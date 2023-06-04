@@ -5,7 +5,7 @@
   <h3>A cashu wallet for Android and IOS</h3>
   <div style="display: flex; align-items: center; justify-content: center">
 
-  [![codecov](https://codecov.io/gh/eNuts-dev/eNuts/branch/main/graph/badge.svg?token=L4M3EJFCI0)](https://codecov.io/gh/eNuts-dev/eNuts)
+  [![codecov](https://codecov.io/gh/cashubtc/eNuts/branch/main/graph/badge.svg?token=MGBC95KGHQ)](https://codecov.io/gh/cashubtc/eNuts)
   ![example workflow](https://github.com/cashubtc/eNuts/actions/workflows/node.js.yml/badge.svg)
   ![ts](https://badgen.net/badge/Built%20With/TypeScript/blue)
 
