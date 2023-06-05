@@ -8,9 +8,11 @@ export class SimpleKeyValueStore extends StoreBase {
 		super(getDb(name), name)
 		void this.#init()
 	}
-	async #init() {
-		if (super._isReady) { return }
+	async #init(rerun = false) {
+		if (this._isReady) { return }
 		await super._createStore()
+		if (rerun) { return }
+		await this.#init(true)
 	}
 	public get(key: string): Promise<string | null | undefined> {
 		return super.get(key)
