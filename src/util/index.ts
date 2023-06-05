@@ -3,7 +3,7 @@ import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
 import type { ILnUrl, IProofSelection } from '@model'
 import axios from 'axios'
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer/'
 import { Vibration } from 'react-native'
 
 import { isBuf,isNum, isStr } from './typeguards'
