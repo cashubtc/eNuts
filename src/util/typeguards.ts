@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer/'
 
 export function isStr(v: unknown): v is string { return typeof v === 'string' }
 export function isNum(v: unknown): v is number { return typeof v === 'number' }

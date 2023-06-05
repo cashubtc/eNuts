@@ -3,12 +3,16 @@ import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
 import type { ILnUrl, IProofSelection } from '@model'
 import axios from 'axios'
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer/'
 import { Vibration } from 'react-native'
 
-import { isBuf, isNum, isStr } from './typeguards'
+import { isBuf,isNum, isStr } from './typeguards'
 
-export { isArr, isArrayOf, isBool, isErr, isFunc, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
+export {
+	isArr, isArrayOf, isBool, isBuf, isErr, isFunc,
+	isNonNullable, isNull, isNum, isObj, isStr, isUndef
+} from './typeguards'
+
 export function rndInt(min: number, max: number) { // min and max included
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }

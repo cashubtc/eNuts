@@ -28,11 +28,14 @@ class HistoryStore extends StoreBase {
 		super(getDb('HistoryStore'), 'HistoryStore')
 		void this.#init()
 	}
-	async #init(): Promise<void> {
+	async #init(rerun = false): Promise<void> {
 		if (this._isReady && this.#idx !== -1) { return }
 		if (!this._isReady) { await super._createStore() }
 		this.#idx = await super.count()
+		if (rerun) { return }
+		await this.#init(true)
 	}
+
 	/**
 	 * add history entry
 	 * @param entry
