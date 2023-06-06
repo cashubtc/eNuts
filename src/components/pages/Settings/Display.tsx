@@ -1,10 +1,9 @@
 import type { TDisplaySettingsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi, themeColors } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi, themeColors } from '@styles'
 import { useContext } from 'react'
-import { StyleSheet, Switch, Text, TouchableOpacity,View } from 'react-native'
+import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 
 export default function DisplaySettings({ navigation }: TDisplaySettingsPageProps) {
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)

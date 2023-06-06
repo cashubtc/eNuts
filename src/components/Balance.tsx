@@ -1,8 +1,9 @@
 import { ExclamationIcon, SwapCurrencyIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi, mainColors } from '@styles/colors'
+import { highlight as hi, mainColors } from '@styles'
 import { formatBalance, formatInt, isBool } from '@util'
+import { getLanguageCode } from '@util/localization'
 import React, { useContext, useState } from 'react'
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -28,7 +29,7 @@ export default function Balance({ balance }: IBalanceProps) {
 				Pending{'('}0{')'}
 			</Text> */}
 				<Text style={[styles.balAmount, { color: hi[highlight] }]}>
-					{formatSats ? formatBalance(balance) : formatInt(balance, 'en', 'standard')}
+					{formatSats ? formatBalance(balance) : formatInt(balance, getLanguageCode(), 'standard')}
 				</Text>
 				<View style={styles.balAssetNameWrap}>
 					<Text style={[styles.balAssetName, { color: color.TEXT_SECONDARY }]}>

@@ -25,6 +25,7 @@ const config: ExpoConfig = {
 	},
 	assetBundlePatterns: ['**/*'],
 	plugins: [
+		'expo-localization',
 		[
 			'expo-barcode-scanner',
 			{

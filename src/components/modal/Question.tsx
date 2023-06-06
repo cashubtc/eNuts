@@ -1,8 +1,8 @@
 import Button from '@comps/Button'
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles/globals'
+import { globals } from '@styles'
 import { useContext } from 'react'
-import { StyleSheet,Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 
 import MyModal from '.'
 

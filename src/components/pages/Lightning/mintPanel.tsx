@@ -4,6 +4,7 @@ import type { TLightningPageProps, TSendTokenPageProps } from '@model/nav'
 import { Picker } from '@react-native-picker/picker'
 import { ThemeContext } from '@src/context/Theme'
 import { formatInt, formatMintUrl } from '@util'
+import { getLanguageCode } from '@util/localization'
 import { useContext } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
@@ -27,7 +28,7 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 					styles.mintAmount,
 					{ color: lnAmount && nav.route.params.balance && nav.route.params.balance < lnAmount ? color.ERROR : color.TEXT }
 				]}>
-					{formatInt(nav.route.params.balance || 0, 'en', 'standard')}
+					{formatInt(nav.route.params.balance || 0, getLanguageCode(), 'standard')}
 				</Text>
 				<ZapIcon width={18} height={18} color={color.TEXT} />
 			</View>

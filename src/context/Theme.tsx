@@ -1,6 +1,6 @@
 import { l } from '@log'
 import { IPreferences } from '@model'
-import { dark, light } from '@styles/colors'
+import { dark, light } from '@styles'
 import { createContext, useState } from 'react'
 
 const useTheme = () => {

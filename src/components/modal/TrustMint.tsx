@@ -1,10 +1,11 @@
 import Button from '@comps/Button'
 import type { ITokenInfo } from '@model'
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles/globals'
+import { globals } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
+import { getLanguageCode } from '@util/localization'
 import React, { useContext } from 'react'
-import { StyleSheet,Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 import MyModal from '.'
@@ -25,7 +26,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			</Text>
 			{/* token amount */}
 			<Text style={[styles.mintPrompt, { color: color.TEXT_SECONDARY, }]}>
-				{formatInt(tokenInfo?.value || 0, 'en', 'standard')} Satoshi from:
+				{formatInt(tokenInfo?.value || 0, getLanguageCode(), 'standard')} Satoshi from:
 			</Text>
 			{/* Show in which mint(s) the tokens are */}
 			<View style={styles.tokenMintsView}>

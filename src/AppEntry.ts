@@ -1,3 +1,5 @@
+// dont touch this
+import './shim'
 import 'expo-dev-client'
 
 import App from '@comps/App'

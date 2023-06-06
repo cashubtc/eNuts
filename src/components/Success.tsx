@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/core'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { addToHistory } from '@store/HistoryStore'
 import { formatInt, formatMintUrl, isNum, vib } from '@util'
+import { getLanguageCode } from '@util/localization'
 import { _mintUrl, requestToken } from '@wallet'
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
@@ -56,7 +57,7 @@ export default function Success({ amount, fee, mints, mint, nav, hash }: ISucces
 					{isNum(fee) ?
 						'Payment successfull!'
 						:
-						<>{formatInt(amount, 'en', 'standard')} Satoshi {mints ? 'claimed' : 'minted'}!</>
+						<>{formatInt(amount, getLanguageCode(), 'standard')} Satoshi {mints ? 'claimed' : 'minted'}!</>
 					}
 				</Text>
 				{mints && mints.map(m => (

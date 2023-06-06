@@ -11,9 +11,9 @@ import { CoinSelectionModal, CoinSelectionResume } from '@pages/Lightning/modal'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi } from '@styles'
 import { formatInt, getSelectedAmount } from '@util'
+import { getLanguageCode } from '@util/localization'
 import { sendToken } from '@wallet'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { StyleSheet, Switch, Text, TextInput, View } from 'react-native'
@@ -116,7 +116,7 @@ export default function LNPageContent({
 						</Text>
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								{formatInt(mintBal, 'en', 'standard')}
+								{formatInt(mintBal, getLanguageCode(), 'standard')}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
 						</View>

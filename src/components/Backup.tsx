@@ -1,7 +1,7 @@
 import Button from '@comps/Button'
 import { l } from '@log'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
+import { highlight as hi } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'

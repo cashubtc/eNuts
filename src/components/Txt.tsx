@@ -1,5 +1,5 @@
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles/globals'
+import { globals } from '@styles'
 import { useContext } from 'react'
 import { StyleProp, Text, TextStyle } from 'react-native'
 
