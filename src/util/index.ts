@@ -165,6 +165,7 @@ export function decodeLnInvoice(invoice: string) {
 	}
 }
 export function openLinkInBrowser(url: string) {
+	if (!url?.trim()) { return }
 	return Linking.canOpenURL(url)
 		.then((canOpen) => canOpen && Linking.openURL(url))
 }
