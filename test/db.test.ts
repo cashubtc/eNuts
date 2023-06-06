@@ -1,12 +1,4 @@
 
-import { getDatabase } from './wrapper/getTestDb'
-
-jest.mock('expo-sqlite', () => ({
-	get openDatabase() {
-		return (_: string) => getDatabase(':memory:')
-	}
-}))
-
 import {
 	addInvoice,
 	addMint,
@@ -19,9 +11,6 @@ import {
 	
 	initDb
 } from '@db'
-
-
-
 
 describe('test db helper', () => {
 	beforeAll(async () => { await initDb() })

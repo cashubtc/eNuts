@@ -4,7 +4,7 @@ import { l } from '@log'
 import type { ILnUrl, IProofSelection } from '@model'
 import axios from 'axios'
 import { Buffer } from 'buffer/'
-import { Vibration } from 'react-native'
+import { Linking, Vibration } from 'react-native'
 
 import { getLanguageCode } from './localization'
 import { isBuf, isNum, isStr } from './typeguards'
@@ -163,4 +163,8 @@ export function decodeLnInvoice(invoice: string) {
 		memo,
 		paymentHash
 	}
+}
+export function openLinkInBrowser(url: string) {
+	return Linking.canOpenURL(url)
+		.then((canOpen) => canOpen && Linking.openURL(url))
 }

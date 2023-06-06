@@ -1,12 +1,3 @@
-
-import { getDatabase as mockGetDatabase } from './wrapper/getTestDb'
-
-jest.mock('expo-sqlite', () => ({
-	get openDatabase() {
-		return (_: string) => mockGetDatabase(':memory:')
-	}
-}))
-
 import { SimpleKeyValueStore } from '@store'
 
 describe('test SimpleKeyValueStore', () => {

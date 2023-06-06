@@ -1,12 +1,3 @@
-
-import { getDatabase as mockGetDatabase } from './wrapper/getTestDb'
-
-jest.mock('expo-sqlite', () => ({
-	get openDatabase() {
-		return (_: string) => mockGetDatabase(':memory:')
-	}
-}))
-
 import type { IHistoryEntry } from '@model'
 import { historyStore } from '@store/HistoryStore'
 
