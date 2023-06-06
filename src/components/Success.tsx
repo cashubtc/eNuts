@@ -56,7 +56,7 @@ export default function Success({ amount, fee, mints, mint, nav, hash }: ISucces
 					{isNum(fee) ?
 						'Payment successfull!'
 						:
-						<>{formatInt(amount, 'en', 'standard')} Satoshi {mints ? 'claimed' : 'minted'}!</>
+						<>{formatInt(amount)} Satoshi {mints ? 'claimed' : 'minted'}!</>
 					}
 				</Text>
 				{mints && mints.map(m => (

@@ -14,8 +14,7 @@ import TopNav from '@nav/TopNav'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { _setMintName, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
-import { highlight as hi, mainColors } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
@@ -175,7 +174,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							Balance
 						</Text>
 						<Text style={{ color: color.TEXT }}>
-							{formatInt(route.params?.amount, 'en', 'standard')}{' Sat'}
+							{formatInt(route.params?.amount)}{' Sat'}
 						</Text>
 					</View>
 					<View style={[styles.line, { borderBottomColor: color.BORDER }]} />

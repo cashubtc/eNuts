@@ -5,10 +5,10 @@ import { l } from '@log'
 import type { TMintInfoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
+import { highlight as hi } from '@styles'
 import { getMintInfo } from '@wallet'
-import { useContext, useEffect,useState } from 'react'
-import { ScrollView,StyleSheet, Text, View } from 'react-native'
+import { useContext, useEffect, useState } from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function MintInfoPage({ route }: TMintInfoPageProps) {
 

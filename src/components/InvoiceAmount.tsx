@@ -4,11 +4,10 @@ import useLoading from '@comps/hooks/Loading'
 import type { IDecodedLNInvoice } from '@model/ln'
 import { InvoiceAmountModal, InvoiceModal } from '@pages/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi } from '@styles'
 import { vib } from '@util'
 import { requestMint } from '@wallet'
-import React, { createRef, useContext, useEffect,useState } from 'react'
+import React, { createRef, useContext, useEffect, useState } from 'react'
 import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 import { useShakeAnimation } from './animation/Shake'
@@ -62,7 +61,7 @@ export default function LNInvoiceAmountModal({
 			startLoading()
 			const resp = await requestMint(mintUrl, +invoice.amount)
 			const decoded = getDecodedLnInvoice(resp.pr)
-			setInvoice({...invoice, decoded, hash: resp.hash})
+			setInvoice({ ...invoice, decoded, hash: resp.hash })
 			setShowInvoice(true)
 			setLNAmountModal(false)
 			stopLoading()
@@ -88,7 +87,7 @@ export default function LNInvoiceAmountModal({
 						style={[styles.invoiceAmount, { color: hi[highlight] }]}
 						caretHidden
 						ref={inputRef}
-						onChangeText={amount => setInvoice({...invoice, amount })}
+						onChangeText={amount => setInvoice({ ...invoice, amount })}
 						onSubmitEditing={handleAmountSubmit}
 						maxLength={8}
 					/>

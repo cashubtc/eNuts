@@ -1,4 +1,8 @@
-import { getRandomBytes, getRandomValues } from 'expo-crypto'
+// dont touch this
+import 'react-native-url-polyfill/auto'
+import 'text-encoding-polyfill'
+
+import * as c from 'expo-crypto'
 
 // eslint-disable-next-line no-console
 console.log('shim.ts')
@@ -10,7 +14,7 @@ if (typeof global?.Crypto === 'undefined' &&
 	typeof global?.window?.crypto === 'undefined') {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-expect-error
-	global.crypto = { getRandomValues, getRandomBytes }
+	global.crypto = c
 }
 /* if (typeof Buffer === 'undefined') {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-var-requires

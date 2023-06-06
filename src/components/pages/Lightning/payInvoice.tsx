@@ -16,8 +16,7 @@ import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi } from '@styles'
 import { formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isLnurl } from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
@@ -211,7 +210,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			{!input.length &&
 				<View style={styles.amountWrap}>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Mint balance: {formatInt(route.params.mintBal, 'en', 'standard')} Sat.
+						Mint balance: {formatInt(route.params.mintBal)} Sat.
 					</Text>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
 						Send bitcoin from "{formatMintUrl(route.params.mint_url)}" to a lightning wallet.
@@ -252,7 +251,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 								</Text>
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-										0 to {formatInt(feeEstimate, 'en', 'standard')}
+										0 to {formatInt(feeEstimate)}
 									</Text>
 									<ZapIcon width={18} height={18} color={color.TEXT} />
 								</View>
@@ -280,7 +279,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						</Text>
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								{formatInt(invoiceAmount / 1000, 'en', 'standard')}
+								{formatInt(invoiceAmount / 1000)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
 						</View>
@@ -292,7 +291,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						</Text>
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								0 to {formatInt(feeEstimate, 'en', 'standard')}
+								0 to {formatInt(feeEstimate)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
 						</View>
@@ -311,7 +310,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						</Text>
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								{formatInt((invoiceAmount / 1000) + feeEstimate, 'en', 'standard')}
+								{formatInt((invoiceAmount / 1000) + feeEstimate)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
 						</View>

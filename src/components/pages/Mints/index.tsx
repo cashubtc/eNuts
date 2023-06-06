@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
@@ -15,8 +14,7 @@ import { defaultMints } from '@src/consts/mints'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { getDefaultMint, getMintBalWithName } from '@store/mintStore'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isUrl } from '@util'
 import { _mintUrl } from '@wallet'
 import React, { useContext, useEffect, useState } from 'react'
@@ -112,6 +110,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 
 	// get mints balances and default mint after navigating to this page
 	useEffect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const focusHandler = navigation.addListener('focus', async () => {
 			await handleMintsState()
 			const defaultt = await getDefaultMint() || ''
@@ -173,7 +172,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 											{isTrustedMint(m.mint_url) ?
 												<View style={styles.mintBal}>
 													<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-														{formatInt(m.amount, 'en', 'compact')}
+														{formatInt(m.amount, undefined, 'compact')}
 													</Text>
 													<ZapIcon width={18} height={18} color={color.TEXT} />
 												</View>
@@ -201,7 +200,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 						selectionColor={hi[highlight]}
 						onChangeText={setInput}
 					/>
-					<Button txt='Add mint' onPress={handleMintInput} />
+					<Button txt='Add mint' onPress={() => { void handleMintInput() }} />
 					<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
 						<Text style={[styles.cancelTxt, { color: hi[highlight] }]}>Cancel</Text>
 					</TouchableOpacity>
@@ -215,6 +214,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 						'Are you sure that you want to trust this mint?'
 					}
 					visible={trustModalOpen}
+					// eslint-disable-next-line @typescript-eslint/no-misused-promises
 					confirmFn={() => handleTrustModal()}
 					cancelFn={() => setTrustModalOpen(false)}
 				/>

@@ -1,9 +1,9 @@
 import { HistoryIcon, MintBoardIcon, WalletIcon } from '@comps/Icons'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
+import { highlight as hi } from '@styles'
 import React, { useContext } from 'react'
-import { StyleSheet, TouchableOpacity,View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { color, highlight } = useContext(ThemeContext)

@@ -8,8 +8,7 @@ import MyModal from '@modal'
 import { IProofSelection } from '@model'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { dark, highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { dark, globals, highlight as hi } from '@styles'
 import { formatExpiry, formatMintUrl, getSelectedAmount } from '@util'
 import { _mintUrl, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
@@ -48,7 +47,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 		if (paid === 'unpaid') { return }
 		void (async () => {
 			try {
-				const {success} = await requestToken(mintUrl, +invoice.amount, invoice.hash)
+				const { success } = await requestToken(mintUrl, +invoice.amount, invoice.hash)
 				l({ success })
 				l({ invoiceSections: invoice.decoded?.sections })
 				if (success) {

@@ -1,5 +1,5 @@
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi,TPref } from '@styles/colors'
+import { highlight as hi, TPref } from '@styles'
 import { useContext } from 'react'
 import { Modal, StyleSheet, View } from 'react-native'
 

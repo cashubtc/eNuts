@@ -1,7 +1,3 @@
-// dont touch this
-import 'react-native-url-polyfill/auto'
-import 'text-encoding-polyfill'
-
 import { getEncodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
@@ -19,8 +15,7 @@ import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { dark, light } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { dark, globals, light } from '@styles'
 import { formatInt, isCashuToken, isTrustedMint, sleep } from '@util'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -154,7 +149,7 @@ export default function App(_initialProps: IInitialProps) {
 			value: encoded,
 			mints: info.mints,
 		})
-		openPrompt(`Successfully claimed ${formatInt(info.value, 'en', 'standard')} Satoshi!`)
+		openPrompt(`Successfully claimed ${formatInt(info.value)} Satoshi!`)
 		setClaimed(true)
 		setClaimOpen(false)
 	}
@@ -262,7 +257,7 @@ export default function App(_initialProps: IInitialProps) {
 									</Text>
 									<Text style={globals(color, highlight).modalTxt}>
 										<Text style={{ fontWeight: '500' }}>
-											{formatInt(tokenInfo?.value || 0, 'en', 'standard')}
+											{formatInt(tokenInfo?.value || 0)}
 										</Text>
 										{' '}Satoshi from the following mint:{' '}
 										{tokenInfo?.mints.map(m => m)}

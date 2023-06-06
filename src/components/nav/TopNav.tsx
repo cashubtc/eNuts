@@ -2,9 +2,9 @@ import { HamburgerIcon, QRIcon } from '@comps/Icons'
 import type { TBottomNavProps } from '@model/nav'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles/globals'
+import { globals } from '@styles'
 import React, { useContext } from 'react'
-import { StyleSheet, Text,TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface TTopNavProps {
 	withBackBtn?: boolean

@@ -14,8 +14,7 @@ import { Picker } from '@react-native-picker/picker'
 import { ThemeContext } from '@src/context/Theme'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { getDefaultMint } from '@store/mintStore'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi } from '@styles'
 import { formatExpiry, formatInt, formatMintUrl, getSelectedAmount } from '@util'
 import { payLnInvoice } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
@@ -126,7 +125,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					Lightning payment request
 				</Text>
 				<Text style={[styles.amount, { color: hi[highlight] }]}>
-					{formatInt(invoiceAmount, 'en', 'standard')}
+					{formatInt(invoiceAmount)}
 				</Text>
 				<Text style={[styles.sat, { color: color.TEXT_SECONDARY }]}>
 					Satoshi
@@ -166,7 +165,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								</Text>
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-										{formatInt(mintBal, 'en', 'standard')}
+										{formatInt(mintBal)}
 									</Text>
 									<ZapIcon width={18} height={18} color={color.TEXT} />
 								</View>

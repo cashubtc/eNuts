@@ -9,8 +9,7 @@ import TopNav from '@nav/TopNav'
 import { Picker } from '@react-native-picker/picker'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { autoMintSwap } from '@wallet'
 import { useContext, useState } from 'react'
@@ -69,7 +68,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 					maxLength={8}
 				/>
 				<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
-					Mint balance: {formatInt(route.params.balance, 'en', 'standard')} Sat
+					Mint balance: {formatInt(route.params.balance)} Sat
 				</Text>
 			</View>
 			{/* Swap-Out Mint: */}

@@ -27,7 +27,7 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 					styles.mintAmount,
 					{ color: lnAmount && nav.route.params.balance && nav.route.params.balance < lnAmount ? color.ERROR : color.TEXT }
 				]}>
-					{formatInt(nav.route.params.balance || 0, 'en', 'standard')}
+					{formatInt(nav.route.params.balance || 0)}
 				</Text>
 				<ZapIcon width={18} height={18} color={color.TEXT} />
 			</View>

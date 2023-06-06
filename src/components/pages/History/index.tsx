@@ -6,7 +6,7 @@ import { FlashList } from '@shopify/flash-list'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { ThemeContext } from '@src/context/Theme'
 import { getHistory } from '@store/HistoryStore'
-import { globals } from '@styles/globals'
+import { globals } from '@styles'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
