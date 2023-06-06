@@ -6,7 +6,8 @@ import axios from 'axios'
 import { Buffer } from 'buffer/'
 import { Vibration } from 'react-native'
 
-import { isBuf,isNum, isStr } from './typeguards'
+import { getLanguageCode } from './localization'
+import { isBuf, isNum, isStr } from './typeguards'
 
 export {
 	isArr, isArrayOf, isBool, isBuf, isErr, isFunc,
@@ -19,10 +20,24 @@ export function rndInt(min: number, max: number) { // min and max included
 export function sleep(ms: number) { return new Promise<void>(resolve => setTimeout(resolve, ms)) }
 
 export function formatBalance(bal: number) { return (bal / 100_000_000).toFixed(8) }
-
-export function formatInt(val: number, locale: string, notation: 'standard' | 'engineering' | 'scientific' | 'compact') {
+/**
+ * format a number to a string with a given locale
+ *
+ * if locale is not specified, the current locale is used
+ *
+ * @export
+ * @param {number} val number to format
+ * @param {string} [locale] optional defaults to the current locale
+ * @param {('standard' | 'engineering' | 'scientific' | 'compact')} [notation='standard'] 'standard' | 'engineering' | 'scientific' | 'compact'
+ * @returns {string}  formatted string representation of the number
+ */
+export function formatInt(
+	val: number,
+	locale?: string,
+	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard'
+): string {
 	// eslint-disable-next-line new-cap
-	const numberFormatter = Intl.NumberFormat(locale, { notation })
+	const numberFormatter = Intl.NumberFormat(locale ? locale : getLanguageCode(), { notation })
 	return numberFormatter.format(val)
 }
 export function getShortDateStr(date: Date) {
@@ -137,9 +152,9 @@ export function decodeLnInvoice(invoice: string) {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const expiry = getFromSection<number>(x.sections, 'expiry', isNum)!
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const memo = getFromSection<string>(x.sections, 'description', isStr)||''
+	const memo = getFromSection<string>(x.sections, 'description', isStr) || ''
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const paymentHash = getFromSection<Buffer>(x.sections, 'payment_hash', isBuf)?.toString('hex')||''
+	const paymentHash = getFromSection<Buffer>(x.sections, 'payment_hash', isBuf)?.toString('hex') || ''
 	return {
 		decoded: x,
 		amount,

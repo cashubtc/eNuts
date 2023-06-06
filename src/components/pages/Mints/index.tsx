@@ -16,7 +16,6 @@ import { ThemeContext } from '@src/context/Theme'
 import { getDefaultMint, getMintBalWithName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isUrl } from '@util'
-import { getLanguageCode } from '@util/localization'
 import { _mintUrl } from '@wallet'
 import React, { useContext, useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -173,7 +172,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 											{isTrustedMint(m.mint_url) ?
 												<View style={styles.mintBal}>
 													<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-														{formatInt(m.amount, getLanguageCode(), 'compact')}
+														{formatInt(m.amount, undefined, 'compact')}
 													</Text>
 													<ZapIcon width={18} height={18} color={color.TEXT} />
 												</View>

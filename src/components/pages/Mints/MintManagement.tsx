@@ -16,7 +16,6 @@ import { ThemeContext } from '@src/context/Theme'
 import { _setMintName, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
-import { getLanguageCode } from '@util/localization'
 import { checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
@@ -175,7 +174,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							Balance
 						</Text>
 						<Text style={{ color: color.TEXT }}>
-							{formatInt(route.params?.amount, getLanguageCode(), 'standard')}{' Sat'}
+							{formatInt(route.params?.amount)}{' Sat'}
 						</Text>
 					</View>
 					<View style={[styles.line, { borderBottomColor: color.BORDER }]} />

@@ -5,7 +5,6 @@ import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo } from '@util'
-import { getLanguageCode } from '@util/localization'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
@@ -56,7 +55,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 					{isLn ? LNstr : eCash}
 				</Text>
 				<Text style={[styles.amount, { color: entry.amount < 0 ? color.ERROR : mainColors.VALID }]}>
-					{formatInt(entry.amount < 0 ? Math.abs(entry.amount) : entry.amount, getLanguageCode(), 'standard')}
+					{formatInt(entry.amount < 0 ? Math.abs(entry.amount) : entry.amount)}
 				</Text>
 				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY }]}>
 					Satoshi

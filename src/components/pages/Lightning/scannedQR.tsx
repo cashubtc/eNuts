@@ -16,7 +16,6 @@ import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatExpiry, formatInt, formatMintUrl, getSelectedAmount } from '@util'
-import { getLanguageCode } from '@util/localization'
 import { payLnInvoice } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Switch, Text, View } from 'react-native'
@@ -126,7 +125,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					Lightning payment request
 				</Text>
 				<Text style={[styles.amount, { color: hi[highlight] }]}>
-					{formatInt(invoiceAmount, getLanguageCode(), 'standard')}
+					{formatInt(invoiceAmount)}
 				</Text>
 				<Text style={[styles.sat, { color: color.TEXT_SECONDARY }]}>
 					Satoshi
@@ -166,7 +165,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								</Text>
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-										{formatInt(mintBal, getLanguageCode(), 'standard')}
+										{formatInt(mintBal)}
 									</Text>
 									<ZapIcon width={18} height={18} color={color.TEXT} />
 								</View>

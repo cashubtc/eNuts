@@ -4,7 +4,6 @@ import type { THistoryPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { formatInt } from '@util'
-import { getLanguageCode } from '@util/localization'
 import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -36,7 +35,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 				</Text>
 			</View>
 			<Text style={[globals(color, highlight).txt, styles.amount, { color: item.amount < 0 ? color.ERROR : mainColors.VALID }]}>
-				{formatInt(item.amount < 0 ? Math.abs(item.amount) : item.amount, getLanguageCode(), 'compact')}
+				{formatInt(item.amount < 0 ? Math.abs(item.amount) : item.amount, undefined, 'compact')}
 				<ZapIcon width={15} height={15} color={item.amount < 0 ? color.ERROR : mainColors.VALID} />
 			</Text>
 		</TouchableOpacity>

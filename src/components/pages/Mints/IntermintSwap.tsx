@@ -11,7 +11,6 @@ import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
-import { getLanguageCode } from '@util/localization'
 import { autoMintSwap } from '@wallet'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
@@ -69,7 +68,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 					maxLength={8}
 				/>
 				<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
-					Mint balance: {formatInt(route.params.balance, getLanguageCode(), 'standard')} Sat
+					Mint balance: {formatInt(route.params.balance)} Sat
 				</Text>
 			</View>
 			{/* Swap-Out Mint: */}
