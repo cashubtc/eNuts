@@ -2,7 +2,7 @@ import { ExclamationIcon, SwapCurrencyIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
-import { formatBalance, formatInt, isBool, openLinkInBrowser } from '@util'
+import { formatBalance, formatInt, isBool, openUrl } from '@util'
 import React, { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -50,7 +50,7 @@ export default function Balance({ balance }: IBalanceProps) {
 				</Text>
 				<TouchableOpacity
 					style={styles.submitIssue}
-					onPress={() => void openLinkInBrowser('https://github.com/cashubtc/eNuts/issues/new')}
+					onPress={() => void openUrl('https://github.com/cashubtc/eNuts/issues/new')}
 				>
 					<Text style={styles.issue}>
 						Submit issue on Github

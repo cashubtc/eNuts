@@ -17,7 +17,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
-import { formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isLnurl, openLinkInBrowser } from '@util'
+import { formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isLnurl, openUrl } from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { createRef, useCallback, useContext, useEffect, useState } from 'react'
@@ -384,7 +384,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				{!input.length && !isKeyboardOpen &&
 					<TouchableOpacity style={{ marginVertical: 10 }} onPress={() => {
 						void (async () => {
-							await openLinkInBrowser('lightning://')
+							await openUrl('lightning://')
 						})()
 					}}>
 						<Text style={globals(color, highlight).pressTxt}>

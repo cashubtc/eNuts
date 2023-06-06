@@ -9,7 +9,7 @@ import { IProofSelection } from '@model'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
-import { formatExpiry, formatMintUrl, getSelectedAmount, openLinkInBrowser } from '@util'
+import { formatExpiry, formatMintUrl, getSelectedAmount, openUrl } from '@util'
 import { _mintUrl, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import React, { useContext, useEffect, useState } from 'react'
@@ -169,7 +169,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							txt='Pay with your LN wallet'
 							onPress={() => {
 								void (async () => {
-									await openLinkInBrowser(`lightning:${invoice.decoded?.paymentRequest || ''}`)
+									await openUrl(`lightning:${invoice.decoded?.paymentRequest || ''}`)
 								})()
 							}}
 						/>

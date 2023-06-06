@@ -3,12 +3,10 @@ import {
 	addInvoice,
 	addMint,
 	addMints,
-	hasMints,
-
 	delInvoice,
 	getAllInvoices,
 	getInvoice,
-	
+	hasMints,
 	initDb
 } from '@db'
 
@@ -30,7 +28,7 @@ describe('test db helper', () => {
 		// setup vars
 		const time = Math.ceil(Date.now() / 1000) - 60
 		const invoiceTest = { pr: 'pr', hash: 'hash', amount: 100, mint_url: 'minturl' }
-		
+
 
 		// test addInvoice
 		expect(await addInvoice(
