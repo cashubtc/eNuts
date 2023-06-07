@@ -41,7 +41,7 @@ export function formatInt(
 	return numberFormatter.format(val)
 }
 export function getShortDateStr(date: Date) {
-	return date.toLocaleDateString(undefined, {
+	return date.toLocaleDateString(getLanguageCode(), {
 		year: '2-digit',
 		month: 'short',
 		day: '2-digit',
