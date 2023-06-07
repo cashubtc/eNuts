@@ -5,7 +5,7 @@ import QR from '@comps/QR'
 import Success from '@comps/Success'
 import { l } from '@log'
 import MyModal from '@modal'
-import { IProofSelection } from '@model'
+import { IMintUrl, IProofSelection } from '@model'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
@@ -188,7 +188,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 }
 
 interface ICoinSelectionProps {
-	mint: string
+	mint?: IMintUrl
 	lnAmount: number
 	disableCS: () => void
 	proofs: IProofSelection[]
@@ -205,7 +205,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 					Coin selection
 				</Text>
 				<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
-					{formatMintUrl(mint)}
+					{formatMintUrl(mint?.customName || mint?.mint_url || '')}
 				</Text>
 				<View style={[styles.tableHeader, { borderBottomColor: color.BORDER }]}>
 					<Text style={[styles.tableHead, { color: color.TEXT }]}>

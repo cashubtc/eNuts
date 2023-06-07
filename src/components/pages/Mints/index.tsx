@@ -6,14 +6,14 @@ import { l } from '@log'
 import MyModal from '@modal'
 import { PromptModal } from '@modal/Prompt'
 import { QuestionModal } from '@modal/Question'
-import { IMintBalWithName } from '@model'
+import { IMintBalWithName, IMintUrl } from '@model'
 import { TMintsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { defaultMints } from '@src/consts/mints'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { getDefaultMint, getMintBalWithName } from '@store/mintStore'
+import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isUrl } from '@util'
 import { _mintUrl } from '@wallet'
@@ -26,7 +26,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
-	const [mintUrl, setMintUrl] = useState('')
+	const [mintUrl, setMintUrl] = useState<IMintUrl>()
 	const [defaultMint, setDefaultM] = useState('')
 	const [input, setInput] = useState('')
 	const [trustModalOpen, setTrustModalOpen] = useState(false)
@@ -59,28 +59,28 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		setNewMintModal(false)
 		setSuccess(true)
 		const mints = await getMintsBalances()
-		setUserMints(await getMintBalWithName(mints))
+		setUserMints(await getCustomMintNames(mints))
 	}
 
 	// navigates to mint-management page if mint available in db or shows the trust modal
-	const handleMintEntry = (selectedMintUrl: string, amount: number) => {
+	const handleMintEntry = (selectedMint: IMintUrl, amount: number) => {
 		// navigate to mint management page
-		if (isTrustedMint(selectedMintUrl)) {
+		if (isTrustedMint(selectedMint.mint_url)) {
 			navigation.navigate('mintmanagement', {
-				mint_url: selectedMintUrl,
+				mint: selectedMint,
 				amount
 			})
 			return
 		}
 		// else: add default mint to users mints
-		setMintUrl(selectedMintUrl)
+		setMintUrl(selectedMint)
 		setTrustModalOpen(true)
 	}
 
 	// trust modal asks user for confirmation on adding a default mint to its trusted list
 	const handleTrustModal = async () => {
 		try {
-			await addMint(mintUrl)
+			await addMint(mintUrl?.mint_url || '')
 		} catch (e) {
 			// prompt error
 			openPrompt('Connection to mint failed')
@@ -92,12 +92,12 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		setSuccess(true)
 		// update mints list state
 		const mints = await getMintsBalances()
-		setUserMints(await getMintBalWithName(mints))
+		setUserMints(await getCustomMintNames(mints))
 	}
 
 	const handleMintsState = async () => {
 		const mintsBal = await getMintsBalances()
-		setUserMints(await getMintBalWithName(mintsBal))
+		setUserMints(await getCustomMintNames(mintsBal))
 	}
 
 	// Show user mints with balances and default mint icon
@@ -144,7 +144,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 								<View key={m.mint_url} style={styles.mintContainer}>
 									<TouchableOpacity
 										style={styles.mintUrlWrap}
-										onPress={() => handleMintEntry(m.mint_url, m.amount)}
+										onPress={() => handleMintEntry(m, m.amount)}
 									>
 										<View style={styles.mintNameWrap}>
 											{defaultMint === m.mint_url &&
@@ -160,11 +160,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 												]}
 											>
 												{/* custom name given by user or show mint URL */}
-												{m.name?.length > 0 ?
-													m.name
-													:
-													formatMintUrl(m.mint_url)
-												}
+												{m.customName || formatMintUrl(m.mint_url)}
 											</Text>
 										</View>
 										{/* Add mint icon or show balance */}
@@ -208,7 +204,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			}
 			{trustModalOpen &&
 				<QuestionModal
-					header={mintUrl === _mintUrl ?
+					header={mintUrl?.mint_url === _mintUrl ?
 						'This is a test mint to play around with. Add it anyway?'
 						:
 						'Are you sure that you want to trust this mint?'

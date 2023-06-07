@@ -37,7 +37,7 @@ export function formatInt(
 	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard'
 ): string {
 	// eslint-disable-next-line new-cap
-	const numberFormatter = Intl.NumberFormat(locale ? locale : getLanguageCode(), { notation })
+	const numberFormatter = Intl.NumberFormat(locale || getLanguageCode(), { notation })
 	return numberFormatter.format(val)
 }
 export function getShortDateStr(date: Date) {

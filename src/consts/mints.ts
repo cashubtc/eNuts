@@ -5,17 +5,17 @@ export const defaultMints: IMintBalWithName[] = [
 	/* {
 		mint_url: 'https://8333.space:3338',
 		amount: 0,
-		name: ''
+		customName: ''
 	},
 	{
 		mint_url: 'https://legend.lnbits.com/cashu/api/v1/TGM7mVpYBkva7sCqLECTk5',
 		amount: 0,
-		name: ''
+		customName: ''
 	}, */
 	{
 		mint_url: _mintUrl,
 		amount: 0,
-		name: ''
+		customName: ''
 	}
 ]
 
