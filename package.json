@@ -9,7 +9,7 @@
 		"start": "expo start",
 		"lint": "npx eslint . --ext .tsx,.jsx,.ts --fix && npx tsc && npm run fmtJson",
 		"ts:check": "npx tsc",
-		"dep:update": "npx -y npm-check-updates --pre -u -u && npm i && npx expo install --fix && npm run lint",
+		"dep:update": "npx -y npm-check-updates --pre -u -u && npm i && npm audit fix || true && npx expo install --fix && npm run lint",
 		"dep:check": "npx -y depcheck@latest",
 		"fmtJson": "npx prettier *.json .github/workflows/*.yml --write --use-tabs --tab-width 4",
 		"expo:i:check": "npx expo install --check",

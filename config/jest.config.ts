@@ -1,6 +1,6 @@
 // import type { Config } from 'jest'
 // import { defaults } from 'jest-config'
-import { JestConfigWithTsJest,pathsToModuleNameMapper } from 'ts-jest'
+import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest'
 
 import { compilerOptions } from '../tsconfig.json'
 
@@ -51,9 +51,10 @@ export default (): JestConfigWithTsJest => ({
 		'!<rootDir>/src/consts/**',
 		'!<rootDir>/src/components/**',
 		'!<rootDir>/src/AppEntry.ts',
+		'!<rootDir>/src/shim.ts',
 		'!<rootDir>/src/storage/store/AsyncStore.ts',
 		'!<rootDir>/src/storage/store/SecureStore.ts',
 	],
 	// verbose: true,
+	setupFiles: ['<rootDir>/test/setup.ts'],
 })
-
