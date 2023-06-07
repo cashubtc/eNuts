@@ -86,7 +86,6 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 						selectedValue={selectedMint.mint_url}
 						onValueChange={(value, _idx) => {
 							void (async () => {
-								l({pickerValue: value})
 								const customName = await getMintName(value)
 								setSelectedMint({ mint_url: value, customName: customName || '' })
 							})()

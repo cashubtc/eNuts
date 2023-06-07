@@ -59,13 +59,14 @@ export default function LNPageContent({
 		// coin selection
 		const selectedProofs = proofs.filter(p => p.selected)
 		try {
-			const token = await sendToken(selectedMint?.mint_url || '', +amount, selectedProofs)
+			if (!selectedMint) { return }
+			const token = await sendToken(selectedMint.mint_url, +amount, selectedProofs)
 			// add as history entry
 			await addToHistory({
 				amount: -amount,
 				type: 1,
 				value: token,
-				mints: [selectedMint?.mint_url || ''],
+				mints: [selectedMint.mint_url],
 			})
 			nav.navigation.navigate('sendToken', { token, amount })
 		} catch (e) {
@@ -83,7 +84,8 @@ export default function LNPageContent({
 	useEffect(() => {
 		if (!createSpendableToken) { return }
 		void (async () => {
-			const proofsDB = (await getProofsByMintUrl(selectedMint?.mint_url || '')).map(p => ({ ...p, selected: false }))
+			if (!selectedMint) { return }
+			const proofsDB = (await getProofsByMintUrl(selectedMint.mint_url)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
 	}, [selectedMint])

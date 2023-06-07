@@ -57,7 +57,10 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 		})()
 	}, [selectedMint])
 	// get mints after navigating to this page
-	useEffect(() => navigation.addListener('focus', handleMintPicker), [navigation])
+	useEffect(() => {
+		const listener = navigation.addListener('focus', handleMintPicker)
+		return listener
+	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav withBackBtn />

@@ -79,8 +79,9 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 
 	// trust modal asks user for confirmation on adding a default mint to its trusted list
 	const handleTrustModal = async () => {
+		if (!mintUrl) { return }
 		try {
-			await addMint(mintUrl?.mint_url || '')
+			await addMint(mintUrl.mint_url)
 		} catch (e) {
 			// prompt error
 			openPrompt('Connection to mint failed')

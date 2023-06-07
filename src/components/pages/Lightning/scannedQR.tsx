@@ -43,11 +43,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
 	const handlePayment = async () => {
-		if (!lnDecoded) { return }
+		if (!lnDecoded || !selectedMint?.mint_url) { return }
 		startLoading()
 		const selectedProofs = proofs.filter(p => p.selected)
 		try {
-			const res = await payLnInvoice(selectedMint?.mint_url || '', lnDecoded.paymentRequest, selectedProofs)
+			const res = await payLnInvoice(selectedMint.mint_url, lnDecoded.paymentRequest, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
 				openPrompt('Invoice could not be payed. Please try again later.')
@@ -56,11 +56,15 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			// payment success, add as history entry
 			await addLnPaymentToHistory(
 				res,
-				[selectedMint?.mint_url || ''],
+				[selectedMint.mint_url],
 				-invoiceAmount,
 				lnDecoded.paymentRequest
 			)
-			nav.navigation.navigate('success', { amount: invoiceAmount + res.realFee, fee: res.realFee, mints: [selectedMint?.mint_url || ''] })
+			nav.navigation.navigate('success', {
+				amount: invoiceAmount + res.realFee,
+				fee: res.realFee,
+				mints: [selectedMint.mint_url]
+			})
 		} catch (e) {
 			l(e)
 			openPrompt(e instanceof Error ? e.message : 'An error occured while paying the invoice.')
@@ -104,8 +108,9 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					setMintBal(m.amount)
 				}
 			})
+			if (!selectedMint?.mint_url) { return }
 			// proofs
-			const proofsDB = (await getProofsByMintUrl(selectedMint?.mint_url || '')).map(p => ({ ...p, selected: false }))
+			const proofsDB = (await getProofsByMintUrl(selectedMint.mint_url)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
 	}, [selectedMint])
@@ -148,7 +153,6 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 							<Picker
 								selectedValue={selectedMint?.mint_url}
 								onValueChange={(value, _idx) => {
-									l({ pickerValue: value })
 									void (async () => {
 										const customName = await getMintName(value)
 										setSelectedMint({ mint_url: value, customName: customName || '' })
