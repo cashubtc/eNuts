@@ -3,8 +3,7 @@ import type { IMintUrl } from '@model'
 import type { TLightningPageProps, TSendTokenPageProps } from '@model/nav'
 import { Picker } from '@react-native-picker/picker'
 import { ThemeContext } from '@src/context/Theme'
-import { l } from '@src/logger'
-import { getMintName } from '@src/storage/store/mintStore'
+import { getMintName } from '@store/mintStore'
 import { formatInt, formatMintUrl } from '@util'
 import { useContext } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
@@ -39,7 +38,6 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 			<Picker
 				selectedValue={selectedMint?.mint_url}
 				onValueChange={(value, _idx) => {
-					l({pickerValue: value})
 					void(async() => {
 						const customName = await getMintName(value)
 						setSelectedMint({mint_url: value, customName: customName || ''})

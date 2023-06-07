@@ -94,6 +94,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			for (const mint of userMints) {
 				if (mint.mint_url === defaultMint) {
 					setSelectedMint(mint)
+					break
 				}
 			}
 		})()

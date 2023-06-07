@@ -6,7 +6,6 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { l } from '@src/logger'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -48,7 +47,6 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 	useEffect(() => {
 		void (async () => {
 			const mintsBals = await getMintsBalances()
-			l({ selectedMint })
 			mintsBals.forEach(m => {
 				if (m.mint_url === selectedMint?.mint_url) {
 					setMintBal(m.amount)
