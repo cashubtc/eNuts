@@ -27,8 +27,8 @@ export function formatBalance(bal: number) { return (bal / 100_000_000).toFixed(
  *
  * @export
  * @param {number} val number to format
- * @param {string} [locale] optional defaults to the current locale
  * @param {('standard' | 'engineering' | 'scientific' | 'compact')} [notation='standard'] 'standard' | 'engineering' | 'scientific' | 'compact'
+ * @param {string} [locale] optional defaults to the current locale
  * @returns {string}  formatted string representation of the number
  */
 export function formatInt(
