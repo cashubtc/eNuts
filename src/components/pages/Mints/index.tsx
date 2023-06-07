@@ -169,7 +169,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 											{isTrustedMint(m.mint_url) ?
 												<View style={styles.mintBal}>
 													<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-														{formatInt(m.amount, undefined, 'compact')}
+														{formatInt(m.amount, 'compact')}
 													</Text>
 													<ZapIcon width={18} height={18} color={color.TEXT} />
 												</View>

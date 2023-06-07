@@ -33,8 +33,8 @@ export function formatBalance(bal: number) { return (bal / 100_000_000).toFixed(
  */
 export function formatInt(
 	val: number,
+	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard',
 	locale?: string,
-	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard'
 ): string {
 	// eslint-disable-next-line new-cap
 	const numberFormatter = Intl.NumberFormat(locale || getLanguageCode(), { notation })
