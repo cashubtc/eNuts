@@ -25,6 +25,8 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 	const [mintBal, setMintBal] = useState(0)
 	const handleMintPicker = async () => {
 		const userMints = await getMintsUrls()
+		if (!userMints.length) { return }
+		// get mints with custom names
 		setMints(await getCustomMintNames(userMints))
 		if (!userMints.length) { return }
 		// set first selected mint

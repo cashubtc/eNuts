@@ -19,7 +19,6 @@ interface IMintPanelProps {
 
 export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelectedMint }: IMintPanelProps) {
 	const { color } = useContext(ThemeContext)
-	l({mintssssssssssssssss: mints})
 	return nav.route.params?.mint ?
 		<View style={styles.minBalWrap}>
 			<Text style={[styles.singleMint, { color: color.TEXT }]}>

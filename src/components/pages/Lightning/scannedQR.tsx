@@ -79,6 +79,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		void (async () => {
 			const userMints = await getMintsUrls()
 			if (!userMints.length) { return }
+			// get mints with custom names
 			setMints(await getCustomMintNames(userMints))
 			// set first selected mint
 			const defaultMint = await getDefaultMint()

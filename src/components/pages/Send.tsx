@@ -3,7 +3,7 @@ import type { IMintUrl } from '@model'
 import type { TSendTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { getDefaultMint } from '@store/mintStore'
+import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
@@ -22,12 +22,14 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 	useEffect(() => {
 		void (async () => {
 			const userMints = await getMintsUrls()
-			setMints(userMints)
+			if (!userMints.length) { return }
+			// get mints with custom names
+			setMints(await getCustomMintNames(userMints))
 			if (!userMints.length) { return }
 			// set first selected mint
 			const defaultMint = await getDefaultMint()
 			if (!defaultMint) {
-				setSelectedMint(userMints[0])
+				setSelectedMint(mints[0])
 				return
 			}
 			for (const mint of userMints) {
