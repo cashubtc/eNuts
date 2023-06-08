@@ -12,6 +12,12 @@ jest.mock('expo-sqlite', () => ({
 
 jest.mock('expo-constants', () => ({}))
 jest.mock('expo-secure-store', () => ({}))
+jest.mock('@bugsnag/expo', () => ({}))
+jest.mock('expo-localization', () => ({}))
+jest.mock('reactotron-react-native', () => ({}))
+jest.mock('react-native', () => ({}))
+// jest.mock('@src/consts', () => ({}))
+jest.mock('expo/config', () => ({}))
 
 /* jest.doMock("@react-native-async-storage/async-storage", () =>
 	require("@react-native-async-storage/async-storage/jest/async-storage-mock"),

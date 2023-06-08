@@ -1,3 +1,4 @@
+import Bugsnag from '@bugsnag/expo'
 import { getEncodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
@@ -10,7 +11,7 @@ import { PromptModal } from '@modal/Prompt'
 import { IInitialProps, IPreferences, ITokenInfo } from '@model'
 import { DrawerNav } from '@nav/Navigator'
 import { NavigationContainer } from '@react-navigation/native'
-import { ContactsContext, IContact } from '@src/context/Contacts'
+import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
@@ -24,6 +25,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useRef, useState } from 'react'
 import { AppState, Text, View } from 'react-native'
+
 
 /* import * as DevMenu from 'expo-dev-menu'
 import { StyleSheet } from 'react-native'
@@ -60,6 +62,8 @@ function Button({ label, onPress }: {
 		</TouchableOpacity>
 	)
 } */
+
+
 const defaultPref: IPreferences = {
 	id: 1,
 	darkmode: false,
@@ -69,8 +73,19 @@ const defaultPref: IPreferences = {
 
 void SplashScreen.preventAutoHideAsync()
 
-export default function App(_initialProps: IInitialProps) {
+// Create the error boundary...
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
 
+function ErrorView() {
+	return <View>
+		<Text>Inform users of an error in the component tree.</Text>
+	</View>
+}
+
+
+
+function _App(_initialProps?: IInitialProps) {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
@@ -323,5 +338,12 @@ export default function App(_initialProps: IInitialProps) {
 				</ContactsContext.Provider>
 			</FocusClaimCtx.Provider>
 		</ThemeContext.Provider>
+	)
+}
+export default function App(initialProps: IInitialProps) {
+	return (
+		<ErrorBoundary FallbackComponent={ErrorView}>
+			<_App _initialProps={initialProps} exp={initialProps.exp} />
+		</ErrorBoundary>
 	)
 }

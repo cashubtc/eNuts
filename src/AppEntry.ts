@@ -1,6 +1,6 @@
 // dont touch this
-import './shim'
 import 'expo-dev-client'
+import './shim'
 
 import App from '@comps/App'
 import { l } from '@log'
@@ -8,7 +8,7 @@ import type { IInitialProps } from '@model'
 import { registerRootComponent } from 'expo'
 
 import { setupReactotron } from './services/reactotron'
-
+import { initCrashReporting } from './util/crashReporting'
 
 
 // Set up Reactotron, which is a free desktop app for inspecting and debugging
@@ -26,9 +26,16 @@ setupReactotron({
 	logSnapshots: false,
 })
 
+initCrashReporting()
+
+// Bugsnag.notify(new Error('Test error from AppEntry'))
+
 l('AppEntryPoint')
 
+
+
 const x: IInitialProps = {
+	// expo?:,
 	exp: {},
 	mode: '\nDEV MODE\n'
 }

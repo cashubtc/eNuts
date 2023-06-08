@@ -1,7 +1,20 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
+import type { ExpoConfig } from 'expo/config'
 import type { SQLStmtCb, SQLStmtErrCb, WebSQLDatabase } from 'expo-sqlite'
 
+export interface IExpoConfig extends ExpoConfig {
+	extra?: {
+		DEBUG?: string | 'full'
+		NODE_ENV?: string | 'development' | 'production' | 'test' | 'preview'
+		NODE_ENV_SHORT?: string | 'prod' | 'dev' | 'test' | 'preview'
+		APP_VARIANT?: string | 'prod' | 'dev' | 'test' | 'preview'
+		bugsnag?: {
+			apiKey?: string
+		}
+	}
+}
 export interface IInitialProps {
+	expo?: IExpoConfig
 	exp: {
 		notification?: any
 		manifestString?: string;
