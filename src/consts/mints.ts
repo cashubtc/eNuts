@@ -1,5 +1,7 @@
 import type { IMintBalWithName } from '@model'
-import { _mintUrl } from '@wallet'
+
+
+export const _mintUrl = 'https://testnut.cashu.space'
 
 export const defaultMints: Readonly<IMintBalWithName[]> = [
 	/* {
