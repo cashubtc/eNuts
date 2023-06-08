@@ -25,6 +25,7 @@ export interface IMint {
 
 export interface IMintUrl {
 	mint_url: string
+	customName?: string
 }
 
 export interface IMintWithBalance {
@@ -33,7 +34,7 @@ export interface IMintWithBalance {
 }
 
 export interface IMintBalWithName extends IMintWithBalance {
-	name: string
+	customName: string
 }
 
 export interface ITokenInfo {

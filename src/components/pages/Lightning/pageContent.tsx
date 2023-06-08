@@ -22,9 +22,9 @@ import MintPanel from './mintPanel'
 interface IAdressTabProps {
 	nav: TLightningPageProps | TSendTokenPageProps
 	mints: IMintUrl[]
-	selectedMint: string
+	selectedMint?: IMintUrl
 	mintBal: number
-	setSelectedMint: (url: string) => void
+	setSelectedMint: (url: IMintUrl) => void
 	createSpendableToken?: boolean
 }
 
@@ -59,13 +59,14 @@ export default function LNPageContent({
 		// coin selection
 		const selectedProofs = proofs.filter(p => p.selected)
 		try {
-			const token = await sendToken(selectedMint, +amount, selectedProofs)
+			if (!selectedMint) { return }
+			const token = await sendToken(selectedMint.mint_url, +amount, selectedProofs)
 			// add as history entry
 			await addToHistory({
 				amount: -amount,
 				type: 1,
 				value: token,
-				mints: [selectedMint],
+				mints: [selectedMint.mint_url],
 			})
 			nav.navigation.navigate('sendToken', { token, amount })
 		} catch (e) {
@@ -83,7 +84,8 @@ export default function LNPageContent({
 	useEffect(() => {
 		if (!createSpendableToken) { return }
 		void (async () => {
-			const proofsDB = (await getProofsByMintUrl(selectedMint)).map(p => ({ ...p, selected: false }))
+			if (!selectedMint) { return }
+			const proofsDB = (await getProofsByMintUrl(selectedMint.mint_url)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
 	}, [selectedMint])
@@ -191,7 +193,7 @@ export default function LNPageContent({
 											return
 										}
 										nav.navigation.navigate('pay invoice', {
-											mint_url: selectedMint,
+											mint: selectedMint,
 											mintBal,
 										})
 										return
@@ -233,7 +235,7 @@ export default function LNPageContent({
 			<LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
 				setLNAmountModal={setLnAmountModalCB}
-				mintUrl={selectedMint}
+				mintUrl={selectedMint?.mint_url ||''}
 			/>
 			{/* coin selection page */}
 			{isEnabled &&

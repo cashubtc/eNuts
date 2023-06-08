@@ -13,7 +13,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { _setMintName, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
+import { _setMintName, getCustomMintNames, getDefaultMint, getMintName , setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
@@ -46,26 +46,27 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	useEffect(() => {
 		void (async () => {
 			const defaultM = await getDefaultMint()
-			setIsDefault(defaultM === route.params.mint_url)
+			setIsDefault(defaultM === route.params.mint?.mint_url)
 		})()
 	}, [])
 
 	const handleMintName = async () => {
-		await _setMintName(route.params.mint_url, mintName)
+		await _setMintName(route.params.mint?.mint_url, mintName)
 		setCustomNameOpen(false)
 		openPrompt('Added a custom name')
 	}
 
 	const hasMintName = async () => {
-		const hasName = await getMintName(route.params.mint_url)
+		const hasName = await getMintName(route.params.mint?.mint_url)
 		setSavedName(hasName || '')
 		setEdit(!!hasName)
 	}
 
 	const handleMintSwap = async () => {
-		const mints = (await getMintsUrls()).filter(m => m.mint_url !== route.params.mint_url)
+		const mints = (await getMintsUrls()).filter(m => m.mint_url !== route.params.mint?.mint_url)
+		const mintsWithCustomNames = await getCustomMintNames(mints)
 		// needs at least 1 mint after filtering out the current swap-out mint
-		if (!mints.length) {
+		if (!mintsWithCustomNames.length) {
 			// promt
 			openPrompt('You need at least 2 mints to perform an inter-mint swap.')
 			return
@@ -76,7 +77,15 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			openPrompt('Mint balance too low!')
 			return
 		}
-		navigation.navigate('inter-mint swap', { mint_url: route.params.mint_url, mints, balance: route.params.amount })
+		const swapOutMintName = await getMintName(route.params.mint?.mint_url)
+		navigation.navigate(
+			'inter-mint swap',
+			{
+				swap_out_mint: { mint_url: route.params.mint?.mint_url, customName: swapOutMintName || '' },
+				mints: mintsWithCustomNames,
+				balance: route.params.amount
+			}
+		)
 	}
 
 	const handleMintBackup = async () => {
@@ -85,8 +94,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			return
 		}
 		try {
-			const token = await getBackUpTokenForMint(route.params.mint_url)
-			navigation.navigate('mint backup', { token, mint_url: route.params.mint_url })
+			const token = await getBackUpTokenForMint(route.params.mint?.mint_url)
+			navigation.navigate('mint backup', { token, mint_url: route.params.mint?.mint_url })
 		} catch (e) {
 			l(e)
 			openPrompt('Backup token could not be created.')
@@ -94,7 +103,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	}
 
 	const handleDefaultMint = async () => {
-		const mUrl = route.params.mint_url
+		const mUrl = route.params.mint?.mint_url
 		const defaultM = await getDefaultMint()
 		// set or remove default
 		await setDefaultMint(defaultM === mUrl ? '' : mUrl)
@@ -104,7 +113,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	const handleProofCheck = async () => {
 		setCheckProofsOpen(false)
-		const mintUrl = route.params.mint_url
+		const mintUrl = route.params.mint?.mint_url
 		const proofs = await getProofsByMintUrl(mintUrl)
 		const res = await checkProofsSpent(mintUrl, proofs)
 		l({ res })
@@ -123,10 +132,10 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		void (async () => {
 			try {
 				const currentDefault = await getDefaultMint()
-				if (currentDefault === route.params.mint_url) {
+				if (currentDefault === route.params.mint?.mint_url) {
 					await setDefaultMint('')
 				}
-				await deleteMint(route.params.mint_url)
+				await deleteMint(route.params.mint?.mint_url)
 				navigation.goBack()
 			} catch (e) {
 				l(e)
@@ -145,13 +154,13 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 				{/* Mint url */}
 				<View style={styles.subHeader}>
 					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
-						{formatMintUrl(route.params?.mint_url)}
+						{formatMintUrl(route.params.mint?.mint_url)}
 					</Text>
 					{/* Copy mint url */}
 					<TouchableOpacity
 						style={{ padding: 5 }}
 						onPress={() => {
-							void Clipboard.setStringAsync(route.params?.mint_url).then(() => {
+							void Clipboard.setStringAsync(route.params.mint?.mint_url).then(() => {
 								setCopied(true)
 								const t = setTimeout(() => {
 									setCopied(false)
@@ -181,7 +190,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					{/* Mint info */}
 					<MintOption
 						txt='Mint info'
-						onPress={() => navigation.navigate('mint info', { mint_url: route.params.mint_url })}
+						onPress={() => navigation.navigate('mint info', { mint_url: route.params.mint?.mint_url })}
 						icon={<InfoIcon width={18} height={18} color={color.TEXT} />}
 					/>
 					{/* Add custom name */}
@@ -204,7 +213,11 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					{/* Redeem to lightning */}
 					<MintOption
 						txt='Melt tokens'
-						onPress={() => navigation.navigate('lightning', { mint: route.params.mint_url, balance: route.params.amount, send: true })}
+						onPress={() => navigation.navigate('lightning', {
+							mint: route.params.mint,
+							balance: route.params.amount,
+							send: true
+						})}
 						icon={<ZapIcon width={18} height={18} color={color.TEXT} />}
 					/>
 					{/* Refresh mint-key */}
@@ -252,20 +265,9 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			{/* Choose amount for LN invoice (minting) */}
 			<LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
-				mintUrl={route.params.mint_url}
+				mintUrl={route.params.mint?.mint_url}
 				setLNAmountModal={setLnAmountModalCB}
 			/>
-			{/* LN invoice modal (minting) */}
-			{/* {showInvoice &&
-				<InvoiceModal
-					visible={showInvoice}
-					ln={LN}
-					mintUrl={route.params?.mint_url}
-					amount={+val}
-					hash={hash}
-					close={() => setShowInvoice(false)}
-				/>
-			} */}
 			{/* modal for deleting a mint */}
 			{delMintModalOpen &&
 				<QuestionModal

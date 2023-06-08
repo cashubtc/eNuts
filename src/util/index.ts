@@ -27,21 +27,21 @@ export function formatBalance(bal: number) { return (bal / 100_000_000).toFixed(
  *
  * @export
  * @param {number} val number to format
- * @param {string} [locale] optional defaults to the current locale
  * @param {('standard' | 'engineering' | 'scientific' | 'compact')} [notation='standard'] 'standard' | 'engineering' | 'scientific' | 'compact'
+ * @param {string} [locale] optional defaults to the current locale
  * @returns {string}  formatted string representation of the number
  */
 export function formatInt(
 	val: number,
+	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard',
 	locale?: string,
-	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard'
 ): string {
 	// eslint-disable-next-line new-cap
-	const numberFormatter = Intl.NumberFormat(locale ? locale : getLanguageCode(), { notation })
+	const numberFormatter = Intl.NumberFormat(locale || getLanguageCode(), { notation })
 	return numberFormatter.format(val)
 }
 export function getShortDateStr(date: Date) {
-	return date.toLocaleDateString(undefined, {
+	return date.toLocaleDateString(getLanguageCode(), {
 		year: '2-digit',
 		month: 'short',
 		day: '2-digit',

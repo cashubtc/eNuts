@@ -22,18 +22,18 @@ export type RootStackParamList = {
 		mints?: string[]
 	}
 	lightning: {
-		mint?: string
+		mint?: IMintUrl
 		balance?: number
 		receive?: boolean
 		send?: boolean
 	} | undefined
 	'pay invoice': {
-		mint_url: string
+		mint?	: IMintUrl
 		mintBal: number
 	}
 	mints: undefined
 	mintmanagement: {
-		mint_url: string
+		mint: IMintUrl
 		amount: number
 		// mint_key: string
 	}
@@ -41,7 +41,10 @@ export type RootStackParamList = {
 		mint_url: string
 	}
 	'inter-mint swap': {
-		mint_url: string
+		swap_out_mint: {
+			mint_url: string
+			customName: string
+		}
 		mints: IMintUrl[]
 		balance: number
 	}

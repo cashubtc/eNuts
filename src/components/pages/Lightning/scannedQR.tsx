@@ -13,7 +13,7 @@ import { CoinSelectionModal, CoinSelectionResume } from '@pages/Lightning/modal'
 import { Picker } from '@react-native-picker/picker'
 import { ThemeContext } from '@src/context/Theme'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
-import { getDefaultMint } from '@store/mintStore'
+import { getCustomMintNames, getDefaultMint, getMintName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatExpiry, formatInt, formatMintUrl, getSelectedAmount } from '@util'
 import { payLnInvoice } from '@wallet'
@@ -32,7 +32,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 	const { prompt, openPrompt, closePrompt } = usePrompt()
 	// user mints
 	const [mints, setMints] = useState<IMintUrl[]>([])
-	const [selectedMint, setSelectedMint] = useState('')
+	const [selectedMint, setSelectedMint] = useState<IMintUrl>()
 	const [mintBal, setMintBal] = useState(0)
 	// LN invoice amount
 	const [invoiceAmount, setInvoiceAmount] = useState(0)
@@ -43,11 +43,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
 	const handlePayment = async () => {
-		if (!lnDecoded) { return }
+		if (!lnDecoded || !selectedMint?.mint_url) { return }
 		startLoading()
 		const selectedProofs = proofs.filter(p => p.selected)
 		try {
-			const res = await payLnInvoice(selectedMint, lnDecoded.paymentRequest, selectedProofs)
+			const res = await payLnInvoice(selectedMint.mint_url, lnDecoded.paymentRequest, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
 				openPrompt('Invoice could not be payed. Please try again later.')
@@ -56,11 +56,15 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			// payment success, add as history entry
 			await addLnPaymentToHistory(
 				res,
-				[selectedMint],
+				[selectedMint.mint_url],
 				-invoiceAmount,
 				lnDecoded.paymentRequest
 			)
-			nav.navigation.navigate('success', { amount: invoiceAmount + res.realFee, fee: res.realFee, mints: [selectedMint] })
+			nav.navigation.navigate('success', {
+				amount: invoiceAmount + res.realFee,
+				fee: res.realFee,
+				mints: [selectedMint.mint_url]
+			})
 		} catch (e) {
 			l(e)
 			openPrompt(e instanceof Error ? e.message : 'An error occured while paying the invoice.')
@@ -78,17 +82,19 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		setTimeLeft(lnDecoded.sections[8].value - timePassed)
 		void (async () => {
 			const userMints = await getMintsUrls()
-			setMints(userMints)
 			if (!userMints.length) { return }
+			// get mints with custom names
+			setMints(await getCustomMintNames(userMints))
 			// set first selected mint
 			const defaultMint = await getDefaultMint()
 			if (!defaultMint) {
-				setSelectedMint(userMints[0].mint_url)
+				setSelectedMint(userMints[0])
 				return
 			}
 			for (const mint of userMints) {
 				if (mint.mint_url === defaultMint) {
-					setSelectedMint(mint.mint_url)
+					setSelectedMint(mint)
+					break
 				}
 			}
 		})()
@@ -99,12 +105,13 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		void (async () => {
 			const mintsBals = await getMintsBalances()
 			mintsBals.forEach(m => {
-				if (m.mint_url === selectedMint) {
+				if (m.mint_url === selectedMint?.mint_url) {
 					setMintBal(m.amount)
 				}
 			})
+			if (!selectedMint?.mint_url) { return }
 			// proofs
-			const proofsDB = (await getProofsByMintUrl(selectedMint)).map(p => ({ ...p, selected: false }))
+			const proofsDB = (await getProofsByMintUrl(selectedMint.mint_url)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
 	}, [selectedMint])
@@ -145,15 +152,20 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								Select a mint to send from:
 							</Text>
 							<Picker
-								selectedValue={selectedMint}
-								onValueChange={(value, _idx) => setSelectedMint(value)}
+								selectedValue={selectedMint?.mint_url}
+								onValueChange={(value, _idx) => {
+									void (async () => {
+										const customName = await getMintName(value)
+										setSelectedMint({ mint_url: value, customName: customName || '' })
+									})()
+								}}
 								dropdownIconColor={color.TEXT}
 								style={styles.picker}
 							>
 								{mints.map(m => (
 									<Picker.Item
 										key={m.mint_url}
-										label={formatMintUrl(m.mint_url)}
+										label={m.customName || formatMintUrl(m.mint_url)}
 										value={m.mint_url}
 										style={{ color: color.TEXT }}
 									/>

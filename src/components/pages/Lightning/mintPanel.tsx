@@ -3,6 +3,7 @@ import type { IMintUrl } from '@model'
 import type { TLightningPageProps, TSendTokenPageProps } from '@model/nav'
 import { Picker } from '@react-native-picker/picker'
 import { ThemeContext } from '@src/context/Theme'
+import { getMintName } from '@store/mintStore'
 import { formatInt, formatMintUrl } from '@util'
 import { useContext } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
@@ -10,9 +11,9 @@ import { StyleSheet, Text, View } from 'react-native'
 interface IMintPanelProps {
 	nav: TLightningPageProps | TSendTokenPageProps
 	mints: IMintUrl[]
-	selectedMint: string
+	selectedMint?: IMintUrl
 	lnAmount?: number
-	setSelectedMint: (url: string) => void
+	setSelectedMint: (url: IMintUrl) => void
 }
 
 export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelectedMint }: IMintPanelProps) {
@@ -20,7 +21,7 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 	return nav.route.params?.mint ?
 		<View style={styles.minBalWrap}>
 			<Text style={[styles.singleMint, { color: color.TEXT }]}>
-				{formatMintUrl(nav.route.params.mint)}
+				{formatMintUrl(nav.route.params.mint.mint_url)}
 			</Text>
 			<View style={styles.mintBal}>
 				<Text style={[
@@ -35,15 +36,20 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 		:
 		mints.length > 0 ?
 			<Picker
-				selectedValue={selectedMint}
-				onValueChange={(value, _idx) => setSelectedMint(value)}
+				selectedValue={selectedMint?.mint_url}
+				onValueChange={(value, _idx) => {
+					void(async() => {
+						const customName = await getMintName(value)
+						setSelectedMint({mint_url: value, customName: customName || ''})
+					})()
+				}}
 				dropdownIconColor={color.TEXT}
 				style={styles.picker}
 			>
 				{mints.map(m => (
 					<Picker.Item
 						key={m.mint_url}
-						label={formatMintUrl(m.mint_url)}
+						label={m.customName || formatMintUrl(m.mint_url)}
 						value={m.mint_url}
 						style={{ color: color.TEXT }}
 					/>
