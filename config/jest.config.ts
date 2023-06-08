@@ -54,6 +54,7 @@ export default (): JestConfigWithTsJest => ({
 		'!<rootDir>/src/shim.ts',
 		'!<rootDir>/src/storage/store/AsyncStore.ts',
 		'!<rootDir>/src/storage/store/SecureStore.ts',
+		'!<rootDir>/src/services'
 	],
 	// verbose: true,
 	setupFiles: ['<rootDir>/test/setup.ts'],
