@@ -219,8 +219,8 @@ export default function LNPageContent({
 						: // user wants to create a spendable token
 						<>
 							{+amount < 1 &&
-								<Text style={[styles.tokenHint, { color: color.TEXT_SECONDARY }]}>
-									Create a cashu token
+								<Text style={[styles.tokenHint, { color: mintBal > 0 ? color.TEXT_SECONDARY : color.ERROR }]}>
+									{mintBal > 0 ? 'Create a cashu token' : 'Chosen mint has not enough funds!'}
 								</Text>
 							}
 							{+amount > 0 && mintBal > 0 && mintBal >= +amount && !isKeyboardOpen &&
