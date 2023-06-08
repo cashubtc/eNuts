@@ -12,7 +12,7 @@ import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
-import { formatInt, getSelectedAmount } from '@util'
+import { formatInt, getSelectedAmount, isNum } from '@util'
 import { sendToken } from '@wallet'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native'
@@ -55,6 +55,15 @@ export default function LNPageContent({
 		msg: ''
 	})
 	const { loading, startLoading, stopLoading } = useLoading()
+	const hasEnoughFunds = () => {
+		// is coming from the send token page or from send via lightning page
+		if (mintBal < 1 && (isSendingToken || nav.route.params?.send)) { return false }
+		// is coming from send via lightning page
+		if (nav.route.params?.send && isNum(nav.route.params?.balance) && nav.route.params.balance === 0) {
+			return false
+		}
+		return true
+	}
 	// generate spendable token
 	const generateToken = async () => {
 		startLoading()
@@ -168,7 +177,7 @@ export default function LNPageContent({
 						</Text>
 					</View>
 				}
-				{/* Token memo only if isSendingToken */}
+				{/* Token memo only if isSendingToken (sending a cashu token) */}
 				{+amount > 0 && isSendingToken &&
 					<TextInput
 						style={globals(color, highlight).input}
@@ -196,7 +205,7 @@ export default function LNPageContent({
 					!isSendingToken ?
 						<>
 							{/* Show a message if mint has not enough funds and the payment is an outgoing TX */}
-							{mintBal < 1 && nav.route.params?.send ?
+							{!hasEnoughFunds() ?
 								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
 									Chosen mint has not enough funds!
 								</Text>
@@ -219,7 +228,7 @@ export default function LNPageContent({
 							}
 							<View style={{ marginVertical: 5 }} />
 						</>
-						: // user wants to create a spendable token
+						: // user wants to create a cashu token
 						<>
 							{+amount < 1 &&
 								<Text style={[styles.tokenHint, { color: mintBal > 0 ? color.TEXT_SECONDARY : color.ERROR }]}>
