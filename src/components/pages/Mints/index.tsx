@@ -186,7 +186,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			</View>
 			{/* Submit new mint URL modal */}
 			{newMintModal && !prompt.open &&
-				<MyModal type='question' animation='fade' visible={newMintModal}>
+				<MyModal type='bottom' animation='slide' visible={newMintModal}>
 					<Text style={globals(color).modalHeader}>
 						Add a new mint
 					</Text>
