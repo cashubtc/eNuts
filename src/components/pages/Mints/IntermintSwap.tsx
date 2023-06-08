@@ -30,9 +30,9 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 		startLoading()
 		// simple way
 		try {
-			const result = await autoMintSwap(route.params.swap_out_mint.mint_url, selectedMint.mint_url, +amount)
+			const result = await autoMintSwap(route.params.swap_out_mint.mintUrl, selectedMint.mintUrl, +amount)
 			l({ result })
-			openPrompt(`Successfully swaped ${amount} Sat from ${route.params.swap_out_mint.mint_url} to ${selectedMint.mint_url}`)
+			openPrompt(`Successfully swaped ${amount} Sat from ${route.params.swap_out_mint.mintUrl} to ${selectedMint.mintUrl}`)
 		} catch (e) {
 			l({ e })
 			if (e instanceof Error) {
@@ -76,18 +76,18 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 			{!isKeyboardOpen && +amount > 0 &&
 				<View>
 					<Text style={[globals(color).txt, styles.mintUrl]}>
-						{route.params.swap_out_mint.customName || formatMintUrl(route.params.swap_out_mint.mint_url)}
+						{route.params.swap_out_mint.customName || formatMintUrl(route.params.swap_out_mint.mintUrl)}
 					</Text>
 					<View style={styles.iconWrap}>
 						<ArrowDownIcon width={50} height={50} color={hi[highlight]} />
 					</View>
 					{/* Swap-In Mint: */}
 					<Picker
-						selectedValue={selectedMint.mint_url}
+						selectedValue={selectedMint.mintUrl}
 						onValueChange={(value, _idx) => {
 							void (async () => {
 								const customName = await getMintName(value)
-								setSelectedMint({ mint_url: value, customName: customName || '' })
+								setSelectedMint({ mintUrl: value, customName: customName || '' })
 							})()
 						}}
 						dropdownIconColor={color.TEXT}
@@ -95,9 +95,9 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 					>
 						{route.params.mints.map(m => (
 							<Picker.Item
-								key={m.mint_url}
-								label={m.customName || formatMintUrl(m.mint_url)}
-								value={m.mint_url}
+								key={m.mintUrl}
+								label={m.customName || formatMintUrl(m.mintUrl)}
+								value={m.mintUrl}
 								style={{ color: color.TEXT }}
 							/>
 						))}

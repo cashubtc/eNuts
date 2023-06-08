@@ -20,16 +20,16 @@ export interface ILnUrl {
 }
 export interface IMint {
 	id: string
-	mint_url: string
+	mintUrl: string
 }
 
 export interface IMintUrl {
-	mint_url: string
+	mintUrl: string
 	customName?: string
 }
 
 export interface IMintWithBalance {
-	mint_url: string
+	mintUrl: string
 	amount: number
 }
 
@@ -61,7 +61,7 @@ export interface IContactResp {
 	id?: number
 	name: string,
 	ln: string,
-	is_owner: string
+	isOwner: string
 }
 
 export interface IProofSelection extends Proof {
@@ -75,7 +75,7 @@ export interface IHistoryEntry {
 	value: string
 	mints: string[]
 	preImage?: string,
-	fee?:number
+	fee?: number
 }
 
 
@@ -84,7 +84,7 @@ export interface IInvoice {
 	hash: string,
 	amount: number,
 	time: number,
-	mint_url: string
+	mintUrl: string
 }
 export interface IOpenDBParams {
 	name: string,

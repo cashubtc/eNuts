@@ -1,4 +1,4 @@
-import { getEncodedToken,type Proof, type Token } from '@cashu/cashu-ts'
+import { getEncodedToken, type Proof, type Token } from '@cashu/cashu-ts'
 
 import { getMintByKeySetId, getProofs, getProofsByMintUrl } from '.'
 
@@ -14,7 +14,7 @@ async function _backUpToken(proofs: Proof[]) {
 		// eslint-disable-next-line no-await-in-loop
 		const m = await getMintByKeySetId(id)
 		if (!m || !proofMap?.[id]?.length) { continue }
-		result.token.push({ mint: m.mint_url, proofs: proofMap[id] })
+		result.token.push({ mint: m.mintUrl, proofs: proofMap[id] })
 	}
 	return result?.token?.length ? getEncodedToken(result) : ''
 }

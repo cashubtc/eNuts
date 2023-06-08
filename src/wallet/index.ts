@@ -1,4 +1,4 @@
-import { CashuMint, CashuWallet, deriveKeysetId, getDecodedLnInvoice, getDecodedToken, getEncodedToken,MintKeys, Proof } from '@cashu/cashu-ts'
+import { CashuMint, CashuWallet, deriveKeysetId, getDecodedLnInvoice, getDecodedToken, getEncodedToken, MintKeys, Proof } from '@cashu/cashu-ts'
 import { addInvoice, addMint, addToken, deleteProofs, delInvoice, getAllInvoices, getInvoice, getMintBalance, getMints } from '@db'
 import { l } from '@log'
 
@@ -68,7 +68,7 @@ export async function checkFees(mintUrl: string, invoice: string) {
 export async function claimToken(encodedToken: string): Promise<boolean> {
 	const decoded = getDecodedToken(encodedToken)
 	if (!decoded?.token?.length) { return false }
-	const trustedMints = (await getMints()).map(x => x.mint_url)
+	const trustedMints = (await getMints()).map(x => x.mintUrl)
 	const tokenEntries = decoded.token.filter(x => trustedMints.includes(x.mint))
 	if (!tokenEntries?.length) { return false }
 	const mintUrls = tokenEntries.map(x => x.mint).filter(x => x)
@@ -94,7 +94,7 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
 export async function requestMint(mintUrl: string, amount: number) {
 	const wallet = await getWallet(mintUrl)
 	const result = await wallet.requestMint(amount)
-	await addInvoice({ amount, mint_url: mintUrl, ...result})
+	await addInvoice({ amount, mintUrl, ...result })
 	runRequestTokenLoop()
 	l('[requestMint]', { result, mintUrl, amount })
 	return result
@@ -225,7 +225,7 @@ async function requestTokenLoop() {
 	for (const invoice of invoices) {
 		try {
 			// eslint-disable-next-line no-await-in-loop
-			await requestToken(invoice.mint_url, invoice.amount, invoice.hash)
+			await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
 		} catch (_) {/* ignore */ }
 		const decoded = getDecodedLnInvoice(invoice.pr)
 		const date = new Date((invoice.time * 1000) + (decoded.expiry * 1000)).getTime()

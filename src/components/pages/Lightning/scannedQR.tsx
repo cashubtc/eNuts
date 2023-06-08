@@ -43,11 +43,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
 	const handlePayment = async () => {
-		if (!lnDecoded || !selectedMint?.mint_url) { return }
+		if (!lnDecoded || !selectedMint?.mintUrl) { return }
 		startLoading()
 		const selectedProofs = proofs.filter(p => p.selected)
 		try {
-			const res = await payLnInvoice(selectedMint.mint_url, lnDecoded.paymentRequest, selectedProofs)
+			const res = await payLnInvoice(selectedMint.mintUrl, lnDecoded.paymentRequest, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
 				openPrompt('Invoice could not be payed. Please try again later.')
@@ -56,14 +56,14 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			// payment success, add as history entry
 			await addLnPaymentToHistory(
 				res,
-				[selectedMint.mint_url],
+				[selectedMint.mintUrl],
 				-invoiceAmount,
 				lnDecoded.paymentRequest
 			)
 			nav.navigation.navigate('success', {
 				amount: invoiceAmount + res.realFee,
 				fee: res.realFee,
-				mints: [selectedMint.mint_url]
+				mints: [selectedMint.mintUrl]
 			})
 		} catch (e) {
 			l(e)
@@ -92,7 +92,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 				return
 			}
 			for (const mint of userMints) {
-				if (mint.mint_url === defaultMint) {
+				if (mint.mintUrl === defaultMint) {
 					setSelectedMint(mint)
 					break
 				}
@@ -105,13 +105,13 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		void (async () => {
 			const mintsBals = await getMintsBalances()
 			mintsBals.forEach(m => {
-				if (m.mint_url === selectedMint?.mint_url) {
+				if (m.mintUrl === selectedMint?.mintUrl) {
 					setMintBal(m.amount)
 				}
 			})
-			if (!selectedMint?.mint_url) { return }
+			if (!selectedMint?.mintUrl) { return }
 			// proofs
-			const proofsDB = (await getProofsByMintUrl(selectedMint.mint_url)).map(p => ({ ...p, selected: false }))
+			const proofsDB = (await getProofsByMintUrl(selectedMint.mintUrl)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
 	}, [selectedMint])
@@ -152,11 +152,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								Select a mint to send from:
 							</Text>
 							<Picker
-								selectedValue={selectedMint?.mint_url}
+								selectedValue={selectedMint?.mintUrl}
 								onValueChange={(value, _idx) => {
 									void (async () => {
 										const customName = await getMintName(value)
-										setSelectedMint({ mint_url: value, customName: customName || '' })
+										setSelectedMint({ mintUrl: value, customName: customName || '' })
 									})()
 								}}
 								dropdownIconColor={color.TEXT}
@@ -164,9 +164,9 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 							>
 								{mints.map(m => (
 									<Picker.Item
-										key={m.mint_url}
-										label={m.customName || formatMintUrl(m.mint_url)}
-										value={m.mint_url}
+										key={m.mintUrl}
+										label={m.customName || formatMintUrl(m.mintUrl)}
+										value={m.mintUrl}
 										style={{ color: color.TEXT }}
 									/>
 								))}

@@ -205,7 +205,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 					Coin selection
 				</Text>
 				<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
-					{formatMintUrl(mint?.customName || mint?.mint_url || 'Not available')}
+					{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
 				</Text>
 				<View style={[styles.tableHeader, { borderBottomColor: color.BORDER }]}>
 					<Text style={[styles.tableHead, { color: color.TEXT }]}>

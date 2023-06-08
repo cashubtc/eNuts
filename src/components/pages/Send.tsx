@@ -33,7 +33,7 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 				return
 			}
 			for (const mint of userMints) {
-				if (mint.mint_url === defaultMint) {
+				if (mint.mintUrl === defaultMint) {
 					setSelectedMint(mint)
 					break
 				}
@@ -45,7 +45,7 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 		void (async () => {
 			const mintsBals = await getMintsBalances()
 			for (const mint of mintsBals) {
-				if (mint.mint_url === selectedMint?.mint_url) {
+				if (mint.mintUrl === selectedMint?.mintUrl) {
 					setMintBal(mint.amount)
 				}
 			}
