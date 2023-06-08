@@ -53,6 +53,9 @@ export type RootStackParamList = {
 		token: string
 		mintUrl: string
 	}
+	'mint proofs': {
+		mintUrl: string
+	}
 	'qr scan': undefined
 	'history': undefined
 	'history entry details': {
@@ -71,6 +74,7 @@ export type TMintManagementPageProps = NativeStackScreenProps<RootStackParamList
 export type TMintInfoPageProps = NativeStackScreenProps<RootStackParamList, 'mint info', 'MyStack'>
 export type TIntermintSwapPageProps = NativeStackScreenProps<RootStackParamList, 'inter-mint swap', 'MyStack'>
 export type TMintBackupPageProps = NativeStackScreenProps<RootStackParamList, 'mint backup', 'MyStack'>
+export type TMintProofsPageProps = NativeStackScreenProps<RootStackParamList, 'mint proofs', 'MyStack'>
 export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr scan', 'MyStack'>
 export type THistoryPageProps = NativeStackScreenProps<RootStackParamList, 'history', 'MyStack'>
 export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 'history entry details', 'MyStack'>
@@ -81,7 +85,8 @@ export type TBottomNavProps =
 	TMintManagementPageProps |
 	TSendTokenPageProps |
 	TPayLNInvoicePageProps |
-	THistoryPageProps
+	THistoryPageProps |
+	TMintProofsPageProps
 
 /**
  * Drawer navigator

@@ -48,8 +48,6 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 		void (async () => {
 			try {
 				const { success } = await requestToken(mintUrl, +invoice.amount, invoice.hash)
-				l({ success })
-				l({ invoiceSections: invoice.decoded?.sections })
 				if (success) {
 					// add as history entry
 					await addToHistory({
@@ -58,35 +56,6 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 						value: invoice.decoded?.paymentRequest || '',
 						mints: [mintUrl],
 					})
-					/**
-						 * decoded LN Invoice sections:
-						 * 0: lightning_network
-						 * 1: coin_network
-						 * 2: amount
-						 * 3: separator
-						 * 4: timestamp
-						 * 5: payment_hash
-						 * 6: description
-						 * 7: min_final_cltv_expiry
-						 * 8: expiry
-						 * 9: payment_secret
-						 * 10: feature_bits
-						 * 11: signature
-						 * 12: checksum
-						 */
-					/*
-					{
-						amount: +invoice.amount
-						type: 1 // LN invoice or cashu token
-						timestamp: Date.now()
-						value: invoice.decoded?.paymentRequest
-						mints: [mintUrl]
-						keysetIds: []
-						memo?: invoice.decoded?.sections[6].description
-						hash: invoice.hash
-					}
-					*/
-					l('invoice payed')
 				}
 				setPaid(success ? 'paid' : 'unpaid')
 			} catch (e) {
@@ -195,6 +164,9 @@ interface ICoinSelectionProps {
 	setProof: (proofs: IProofSelection[]) => void
 }
 
+/**
+ * This component is the main container of the pressable proofs-list aka coin selection list.
+ */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
 	const { color } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
@@ -207,14 +179,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 				<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
 					{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
 				</Text>
-				<View style={[styles.tableHeader, { borderBottomColor: color.BORDER }]}>
-					<Text style={[styles.tableHead, { color: color.TEXT }]}>
-						Amount
-					</Text>
-					<Text style={[styles.tableHead, { color: color.TEXT, marginRight: 40 }]}>
-						Keyset ID
-					</Text>
-				</View>
+				<ProofListHeader margin={40} />
 				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 					{lnAmount > 0 &&
 						proofs.map(p => (
@@ -259,6 +224,9 @@ interface IResume {
 	selectedAmount: number
 }
 
+/**
+ * This component shows the amount and the change of selected proofs in a pressable row of a proofs-list.
+ */
 export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 	const { color } = useContext(ThemeContext)
 	return (
@@ -281,6 +249,27 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 					</Text>
 				</View>
 			}
+		</>
+	)
+}
+
+/**
+ * A component that shows the header of the proofs-list.
+ * Margin is used for the pressable coin-selection row.
+ * If the row of the proofs-list is non-pressable, margin is not required.
+ */
+export function ProofListHeader({ margin }: { margin?: number }) {
+	const { color } = useContext(ThemeContext)
+	return (
+		<>
+			<View style={[styles.tableHeader, { borderBottomColor: color.BORDER }]}>
+				<Text style={[styles.tableHead, { color: color.TEXT }]}>
+					Amount
+				</Text>
+				<Text style={[styles.tableHead, { color: color.TEXT, marginRight: margin || 0 }]}>
+					Keyset ID
+				</Text>
+			</View>
 		</>
 	)
 }

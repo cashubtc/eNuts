@@ -10,6 +10,12 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 
 	const handleNav = (routeStr: TRouteString) => navigation.navigate(routeStr)
 
+	const isMintRelatedPage =
+		route.name === 'mints' ||
+		route.name === 'mintmanagement' ||
+		route.name === 'mint proofs' ||
+		(route.name === 'lightning' && !route.params?.receive && !route.params?.send)
+
 	return (
 		<View style={styles.bottomNav}>
 			<TouchableOpacity
@@ -34,7 +40,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				onPress={() => handleNav('mints')}
 			>
 				<MintBoardIcon
-					color={route.name === 'mints' || route.name === 'mintmanagement' || (route.name === 'lightning' && !route.params?.receive && !route.params?.send) ?
+					color={isMintRelatedPage ?
 						hi[highlight]
 						:
 						color.TEXT

@@ -12,6 +12,7 @@ import Mints from '@pages/Mints'
 import IntermintSwap from '@pages/Mints/IntermintSwap'
 import MintBackup from '@pages/Mints/MintBackup'
 import MintManagement from '@pages/Mints/MintManagement'
+import MintProofsPage from '@pages/Mints/Proofs'
 import QRScanPage from '@pages/QRScan.tsx'
 import SendTokenPage from '@pages/Send'
 import Settings from '@pages/Settings'
@@ -138,6 +139,10 @@ function Navigator() {
 				<Stack.Screen
 					name='mint backup'
 					component={MintBackup}
+				/>
+				<Stack.Screen
+					name='mint proofs'
+					component={MintProofsPage}
 				/>
 				<Stack.Screen
 					name='qr scan'
