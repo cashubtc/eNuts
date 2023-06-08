@@ -173,7 +173,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					</Text>
 					{!openNew.isOwner &&
 						<TextInput
-							style={globals(color).input}
+							style={[globals(color).input, { marginBottom: 20 }]}
 							placeholder="Name"
 							placeholderTextColor={color.INPUT_PH}
 							selectionColor={hi[highlight]}
@@ -181,7 +181,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						/>
 					}
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="zap@me.now"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}

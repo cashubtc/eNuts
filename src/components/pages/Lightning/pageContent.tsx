@@ -172,7 +172,7 @@ export default function LNPageContent({
 				{+amount > 0 && isSendingToken &&
 					<TextInput
 						style={globals(color, highlight).input}
-						placeholder='Add a memo with max. 22 chars.'
+						placeholder='Add a memo with max. 21 chars.'
 						placeholderTextColor={color.INPUT_PH}
 						maxLength={21}
 						onChangeText={setMemo}

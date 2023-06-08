@@ -111,7 +111,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					</Text>
 					{!route.params.contact?.isOwner &&
 						<TextInput
-							style={globals(color).input}
+							style={[globals(color).input, { marginBottom: 20 }]}
 							placeholder="Name"
 							placeholderTextColor={color.INPUT_PH}
 							selectionColor={hi[highlight]}
@@ -120,7 +120,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						/>
 					}
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="zap@me.now"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}

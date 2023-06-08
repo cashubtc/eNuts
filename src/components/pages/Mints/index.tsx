@@ -191,7 +191,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 						Add a new mint
 					</Text>
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="Mint URL"
 						placeholderTextColor={color.BORDER}
 						selectionColor={hi[highlight]}

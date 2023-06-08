@@ -13,7 +13,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { _setMintName, getCustomMintNames, getDefaultMint, getMintName , setDefaultMint } from '@store/mintStore'
+import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
@@ -297,7 +297,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						{edit ? 'Edit mint name' : 'Add a custom name'}
 					</Text>
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="Custom mint name"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}

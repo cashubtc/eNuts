@@ -373,7 +373,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				<View style={{ position: 'relative' }}>
 					<TextInput
 						keyboardType='email-address'
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="LN invoice or LNURL"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
