@@ -19,7 +19,6 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		color: hi[h || '']
 	},
 	input: {
-		marginBottom: 15,
 		borderWidth: 1,
 		color: color.TEXT,
 		borderColor: color.BORDER,

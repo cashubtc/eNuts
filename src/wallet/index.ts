@@ -149,7 +149,7 @@ export async function payLnInvoice(mintUrl: string, invoice: string, proofs: Pro
 		return { result: undefined, error }
 	}
 }
-export async function sendToken(mintUrl: string, amount: number, proofs: Proof[] = []) {
+export async function sendToken(mintUrl: string, amount: number, memo = 'Sent via eNuts.', proofs: Proof[] = []) {
 	const wallet = await getWallet(mintUrl)
 	if (!proofs?.length) {
 		const { proofsToUse } = await getProofsToUse(mintUrl, amount)
@@ -161,7 +161,7 @@ export async function sendToken(mintUrl: string, amount: number, proofs: Proof[]
 	// add change back to db
 	if (returnChange.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
 	await deleteProofs(proofs)
-	return getEncodedToken({ token: [{ mint: mintUrl, proofs: send }] })
+	return getEncodedToken({ token: [{ mint: mintUrl, proofs: send }], memo })
 }
 export async function autoMintSwap(
 	srcMintUrl: string,

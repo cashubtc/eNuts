@@ -15,7 +15,7 @@ import { globals, highlight as hi } from '@styles'
 import { formatInt, getSelectedAmount } from '@util'
 import { sendToken } from '@wallet'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { StyleSheet, Switch, Text, TextInput, View } from 'react-native'
+import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
 import MintPanel from './mintPanel'
 
@@ -43,6 +43,8 @@ export default function LNPageContent({
 	const setLnAmountModalCB = useCallback((val: boolean) => setLNAmountModal(val), [])
 	// spendable token amount state
 	const [amount, setAmount] = useState('')
+	// spendable token memo state
+	const [memo, setMemo] = useState('')
 	// coin selection
 	const [isEnabled, setIsEnabled] = useState(false)
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
@@ -60,7 +62,7 @@ export default function LNPageContent({
 		const selectedProofs = proofs.filter(p => p.selected)
 		try {
 			if (!selectedMint) { return }
-			const token = await sendToken(selectedMint.mint_url, +amount, selectedProofs)
+			const token = await sendToken(selectedMint.mint_url, +amount, memo, selectedProofs)
 			// add as history entry
 			await addToHistory({
 				amount: -amount,
@@ -152,7 +154,7 @@ export default function LNPageContent({
 				{mints.length > 0 && mintBal > 0 && isSendingToken &&
 					<View style={styles.amountWrap}>
 						<TextInput
-							keyboardType='numeric' // Platform.OS === 'android' ? 'number-pad' : 'numeric'
+							keyboardType={Platform.OS === 'android' ? 'number-pad' : 'numeric'}
 							placeholder='0'
 							placeholderTextColor={hi[highlight]}
 							style={[styles.amount, { color: hi[highlight] }]}
@@ -165,6 +167,16 @@ export default function LNPageContent({
 							Satoshi
 						</Text>
 					</View>
+				}
+				{/* Token memo only if isSendingToken */}
+				{+amount > 0 && isSendingToken &&
+					<TextInput
+						style={globals(color, highlight).input}
+						placeholder='Add a memo'
+						placeholderTextColor={color.INPUT_PH}
+						maxLength={21}
+						onChangeText={setMemo}
+					/>
 				}
 			</View>
 			<View style={[
@@ -203,14 +215,6 @@ export default function LNPageContent({
 								}}
 							/>
 							<View style={{ marginVertical: 5 }} />
-							{/* <TouchableOpacity
-								style={styles.sendBtnWrap}
-								onPress={() => nav.navigation.navigate('dashboard')}
-							>
-								<Text style={globals(color, highlight).pressTxt}>
-									Cancel
-								</Text>
-							</TouchableOpacity> */}
 						</>
 						: // user wants to create a spendable token
 						<>
@@ -235,7 +239,7 @@ export default function LNPageContent({
 			<LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
 				setLNAmountModal={setLnAmountModalCB}
-				mintUrl={selectedMint?.mint_url ||''}
+				mintUrl={selectedMint?.mint_url || ''}
 			/>
 			{/* coin selection page */}
 			{isEnabled &&
