@@ -9,7 +9,7 @@ const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
 const wallets: { [mintUrl: string]: CashuWallet } = {}
 
 
-export const _mintUrl = 'https://testnut.cashu.space'
+
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string) {

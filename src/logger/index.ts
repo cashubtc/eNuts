@@ -1,4 +1,4 @@
-import { env } from '@src/consts/env'
+import { env } from '@src/consts'
 import { isReactotronRunnig } from '@src/services/reactotron'
 
 /* function _log(
