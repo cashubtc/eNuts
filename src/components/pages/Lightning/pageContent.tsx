@@ -71,13 +71,13 @@ export default function LNPageContent({
 		const selectedProofs = proofs.filter(p => p.selected)
 		try {
 			if (!selectedMint) { return }
-			const token = await sendToken(selectedMint.mint_url, +amount, memo, selectedProofs)
+			const token = await sendToken(selectedMint.mintUrl, +amount, memo, selectedProofs)
 			// add as history entry
 			await addToHistory({
 				amount: -amount,
 				type: 1,
 				value: token,
-				mints: [selectedMint.mint_url],
+				mints: [selectedMint.mintUrl],
 			})
 			nav.navigation.navigate('sendToken', { token, amount })
 		} catch (e) {
@@ -96,7 +96,7 @@ export default function LNPageContent({
 		if (!isSendingToken) { return }
 		void (async () => {
 			if (!selectedMint) { return }
-			const proofsDB = (await getProofsByMintUrl(selectedMint.mint_url)).map(p => ({ ...p, selected: false }))
+			const proofsDB = (await getProofsByMintUrl(selectedMint.mintUrl)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
 	}, [selectedMint])
@@ -251,7 +251,7 @@ export default function LNPageContent({
 			<LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
 				setLNAmountModal={setLnAmountModalCB}
-				mintUrl={selectedMint?.mint_url || ''}
+				mintUrl={selectedMint?.mintUrl || ''}
 			/>
 			{/* coin selection page */}
 			{isEnabled &&

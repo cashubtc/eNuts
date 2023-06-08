@@ -34,7 +34,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	const [success, setSuccess] = useState(false)
 	const { prompt, openPrompt, closePrompt } = usePrompt()
 
-	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mint_url === mintUrl)
+	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
 
 	// adds a mint via input
 	const handleMintInput = async () => {
@@ -45,7 +45,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls()
-			if (mints.some(m => m.mint_url === input)) {
+			if (mints.some(m => m.mintUrl === input)) {
 				openPrompt('Mint already added')
 				return
 			}
@@ -65,7 +65,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	// navigates to mint-management page if mint available in db or shows the trust modal
 	const handleMintEntry = (selectedMint: IMintUrl, amount: number) => {
 		// navigate to mint management page
-		if (isTrustedMint(selectedMint.mint_url)) {
+		if (isTrustedMint(selectedMint.mintUrl)) {
 			navigation.navigate('mintmanagement', {
 				mint: selectedMint,
 				amount
@@ -81,7 +81,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	const handleTrustModal = async () => {
 		if (!mintUrl) { return }
 		try {
-			await addMint(mintUrl.mint_url)
+			await addMint(mintUrl.mintUrl)
 		} catch (e) {
 			// prompt error
 			openPrompt('Connection to mint failed')
@@ -140,15 +140,15 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					</View>
 					{/* Mints list where test mint is always visible */}
 					<ScrollView showsVerticalScrollIndicator={false}>
-						{[...defaultMints.filter(m => !isTrustedMint(m.mint_url)), ...usertMints]
+						{[...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]
 							.map(m => (
-								<View key={m.mint_url} style={styles.mintContainer}>
+								<View key={m.mintUrl} style={styles.mintContainer}>
 									<TouchableOpacity
 										style={styles.mintUrlWrap}
 										onPress={() => handleMintEntry(m, m.amount)}
 									>
 										<View style={styles.mintNameWrap}>
-											{defaultMint === m.mint_url &&
+											{defaultMint === m.mintUrl &&
 												<MintBoardIcon width={18} height={18} color={hi[highlight]} />
 											}
 											<Text
@@ -156,17 +156,17 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 													styles.mintUrl,
 													{
 														color: color.TEXT,
-														marginLeft: defaultMint === m.mint_url ? 10 : 0
+														marginLeft: defaultMint === m.mintUrl ? 10 : 0
 													}
 												]}
 											>
 												{/* custom name given by user or show mint URL */}
-												{m.customName || formatMintUrl(m.mint_url)}
+												{m.customName || formatMintUrl(m.mintUrl)}
 											</Text>
 										</View>
 										{/* Add mint icon or show balance */}
 										<Text>
-											{isTrustedMint(m.mint_url) ?
+											{isTrustedMint(m.mintUrl) ?
 												<View style={styles.mintBal}>
 													<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 														{formatInt(m.amount, 'compact', 'en')}
@@ -205,7 +205,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			}
 			{trustModalOpen &&
 				<QuestionModal
-					header={mintUrl?.mint_url === _mintUrl ?
+					header={mintUrl?.mintUrl === _mintUrl ?
 						'This is a test mint to play around with. Add it anyway?'
 						:
 						'Are you sure that you want to trust this mint?'

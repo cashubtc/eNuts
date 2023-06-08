@@ -93,8 +93,8 @@ export function isLnurl(addr: string) {
 /* export function cleanupMintUrl(mintUrl: string) {
 	return mintUrl.replaceAll(/[\W]/gi, '')
 } */
-export function isTrustedMint(userMints: { mint_url: string }[], tokenMints: string[]) {
-	return userMints.some(m => tokenMints.includes(m.mint_url))
+export function isTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]) {
+	return userMints.some(m => tokenMints.includes(m.mintUrl))
 }
 export async function getInvoiceFromLnurl(address: string, amount: number) {
 	try {

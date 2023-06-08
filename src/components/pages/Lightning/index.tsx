@@ -35,7 +35,7 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 			return
 		}
 		for (const mint of userMints) {
-			if (mint.mint_url === defaultMint) {
+			if (mint.mintUrl === defaultMint) {
 				setSelectedMint(mint)
 				break
 			}
@@ -48,7 +48,7 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 		void (async () => {
 			const mintsBals = await getMintsBalances()
 			mintsBals.forEach(m => {
-				if (m.mint_url === selectedMint?.mint_url) {
+				if (m.mintUrl === selectedMint?.mintUrl) {
 					setMintBal(m.amount)
 				}
 			})

@@ -56,7 +56,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		// Pay invoice
 		if (!isLnurl(input)) {
 			try {
-				const res = await payLnInvoice(route.params.mint.mint_url, input, selectedProofs)
+				const res = await payLnInvoice(route.params.mint.mintUrl, input, selectedProofs)
 				stopLoading()
 				if (!res.result?.isPaid) {
 					openPrompt('Invoice could not be payed. Please try again later.')
@@ -65,14 +65,14 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				// payment success, add as history entry
 				await addLnPaymentToHistory(
 					res,
-					[route.params.mint.mint_url],
+					[route.params.mint.mintUrl],
 					-invoiceAmount,
 					input
 				)
 				navigation.navigate('success', {
 					amount: invoiceAmount + res.realFee,
 					fee: res.realFee,
-					mints: [route.params.mint.mint_url]
+					mints: [route.params.mint.mintUrl]
 				})
 			} catch (e) {
 				l(e)
@@ -97,7 +97,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				stopLoading()
 				return
 			}
-			const res = await payLnInvoice(route.params.mint.mint_url, invoice, selectedProofs)
+			const res = await payLnInvoice(route.params.mint.mintUrl, invoice, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
 				openPrompt('Something went wrong while paying the LN invoice')
@@ -109,14 +109,14 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			// add as history entry
 			await addLnPaymentToHistory(
 				res,
-				[route.params.mint.mint_url],
+				[route.params.mint.mintUrl],
 				-LNURLAmount,
 				invoice
 			)
 			navigation.navigate('success', {
 				amount: +LNURLAmount + res.realFee,
 				fee: res.realFee,
-				mints: [route.params.mint.mint_url]
+				mints: [route.params.mint.mintUrl]
 			})
 		} catch (e) {
 			if (e instanceof Error) {
@@ -141,7 +141,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				// TODO show some kind of error message to the user since he can not proceed the payment now
 				return
 			}
-			const fee = await checkFees(route.params.mint.mint_url, invoice)
+			const fee = await checkFees(route.params.mint.mintUrl, invoice)
 			setFeeEstimate(fee)
 			setIsCalculatingFee(false)
 		}
@@ -155,7 +155,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		const clipboard = await Clipboard.getStringAsync()
 		if (!clipboard || clipboard === 'null' || !route.params.mint) { return }
 		try {
-			setFeeEstimate(await checkFees(route.params.mint.mint_url, clipboard))
+			setFeeEstimate(await checkFees(route.params.mint.mintUrl, clipboard))
 			setInput(clipboard)
 		} catch (e) {
 			l(e)
@@ -165,8 +165,8 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	// Get proofs for coin selection
 	useEffect(() => {
 		void (async () => {
-			if(!route.params.mint) { return }
-			const proofsDB = (await getProofsByMintUrl(route.params.mint.mint_url)).map(p => ({ ...p, selected: false }))
+			if (!route.params.mint) { return }
+			const proofsDB = (await getProofsByMintUrl(route.params.mint.mintUrl)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
 	}, [])
@@ -223,7 +223,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						Mint balance: {formatInt(route.params.mintBal)} Sat.
 					</Text>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Send bitcoin from "{formatMintUrl(route.params.mint?.mint_url || '')}" to a lightning wallet.
+						Send bitcoin from "{formatMintUrl(route.params.mint?.mintUrl || '')}" to a lightning wallet.
 					</Text>
 				</View>
 			}

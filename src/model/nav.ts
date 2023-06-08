@@ -29,7 +29,7 @@ export type RootStackParamList = {
 		send?: boolean
 	} | undefined
 	'pay invoice': {
-		mint?	: IMintUrl
+		mint?: IMintUrl
 		mintBal: number
 	}
 	mints: undefined
@@ -39,11 +39,11 @@ export type RootStackParamList = {
 		// mint_key: string
 	}
 	'mint info': {
-		mint_url: string
+		mintUrl: string
 	}
 	'inter-mint swap': {
 		swap_out_mint: {
-			mint_url: string
+			mintUrl: string
 			customName: string
 		}
 		mints: IMintUrl[]
@@ -51,7 +51,7 @@ export type RootStackParamList = {
 	}
 	'mint backup': {
 		token: string
-		mint_url: string
+		mintUrl: string
 	}
 	'qr scan': undefined
 	'history': undefined

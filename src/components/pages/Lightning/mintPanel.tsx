@@ -21,7 +21,7 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 	return nav.route.params?.mint ?
 		<View style={styles.minBalWrap}>
 			<Text style={[styles.singleMint, { color: color.TEXT }]}>
-				{nav.route.params.mint.customName || formatMintUrl(nav.route.params.mint.mint_url)}
+				{nav.route.params.mint.customName || formatMintUrl(nav.route.params.mint.mintUrl)}
 			</Text>
 			<View style={styles.mintBal}>
 				<Text style={[
@@ -36,11 +36,11 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 		:
 		mints.length > 0 ?
 			<Picker
-				selectedValue={selectedMint?.mint_url}
+				selectedValue={selectedMint?.mintUrl}
 				onValueChange={(value, _idx) => {
-					void(async() => {
+					void (async () => {
 						const customName = await getMintName(value)
-						setSelectedMint({mint_url: value, customName: customName || ''})
+						setSelectedMint({ mintUrl: value, customName: customName || '' })
 					})()
 				}}
 				dropdownIconColor={color.TEXT}
@@ -48,9 +48,9 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 			>
 				{mints.map(m => (
 					<Picker.Item
-						key={m.mint_url}
-						label={m.customName || formatMintUrl(m.mint_url)}
-						value={m.mint_url}
+						key={m.mintUrl}
+						label={m.customName || formatMintUrl(m.mintUrl)}
+						value={m.mintUrl}
 						style={{ color: color.TEXT }}
 					/>
 				))}

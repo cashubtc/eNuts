@@ -18,7 +18,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 	useEffect(() => {
 		void (async () => {
 			try {
-				const mintInfo = await getMintInfo(route.params.mint_url)
+				const mintInfo = await getMintInfo(route.params.mintUrl)
 				setInfo(mintInfo)
 				l({ mintInfo })
 			} catch (e) {

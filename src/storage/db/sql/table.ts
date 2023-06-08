@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS proofs (
 );
 `
 const createProofsUsedTable = `
-CREATE TABLE IF NOT EXISTS proofs_used (
+CREATE TABLE IF NOT EXISTS proofsUsed (
 	amount INTEGER NOT NULL,
 	C TEXT NOT NULL,
 	secret TEXT PRIMARY KEY NOT NULL,
@@ -18,14 +18,14 @@ CREATE TABLE IF NOT EXISTS proofs_used (
 );
 `
 const createKeysetIdsTable = `
-CREATE TABLE IF NOT EXISTS keyset_ids (
+CREATE TABLE IF NOT EXISTS keysetIds (
 	id TEXT,
-	mint_url TEXT,
-	UNIQUE (id, mint_url)
+	mintUrl TEXT,
+	UNIQUE (id, mintUrl)
 );
 `
 const createMintKeysTable = `
-CREATE TABLE IF NOT EXISTS mint_keys (
+CREATE TABLE IF NOT EXISTS mintKeys (
 	id TEXT NOT NULL,
 	amount INTEGER NOT NULL,
 	pubkey TEXT NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 	pr TEXT NOT NULL,
 	hash TEXT PRIMARY KEY,
 	time INTEGER DEFAULT (cast(strftime('%s','now') as INTEGER)),
-	mint_url TEXT NOT NULL
+	mintUrl TEXT NOT NULL
 );
 `
 // preferences
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS contacts (
 	id integer PRIMARY KEY AUTOINCREMENT ,
 	name TEXT NOT NULL UNIQUE,
 	ln TEXT NOT NULL UNIQUE,
-	is_owner Bool Default False
+	isOwner Bool Default False
 );
 `
 export const tables: readonly string[] = [
