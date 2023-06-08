@@ -1,22 +1,21 @@
-import { Proof } from '@cashu/cashu-ts'
+import type { Proof } from '@cashu/cashu-ts'
 import type { IProofSelection } from '@model'
 import { ThemeContext } from '@src/context/Theme'
-import { hasOwnProperty } from '@src/util/typeguards'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-interface ProofRowProps {
+interface IProofRowProps {
 	proof: Proof | IProofSelection
 }
-interface CoinSelectionRowProps extends ProofRowProps {
+interface ICoinSelectionRowProps extends IProofRowProps {
 	setChecked: () => void
 }
 
 /**
  * A pressable component that handles coin selection
  */
-export default function CoinSelectionRow({ proof, setChecked }: CoinSelectionRowProps) {
+export default function CoinSelectionRow({ proof, setChecked }: ICoinSelectionRowProps) {
 	return (
 		<TouchableOpacity style={styles.overview} onPress={setChecked}>
 			<ProofRowContent proof={proof} />
@@ -27,7 +26,7 @@ export default function CoinSelectionRow({ proof, setChecked }: CoinSelectionRow
 /**
  * A non-pressable list component that only shows the proofs
  */
-export function ProofRow({ proof }: ProofRowProps) {
+export function ProofRow({ proof }: IProofRowProps) {
 	return (
 		<View style={styles.overview}>
 			<ProofRowContent proof={proof} />
@@ -35,7 +34,7 @@ export function ProofRow({ proof }: ProofRowProps) {
 	)
 }
 
-export function ProofRowContent({ proof }: ProofRowProps) {
+export function ProofRowContent({ proof }: IProofRowProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<>
@@ -45,11 +44,11 @@ export function ProofRowContent({ proof }: ProofRowProps) {
 			<View style={styles.keyWrap}>
 				<Text style={[
 					styles.keysetID,
-					{ color: color.TEXT_SECONDARY, marginRight: hasOwnProperty(proof, 'selected') ? 20 : 0 }
+					{ color: color.TEXT_SECONDARY, marginRight: 'selected' in proof ? 20 : 0 }
 				]}>
 					{proof.id}
 				</Text>
-				{hasOwnProperty(proof, 'selected') &&
+				{'selected' in proof &&
 					<View
 						style={[
 							styles.radioBtn,

@@ -1,4 +1,4 @@
-import { Proof } from '@cashu/cashu-ts'
+import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
 import { CheckmarkIcon, CopyIcon } from '@comps/Icons'
 import { getProofsByMintUrl } from '@db'
