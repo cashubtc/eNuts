@@ -1,4 +1,5 @@
 import { env } from '@src/consts/env'
+import { isReactotronRunnig } from '@src/services/reactotron'
 
 /* function _log(
 	withTime: boolean,
@@ -20,14 +21,31 @@ export function l(msg?: unknown, ...optionalParams: unknown[]) {
 	let fnName = callerInfo()?.name
 	if (!fnName || fnName === '?anon_0_') { fnName = '' }
 	if (fnName) { fnName = `[${fnName}]` }
+
+	/* (isReactotronRunnig
+		// eslint-disable-next-line no-console
+		? console?.tron?.log || console.log
+		// eslint-disable-next-line no-console
+		: console.log
+	) */
 	// eslint-disable-next-line no-console
-	console.log(
-		`[${new Date().toLocaleTimeString()}]${fnName}`,
+	console.log(`[${new Date().toLocaleTimeString()}]${fnName}`,
 		msg,
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		...optionalParams
 	)
+	if (isReactotronRunnig) {
+		// eslint-disable-next-line no-console
+		console.tron?.log?.(`[${new Date().toLocaleTimeString()}]${fnName}`,
+			msg,
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+			...optionalParams
+		)
+		// eslint-disable-next-line no-console
+		// console?.tron?.error?.([msg, optionalParams], '[ERROR]')
+	}
 }
+
 function debug(msg?: unknown, ...optionalParams: unknown[]) {
 	warn(
 		`[${callerInfo()?.name}]`,
@@ -60,7 +78,7 @@ export function callerInfo(skipOf = 3) {
 	if (error.stack) {
 		const cla = error.stack.split('\n')
 		let idx = 1
-
+	
 		console.log(idx, '----------------', cla[idx])
 		while (idx < cla.length && cla[idx].includes('callerInfo')) { idx++ }
 		if (idx < cla.length) {
