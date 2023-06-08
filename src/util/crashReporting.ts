@@ -12,7 +12,7 @@ import { env } from '@src/consts'
  *  This is where you put your crash reporting service initialization code to call in `./app/app.tsx`
  */
 export function initCrashReporting() {
-	return Bugsnag.start(env.BUGSNAG_API_KEY)
+	return env.BUGSNAG_API_KEY ? Bugsnag.start(env.BUGSNAG_API_KEY) : undefined
 }
 
 /**

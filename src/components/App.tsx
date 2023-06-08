@@ -11,6 +11,7 @@ import { PromptModal } from '@modal/Prompt'
 import { IInitialProps, IPreferences, ITokenInfo } from '@model'
 import { DrawerNav } from '@nav/Navigator'
 import { NavigationContainer } from '@react-navigation/native'
+import { env } from '@src/consts'
 import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
@@ -75,16 +76,11 @@ const defaultPref: IPreferences = {
 
 void SplashScreen.preventAutoHideAsync()
 
-// Create the error boundary...
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
-
 function ErrorView() {
 	return <View>
 		<Text>Inform users of an error in the component tree.</Text>
 	</View>
 }
-
 
 
 function _App(_initialProps?: IInitialProps) {
@@ -343,9 +339,15 @@ function _App(_initialProps?: IInitialProps) {
 	)
 }
 export default function App(initialProps: IInitialProps) {
-	return (
-		<ErrorBoundary FallbackComponent={ErrorView}>
-			<_App _initialProps={initialProps} exp={initialProps.exp} />
-		</ErrorBoundary>
-	)
+	if (env.BUGSNAG_API_KEY) {
+		// Create the error boundary...
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+		const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
+		return (
+			<ErrorBoundary FallbackComponent={ErrorView}>
+				<_App _initialProps={initialProps} exp={initialProps.exp} />
+			</ErrorBoundary>
+		)
+	}
+	return _App()
 }

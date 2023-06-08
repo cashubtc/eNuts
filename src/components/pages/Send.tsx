@@ -24,15 +24,15 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 			const userMints = await getMintsUrls()
 			if (!userMints.length) { return }
 			// get mints with custom names
-			setMints(await getCustomMintNames(userMints))
-			if (!userMints.length) { return }
+			const mintsWithName = await getCustomMintNames(userMints)
+			setMints(mintsWithName)
 			// set first selected mint
 			const defaultMint = await getDefaultMint()
 			if (!defaultMint) {
-				setSelectedMint(mints[0])
+				setSelectedMint(mintsWithName[0])
 				return
 			}
-			for (const mint of userMints) {
+			for (const mint of mintsWithName) {
 				if (mint.mintUrl === defaultMint) {
 					setSelectedMint(mint)
 					break
