@@ -15,3 +15,6 @@ export function isArr(v: unknown): v is unknown[] { return Array.isArray(v) }
 export function isErr(v: unknown): v is Error { return v instanceof Error }
 export function isBuf(v: unknown): v is Buffer { return Buffer.isBuffer(v) }
 export function isNonNullable<T>(v: T): v is NonNullable<T> { return !isNull(v) && !isUndef(v) }
+export function hasOwnProperty<X extends object, Y extends PropertyKey>(obj: X, prop: Y): obj is X & Record<Y, unknown> {
+	return Object.hasOwnProperty.call(obj, prop)
+}

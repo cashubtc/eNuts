@@ -1,17 +1,29 @@
+import { Proof } from '@cashu/cashu-ts'
+import { ProofRow } from '@comps/coinSelectionRow'
 import { CheckmarkIcon, CopyIcon } from '@comps/Icons'
+import { getProofsByMintUrl } from '@db'
 import { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
+import { CoinSelectionListHeader } from '@pages/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export default function MintProofsPage({ navigation, route }: TMintProofsPageProps) {
 	const { color } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
+	const [proofs, setProofs] = useState<Proof[]>([])
+
+	// initiate proofs
+	useEffect(() => {
+		void (async () => {
+			setProofs(await getProofsByMintUrl(route.params.mintUrl))
+		})()
+	}, [])
 
 	return (
 		<View style={styles.container}>
@@ -46,7 +58,10 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 						}
 					</TouchableOpacity>
 				</View>
+				{/* List header */}
+				<CoinSelectionListHeader />
 				{/* Proofs list */}
+				{proofs.map(p => <ProofRow key={p.secret} proof={p} />)}
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 		</View>
