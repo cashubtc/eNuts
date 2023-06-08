@@ -21,7 +21,7 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 	return nav.route.params?.mint ?
 		<View style={styles.minBalWrap}>
 			<Text style={[styles.singleMint, { color: color.TEXT }]}>
-				{formatMintUrl(nav.route.params.mint.mint_url)}
+				{nav.route.params.mint.customName || formatMintUrl(nav.route.params.mint.mint_url)}
 			</Text>
 			<View style={styles.mintBal}>
 				<Text style={[

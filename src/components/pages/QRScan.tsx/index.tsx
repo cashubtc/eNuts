@@ -104,7 +104,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			value: data,
 			mints: info.mints,
 		})
-		openPrompt(`Claimed ${info?.value} Satoshi from ${info?.mints[0]}!`)
+		openPrompt(`Claimed ${info?.value} Satoshi from ${info?.mints[0]}! Memo: ${info?.decoded.memo}`)
 	}
 
 	const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {

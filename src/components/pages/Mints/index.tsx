@@ -169,7 +169,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 											{isTrustedMint(m.mint_url) ?
 												<View style={styles.mintBal}>
 													<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-														{formatInt(m.amount, 'compact')}
+														{formatInt(m.amount, 'compact', 'en')}
 													</Text>
 													<ZapIcon width={18} height={18} color={color.TEXT} />
 												</View>
@@ -186,12 +186,12 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			</View>
 			{/* Submit new mint URL modal */}
 			{newMintModal && !prompt.open &&
-				<MyModal type='question' animation='fade' visible={newMintModal}>
+				<MyModal type='bottom' animation='slide' visible={newMintModal}>
 					<Text style={globals(color).modalHeader}>
 						Add a new mint
 					</Text>
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="Mint URL"
 						placeholderTextColor={color.BORDER}
 						selectionColor={hi[highlight]}

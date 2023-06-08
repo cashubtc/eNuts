@@ -60,7 +60,7 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 				selectedMint={selectedMint}
 				mintBal={mintBal}
 				setSelectedMint={setSelectedMintCB}
-				createSpendableToken
+				isSendingToken
 			/>
 		</View>
 	)

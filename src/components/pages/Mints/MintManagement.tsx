@@ -2,21 +2,21 @@ import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { BackupIcon, CheckmarkIcon, CopyIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
 import LNInvoiceAmountModal from '@comps/InvoiceAmount'
+import Toaster from '@comps/Toaster'
 import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
 import { getBackUpTokenForMint } from '@db/backup'
 import { l } from '@log'
 import MyModal from '@modal'
-import { PromptModal } from '@modal/Prompt'
 import { QuestionModal } from '@modal/Question'
 import { TMintManagementPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { _setMintName, getCustomMintNames, getDefaultMint, getMintName , setDefaultMint } from '@store/mintStore'
+import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
-import { checkProofsSpent } from '@wallet'
+import { _mintUrl, checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -40,7 +40,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const [delMintModalOpen, setDelMintModalOpen] = useState(false)
 	const [copied, setCopied] = useState(false)
 	// prompt modal
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 
 	// check if it is a default mint
 	useEffect(() => {
@@ -53,7 +53,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const handleMintName = async () => {
 		await _setMintName(route.params.mint?.mint_url, mintName)
 		setCustomNameOpen(false)
-		openPrompt('Added a custom name')
+		openPromptAutoClose(true, 'Added a custom name')
 	}
 
 	const hasMintName = async () => {
@@ -63,18 +63,23 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	}
 
 	const handleMintSwap = async () => {
-		const mints = (await getMintsUrls()).filter(m => m.mint_url !== route.params.mint?.mint_url)
+		const mints = (await getMintsUrls()).filter(m => m.mint_url !== route.params.mint?.mint_url && m.mint_url !== _mintUrl)
 		const mintsWithCustomNames = await getCustomMintNames(mints)
-		// needs at least 1 mint after filtering out the current swap-out mint
-		if (!mintsWithCustomNames.length) {
+		// needs at least 1 mint after filtering out the current swap-out mint and test mint
+		if (!mints.length) {
 			// promt
-			openPrompt('You need at least 2 mints to perform an inter-mint swap.')
+			openPromptAutoClose(false, 'You need at least 2 mints to perform an inter-mint swap.')
+			return
+		}
+		// cant swap out from a test mint
+		if (route.params.mint?.mint_url === _mintUrl) {
+			openPromptAutoClose(false, 'Swap out from a test mint is not possible.')
 			return
 		}
 		// balance must be higher than 0
 		if (route.params.amount < 1) {
 			// promt
-			openPrompt('Mint balance too low!')
+			openPromptAutoClose(false, 'Mint balance too low!')
 			return
 		}
 		const swapOutMintName = await getMintName(route.params.mint?.mint_url)
@@ -90,7 +95,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	const handleMintBackup = async () => {
 		if (route.params.amount < 1) {
-			openPrompt('The mint has no balance for a backup!')
+			openPromptAutoClose(false, 'The mint has no balance for a backup!')
 			return
 		}
 		try {
@@ -98,7 +103,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			navigation.navigate('mint backup', { token, mint_url: route.params.mint?.mint_url })
 		} catch (e) {
 			l(e)
-			openPrompt('Backup token could not be created.')
+			openPromptAutoClose(false, 'Backup token could not be created.')
 		}
 	}
 
@@ -108,7 +113,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		// set or remove default
 		await setDefaultMint(defaultM === mUrl ? '' : mUrl)
 		setIsDefault(defaultM !== mUrl)
-		openPrompt('Updated the default mint')
+		openPromptAutoClose(true, 'Updated the default mint')
 	}
 
 	const handleProofCheck = async () => {
@@ -121,10 +126,10 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		l({ proofsToDel })
 		try {
 			await deleteProofs(proofsToDel)
-			openPrompt(`Deleted ${proofsToDel.length} proofs.`)
+			openPromptAutoClose(true, `Deleted ${proofsToDel.length} proofs.`)
 		} catch (e) {
 			l(e)
-			openPrompt('Something went wrong while deleting proofs.')
+			openPromptAutoClose(false, 'Something went wrong while deleting proofs.')
 		}
 	}
 
@@ -213,11 +218,17 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					{/* Redeem to lightning */}
 					<MintOption
 						txt='Melt tokens'
-						onPress={() => navigation.navigate('lightning', {
-							mint: route.params.mint,
-							balance: route.params.amount,
-							send: true
-						})}
+						onPress={() => {
+							if (route.params.amount < 1) {
+								openPromptAutoClose(false, 'Not enough funds!')
+								return
+							}
+							navigation.navigate('lightning', {
+								mint: route.params.mint,
+								balance: route.params.amount,
+								send: true
+							})
+						}}
 						icon={<ZapIcon width={18} height={18} color={color.TEXT} />}
 					/>
 					{/* Refresh mint-key */}
@@ -284,9 +295,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					header='Are you sure that you want to check all the proofs?'
 					txt='This will check if your tokens are spendable and will otherwise delete them.'
 					visible={checkProofsOpen}
-					confirmFn={() => {
-						void handleProofCheck()
-					}}
+					confirmFn={() => void handleProofCheck()}
 					cancelFn={() => setCheckProofsOpen(false)}
 				/>
 			}
@@ -297,7 +306,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						{edit ? 'Edit mint name' : 'Add a custom name'}
 					</Text>
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="Custom mint name"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
@@ -306,9 +315,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					{(mintName.length > 0 || savedName.length > 0) &&
 						<Button
 							txt='Save'
-							onPress={() => {
-								void handleMintName()
-							}}
+							onPress={() => void handleMintName()}
 						/>
 					}
 					<TouchableOpacity onPress={() => setCustomNameOpen(false)}>
@@ -318,13 +325,9 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					</TouchableOpacity>
 				</MyModal>}
 			{/* Prompt modal */}
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-				hideIcon={prompt.msg.includes('Added a custom name') || prompt.msg.includes('Updated the default mint')}
-			/>
-			{!isKeyboardOpen && !delMintModalOpen && !checkProofsOpen && !prompt.open &&
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+			{/* Bottom navigation */}
+			{!isKeyboardOpen && !delMintModalOpen && !checkProofsOpen &&
 				<BottomNav navigation={navigation} route={route} />
 			}
 		</View>

@@ -21,7 +21,7 @@ export function sleep(ms: number) { return new Promise<void>(resolve => setTimeo
 
 export function formatBalance(bal: number) { return (bal / 100_000_000).toFixed(8) }
 /**
- * format a number to a string with a given locale
+ * format a number to a string with a given locale. Compact notation is not yet supported for all locales.
  *
  * if locale is not specified, the current locale is used
  *

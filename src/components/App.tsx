@@ -131,7 +131,6 @@ export default function App(_initialProps: IInitialProps) {
 		if (!tokenInfo) { return }
 		const encoded = getEncodedToken(tokenInfo.decoded)
 		const success = await claimToken(encoded).catch(l)
-		stopLoading()
 		if (!success) {
 			alert('Token invalid or already claimed')
 			setClaimOpen(false)
@@ -151,6 +150,7 @@ export default function App(_initialProps: IInitialProps) {
 		})
 		openPrompt(`Successfully claimed ${formatInt(info.value)} Satoshi!`)
 		setClaimed(true)
+		stopLoading()
 		setClaimOpen(false)
 	}
 
@@ -256,11 +256,12 @@ export default function App(_initialProps: IInitialProps) {
 										Found a cashu token in your clipboard
 									</Text>
 									<Text style={globals(color, highlight).modalTxt}>
+										Memo: {tokenInfo?.decoded.memo}{'\n'}
 										<Text style={{ fontWeight: '500' }}>
 											{formatInt(tokenInfo?.value || 0)}
 										</Text>
 										{' '}Satoshi from the following mint:{' '}
-										{tokenInfo?.mints.map(m => m)}
+										{tokenInfo?.mints.join(', ')}
 									</Text>
 									<Button
 										txt={loading ? 'Claiming...' : 'Claim now!'}

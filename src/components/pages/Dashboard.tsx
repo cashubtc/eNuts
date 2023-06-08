@@ -4,11 +4,11 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
+import Toaster from '@comps/Toaster'
 import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
 import OptsModal from '@modal/OptsModal'
-import { PromptModal } from '@modal/Prompt'
 import TrustMintModal from '@modal/TrustMint'
 import { TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -35,7 +35,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// Total Balance state (all mints)
 	const [balance, setBalance] = useState(0)
 	// Prompt modal
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	// Cashu token hook
 	const {
 		token,
@@ -60,7 +60,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPrompt('Your clipboard contains an invalid cashu token!')
+			openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -84,7 +84,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const handleTokenSubmit = async (url: string) => {
 		const tokenInfo = getTokenInfo(url)
 		if (!tokenInfo) {
-			openPrompt('Your clipboard contains an invalid cashu token!')
+			openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -110,7 +110,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setToken('')
 		stopLoading()
 		if (!success) {
-			openPrompt('Token invalid or already claimed')
+			openPromptAutoClose(false, 'Token invalid or already claimed')
 			return
 		}
 		const info = getTokenInfo(encodedToken)
@@ -127,7 +127,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})
 		navigation.navigate('success', {
 			amount: info?.value,
-			mints: info?.mints
+			mints: info?.mints,
+			memo: info?.decoded.memo
 		})
 	}
 
@@ -217,7 +218,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						void (async () => {
 							const clipboard = await Clipboard.getStringAsync()
 							if (!isCashuToken(clipboard)) {
-								openPrompt('Your clipboard contains an invalid cashu token!')
+								openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
 								setModal({ ...modal, receiveOpts: false })
 								return
 							}
@@ -250,12 +251,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					onPressCancel={() => setModal({ ...modal, sendOpts: false })}
 				/>
 			}
-			{/* Prompt modal */}
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			{/* Prompt toaster */}
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

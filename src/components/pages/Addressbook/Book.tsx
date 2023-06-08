@@ -169,11 +169,11 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			{openNew.open && !prompt.open &&
 				<MyModal type='bottom' animation='slide' visible={true}>
 					<Text style={globals(color).modalHeader}>
-						{openNew.isOwner ? 'Your LN address' : 'New address'}
+						{openNew.isOwner ? 'Your LNURL' : 'New contact'}
 					</Text>
 					{!openNew.isOwner &&
 						<TextInput
-							style={globals(color).input}
+							style={[globals(color).input, { marginBottom: 20 }]}
 							placeholder="Name"
 							placeholderTextColor={color.INPUT_PH}
 							selectionColor={hi[highlight]}
@@ -181,7 +181,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						/>
 					}
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="zap@me.now"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}

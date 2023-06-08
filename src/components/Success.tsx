@@ -14,11 +14,12 @@ interface ISuccessProps {
 	fee?: number
 	mints?: string[]
 	mint?: string
+	memo?: string
 	nav?: NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>
 	hash?: string
 }
 
-export default function Success({ amount, fee, mints, mint, nav, hash }: ISuccessProps) {
+export default function Success({ amount, fee, mints, mint, memo, nav, hash }: ISuccessProps) {
 	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 	const [testMintTokenRdy, setTestMintTokenRdy] = useState(false)
 	// Only for the hard-coded test mint. Otherwise this is done for other mints before landing in this page
@@ -59,6 +60,11 @@ export default function Success({ amount, fee, mints, mint, nav, hash }: ISucces
 						<>{formatInt(amount)} Satoshi {mints ? 'claimed' : 'minted'}!</>
 					}
 				</Text>
+				{memo &&
+					<Text style={styles.mints}>
+						{memo}
+					</Text>
+				}
 				{mints && mints.map(m => (
 					<Text style={styles.mints} key={m}>
 						{formatMintUrl(m)}
