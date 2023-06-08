@@ -78,7 +78,7 @@ export default function LNPageContent({
 				stopLoading()
 				return
 			}
-			setPayError({ open: true, msg: 'Could not create a spendable token. Please try again later.' })
+			setPayError({ open: true, msg: 'Could not create a cashu token. Please try again later.' })
 		}
 		stopLoading()
 	}
@@ -195,25 +195,28 @@ export default function LNPageContent({
 					: // user wants to send his tokens to LN
 					!isSendingToken ?
 						<>
-							<Button
-								txt={nav.route.params?.send ? 'Create invoice' : 'Select amount'}
-								onPress={() => {
-									// send
-									if (nav.route.params?.send) {
-										if (mintBal < 1) {
-											setPayError({ open: true, msg: 'Not enough funds!' })
+							{/* Show a message if mint has not enough funds and the payment is an outgoing TX */}
+							{mintBal < 1 && nav.route.params?.send ?
+								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
+									Chosen mint has not enough funds!
+								</Text>
+								:
+								<Button
+									txt={nav.route.params?.send ? 'Create invoice' : 'Select amount'}
+									onPress={() => {
+										// send
+										if (nav.route.params?.send) {
+											nav.navigation.navigate('pay invoice', {
+												mint: selectedMint,
+												mintBal,
+											})
 											return
 										}
-										nav.navigation.navigate('pay invoice', {
-											mint: selectedMint,
-											mintBal,
-										})
-										return
-									}
-									// receive
-									setLNAmountModal(true)
-								}}
-							/>
+										// receive
+										setLNAmountModal(true)
+									}}
+								/>
+							}
 							<View style={{ marginVertical: 5 }} />
 						</>
 						: // user wants to create a spendable token
