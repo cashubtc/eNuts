@@ -1,6 +1,6 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
-import { BackupIcon, CheckmarkIcon, CopyIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
+import { BackupIcon, CheckmarkIcon, CopyIcon, EyeIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
 import LNInvoiceAmountModal from '@comps/InvoiceAmount'
 import Toaster from '@comps/Toaster'
 import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
@@ -256,6 +256,17 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt={isDefault ? 'Remove from default' : 'Set as default mint'}
 						onPress={() => void handleDefaultMint()}
 						icon={<MintBoardIcon width={19} height={19} color={color.TEXT} />}
+					/>
+					<MintOption
+						txt='Show proofs'
+						onPress={() => {
+							if (route.params.amount < 1) {
+								openPromptAutoClose(false, 'Mint has no proofs. Balance too low!')
+								return
+							}
+							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
+						}}
+						icon={<EyeIcon width={19} height={19} color={color.TEXT} />}
 					/>
 					{/* Check proofs */}
 					<MintOption
