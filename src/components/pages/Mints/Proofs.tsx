@@ -5,7 +5,7 @@ import { getProofsByMintUrl } from '@db'
 import { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
-import { CoinSelectionListHeader } from '@pages/Lightning/modal'
+import { ProofListHeader } from '@pages/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { formatMintUrl } from '@util'
@@ -59,7 +59,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 					</TouchableOpacity>
 				</View>
 				{/* List header */}
-				<CoinSelectionListHeader />
+				<ProofListHeader />
 				{/* Proofs list */}
 				{proofs.map(p => <ProofRow key={p.secret} proof={p} />)}
 			</View>

@@ -164,6 +164,9 @@ interface ICoinSelectionProps {
 	setProof: (proofs: IProofSelection[]) => void
 }
 
+/**
+ * This component is the main container of the pressable proofs-list aka coin selection list.
+ */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
 	const { color } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
@@ -176,7 +179,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 				<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
 					{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
 				</Text>
-				<CoinSelectionListHeader margin={40} />
+				<ProofListHeader margin={40} />
 				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 					{lnAmount > 0 &&
 						proofs.map(p => (
@@ -221,6 +224,9 @@ interface IResume {
 	selectedAmount: number
 }
 
+/**
+ * This component shows the amount and the change of selected proofs in a pressable row of a proofs-list.
+ */
 export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 	const { color } = useContext(ThemeContext)
 	return (
@@ -247,7 +253,12 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 	)
 }
 
-export function CoinSelectionListHeader({ margin }: { margin?: number }) {
+/**
+ * A component that shows the header of the proofs-list.
+ * Margin is used for the pressable coin-selection row.
+ * If the row of the proofs-list is non-pressable, margin is not required.
+ */
+export function ProofListHeader({ margin }: { margin?: number }) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
