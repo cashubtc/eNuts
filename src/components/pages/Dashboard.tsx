@@ -127,7 +127,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})
 		navigation.navigate('success', {
 			amount: info?.value,
-			mints: info?.mints
+			mints: info?.mints,
+			memo: info?.decoded.memo
 		})
 	}
 

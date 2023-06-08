@@ -20,6 +20,7 @@ export type RootStackParamList = {
 		amount?: number
 		fee?: number
 		mints?: string[]
+		memo?: string
 	}
 	lightning: {
 		mint?: IMintUrl

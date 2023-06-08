@@ -11,6 +11,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>
 			<Success
 				amount={route.params.amount || 0}
+				memo={route.params.memo}
 				fee={route.params.fee}
 				mints={route.params.mints}
 				nav={navigation}
