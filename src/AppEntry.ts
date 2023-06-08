@@ -8,7 +8,6 @@ import type { IInitialProps } from '@model'
 import { registerRootComponent } from 'expo'
 
 import { setupReactotron } from './services/reactotron'
-import { initCrashReporting } from './util/crashReporting'
 
 
 // Set up Reactotron, which is a free desktop app for inspecting and debugging
@@ -26,7 +25,6 @@ setupReactotron({
 	logSnapshots: false,
 })
 
-initCrashReporting()
 
 // Bugsnag.notify(new Error('Test error from AppEntry'))
 
