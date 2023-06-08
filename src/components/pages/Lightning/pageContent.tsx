@@ -19,13 +19,13 @@ import { StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
 import MintPanel from './mintPanel'
 
-interface IAdressTabProps {
+interface ILNPageProps {
 	nav: TLightningPageProps | TSendTokenPageProps
 	mints: IMintUrl[]
 	selectedMint?: IMintUrl
 	mintBal: number
 	setSelectedMint: (url: IMintUrl) => void
-	createSpendableToken?: boolean
+	isSendingToken?: boolean
 }
 
 export default function LNPageContent({
@@ -34,8 +34,8 @@ export default function LNPageContent({
 	selectedMint,
 	mintBal,
 	setSelectedMint,
-	createSpendableToken
-}: IAdressTabProps) {
+	isSendingToken
+}: ILNPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// invoice amount modal
@@ -82,7 +82,7 @@ export default function LNPageContent({
 	}
 	// coin selection
 	useEffect(() => {
-		if (!createSpendableToken) { return }
+		if (!isSendingToken) { return }
 		void (async () => {
 			if (!selectedMint) { return }
 			const proofsDB = (await getProofsByMintUrl(selectedMint.mint_url)).map(p => ({ ...p, selected: false }))
@@ -93,7 +93,7 @@ export default function LNPageContent({
 		<>
 			<View style={styles.pickerWrap}>
 				{/* header */}
-				{!createSpendableToken &&
+				{!isSendingToken &&
 					<Text style={[styles.lnHint, { color: color.TEXT }]}>
 						{nav.route.params?.mint ?
 							'Pay to a Lightning wallet'
@@ -149,14 +149,14 @@ export default function LNPageContent({
 					</>
 				}
 				{/* Amount to send */}
-				{mints.length > 0 && mintBal > 0 && createSpendableToken &&
+				{mints.length > 0 && mintBal > 0 && isSendingToken &&
 					<View style={styles.amountWrap}>
 						<TextInput
 							keyboardType='numeric' // Platform.OS === 'android' ? 'number-pad' : 'numeric'
 							placeholder='0'
 							placeholderTextColor={hi[highlight]}
 							style={[styles.amount, { color: hi[highlight] }]}
-							autoFocus={createSpendableToken}
+							autoFocus={isSendingToken}
 							caretHidden
 							onChangeText={setAmount}
 							maxLength={8}
@@ -169,7 +169,7 @@ export default function LNPageContent({
 			</View>
 			<View style={[
 				styles.actionWrap,
-				{ backgroundColor: color.BACKGROUND, marginBottom: isKeyboardOpen ? 10 : createSpendableToken ? 20 : 75 }
+				{ backgroundColor: color.BACKGROUND, marginBottom: isKeyboardOpen ? 10 : isSendingToken ? 20 : 75 }
 			]}>
 				{/* user has no mints */}
 				{!mints.length ?
@@ -181,7 +181,7 @@ export default function LNPageContent({
 						<View style={{ marginVertical: 5 }} />
 					</>
 					: // user wants to send his tokens to LN
-					!createSpendableToken ?
+					!isSendingToken ?
 						<>
 							<Button
 								txt={nav.route.params?.send ? 'Create invoice' : 'Select amount'}
