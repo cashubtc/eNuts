@@ -1,7 +1,7 @@
 import type { IMintBalWithName } from '@model'
 import { _mintUrl } from '@wallet'
 
-export const defaultMints: IMintBalWithName[] = [
+export const defaultMints: Readonly<IMintBalWithName[]> = [
 	/* {
 		mintUrl: 'https://8333.space:3338',
 		amount: 0,
@@ -17,7 +17,7 @@ export const defaultMints: IMintBalWithName[] = [
 		amount: 0,
 		customName: ''
 	}
-]
+] as const
 
 // https://reactnative.dev/docs/platform
 // export const osAndroid = 'android'
