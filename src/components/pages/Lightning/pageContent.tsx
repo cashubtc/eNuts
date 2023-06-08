@@ -100,7 +100,7 @@ export default function LNPageContent({
 						{nav.route.params?.mint ?
 							'Pay to a Lightning wallet'
 							:
-							`Select a mint ${nav.route.params?.send ? 'to pay from' : ''}`
+							`Select a mint ${nav.route.params?.send ? 'to pay from' : 'to top up'}`
 						}
 					</Text>
 				}
