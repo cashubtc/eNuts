@@ -104,7 +104,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							{expiry > 0 ?
 								formatExpiry(expiry)
 								:
-								<Text>Invoice expired!</Text>
+								'Invoice expired!'
 							}
 						</Text>
 						{expiry > 0 && !paid &&

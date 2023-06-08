@@ -28,6 +28,8 @@ import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useRef, useState } from 'react'
 import { AppState, Text, View } from 'react-native'
 
+import Txt from './Txt'
+
 initCrashReporting()
 
 /* import * as DevMenu from 'expo-dev-menu'
@@ -277,9 +279,10 @@ function _App(_initialProps?: IInitialProps) {
 									</Text>
 									<Text style={globals(color, highlight).modalTxt}>
 										Memo: {tokenInfo?.decoded.memo}{'\n'}
-										<Text style={{ fontWeight: '500' }}>
-											{formatInt(tokenInfo?.value || 0)}
-										</Text>
+										<Txt
+											txt={formatInt(tokenInfo?.value || 0)}
+											styles={[{ fontWeight: '500' }]}
+										/>
 										{' '}Satoshi from the following mint:{' '}
 										{tokenInfo?.mints.join(', ')}
 									</Text>

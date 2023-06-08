@@ -1,4 +1,5 @@
 import { IncomingArrowIcon, OutgoingArrowIcon, ZapIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
@@ -27,9 +28,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 				<IncomingArrowIcon color={color.TEXT} />
 			}
 			<View style={styles.infoWrap}>
-				<Text style={globals(color, highlight).txt}>
-					{item.type === 1 ? 'eCash' : 'Lightning'}
-				</Text>
+				<Txt txt={item.type === 1 ? 'eCash' : 'Lightning'} />
 				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY }]}>
 					<EntryTime from={item.timestamp * 1000} fallback='Just now' />
 				</Text>

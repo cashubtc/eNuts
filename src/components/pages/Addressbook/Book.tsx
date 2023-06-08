@@ -1,6 +1,7 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { PlusIcon, UserIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import { addContact, getContacts } from '@db'
 import MyModal from '@modal'
 import { PromptModal } from '@modal/Prompt'
@@ -155,9 +156,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 										})
 									}}
 								>
-									<Text style={globals(color).txt}>
-										{c.name}
-									</Text>
+									<Txt txt={c.name} />
 								</TouchableOpacity>
 							</View>
 							{i < contacts.length - 1 && <View style={[styles.separator, { borderBottomColor: color.BORDER }]} />}
