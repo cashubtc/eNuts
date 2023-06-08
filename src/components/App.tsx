@@ -18,6 +18,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, isCashuToken, isTrustedMint, sleep } from '@util'
+import { initCrashReporting } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
@@ -26,6 +27,7 @@ import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useRef, useState } from 'react'
 import { AppState, Text, View } from 'react-native'
 
+initCrashReporting()
 
 /* import * as DevMenu from 'expo-dev-menu'
 import { StyleSheet } from 'react-native'
