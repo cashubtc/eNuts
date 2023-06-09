@@ -20,7 +20,7 @@ export default (): JestConfigWithTsJest => ({
 				}]
 	},
 	resolver: 'ts-jest-resolver',
-	testRegex: 'test/.*\\.(test|spec)?\\.(ts)$',
+	testRegex: 'test/.*\\.(test|spec)?\\.(ts|tsx)$',
 	// moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 	preset: 'jest-expo',
 	transformIgnorePatterns: [
@@ -36,7 +36,7 @@ export default (): JestConfigWithTsJest => ({
 	},
 	collectCoverage: false,
 	collectCoverageFrom: [
-		'**/src/**/*.ts',
+		'**/src/**/*.{ts,tsx}',
 		'!**/coverage/**',
 		'!**/report/**',
 		'!**/assets/**',
@@ -49,9 +49,9 @@ export default (): JestConfigWithTsJest => ({
 		'!app.config.js',
 		'!metro.config.js',
 		'!react-native.config.js',
-		'!**/src/styles/**',
+		// '!**/src/styles/**',
 		'!**/src/consts/**',
-		'!**/src/components/**',
+		// '!**/src/components/**',
 		'!**/src/AppEntry.ts',
 		'!**/src/shim.ts',
 		// '!**/src/storage/store/AsyncStore.ts',

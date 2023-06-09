@@ -1,9 +1,13 @@
 // we always make sure 'react-native' gets included first
-// import * as ReactNative from "react-native"
+// eslint-disable-next-line simple-import-sort/imports
+import * as ReactNative from 'react-native'
+
+import { Locale } from 'expo-localization'
+
 import { getDatabase } from './wrapper/getTestDb'
 
 // libraries to mock
-// jest.doMock("react-native", () => { return ReactNative })
+jest.doMock('react-native', () => ReactNative)
 jest.mock('expo-sqlite', () => ({
 	get openDatabase() {
 		return (_: string) => getDatabase(':memory:')
@@ -13,9 +17,15 @@ jest.mock('expo-sqlite', () => ({
 jest.mock('expo-constants', () => ({}))
 jest.mock('expo-secure-store', () => ({}))
 jest.mock('@bugsnag/expo', () => ({}))
-jest.mock('expo-localization', () => ({}))
+jest.mock('expo-localization', () => ({
+	locale: 'de',
+	getLgetLocales: () => {
+		const arr: Locale[] = []
+		return arr
+	}
+}))
 jest.mock('reactotron-react-native', () => ({}))
-jest.mock('react-native', () => ({}))
+// jest.mock('react-native', () => ({}))
 // jest.mock('@consts', () => ({}))
 jest.mock('expo/config', () => ({}))
 
