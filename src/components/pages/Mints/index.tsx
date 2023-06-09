@@ -43,7 +43,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		}
 		try {
 			// check if mint is already in db
-			const mints = await getMintsUrls()
+			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === input)) {
 				openPrompt('Mint already added')
 				return

@@ -64,7 +64,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	}
 
 	const handleMintSwap = async () => {
-		const mints = (await getMintsUrls()).filter(m => m.mintUrl !== route.params.mint?.mintUrl && m.mintUrl !== _mintUrl)
+		const mints = (await getMintsUrls(true)).filter(m => m.mintUrl !== route.params.mint?.mintUrl && m.mintUrl !== _mintUrl)
 		const mintsWithCustomNames = await getCustomMintNames(mints)
 		// needs at least 1 mint after filtering out the current swap-out mint and test mint
 		if (!mints.length) {

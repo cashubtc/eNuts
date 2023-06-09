@@ -1,6 +1,7 @@
 import { CashuMint, CashuWallet, deriveKeysetId, getDecodedLnInvoice, getDecodedToken, getEncodedToken, MintKeys, Proof } from '@cashu/cashu-ts'
-import { addInvoice, addMint, addToken, deleteProofs, delInvoice, getAllInvoices, getInvoice, getMintBalance, getMints } from '@db'
+import { addInvoice, addMint, addToken, deleteProofs, delInvoice, getAllInvoices, getInvoice, getMintBalance, getMintsUrls } from '@db'
 import { l } from '@log'
+import { isCashuToken } from '@src/util'
 
 import { sumProofsValue } from './proofs'
 import { getProofsToUse } from './util'
@@ -66,9 +67,11 @@ export async function checkFees(mintUrl: string, invoice: string) {
 	return fee
 }
 export async function claimToken(encodedToken: string): Promise<boolean> {
+	encodedToken = isCashuToken(encodedToken) || ''
+	if (!encodedToken?.trim()) { return false }
 	const decoded = getDecodedToken(encodedToken)
 	if (!decoded?.token?.length) { return false }
-	const trustedMints = (await getMints()).map(x => x.mintUrl)
+	const trustedMints = await getMintsUrls()
 	const tokenEntries = decoded.token.filter(x => trustedMints.includes(x.mint))
 	if (!tokenEntries?.length) { return false }
 	const mintUrls = tokenEntries.map(x => x.mint).filter(x => x)
