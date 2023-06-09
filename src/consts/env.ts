@@ -1,5 +1,5 @@
 
-import { IExpoConfig } from '@src/model'
+import { IExpoConfig } from '@model'
 import { default as Consts, ExecutionEnvironment as ExecEnv } from 'expo-constants'
 
 const { executionEnvironment: execEnv } = Consts

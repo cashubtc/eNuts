@@ -1,6 +1,7 @@
 import { SimpleKeyValueStore } from '@store'
 
 describe('test SimpleKeyValueStore', () => {
+	// eslint-disable-next-line @typescript-eslint/await-thenable
 	afterAll(async () => { await store.close() })
 	const store = new SimpleKeyValueStore('store')
 
@@ -21,19 +22,19 @@ describe('test SimpleKeyValueStore', () => {
 		await store.setObj<{ object: string }>('objKey', { object: 'objPropUpdated' })
 		expect(await store.getObj('objKey')).toMatchObject({ object: 'objPropUpdated' })
 		// test get keys
-		expect(await store.keys()).toStrictEqual(["testkey", "key2", "key", "objKey"])
+		expect(await store.keys()).toStrictEqual(['testkey', 'key2', 'key', 'objKey'])
 		// test get keys with prefix
-		expect(await store.keysByPrefix('test')).toStrictEqual(["testkey"])
+		expect(await store.keysByPrefix('test')).toStrictEqual(['testkey'])
 		// test get by prefix
 		expect(await store.getByKeyPrefix('test')).toMatchObject([{ key: 'testkey', value: 'valuetest' }])
 		// test get obj by prefix
 		expect(await store.getObjsByKeyPrefix<{ object: string }>('objKey')).toMatchObject([{ key: 'objKey', value: { object: 'objPropUpdated' } }])
 		// test get all
 		expect(await store.getAll()).toMatchObject([
-			{ key: "testkey", value: "valuetest" },
-			{ key: "key2", value: "value2" },
-			{ key: "key", value: "valueUpdated" },
-			{ key: "objKey", value: '{"object":"objPropUpdated"}' }
+			{ key: 'testkey', value: 'valuetest' },
+			{ key: 'key2', value: 'value2' },
+			{ key: 'key', value: 'valueUpdated' },
+			{ key: 'objKey', value: '{"object":"objPropUpdated"}' }
 		])
 		await store.clear()
 		// test clear
