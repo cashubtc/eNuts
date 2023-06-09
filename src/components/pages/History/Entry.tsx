@@ -28,7 +28,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			}
 			<View style={styles.infoWrap}>
 				<Text style={globals(color, highlight).txt}>
-					{item.type === 1 ? 'eCash' : 'Lightning'}
+					{item.type === 1 ? 'Ecash' : 'Lightning'}
 				</Text>
 				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY }]}>
 					<EntryTime from={item.timestamp * 1000} fallback='Just now' />
