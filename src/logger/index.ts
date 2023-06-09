@@ -1,5 +1,6 @@
-import { env } from '@src/consts'
-import { isReactotronRunnig } from '@src/services/reactotron'
+import { env } from '@consts'
+
+import { isReactotronRunnig } from './reactotron'
 
 /* function _log(
 	withTime: boolean,
@@ -63,7 +64,10 @@ export function warn(msg: unknown, ...args: unknown[]) {
 	// eslint-disable-next-line no-console
 	console.warn(`[${new Date().toLocaleTimeString()}]`, msg, ...args)
 }
-
+export function err(msg: unknown, ...args: unknown[]) {
+	// eslint-disable-next-line no-console
+	console.error(`[${new Date().toLocaleTimeString()}]`, msg, ...args)
+}
 export function callerInfo(skipOf = 3) {
 	skipOf = skipOf || 3
 	let eStack

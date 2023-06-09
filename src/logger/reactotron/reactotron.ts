@@ -14,6 +14,7 @@
  */
 
 // import { goBack, navigate,resetRoot } from '../../navigators/navigationUtilities'
+import { isReactNativeDevMode } from '@consts'
 import { NativeModules } from 'react-native'
 import { openInEditor, trackGlobalErrors } from 'reactotron-react-native'
 
@@ -44,11 +45,11 @@ declare global {
 
 
 // in dev, we attach Reactotron, in prod we attach a interface-compatible mock.
-if (__DEV__) {
+if (isReactNativeDevMode) {
 	// eslint-disable-next-line no-console
 	console.tron = Reactotron // attach reactotron to `console.tron`
 } else {
-	// attach a mock so if things sneak by our __DEV__ guards, we won't crash.
+	// attach a mock so if things sneak by our isReactNativeDevMode guards, we won't crash.
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-expect-error
 	console.tron = fakeReactotron// eslint-disable-line no-console
@@ -65,7 +66,7 @@ let _reactotronIsSetUp = false
  */
 export function setupReactotron(customConfig: ReactotronConfig = {}) {
 	// only run this in dev... metro bundler will ignore this block: 🎉
-	if (__DEV__) {
+	if (isReactNativeDevMode) {
 		// only setup once.
 		if (_reactotronIsSetUp) { return }
 
@@ -80,6 +81,7 @@ export function setupReactotron(customConfig: ReactotronConfig = {}) {
 
 		// configure reactotron
 		Reactotron.configure({
+			...config,
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-var-requires
 			name: config.name || require('../../../package.json').name,
 			host: config.host,
@@ -96,15 +98,13 @@ export function setupReactotron(customConfig: ReactotronConfig = {}) {
 			.connect()
 
 		_reactotronIsSetUp = true
-		isReactotronRunnig = typeof __DEV__ !== 'undefined' && __DEV__ && _reactotronIsSetUp
+		isReactotronRunnig = isReactNativeDevMode && _reactotronIsSetUp
 		// eslint-disable-next-line no-console
 		console.log(
 			'Reactotron Configured', isReactotronRunnig,
-			typeof __DEV__ !== 'undefined', __DEV__, _reactotronIsSetUp
+			isReactNativeDevMode, _reactotronIsSetUp
 		)
 	}
 }
 
-export let isReactotronRunnig: Readonly<boolean> = typeof __DEV__ !== 'undefined'
-	&& __DEV__
-	&& _reactotronIsSetUp
+export let isReactotronRunnig: Readonly<boolean> = isReactNativeDevMode && _reactotronIsSetUp

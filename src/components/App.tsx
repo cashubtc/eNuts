@@ -3,6 +3,7 @@ import { getEncodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
+import { env } from '@consts'
 import { addAllMintIds, getBalance, getContacts, getMintsBalances, getMintsUrls, getPreferences, initDb, setPreferences } from '@db'
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
@@ -17,7 +18,7 @@ import { KeyboardProvider } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
-import { formatInt, isCashuToken, isTrustedMint, sleep } from '@util'
+import { formatInt, hasTrustedMint, isCashuToken, sleep } from '@util'
 import { initCrashReporting } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -26,6 +27,8 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useRef, useState } from 'react'
 import { AppState, Text, View } from 'react-native'
+
+import { ErrorBoundary } from './ErrorScreen/ErrorBoundary'
 
 initCrashReporting()
 
@@ -75,15 +78,8 @@ const defaultPref: IPreferences = {
 
 void SplashScreen.preventAutoHideAsync()
 
-// Create the error boundary...
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
 
-function ErrorView() {
-	return <View>
-		<Text>Inform users of an error in the component tree.</Text>
-	</View>
-}
+
 
 
 
@@ -126,7 +122,7 @@ function _App(_initialProps?: IInitialProps) {
 			const userMints = await getMintsUrls()
 			// do not claim from clipboard when app comes to the foreground if mint from token is not trusted
 			// TODO token can belong to multiple mints
-			if (!isTrustedMint(userMints, info?.mints || [])) { return false }
+			if (!hasTrustedMint(userMints, info?.mints || [])) { return false }
 			// check if token is spendable
 			const isSpendable = await isTokenSpendable(clipboard)
 			isSpent = !isSpendable
@@ -343,8 +339,23 @@ function _App(_initialProps?: IInitialProps) {
 	)
 }
 export default function App(initialProps: IInitialProps) {
+	if (env.BUGSNAG_API_KEY) {
+		// Create the error boundary...
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+		const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
+		const ErrorView = () => (
+			<View>
+				<Text>Inform users of an error in the component tree.</Text>
+			</View>
+		)
+		return (
+			<ErrorBoundary FallbackComponent={ErrorView}>
+				<_App _initialProps={initialProps} exp={initialProps.exp} />
+			</ErrorBoundary>
+		)
+	}
 	return (
-		<ErrorBoundary FallbackComponent={ErrorView}>
+		<ErrorBoundary catchErrors='always'>
 			<_App _initialProps={initialProps} exp={initialProps.exp} />
 		</ErrorBoundary>
 	)

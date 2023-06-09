@@ -1,6 +1,5 @@
 
 import { getEncodedToken } from '@cashu/cashu-ts'
-
 import {
 	addInvoice,
 	addMint,

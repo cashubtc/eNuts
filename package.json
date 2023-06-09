@@ -24,7 +24,11 @@
 		"web": "expo start --web",
 		"test": "npx jest -c config/jest.config.ts --passWithNoTests ",
 		"test:coverage": "npm run test -- --collectCoverage",
-		"test:dev": "npm run test -- --detectOpenHandles"
+		"test:dev": "npm run test -- --detectOpenHandles",
+		"cpd:ts": "npx -y jscpd -c config/cpd.config.ts.json src config",
+		"cpd:tsx": "npx -y jscpd -c config/cpd.config.tsx.json src",
+		"cpd": "npm run cpd:ts && npm run cpd:tsx",
+		"deps:c": "npx -y madge --circular --ts-config tsconfig.json --extensions ts,tsx ."
 	},
 	"dependencies": {
 		"@bugsnag/expo": "^48.1.0",

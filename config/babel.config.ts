@@ -23,6 +23,7 @@ const fn: ConfigFunction = (api: ConfigAPI): TransformOptions => {
 					'@util': './src/util',
 					'@modal': './src/components/modal',
 					'@store': './src/storage/store',
+					'@consts': './src/consts',
 				},
 				'extensions': [
 					'.js',
