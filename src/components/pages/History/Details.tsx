@@ -23,7 +23,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	const isPayment = entry.amount < 0
 	const isLn = entry.type === 2
 	const LNstr = `Lightning ${isPayment ? 'payment' : 'invoice'}`
-	const eCash = 'eCash payment'
+	const Ecash = 'Ecash payment'
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
 	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : 'No Memo'
 	const copyValue = async () => {
@@ -52,7 +52,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 			<TopNav withBackBtn />
 			<View style={styles.topSection}>
 				<Text style={[globals(color, highlight).txt, styles.info]}>
-					{isLn ? LNstr : eCash}
+					{isLn ? LNstr : Ecash}
 				</Text>
 				<Text style={[styles.amount, { color: entry.amount < 0 ? color.ERROR : mainColors.VALID }]}>
 					{formatInt(entry.amount < 0 ? Math.abs(entry.amount) : entry.amount)}
