@@ -5,7 +5,6 @@ import { globals } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import React, { useContext } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 
 import MyModal from '.'
 
@@ -35,14 +34,12 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 				If you choose "No", the tokens will not be claimed.
 			</Text>
 			<Button txt={loading ? 'Claiming...' : 'Yes'} onPress={handleTrustModal} />
-			<TouchableOpacity
-				style={styles.no}
+			<View style={{ marginVertical: 10 }} />
+			<Button
+				outlined
+				txt='No'
 				onPress={closeModal}
-			>
-				<Text style={globals(color, highlight).pressTxt}>
-					No
-				</Text>
-			</TouchableOpacity>
+			/>
 		</MyModal>
 	)
 }
@@ -54,10 +51,5 @@ const styles = StyleSheet.create({
 	},
 	tokenMintsView: {
 		marginBottom: 20
-	},
-	no: {
-		marginTop: 15,
-		marginBottom: -15,
-		padding: 10,
 	},
 })
