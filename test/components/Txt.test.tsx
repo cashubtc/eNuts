@@ -1,5 +1,5 @@
-import { render } from '@testing-library/react-native'
 import Txt from '@comps/Txt'
+import { render } from '@testing-library/react-native'
 
 describe('Basic test of the Txt.tsx component', () => {
 	it('renders the expected string', () => {

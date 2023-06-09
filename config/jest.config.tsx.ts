@@ -20,7 +20,7 @@ export default (): JestConfigWithTsJest => ({
 				}]
 	},
 	resolver: 'ts-jest-resolver',
-	testRegex: 'test/.*\\.(test|spec)?\\.(ts)$',
+	testRegex: 'test/.*\\.(test|spec)?\\.(tsx)$',
 	// moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 	preset: 'jest-expo',
 	transformIgnorePatterns: [
@@ -36,7 +36,7 @@ export default (): JestConfigWithTsJest => ({
 	},
 	collectCoverage: false,
 	collectCoverageFrom: [
-		'**/src/**/*.ts',
+		'**/src/**/*{.ts,.tsx}',
 		'!**/coverage/**',
 		'!**/report/**',
 		'!**/assets/**',
@@ -62,5 +62,5 @@ export default (): JestConfigWithTsJest => ({
 		//'!**/src/logger/*'
 	],
 	// verbose: true,
-	setupFiles: ['<rootDir>/test/setup.ts'],
+	//setupFiles: ['<rootDir>/test/setup.ts'],
 })
