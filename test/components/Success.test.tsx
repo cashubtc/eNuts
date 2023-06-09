@@ -1,6 +1,6 @@
 import Success from '@comps/Success'
 import { NavigationContainer } from '@react-navigation/native'
-import { fireEvent, render, screen } from '@testing-library/react-native'
+import { render, screen } from '@testing-library/react-native'
 
 // Mock the navigation object
 const mockNavigation = {
