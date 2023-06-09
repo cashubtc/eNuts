@@ -16,7 +16,7 @@ jest.mock('@bugsnag/expo', () => ({}))
 jest.mock('expo-localization', () => ({}))
 jest.mock('reactotron-react-native', () => ({}))
 jest.mock('react-native', () => ({}))
-// jest.mock('@src/consts', () => ({}))
+// jest.mock('@consts', () => ({}))
 jest.mock('expo/config', () => ({}))
 
 /* jest.doMock("@react-native-async-storage/async-storage", () =>

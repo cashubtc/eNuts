@@ -1,4 +1,4 @@
-import { DayInMs, HourInMs, MinuteInMs } from '@src/consts'
+import { DayInMs, HourInMs, MinuteInMs } from '@consts'
 import { useEffect, useState } from 'react'
 
 interface IEntryTimeProps {

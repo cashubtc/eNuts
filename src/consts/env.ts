@@ -1,6 +1,18 @@
 
 import type { IExpoConfig } from '@src/model'
-import Constants from 'expo-constants'
+import Constants, { ExecutionEnvironment } from 'expo-constants'
+
+
+// `true` when running in Expo Go.
+const isExpoDev = Constants.executionEnvironment === ExecutionEnvironment.StoreClient
+// `true` when running in preview/production mode.
+const isExpoProd = Constants.executionEnvironment === ExecutionEnvironment.Standalone
+// True if the app is running in an `expo build` app or if it's running in Expo Go.
+const isExpo = isExpoDev || isExpoProd
+
+const isReactNativeDevMode = typeof __DEV__ === 'boolean' && __DEV__
+
+export { isExpo, isExpoDev, isExpoProd, isReactNativeDevMode }
 
 type AppVariant = 'preview' | 'prod' | 'dev' | undefined
 
@@ -25,7 +37,7 @@ function appVariant(): AppVariant {
 }
 
 const config: Readonly<IExpoConfig | undefined | null> = Constants?.expoConfig
-export const env: Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> = {
+export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> */ = {
 	DEBUG: process.env.DEBUG || config?.extra?.DEBUG,
 
 	NODE_ENV: process.env.NODE_ENV || config?.extra?.NODE_ENV,
@@ -38,5 +50,8 @@ export const env: Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> 
 		|| process.env.BUGSNAG_APIKEY
 		|| config?.extra?.bugsnag?.apiKey,
 
-
+	isExpo,
+	isExpoDev,
+	isExpoProd,
+	isReactNativeDevMode,
 } as const
