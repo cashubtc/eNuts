@@ -23,7 +23,6 @@
 		"ios": "expo start --ios",
 		"web": "expo start --web",
 		"test": "npx jest -c config/jest.config.ts --passWithNoTests ",
-		"testtsx": "npx jest -c config/jest.config.tsx.ts --passWithNoTests ",
 		"test:coverage": "npm run test -- --collectCoverage",
 		"test:dev": "npm run test -- --detectOpenHandles",
 		"cpd:ts": "npx -y jscpd -c config/cpd.config.ts.json src config",

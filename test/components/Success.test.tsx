@@ -1,7 +1,5 @@
 import Success from '@comps/Success'
-import { formatInt } from '@src/util'
-import { render } from '@testing-library/react-native'
-import { Locale } from 'expo-localization'
+import { render, screen } from '@testing-library/react-native'
 // {
 // 	amount: number
 // 	fee?: number
@@ -11,37 +9,27 @@ import { Locale } from 'expo-localization'
 // 	nav?: NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>
 // 	hash?: string
 // }
-// Mock the expo-localization
-jest.mock('expo-localization', () => {
-	return {
-		locale: 'de',
-		getLgetLocales: () => {
-			const arr: Locale[] = []
-			return arr
-		}
-	}
-})
 describe('Basic test of the Success.tsx component', () => {
 	it('renders the success screen for payment from the mint to a LN wallet', () => {
-		const { getByText } = render(
+		render(
 			<Success
 				amount={21}
 				fee={0}
 				mints={['test-mint']}
 			/>
 		)
-		const textElement = getByText('Payment successfull!')
+		const textElement = screen.getByText('Payment successfull!')
 		expect(textElement).toBeDefined()
 	})
 	it('renders the success screen for minting new tokens', () => {
-		const { getByText } = render(
+		render(
 			<Success
 				amount={21}
 				hash='test-hash'
 				mint='test-mint'
 			/>
 		)
-		const textElement = getByText(`${formatInt(21)} Satoshi minted!`)
+		const textElement = screen.getByText('21 Satoshi minted!')
 		expect(textElement).toBeDefined()
 	})
 

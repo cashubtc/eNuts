@@ -1,6 +1,6 @@
 import Balance from '@comps/Balance'
 import { initDb } from '@src/storage/db'
-import { fireEvent,render,screen } from '@testing-library/react-native'
+import { fireEvent, render, screen } from '@testing-library/react-native'
 
 describe('Basic test of the Txt.tsx component', () => {
 	// eslint-disable-next-line no-return-await
