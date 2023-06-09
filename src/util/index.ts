@@ -94,6 +94,7 @@ export function isLnurl(addr: string) {
 	return mintUrl.replaceAll(/[\W]/gi, '')
 } */
 export function isTrustedMint(userMints: string[], tokenMints: string[]): boolean
+export function isTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]): boolean
 export function isTrustedMint(userMints: ({ mintUrl: string } | string)[], tokenMints: string[]) {
 	let mints: string[] = []
 	if (isArr(userMints)) {
