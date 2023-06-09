@@ -25,18 +25,18 @@ export const ThemeContext = createContext<useThemeType>({
 		formatBalance: false,
 		theme: 'Default'
 	},
-	theme: '',
+	theme: 'Light',
 	setTheme: () => l(''),
 	color: {
-		BACKGROUND: '',
-		DRAWER: '',
-		TEXT: '',
-		TEXT_SECONDARY: '',
-		INPUT_BG: '',
-		INPUT_PH: '',
-		BORDER: '',
-		ERROR: ''
+		BACKGROUND: '#FAFAFA',
+		DRAWER: '#FAFAFA',
+		TEXT: '#656565',
+		TEXT_SECONDARY: '#BDBDBD',
+		INPUT_BG: '#F6F6F6',
+		INPUT_PH: '#656565',
+		BORDER: '#E8E8E8',
+		ERROR: '#FF6666'
 	},
-	highlight: '',
+	highlight: '#5DB075',
 	setHighlight: () => l('')
 })

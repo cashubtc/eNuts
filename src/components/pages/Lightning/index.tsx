@@ -26,15 +26,16 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 		const userMints = await getMintsUrls(true)
 		if (!userMints.length) { return }
 		// get mints with custom names
-		setMints(await getCustomMintNames(userMints))
+		const mintsWithName = await getCustomMintNames(userMints)
+		setMints(mintsWithName)
 		if (!userMints.length) { return }
 		// set first selected mint
 		const defaultMint = await getDefaultMint()
 		if (!defaultMint) {
-			setSelectedMint(userMints[0])
+			setSelectedMint(mintsWithName[0])
 			return
 		}
-		for (const mint of userMints) {
+		for (const mint of mintsWithName) {
 			if (mint.mintUrl === defaultMint) {
 				setSelectedMint(mint)
 				break

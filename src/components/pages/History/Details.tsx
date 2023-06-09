@@ -1,9 +1,10 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
 import { CheckmarkIcon, CopyIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { globals, mainColors } from '@styles'
+import { mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
@@ -17,7 +18,7 @@ const initialCopyState = {
 }
 
 export default function DetailsPage({ route }: THistoryEntryPageProps) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)
 	const entry = route.params.entry
 	const isPayment = entry.amount < 0
@@ -51,45 +52,38 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav withBackBtn />
 			<View style={styles.topSection}>
-				<Text style={[globals(color, highlight).txt, styles.info]}>
-					{isLn ? LNstr : Ecash}
-				</Text>
+				<Txt
+					txt={isLn ? LNstr : Ecash}
+					styles={[styles.info]}
+				/>
 				<Text style={[styles.amount, { color: entry.amount < 0 ? color.ERROR : mainColors.VALID }]}>
 					{formatInt(entry.amount < 0 ? Math.abs(entry.amount) : entry.amount)}
 				</Text>
-				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY }]}>
-					Satoshi
-				</Text>
+				<Txt
+					txt='Satoshi'
+					styles={[{ color: color.TEXT_SECONDARY }]}
+				/>
 			</View>
 			{/* Settle Time */}
 			<View style={styles.entryInfo}>
-				<Text style={globals(color, highlight).txt}>
-					Settle Time
-				</Text>
-				<Text style={globals(color, highlight).txt}>
-					{new Date(entry.timestamp * 1000).toLocaleString()}
-				</Text>
+				<Txt txt='Settle Time' />
+				<Txt txt={new Date(entry.timestamp * 1000).toLocaleString()} />
 			</View>
 			<View style={[styles.separator, { borderColor: color.BORDER }]} />
 			{/* Memo */}
 			<View style={styles.entryInfo}>
-				<Text style={globals(color, highlight).txt}>
-					Memo
-				</Text>
-				<Text style={[globals(color, highlight).txt, styles.infoValue]}>
-					{isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : 'No Memo'}
-				</Text>
+				<Txt txt='Memo' />
+				<Txt
+					txt={isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : 'No Memo'}
+					styles={[styles.infoValue]}
+				/>
 			</View>
 			<View style={[styles.separator, { borderColor: color.BORDER }]} />
 			{/* Mints */}
 			{/* TODO update style to fit multiple mints */}
 			<View style={styles.entryInfo}>
-				<Text style={globals(color, highlight).txt}>
-					{isLn ? 'Mint' : 'Mints'}
-				</Text>
-				<Text style={globals(color, highlight).txt}>
-					{entry.mints.map(m => formatMintUrl(m))}
-				</Text>
+				<Txt txt={isLn ? 'Mint' : 'Mints'} />
+				<Txt txt={entry.mints.map(m => formatMintUrl(m)).join(', ')} />
 			</View>
 			<View style={[styles.separator, { borderColor: color.BORDER }]} />
 			{/* cashu token or ln invoice */}
@@ -100,13 +94,12 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 					void copyValue()
 				}}
 			>
-				<Text style={globals(color, highlight).txt}>
-					{isLn ? 'Invoice' : 'Token'}
-				</Text>
+				<Txt txt={isLn ? 'Invoice' : 'Token'} />
 				<View style={styles.copyWrap}>
-					<Text style={[globals(color, highlight).txt, styles.infoValue, entry.value.length > 0 ? styles.mr10 : {}]}>
-						{entry.value.length ? `${entry.value.slice(0, 16)}...` : 'Not available'}
-					</Text>
+					<Txt
+						txt={entry.value.length ? `${entry.value.slice(0, 16)}...` : 'Not available'}
+						styles={[styles.infoValue, entry.value.length > 0 ? styles.mr10 : {}]}
+					/>
 					{entry.value.length > 0 &&
 						<>
 							{copy.value ?
@@ -129,13 +122,12 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 							void copyHash()
 						}}
 					>
-						<Text style={globals(color, highlight).txt}>
-							Payment Hash
-						</Text>
+						<Txt txt='Payment Hash' />
 						<View style={styles.copyWrap}>
-							<Text style={[globals(color, highlight).txt, styles.infoValue, hash.length > 0 ? styles.mr10 : {}]}>
-								{hash.length > 0 ? `${hash.slice(0, 16)}...` : 'Not available'}
-							</Text>
+							<Txt
+								txt={hash.length > 0 ? `${hash.slice(0, 16)}...` : 'Not available'}
+								styles={[styles.infoValue, hash.length > 0 ? styles.mr10 : {}]}
+							/>
 							{hash.length > 0 &&
 								<>
 									{copy.hash ?
@@ -156,17 +148,12 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 							void copyPreimage()
 						}}
 					>
-						<Text style={globals(color, highlight).txt}>
-							Pre-Image
-						</Text>
+						<Txt txt='Pre-Image' />
 						<View style={styles.copyWrap}>
-							<Text style={[
-								globals(color, highlight).txt,
-								styles.infoValue,
-								entry.preImage && entry.preImage.length > 0 ? styles.mr10 : {}
-							]}>
-								{entry.preImage || 'Not available'}
-							</Text>
+							<Txt
+								txt={entry.preImage || 'Not available'}
+								styles={[styles.infoValue, entry.preImage && entry.preImage.length > 0 ? styles.mr10 : {}]}
+							/>
 							{entry.preImage && entry.preImage.length > 0 &&
 								<>
 									{copy.preimage ?
@@ -181,12 +168,8 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 					<View style={[styles.separator, { borderColor: color.BORDER }]} />
 					{/* LN payment fees */}
 					<View style={styles.entryInfo}>
-						<Text style={globals(color, highlight).txt}>
-							Fee
-						</Text>
-						<Text style={globals(color, highlight).txt}>
-							{entry.fee ? `${entry.fee} Satoshi` : 'Not available'}
-						</Text>
+						<Txt txt='Fee' />
+						<Txt txt={entry.fee ? `${entry.fee} Satoshi` : 'Not available'} />
 					</View>
 				</>
 			}

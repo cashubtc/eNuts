@@ -3,10 +3,10 @@ import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
 import { CloseIcon, FlashlightOffIcon, ZapIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
 import { QRType } from '@consts'
 import { addMint, getMintsUrls } from '@db'
 import { l } from '@log'
-import { PromptModal } from '@modal/Prompt'
 import TrustMintModal from '@modal/TrustMint'
 import { IDecodedLNInvoice } from '@model/ln'
 import { TQRScanPageProps } from '@model/nav'
@@ -33,7 +33,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	// LN details modal
 	const [detailsOpen, setDetailsOpen] = useState(false)
 	// prompt modal
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// cashu token
 	const {
@@ -47,9 +47,8 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 
 	const handleCashuToken = async (data: string) => {
 		const info = getTokenInfo(data)
-		l({ data })
 		if (!info) {
-			openPrompt('Token invalid or already claimed')
+			openPromptAutoClose(false, 'Token invalid or already claimed')
 			return
 		}
 		// save token info in state
@@ -71,8 +70,10 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPrompt('Invalid cashu token')
+			openPromptAutoClose(false, 'Invalid cashu token')
 			stopLoading()
+			// close modal
+			setTrustModal(false)
 			return
 		}
 		// TODO only add chosen mints by the user
@@ -87,16 +88,20 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const receiveToken = async (data: string) => {
 		const success = await claimToken(data).catch(l)
 		stopLoading()
+		// close modal
+		setTrustModal(false)
 		if (!success) {
-			openPrompt('Token invalid or already claimed')
+			openPromptAutoClose(false, 'Token invalid or already claimed')
 			return
 		}
 		const info = getTokenInfo(data)
 		// TODO show all mints of token
 		if (!info) {
-			l('Error while getting token info')
+			openPromptAutoClose(false, 'Error while getting token info')
 			return
 		}
+		// success prompt
+		openPromptAutoClose(true, `Claimed ${info?.value} Satoshi from${'\n'}${info?.mints[0]}!${'\n'}Memo: ${info?.decoded.memo}`)
 		// add as history entry
 		await addToHistory({
 			amount: info.value,
@@ -104,14 +109,13 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			value: data,
 			mints: info.mints,
 		})
-		openPrompt(`Claimed ${info?.value} Satoshi from ${info?.mints[0]}! Memo: ${info?.decoded.memo}`)
 	}
 
 	const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {
 		setScanned(true)
 		// early return if barcode is not a QR
 		if (+type !== QRType) {
-			alert('Not a QR code!')
+			openPromptAutoClose(false, 'Not a QR code!')
 			return
 		}
 		// handle cashu token claim
@@ -128,7 +132,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			setDetailsOpen(true)
 		} catch (e) {
 			l(e)
-			alert(`Unknown data: ${data}`)
+			openPromptAutoClose(false, `Unknown data: ${data}`)
 		}
 	}
 
@@ -150,7 +154,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 						style={StyleSheet.absoluteFill}
 						ratio={'16:9'}
 						barCodeScannerSettings={{
-							barCodeTypes: ['256'],
+							barCodeTypes: [`${QRType}`],
 						}}
 						onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
 					/>
@@ -215,13 +219,12 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					nav={{ navigation, route }}
 				/>
 			}
-			<PromptModal
-				hideIcon
-				header={prompt.msg.includes('Claimed') ? 'Success' : prompt.msg}
-				txt={prompt.msg.includes('Claimed') ? prompt.msg : ''}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			{prompt.open &&
+				<Toaster
+					success={prompt.success}
+					txt={prompt.msg}
+				/>
+			}
 		</View>
 	)
 }
@@ -247,7 +250,7 @@ const styles = StyleSheet.create({
 	},
 	scanAgain: {
 		position: 'absolute',
-		bottom: 200,
+		bottom: 150,
 		padding: 20,
 		backgroundColor: '#000',
 		opacity: .5,

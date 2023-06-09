@@ -30,6 +30,7 @@ jobs:
             - run: npm run lint
             - run: npm run build --if-present
             - run: npm run test:coverage
+            # - run: npm run testtsx:coverage
             - name: Upload coverage reports to Codecov
               uses: codecov/codecov-action@v3
               with:

@@ -164,7 +164,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 											</Text>
 										</View>
 										{/* Add mint icon or show balance */}
-										<Text>
+										<View>
 											{isTrustedMint(m.mintUrl) ?
 												<View style={styles.mintBal}>
 													<Text style={[styles.mintAmount, { color: color.TEXT }]}>
@@ -175,7 +175,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 												:
 												<PlusIcon color={color.TEXT} />
 											}
-										</Text>
+										</View>
 									</TouchableOpacity>
 									<View style={{ borderBottomWidth: 1, borderBottomColor: color.BORDER }} />
 								</View>
