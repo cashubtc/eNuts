@@ -81,7 +81,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
 		setTimeLeft(lnDecoded.sections[8].value - timePassed)
 		void (async () => {
-			const userMints = await getMintsUrls()
+			const userMints = await getMintsUrls(true)
 			if (!userMints.length) { return }
 			// get mints with custom names
 			setMints(await getCustomMintNames(userMints))

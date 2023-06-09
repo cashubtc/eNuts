@@ -21,7 +21,7 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 	// initiate user mints
 	useEffect(() => {
 		void (async () => {
-			const userMints = await getMintsUrls()
+			const userMints = await getMintsUrls(true)
 			if (!userMints.length) { return }
 			// get mints with custom names
 			setMints(await getCustomMintNames(userMints))

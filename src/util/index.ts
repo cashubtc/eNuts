@@ -7,7 +7,7 @@ import { Buffer } from 'buffer/'
 import { Linking, Vibration } from 'react-native'
 
 import { getLanguageCode } from './localization'
-import { isBuf, isNum, isStr } from './typeguards'
+import { isArr, isArrayOf, isBuf, isNum, isObj, isStr } from './typeguards'
 
 export {
 	isArr, isArrayOf, isBool, isBuf, isErr, isFunc,
@@ -93,8 +93,17 @@ export function isLnurl(addr: string) {
 /* export function cleanupMintUrl(mintUrl: string) {
 	return mintUrl.replaceAll(/[\W]/gi, '')
 } */
-export function isTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]) {
-	return userMints.some(m => tokenMints.includes(m.mintUrl))
+export function isTrustedMint(userMints: string[], tokenMints: string[]): boolean
+export function isTrustedMint(userMints: ({ mintUrl: string } | string)[], tokenMints: string[]) {
+	let mints: string[] = []
+	if (isArr(userMints)) {
+		const elemGuard = (ele: unknown): ele is { mintUrl: string } => isObj(ele) && 'mintUrl' in ele
+		const checkArr = isArrayOf<{ mintUrl: string }>(elemGuard)
+		if (checkArr(userMints)) {
+			mints = userMints.map(m => m.mintUrl)
+		}
+	} else { mints = userMints }
+	return mints.some(m => tokenMints.includes(m))
 }
 export async function getInvoiceFromLnurl(address: string, amount: number) {
 	try {
