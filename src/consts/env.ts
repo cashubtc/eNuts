@@ -1,12 +1,12 @@
 
-import type { IExpoConfig } from '@src/model'
-import Constants, { ExecutionEnvironment } from 'expo-constants'
+import { IExpoConfig } from '@src/model'
+import { default as Consts, ExecutionEnvironment as ExecEnv } from 'expo-constants'
 
-
+const { executionEnvironment: execEnv } = Consts
 // `true` when running in Expo Go.
-const isExpoDev = Constants.executionEnvironment === ExecutionEnvironment.StoreClient
+const isExpoDev = execEnv && ExecEnv?.StoreClient && execEnv === ExecEnv?.StoreClient
 // `true` when running in preview/production mode.
-const isExpoProd = Constants.executionEnvironment === ExecutionEnvironment.Standalone
+const isExpoProd = execEnv && ExecEnv?.Standalone && execEnv === ExecEnv?.Standalone
 // True if the app is running in an `expo build` app or if it's running in Expo Go.
 const isExpo = isExpoDev || isExpoProd
 
@@ -36,7 +36,7 @@ function appVariant(): AppVariant {
 	if (process.env.APP_VARIANT === 'preview') { return 'preview' }
 }
 
-const config: Readonly<IExpoConfig | undefined | null> = Constants?.expoConfig
+const config: Readonly<IExpoConfig | undefined | null> = Consts?.expoConfig
 export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> */ = {
 	DEBUG: process.env.DEBUG || config?.extra?.DEBUG,
 
