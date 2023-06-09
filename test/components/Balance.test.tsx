@@ -22,7 +22,7 @@ jest.mock('expo-localization', () => {
 		}
 	}
 })
-describe('Basic test of the Txt.tsx component', () => {
+describe('Basic test of the Balance.tsx component', () => {
 	// Clear all mock function calls before each test
 	beforeEach(() => jest.clearAllMocks())
 	// Start tests
