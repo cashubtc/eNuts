@@ -33,9 +33,15 @@ export function formatInt(
 	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard',
 	locale?: string,
 ): string {
-	// eslint-disable-next-line new-cap
-	const numberFormatter = Intl.NumberFormat(locale || getLanguageCode(), { notation })
-	return numberFormatter.format(val)
+	try {
+		const lan = getLanguageCode()
+		// eslint-disable-next-line new-cap
+		const numberFormatter = Intl.NumberFormat(locale || lan, { notation })
+		return numberFormatter.format(val)
+	} catch (e) {
+		l(e)
+		return val.toLocaleString()
+	}
 }
 export function getShortDateStr(date: Date) {
 	return date.toLocaleDateString(getLanguageCode(), {

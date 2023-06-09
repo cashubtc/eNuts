@@ -12,7 +12,7 @@ describe('Basic test of the Txt.tsx component', () => {
 		const textElement = getByText('Hello World!')
 		expect(textElement.props.style[0]).toStrictEqual({
 			fontSize: 16,
-			color: ''
+			color: '#656565'
 		})
 	})
 	it('has an additional specific style applied', () => {
