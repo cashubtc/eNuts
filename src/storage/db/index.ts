@@ -212,11 +212,33 @@ export async function getMints(): Promise<IMint[]> {
 	l('[getMints]', result)
 	return result
 }
-export async function getMintsUrls(): Promise<IMint[]> {
+/**
+ * get all unique mint urls in db 
+ * 
+ *	if asObj is false or undefined, returns array of strings
+
+ * @export
+ * @param {false} [asObj] optional, if false or undefined, returns array of strings
+ * @return {*}  {Promise<string[]>}
+ */
+export async function getMintsUrls(asObj?: false): Promise<string[]>
+/**
+ * get all unique mint urls in db 
+ * 
+ *	if asObj is true, returns array of objects with key mintUrl
+
+ * @deprecated  this overload will be removed in the future
+ *
+ * @export
+ * @param {true} asObj
+ * @return {*}  {Promise<{ mintUrl: string }[]>}
+ */
+export async function getMintsUrls(asObj: true): Promise<{ mintUrl: string }[]>
+export async function getMintsUrls(asObj = false): Promise<(string | { mintUrl: string })[]> {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	const result = await db.all<IMint>('SELECT DISTINCT mintUrl FROM keysetIds', [])
+	const result = await db.all<{ mintUrl: string }>('SELECT DISTINCT mintUrl FROM keysetIds', [])
 	l('Mints', result)
-	return result
+	return asObj ? result : result.map(x => x.mintUrl)
 }
 export async function addMint(mintUrl: string, id = ''): Promise<boolean> {
 	const sql = 'INSERT OR IGNORE INTO keysetIds (id, mintUrl) VALUES (?, ?)'
