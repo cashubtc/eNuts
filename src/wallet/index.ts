@@ -4,6 +4,7 @@ import { l } from '@log'
 
 import { sumProofsValue } from './proofs'
 import { getProofsToUse } from './util'
+import { isCashuToken } from '@src/util'
 
 const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
 const wallets: { [mintUrl: string]: CashuWallet } = {}
@@ -66,6 +67,8 @@ export async function checkFees(mintUrl: string, invoice: string) {
 	return fee
 }
 export async function claimToken(encodedToken: string): Promise<boolean> {
+	encodedToken = isCashuToken(encodedToken) || ''
+	if (!encodedToken?.trim()) { return false }
 	const decoded = getDecodedToken(encodedToken)
 	if (!decoded?.token?.length) { return false }
 	const trustedMints = (await getMints()).map(x => x.mintUrl)
