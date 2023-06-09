@@ -18,7 +18,7 @@ import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
-import { isCashuToken, isTrustedMint } from '@util'
+import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
@@ -94,7 +94,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// check if user wants to trust the token mint
 		const userMints = await getMintsUrls()
 		// TODO update this check for future multiple mints of token
-		if (!isTrustedMint(userMints, tokenInfo.mints)) {
+		if (!hasTrustedMint(userMints, tokenInfo.mints)) {
 			// ask user for permission if token mint is not in his mint list
 			setTrustModal(true)
 			return

@@ -18,7 +18,7 @@ import { KeyboardProvider } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
-import { formatInt, isCashuToken, isTrustedMint, sleep } from '@util'
+import { formatInt, hasTrustedMint, isCashuToken, sleep } from '@util'
 import { initCrashReporting } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -122,7 +122,7 @@ function _App(_initialProps?: IInitialProps) {
 			const userMints = await getMintsUrls()
 			// do not claim from clipboard when app comes to the foreground if mint from token is not trusted
 			// TODO token can belong to multiple mints
-			if (!isTrustedMint(userMints, info?.mints || [])) { return false }
+			if (!hasTrustedMint(userMints, info?.mints || [])) { return false }
 			// check if token is spendable
 			const isSpendable = await isTokenSpendable(clipboard)
 			isSpent = !isSpendable

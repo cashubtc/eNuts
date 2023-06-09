@@ -13,7 +13,7 @@ import { TQRScanPageProps } from '@model/nav'
 import ScannedQRDetails from '@pages/Lightning/scannedQR'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { isCashuToken, isTrustedMint, vib } from '@util'
+import { hasTrustedMint, isCashuToken, vib } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner } from 'expo-barcode-scanner'
@@ -57,7 +57,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// check if user wants to trust the token mint
 		const userMints = await getMintsUrls()
 		// TODO update this check for future multiple mints of token
-		if (!isTrustedMint(userMints, info.mints)) {
+		if (!hasTrustedMint(userMints, info.mints)) {
 			// ask user for permission if token mint is not in his mint list
 			setTrustModal(true)
 			return
