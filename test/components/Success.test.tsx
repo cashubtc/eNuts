@@ -1,15 +1,7 @@
 import Success from '@comps/Success'
 import { NavigationContainer } from '@react-navigation/native'
 import { fireEvent, render, screen } from '@testing-library/react-native'
-// {
-// 	amount: number
-// 	fee?: number
-// 	mints?: string[]
-// 	mint?: string
-// 	memo?: string
-// 	nav?: NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>
-// 	hash?: string
-// }
+
 // Mock the navigation object
 const mockNavigation = {
 	navigate: jest.fn(),
