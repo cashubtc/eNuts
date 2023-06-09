@@ -27,7 +27,8 @@
 		"test:dev": "npm run test -- --detectOpenHandles",
 		"cpd:ts": "npx -y jscpd -c config/cpd.config.ts.json src config",
 		"cpd:tsx": "npx -y jscpd -c config/cpd.config.tsx.json src",
-		"cpd": "npm run cpd:ts && npm run cpd:tsx"
+		"cpd": "npm run cpd:ts && npm run cpd:tsx",
+		"deps:c": "npx -y madge --circular --ts-config tsconfig.json --extensions ts,tsx --baseDir . src"
 	},
 	"dependencies": {
 		"@bugsnag/expo": "^48.1.0",
