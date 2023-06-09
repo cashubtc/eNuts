@@ -6,6 +6,6 @@ build
 .vscode
 coverage
 patches
-test
 babel.config.js
 jest.config.js
+report

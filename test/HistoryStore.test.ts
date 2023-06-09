@@ -4,6 +4,7 @@ import { historyStore } from '@store/HistoryStore'
 
 
 describe('test HistoryStore', () => {
+	// eslint-disable-next-line @typescript-eslint/await-thenable
 	afterAll(async () => { await store.close() })
 	const store = historyStore
 	const entry: IHistoryEntry = {

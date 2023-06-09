@@ -16,11 +16,12 @@ jest.mock('@bugsnag/expo', () => ({}))
 jest.mock('expo-localization', () => ({}))
 jest.mock('reactotron-react-native', () => ({}))
 jest.mock('react-native', () => ({}))
-// jest.mock('@src/consts', () => ({}))
+// jest.mock('@consts', () => ({}))
 jest.mock('expo/config', () => ({}))
 
-/* jest.doMock("@react-native-async-storage/async-storage", () =>
-	require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-) */
+jest.doMock('@react-native-async-storage/async-storage', () =>
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+)
 
 declare global { const __TEST__ = true }

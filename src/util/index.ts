@@ -7,12 +7,9 @@ import { Buffer } from 'buffer/'
 import { Linking, Vibration } from 'react-native'
 
 import { getLanguageCode } from './localization'
-import { isArr, isArrayOf, isBuf, isNum, isObj, isStr } from './typeguards'
+import { isArr, isBuf, isNum, isStr } from './typeguards'
 
-export {
-	isArr, isArrayOf, isBool, isBuf, isErr, isFunc,
-	isNonNullable, isNull, isNum, isObj, isStr, isUndef
-} from './typeguards'
+export * from './typeguards'
 
 export function rndInt(min: number, max: number) { // min and max included
 	return Math.floor(Math.random() * (max - min + 1) + min)
@@ -93,18 +90,11 @@ export function isLnurl(addr: string) {
 /* export function cleanupMintUrl(mintUrl: string) {
 	return mintUrl.replaceAll(/[\W]/gi, '')
 } */
-export function isTrustedMint(userMints: string[], tokenMints: string[]): boolean
-export function isTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]): boolean
-export function isTrustedMint(userMints: ({ mintUrl: string } | string)[], tokenMints: string[]) {
-	let mints: string[] = []
-	if (isArr(userMints)) {
-		const elemGuard = (ele: unknown): ele is { mintUrl: string } => isObj(ele) && 'mintUrl' in ele
-		const checkArr = isArrayOf<{ mintUrl: string }>(elemGuard)
-		if (checkArr(userMints)) {
-			mints = userMints.map(m => m.mintUrl)
-		}
-	} else { mints = userMints }
-	return mints.some(m => tokenMints.includes(m))
+export function hasTrustedMint(userMints: string[], tokenMints: string[]): boolean
+export function hasTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]): boolean
+export function hasTrustedMint(uMints: ({ mintUrl: string } | string)[], tMints: string[]) {
+	if (!uMints?.length || !isArr(uMints) || !tMints?.length || !isArr(tMints)) { return false }
+	return uMints.some(m => tMints.includes(isStr(m) ? m : m.mintUrl))
 }
 export async function getInvoiceFromLnurl(address: string, amount: number) {
 	try {

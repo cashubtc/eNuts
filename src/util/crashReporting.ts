@@ -6,7 +6,8 @@
  */
 // import Bugsnag from "@bugsnag/react-native"
 import Bugsnag from '@bugsnag/expo'
-import { env } from '@src/consts'
+import { env, isReactNativeDevMode } from '@consts'
+import { ErrorInfo } from 'react'
 
 /**
  *  This is where you put your crash reporting service initialization code to call in `./app/app.tsx`
@@ -33,15 +34,15 @@ export enum ErrorType {
 /**
  * Manually report a handled error.
  */
-export function reportCrash(error: Error, type: ErrorType = ErrorType.FATAL) {
-	if (__DEV__) {
+export function reportCrash(error: Error, errInfo: ErrorInfo, type: ErrorType = ErrorType.FATAL) {
+	if (isReactNativeDevMode) {
 		// Log to console and Reactotron in development
 		const message = error.message || 'Unknown'
 		// eslint-disable-next-line no-console
-		console.error(error)
+		console.error(error, errInfo)
 		// eslint-disable-next-line no-console
 		console.log(message, type)
 		// eslint-disable-next-line no-console
-		console?.tron?.log?.(error)
-	} else { Bugsnag.notify(error) }
+		console?.tron?.error?.({ error, errInfo }, error.stack)
+	} else if (env.BUGSNAG_API_KEY) { Bugsnag.notify(error) }
 }
