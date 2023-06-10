@@ -1,6 +1,7 @@
 import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
-import { CheckmarkIcon, CopyIcon } from '@comps/Icons'
+import { CheckmarkIcon, CopyIcon, InfoIcon } from '@comps/Icons'
+import KeysetHint from '@comps/KeysetHint'
 import { getProofsByMintUrl } from '@db'
 import { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -65,6 +66,8 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 						}
 					</TouchableOpacity>
 				</View>
+				{/* Info about latest keyset ids highlighted in green */}
+				<KeysetHint />
 				{/* List header */}
 				<ProofListHeader />
 				{/* Proofs list */}
@@ -95,7 +98,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
-		marginBottom: 20
+		marginBottom: 5
 	},
 	mintUrl: {
 		fontSize: 16,

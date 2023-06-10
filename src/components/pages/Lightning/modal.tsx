@@ -1,6 +1,7 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
 import { IInvoiceState } from '@comps/InvoiceAmount'
+import KeysetHint from '@comps/KeysetHint'
 import QR from '@comps/QR'
 import Success from '@comps/Success'
 import { _mintUrl } from '@consts'
@@ -188,6 +189,8 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 				<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
 					{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
 				</Text>
+				{/* Info about latest keyset ids highlighted in green */}
+				<KeysetHint />
 				<ProofListHeader margin={40} />
 				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 					{lnAmount > 0 &&
