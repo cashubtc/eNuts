@@ -1,6 +1,6 @@
 import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
-import { CheckmarkIcon, CopyIcon, InfoIcon } from '@comps/Icons'
+import { CheckmarkIcon, CopyIcon, InfoIcon, MintBoardIcon } from '@comps/Icons'
 import KeysetHint from '@comps/KeysetHint'
 import { getProofsByMintUrl } from '@db'
 import { TMintProofsPageProps } from '@model/nav'
@@ -43,6 +43,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 				</Text>
 				{/* Mint url */}
 				<View style={styles.subHeader}>
+					<MintBoardIcon width={19} height={19} color={color.TEXT_SECONDARY} />
 					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
 						{formatMintUrl(route.params.mintUrl)}
 					</Text>
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
 	},
 	mintUrl: {
 		fontSize: 16,
-		marginRight: 10,
+		marginHorizontal: 10,
 	},
 	scroll: {
 		marginBottom: 140,

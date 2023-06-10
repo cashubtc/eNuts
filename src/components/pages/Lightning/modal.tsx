@@ -1,5 +1,6 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
+import { MintBoardIcon } from '@comps/Icons'
 import { IInvoiceState } from '@comps/InvoiceAmount'
 import KeysetHint from '@comps/KeysetHint'
 import QR from '@comps/QR'
@@ -176,7 +177,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
 	useEffect(() => {
 		if (!mint?.mintUrl) { return }
-		void (async() => {
+		void (async () => {
 			setMintKeysetId(await getMintActiveKeysetId(mint.mintUrl))
 		})()
 	}, [])
@@ -186,9 +187,12 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 				<Text style={globals(color).header}>
 					Coin selection
 				</Text>
-				<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
-					{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
-				</Text>
+				<View style={styles.activeMint}>
+					<MintBoardIcon width={19} height={19} color={color.TEXT_SECONDARY} />
+					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
+						{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
+					</Text>
+				</View>
 				{/* Info about latest keyset ids highlighted in green */}
 				<KeysetHint />
 				<ProofListHeader margin={40} />
@@ -304,8 +308,7 @@ const styles = StyleSheet.create({
 	},
 	mintUrl: {
 		fontSize: 16,
-		marginRight: 10,
-		marginBottom: 15,
+		marginLeft: 10,
 	},
 	invoiceWrap: {
 		alignItems: 'center',
@@ -361,4 +364,9 @@ const styles = StyleSheet.create({
 		borderWidth: 5,
 		borderColor: '#FFF'
 	},
+	activeMint: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 15,
+	}
 })
