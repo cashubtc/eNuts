@@ -139,6 +139,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			setModal({ ...modal, mint: !hasUserMints })
 			setBalance(await getBalance())
 		})()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
 
 	// handle initial URL passed on by clicking on a cashu link
@@ -148,6 +149,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			// alert(`URL in dashboard useEffect: ${url}`)
 			await handleTokenSubmit(url)
 		})()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
 
 	// get balance after navigating to this page

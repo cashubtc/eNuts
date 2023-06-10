@@ -1,4 +1,3 @@
-import React from 'react'
 import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg'
 
 // SVG ICON SOURCE:

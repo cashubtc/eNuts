@@ -74,7 +74,7 @@ export default function LNInvoiceAmountModal({
 			inputRef.current?.focus()
 			clearTimeout(t)
 		}, 100)
-	}, [lnAmountModal])
+	}, [lnAmountModal, inputRef])
 
 	return (
 		<>

@@ -98,8 +98,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 				}
 			}
 		})()
-
-	}, [])
+	}, [lnDecoded])
 	// update mint balance after picking mint
 	useEffect(() => {
 		void (async () => {

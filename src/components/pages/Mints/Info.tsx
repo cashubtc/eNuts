@@ -27,7 +27,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 			}
 		})()
 		return () => setInfo(undefined)
-	}, [])
+	}, [route.params.mintUrl])
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

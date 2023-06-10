@@ -1,9 +1,9 @@
-import { useContext } from "react"
-import { Text, View } from "react-native"
-import { InfoIcon } from "./Icons"
-import { mainColors } from "@styles"
-import { StyleSheet } from "react-native"
-import { ThemeContext } from "@src/context/Theme"
+import { ThemeContext } from '@src/context/Theme'
+import { mainColors } from '@styles'
+import { useContext } from 'react'
+import { StyleSheet,Text, View  } from 'react-native'
+
+import { InfoIcon } from './Icons'
 
 export default function KeysetHint() {
 	const { color } = useContext(ThemeContext)
@@ -11,7 +11,7 @@ export default function KeysetHint() {
 		<View style={styles.keysetHintWrap}>
 			<InfoIcon width={20} height={20} color={color.TEXT_SECONDARY} />
 			<Text style={[styles.keysetHint, { color: color.TEXT_SECONDARY }]}>
-				Latest keyset ID's are highlighted in <Text style={{ color: mainColors.VALID }}>green</Text>
+				Latest keyset ID&apos;s are highlighted in <Text style={{ color: mainColors.VALID }}>green</Text>
 			</Text>
 		</View>
 	)

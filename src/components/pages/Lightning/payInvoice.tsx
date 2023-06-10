@@ -169,7 +169,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			const proofsDB = (await getProofsByMintUrl(route.params.mint.mintUrl)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
-	}, [])
+	}, [route.params.mint])
 	// set ln info on input change
 	useEffect(() => {
 		// early return if user clears the input field
@@ -200,7 +200,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		} catch (e) {
 			l(e)
 		}
-	}, [input])
+	}, [input, keyboardRef])
 	// LN invoice expiry time
 	useEffect(() => {
 		if (timeLeft < 0) {
@@ -212,6 +212,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		}
 	}, [timeLeft])
 	// Get estimated fees every time the keyboard dissapears and conditions have passed
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => void handleKeyboard(), [isKeyboardOpen])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -223,7 +224,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						Mint balance: {formatInt(route.params.mintBal)} Sat.
 					</Text>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Send bitcoin from "{formatMintUrl(route.params.mint?.mintUrl || '')}" to a lightning wallet.
+						Send bitcoin from &quot;{formatMintUrl(route.params.mint?.mintUrl || '')}&quot; to a lightning wallet.
 					</Text>
 				</View>
 			}
@@ -231,7 +232,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			{isLnurl(input) &&
 				<View style={styles.amountWrap}>
 					<Text style={[styles.payTo, { color: color.TEXT }]}>
-						Select amount for "{input}"
+						Select amount for &quot;{input}&quot;
 					</Text>
 					<TextInput
 						keyboardType='numeric' // Platform.OS === 'android' ? 'number-pad' : 'numeric'

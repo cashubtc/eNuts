@@ -84,7 +84,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 		if (expiry && expiry > 0) {
 			setTimeout(() => setExpiry(timeLeft - 1), 1000)
 		}
-	}, [expiry])
+	}, [expiry, expiryTime])
 	return (
 		<MyModal type='invoiceAmount' animation='fade' visible={visible} success={paid === 'paid' || mintUrl === _mintUrl}>
 			{invoice.decoded && mintUrl !== _mintUrl && (!paid || paid === 'unpaid') ?
@@ -180,7 +180,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 		void (async () => {
 			setMintKeysetId(await getMintActiveKeysetId(mint.mintUrl))
 		})()
-	}, [])
+	}, [mint?.mintUrl])
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
 			<View style={styles.proofContainer}>
