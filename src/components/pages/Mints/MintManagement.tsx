@@ -19,7 +19,7 @@ import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {

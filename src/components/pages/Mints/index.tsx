@@ -16,7 +16,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isUrl } from '@util'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 

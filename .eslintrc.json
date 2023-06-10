@@ -1,5 +1,7 @@
 {
 	"env": {
+		"es6": true,
+		"node": true,
 		"es2021": true,
 		// "react-native/react-native": true,
 		"jest/globals": true
@@ -8,9 +10,24 @@
 		"react": {
 			"pragma": "React",
 			"version": "detect"
+		},
+		"import/parsers": {
+			"@typescript-eslint/parser": [".ts", ".tsx"]
 		} /* ,
 		"import/resolver": {
-			"typescript": {} // this loads <rootdir>/tsconfig.json to ESLint
+			/* "typescript": {
+				"paths": "./tsconfig.json",
+				"alwaysTryTypes": true
+			},
+			// "typescript": {}, // this loads <rootdir>/tsconfig.json to ESLint
+			"node": {
+				"extensions": [
+					".js",
+					".jsx",
+					".ts",
+					".tsx"
+				]
+			}
 		} */
 	},
 	"extends": [
@@ -22,7 +39,13 @@
 		"plugin:json/recommended",
 		// "plugin:import/recommended",
 		"plugin:import/typescript",
-		"plugin:jest/recommended"
+		"plugin:jest/recommended",
+		// "eslint:recommended",
+		"plugin:react/recommended",
+		"plugin:react-hooks/recommended",
+		"plugin:react/jsx-runtime"
+		// "plugin:import/errors",
+		// "plugin:import/warnings"
 	],
 	"overrides": [
 		{
@@ -46,6 +69,8 @@
 		"project": "tsconfig.json"
 	},
 	"plugins": [
+		"react",
+		"react-hooks",
 		"jest",
 		"es5",
 		"html",
@@ -63,6 +88,8 @@
 		"jsdoc"
 	],
 	"rules": {
+		"react/no-unescaped-entities": "warn",
+		"no-dupe-class-members": 0,
 		"simple-import-sort/imports": "warn",
 		"simple-import-sort/exports": "warn",
 		"import/first": "warn",
@@ -198,7 +225,6 @@
 		"no-else-return": "warn",
 		"prefer-const": "warn",
 		"no-console": 1,
-		"no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
 		"indent": ["warn", "tab", { "SwitchCase": 1 }],
 		"linebreak-style": ["warn", "windows"],
 		"quotes": ["warn", "single"],

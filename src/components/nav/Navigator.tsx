@@ -23,7 +23,7 @@ import SuccessPage from '@pages/Success'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { ThemeContext } from '@src/context/Theme'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import CustomDrawer from './CustomDrawer'
