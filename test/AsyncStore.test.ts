@@ -14,7 +14,7 @@ describe('test AsyncStore', () => {
 	})
 	afterEach(() => jest.clearAllMocks())
 
-	test('test AsyncStore getObj', async () => {
+	test('AsyncStore getObj', async () => {
 		const value = await AsyncStore.getObj<typeof VALUE_OBJECT>(KEY)
 		expect(value).toEqual(JSON.parse(VALUE_STRING))
 		expect(AsyncStorage.getItem).toHaveBeenCalledWith(KEY)
@@ -22,7 +22,7 @@ describe('test AsyncStore', () => {
 		expect(await AsyncStore.getObj<typeof VALUE_OBJECT>(KEY)).toBe(null)
 	})
 
-	test('test AsyncStore get', async () => {
+	test('AsyncStore get', async () => {
 		const value = await AsyncStore.get(KEY)
 		expect(value).toEqual(VALUE_STRING)
 		expect(AsyncStorage.getItem).toHaveBeenCalledWith(KEY)
@@ -30,7 +30,7 @@ describe('test AsyncStore', () => {
 		expect(await AsyncStore.get(KEY)).toBe(null)
 	})
 
-	test('test AsyncStore setObj', async () => {
+	test('AsyncStore setObj', async () => {
 		await AsyncStore.setObj(KEY, VALUE_OBJECT)
 		expect(AsyncStorage.setItem).toHaveBeenCalledWith(KEY, VALUE_STRING)
 		// bad case 
@@ -38,37 +38,37 @@ describe('test AsyncStore', () => {
 			.toThrow('Do not know how to serialize a BigInt')
 	})
 
-	test('test AsyncStore set', async () => {
+	test('AsyncStore set', async () => {
 		await AsyncStore.set(KEY, VALUE_STRING)
 		expect(AsyncStorage.setItem).toHaveBeenCalledWith(KEY, VALUE_STRING)
 		// bad case 
 		// await expect(()=>AsyncStore.set(KEY, undefined as unknown as string)).rejects.toThrow()
 	})
 
-	test('test AsyncStore delete', async () => {
+	test('AsyncStore delete', async () => {
 		await AsyncStore.delete(KEY)
 		expect(AsyncStorage.removeItem).toHaveBeenCalledWith(KEY)
 	})
 
-	test('test AsyncStore clear', async () => {
+	test('AsyncStore clear', async () => {
 		await AsyncStore.clear()
 		expect(AsyncStorage.clear).toHaveBeenCalledWith()
 	})
 
-	test('test AsyncStore keys', async () => {
+	test('AsyncStore keys', async () => {
 		await AsyncStore.keys()
 		expect(AsyncStorage.getAllKeys).toHaveBeenCalledWith()
 	})
 
-	test('test AsyncStore getMany', async () => {
+	test('AsyncStore getMany', async () => {
 		await AsyncStore.getMany([])
 		expect(AsyncStorage.multiGet).toHaveBeenCalledWith([])
 	})
-	test('test AsyncStore getManyObj', async () => {
+	test('AsyncStore getManyObj', async () => {
 		await AsyncStore.getManyObj([])
 		expect(AsyncStorage.multiGet).toHaveBeenCalledWith([])
 	})
-	test('test AsyncStore setMany', async () => {
+	test('AsyncStore setMany', async () => {
 		await AsyncStore.setMany([])
 		expect(AsyncStorage.multiSet).toHaveBeenCalledWith([])
 	})

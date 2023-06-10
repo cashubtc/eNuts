@@ -5,7 +5,7 @@ describe('test SimpleKeyValueStore', () => {
 	afterAll(async () => { await store.close() })
 	const store = new SimpleKeyValueStore('store')
 
-	test('test methods', async () => {
+	test('methods', async () => {
 		// set values
 		await store.set('key', 'value')
 		await store.set('testkey', 'valuetest')
@@ -44,7 +44,7 @@ describe('test SimpleKeyValueStore', () => {
 			.toMatchObject([{ key: 'objKey', value: { object: 'objProp' } }])
 		expect(await store.count()).toBe(1)
 		// test special chars
-		expect(await store.set('? : // = \\ \' ´ § ¶ ± « » ° £ ¥ € ® © § ¶ ± « » �', 'value'))
+		expect(await store.set('? : // = \\ \' ´ § ¶ ± « » ° £ ¥ € ® © § ¶ ± « » �', 'value')).toBe(true)
 		expect(await store.count()).toBe(2)
 		expect(await store.get('? : // = \\ \' ´ § ¶ ± « » ° £ ¥ € ® © § ¶ ± « » �')).toBe('value')
 	})

@@ -59,7 +59,7 @@ describe('test db helper', () => {
 	}
 	const token = getEncodedToken(rawToken)
 
-	test('test mint helper', async () => {
+	test('mint helper', async () => {
 		// test hasMints
 		expect(await hasMints()).toBe(false)
 		// test getMints
@@ -75,7 +75,7 @@ describe('test db helper', () => {
 			[{ mintUrl: 'test', id: 'testid' }, ...mints,]
 		)
 	})
-	test('test db Invoice', async () => {
+	test('db Invoice', async () => {
 		// setup vars
 		const time = Math.ceil(Date.now() / 1000) - 60
 		const invoiceTest = { pr: 'pr', hash: 'hash', amount: 100, mintUrl: 'minturl' }
@@ -99,7 +99,7 @@ describe('test db helper', () => {
 		// test getAllInvoices
 		expect(await getAllInvoices()).toStrictEqual([])
 	})
-	test('test db bal', async () => {
+	test('db bal', async () => {
 		expect(await hasMints()).toBe(false)
 		expect(await getBalance()).toBe(0)
 		expect(await addMints(...mints)).toBe(true)

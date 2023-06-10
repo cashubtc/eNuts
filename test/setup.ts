@@ -18,7 +18,7 @@ jest.mock('expo-constants', () => ({}))
 jest.mock('expo-secure-store', () => ({}))
 jest.mock('@bugsnag/expo', () => ({}))
 jest.mock('expo-localization', () => ({
-	locale: 'de',
+	locale: 'en-US',
 	getLgetLocales: () => {
 		const arr: Locale[] = []
 		return arr

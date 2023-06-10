@@ -9,4 +9,3 @@ patches
 babel.config.js
 jest.config.js
 report
-test/components/*
