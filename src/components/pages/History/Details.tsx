@@ -5,7 +5,6 @@ import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { l } from '@src/logger'
 import { mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo } from '@util'
 import { isTokenSpendable } from '@wallet'
@@ -63,10 +62,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	useEffect(() => {
 		if (isLn) { return }
 		void (async () => {
-			l({ entry: entry.value })
-			const test = await isTokenSpendable(entry.value)
-			l({ test })
-			setIsSpent(!test)
+			setIsSpent(!(await isTokenSpendable(entry.value)))
 		})()
 	}, [isLn, entry.value])
 	return (
@@ -126,7 +122,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 							{copy.value ?
 								<CheckmarkIcon width={18} height={20} color={mainColors.VALID} />
 								:
-								<CopyIcon width={18} height={20} color={color.TEXT} />
+								<CopyIcon width={19} height={21} color={color.TEXT} />
 							}
 						</>
 					}
@@ -135,9 +131,9 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 			<View style={[styles.separator, { borderColor: color.BORDER }]} />
 			{/* check is token spendable */}
 			{isPayment && !isLn &&
-				<TouchableOpacity
-					style={styles.entryInfo}
-					onPress={() => void handleCheckSpendable()}
+				<IsSpentContainer
+					isSpent={isSpent}
+					handleCheckSpendable={() => void handleCheckSpendable()}
 				>
 					<Txt txt={`Token ${isSpent ? 'has been spent' : 'is pending...'}`} />
 					{isSpent ?
@@ -148,7 +144,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 							:
 							<BackupIcon width={18} height={18} color={color.TEXT} />
 					}
-				</TouchableOpacity>
+				</IsSpentContainer>
 			}
 			<View style={[styles.separator, { borderColor: color.BORDER }]} />
 			{/* Lightning related */}
@@ -215,6 +211,26 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 			}
 		</View>
 	)
+}
+
+interface IIsSpentContainerProps {
+	isSpent: boolean,
+	handleCheckSpendable: () => void
+	children: React.ReactNode
+}
+
+function IsSpentContainer({ isSpent, handleCheckSpendable, children }: IIsSpentContainerProps) {
+	return isSpent ?
+		<View style={styles.entryInfo}>
+			{children}
+		</View>
+		:
+		<TouchableOpacity
+			style={styles.entryInfo}
+			onPress={() => void handleCheckSpendable()}
+		>
+			{children}
+		</TouchableOpacity>
 }
 
 const styles = StyleSheet.create({
