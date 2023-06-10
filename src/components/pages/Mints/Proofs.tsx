@@ -8,7 +8,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ProofListHeader } from '@pages/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
-import { getMintActiveKeysetId } from '@src/wallet'
+import { getMintCurrentKeySetId } from '@src/wallet'
 import { globals, mainColors } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
@@ -26,7 +26,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 		void (async () => {
 			const [proofs, keysetId] = await Promise.all([
 				getProofsByMintUrl(route.params.mintUrl),
-				getMintActiveKeysetId(route.params.mintUrl)
+				getMintCurrentKeySetId(route.params.mintUrl)
 			])
 			setProofs(proofs)
 			setMintKeysetId(keysetId)

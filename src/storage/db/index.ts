@@ -207,7 +207,7 @@ export async function deleteProofs(proofs: Proof[]): Promise<boolean | undefined
 
 // ################################ Mints ################################
 export async function getMints(): Promise<IMint[]> {
-	// eslint-disable-next-line @typescript-eslint/naming-convention
+
 	const result = await db.all<IMint>('SELECT * FROM keysetIds', [])
 	l('[getMints]', result)
 	return result
@@ -235,7 +235,7 @@ export async function getMintsUrls(asObj?: false): Promise<string[]>
  */
 export async function getMintsUrls(asObj: true): Promise<{ mintUrl: string }[]>
 export async function getMintsUrls(asObj = false): Promise<(string | { mintUrl: string })[]> {
-	// eslint-disable-next-line @typescript-eslint/naming-convention
+
 	const result = await db.all<{ mintUrl: string }>('SELECT DISTINCT mintUrl FROM keysetIds', [])
 	l('Mints', result)
 	return asObj ? result : result.map(x => x.mintUrl)

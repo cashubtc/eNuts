@@ -84,7 +84,7 @@ void SplashScreen.preventAutoHideAsync()
 
 
 function _App(_initialProps?: IInitialProps) {
-	// eslint-disable-next-line @typescript-eslint/naming-convention
+
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
 	const claimData = { claimed, setClaimed }
@@ -175,7 +175,7 @@ function _App(_initialProps?: IInitialProps) {
 		setPref({ ...pref, darkmode: theme === 'Dark' })
 		// update DB
 		void setPreferences({ ...pref, darkmode: theme === 'Dark' })
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [theme])
 	// update highlighting color
 	useEffect(() => {
@@ -184,7 +184,7 @@ function _App(_initialProps?: IInitialProps) {
 		setPref({ ...pref, theme: highlight })
 		// update DB
 		void setPreferences({ ...pref, theme: highlight })
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [highlight])
 
 	useEffect(() => {
