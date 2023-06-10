@@ -1,6 +1,9 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
+import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon } from '@comps/Icons'
+import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon, QRIcon } from '@comps/Icons'
+import MyModal from '@comps/modal'
+import QR from '@comps/QR'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -24,6 +27,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	const [copy, setCopy] = useState(initialCopyState)
 	const [isSpent, setIsSpent] = useState(false)
 	const { loading, startLoading, stopLoading } = useLoading()
+	const [qr, setQr] = useState({ open: false, error: false })
 	const entry = route.params.entry
 	const isPayment = entry.amount < 0
 	const isLn = entry.type === 2
@@ -57,6 +61,9 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 		startLoading()
 		setIsSpent(!(await isTokenSpendable(entry.value)))
 		stopLoading()
+	}
+	const handleQR = () => {
+		setQr({ ...qr, open: true })
 	}
 	// initial check is token spent
 	useEffect(() => {
@@ -207,8 +214,36 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 						<Txt txt='Fee' />
 						<Txt txt={entry.fee ? `${entry.fee} Satoshi` : 'Not available'} />
 					</View>
+					<View style={[styles.separator, { borderColor: color.BORDER }]} />
 				</>
 			}
+			{/* QR code */}
+			<TouchableOpacity
+				style={styles.entryInfo}
+				onPress={handleQR}
+			>
+				<Txt txt='Show QR code' />
+				<QRIcon width={17} height={17} color={color.TEXT} />
+			</TouchableOpacity>
+			<MyModal type='question' visible={qr.open}>
+				{qr.error ?
+					<Txt txt='The amount of data is too big for a QR code.' styles={[{ textAlign: 'center' }]} />
+					:
+					<QR
+						value={entry.value}
+						size={300}
+						onError={() => {
+							setQr({ open: true, error: true })
+						}}
+					/>
+				}
+				<View style={{ marginVertical: 20 }} />
+				<Button
+					outlined
+					txt='OK'
+					onPress={() => setQr({ open: false, error: false })}
+				/>
+			</MyModal>
 		</View>
 	)
 }
