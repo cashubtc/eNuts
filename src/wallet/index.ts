@@ -62,6 +62,7 @@ export async function isTokenSpendable(token: string) {
 export async function checkProofsSpent(mintUrl: string, toCheck: { secret: string }[]) {
 	return (await getWallet(mintUrl)).checkProofsSpent(toCheck)
 }
+// ToDo update @BilligsterUser !!!
 export async function getMintActiveKeysetId(mintUrl: string) {
 	return (await getWallet(mintUrl)).keysetId
 }
