@@ -3,7 +3,7 @@ import { setPreferences } from '@db'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
 import { formatBalance, formatInt, isBool, openUrl } from '@util'
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface IBalanceProps {

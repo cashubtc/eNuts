@@ -3,7 +3,7 @@ import type { ITokenInfo } from '@model'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import MyModal from '.'

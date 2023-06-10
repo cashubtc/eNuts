@@ -62,5 +62,6 @@ export default (): JestConfigWithTsJest => ({
 		//'!**/src/logger/*'
 	],
 	// verbose: true,
+	// setupFilesAfterEnv: [ '<rootDir>/node_modules/react-native-gesture-handler/jestSetup.js'],
 	setupFiles: ['<rootDir>/test/setup.ts'],
 })

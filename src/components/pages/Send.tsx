@@ -4,7 +4,7 @@ import type { TSendTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import LNPageContent from './Lightning/pageContent'

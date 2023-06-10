@@ -13,7 +13,7 @@ import { dark, globals, highlight as hi } from '@styles'
 import { formatExpiry, formatMintUrl, getSelectedAmount, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 

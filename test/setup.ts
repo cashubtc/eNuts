@@ -1,13 +1,14 @@
 // we always make sure 'react-native' gets included first
 // eslint-disable-next-line simple-import-sort/imports
-import * as ReactNative from 'react-native'
+import 'react-native'
 
 import { Locale } from 'expo-localization'
 
 import { getDatabase } from './wrapper/getTestDb'
 
 // libraries to mock
-jest.doMock('react-native', () => ReactNative)
+// jest.mock('react-native', () => jest.requireActual<typeof import('react-native')>('react-native'))
+
 jest.mock('expo-sqlite', () => ({
 	get openDatabase() {
 		return (_: string) => getDatabase(':memory:')
