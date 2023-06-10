@@ -11,7 +11,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
 import { formatExpiry, formatMintUrl, getSelectedAmount, openUrl } from '@util'
-import { requestToken } from '@wallet'
+import { getMintActiveKeysetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -171,6 +171,14 @@ interface ICoinSelectionProps {
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
 	const { color } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
+	const [mintKeysetId, setMintKeysetId] = useState('')
+	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
+	useEffect(() => {
+		if (!mint?.mintUrl) { return }
+		void (async() => {
+			setMintKeysetId(await getMintActiveKeysetId(mint.mintUrl))
+		})()
+	}, [])
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
 			<View style={styles.proofContainer}>
@@ -185,8 +193,9 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 					{lnAmount > 0 &&
 						proofs.map(p => (
 							<CoinSelectionRow
-								proof={p}
 								key={p.secret}
+								proof={p}
+								isLatestKeysetId={mintKeysetId === p.id}
 								setChecked={() => {
 									const proofIdx = proofs.findIndex(proof => proof.secret === p.secret)
 									const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)

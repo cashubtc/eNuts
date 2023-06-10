@@ -7,6 +7,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ProofListHeader } from '@pages/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
+import { getMintActiveKeysetId } from '@src/wallet'
 import { globals, mainColors } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
@@ -17,16 +18,21 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 	const { color } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const [proofs, setProofs] = useState<Proof[]>([])
-
-	// initiate proofs
+	const [mintKeysetId, setMintKeysetId] = useState('')
+	// initiate proofs & get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
 	useEffect(() => {
 		void (async () => {
-			setProofs(await getProofsByMintUrl(route.params.mintUrl))
+			const [proofs, keysetId] = await Promise.all([
+				getProofsByMintUrl(route.params.mintUrl),
+				getMintActiveKeysetId(route.params.mintUrl)
+			])
+			setProofs(proofs)
+			setMintKeysetId(keysetId)
 		})()
 	}, [])
 
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav withBackBtn />
 			<View style={styles.content}>
 				{/* Header */}
@@ -61,7 +67,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 				{/* List header */}
 				<ProofListHeader />
 				{/* Proofs list */}
-				{proofs.map(p => <ProofRow key={p.secret} proof={p} />)}
+				{proofs.map(p => <ProofRow key={p.secret} proof={p} isLatestKeysetId={p.id === mintKeysetId} />)}
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 		</View>
