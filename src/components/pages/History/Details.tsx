@@ -1,13 +1,16 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
-import { CheckmarkIcon, CopyIcon } from '@comps/Icons'
+import useLoading from '@comps/hooks/Loading'
+import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { l } from '@src/logger'
 import { mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo } from '@util'
+import { isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
@@ -20,6 +23,8 @@ const initialCopyState = {
 export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)
+	const [isSpent, setIsSpent] = useState(false)
+	const { loading, startLoading, stopLoading } = useLoading()
 	const entry = route.params.entry
 	const isPayment = entry.amount < 0
 	const isLn = entry.type === 2
@@ -48,6 +53,22 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 			clearTimeout(t)
 		}, 3000)
 	}
+	const handleCheckSpendable = async () => {
+		if (isSpent || loading) { return }
+		startLoading()
+		setIsSpent(!(await isTokenSpendable(entry.value)))
+		stopLoading()
+	}
+	// initial check is token spent
+	useEffect(() => {
+		if (isLn) { return }
+		void (async () => {
+			l({ entry: entry.value })
+			const test = await isTokenSpendable(entry.value)
+			l({ test })
+			setIsSpent(!test)
+		})()
+	}, [isLn, entry.value])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav withBackBtn />
@@ -112,6 +133,25 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 				</View>
 			</TouchableOpacity>
 			<View style={[styles.separator, { borderColor: color.BORDER }]} />
+			{/* check is token spendable */}
+			{isPayment && !isLn &&
+				<TouchableOpacity
+					style={styles.entryInfo}
+					onPress={() => void handleCheckSpendable()}
+				>
+					<Txt txt={`Token ${isSpent ? 'has been spent' : 'is pending...'}`} />
+					{isSpent ?
+						<CheckCircleIcon width={18} height={18} color={mainColors.VALID} />
+						:
+						loading ?
+							<Txt txt='Loading...' />
+							:
+							<BackupIcon width={18} height={18} color={color.TEXT} />
+					}
+				</TouchableOpacity>
+			}
+			<View style={[styles.separator, { borderColor: color.BORDER }]} />
+			{/* Lightning related */}
 			{isLn &&
 				<>
 					{/* LN payment hash */}
