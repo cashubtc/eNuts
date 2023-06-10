@@ -1,4 +1,4 @@
-import React, { ErrorInfo } from 'react'
+import { ErrorInfo } from 'react'
 import { Button, ScrollView, View } from 'react-native'
 
 

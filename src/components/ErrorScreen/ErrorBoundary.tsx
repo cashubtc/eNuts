@@ -1,7 +1,7 @@
 import { isReactNativeDevMode } from '@consts'
 import { err } from '@log'
 import { reportCrash } from '@util/crashReporting'
-import React, { Component, ErrorInfo, ReactNode } from 'react'
+import { Component, ErrorInfo, ReactNode } from 'react'
 
 import { ErrorDetails } from './ErrorDetails'
 

@@ -18,7 +18,7 @@ import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import QRMarker from './Marker'

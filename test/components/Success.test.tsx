@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import Success from '@comps/Success'
-import { NavigationContainer } from '@react-navigation/native'
-import { render, screen } from '@testing-library/react-native'
+import Nav,{ NavigationContainer } from '@react-navigation/native'
+import { fireEvent, render, screen } from '@testing-library/react-native'
 
+const mockedNavigate = jest.fn()
 
-// Mock the NavigationContainer
-jest.doMock('@react-navigation/native', () => ({
-	...NavigationContainer
+jest.mock('@react-navigation/native', () => ({
+	...jest.requireActual<typeof Nav>('@react-navigation/native'),
+	useNavigation: () => ({ navigate: mockedNavigate })
 }))
 
 describe('Basic test of the Success.tsx component', () => {
@@ -51,23 +53,26 @@ describe('Basic test of the Success.tsx component', () => {
 		const memo = screen.getByText('Just a test')
 		expect(memo).toBeDefined()
 	})
-	// eslint-disable-next-line jest/no-commented-out-tests
-	// it('navigates to a specific screen', () => {
-	// 	render(
-	// 		<NavigationContainer>
-	// 			<Success
-	// 				amount={21}
-	// 				mints={['test-mint']}
-	// 				memo='Just a test'
-	// 			/>
-	// 		</NavigationContainer>
-	// 	)
-	// 	const pressElement = screen.getByText('Back to dashboard')
-	// 	fireEvent.press(pressElement)
-	// 	const expectedComponent = screen.getByTestId('dashboard')
-	// 	// Verify if the expected component is rendered
-	// 	expect(expectedComponent).toBeDefined()
-	// 	// Verify if the navigate function was called with the correct screen name
-	// 	expect(mockNavigation.navigate).toHaveBeenCalledWith('dashboard')
-	// })
+	it('navigates to a specific screen', () => {
+		render(
+			<NavigationContainer>
+				<Success
+					amount={21}
+					mints={['test-mint']}
+					memo='Just a test'
+				/>
+			</NavigationContainer>
+		)
+		// Press the button
+		fireEvent.press(screen.getByText('Back to dashboard'))
+
+		// Verify if the navigate function was called
+		expect(mockedNavigate).toHaveBeenCalledTimes(1)
+		// Verify if the navigate function was called with the correct screen name
+		expect(mockedNavigate).toHaveBeenCalledWith('dashboard')
+
+		// const expectedComponent = screen.getByTestId('dashboard')
+		// // Verify if the expected component is rendered
+		// expect(expectedComponent).toBeDefined()
+	})
 })
