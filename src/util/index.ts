@@ -1,4 +1,3 @@
-import Bugsnag from '@bugsnag/expo'
 import { getDecodedLnInvoice, getDecodedToken } from '@cashu/cashu-ts'
 import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
@@ -175,7 +174,4 @@ export function openUrl(url: string) {
 	if (!url?.trim()) { return }
 	return Linking.canOpenURL(url)
 		.then((canOpen) => canOpen && Linking.openURL(url))
-}
-export function reportBug(e: unknown, fallbackMsg: string) {
-	Bugsnag.notify(e instanceof Error ? e : fallbackMsg)
 }
