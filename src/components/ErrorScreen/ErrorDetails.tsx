@@ -17,23 +17,20 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<ScrollView>
-				<Text style={globals(color, highlight).modalHeader}>
-					An error occured!
-				</Text>
-				{/* firendly subtitle */}
-				<Txt txt={props.error.message} />
+			<Text style={globals(color, highlight).modalHeader}>
+				An error occured!
+			</Text>
+			<Txt
+				txt='We are sorry that you encountered this problem. You can help us improve the software by taking a screenshot and creating a short bug report.'
+				styles={[{ textAlign: 'center', marginBottom: 20 }]}
+			/>
+			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+				<Txt txt={props.error.message} styles={[{ color: color.ERROR }]} />
 				<Txt txt={props.errorInfo?.componentStack || 'Error stack not available'} />
 			</ScrollView>
 			<Button
-				txt='Report error'
+				txt='Bug report'
 				onPress={() => void openUrl(repoIssueUrl)}
-			/>
-			<View style={{ marginVertical: 10 }} />
-			<Button
-				outlined
-				txt='Reset'
-				onPress={() => props.onReset()}
 			/>
 		</View>
 	)
@@ -42,5 +39,11 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		paddingHorizontal: 20,
+		paddingBottom: 20,
+		paddingTop: 80,
 	},
+	scroll: {
+		marginBottom: 20,
+	}
 })
