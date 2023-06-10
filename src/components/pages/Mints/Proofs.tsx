@@ -13,6 +13,7 @@ import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
 
 export default function MintProofsPage({ navigation, route }: TMintProofsPageProps) {
 	const { color } = useContext(ThemeContext)
@@ -67,7 +68,9 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 				{/* List header */}
 				<ProofListHeader />
 				{/* Proofs list */}
-				{proofs.map(p => <ProofRow key={p.secret} proof={p} isLatestKeysetId={p.id === mintKeysetId} />)}
+				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+					{proofs.map(p => <ProofRow key={p.secret} proof={p} isLatestKeysetId={p.id === mintKeysetId} />)}
+				</ScrollView>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 		</View>
@@ -97,5 +100,8 @@ const styles = StyleSheet.create({
 	mintUrl: {
 		fontSize: 16,
 		marginRight: 10,
+	},
+	scroll: {
+		marginBottom: 140,
 	},
 })
