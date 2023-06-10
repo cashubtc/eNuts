@@ -91,7 +91,7 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
 			{/* Footer */}
 			<View style={[styles.view, { backgroundColor: color.DRAWER, borderColor: color.BORDER }, styles.marginBottom]}>
 				<Text style={[styles.routeName, { color: color.TEXT }]}>
-					v0.0.1-alpha
+					v0.0.2-alpha
 				</Text>
 			</View>
 		</View>
