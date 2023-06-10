@@ -162,6 +162,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+			test
 			<TopNav nav={{ navigation, route }} />
 			{/* Balance overview */}
 			<Balance balance={balance} />

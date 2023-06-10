@@ -25,7 +25,7 @@ interface IState {
  * - [Documentation and Examples](https://github.com/infinitered/ignite/blob/master/docs/Error-Boundary.md)
  * - [React Error Boundaries](https://reactjs.org/docs/error-boundaries.html)
  */
-export class ErrorBoundary extends Component<IProps, IState> {
+export class CustomErrorBoundary extends Component<IProps, IState> {
 	state = { error: null, errorInfo: null }
 
 	// If an error in a child is encountered, this will run
@@ -58,13 +58,13 @@ export class ErrorBoundary extends Component<IProps, IState> {
 
 	// Render an error UI if there's an error; otherwise, render children
 	render() {
-		return this.isEnabled() && this.state.error
-			? <ErrorDetails
+		return this.isEnabled() && this.state.error ?
+			<ErrorDetails
 				onReset={this.resetError}
 				error={this.state.error}
 				errorInfo={this.state.errorInfo}
 			/>
-			: this.props.children
-
+			:
+			this.props.children
 	}
 }

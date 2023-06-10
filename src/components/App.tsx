@@ -28,47 +28,11 @@ import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useRef, useState } from 'react'
 import { AppState, Text, View } from 'react-native'
 
-import { ErrorBoundary } from './ErrorScreen/ErrorBoundary'
+import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
+import { ErrorDetails } from './ErrorScreen/ErrorDetails'
 import Txt from './Txt'
 
 initCrashReporting()
-
-/* import * as DevMenu from 'expo-dev-menu'
-import { StyleSheet } from 'react-native'
-
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	buttonContainer: {
-		backgroundColor: '#4630eb',
-		borderRadius: 4,
-		padding: 12,
-		marginVertical: 10,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	buttonText: {
-		color: '#ffffff',
-		fontSize: 16,
-	},
-})
-
-function Button({ label, onPress }: {
-	onPress: (event: GestureResponderEvent) => void,
-	label: string
-}){
-	return (
-		<TouchableOpacity style={styles.buttonContainer} onPress={onPress}>
-			<Text style={styles.buttonText}>{label}</Text>
-		</TouchableOpacity>
-	)
-} */
-
 
 const defaultPref: IPreferences = {
 	id: 1,
@@ -79,11 +43,7 @@ const defaultPref: IPreferences = {
 
 void SplashScreen.preventAutoHideAsync()
 
-
-
-
-
-function _App(_initialProps?: IInitialProps) {
+export default function App(_initialProps: IInitialProps) {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
@@ -175,7 +135,7 @@ function _App(_initialProps?: IInitialProps) {
 		setPref({ ...pref, darkmode: theme === 'Dark' })
 		// update DB
 		void setPreferences({ ...pref, darkmode: theme === 'Dark' })
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [theme])
 	// update highlighting color
 	useEffect(() => {
@@ -184,7 +144,7 @@ function _App(_initialProps?: IInitialProps) {
 		setPref({ ...pref, theme: highlight })
 		// update DB
 		void setPreferences({ ...pref, theme: highlight })
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [highlight])
 
 	useEffect(() => {
@@ -213,7 +173,6 @@ function _App(_initialProps?: IInitialProps) {
 				setPref(defaultPref)
 			} finally {
 				await SplashScreen.hideAsync()
-				setIsRdy(true)
 			}
 		}
 		async function initContacts() {
@@ -241,6 +200,7 @@ function _App(_initialProps?: IInitialProps) {
 			if (mintBalsTotal !== bal) {
 				await addAllMintIds()
 			}
+			setIsRdy(true)
 		}
 		void init().then(fsInfo)
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -263,103 +223,73 @@ function _App(_initialProps?: IInitialProps) {
 
 	if (!isRdy) { return null }
 
-	return (
-		<ThemeContext.Provider value={themeData}>
-			<FocusClaimCtx.Provider value={claimData}>
-				<ContactsContext.Provider value={contactData}>
-					<KeyboardProvider>
-						<NavigationContainer theme={theme === 'Light' ? light : dark}>
-							<DrawerNav />
-							<StatusBar style="auto" />
-							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-							{claimOpen &&
-								<MyModal type='question' visible>
-									<Text style={globals(color, highlight).modalHeader}>
-										Found a cashu token in your clipboard
-									</Text>
-									<Text style={globals(color, highlight).modalTxt}>
-										Memo: {tokenInfo?.decoded.memo}{'\n'}
-										<Txt
-											txt={formatInt(tokenInfo?.value || 0)}
-											styles={[{ fontWeight: '500' }]}
-										/>
-										{' '}Satoshi from the following mint:{' '}
-										{tokenInfo?.mints.join(', ')}
-									</Text>
-									<Button
-										txt={loading ? 'Claiming...' : 'Claim now!'}
-										onPress={() => void handleRedeem()}
-									/>
-									<View style={{ marginVertical: 10 }} />
-									<Button
-										txt='Cancel'
-										outlined
-										onPress={() => setClaimOpen(false)}
-									/>
-								</MyModal>
-							}
-							<PromptModal
-								hideIcon
-								header={prompt.msg}
-								visible={prompt.open}
-								close={closePrompt}
-							/>
-							{/* {env.NODE_ENV === 'development' &&
-							<View style={{ height: 100 }} >
-								<Text>Current state is: {appStateVisible}</Text>
-								<Text>
-									{initialProps.mode} {
-										process?.env
-											? Object.entries(process.env)
-												.map(e => e.join('='))
-												.join('\n')
-											: 'no env'
-									}
-								</Text>
-								<Text>
-									env obj
-									{
-										env
-											? Object.entries(env)
-												.map(e => e.join('='))
-												.join('\n')
-											: 'no env2'
-									}</Text>
-							</View>} */}
-
-							{/* <Button
-							label="Open Dev Menu"
-							onPress={() => {
-								DevMenu.openMenu()
-							}}
-						/> */}
-
-						</NavigationContainer>
-					</KeyboardProvider>
-				</ContactsContext.Provider>
-			</FocusClaimCtx.Provider>
-		</ThemeContext.Provider>
-	)
-}
-export default function App(initialProps: IInitialProps) {
-	if (env.BUGSNAG_API_KEY) {
-		// Create the error boundary...
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-		const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
-		const ErrorView = () => (
-			<View>
-				<Text>Inform users of an error in the component tree.</Text>
-			</View>
-		)
+	// Bugsnag Error boundary. docs: https://docs.bugsnag.com/platforms/javascript/react/
+	const BugSnagErrorBoundary = ({ children }: { children: React.ReactNode }) => {
+		if (env.BUGSNAG_API_KEY) {
+			// Create the error boundary...
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+			const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
+			// Uses the bugsnack error boundary component which posts the errors to our bugsnag account
+			return (
+				<ErrorBoundary FallbackComponent={ErrorDetails}>
+					{children}
+				</ErrorBoundary>
+			)
+		}
 		return (
-			<ErrorBoundary FallbackComponent={ErrorView}>
-				<_App _initialProps={initialProps} exp={initialProps.exp} />
-			</ErrorBoundary>
+			<CustomErrorBoundary catchErrors='always'>
+				{children}
+			</CustomErrorBoundary>
 		)
 	}
+
 	return (
-		<ErrorBoundary catchErrors='always'>
-			<_App _initialProps={initialProps} exp={initialProps.exp} />
-		</ErrorBoundary>
+		<ThemeContext.Provider value={themeData}>
+			<BugSnagErrorBoundary>
+				<FocusClaimCtx.Provider value={claimData}>
+					<ContactsContext.Provider value={contactData}>
+						<KeyboardProvider>
+							<NavigationContainer theme={theme === 'Light' ? light : dark}>
+								<DrawerNav />
+								<StatusBar style="auto" />
+								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
+								{claimOpen &&
+									<MyModal type='question' visible>
+										<Text style={globals(color, highlight).modalHeader}>
+											Found a cashu token in your clipboard
+										</Text>
+										<Text style={globals(color, highlight).modalTxt}>
+											Memo: {tokenInfo?.decoded.memo}{'\n'}
+											<Txt
+												txt={formatInt(tokenInfo?.value || 0)}
+												styles={[{ fontWeight: '500' }]}
+											/>
+											{' '}Satoshi from the following mint:{' '}
+											{tokenInfo?.mints.join(', ')}
+										</Text>
+										<Button
+											txt={loading ? 'Claiming...' : 'Claim now!'}
+											onPress={() => void handleRedeem()}
+										/>
+										<View style={{ marginVertical: 10 }} />
+										<Button
+											txt='Cancel'
+											outlined
+											onPress={() => setClaimOpen(false)}
+										/>
+									</MyModal>
+								}
+								<PromptModal
+									hideIcon
+									header={prompt.msg}
+									visible={prompt.open}
+									close={closePrompt}
+								/>
+							</NavigationContainer>
+						</KeyboardProvider>
+					</ContactsContext.Provider>
+				</FocusClaimCtx.Provider>
+			</BugSnagErrorBoundary>
+		</ThemeContext.Provider>
 	)
 }

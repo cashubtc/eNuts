@@ -1,4 +1,5 @@
 import { ExclamationIcon, SwapCurrencyIcon } from '@comps/Icons'
+import { repoIssueUrl } from '@consts/urls'
 import { setPreferences } from '@db'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
@@ -50,7 +51,7 @@ export default function Balance({ balance }: IBalanceProps) {
 				</Text>
 				<TouchableOpacity
 					style={styles.submitIssue}
-					onPress={() => void openUrl('https://github.com/cashubtc/eNuts/issues/new')}
+					onPress={() => void openUrl(repoIssueUrl)}
 				>
 					<Text style={styles.issue}>
 						Submit issue on Github

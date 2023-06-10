@@ -1,6 +1,11 @@
-import { ErrorInfo } from 'react'
-import { Button, ScrollView, View } from 'react-native'
-
+import Button from '@comps/Button'
+import Txt from '@comps/Txt'
+import { repoIssueUrl } from '@consts/urls'
+import { ThemeContext } from '@src/context/Theme'
+import { globals } from '@styles'
+import { openUrl } from '@util'
+import { ErrorInfo, useContext } from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export interface ErrorDetailsProps {
 	error: Error
@@ -9,35 +14,33 @@ export interface ErrorDetailsProps {
 }
 
 export function ErrorDetails(props: ErrorDetailsProps) {
-	{/* <Screen
-			preset="fixed"
-			safeAreaEdges={['top', 'bottom']}
-			contentContainerStyle={$contentContainer}
-		> */}
+	const { color, highlight } = useContext(ThemeContext)
 	return (
-		<>
-			<View>
-				{/* 		<Icon icon="ladybug" size={64} />
-				<Text style={$heading} preset="subheading" tx="errorScreen.title" />
-				<Text tx="errorScreen.friendlySubtitle" /> */}
-			</View>
-
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<ScrollView>
-				{/* 	<Text style={$errorContent} weight="bold" text={`${props.error}`.trim()} />
-				<Text
-					selectable
-					style={$errorBacktrace}
-					text={`${props.errorInfo.componentStack}`.trim()}
-				/> */}
+				<Text style={globals(color, highlight).modalHeader}>
+					An error occured!
+				</Text>
+				{/* firendly subtitle */}
+				<Txt txt={props.error.message} />
+				<Txt txt={props.errorInfo?.componentStack || 'Error stack not available'} />
 			</ScrollView>
-
 			<Button
-				// preset="reversed"
-				// style={$resetButton}
-				onPress={() => props.onReset()}
-				title="errorScreen.reset"
+				txt='Report error'
+				onPress={() => void openUrl(repoIssueUrl)}
 			/>
-		</>
+			<View style={{ marginVertical: 10 }} />
+			<Button
+				outlined
+				txt='Reset'
+				onPress={() => props.onReset()}
+			/>
+		</View>
 	)
 }
 
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
+})
