@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Txt from '@comps/Txt'
 import { render, screen } from '@testing-library/react-native'
 

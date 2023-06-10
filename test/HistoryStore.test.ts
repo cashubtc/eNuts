@@ -16,7 +16,7 @@ describe('test HistoryStore', () => {
 		// keysetIds: [],
 		// memo: '',
 	}
-	test('test methods', async () => {
+	test('methods', async () => {
 		// test entry count
 		expect(store.entryCount).toBe(0)
 		// set values
