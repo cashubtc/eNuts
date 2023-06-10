@@ -97,6 +97,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		if (!hasTrustedMint(userMints, tokenInfo.mints)) {
 			// ask user for permission if token mint is not in his mint list
 			setTrustModal(true)
+			stopLoading()
 			return
 		}
 		await receiveToken(url)
@@ -214,14 +215,16 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{modal.receiveOpts &&
 				<OptsModal
 					visible={modal.receiveOpts}
-					button1Txt='Paste & redeem Ecash'
+					button1Txt={loading ? 'claiming...' : 'Paste & redeem Ecash'}
 					onPressFirstBtn={() => {
 						if (token.length) { return }
 						void (async () => {
+							startLoading()
 							const clipboard = await Clipboard.getStringAsync()
 							if (!isCashuToken(clipboard)) {
 								openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
 								setModal({ ...modal, receiveOpts: false })
+								stopLoading()
 								return
 							}
 							setToken(clipboard)

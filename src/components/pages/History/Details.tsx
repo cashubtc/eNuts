@@ -1,13 +1,18 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
-import { CheckmarkIcon, CopyIcon } from '@comps/Icons'
+import Button from '@comps/Button'
+import useLoading from '@comps/hooks/Loading'
+import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon, QRIcon } from '@comps/Icons'
+import MyModal from '@comps/modal'
+import QR from '@comps/QR'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo } from '@util'
+import { isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
@@ -20,6 +25,9 @@ const initialCopyState = {
 export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)
+	const [isSpent, setIsSpent] = useState(false)
+	const { loading, startLoading, stopLoading } = useLoading()
+	const [qr, setQr] = useState({ open: false, error: false })
 	const entry = route.params.entry
 	const isPayment = entry.amount < 0
 	const isLn = entry.type === 2
@@ -48,6 +56,22 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 			clearTimeout(t)
 		}, 3000)
 	}
+	const handleCheckSpendable = async () => {
+		if (isSpent || loading) { return }
+		startLoading()
+		setIsSpent(!(await isTokenSpendable(entry.value)))
+		stopLoading()
+	}
+	const handleQR = () => {
+		setQr({ ...qr, open: true })
+	}
+	// initial check is token spent
+	useEffect(() => {
+		if (isLn) { return }
+		void (async () => {
+			setIsSpent(!(await isTokenSpendable(entry.value)))
+		})()
+	}, [isLn, entry.value])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav withBackBtn />
@@ -105,13 +129,32 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 							{copy.value ?
 								<CheckmarkIcon width={18} height={20} color={mainColors.VALID} />
 								:
-								<CopyIcon width={18} height={20} color={color.TEXT} />
+								<CopyIcon width={19} height={21} color={color.TEXT} />
 							}
 						</>
 					}
 				</View>
 			</TouchableOpacity>
 			<View style={[styles.separator, { borderColor: color.BORDER }]} />
+			{/* check is token spendable */}
+			{isPayment && !isLn &&
+				<IsSpentContainer
+					isSpent={isSpent}
+					handleCheckSpendable={() => void handleCheckSpendable()}
+				>
+					<Txt txt={`Token ${isSpent ? 'has been spent' : 'is pending...'}`} />
+					{isSpent ?
+						<CheckCircleIcon width={18} height={18} color={mainColors.VALID} />
+						:
+						loading ?
+							<Txt txt='Loading...' />
+							:
+							<BackupIcon width={18} height={18} color={color.TEXT} />
+					}
+				</IsSpentContainer>
+			}
+			<View style={[styles.separator, { borderColor: color.BORDER }]} />
+			{/* Lightning related */}
 			{isLn &&
 				<>
 					{/* LN payment hash */}
@@ -171,10 +214,58 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 						<Txt txt='Fee' />
 						<Txt txt={entry.fee ? `${entry.fee} Satoshi` : 'Not available'} />
 					</View>
+					<View style={[styles.separator, { borderColor: color.BORDER }]} />
 				</>
 			}
+			{/* QR code */}
+			<TouchableOpacity
+				style={styles.entryInfo}
+				onPress={handleQR}
+			>
+				<Txt txt='Show QR code' />
+				<QRIcon width={17} height={17} color={color.TEXT} />
+			</TouchableOpacity>
+			<MyModal type='question' visible={qr.open}>
+				{qr.error ?
+					<Txt txt='The amount of data is too big for a QR code.' styles={[{ textAlign: 'center' }]} />
+					:
+					<QR
+						value={entry.value}
+						size={300}
+						onError={() => {
+							setQr({ open: true, error: true })
+						}}
+					/>
+				}
+				<View style={{ marginVertical: 20 }} />
+				<Button
+					outlined
+					txt='OK'
+					onPress={() => setQr({ open: false, error: false })}
+				/>
+			</MyModal>
 		</View>
 	)
+}
+
+interface IIsSpentContainerProps {
+	isSpent: boolean,
+	handleCheckSpendable: () => void
+	children: React.ReactNode
+}
+
+function IsSpentContainer({ isSpent, handleCheckSpendable, children }: IIsSpentContainerProps) {
+	return isSpent ?
+		<View style={styles.entryInfo}>
+			{children}
+		</View>
+		:
+		<TouchableOpacity
+			style={styles.entryInfo}
+			onPress={() => void handleCheckSpendable()}
+		>
+			{children}
+		</TouchableOpacity>
 }
 
 const styles = StyleSheet.create({
