@@ -11,7 +11,6 @@ const isExpoProd = execEnv && ExecEnv?.Standalone && execEnv === ExecEnv?.Standa
 const isExpo = isExpoDev || isExpoProd
 
 const isReactNativeDevMode = typeof __DEV__ === 'boolean' && __DEV__
-
 export { isExpo, isExpoDev, isExpoProd, isReactNativeDevMode }
 
 type AppVariant = 'preview' | 'prod' | 'dev' | undefined
@@ -55,3 +54,14 @@ export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string 
 	isExpoProd,
 	isReactNativeDevMode,
 } as const
+
+
+export const isTestMode = (typeof __TEST__ === 'boolean' && __TEST__)
+	|| (typeof jest !== 'undefined' && jest.isMockFunction(jest))
+	|| (env?.NODE_ENV_SHORT === 'test' || env?.NODE_ENV === 'test')
+	|| (env?.APP_VARIANT === 'test' || env?.NODE_ENV === 'test')
+	|| (env?.NODE_ENV === 'test' && env?.NODE_ENV_SHORT === 'test')
+	|| process.env.NODE_ENV === 'test' || config?.extra?.NODE_ENV === 'test'
+
+
+

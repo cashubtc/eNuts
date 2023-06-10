@@ -1,4 +1,4 @@
-import { env } from '@consts'
+import { env, isTestMode } from '@consts'
 
 import { isReactotronRunnig } from './reactotron'
 
@@ -17,7 +17,14 @@ import { isReactotronRunnig } from './reactotron'
 	console.log(prefix, msg, ...optionalParams)
 } */
 export function l(msg?: unknown, ...optionalParams: unknown[]) {
-	if (env.NODE_ENV === 'production') { return }
+	if (
+		env?.NODE_ENV_SHORT === 'test' || env?.NODE_ENV === 'test'
+		|| env?.NODE_ENV_SHORT === 'prod' || env?.NODE_ENV === 'prod'
+		|| env?.NODE_ENV === 'production' || env.NODE_ENV === 'production'
+		|| isTestMode
+	) {
+		return
+	}
 	if (env.DEBUG === 'full') { return debug(msg, ...optionalParams) }
 	let fnName = callerInfo()?.name
 	if (!fnName || fnName === '?anon_0_') { fnName = '' }

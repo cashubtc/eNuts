@@ -13,7 +13,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
 import { formatExpiry, formatMintUrl, getSelectedAmount, openUrl } from '@util'
-import { getMintActiveKeysetId, requestToken } from '@wallet'
+import { getMintCurrentKeySetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -178,7 +178,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	useEffect(() => {
 		if (!mint?.mintUrl) { return }
 		void (async () => {
-			setMintKeysetId(await getMintActiveKeysetId(mint.mintUrl))
+			setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
 		})()
 	}, [mint?.mintUrl])
 	return (
