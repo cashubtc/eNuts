@@ -1,6 +1,11 @@
-import { ErrorInfo } from 'react'
-import { Button, ScrollView, View } from 'react-native'
-
+import Button from '@comps/Button'
+import Txt from '@comps/Txt'
+import { repoIssueUrl } from '@consts/urls'
+import { ThemeContext } from '@src/context/Theme'
+import { globals } from '@styles'
+import { openUrl } from '@util'
+import { ErrorInfo, useContext } from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export interface ErrorDetailsProps {
 	error: Error
@@ -9,35 +14,36 @@ export interface ErrorDetailsProps {
 }
 
 export function ErrorDetails(props: ErrorDetailsProps) {
-	{/* <Screen
-			preset="fixed"
-			safeAreaEdges={['top', 'bottom']}
-			contentContainerStyle={$contentContainer}
-		> */}
+	const { color, highlight } = useContext(ThemeContext)
 	return (
-		<>
-			<View>
-				{/* 		<Icon icon="ladybug" size={64} />
-				<Text style={$heading} preset="subheading" tx="errorScreen.title" />
-				<Text tx="errorScreen.friendlySubtitle" /> */}
-			</View>
-
-			<ScrollView>
-				{/* 	<Text style={$errorContent} weight="bold" text={`${props.error}`.trim()} />
-				<Text
-					selectable
-					style={$errorBacktrace}
-					text={`${props.errorInfo.componentStack}`.trim()}
-				/> */}
-			</ScrollView>
-
-			<Button
-				// preset="reversed"
-				// style={$resetButton}
-				onPress={() => props.onReset()}
-				title="errorScreen.reset"
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+			<Text style={globals(color, highlight).modalHeader}>
+				An error occured!
+			</Text>
+			<Txt
+				txt='We are sorry that you encountered this problem. You can help us improve the software by taking a screenshot and creating a short bug report.'
+				styles={[{ textAlign: 'center', marginBottom: 20 }]}
 			/>
-		</>
+			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+				<Txt txt={props.error.message} styles={[{ color: color.ERROR }]} />
+				<Txt txt={props.errorInfo?.componentStack || 'Error stack not available'} />
+			</ScrollView>
+			<Button
+				txt='Bug report'
+				onPress={() => void openUrl(repoIssueUrl)}
+			/>
+		</View>
 	)
 }
 
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		paddingHorizontal: 20,
+		paddingBottom: 20,
+		paddingTop: 80,
+	},
+	scroll: {
+		marginBottom: 20,
+	}
+})

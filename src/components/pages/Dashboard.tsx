@@ -214,7 +214,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{modal.receiveOpts &&
 				<OptsModal
 					visible={modal.receiveOpts}
-					button1Txt='Paste & redeem ecash'
+					button1Txt='Paste & redeem Ecash'
 					onPressFirstBtn={() => {
 						if (token.length) { return }
 						void (async () => {
@@ -240,7 +240,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{modal.sendOpts &&
 				<OptsModal
 					visible={modal.sendOpts}
-					button1Txt='Send ecash'
+					button1Txt='Send Ecash'
 					onPressFirstBtn={() => {
 						navigation.navigate('send')
 						setModal({ ...modal, sendOpts: false })
