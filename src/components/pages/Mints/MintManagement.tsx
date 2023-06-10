@@ -47,9 +47,9 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	useEffect(() => {
 		void (async () => {
 			const defaultM = await getDefaultMint()
-			setIsDefault(defaultM === route.params.mint?.mintUrl)
+			setIsDefault(defaultM === route.params.mint.mintUrl)
 		})()
-	}, [])
+	}, [route.params.mint.mintUrl])
 
 	const handleMintName = async () => {
 		await _setMintName(route.params.mint?.mintUrl, mintName)

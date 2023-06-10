@@ -99,7 +99,7 @@ export default function LNPageContent({
 			const proofsDB = (await getProofsByMintUrl(selectedMint.mintUrl)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
-	}, [selectedMint])
+	}, [selectedMint, isSendingToken])
 	return (
 		<>
 			<View style={styles.pickerWrap}>

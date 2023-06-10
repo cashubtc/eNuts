@@ -44,7 +44,7 @@ export default function Success({ amount, fee, mints, mint, memo, nav, hash }: I
 				setTestMintTokenRdy(true)
 			})()
 		}
-	}, [])
+	}, [amount, hash, mint])
 	return (
 		<>
 			<View style={styles.imgWrap}>

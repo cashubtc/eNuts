@@ -31,7 +31,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 				{tokenInfo?.mints.map(m => <Text style={[styles.mintPrompt, { color: color.TEXT_SECONDARY, }]} key={m}>{formatMintUrl(m)}</Text>)}
 			</View>
 			<Text style={globals(color, highlight).modalTxt}>
-				If you choose "No", the tokens will not be claimed.
+				If you choose &quot;No&quot;, the tokens will not be claimed.
 			</Text>
 			<Button txt={loading ? 'Claiming...' : 'Yes'} onPress={handleTrustModal} />
 			<View style={{ marginVertical: 10 }} />

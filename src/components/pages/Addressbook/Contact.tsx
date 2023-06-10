@@ -54,6 +54,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			name: route.params.contact?.name,
 			ln: route.params.contact?.ln
 		})
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [openEdit])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

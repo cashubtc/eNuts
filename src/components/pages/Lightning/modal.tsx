@@ -1,6 +1,8 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
+import { MintBoardIcon } from '@comps/Icons'
 import { IInvoiceState } from '@comps/InvoiceAmount'
+import KeysetHint from '@comps/KeysetHint'
 import QR from '@comps/QR'
 import Success from '@comps/Success'
 import { _mintUrl } from '@consts'
@@ -11,7 +13,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
 import { formatExpiry, formatMintUrl, getSelectedAmount, openUrl } from '@util'
-import { requestToken } from '@wallet'
+import { getMintActiveKeysetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -82,7 +84,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 		if (expiry && expiry > 0) {
 			setTimeout(() => setExpiry(timeLeft - 1), 1000)
 		}
-	}, [expiry])
+	}, [expiry, expiryTime])
 	return (
 		<MyModal type='invoiceAmount' animation='fade' visible={visible} success={paid === 'paid' || mintUrl === _mintUrl}>
 			{invoice.decoded && mintUrl !== _mintUrl && (!paid || paid === 'unpaid') ?
@@ -171,22 +173,36 @@ interface ICoinSelectionProps {
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
 	const { color } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
+	const [mintKeysetId, setMintKeysetId] = useState('')
+	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
+	useEffect(() => {
+		if (!mint?.mintUrl) { return }
+		void (async () => {
+			setMintKeysetId(await getMintActiveKeysetId(mint.mintUrl))
+		})()
+	}, [mint?.mintUrl])
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
 			<View style={styles.proofContainer}>
 				<Text style={globals(color).header}>
 					Coin selection
 				</Text>
-				<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
-					{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
-				</Text>
+				<View style={styles.activeMint}>
+					<MintBoardIcon width={19} height={19} color={color.TEXT_SECONDARY} />
+					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
+						{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
+					</Text>
+				</View>
+				{/* Info about latest keyset ids highlighted in green */}
+				<KeysetHint />
 				<ProofListHeader margin={40} />
 				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 					{lnAmount > 0 &&
 						proofs.map(p => (
 							<CoinSelectionRow
-								proof={p}
 								key={p.secret}
+								proof={p}
+								isLatestKeysetId={mintKeysetId === p.id}
 								setChecked={() => {
 									const proofIdx = proofs.findIndex(proof => proof.secret === p.secret)
 									const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
@@ -292,8 +308,7 @@ const styles = StyleSheet.create({
 	},
 	mintUrl: {
 		fontSize: 16,
-		marginRight: 10,
-		marginBottom: 15,
+		marginLeft: 10,
 	},
 	invoiceWrap: {
 		alignItems: 'center',
@@ -349,4 +364,9 @@ const styles = StyleSheet.create({
 		borderWidth: 5,
 		borderColor: '#FFF'
 	},
+	activeMint: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 15,
+	}
 })

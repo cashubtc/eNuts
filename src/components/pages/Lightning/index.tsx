@@ -19,7 +19,7 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 	const [mints, setMints] = useState<IMintUrl[]>([])
 	// mint selection
 	const [selectedMint, setSelectedMint] = useState<IMintUrl>()
-	const setSelectedMintCB = useCallback((url: IMintUrl) => setSelectedMint(url), [selectedMint])
+	const setSelectedMintCB = useCallback((url: IMintUrl) => setSelectedMint(url), [])
 	// selected mint balance
 	const [mintBal, setMintBal] = useState(0)
 	const handleMintPicker = async () => {

@@ -36,6 +36,7 @@ export default function EntryTime({ from, fallback }: IEntryTimeProps) {
 			})
 		}, MinuteInMs)
 		return () => clearInterval(t)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [time])
 
 	return <>{time}</>

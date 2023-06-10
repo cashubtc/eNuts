@@ -1,32 +1,40 @@
 import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
-import { CheckmarkIcon, CopyIcon } from '@comps/Icons'
+import { CheckmarkIcon, CopyIcon, MintBoardIcon } from '@comps/Icons'
+import KeysetHint from '@comps/KeysetHint'
 import { getProofsByMintUrl } from '@db'
 import { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ProofListHeader } from '@pages/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
+import { getMintActiveKeysetId } from '@src/wallet'
 import { globals, mainColors } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
 
 export default function MintProofsPage({ navigation, route }: TMintProofsPageProps) {
 	const { color } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const [proofs, setProofs] = useState<Proof[]>([])
-
-	// initiate proofs
+	const [mintKeysetId, setMintKeysetId] = useState('')
+	// initiate proofs & get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
 	useEffect(() => {
 		void (async () => {
-			setProofs(await getProofsByMintUrl(route.params.mintUrl))
+			const [proofs, keysetId] = await Promise.all([
+				getProofsByMintUrl(route.params.mintUrl),
+				getMintActiveKeysetId(route.params.mintUrl)
+			])
+			setProofs(proofs)
+			setMintKeysetId(keysetId)
 		})()
-	}, [])
+	}, [route.params.mintUrl])
 
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav withBackBtn />
 			<View style={styles.content}>
 				{/* Header */}
@@ -35,6 +43,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 				</Text>
 				{/* Mint url */}
 				<View style={styles.subHeader}>
+					<MintBoardIcon width={19} height={19} color={color.TEXT_SECONDARY} />
 					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
 						{formatMintUrl(route.params.mintUrl)}
 					</Text>
@@ -58,10 +67,14 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 						}
 					</TouchableOpacity>
 				</View>
+				{/* Info about latest keyset ids highlighted in green */}
+				<KeysetHint />
 				{/* List header */}
 				<ProofListHeader />
 				{/* Proofs list */}
-				{proofs.map(p => <ProofRow key={p.secret} proof={p} />)}
+				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+					{proofs.map(p => <ProofRow key={p.secret} proof={p} isLatestKeysetId={p.id === mintKeysetId} />)}
+				</ScrollView>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 		</View>
@@ -86,10 +99,13 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
-		marginBottom: 20
+		marginBottom: 5
 	},
 	mintUrl: {
 		fontSize: 16,
-		marginRight: 10,
+		marginHorizontal: 10,
+	},
+	scroll: {
+		marginBottom: 140,
 	},
 })
