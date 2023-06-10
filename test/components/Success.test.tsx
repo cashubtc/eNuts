@@ -1,16 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Success from '@comps/Success'
 import { NavigationContainer } from '@react-navigation/native'
 import { render, screen } from '@testing-library/react-native'
 
-// Mock the navigation object
-const mockNavigation = {
-	navigate: jest.fn(),
-}
 
 // Mock the NavigationContainer
-jest.mock('@react-navigation/native', () => ({
-	...jest.requireActual('@react-navigation/native'),
-	useNavigation: () => mockNavigation,
+jest.doMock('@react-navigation/native', () => ({
+	...NavigationContainer
 }))
 
 describe('Basic test of the Success.tsx component', () => {
@@ -55,6 +51,7 @@ describe('Basic test of the Success.tsx component', () => {
 		const memo = screen.getByText('Just a test')
 		expect(memo).toBeDefined()
 	})
+	// eslint-disable-next-line jest/no-commented-out-tests
 	// it('navigates to a specific screen', () => {
 	// 	render(
 	// 		<NavigationContainer>

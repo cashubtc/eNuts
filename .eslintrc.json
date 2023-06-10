@@ -79,7 +79,7 @@
 			"warn",
 			{ "allowNumber": true, "allowBoolean": true, "allowNullish": true }
 		],
-		// "@typescript-eslint/no-explicit-any": 0,
+		"@typescript-eslint/no-explicit-any": 0,
 		// "@typescript-eslint/explicit-module-boundary-types": 0,
 		/* "@typescript-eslint/naming-convention": [
 			"warn",
