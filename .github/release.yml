@@ -1,0 +1,21 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - bot
+  categories:
+    - title: Pull requests
+      labels:
+        - release
+    - title: Breaking Changes 🛠
+      labels:
+        - breaking-change
+    - title: New Features 🎉
+      labels:
+        - enhancement
+    - title: Tests
+      labels:
+        - "test"
+    - title: Documentation
+      labels:
+        - "documentation"
