@@ -3,10 +3,11 @@ import { DrawerContentComponentProps, DrawerContentScrollView } from '@react-nav
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, light } from '@styles'
 import { skipRoute } from '@util'
-import { version } from 'package.json'
 import { useContext } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+
+import { version } from '../../../package.json'
 // import { useState } from 'react'
 // import { interpolateNode } from 'react-native-reanimated'
 
