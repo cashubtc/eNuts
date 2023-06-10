@@ -1,5 +1,13 @@
-import { CashuMint, CashuWallet, deriveKeysetId, getDecodedLnInvoice, getDecodedToken, getEncodedToken, MintKeys, Proof } from '@cashu/cashu-ts'
-import { addInvoice, addMint, addToken, deleteProofs, delInvoice, getAllInvoices, getInvoice, getMintBalance, getMintsUrls } from '@db'
+import {
+	CashuMint, CashuWallet, deriveKeysetId,
+	getDecodedLnInvoice, getDecodedToken,
+	getEncodedToken, type MintKeys, type Proof
+} from '@cashu/cashu-ts'
+import {
+	addInvoice, addMint, addToken, deleteProofs,
+	delInvoice, getAllInvoices, getInvoice,
+	getMintBalance, getMintsUrls
+} from '@db'
 import { l } from '@log'
 import { isCashuToken } from '@src/util'
 
@@ -10,13 +18,14 @@ const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
 const wallets: { [mintUrl: string]: CashuWallet } = {}
 
 
-
-
-// eslint-disable-next-line @typescript-eslint/naming-convention
 function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string) {
 	if (!keySetId) { keySetId = deriveKeysetId(keys) }
 	if (!_mintKeysMap[mintUrl]) { _mintKeysMap[mintUrl] = {} }
-	if (!_mintKeysMap[mintUrl][keySetId]) { _mintKeysMap[mintUrl][keySetId] = keys }
+	if (!_mintKeysMap[mintUrl][keySetId]) {
+		_mintKeysMap[mintUrl][keySetId] = keys
+		if (!wallets[mintUrl] || wallets[mintUrl].keysetId === keySetId) { return }
+		wallets[mintUrl].keys = keys
+	}
 }
 
 
@@ -25,9 +34,23 @@ async function getWallet(mintUrl: string) {
 	const mint = new CashuMint(mintUrl)
 	const keys = await mint.getKeys()
 	const wallet = new CashuWallet(mint, keys)
-	void _setKeys(mintUrl, keys)
+	_setKeys(mintUrl, keys)
 	wallets[mintUrl] = wallet
 	return wallet
+}
+async function getCurrentKeySetId(mintUrl: string) {
+	const keys = await (await getWallet(mintUrl)).mint.getKeys()
+	const keySetId = deriveKeysetId(keys)
+	_setKeys(mintUrl, keys, keySetId)
+	return keySetId
+}
+
+
+export function getMintCurrentKeySetId(mintUrl: string) {
+	return getCurrentKeySetId(mintUrl)
+}
+export function getMintKeySetIds(mintUrl: string) {
+	return CashuMint.getKeySets(mintUrl)
 }
 export function getMintInfo(mintUrl: string) {
 	return CashuMint.getInfo(mintUrl)
@@ -61,10 +84,6 @@ export async function isTokenSpendable(token: string) {
 }
 export async function checkProofsSpent(mintUrl: string, toCheck: { secret: string }[]) {
 	return (await getWallet(mintUrl)).checkProofsSpent(toCheck)
-}
-// ToDo update @BilligsterUser !!!
-export async function getMintActiveKeysetId(mintUrl: string) {
-	return (await getWallet(mintUrl)).keysetId
 }
 export async function checkFees(mintUrl: string, invoice: string) {
 	const { fee } = await CashuMint.checkFees(mintUrl, { pr: invoice })
