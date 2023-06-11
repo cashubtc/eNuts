@@ -2,7 +2,7 @@ import type { IHistoryEntry, IKeyValuePair } from '@model'
 import { getHistoryGroupDate } from '@util'
 import type { payLnInvoice } from '@wallet'
 
-import { type ISelectParams,StoreBase } from './StoreBase'
+import { type ISelectParams, StoreBase } from './StoreBase'
 import { getDb } from './utils'
 
 /**
@@ -61,6 +61,9 @@ class HistoryStore extends StoreBase {
 	public async getHistoryWithKeys({ order = 'DESC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<IKeyValuePair<IHistoryEntry>[]> {
 		await this.#init()
 		return super.getObjsAll<IHistoryEntry>({ order, start, count, orderBy })
+	}
+	public updateHistoryEntry(oldEntry: IHistoryEntry, newEntry: IHistoryEntry) {
+		return super.updateObjByValue(oldEntry, newEntry)
 	}
 	/**
 	 * clear history

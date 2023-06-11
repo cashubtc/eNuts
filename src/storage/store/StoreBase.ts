@@ -106,6 +106,24 @@ export abstract class StoreBase {
 		)
 		return result?.item?.(0)?.value
 	}
+	protected async updateByValue(oldValue: string, newValue: string) :Promise<boolean> {
+		if (!this._isReady) {
+			await this._createStore()
+			if (!this._isReady) { return false }
+		}
+		const result = await this._db.exec({
+			sql: `UPDATE ${this._name} SET value = ? WHERE KEY in (SELECT KEY FROM ${this._name} WHERE value = ? LIMIT 1)`,
+			args:[newValue,oldValue]
+		})
+		return !!(result && 'rowsAffected' in result && result?.rowsAffected===1)
+	}
+	protected async updateObjByValue<T extends object>(oldValue: T, newValue: T): Promise<boolean>{
+		if (!this._isReady) {
+			await this._createStore()
+			if (!this._isReady) { return false }
+		}
+		return this.updateByValue(toJson(oldValue), toJson(newValue))
+	}
 	protected async getObj<T extends object>(key: string): Promise<T | null | undefined> {
 		const strVal = await this.get(key)
 		if (!strVal) { return null }

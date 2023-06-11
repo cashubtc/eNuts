@@ -50,5 +50,11 @@ describe('test HistoryStore', () => {
 		expect(await store.getHistoryWithKeys({ start: 1 })).toStrictEqual([
 			{ key: '0', value: entry },
 		])
+		// test update value by old value
+		expect(await store.updateHistoryEntry(entry, { ...entry, amount: 69 })).toBe(true)
+		expect(await store.getHistoryWithKeys()).toStrictEqual([
+			{ key: '1', value: entry },
+			{ key: '0', value: { ...entry, amount: 69 } },
+		])
 	})
 })
