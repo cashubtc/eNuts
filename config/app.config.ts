@@ -1,4 +1,3 @@
-
 import { config as dotenvConfig } from 'dotenv'
 import { ExpoConfig } from 'expo/config'
 
@@ -33,7 +32,10 @@ const _appVariant = appVariant() || process.env.APP_VARIANT || 'dev'
 
 const _nodeEnvShort = nodeEnvShort()
 
-dotenvConfig({ path: `.env${_nodeEnvShort === 'prod' ? '' : `.${nodeEnvShort()}`}` })
+try {
+	dotenvConfig({ path: `.env${_nodeEnvShort === 'prod' ? '' : `.${nodeEnvShort()}`}` })
+} catch (e) { console.log('dotenv error:', e) } // eslint-disable-line no-console
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const IS_DEV = _appVariant === 'dev'
@@ -99,12 +101,6 @@ const config: ExpoConfig = {
 		NODE_ENV_SHORT: _nodeEnvShort,
 	}
 }
-// eslint-disable-next-line no-console
-console.log(
-	'bugsnag',
-	config?.extra?.bugsnag,
-	process.env.BUGSNAG_API_KEY,
-	process.env.BUGSNAG_APIKEY
-)
+
 
 export default config
