@@ -4,18 +4,18 @@ changelog:
       - ignore-for-release
       - bot
   categories:
-    - title: Pull requests
+    - title: Bug fixes 🐛
       labels:
-        - release
+        - bug
     - title: Breaking Changes 🛠
       labels:
         - breaking-change
     - title: New Features 🎉
       labels:
         - enhancement
-    - title: Tests
+    - title: Tests 💯
       labels:
         - "test"
-    - title: Documentation
+    - title: Documentation 📄
       labels:
         - "documentation"
