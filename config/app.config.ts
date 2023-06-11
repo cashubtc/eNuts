@@ -1,9 +1,6 @@
 import { config as dotenvConfig } from 'dotenv'
 import { ExpoConfig } from 'expo/config'
-
 import { version } from './../package.json'
-
-
 
 type AppVariant = 'preview' | 'prod' | 'dev' | undefined
 
@@ -27,7 +24,6 @@ function appVariant(): AppVariant {
 	if (process.env.APP_VARIANT === 'preview') { return 'preview' }
 }
 
-
 const _appVariant = appVariant() || process.env.APP_VARIANT || 'dev'
 
 const _nodeEnvShort = nodeEnvShort()
@@ -42,8 +38,6 @@ const IS_DEV = _appVariant === 'dev'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const IS_PREVIEW = _appVariant === 'preview'
 const IS_PROD = _appVariant === 'prod'
-
-
 
 const config: ExpoConfig = {
 	name: `eNuts${!IS_PROD ? ` (${_appVariant})` : ''}`,
@@ -101,6 +95,13 @@ const config: ExpoConfig = {
 		NODE_ENV_SHORT: _nodeEnvShort,
 	}
 }
+// eslint-disable-next-line no-console
+console.log(
+	'bugsnag',
+	config?.extra?.bugsnag,
+	process.env.BUGSNAG_API_KEY,
+	process.env.BUGSNAG_APIKEY
+)
 
 
 export default config

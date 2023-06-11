@@ -87,6 +87,7 @@ export interface IHistoryEntry {
 	timestamp: number
 	value: string
 	mints: string[]
+	isSpent?: boolean
 	preImage?: string,
 	fee?: number
 }
