@@ -8,11 +8,12 @@ import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { historyStore } from '@store'
 import { mainColors } from '@styles'
-import { formatInt, formatMintUrl, getLnInvoiceInfo } from '@util'
+import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
@@ -23,12 +24,12 @@ const initialCopyState = {
 }
 
 export default function DetailsPage({ route }: THistoryEntryPageProps) {
+	const entry = route.params.entry
 	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)
-	const [isSpent, setIsSpent] = useState(false)
+	const [isSpent, setIsSpent] = useState(entry.isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [qr, setQr] = useState({ open: false, error: false })
-	const entry = route.params.entry
 	const isPayment = entry.amount < 0
 	const isLn = entry.type === 2
 	const LNstr = `Lightning ${isPayment ? 'payment' : 'invoice'}`
@@ -59,19 +60,15 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	const handleCheckSpendable = async () => {
 		if (isSpent || loading) { return }
 		startLoading()
-		setIsSpent(!(await isTokenSpendable(entry.value)))
+		const isSpendable = await isTokenSpendable(entry.value)
+		setIsSpent(!isSpendable)
+		// update history item
+		await historyStore.updateHistoryEntry(entry, { ...entry, isSpent: !isSpendable })
 		stopLoading()
 	}
 	const handleQR = () => {
 		setQr({ ...qr, open: true })
 	}
-	// initial check is token spent
-	useEffect(() => {
-		if (isLn) { return }
-		void (async () => {
-			setIsSpent(!(await isTokenSpendable(entry.value)))
-		})()
-	}, [isLn, entry.value])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav withBackBtn />
@@ -142,14 +139,16 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 					isSpent={isSpent}
 					handleCheckSpendable={() => void handleCheckSpendable()}
 				>
-					<Txt txt={`Token ${isSpent ? 'has been spent' : 'is pending...'}`} />
+					<Txt
+						txt={isUndef(isSpent) ? 'Check if token has been spent' : `Token ${isSpent ? 'has been spent' : 'is pending...'}`}
+					/>
 					{isSpent ?
 						<CheckCircleIcon width={18} height={18} color={mainColors.VALID} />
 						:
 						loading ?
 							<Txt txt='Loading...' />
 							:
-							<BackupIcon width={18} height={18} color={color.TEXT} />
+							<BackupIcon width={20} height={20} color={color.TEXT} />
 					}
 				</IsSpentContainer>
 			}
@@ -249,7 +248,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 }
 
 interface IIsSpentContainerProps {
-	isSpent: boolean,
+	isSpent?: boolean,
 	handleCheckSpendable: () => void
 	children: React.ReactNode
 }
