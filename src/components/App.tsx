@@ -1,14 +1,12 @@
 import Bugsnag from '@bugsnag/expo'
 import { getEncodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
-import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import { env } from '@consts'
 import { addAllMintIds, getBalance, getContacts, getMintsBalances, getMintsUrls, getPreferences, initDb, setPreferences } from '@db'
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import MyModal from '@modal'
-import { PromptModal } from '@modal/Prompt'
 import { IInitialProps, IPreferences, ITokenInfo } from '@model'
 import { DrawerNav } from '@nav/Navigator'
 import { NavigationContainer } from '@react-navigation/native'
@@ -30,6 +28,7 @@ import { AppState, Text, View } from 'react-native'
 
 import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './ErrorScreen/ErrorDetails'
+import Toaster from './Toaster'
 import Txt from './Txt'
 
 initCrashReporting()
@@ -64,8 +63,7 @@ export default function App(_initialProps: IInitialProps) {
 	const [, setAppStateVisible] = useState(appState.current)
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>()
 	const [claimOpen, setClaimOpen] = useState(false)
-	const { prompt, openPrompt, closePrompt } = usePrompt()
-	const { loading, startLoading, stopLoading } = useLoading()
+	const { prompt, openPromptAutoClose } = usePrompt()
 
 	const handleForeground = async () => {
 		// TODO immediatly reading clipboard after the app comes to the foreground can result
@@ -100,18 +98,18 @@ export default function App(_initialProps: IInitialProps) {
 	}
 
 	const handleRedeem = async () => {
-		startLoading()
+		// startLoading()
 		if (!tokenInfo) { return }
+		setClaimOpen(false)
 		const encoded = getEncodedToken(tokenInfo.decoded)
 		const success = await claimToken(encoded).catch(l)
 		if (!success) {
-			alert('Token invalid or already claimed')
-			setClaimOpen(false)
+			openPromptAutoClose(false, 'Token invalid or already claimed')
 			return
 		}
 		const info = getTokenInfo(encoded)
 		if (!info) {
-			l('Error while getting token info')
+			openPromptAutoClose(false, 'Error while getting token info')
 			return
 		}
 		// add as history entry
@@ -121,10 +119,8 @@ export default function App(_initialProps: IInitialProps) {
 			value: encoded,
 			mints: info.mints,
 		})
-		openPrompt(`Successfully claimed ${formatInt(info.value)} Satoshi!`)
+		openPromptAutoClose(true, `Successfully claimed ${formatInt(info.value)} Satoshi!`)
 		setClaimed(true)
-		stopLoading()
-		setClaimOpen(false)
 	}
 
 	// update theme
@@ -245,11 +241,11 @@ export default function App(_initialProps: IInitialProps) {
 
 	return (
 		<ThemeContext.Provider value={themeData}>
-			<BugSnagErrorBoundary>
-				<FocusClaimCtx.Provider value={claimData}>
-					<ContactsContext.Provider value={contactData}>
-						<KeyboardProvider>
-							<NavigationContainer theme={theme === 'Light' ? light : dark}>
+			<NavigationContainer theme={theme === 'Light' ? light : dark}>
+				<BugSnagErrorBoundary>
+					<FocusClaimCtx.Provider value={claimData}>
+						<ContactsContext.Provider value={contactData}>
+							<KeyboardProvider>
 								<DrawerNav />
 								<StatusBar style="auto" />
 								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
@@ -268,7 +264,7 @@ export default function App(_initialProps: IInitialProps) {
 											{tokenInfo?.mints.join(', ')}
 										</Text>
 										<Button
-											txt={loading ? 'Claiming...' : 'Claim now!'}
+											txt='Claim now!'
 											onPress={() => void handleRedeem()}
 										/>
 										<View style={{ marginVertical: 10 }} />
@@ -279,17 +275,17 @@ export default function App(_initialProps: IInitialProps) {
 										/>
 									</MyModal>
 								}
-								<PromptModal
-									hideIcon
-									header={prompt.msg}
-									visible={prompt.open}
-									close={closePrompt}
-								/>
-							</NavigationContainer>
-						</KeyboardProvider>
-					</ContactsContext.Provider>
-				</FocusClaimCtx.Provider>
-			</BugSnagErrorBoundary>
+								{prompt.open &&
+									<Toaster
+										success
+										txt={prompt.msg}
+									/>
+								}
+							</KeyboardProvider>
+						</ContactsContext.Provider>
+					</FocusClaimCtx.Provider>
+				</BugSnagErrorBoundary>
+			</NavigationContainer>
 		</ThemeContext.Provider>
 	)
 }
