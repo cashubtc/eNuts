@@ -17,7 +17,7 @@
 		"expo:doc": "npx -y expo-doctor@latest",
 		"build:dev": "npx -y eas-cli@latest build -e development -p android -m devWithDevClient --no-wait",
 		"build:preview": "npx -y eas-cli@latest build -e preview -p android -m previewNoDevClient --no-wait",
-		"build:ci": "npx -y eas-cli@latest build --non-interactive -e development -p android -m ciDevBuild --no-wait",
+		"build:ci": "npx -y eas-cli@latest build --non-interactive -e preview -p android -m ciPreviewBuild --no-wait",
 		"eas-build-on-success": "npx bugsnag-eas-build-on-success",
 		"android": "expo start --android",
 		"ios": "expo start --ios",
@@ -149,6 +149,5 @@
 	"bugs": {
 		"url": "https://github.com/cashubtc/eNuts/issues"
 	},
-	"main": "src/AppEntry.ts",
-	"private": true
+	"main": "src/AppEntry.ts"
 }
