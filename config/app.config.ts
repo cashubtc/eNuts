@@ -74,7 +74,7 @@ const config: ExpoConfig = {
 			{
 				cameraPermission: 'Allow eNuts to access camera.'
 			}
-		]
+		],'./android-manifest.plugin.js'
 	],
 	ios: {
 		supportsTablet: true,
