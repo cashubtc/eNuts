@@ -149,6 +149,5 @@
 	"bugs": {
 		"url": "https://github.com/cashubtc/eNuts/issues"
 	},
-	"main": "src/AppEntry.ts",
-	"private": true
+	"main": "src/AppEntry.ts"
 }
