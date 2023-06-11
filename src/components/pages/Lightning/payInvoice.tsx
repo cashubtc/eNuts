@@ -16,13 +16,12 @@ import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
-import { formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isLnurl } from '@util'
+import { globals, highlight as hi } from '@styles'
+import { formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isLnurl, openUrl } from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { createRef, useCallback, useContext, useEffect, useState } from 'react'
-import { Linking, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageProps) {
 	const { color, highlight } = useContext(ThemeContext)
@@ -50,13 +49,14 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	const { loading, startLoading, stopLoading } = useLoading()
 	// LN payment
 	const handleTokenSend = async () => {
+		if (!route.params.mint) { return }
 		startLoading()
 		// coin selection
 		const selectedProofs = proofs.filter(p => p.selected)
 		// Pay invoice
 		if (!isLnurl(input)) {
 			try {
-				const res = await payLnInvoice(route.params.mint_url, input, selectedProofs)
+				const res = await payLnInvoice(route.params.mint.mintUrl, input, selectedProofs)
 				stopLoading()
 				if (!res.result?.isPaid) {
 					openPrompt('Invoice could not be payed. Please try again later.')
@@ -65,11 +65,15 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				// payment success, add as history entry
 				await addLnPaymentToHistory(
 					res,
-					[route.params.mint_url],
+					[route.params.mint.mintUrl],
 					-invoiceAmount,
 					input
 				)
-				navigation.navigate('success', { amount: invoiceAmount + res.realFee, fee: res.realFee, mints: [route.params.mint_url] })
+				navigation.navigate('success', {
+					amount: invoiceAmount + res.realFee,
+					fee: res.realFee,
+					mints: [route.params.mint.mintUrl]
+				})
 			} catch (e) {
 				l(e)
 				openPrompt(e instanceof Error ? e.message : 'An error occured while paying the invoice.')
@@ -93,7 +97,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				stopLoading()
 				return
 			}
-			const res = await payLnInvoice(route.params.mint_url, invoice, selectedProofs)
+			const res = await payLnInvoice(route.params.mint.mintUrl, invoice, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
 				openPrompt('Something went wrong while paying the LN invoice')
@@ -105,11 +109,15 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			// add as history entry
 			await addLnPaymentToHistory(
 				res,
-				[route.params.mint_url],
+				[route.params.mint.mintUrl],
 				-LNURLAmount,
 				invoice
 			)
-			navigation.navigate('success', { amount: +LNURLAmount + res.realFee, fee: res.realFee, mints: [route.params.mint_url] })
+			navigation.navigate('success', {
+				amount: +LNURLAmount + res.realFee,
+				fee: res.realFee,
+				mints: [route.params.mint.mintUrl]
+			})
 		} catch (e) {
 			if (e instanceof Error) {
 				l(e.message)
@@ -129,11 +137,11 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		if (+LNURLAmount > 0 && !isKeyboardOpen) {
 			setIsCalculatingFee(true)
 			const invoice = await getInvoiceFromLnurl(input.trim(), +LNURLAmount)
-			if (!invoice?.length) {
+			if (!invoice?.length || !route.params.mint) {
 				// TODO show some kind of error message to the user since he can not proceed the payment now
 				return
 			}
-			const fee = await checkFees(route.params.mint_url, invoice)
+			const fee = await checkFees(route.params.mint.mintUrl, invoice)
 			setFeeEstimate(fee)
 			setIsCalculatingFee(false)
 		}
@@ -145,9 +153,9 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			return
 		}
 		const clipboard = await Clipboard.getStringAsync()
-		if (!clipboard || clipboard === 'null') { return }
+		if (!clipboard || clipboard === 'null' || !route.params.mint) { return }
 		try {
-			setFeeEstimate(await checkFees(route.params.mint_url, clipboard))
+			setFeeEstimate(await checkFees(route.params.mint.mintUrl, clipboard))
 			setInput(clipboard)
 		} catch (e) {
 			l(e)
@@ -157,10 +165,11 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	// Get proofs for coin selection
 	useEffect(() => {
 		void (async () => {
-			const proofsDB = (await getProofsByMintUrl(route.params.mint_url)).map(p => ({ ...p, selected: false }))
+			if (!route.params.mint) { return }
+			const proofsDB = (await getProofsByMintUrl(route.params.mint.mintUrl)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
-	}, [])
+	}, [route.params.mint])
 	// set ln info on input change
 	useEffect(() => {
 		// early return if user clears the input field
@@ -191,7 +200,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		} catch (e) {
 			l(e)
 		}
-	}, [input])
+	}, [input, keyboardRef])
 	// LN invoice expiry time
 	useEffect(() => {
 		if (timeLeft < 0) {
@@ -203,6 +212,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		}
 	}, [timeLeft])
 	// Get estimated fees every time the keyboard dissapears and conditions have passed
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => void handleKeyboard(), [isKeyboardOpen])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -211,10 +221,10 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			{!input.length &&
 				<View style={styles.amountWrap}>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Mint balance: {formatInt(route.params.mintBal, 'en', 'standard')} Sat.
+						Mint balance: {formatInt(route.params.mintBal)} Sat.
 					</Text>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Send bitcoin from "{formatMintUrl(route.params.mint_url)}" to a lightning wallet.
+						Send bitcoin from &quot;{formatMintUrl(route.params.mint?.mintUrl || '')}&quot; to a lightning wallet.
 					</Text>
 				</View>
 			}
@@ -222,7 +232,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			{isLnurl(input) &&
 				<View style={styles.amountWrap}>
 					<Text style={[styles.payTo, { color: color.TEXT }]}>
-						Select amount for "{input}"
+						Select amount for &quot;{input}&quot;
 					</Text>
 					<TextInput
 						keyboardType='numeric' // Platform.OS === 'android' ? 'number-pad' : 'numeric'
@@ -252,7 +262,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 								</Text>
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-										0 to {formatInt(feeEstimate, 'en', 'standard')}
+										0 to {formatInt(feeEstimate)}
 									</Text>
 									<ZapIcon width={18} height={18} color={color.TEXT} />
 								</View>
@@ -280,7 +290,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						</Text>
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								{formatInt(invoiceAmount / 1000, 'en', 'standard')}
+								{formatInt(invoiceAmount / 1000)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
 						</View>
@@ -292,7 +302,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						</Text>
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								0 to {formatInt(feeEstimate, 'en', 'standard')}
+								0 to {formatInt(feeEstimate)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
 						</View>
@@ -311,7 +321,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						</Text>
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								{formatInt((invoiceAmount / 1000) + feeEstimate, 'en', 'standard')}
+								{formatInt((invoiceAmount / 1000) + feeEstimate)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
 						</View>
@@ -364,7 +374,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				<View style={{ position: 'relative' }}>
 					<TextInput
 						keyboardType='email-address'
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="LN invoice or LNURL"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
@@ -385,7 +395,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				{!input.length && !isKeyboardOpen &&
 					<TouchableOpacity style={{ marginVertical: 10 }} onPress={() => {
 						void (async () => {
-							await Linking.openURL('lightning://')
+							await openUrl('lightning://')
 						})()
 					}}>
 						<Text style={globals(color, highlight).pressTxt}>
@@ -416,7 +426,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			{/* coin selection page */}
 			{isEnabled &&
 				<CoinSelectionModal
-					mint={route.params.mint_url}
+					mint={route.params.mint}
 					lnAmount={(isLnurl(input) ? +LNURLAmount : invoiceAmount / 1000) + feeEstimate}
 					disableCS={() => setIsEnabled(false)}
 					proofs={proofs}

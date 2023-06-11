@@ -1,18 +1,10 @@
-
-import { getDatabase as mockGetDatabase } from './wrapper/getTestDb'
-
-jest.mock('expo-sqlite', () => ({
-	get openDatabase() {
-		return (_: string) => mockGetDatabase(':memory:')
-	}
-}))
-
 import type { IHistoryEntry } from '@model'
 import { historyStore } from '@store/HistoryStore'
 
 
 
 describe('test HistoryStore', () => {
+	// eslint-disable-next-line @typescript-eslint/await-thenable
 	afterAll(async () => { await store.close() })
 	const store = historyStore
 	const entry: IHistoryEntry = {
@@ -24,7 +16,7 @@ describe('test HistoryStore', () => {
 		// keysetIds: [],
 		// memo: '',
 	}
-	test('test methods', async () => {
+	test('methods', async () => {
 		// test entry count
 		expect(store.entryCount).toBe(0)
 		// set values

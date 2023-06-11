@@ -1,25 +1,22 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
+import { _mintUrl, defaultMints } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
 import { PromptModal } from '@modal/Prompt'
 import { QuestionModal } from '@modal/Question'
-import { IMintBalWithName } from '@model'
+import { IMintBalWithName, IMintUrl } from '@model'
 import { TMintsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
-import { defaultMints } from '@src/consts/mints'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { getDefaultMint, getMintBalWithName } from '@store/mintStore'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
+import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isUrl } from '@util'
-import { _mintUrl } from '@wallet'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
@@ -28,7 +25,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
-	const [mintUrl, setMintUrl] = useState('')
+	const [mintUrl, setMintUrl] = useState<IMintUrl>()
 	const [defaultMint, setDefaultM] = useState('')
 	const [input, setInput] = useState('')
 	const [trustModalOpen, setTrustModalOpen] = useState(false)
@@ -36,7 +33,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	const [success, setSuccess] = useState(false)
 	const { prompt, openPrompt, closePrompt } = usePrompt()
 
-	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mint_url === mintUrl)
+	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
 
 	// adds a mint via input
 	const handleMintInput = async () => {
@@ -46,8 +43,8 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		}
 		try {
 			// check if mint is already in db
-			const mints = await getMintsUrls()
-			if (mints.some(m => m.mint_url === input)) {
+			const mints = await getMintsUrls(true)
+			if (mints.some(m => m.mintUrl === input)) {
 				openPrompt('Mint already added')
 				return
 			}
@@ -61,28 +58,29 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		setNewMintModal(false)
 		setSuccess(true)
 		const mints = await getMintsBalances()
-		setUserMints(await getMintBalWithName(mints))
+		setUserMints(await getCustomMintNames(mints))
 	}
 
 	// navigates to mint-management page if mint available in db or shows the trust modal
-	const handleMintEntry = (selectedMintUrl: string, amount: number) => {
+	const handleMintEntry = (selectedMint: IMintUrl, amount: number) => {
 		// navigate to mint management page
-		if (isTrustedMint(selectedMintUrl)) {
+		if (isTrustedMint(selectedMint.mintUrl)) {
 			navigation.navigate('mintmanagement', {
-				mint_url: selectedMintUrl,
+				mint: selectedMint,
 				amount
 			})
 			return
 		}
 		// else: add default mint to users mints
-		setMintUrl(selectedMintUrl)
+		setMintUrl(selectedMint)
 		setTrustModalOpen(true)
 	}
 
 	// trust modal asks user for confirmation on adding a default mint to its trusted list
 	const handleTrustModal = async () => {
+		if (!mintUrl) { return }
 		try {
-			await addMint(mintUrl)
+			await addMint(mintUrl.mintUrl)
 		} catch (e) {
 			// prompt error
 			openPrompt('Connection to mint failed')
@@ -94,12 +92,12 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		setSuccess(true)
 		// update mints list state
 		const mints = await getMintsBalances()
-		setUserMints(await getMintBalWithName(mints))
+		setUserMints(await getCustomMintNames(mints))
 	}
 
 	const handleMintsState = async () => {
 		const mintsBal = await getMintsBalances()
-		setUserMints(await getMintBalWithName(mintsBal))
+		setUserMints(await getCustomMintNames(mintsBal))
 	}
 
 	// Show user mints with balances and default mint icon
@@ -112,6 +110,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 
 	// get mints balances and default mint after navigating to this page
 	useEffect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const focusHandler = navigation.addListener('focus', async () => {
 			await handleMintsState()
 			const defaultt = await getDefaultMint() || ''
@@ -140,15 +139,15 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					</View>
 					{/* Mints list where test mint is always visible */}
 					<ScrollView showsVerticalScrollIndicator={false}>
-						{[...defaultMints.filter(m => !isTrustedMint(m.mint_url)), ...usertMints]
+						{[...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]
 							.map(m => (
-								<View key={m.mint_url} style={styles.mintContainer}>
+								<View key={m.mintUrl} style={styles.mintContainer}>
 									<TouchableOpacity
 										style={styles.mintUrlWrap}
-										onPress={() => handleMintEntry(m.mint_url, m.amount)}
+										onPress={() => handleMintEntry(m, m.amount)}
 									>
 										<View style={styles.mintNameWrap}>
-											{defaultMint === m.mint_url &&
+											{defaultMint === m.mintUrl &&
 												<MintBoardIcon width={18} height={18} color={hi[highlight]} />
 											}
 											<Text
@@ -156,31 +155,27 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 													styles.mintUrl,
 													{
 														color: color.TEXT,
-														marginLeft: defaultMint === m.mint_url ? 10 : 0
+														marginLeft: defaultMint === m.mintUrl ? 10 : 0
 													}
 												]}
 											>
 												{/* custom name given by user or show mint URL */}
-												{m.name?.length > 0 ?
-													m.name
-													:
-													formatMintUrl(m.mint_url)
-												}
+												{m.customName || formatMintUrl(m.mintUrl)}
 											</Text>
 										</View>
 										{/* Add mint icon or show balance */}
-										<Text>
-											{isTrustedMint(m.mint_url) ?
+										<View>
+											{isTrustedMint(m.mintUrl) ?
 												<View style={styles.mintBal}>
 													<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-														{formatInt(m.amount, 'en', 'compact')}
+														{formatInt(m.amount, 'compact', 'en')}
 													</Text>
 													<ZapIcon width={18} height={18} color={color.TEXT} />
 												</View>
 												:
 												<PlusIcon color={color.TEXT} />
 											}
-										</Text>
+										</View>
 									</TouchableOpacity>
 									<View style={{ borderBottomWidth: 1, borderBottomColor: color.BORDER }} />
 								</View>
@@ -190,18 +185,18 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			</View>
 			{/* Submit new mint URL modal */}
 			{newMintModal && !prompt.open &&
-				<MyModal type='question' animation='fade' visible={newMintModal}>
+				<MyModal type='bottom' animation='slide' visible={newMintModal}>
 					<Text style={globals(color).modalHeader}>
 						Add a new mint
 					</Text>
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="Mint URL"
 						placeholderTextColor={color.BORDER}
 						selectionColor={hi[highlight]}
 						onChangeText={setInput}
 					/>
-					<Button txt='Add mint' onPress={handleMintInput} />
+					<Button txt='Add mint' onPress={() => { void handleMintInput() }} />
 					<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
 						<Text style={[styles.cancelTxt, { color: hi[highlight] }]}>Cancel</Text>
 					</TouchableOpacity>
@@ -209,12 +204,13 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			}
 			{trustModalOpen &&
 				<QuestionModal
-					header={mintUrl === _mintUrl ?
+					header={mintUrl?.mintUrl === _mintUrl ?
 						'This is a test mint to play around with. Add it anyway?'
 						:
 						'Are you sure that you want to trust this mint?'
 					}
 					visible={trustModalOpen}
+					// eslint-disable-next-line @typescript-eslint/no-misused-promises
 					confirmFn={() => handleTrustModal()}
 					cancelFn={() => setTrustModalOpen(false)}
 				/>

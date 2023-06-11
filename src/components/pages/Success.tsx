@@ -1,9 +1,9 @@
 import Success from '@comps/Success'
 import type { TSuccessPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
-import React, { useContext } from 'react'
-import { StyleSheet,View } from 'react-native'
+import { highlight as hi } from '@styles'
+import { useContext } from 'react'
+import { StyleSheet, View } from 'react-native'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	const { highlight } = useContext(ThemeContext)
@@ -11,6 +11,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>
 			<Success
 				amount={route.params.amount || 0}
+				memo={route.params.memo}
 				fee={route.params.fee}
 				mints={route.params.mints}
 				nav={navigation}
@@ -19,7 +20,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	)
 }
 
-const styles =  StyleSheet.create({
+const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: 'center',

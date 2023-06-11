@@ -1,14 +1,14 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { PlusIcon, UserIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import { addContact, getContacts } from '@db'
 import MyModal from '@modal'
 import { PromptModal } from '@modal/Prompt'
 import { TAddressBookPageProps } from '@model/nav'
 import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi } from '@styles'
 import { isLnurl } from '@util'
 import { useContext, useState } from 'react'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -156,9 +156,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 										})
 									}}
 								>
-									<Text style={globals(color).txt}>
-										{c.name}
-									</Text>
+									<Txt txt={c.name} />
 								</TouchableOpacity>
 							</View>
 							{i < contacts.length - 1 && <View style={[styles.separator, { borderBottomColor: color.BORDER }]} />}
@@ -170,11 +168,11 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			{openNew.open && !prompt.open &&
 				<MyModal type='bottom' animation='slide' visible={true}>
 					<Text style={globals(color).modalHeader}>
-						{openNew.isOwner ? 'Your LN address' : 'New address'}
+						{openNew.isOwner ? 'Your LNURL' : 'New contact'}
 					</Text>
 					{!openNew.isOwner &&
 						<TextInput
-							style={globals(color).input}
+							style={[globals(color).input, { marginBottom: 20 }]}
 							placeholder="Name"
 							placeholderTextColor={color.INPUT_PH}
 							selectionColor={hi[highlight]}
@@ -182,7 +180,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						/>
 					}
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="zap@me.now"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}

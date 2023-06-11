@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer/'
 
 declare module '@gandlaf21/bolt11-decode' {
 	export type ValueUnion = IRouteHintEntry[] | IValue | number | string | Buffer;

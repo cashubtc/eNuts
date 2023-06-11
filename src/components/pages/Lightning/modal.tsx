@@ -1,20 +1,22 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
+import { MintBoardIcon } from '@comps/Icons'
 import { IInvoiceState } from '@comps/InvoiceAmount'
+import KeysetHint from '@comps/KeysetHint'
 import QR from '@comps/QR'
 import Success from '@comps/Success'
+import { _mintUrl } from '@consts'
 import { l } from '@log'
 import MyModal from '@modal'
-import { IProofSelection } from '@model'
+import { IMintUrl, IProofSelection } from '@model'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { dark, highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
-import { formatExpiry, formatMintUrl, getSelectedAmount } from '@util'
-import { _mintUrl, requestToken } from '@wallet'
+import { dark, globals, highlight as hi } from '@styles'
+import { formatExpiry, formatMintUrl, getSelectedAmount, openUrl } from '@util'
+import { getMintCurrentKeySetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import React, { useContext, useEffect, useState } from 'react'
-import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useContext, useEffect, useState } from 'react'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
 interface IInvoiceAmountModalProps {
@@ -48,9 +50,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 		if (paid === 'unpaid') { return }
 		void (async () => {
 			try {
-				const {success} = await requestToken(mintUrl, +invoice.amount, invoice.hash)
-				l({ success })
-				l({ invoiceSections: invoice.decoded?.sections })
+				const { success } = await requestToken(mintUrl, +invoice.amount, invoice.hash)
 				if (success) {
 					// add as history entry
 					await addToHistory({
@@ -59,35 +59,6 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 						value: invoice.decoded?.paymentRequest || '',
 						mints: [mintUrl],
 					})
-					/**
-						 * decoded LN Invoice sections:
-						 * 0: lightning_network
-						 * 1: coin_network
-						 * 2: amount
-						 * 3: separator
-						 * 4: timestamp
-						 * 5: payment_hash
-						 * 6: description
-						 * 7: min_final_cltv_expiry
-						 * 8: expiry
-						 * 9: payment_secret
-						 * 10: feature_bits
-						 * 11: signature
-						 * 12: checksum
-						 */
-					/*
-					{
-						amount: +invoice.amount
-						type: 1 // LN invoice or cashu token
-						timestamp: Date.now()
-						value: invoice.decoded?.paymentRequest
-						mints: [mintUrl]
-						keysetIds: []
-						memo?: invoice.decoded?.sections[6].description
-						hash: invoice.hash
-					}
-					*/
-					l('invoice payed')
 				}
 				setPaid(success ? 'paid' : 'unpaid')
 			} catch (e) {
@@ -113,7 +84,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 		if (expiry && expiry > 0) {
 			setTimeout(() => setExpiry(timeLeft - 1), 1000)
 		}
-	}, [expiry])
+	}, [expiry, expiryTime])
 	return (
 		<MyModal type='invoiceAmount' animation='fade' visible={visible} success={paid === 'paid' || mintUrl === _mintUrl}>
 			{invoice.decoded && mintUrl !== _mintUrl && (!paid || paid === 'unpaid') ?
@@ -135,7 +106,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							{expiry > 0 ?
 								formatExpiry(expiry)
 								:
-								<Text>Invoice expired!</Text>
+								'Invoice expired!'
 							}
 						</Text>
 						{expiry > 0 && !paid &&
@@ -170,7 +141,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							txt='Pay with your LN wallet'
 							onPress={() => {
 								void (async () => {
-									await Linking.openURL(`lightning:${invoice.decoded?.paymentRequest || ''}`)
+									await openUrl(`lightning:${invoice.decoded?.paymentRequest || ''}`)
 								})()
 							}}
 						/>
@@ -189,39 +160,49 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 }
 
 interface ICoinSelectionProps {
-	mint: string
+	mint?: IMintUrl
 	lnAmount: number
 	disableCS: () => void
 	proofs: IProofSelection[]
 	setProof: (proofs: IProofSelection[]) => void
 }
 
+/**
+ * This component is the main container of the pressable proofs-list aka coin selection list.
+ */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
 	const { color } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
+	const [mintKeysetId, setMintKeysetId] = useState('')
+	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
+	useEffect(() => {
+		if (!mint?.mintUrl) { return }
+		void (async () => {
+			setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
+		})()
+	}, [mint?.mintUrl])
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
 			<View style={styles.proofContainer}>
 				<Text style={globals(color).header}>
 					Coin selection
 				</Text>
-				<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
-					{formatMintUrl(mint)}
-				</Text>
-				<View style={[styles.tableHeader, { borderBottomColor: color.BORDER }]}>
-					<Text style={[styles.tableHead, { color: color.TEXT }]}>
-						Amount
-					</Text>
-					<Text style={[styles.tableHead, { color: color.TEXT, marginRight: 40 }]}>
-						Keyset ID
+				<View style={styles.activeMint}>
+					<MintBoardIcon width={19} height={19} color={color.TEXT_SECONDARY} />
+					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
+						{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
 					</Text>
 				</View>
+				{/* Info about latest keyset ids highlighted in green */}
+				<KeysetHint />
+				<ProofListHeader margin={40} />
 				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 					{lnAmount > 0 &&
 						proofs.map(p => (
 							<CoinSelectionRow
-								proof={p}
 								key={p.secret}
+								proof={p}
+								isLatestKeysetId={mintKeysetId === p.id}
 								setChecked={() => {
 									const proofIdx = proofs.findIndex(proof => proof.secret === p.secret)
 									const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
@@ -260,6 +241,9 @@ interface IResume {
 	selectedAmount: number
 }
 
+/**
+ * This component shows the amount and the change of selected proofs in a pressable row of a proofs-list.
+ */
 export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 	const { color } = useContext(ThemeContext)
 	return (
@@ -286,6 +270,27 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 	)
 }
 
+/**
+ * A component that shows the header of the proofs-list.
+ * Margin is used for the pressable coin-selection row.
+ * If the row of the proofs-list is non-pressable, margin is not required.
+ */
+export function ProofListHeader({ margin }: { margin?: number }) {
+	const { color } = useContext(ThemeContext)
+	return (
+		<>
+			<View style={[styles.tableHeader, { borderBottomColor: color.BORDER }]}>
+				<Text style={[styles.tableHead, { color: color.TEXT }]}>
+					Amount
+				</Text>
+				<Text style={[styles.tableHead, { color: color.TEXT, marginRight: margin || 0 }]}>
+					Keyset ID
+				</Text>
+			</View>
+		</>
+	)
+}
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -303,8 +308,7 @@ const styles = StyleSheet.create({
 	},
 	mintUrl: {
 		fontSize: 16,
-		marginRight: 10,
-		marginBottom: 15,
+		marginLeft: 10,
 	},
 	invoiceWrap: {
 		alignItems: 'center',
@@ -360,4 +364,9 @@ const styles = StyleSheet.create({
 		borderWidth: 5,
 		borderColor: '#FFF'
 	},
+	activeMint: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 15,
+	}
 })

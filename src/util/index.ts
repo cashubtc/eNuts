@@ -3,26 +3,48 @@ import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
 import type { ILnUrl, IProofSelection } from '@model'
 import axios from 'axios'
-import { Buffer } from 'buffer'
-import { Vibration } from 'react-native'
+import { Buffer } from 'buffer/'
+import { Linking, Vibration } from 'react-native'
 
-import { isBuf, isNum, isStr } from './typeguards'
+import { getLanguageCode } from './localization'
+import { isArr, isBuf, isNum, isStr } from './typeguards'
 
-export { isArr, isArrayOf, isBool, isErr, isFunc, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
+export * from './typeguards'
+
 export function rndInt(min: number, max: number) { // min and max included
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 export function sleep(ms: number) { return new Promise<void>(resolve => setTimeout(resolve, ms)) }
 
 export function formatBalance(bal: number) { return (bal / 100_000_000).toFixed(8) }
-
-export function formatInt(val: number, locale: string, notation: 'standard' | 'engineering' | 'scientific' | 'compact') {
-	// eslint-disable-next-line new-cap
-	const numberFormatter = Intl.NumberFormat(locale, { notation })
-	return numberFormatter.format(val)
+/**
+ * format a number to a string with a given locale. Compact notation is not yet supported for all locales.
+ *
+ * if locale is not specified, the current locale is used
+ *
+ * @export
+ * @param {number} val number to format
+ * @param {('standard' | 'engineering' | 'scientific' | 'compact')} [notation='standard'] 'standard' | 'engineering' | 'scientific' | 'compact'
+ * @param {string} [locale] optional defaults to the current locale
+ * @returns {string}  formatted string representation of the number
+ */
+export function formatInt(
+	val: number,
+	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard',
+	locale?: string,
+): string {
+	try {
+		const lan = getLanguageCode()
+		// eslint-disable-next-line new-cap
+		const numberFormatter = Intl.NumberFormat(locale || lan, { notation })
+		return numberFormatter.format(val)
+	} catch (e) {
+		l(e)
+		return val.toLocaleString()
+	}
 }
 export function getShortDateStr(date: Date) {
-	return date.toLocaleDateString(undefined, {
+	return date.toLocaleDateString(getLanguageCode(), {
 		year: '2-digit',
 		month: 'short',
 		day: '2-digit',
@@ -74,8 +96,11 @@ export function isLnurl(addr: string) {
 /* export function cleanupMintUrl(mintUrl: string) {
 	return mintUrl.replaceAll(/[\W]/gi, '')
 } */
-export function isTrustedMint(userMints: { mint_url: string }[], tokenMints: string[]) {
-	return userMints.some(m => tokenMints.includes(m.mint_url))
+export function hasTrustedMint(userMints: string[], tokenMints: string[]): boolean
+export function hasTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]): boolean
+export function hasTrustedMint(uMints: ({ mintUrl: string } | string)[], tMints: string[]) {
+	if (!uMints?.length || !isArr(uMints) || !tMints?.length || !isArr(tMints)) { return false }
+	return uMints.some(m => tMints.includes(isStr(m) ? m : m.mintUrl))
 }
 export async function getInvoiceFromLnurl(address: string, amount: number) {
 	try {
@@ -133,9 +158,9 @@ export function decodeLnInvoice(invoice: string) {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const expiry = getFromSection<number>(x.sections, 'expiry', isNum)!
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const memo = getFromSection<string>(x.sections, 'description', isStr)||''
+	const memo = getFromSection<string>(x.sections, 'description', isStr) || ''
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const paymentHash = getFromSection<Buffer>(x.sections, 'payment_hash', isBuf)?.toString('hex')||''
+	const paymentHash = getFromSection<Buffer>(x.sections, 'payment_hash', isBuf)?.toString('hex') || ''
 	return {
 		decoded: x,
 		amount,
@@ -144,4 +169,9 @@ export function decodeLnInvoice(invoice: string) {
 		memo,
 		paymentHash
 	}
+}
+export function openUrl(url: string) {
+	if (!url?.trim()) { return }
+	return Linking.canOpenURL(url)
+		.then((canOpen) => canOpen && Linking.openURL(url))
 }

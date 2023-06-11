@@ -1,2 +1,7 @@
+
+const configPath = `${__dirname}/config/babel.config.ts`;
+
 require('ts-node/register');
-module.exports = require('./config/babel.config.ts');
+
+module.exports = require(configPath);
+

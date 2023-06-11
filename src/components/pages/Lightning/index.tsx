@@ -6,7 +6,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { getDefaultMint } from '@store/mintStore'
+import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
@@ -18,36 +18,38 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 	// user mints
 	const [mints, setMints] = useState<IMintUrl[]>([])
 	// mint selection
-	const [selectedMint, setSelectedMint] = useState('')
-	const setSelectedMintCB = useCallback((url: string) => setSelectedMint(url), [])
+	const [selectedMint, setSelectedMint] = useState<IMintUrl>()
+	const setSelectedMintCB = useCallback((url: IMintUrl) => setSelectedMint(url), [])
 	// selected mint balance
 	const [mintBal, setMintBal] = useState(0)
+	const handleMintPicker = async () => {
+		const userMints = await getMintsUrls(true)
+		if (!userMints.length) { return }
+		// get mints with custom names
+		const mintsWithName = await getCustomMintNames(userMints)
+		setMints(mintsWithName)
+		if (!userMints.length) { return }
+		// set first selected mint
+		const defaultMint = await getDefaultMint()
+		if (!defaultMint) {
+			setSelectedMint(mintsWithName[0])
+			return
+		}
+		for (const mint of mintsWithName) {
+			if (mint.mintUrl === defaultMint) {
+				setSelectedMint(mint)
+				break
+			}
+		}
+	}
 	// initiate user mints
-	useEffect(() => {
-		void (async () => {
-			const userMints = await getMintsUrls()
-			setMints(userMints)
-			if (!userMints.length) { return }
-			// set first selected mint
-			const defaultMint = await getDefaultMint()
-			if (!defaultMint) {
-				setSelectedMint(userMints[0].mint_url)
-				return
-			}
-			for (const mint of userMints) {
-				if (mint.mint_url === defaultMint) {
-					setSelectedMint(mint.mint_url)
-					break
-				}
-			}
-		})()
-	}, [])
+	useEffect(() => void handleMintPicker(), [])
 	// update mint balance after picking mint
 	useEffect(() => {
 		void (async () => {
 			const mintsBals = await getMintsBalances()
 			mintsBals.forEach(m => {
-				if (m.mint_url === selectedMint) {
+				if (m.mintUrl === selectedMint?.mintUrl) {
 					setMintBal(m.amount)
 				}
 			})
@@ -55,11 +57,8 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 	}, [selectedMint])
 	// get mints after navigating to this page
 	useEffect(() => {
-		const focusHandler = navigation.addListener('focus', async () => {
-			const userMints = await getMintsUrls()
-			setMints(userMints)
-		})
-		return focusHandler
+		const listener = navigation.addListener('focus', handleMintPicker)
+		return listener
 	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

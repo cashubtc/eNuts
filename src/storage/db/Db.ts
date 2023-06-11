@@ -1,6 +1,6 @@
 
 import type { IOpenDB, IOpenDBParams, ITx, QueryArgs } from '@model'
-import { isFunc, isObj,isStr } from '@util'
+import { isFunc, isObj, isStr, sleep } from '@util'
 import type {
 	Query,
 	ResultSet,
@@ -44,7 +44,15 @@ export class Db {
 		}
 		throw new Error('Db constructor error')
 	}
-
+	public static async reset(db: Db, newDB: WebSQLDatabase) {
+		// eslint-disable-next-line @typescript-eslint/await-thenable
+		await db.close()
+		await sleep(1000)
+		db.db = newDB
+	}
+	public reset(newDB: WebSQLDatabase) {
+		return Db.reset(this, newDB)
+	}
 	public static close(db: WebSQLDatabase) {
 		if (typeof db?.close === 'function') {
 			db.close()

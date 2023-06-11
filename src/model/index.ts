@@ -1,7 +1,20 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
+import type { ExpoConfig } from 'expo/config'
 import type { SQLStmtCb, SQLStmtErrCb, WebSQLDatabase } from 'expo-sqlite'
 
+export interface IExpoConfig extends ExpoConfig {
+	extra?: {
+		DEBUG?: string | 'full'
+		NODE_ENV?: string | 'development' | 'production' | 'test' | 'preview'
+		NODE_ENV_SHORT?: string | 'prod' | 'dev' | 'test' | 'preview'
+		APP_VARIANT?: string | 'prod' | 'dev' | 'test' | 'preview'
+		bugsnag?: {
+			apiKey?: string
+		}
+	}
+}
 export interface IInitialProps {
+	expo?: IExpoConfig
 	exp: {
 		notification?: any
 		manifestString?: string;
@@ -20,20 +33,21 @@ export interface ILnUrl {
 }
 export interface IMint {
 	id: string
-	mint_url: string
+	mintUrl: string
 }
 
 export interface IMintUrl {
-	mint_url: string
+	mintUrl: string
+	customName?: string
 }
 
 export interface IMintWithBalance {
-	mint_url: string
+	mintUrl: string
 	amount: number
 }
 
 export interface IMintBalWithName extends IMintWithBalance {
-	name: string
+	customName: string
 }
 
 export interface ITokenInfo {
@@ -60,7 +74,7 @@ export interface IContactResp {
 	id?: number
 	name: string,
 	ln: string,
-	is_owner: string
+	isOwner: string
 }
 
 export interface IProofSelection extends Proof {
@@ -74,7 +88,7 @@ export interface IHistoryEntry {
 	value: string
 	mints: string[]
 	preImage?: string,
-	fee?:number
+	fee?: number
 }
 
 
@@ -83,7 +97,7 @@ export interface IInvoice {
 	hash: string,
 	amount: number,
 	time: number,
-	mint_url: string
+	mintUrl: string
 }
 export interface IOpenDBParams {
 	name: string,

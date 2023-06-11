@@ -1,11 +1,9 @@
-// dont touch this
-import 'react-native-url-polyfill/auto'
-import 'text-encoding-polyfill'
-
+import Bugsnag from '@bugsnag/expo'
 import { getEncodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
+import { env } from '@consts'
 import { addAllMintIds, getBalance, getContacts, getMintsBalances, getMintsUrls, getPreferences, initDb, setPreferences } from '@db'
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
@@ -14,14 +12,14 @@ import { PromptModal } from '@modal/Prompt'
 import { IInitialProps, IPreferences, ITokenInfo } from '@model'
 import { DrawerNav } from '@nav/Navigator'
 import { NavigationContainer } from '@react-navigation/native'
-import { ContactsContext, IContact } from '@src/context/Contacts'
+import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { dark, light } from '@styles/colors'
-import { globals } from '@styles/globals'
-import { formatInt, isCashuToken, isTrustedMint, sleep } from '@util'
+import { dark, globals, light } from '@styles'
+import { formatInt, hasTrustedMint, isCashuToken, sleep } from '@util'
+import { initCrashReporting } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
@@ -30,41 +28,12 @@ import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useRef, useState } from 'react'
 import { AppState, Text, View } from 'react-native'
 
-/* import * as DevMenu from 'expo-dev-menu'
-import { StyleSheet } from 'react-native'
+import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
+import { ErrorDetails } from './ErrorScreen/ErrorDetails'
+import Txt from './Txt'
 
+initCrashReporting()
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	buttonContainer: {
-		backgroundColor: '#4630eb',
-		borderRadius: 4,
-		padding: 12,
-		marginVertical: 10,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	buttonText: {
-		color: '#ffffff',
-		fontSize: 16,
-	},
-})
-
-function Button({ label, onPress }: {
-	onPress: (event: GestureResponderEvent) => void,
-	label: string
-}){
-	return (
-		<TouchableOpacity style={styles.buttonContainer} onPress={onPress}>
-			<Text style={styles.buttonText}>{label}</Text>
-		</TouchableOpacity>
-	)
-} */
 const defaultPref: IPreferences = {
 	id: 1,
 	darkmode: false,
@@ -75,7 +44,6 @@ const defaultPref: IPreferences = {
 void SplashScreen.preventAutoHideAsync()
 
 export default function App(_initialProps: IInitialProps) {
-
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
@@ -114,7 +82,7 @@ export default function App(_initialProps: IInitialProps) {
 			const userMints = await getMintsUrls()
 			// do not claim from clipboard when app comes to the foreground if mint from token is not trusted
 			// TODO token can belong to multiple mints
-			if (!isTrustedMint(userMints, info?.mints || [])) { return false }
+			if (!hasTrustedMint(userMints, info?.mints || [])) { return false }
 			// check if token is spendable
 			const isSpendable = await isTokenSpendable(clipboard)
 			isSpent = !isSpendable
@@ -136,7 +104,6 @@ export default function App(_initialProps: IInitialProps) {
 		if (!tokenInfo) { return }
 		const encoded = getEncodedToken(tokenInfo.decoded)
 		const success = await claimToken(encoded).catch(l)
-		stopLoading()
 		if (!success) {
 			alert('Token invalid or already claimed')
 			setClaimOpen(false)
@@ -154,8 +121,9 @@ export default function App(_initialProps: IInitialProps) {
 			value: encoded,
 			mints: info.mints,
 		})
-		openPrompt(`Successfully claimed ${formatInt(info.value, 'en', 'standard')} Satoshi!`)
+		openPrompt(`Successfully claimed ${formatInt(info.value)} Satoshi!`)
 		setClaimed(true)
+		stopLoading()
 		setClaimOpen(false)
 	}
 
@@ -167,6 +135,7 @@ export default function App(_initialProps: IInitialProps) {
 		setPref({ ...pref, darkmode: theme === 'Dark' })
 		// update DB
 		void setPreferences({ ...pref, darkmode: theme === 'Dark' })
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [theme])
 	// update highlighting color
 	useEffect(() => {
@@ -175,6 +144,7 @@ export default function App(_initialProps: IInitialProps) {
 		setPref({ ...pref, theme: highlight })
 		// update DB
 		void setPreferences({ ...pref, theme: highlight })
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [highlight])
 
 	useEffect(() => {
@@ -203,7 +173,6 @@ export default function App(_initialProps: IInitialProps) {
 				setPref(defaultPref)
 			} finally {
 				await SplashScreen.hideAsync()
-				setIsRdy(true)
 			}
 		}
 		async function initContacts() {
@@ -218,12 +187,20 @@ export default function App(_initialProps: IInitialProps) {
 			await initDB()
 			await initContacts()
 			await initPreferences()
+			// await dropTable('proofs')
+			// await dropTable('proofsUsed')
+			// await dropTable('keysetIds')
+			// await dropTable('mintKeys')
+			// await dropTable('invoices')
+			// await dropTable('preferences')
+			// await dropTable('contacts')
 			const mintBalsTotal = (await getMintsBalances()).reduce((acc, cur) => acc + cur.amount, 0)
 			const bal = await getBalance()
 			l({ bal, mintBalsTotal })
 			if (mintBalsTotal !== bal) {
 				await addAllMintIds()
 			}
+			setIsRdy(true)
 		}
 		void init().then(fsInfo)
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -246,79 +223,73 @@ export default function App(_initialProps: IInitialProps) {
 
 	if (!isRdy) { return null }
 
+	// Bugsnag Error boundary. docs: https://docs.bugsnag.com/platforms/javascript/react/
+	const BugSnagErrorBoundary = ({ children }: { children: React.ReactNode }) => {
+		if (env.BUGSNAG_API_KEY) {
+			// Create the error boundary...
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+			const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
+			// Uses the bugsnack error boundary component which posts the errors to our bugsnag account
+			return (
+				<ErrorBoundary FallbackComponent={ErrorDetails}>
+					{children}
+				</ErrorBoundary>
+			)
+		}
+		return (
+			<CustomErrorBoundary catchErrors='always'>
+				{children}
+			</CustomErrorBoundary>
+		)
+	}
+
 	return (
 		<ThemeContext.Provider value={themeData}>
-			<FocusClaimCtx.Provider value={claimData}>
-				<ContactsContext.Provider value={contactData}>
-					<KeyboardProvider>
-						<NavigationContainer theme={theme === 'Light' ? light : dark}>
-							<DrawerNav />
-							<StatusBar style="auto" />
-							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-							{claimOpen &&
-								<MyModal type='question' visible>
-									<Text style={globals(color, highlight).modalHeader}>
-										Found a cashu token in your clipboard
-									</Text>
-									<Text style={globals(color, highlight).modalTxt}>
-										<Text style={{ fontWeight: '500' }}>
-											{formatInt(tokenInfo?.value || 0, 'en', 'standard')}
+			<BugSnagErrorBoundary>
+				<FocusClaimCtx.Provider value={claimData}>
+					<ContactsContext.Provider value={contactData}>
+						<KeyboardProvider>
+							<NavigationContainer theme={theme === 'Light' ? light : dark}>
+								<DrawerNav />
+								<StatusBar style="auto" />
+								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
+								{claimOpen &&
+									<MyModal type='question' visible>
+										<Text style={globals(color, highlight).modalHeader}>
+											Found a cashu token in your clipboard
 										</Text>
-										{' '}Satoshi from the following mint:{' '}
-										{tokenInfo?.mints.map(m => m)}
-									</Text>
-									<Button
-										txt={loading ? 'Claiming...' : 'Claim now!'}
-										onPress={() => void handleRedeem()}
-									/>
-									<View style={{ marginVertical: 10 }} />
-									<Button
-										txt='Cancel'
-										outlined
-										onPress={() => setClaimOpen(false)}
-									/>
-								</MyModal>
-							}
-							<PromptModal
-								hideIcon
-								header={prompt.msg}
-								visible={prompt.open}
-								close={closePrompt}
-							/>
-							{/* {env.NODE_ENV === 'development' &&
-							<View style={{ height: 100 }} >
-								<Text>Current state is: {appStateVisible}</Text>
-								<Text>
-									{initialProps.mode} {
-										process?.env
-											? Object.entries(process.env)
-												.map(e => e.join('='))
-												.join('\n')
-											: 'no env'
-									}
-								</Text>
-								<Text>
-									env obj
-									{
-										env
-											? Object.entries(env)
-												.map(e => e.join('='))
-												.join('\n')
-											: 'no env2'
-									}</Text>
-							</View>} */}
-
-							{/* <Button
-							label="Open Dev Menu"
-							onPress={() => {
-								DevMenu.openMenu()
-							}}
-						/> */}
-
-						</NavigationContainer>
-					</KeyboardProvider>
-				</ContactsContext.Provider>
-			</FocusClaimCtx.Provider>
+										<Text style={globals(color, highlight).modalTxt}>
+											Memo: {tokenInfo?.decoded.memo}{'\n'}
+											<Txt
+												txt={formatInt(tokenInfo?.value || 0)}
+												styles={[{ fontWeight: '500' }]}
+											/>
+											{' '}Satoshi from the following mint:{' '}
+											{tokenInfo?.mints.join(', ')}
+										</Text>
+										<Button
+											txt={loading ? 'Claiming...' : 'Claim now!'}
+											onPress={() => void handleRedeem()}
+										/>
+										<View style={{ marginVertical: 10 }} />
+										<Button
+											txt='Cancel'
+											outlined
+											onPress={() => setClaimOpen(false)}
+										/>
+									</MyModal>
+								}
+								<PromptModal
+									hideIcon
+									header={prompt.msg}
+									visible={prompt.open}
+									close={closePrompt}
+								/>
+							</NavigationContainer>
+						</KeyboardProvider>
+					</ContactsContext.Provider>
+				</FocusClaimCtx.Provider>
+			</BugSnagErrorBoundary>
 		</ThemeContext.Provider>
 	)
 }

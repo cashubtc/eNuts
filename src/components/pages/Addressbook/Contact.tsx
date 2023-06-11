@@ -8,8 +8,7 @@ import { PromptModal } from '@modal/Prompt'
 import { IContactPageProps } from '@model/nav'
 import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { globals, highlight as hi } from '@styles'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -55,6 +54,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			name: route.params.contact?.name,
 			ln: route.params.contact?.ln
 		})
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [openEdit])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -108,11 +108,11 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			{openEdit && !prompt.open &&
 				<MyModal type='bottom' animation='slide' visible={true}>
 					<Text style={globals(color).modalHeader}>
-						{route.params.contact?.isOwner ? 'Edit' : 'Edit contact'}
+						Edit contact
 					</Text>
 					{!route.params.contact?.isOwner &&
 						<TextInput
-							style={globals(color).input}
+							style={[globals(color).input, { marginBottom: 20 }]}
 							placeholder="Name"
 							placeholderTextColor={color.INPUT_PH}
 							selectionColor={hi[highlight]}
@@ -121,7 +121,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						/>
 					}
 					<TextInput
-						style={globals(color).input}
+						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="zap@me.now"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}

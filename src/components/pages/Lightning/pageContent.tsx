@@ -11,22 +11,21 @@ import { CoinSelectionModal, CoinSelectionResume } from '@pages/Lightning/modal'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
-import { formatInt, getSelectedAmount } from '@util'
+import { globals, highlight as hi } from '@styles'
+import { formatInt, getSelectedAmount, isNum } from '@util'
 import { sendToken } from '@wallet'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { StyleSheet, Switch, Text, TextInput, View } from 'react-native'
+import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
 import MintPanel from './mintPanel'
 
-interface IAdressTabProps {
+interface ILNPageProps {
 	nav: TLightningPageProps | TSendTokenPageProps
 	mints: IMintUrl[]
-	selectedMint: string
+	selectedMint?: IMintUrl
 	mintBal: number
-	setSelectedMint: (url: string) => void
-	createSpendableToken?: boolean
+	setSelectedMint: (url: IMintUrl) => void
+	isSendingToken?: boolean
 }
 
 export default function LNPageContent({
@@ -35,8 +34,8 @@ export default function LNPageContent({
 	selectedMint,
 	mintBal,
 	setSelectedMint,
-	createSpendableToken
-}: IAdressTabProps) {
+	isSendingToken
+}: ILNPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// invoice amount modal
@@ -44,6 +43,8 @@ export default function LNPageContent({
 	const setLnAmountModalCB = useCallback((val: boolean) => setLNAmountModal(val), [])
 	// spendable token amount state
 	const [amount, setAmount] = useState('')
+	// spendable token memo state
+	const [memo, setMemo] = useState('')
 	// coin selection
 	const [isEnabled, setIsEnabled] = useState(false)
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
@@ -54,19 +55,29 @@ export default function LNPageContent({
 		msg: ''
 	})
 	const { loading, startLoading, stopLoading } = useLoading()
+	const hasEnoughFunds = () => {
+		// is coming from the send token page or from send via lightning page
+		if (mintBal < 1 && (isSendingToken || nav.route.params?.send)) { return false }
+		// is coming from send via lightning page
+		if (nav.route.params?.send && isNum(nav.route.params?.balance) && nav.route.params.balance === 0) {
+			return false
+		}
+		return true
+	}
 	// generate spendable token
 	const generateToken = async () => {
 		startLoading()
 		// coin selection
 		const selectedProofs = proofs.filter(p => p.selected)
 		try {
-			const token = await sendToken(selectedMint, +amount, selectedProofs)
+			if (!selectedMint) { return }
+			const token = await sendToken(selectedMint.mintUrl, +amount, memo, selectedProofs)
 			// add as history entry
 			await addToHistory({
 				amount: -amount,
 				type: 1,
 				value: token,
-				mints: [selectedMint],
+				mints: [selectedMint.mintUrl],
 			})
 			nav.navigation.navigate('sendToken', { token, amount })
 		} catch (e) {
@@ -76,28 +87,29 @@ export default function LNPageContent({
 				stopLoading()
 				return
 			}
-			setPayError({ open: true, msg: 'Could not create a spendable token. Please try again later.' })
+			setPayError({ open: true, msg: 'Could not create a cashu token. Please try again later.' })
 		}
 		stopLoading()
 	}
 	// coin selection
 	useEffect(() => {
-		if (!createSpendableToken) { return }
+		if (!isSendingToken) { return }
 		void (async () => {
-			const proofsDB = (await getProofsByMintUrl(selectedMint)).map(p => ({ ...p, selected: false }))
+			if (!selectedMint) { return }
+			const proofsDB = (await getProofsByMintUrl(selectedMint.mintUrl)).map(p => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
-	}, [selectedMint])
+	}, [selectedMint, isSendingToken])
 	return (
 		<>
 			<View style={styles.pickerWrap}>
 				{/* header */}
-				{!createSpendableToken &&
+				{!isSendingToken &&
 					<Text style={[styles.lnHint, { color: color.TEXT }]}>
 						{nav.route.params?.mint ?
 							'Pay to a Lightning wallet'
 							:
-							`Select a mint ${nav.route.params?.send ? 'to pay from' : ''}`
+							`Select a mint ${nav.route.params?.send ? 'to pay from' : 'to top up'}`
 						}
 					</Text>
 				}
@@ -116,7 +128,7 @@ export default function LNPageContent({
 						</Text>
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								{formatInt(mintBal, 'en', 'standard')}
+								{formatInt(mintBal)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
 						</View>
@@ -148,14 +160,14 @@ export default function LNPageContent({
 					</>
 				}
 				{/* Amount to send */}
-				{mints.length > 0 && mintBal > 0 && createSpendableToken &&
+				{mints.length > 0 && mintBal > 0 && isSendingToken &&
 					<View style={styles.amountWrap}>
 						<TextInput
-							keyboardType='numeric' // Platform.OS === 'android' ? 'number-pad' : 'numeric'
+							keyboardType={Platform.OS === 'android' ? 'number-pad' : 'numeric'}
 							placeholder='0'
 							placeholderTextColor={hi[highlight]}
 							style={[styles.amount, { color: hi[highlight] }]}
-							autoFocus={createSpendableToken}
+							autoFocus={isSendingToken}
 							caretHidden
 							onChangeText={setAmount}
 							maxLength={8}
@@ -165,10 +177,20 @@ export default function LNPageContent({
 						</Text>
 					</View>
 				}
+				{/* Token memo only if isSendingToken (sending a cashu token) */}
+				{+amount > 0 && isSendingToken &&
+					<TextInput
+						style={globals(color, highlight).input}
+						placeholder='Add a memo with max. 21 chars.'
+						placeholderTextColor={color.INPUT_PH}
+						maxLength={21}
+						onChangeText={setMemo}
+					/>
+				}
 			</View>
 			<View style={[
 				styles.actionWrap,
-				{ backgroundColor: color.BACKGROUND, marginBottom: isKeyboardOpen ? 10 : createSpendableToken ? 20 : 75 }
+				{ backgroundColor: color.BACKGROUND, marginBottom: isKeyboardOpen ? 10 : isSendingToken ? 20 : 75 }
 			]}>
 				{/* user has no mints */}
 				{!mints.length ?
@@ -180,42 +202,37 @@ export default function LNPageContent({
 						<View style={{ marginVertical: 5 }} />
 					</>
 					: // user wants to send his tokens to LN
-					!createSpendableToken ?
+					!isSendingToken ?
 						<>
-							<Button
-								txt={nav.route.params?.send ? 'Create invoice' : 'Select amount'}
-								onPress={() => {
-									// send
-									if (nav.route.params?.send) {
-										if (mintBal < 1) {
-											setPayError({ open: true, msg: 'Not enough funds!' })
+							{/* Show a message if mint has not enough funds and the payment is an outgoing TX */}
+							{!hasEnoughFunds() ?
+								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
+									Chosen mint has not enough funds!
+								</Text>
+								:
+								<Button
+									txt={nav.route.params?.send ? 'Create invoice' : 'Select amount'}
+									onPress={() => {
+										// send
+										if (nav.route.params?.send) {
+											nav.navigation.navigate('pay invoice', {
+												mint: selectedMint,
+												mintBal,
+											})
 											return
 										}
-										nav.navigation.navigate('pay invoice', {
-											mint_url: selectedMint,
-											mintBal,
-										})
-										return
-									}
-									// receive
-									setLNAmountModal(true)
-								}}
-							/>
+										// receive
+										setLNAmountModal(true)
+									}}
+								/>
+							}
 							<View style={{ marginVertical: 5 }} />
-							{/* <TouchableOpacity
-								style={styles.sendBtnWrap}
-								onPress={() => nav.navigation.navigate('dashboard')}
-							>
-								<Text style={globals(color, highlight).pressTxt}>
-									Cancel
-								</Text>
-							</TouchableOpacity> */}
 						</>
-						: // user wants to create a spendable token
+						: // user wants to create a cashu token
 						<>
 							{+amount < 1 &&
-								<Text style={[styles.tokenHint, { color: color.TEXT_SECONDARY }]}>
-									Create a cashu token
+								<Text style={[styles.tokenHint, { color: mintBal > 0 ? color.TEXT_SECONDARY : color.ERROR }]}>
+									{mintBal > 0 ? 'Create a cashu token' : 'Chosen mint has not enough funds!'}
 								</Text>
 							}
 							{+amount > 0 && mintBal > 0 && mintBal >= +amount && !isKeyboardOpen &&
@@ -234,7 +251,7 @@ export default function LNPageContent({
 			<LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
 				setLNAmountModal={setLnAmountModalCB}
-				mintUrl={selectedMint}
+				mintUrl={selectedMint?.mintUrl || ''}
 			/>
 			{/* coin selection page */}
 			{isEnabled &&

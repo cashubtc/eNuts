@@ -1,0 +1,17 @@
+{
+	"output": "./report/tsx/",
+	"pattern": "**/*.tsx",
+	"format": "tsx",
+	"silent":true,
+	"ignoreCase": true,
+	"max-lines": 10000,
+	"minTokens": 75,
+	"max-size": "30mb",
+	"threshold": 10,
+	"min-lines": 5,
+	"mode": "weak",
+	"gitignore": true,
+	"reporters": ["html", "console"],
+	"ignore": ["**/__snapshots__/**", "node_modules", "report", ".git"],
+	"absolute": true
+}

@@ -3,8 +3,8 @@ import type { IMintUrl } from '@model'
 import type { TSendTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { getDefaultMint } from '@store/mintStore'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import LNPageContent from './Lightning/pageContent'
@@ -14,25 +14,27 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 	// user mints
 	const [mints, setMints] = useState<IMintUrl[]>([])
 	// mint selection
-	const [selectedMint, setSelectedMint] = useState('')
-	const setSelectedMintCB = useCallback((url: string) => setSelectedMint(url), [])
+	const [selectedMint, setSelectedMint] = useState<IMintUrl>()
+	const setSelectedMintCB = useCallback((url: IMintUrl) => setSelectedMint(url), [])
 	// selected mint balance
 	const [mintBal, setMintBal] = useState(0)
 	// initiate user mints
 	useEffect(() => {
 		void (async () => {
-			const userMints = await getMintsUrls()
-			setMints(userMints)
+			const userMints = await getMintsUrls(true)
 			if (!userMints.length) { return }
+			// get mints with custom names
+			const mintsWithName = await getCustomMintNames(userMints)
+			setMints(mintsWithName)
 			// set first selected mint
 			const defaultMint = await getDefaultMint()
 			if (!defaultMint) {
-				setSelectedMint(userMints[0].mint_url)
+				setSelectedMint(mintsWithName[0])
 				return
 			}
-			for (const mint of userMints) {
-				if (mint.mint_url === defaultMint) {
-					setSelectedMint(mint.mint_url)
+			for (const mint of mintsWithName) {
+				if (mint.mintUrl === defaultMint) {
+					setSelectedMint(mint)
 					break
 				}
 			}
@@ -43,7 +45,7 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 		void (async () => {
 			const mintsBals = await getMintsBalances()
 			for (const mint of mintsBals) {
-				if (mint.mint_url === selectedMint) {
+				if (mint.mintUrl === selectedMint?.mintUrl) {
 					setMintBal(mint.amount)
 				}
 			}
@@ -58,7 +60,7 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 				selectedMint={selectedMint}
 				mintBal={mintBal}
 				setSelectedMint={setSelectedMintCB}
-				createSpendableToken
+				isSendingToken
 			/>
 		</View>
 	)

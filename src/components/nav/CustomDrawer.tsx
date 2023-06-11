@@ -1,11 +1,13 @@
 import { ContactsIcon, SettingsIcon } from '@comps/Icons'
 import { DrawerContentComponentProps, DrawerContentScrollView } from '@react-navigation/drawer'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi, light } from '@styles/colors'
+import { highlight as hi, light } from '@styles'
 import { skipRoute } from '@util'
 import { useContext } from 'react'
-import { Image,StyleSheet, Text, View  } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+
+import { version } from '../../../package.json'
 // import { useState } from 'react'
 // import { interpolateNode } from 'react-native-reanimated'
 
@@ -91,7 +93,7 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
 			{/* Footer */}
 			<View style={[styles.view, { backgroundColor: color.DRAWER, borderColor: color.BORDER }, styles.marginBottom]}>
 				<Text style={[styles.routeName, { color: color.TEXT }]}>
-					v0.0.1-alpha
+					v{version}
 				</Text>
 			</View>
 		</View>

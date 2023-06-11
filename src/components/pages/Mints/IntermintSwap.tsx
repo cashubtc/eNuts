@@ -9,8 +9,8 @@ import TopNav from '@nav/TopNav'
 import { Picker } from '@react-native-picker/picker'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
+import { getMintName } from '@store/mintStore'
+import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { autoMintSwap } from '@wallet'
 import { useContext, useState } from 'react'
@@ -20,7 +20,7 @@ import { TextInput } from 'react-native-gesture-handler'
 export default function IntermintSwap({ navigation, route }: TIntermintSwapPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
-	const [selectedMint, setSelectedMint] = useState(route.params.mints[0].mint_url)
+	const [selectedMint, setSelectedMint] = useState(route.params.mints[0])
 	const [amount, setAmount] = useState('')
 	const { loading, startLoading, stopLoading } = useLoading()
 	const { prompt, openPrompt, closePrompt } = usePrompt()
@@ -30,9 +30,9 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 		startLoading()
 		// simple way
 		try {
-			const result = await autoMintSwap(route.params.mint_url, selectedMint, +amount)
+			const result = await autoMintSwap(route.params.swap_out_mint.mintUrl, selectedMint.mintUrl, +amount)
 			l({ result })
-			openPrompt(`Successfully swaped ${amount} Sat from ${route.params.mint_url} to ${selectedMint}`)
+			openPrompt(`Successfully swaped ${amount} Sat from ${route.params.swap_out_mint.mintUrl} to ${selectedMint.mintUrl}`)
 		} catch (e) {
 			l({ e })
 			if (e instanceof Error) {
@@ -69,30 +69,35 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 					maxLength={8}
 				/>
 				<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
-					Mint balance: {formatInt(route.params.balance, 'en', 'standard')} Sat
+					Mint balance: {formatInt(route.params.balance)} Sat
 				</Text>
 			</View>
 			{/* Swap-Out Mint: */}
 			{!isKeyboardOpen && +amount > 0 &&
 				<View>
 					<Text style={[globals(color).txt, styles.mintUrl]}>
-						{formatMintUrl(route.params.mint_url)}
+						{route.params.swap_out_mint.customName || formatMintUrl(route.params.swap_out_mint.mintUrl)}
 					</Text>
 					<View style={styles.iconWrap}>
 						<ArrowDownIcon width={50} height={50} color={hi[highlight]} />
 					</View>
 					{/* Swap-In Mint: */}
 					<Picker
-						selectedValue={selectedMint}
-						onValueChange={(value, _idx) => setSelectedMint(value)}
+						selectedValue={selectedMint.mintUrl}
+						onValueChange={(value, _idx) => {
+							void (async () => {
+								const customName = await getMintName(value)
+								setSelectedMint({ mintUrl: value, customName: customName || '' })
+							})()
+						}}
 						dropdownIconColor={color.TEXT}
 						style={styles.picker}
 					>
 						{route.params.mints.map(m => (
 							<Picker.Item
-								key={m.mint_url}
-								label={formatMintUrl(m.mint_url)}
-								value={m.mint_url}
+								key={m.mintUrl}
+								label={m.customName || formatMintUrl(m.mintUrl)}
+								value={m.mintUrl}
 								style={{ color: color.TEXT }}
 							/>
 						))}

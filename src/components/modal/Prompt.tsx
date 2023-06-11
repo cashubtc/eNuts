@@ -1,9 +1,9 @@
 import Button from '@comps/Button'
 import { ExclamationIcon } from '@comps/Icons'
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles/globals'
+import { globals } from '@styles'
 import { useContext } from 'react'
-import { StyleSheet,Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 import MyModal from '.'
 

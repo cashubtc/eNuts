@@ -5,10 +5,10 @@ import { l } from '@log'
 import type { TMintInfoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
+import { highlight as hi } from '@styles'
 import { getMintInfo } from '@wallet'
-import { useContext, useEffect,useState } from 'react'
-import { ScrollView,StyleSheet, Text, View } from 'react-native'
+import { useContext, useEffect, useState } from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function MintInfoPage({ route }: TMintInfoPageProps) {
 
@@ -18,7 +18,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 	useEffect(() => {
 		void (async () => {
 			try {
-				const mintInfo = await getMintInfo(route.params.mint_url)
+				const mintInfo = await getMintInfo(route.params.mintUrl)
 				setInfo(mintInfo)
 				l({ mintInfo })
 			} catch (e) {
@@ -27,7 +27,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 			}
 		})()
 		return () => setInfo(undefined)
-	}, [])
+	}, [route.params.mintUrl])
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

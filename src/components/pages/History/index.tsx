@@ -1,3 +1,4 @@
+import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -6,14 +7,14 @@ import { FlashList } from '@shopify/flash-list'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { ThemeContext } from '@src/context/Theme'
 import { getHistory } from '@store/HistoryStore'
-import { globals } from '@styles/globals'
+import { globals } from '@styles'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import HistoryEntry from './Entry'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { color } = useContext(ThemeContext)
 	const { claimed } = useContext(FocusClaimCtx)
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})
 	// update history after claiming from clipboard when the app comes to the foreground
@@ -37,9 +38,10 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 				<Text style={[globals(color).header, { marginBottom: 0 }]}>
 					History
 				</Text>
-				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY }]}>
-					Press on entry to open details.
-				</Text>
+				<Txt
+					txt='Press on entry to open details.'
+					styles={[{ color: color.TEXT_SECONDARY }]}
+				/>
 			</View>
 			{/* TODO apply filter for ecash or LN TXs */}
 			{/* TODO check theme change re-render */}
@@ -72,9 +74,12 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							</View>
 						</>
 					)}
-					ListEmptyComponent={<Text style={[globals(color, highlight).txt, { textAlign: 'center', marginTop: 20, color: color.TEXT_SECONDARY }]}>
-						No transactions yet...
-					</Text>}
+					ListEmptyComponent={
+						<Txt
+							txt='No transactions yet...'
+							styles={[{ textAlign: 'center', marginTop: 20, color: color.TEXT_SECONDARY }]}
+						/>
+					}
 				/>
 			</View>
 			<BottomNav navigation={navigation} route={route} />

@@ -4,11 +4,11 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
+import Toaster from '@comps/Toaster'
 import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
 import OptsModal from '@modal/OptsModal'
-import { PromptModal } from '@modal/Prompt'
 import TrustMintModal from '@modal/TrustMint'
 import { TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -17,13 +17,12 @@ import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { highlight as hi } from '@styles/colors'
-import { globals } from '@styles/globals'
-import { isCashuToken, isTrustedMint } from '@util'
+import { globals, highlight as hi } from '@styles'
+import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
@@ -36,7 +35,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// Total Balance state (all mints)
 	const [balance, setBalance] = useState(0)
 	// Prompt modal
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	// Cashu token hook
 	const {
 		token,
@@ -61,7 +60,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPrompt('Your clipboard contains an invalid cashu token!')
+			openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -85,7 +84,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const handleTokenSubmit = async (url: string) => {
 		const tokenInfo = getTokenInfo(url)
 		if (!tokenInfo) {
-			openPrompt('Your clipboard contains an invalid cashu token!')
+			openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -95,9 +94,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// check if user wants to trust the token mint
 		const userMints = await getMintsUrls()
 		// TODO update this check for future multiple mints of token
-		if (!isTrustedMint(userMints, tokenInfo.mints)) {
+		if (!hasTrustedMint(userMints, tokenInfo.mints)) {
 			// ask user for permission if token mint is not in his mint list
 			setTrustModal(true)
+			stopLoading()
 			return
 		}
 		await receiveToken(url)
@@ -111,7 +111,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setToken('')
 		stopLoading()
 		if (!success) {
-			openPrompt('Token invalid or already claimed')
+			openPromptAutoClose(false, 'Token invalid or already claimed')
 			return
 		}
 		const info = getTokenInfo(encodedToken)
@@ -128,7 +128,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})
 		navigation.navigate('success', {
 			amount: info?.value,
-			mints: info?.mints
+			mints: info?.mints,
+			memo: info?.decoded.memo
 		})
 	}
 
@@ -139,6 +140,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			setModal({ ...modal, mint: !hasUserMints })
 			setBalance(await getBalance())
 		})()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
 
 	// handle initial URL passed on by clicking on a cashu link
@@ -148,6 +150,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			// alert(`URL in dashboard useEffect: ${url}`)
 			await handleTokenSubmit(url)
 		})()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
 
 	// get balance after navigating to this page
@@ -212,14 +215,16 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{modal.receiveOpts &&
 				<OptsModal
 					visible={modal.receiveOpts}
-					button1Txt='Paste & redeem ecash'
+					button1Txt={loading ? 'claiming...' : 'Paste & redeem Ecash'}
 					onPressFirstBtn={() => {
 						if (token.length) { return }
 						void (async () => {
+							startLoading()
 							const clipboard = await Clipboard.getStringAsync()
 							if (!isCashuToken(clipboard)) {
-								openPrompt('Your clipboard contains an invalid cashu token!')
+								openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
 								setModal({ ...modal, receiveOpts: false })
+								stopLoading()
 								return
 							}
 							setToken(clipboard)
@@ -238,7 +243,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{modal.sendOpts &&
 				<OptsModal
 					visible={modal.sendOpts}
-					button1Txt='Send ecash'
+					button1Txt='Send Ecash'
 					onPressFirstBtn={() => {
 						navigation.navigate('send')
 						setModal({ ...modal, sendOpts: false })
@@ -251,12 +256,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					onPressCancel={() => setModal({ ...modal, sendOpts: false })}
 				/>
 			}
-			{/* Prompt modal */}
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			{/* Prompt toaster */}
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

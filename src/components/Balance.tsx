@@ -1,10 +1,11 @@
 import { ExclamationIcon, SwapCurrencyIcon } from '@comps/Icons'
+import { repoIssueUrl } from '@consts/urls'
 import { setPreferences } from '@db'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi, mainColors } from '@styles/colors'
-import { formatBalance, formatInt, isBool } from '@util'
-import React, { useContext, useState } from 'react'
-import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { highlight as hi, mainColors } from '@styles'
+import { formatBalance, formatInt, isBool, openUrl } from '@util'
+import { useContext, useState } from 'react'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface IBalanceProps {
 	balance: number
@@ -22,24 +23,27 @@ export default function Balance({ balance }: IBalanceProps) {
 	}
 
 	return (
-		<TouchableOpacity style={styles.balanceWrap} onPress={toggleBalanceFormat}>
-			{/* <Text style={[styles.balPending, { color: color.TEXT_SECONDARY }]}>
+		<View style={styles.balanceContainer}>
+			<TouchableOpacity style={styles.balanceWrap} onPress={toggleBalanceFormat}>
+				{/* <Text style={[styles.balPending, { color: color.TEXT_SECONDARY }]}>
 				Pending{'('}0{')'}
 			</Text> */}
-			<Text style={[styles.balAmount, { color: hi[highlight] }]}>
-				{formatSats ? formatBalance(balance) : formatInt(balance, 'en', 'standard')}
-			</Text>
-			<View style={styles.balAssetNameWrap}>
-				<Text style={[styles.balAssetName, { color: color.TEXT_SECONDARY }]}>
-					{formatSats ? 'BTC' : 'Satoshi'}
+				<Text style={[styles.balAmount, { color: hi[highlight] }]}>
+					{formatSats ? formatBalance(balance) : formatInt(balance)}
 				</Text>
-				<SwapCurrencyIcon color={color.TEXT_SECONDARY} />
-			</View>
+				<View style={styles.balAssetNameWrap}>
+					<Text style={[styles.balAssetName, { color: color.TEXT_SECONDARY }]}>
+						{formatSats ? 'BTC' : 'Satoshi'}
+					</Text>
+					<SwapCurrencyIcon color={color.TEXT_SECONDARY} />
+				</View>
+			</TouchableOpacity>
+			{/* Disclaimer */}
 			<View style={styles.disclaimerWrap}>
 				<ExclamationIcon width={22} height={22} color={mainColors.WARN} />
 				<Text style={[styles.disclaimerTxt, { color: color.TEXT }]}>
-					Please note that this is an alpha version which is
-					in early stage and still undergoing testing before its official release.
+					Please note that this is an alpha version in its early stage
+					and is still undergoing testing before its official release.
 					The software and all content found on it are provided on an
 					“as is” and “as available” basis. We do not give any warranties,
 					whether express or implied, as to the suitability or usability of the
@@ -47,24 +51,26 @@ export default function Balance({ balance }: IBalanceProps) {
 				</Text>
 				<TouchableOpacity
 					style={styles.submitIssue}
-					onPress={() => void Linking.openURL('https://github.com/cashubtc/eNuts/issues/new') }
+					onPress={() => void openUrl(repoIssueUrl)}
 				>
 					<Text style={styles.issue}>
 						Submit issue on Github
 					</Text>
 				</TouchableOpacity>
 			</View>
-		</TouchableOpacity>
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
-	balanceWrap: {
+	balanceContainer: {
 		position: 'absolute',
 		top: 150,
 		left: 20,
 		right: 20,
 		flex: 1,
+	},
+	balanceWrap: {
 		alignItems: 'center',
 	},
 	/* balPending: {

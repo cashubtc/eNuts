@@ -1,14 +1,20 @@
 import { HistoryIcon, MintBoardIcon, WalletIcon } from '@comps/Icons'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
-import React, { useContext } from 'react'
-import { StyleSheet, TouchableOpacity,View } from 'react-native'
+import { highlight as hi } from '@styles'
+import { useContext } from 'react'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { color, highlight } = useContext(ThemeContext)
 
 	const handleNav = (routeStr: TRouteString) => navigation.navigate(routeStr)
+
+	const isMintRelatedPage =
+		route.name === 'mints' ||
+		route.name === 'mintmanagement' ||
+		route.name === 'mint proofs' ||
+		(route.name === 'lightning' && !route.params?.receive && !route.params?.send)
 
 	return (
 		<View style={styles.bottomNav}>
@@ -34,7 +40,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				onPress={() => handleNav('mints')}
 			>
 				<MintBoardIcon
-					color={route.name === 'mints' || route.name === 'mintmanagement' || (route.name === 'lightning' && !route.params?.receive && !route.params?.send) ?
+					color={isMintRelatedPage ?
 						hi[highlight]
 						:
 						color.TEXT

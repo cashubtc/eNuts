@@ -1,12 +1,13 @@
 import Button from '@comps/Button'
+import { _mintUrl } from '@consts'
 import { l } from '@log'
 import type { RootStackParamList } from '@model/nav'
-import { useNavigation } from '@react-navigation/core'
+import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { addToHistory } from '@store/HistoryStore'
 import { formatInt, formatMintUrl, isNum, vib } from '@util'
-import { _mintUrl, requestToken } from '@wallet'
-import React, { useEffect, useState } from 'react'
+import { requestToken } from '@wallet'
+import { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 interface ISuccessProps {
@@ -14,11 +15,12 @@ interface ISuccessProps {
 	fee?: number
 	mints?: string[]
 	mint?: string
+	memo?: string
 	nav?: NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>
 	hash?: string
 }
 
-export default function Success({ amount, fee, mints, mint, nav, hash }: ISuccessProps) {
+export default function Success({ amount, fee, mints, mint, memo, nav, hash }: ISuccessProps) {
 	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 	const [testMintTokenRdy, setTestMintTokenRdy] = useState(false)
 	// Only for the hard-coded test mint. Otherwise this is done for other mints before landing in this page
@@ -42,7 +44,7 @@ export default function Success({ amount, fee, mints, mint, nav, hash }: ISucces
 				setTestMintTokenRdy(true)
 			})()
 		}
-	}, [])
+	}, [amount, hash, mint])
 	return (
 		<>
 			<View style={styles.imgWrap}>
@@ -56,9 +58,14 @@ export default function Success({ amount, fee, mints, mint, nav, hash }: ISucces
 					{isNum(fee) ?
 						'Payment successfull!'
 						:
-						<>{formatInt(amount, 'en', 'standard')} Satoshi {mints ? 'claimed' : 'minted'}!</>
+						<>{formatInt(amount)} Satoshi {mints ? 'claimed' : 'minted'}!</>
 					}
 				</Text>
+				{memo &&
+					<Text style={styles.mints}>
+						{memo}
+					</Text>
+				}
 				{mints && mints.map(m => (
 					<Text style={styles.mints} key={m}>
 						{formatMintUrl(m)}

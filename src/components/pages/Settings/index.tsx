@@ -6,7 +6,7 @@ import { TSettingsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
-import { globals } from '@styles/globals'
+import { globals } from '@styles'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 

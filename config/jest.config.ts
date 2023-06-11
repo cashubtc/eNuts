@@ -1,6 +1,6 @@
 // import type { Config } from 'jest'
 // import { defaults } from 'jest-config'
-import { JestConfigWithTsJest,pathsToModuleNameMapper } from 'ts-jest'
+import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest'
 
 import { compilerOptions } from '../tsconfig.json'
 
@@ -36,9 +36,11 @@ export default (): JestConfigWithTsJest => ({
 	},
 	collectCoverage: false,
 	collectCoverageFrom: [
-		'<rootDir>/src/**/*.{js,jsx,ts}',
+		'**/src/**/*.{ts,tsx}',
 		'!**/coverage/**',
+		'!**/report/**',
 		'!**/assets/**',
+		'!**/test/**',
 		'!**/config/**',
 		'!**/coverage/**',
 		'!node_modules/**',
@@ -47,13 +49,19 @@ export default (): JestConfigWithTsJest => ({
 		'!app.config.js',
 		'!metro.config.js',
 		'!react-native.config.js',
-		'!<rootDir>/src/styles/**',
-		'!<rootDir>/src/consts/**',
-		'!<rootDir>/src/components/**',
-		'!<rootDir>/src/AppEntry.ts',
-		'!<rootDir>/src/storage/store/AsyncStore.ts',
-		'!<rootDir>/src/storage/store/SecureStore.ts',
+		// '!**/src/styles/**',
+		'!**/src/consts/**',
+		// '!**/src/components/**',
+		'!**/src/AppEntry.ts',
+		'!**/src/shim.ts',
+		// '!**/src/storage/store/AsyncStore.ts',
+		'!**/src/storage/store/SecureStore.ts',
+		'!**/src/logger/reactotron/**',
+		'!**/src/util/crashReporting.ts',
+		'!**/src/storage/db/fs.ts',
+		//'!**/src/logger/*'
 	],
 	// verbose: true,
+	// setupFilesAfterEnv: [ '<rootDir>/node_modules/react-native-gesture-handler/jestSetup.js'],
+	setupFiles: ['<rootDir>/test/setup.ts'],
 })
-

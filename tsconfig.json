@@ -40,7 +40,9 @@
 			"@db": ["src/storage/db"],
 			"@db/*": ["src/storage/db/*"],
 			"@store": ["src/storage/store"],
-			"@store/*": ["src/storage/store/*"]
+			"@store/*": ["src/storage/store/*"],
+			"@consts": ["src/consts"],
+			"@consts/*": ["src/consts/*"]
 		}
 	},
 	"extends": "expo/tsconfig.base"

@@ -20,34 +20,41 @@ export type RootStackParamList = {
 		amount?: number
 		fee?: number
 		mints?: string[]
+		memo?: string
 	}
 	lightning: {
-		mint?: string
+		mint?: IMintUrl
 		balance?: number
 		receive?: boolean
 		send?: boolean
 	} | undefined
 	'pay invoice': {
-		mint_url: string
+		mint?: IMintUrl
 		mintBal: number
 	}
 	mints: undefined
 	mintmanagement: {
-		mint_url: string
+		mint: IMintUrl
 		amount: number
 		// mint_key: string
 	}
 	'mint info': {
-		mint_url: string
+		mintUrl: string
 	}
 	'inter-mint swap': {
-		mint_url: string
+		swap_out_mint: {
+			mintUrl: string
+			customName: string
+		}
 		mints: IMintUrl[]
 		balance: number
 	}
 	'mint backup': {
 		token: string
-		mint_url: string
+		mintUrl: string
+	}
+	'mint proofs': {
+		mintUrl: string
 	}
 	'qr scan': undefined
 	'history': undefined
@@ -67,6 +74,7 @@ export type TMintManagementPageProps = NativeStackScreenProps<RootStackParamList
 export type TMintInfoPageProps = NativeStackScreenProps<RootStackParamList, 'mint info', 'MyStack'>
 export type TIntermintSwapPageProps = NativeStackScreenProps<RootStackParamList, 'inter-mint swap', 'MyStack'>
 export type TMintBackupPageProps = NativeStackScreenProps<RootStackParamList, 'mint backup', 'MyStack'>
+export type TMintProofsPageProps = NativeStackScreenProps<RootStackParamList, 'mint proofs', 'MyStack'>
 export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr scan', 'MyStack'>
 export type THistoryPageProps = NativeStackScreenProps<RootStackParamList, 'history', 'MyStack'>
 export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 'history entry details', 'MyStack'>
@@ -77,7 +85,8 @@ export type TBottomNavProps =
 	TMintManagementPageProps |
 	TSendTokenPageProps |
 	TPayLNInvoicePageProps |
-	THistoryPageProps
+	THistoryPageProps |
+	TMintProofsPageProps
 
 /**
  * Drawer navigator

@@ -11,6 +11,8 @@ export default function QRMarker({ size }: { size: number }) {
 	)
 }
 
+const markerWidth = 5
+
 const styles = StyleSheet.create({
 	main: {
 		position: 'absolute',
@@ -21,25 +23,25 @@ const styles = StyleSheet.create({
 	tl: {
 		top: 0,
 		left: 0,
-		borderTopWidth: 10,
-		borderLeftWidth: 10,
+		borderTopWidth: markerWidth,
+		borderLeftWidth: markerWidth,
 	},
 	tr: {
 		top: 0,
 		right: 0,
-		borderTopWidth: 10,
-		borderRightWidth: 10,
+		borderTopWidth: markerWidth,
+		borderRightWidth: markerWidth,
 	},
 	bl: {
 		bottom: 0,
 		left: 0,
-		borderBottomWidth: 10,
-		borderLeftWidth: 10,
+		borderBottomWidth: markerWidth,
+		borderLeftWidth: markerWidth,
 	},
 	br: {
 		bottom: 0,
 		right: 0,
-		borderBottomWidth: 10,
-		borderRightWidth: 10,
+		borderBottomWidth: markerWidth,
+		borderRightWidth: markerWidth,
 	},
 })

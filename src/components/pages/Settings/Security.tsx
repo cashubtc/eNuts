@@ -7,7 +7,7 @@ import { PromptModal } from '@modal/Prompt'
 import { TSecuritySettingsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles/globals'
+import { globals } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 

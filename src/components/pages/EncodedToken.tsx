@@ -4,7 +4,7 @@ import { l } from '@log'
 import { TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { dark, highlight as hi } from '@styles/colors'
+import { dark, highlight as hi } from '@styles'
 import { vib } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
@@ -73,7 +73,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 					<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>
 						<QR
 							size={320}
-							value={route.params.token}
+							value={`cashu://${route.params.token}`}
 							onError={() => setError({ msg: 'The amount of data is too big for a QR code.', open: true })}
 						/>
 					</View>

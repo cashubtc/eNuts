@@ -1,6 +1,6 @@
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles/colors'
-import React, { useContext } from 'react'
+import { highlight as hi } from '@styles'
+import { useContext } from 'react'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native'
 
 interface IButtonProps {

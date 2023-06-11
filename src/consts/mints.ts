@@ -1,23 +1,25 @@
 import type { IMintBalWithName } from '@model'
-import { _mintUrl } from '@wallet'
 
-export const defaultMints: IMintBalWithName[] = [
+
+export const _mintUrl = 'https://testnut.cashu.space'
+
+export const defaultMints: Readonly<IMintBalWithName[]> = [
 	/* {
-		mint_url: 'https://8333.space:3338',
+		mintUrl: 'https://8333.space:3338',
 		amount: 0,
-		name: ''
+		customName: ''
 	},
 	{
-		mint_url: 'https://legend.lnbits.com/cashu/api/v1/TGM7mVpYBkva7sCqLECTk5',
+		mintUrl: 'https://legend.lnbits.com/cashu/api/v1/TGM7mVpYBkva7sCqLECTk5',
 		amount: 0,
-		name: ''
+		customName: ''
 	}, */
 	{
-		mint_url: _mintUrl,
+		mintUrl: _mintUrl,
 		amount: 0,
-		name: ''
+		customName: ''
 	}
-]
+] as const
 
 // https://reactnative.dev/docs/platform
 // export const osAndroid = 'android'
