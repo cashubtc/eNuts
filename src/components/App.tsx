@@ -16,7 +16,7 @@ import { KeyboardProvider } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
-import { formatInt, hasTrustedMint, isCashuToken, sleep } from '@util'
+import { formatInt, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
 import { initCrashReporting } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -154,7 +154,7 @@ export default function App(_initialProps: IInitialProps) {
 				l(await getBalancesByKeysetId()) */
 			} catch (e) {
 				l(e)
-				alert(`Something went wrong while initializing the DB! ${e instanceof Error ? e.message : ''}`)
+				alert(`Something went wrong while initializing the DB! ${isErr(e) ? e.message : ''}`)
 			}
 		}
 		async function initPreferences() {

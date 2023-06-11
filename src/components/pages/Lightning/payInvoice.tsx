@@ -17,7 +17,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
-import { formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isLnurl, openUrl } from '@util'
+import { formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
@@ -75,7 +75,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				})
 			} catch (e) {
 				l(e)
-				openPromptAutoClose(false, e instanceof Error ? e.message : 'An error occured while paying the invoice.')
+				openPromptAutoClose(false, isErr(e) ? e.message : 'An error occured while paying the invoice.')
 				stopLoading()
 			}
 			return
@@ -118,11 +118,8 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				mints: [route.params.mint.mintUrl]
 			})
 		} catch (e) {
-			if (e instanceof Error) {
-				l(e.message)
-				openPromptAutoClose(false, e instanceof Error ? e.message : 'An error occured while paying the invoice.')
-				stopLoading()
-			}
+			openPromptAutoClose(false, isErr(e) ? e.message : 'An error occured while paying the invoice.')
+			stopLoading()
 		}
 	}
 	// Only for handling fee estimation for the amount selected to send to a LNURL

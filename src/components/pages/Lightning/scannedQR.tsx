@@ -15,7 +15,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { getCustomMintNames, getDefaultMint, getMintName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
-import { formatExpiry, formatInt, formatMintUrl, getSelectedAmount } from '@util'
+import { formatExpiry, formatInt, formatMintUrl, getSelectedAmount, isErr } from '@util'
 import { payLnInvoice } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Switch, Text, View } from 'react-native'
@@ -67,7 +67,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			})
 		} catch (e) {
 			l(e)
-			openPrompt(e instanceof Error ? e.message : 'An error occured while paying the invoice.')
+			openPrompt(isErr(e)? e.message : 'An error occured while paying the invoice.')
 			stopLoading()
 		}
 	}
