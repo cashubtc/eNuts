@@ -219,30 +219,10 @@ export default function App(_initialProps: IInitialProps) {
 
 	if (!isRdy) { return null }
 
-	// Bugsnag Error boundary. docs: https://docs.bugsnag.com/platforms/javascript/react/
-	const BugSnagErrorBoundary = ({ children }: { children: React.ReactNode }) => {
-		if (env.BUGSNAG_API_KEY) {
-			// Create the error boundary...
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-			const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
-			// Uses the bugsnack error boundary component which posts the errors to our bugsnag account
-			return (
-				<ErrorBoundary FallbackComponent={ErrorDetails}>
-					{children}
-				</ErrorBoundary>
-			)
-		}
-		return (
-			<CustomErrorBoundary catchErrors='always'>
-				{children}
-			</CustomErrorBoundary>
-		)
-	}
-
 	return (
 		<ThemeContext.Provider value={themeData}>
-			<NavigationContainer theme={theme === 'Light' ? light : dark}>
-				<BugSnagErrorBoundary>
+			<BugSnagErrorBoundary>
+				<NavigationContainer theme={theme === 'Light' ? light : dark}>
 					<FocusClaimCtx.Provider value={claimData}>
 						<ContactsContext.Provider value={contactData}>
 							<KeyboardProvider>
@@ -284,8 +264,28 @@ export default function App(_initialProps: IInitialProps) {
 							</KeyboardProvider>
 						</ContactsContext.Provider>
 					</FocusClaimCtx.Provider>
-				</BugSnagErrorBoundary>
-			</NavigationContainer>
+				</NavigationContainer>
+			</BugSnagErrorBoundary>
 		</ThemeContext.Provider>
+	)
+}
+
+// Bugsnag Error boundary. docs: https://docs.bugsnag.com/platforms/javascript/react/
+function BugSnagErrorBoundary({ children }: { children: React.ReactNode }) {
+	if (env.BUGSNAG_API_KEY) {
+		// Create the error boundary...
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+		const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
+		// Uses the bugsnack error boundary component which posts the errors to our bugsnag account
+		return (
+			<ErrorBoundary FallbackComponent={ErrorDetails}>
+				{children}
+			</ErrorBoundary>
+		)
+	}
+	return (
+		<CustomErrorBoundary catchErrors='always'>
+			{children}
+		</CustomErrorBoundary>
 	)
 }
