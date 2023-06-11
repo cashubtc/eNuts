@@ -1,5 +1,6 @@
 import { config as dotenvConfig } from 'dotenv'
 import { ExpoConfig } from 'expo/config'
+
 import { version } from './../package.json'
 
 type AppVariant = 'preview' | 'prod' | 'dev' | undefined
@@ -31,7 +32,6 @@ const _nodeEnvShort = nodeEnvShort()
 try {
 	dotenvConfig({ path: `.env${_nodeEnvShort === 'prod' ? '' : `.${nodeEnvShort()}`}` })
 } catch (e) { console.log('dotenv error:', e) } // eslint-disable-line no-console
-
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const IS_DEV = _appVariant === 'dev'

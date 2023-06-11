@@ -8,6 +8,7 @@ import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { historyStore } from '@src/storage/store'
 import { mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { isTokenSpendable } from '@wallet'
@@ -62,6 +63,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 		const isSpendable = await isTokenSpendable(entry.value)
 		setIsSpent(!isSpendable)
 		// update history item
+		await historyStore.updateHistoryEntry(entry, { ...entry, isSpent: !isSpendable })
 		stopLoading()
 	}
 	const handleQR = () => {
