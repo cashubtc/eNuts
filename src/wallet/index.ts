@@ -9,7 +9,7 @@ import {
 	getMintBalance, getMintsUrls
 } from '@db'
 import { l } from '@log'
-import { isCashuToken, isErr } from '@src/util'
+import { isCashuToken } from '@util'
 
 import { sumProofsValue } from './proofs'
 import { getProofsToUse } from './util'
