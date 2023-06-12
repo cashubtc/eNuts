@@ -251,7 +251,7 @@ export default function LNPageContent({
 			<LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
 				setLNAmountModal={setLnAmountModalCB}
-				mintUrl={selectedMint?.mintUrl || ''}
+				mintUrl={selectedMint?.mintUrl ?? ''}
 			/>
 			{/* coin selection page */}
 			{isEnabled &&

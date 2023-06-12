@@ -41,7 +41,7 @@ interface IInvoiceModalProps {
 
 export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModalProps) {
 	const { color, highlight } = useContext(ThemeContext)
-	const [expiry, setExpiry] = useState(invoice.decoded?.expiry || 600)
+	const [expiry, setExpiry] = useState(invoice.decoded?.expiry ?? 600)
 	const [expiryTime,] = useState(expiry * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const [copied, setCopied] = useState(false)
@@ -56,7 +56,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 					await addToHistory({
 						amount: +invoice.amount,
 						type: 2,
-						value: invoice.decoded?.paymentRequest || '',
+						value: invoice.decoded?.paymentRequest ?? '',
 						mints: [mintUrl],
 					})
 				}
@@ -127,7 +127,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							txt={copied ? 'Copied!' : 'Copy invoice'}
 							outlined
 							onPress={() => {
-								void Clipboard.setStringAsync(invoice.decoded?.paymentRequest || '').then(() => {
+								void Clipboard.setStringAsync(invoice.decoded?.paymentRequest ?? '').then(() => {
 									setCopied(true)
 									const t = setTimeout(() => {
 										setCopied(false)
@@ -141,7 +141,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							txt='Pay with your LN wallet'
 							onPress={() => {
 								void (async () => {
-									await openUrl(`lightning:${invoice.decoded?.paymentRequest || ''}`)
+									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)
 								})()
 							}}
 						/>
@@ -171,7 +171,7 @@ interface ICoinSelectionProps {
  * This component is the main container of the pressable proofs-list aka coin selection list.
  */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
-	const { color } = useContext(ThemeContext)
+	const { color, highlight } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
 	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
@@ -184,9 +184,21 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
 			<View style={styles.proofContainer}>
-				<Text style={globals(color).header}>
-					Coin selection
-				</Text>
+				<View style={styles.header}>
+					<Text style={globals(color).header}>
+						Coin selection
+					</Text>
+					<TouchableOpacity
+						onPress={() => {
+							setVisible(false)
+							disableCS()
+						}}
+					>
+						<Text style={globals(color, highlight).pressTxt}>
+							Cancel
+						</Text>
+					</TouchableOpacity>
+				</View>
 				<View style={styles.activeMint}>
 					<MintBoardIcon width={19} height={19} color={color.TEXT_SECONDARY} />
 					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
@@ -195,7 +207,8 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 				</View>
 				{/* Info about latest keyset ids highlighted in green */}
 				<KeysetHint />
-				<ProofListHeader margin={40} />
+				<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} />
+				<ProofListHeader />
 				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 					{lnAmount > 0 &&
 						proofs.map(p => (
@@ -211,27 +224,17 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 							/>
 						))
 					}
-					<View style={{ marginVertical: 25, borderBottomColor: color.BORDER, borderBottomWidth: 1 }} />
-					<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} />
-					<View style={{ marginVertical: 10 }} />
-					{getSelectedAmount(proofs) >= lnAmount &&
-						<Button
-							txt='Confirm'
-							onPress={() => setVisible(false)}
-						/>
-					}
-					<View style={{ marginVertical: 10 }} />
-					<Button
-						txt='Cancel'
-						outlined
-						onPress={() => {
-							setVisible(false)
-							disableCS()
-						}}
-					/>
-					<View style={{ marginVertical: 10 }} />
 				</ScrollView>
 			</View>
+			{getSelectedAmount(proofs) >= lnAmount &&
+				<View style={[styles.confirmWrap, { backgroundColor: color.BACKGROUND }]}>
+					<Button
+						outlined
+						txt='Confirm'
+						onPress={() => setVisible(false)}
+					/>
+				</View>
+			}
 		</MyModal>
 	)
 }
@@ -275,7 +278,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
  * Margin is used for the pressable coin-selection row.
  * If the row of the proofs-list is non-pressable, margin is not required.
  */
-export function ProofListHeader({ margin }: { margin?: number }) {
+export function ProofListHeader() {
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
@@ -283,7 +286,7 @@ export function ProofListHeader({ margin }: { margin?: number }) {
 				<Text style={[styles.tableHead, { color: color.TEXT }]}>
 					Amount
 				</Text>
-				<Text style={[styles.tableHead, { color: color.TEXT, marginRight: margin || 0 }]}>
+				<Text style={[styles.tableHead, { color: color.TEXT }]}>
 					Keyset ID
 				</Text>
 			</View>
@@ -300,6 +303,12 @@ const styles = StyleSheet.create({
 	},
 	proofContainer: {
 		width: '100%',
+		paddingBottom: 30,
+	},
+	header: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
 	},
 	overview: {
 		flexDirection: 'row',
@@ -368,5 +377,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		marginBottom: 15,
+	},
+	confirmWrap: {
+		position: 'absolute',
+		bottom: 0,
+		right: 0,
+		left: 0,
+		padding: 20,
 	}
 })
