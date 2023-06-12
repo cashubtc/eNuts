@@ -14,8 +14,7 @@ import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 const initialCopyState = {
 	value: false,
