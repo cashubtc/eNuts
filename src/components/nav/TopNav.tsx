@@ -7,12 +7,13 @@ import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface TTopNavProps {
+	screenName?: string
 	withBackBtn?: boolean
 	backHandler?: () => void
 	nav?: TBottomNavProps
 }
 
-export default function TopNav({ withBackBtn, backHandler, nav }: TTopNavProps) {
+export default function TopNav({ screenName, withBackBtn, backHandler, nav }: TTopNavProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const navHook = useNavigation()
 	const handlePress = () => {
@@ -37,6 +38,11 @@ export default function TopNav({ withBackBtn, backHandler, nav }: TTopNavProps) 
 			>
 				<HamburgerIcon color={color.TEXT} />
 			</TouchableOpacity>
+			{screenName &&
+				<Text style={[styles.screenName, { color: color.TEXT }]}>
+					{screenName}
+				</Text>
+			}
 			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
 				{withBackBtn ?
 					<Text style={globals(color, highlight).pressTxt}>
@@ -53,19 +59,24 @@ export default function TopNav({ withBackBtn, backHandler, nav }: TTopNavProps) 
 const styles = StyleSheet.create({
 	topNav: {
 		position: 'absolute',
-		top: 75,
+		top: 50,
 		left: 20,
 		right: 20,
 		flex: 1,
 		flexDirection: 'row',
+		alignItems: 'center',
 		justifyContent: 'space-between',
 	},
 	topIconL: {
 		paddingRight: 20,
-		paddingBottom: 20
+		paddingVertical: 20
 	},
 	topIconR: {
 		paddingLeft: 20,
-		paddingBottom: 20
+		paddingVertical: 20
 	},
+	screenName: {
+		fontWeight: '500',
+		fontSize: 20,
+	}
 })

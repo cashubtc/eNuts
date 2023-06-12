@@ -42,11 +42,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
-			{/* Header */}
-			<Text style={[globals(color).header, styles.header]}>
-				Inter-Mint Swap
-			</Text>
+			<TopNav screenName='Swap' withBackBtn />
 			{/* sub header */}
 			<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
 				Swap tokens from one mint for tokens from another mint.
@@ -132,9 +128,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingTop: 130,
 		paddingHorizontal: 20,
-	},
-	header: {
-		marginBottom: 0,
 	},
 	subHeader: {
 		fontSize: 16,

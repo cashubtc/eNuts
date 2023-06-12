@@ -10,12 +10,10 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
+				screenName='Display'
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
-			<Text style={[globals(color).header, { marginBottom: 25 }]}>
-				Display
-			</Text>
 			<View style={styles.settingsRow}>
 				<Text style={globals(color).txt}>
 					Dark mode

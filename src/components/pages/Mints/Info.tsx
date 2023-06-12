@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingHorizontal: 20,
-		paddingTop: 130
+		paddingTop: 100
 	},
 	mainInfo: {
 		borderWidth: 1,

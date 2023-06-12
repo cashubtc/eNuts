@@ -126,66 +126,61 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+			<TopNav screenName='Mints' nav={{ navigation, route }} />
 			<View style={styles.topSection}>
-				<TopNav nav={{ navigation, route }} />
-				<View style={styles.topContent}>
-					{/* Header */}
-					<View style={[styles.headerWrap, { marginBottom: 20 }]}>
-						<Text style={[globals(color).header, { marginBottom: 0 }]}>
-							My mints
-						</Text>
-						<TouchableOpacity
-							style={{ paddingVertical: 10 }}
-							onPress={() => setNewMintModal(true)}
-						>
-							<PlusIcon width={22} height={22} color={color.TEXT} />
-						</TouchableOpacity>
-					</View>
-					{/* Mints list where test mint is always visible */}
-					<ScrollView showsVerticalScrollIndicator={false}>
-						{[...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]
-							.map(m => (
-								<View key={m.mintUrl} style={styles.mintContainer}>
-									<TouchableOpacity
-										style={styles.mintUrlWrap}
-										onPress={() => handleMintEntry(m, m.amount)}
-									>
-										<View style={styles.mintNameWrap}>
-											{defaultMint === m.mintUrl &&
-												<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-											}
-											<Text
-												style={[
-													styles.mintUrl,
-													{
-														color: color.TEXT,
-														marginLeft: defaultMint === m.mintUrl ? 10 : 0
-													}
-												]}
-											>
-												{/* custom name given by user or show mint URL */}
-												{m.customName || formatMintUrl(m.mintUrl)}
-											</Text>
-										</View>
-										{/* Add mint icon or show balance */}
-										<View>
-											{isTrustedMint(m.mintUrl) ?
-												<View style={styles.mintBal}>
-													<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-														{formatInt(m.amount, 'compact', 'en')}
-													</Text>
-													<ZapIcon width={18} height={18} color={color.TEXT} />
-												</View>
-												:
-												<PlusIcon color={color.TEXT} />
-											}
-										</View>
-									</TouchableOpacity>
-									<View style={{ borderBottomWidth: 1, borderBottomColor: color.BORDER }} />
-								</View>
-							))}
-					</ScrollView>
+				{/* Header */}
+				<View style={styles.headerWrap}>
+					<TouchableOpacity
+						style={{ paddingVertical: 10 }}
+						onPress={() => setNewMintModal(true)}
+					>
+						<PlusIcon width={22} height={22} color={color.TEXT} />
+					</TouchableOpacity>
 				</View>
+				{/* Mints list where test mint is always visible */}
+				<ScrollView showsVerticalScrollIndicator={false}>
+					{[...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]
+						.map(m => (
+							<View key={m.mintUrl} style={styles.mintContainer}>
+								<TouchableOpacity
+									style={styles.mintUrlWrap}
+									onPress={() => handleMintEntry(m, m.amount)}
+								>
+									<View style={styles.mintNameWrap}>
+										{defaultMint === m.mintUrl &&
+											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+										}
+										<Text
+											style={[
+												styles.mintUrl,
+												{
+													color: color.TEXT,
+													marginLeft: defaultMint === m.mintUrl ? 10 : 0
+												}
+											]}
+										>
+											{/* custom name given by user or show mint URL */}
+											{m.customName || formatMintUrl(m.mintUrl)}
+										</Text>
+									</View>
+									{/* Add mint icon or show balance */}
+									<View>
+										{isTrustedMint(m.mintUrl) ?
+											<View style={styles.mintBal}>
+												<Text style={[styles.mintAmount, { color: color.TEXT }]}>
+													{formatInt(m.amount, 'compact', 'en')}
+												</Text>
+												<ZapIcon width={18} height={18} color={color.TEXT} />
+											</View>
+											:
+											<PlusIcon color={color.TEXT} />
+										}
+									</View>
+								</TouchableOpacity>
+								<View style={{ borderBottomWidth: 1, borderBottomColor: color.BORDER }} />
+							</View>
+						))}
+				</ScrollView>
 			</View>
 			{/* Submit new mint URL modal */}
 			<MyModal type='bottom' animation='slide' visible={newMintModal && !prompt.open}>
@@ -195,7 +190,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				<TextInput
 					style={[globals(color).input, { marginBottom: 20 }]}
 					placeholder="Mint URL"
-					placeholderTextColor={color.BORDER}
+					placeholderTextColor={color.INPUT_PH}
 					selectionColor={hi[highlight]}
 					onChangeText={setInput}
 				/>
@@ -232,16 +227,14 @@ const styles = StyleSheet.create({
 	topSection: {
 		width: '100%',
 		paddingHorizontal: 20,
-		paddingTop: 20,
+		marginTop: 120,
 		paddingBottom: 225,
-	},
-	topContent: {
-		marginTop: 110,
 	},
 	headerWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'space-between',
+		justifyContent: 'flex-end',
+		marginBottom: 10,
 	},
 	mintNameWrap: {
 		flexDirection: 'row',

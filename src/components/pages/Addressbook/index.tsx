@@ -10,7 +10,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Address book' withBackBtn />
 			<AddressBook nav={{ navigation, route }} />
 		</View>
 	)

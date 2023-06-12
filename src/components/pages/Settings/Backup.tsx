@@ -10,6 +10,7 @@ export default function BackupPage({ navigation, route }: TBackupPageProps) {
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
+				screenName='Backup'
 				withBackBtn
 				backHandler={() => navigation.navigate('Security settings')}
 			/>

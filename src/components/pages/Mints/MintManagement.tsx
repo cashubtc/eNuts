@@ -151,12 +151,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Mint settings' withBackBtn />
 			<View style={styles.content}>
-				{/* Header */}
-				<Text style={[globals(color).header, styles.header]}>
-					Manage mint
-				</Text>
 				{/* Mint url */}
 				<View style={styles.subHeader}>
 					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
@@ -376,7 +372,7 @@ const styles = StyleSheet.create({
 		marginBottom: 175,
 	},
 	content: {
-		marginTop: 130,
+		marginTop: 100,
 		paddingHorizontal: 20,
 	},
 	header: {
@@ -384,7 +380,7 @@ const styles = StyleSheet.create({
 	},
 	subHeader: {
 		flexDirection: 'row',
-		justifyContent: 'flex-start',
+		justifyContent: 'center',
 		alignItems: 'center',
 		marginBottom: 20
 	},

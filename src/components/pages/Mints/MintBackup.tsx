@@ -10,6 +10,7 @@ export default function MintBackup({ navigation, route }: TMintBackupPageProps) 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
+				screenName='Mint Backup'
 				withBackBtn
 				backHandler={() => navigation.goBack()}
 			/>
@@ -24,7 +25,7 @@ export default function MintBackup({ navigation, route }: TMintBackupPageProps) 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 130,
+		paddingTop: 110,
 		paddingHorizontal: 20,
 	},
 })

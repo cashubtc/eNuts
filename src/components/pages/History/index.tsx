@@ -7,7 +7,6 @@ import { FlashList } from '@shopify/flash-list'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { ThemeContext } from '@src/context/Theme'
 import { getHistory } from '@store/HistoryStore'
-import { globals } from '@styles'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
@@ -33,14 +32,11 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav nav={{ navigation, route }} />
+			<TopNav screenName='History' nav={{ navigation, route }} />
 			<View style={styles.topSection}>
-				<Text style={[globals(color).header, { marginBottom: 0 }]}>
-					History
-				</Text>
 				<Txt
 					txt='Press on entry to open details.'
-					styles={[{ color: color.TEXT_SECONDARY }]}
+					styles={[{ color: color.TEXT_SECONDARY, textAlign: 'center' }]}
 				/>
 			</View>
 			{/* TODO apply filter for ecash or LN TXs */}
@@ -94,7 +90,7 @@ const styles = StyleSheet.create({
 	},
 	topSection: {
 		width: '100%',
-		marginTop: 130,
+		marginTop: 100,
 		marginBottom: 20,
 		paddingHorizontal: 20,
 	},

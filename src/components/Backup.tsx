@@ -1,7 +1,6 @@
 import Button from '@comps/Button'
 import { l } from '@log'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
@@ -13,7 +12,7 @@ interface IBackupSuccessProps {
 }
 
 export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { color } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const handleShare = async () => {
 		try {
@@ -39,14 +38,11 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 	}
 	return (
 		<>
-			<Text style={[styles.successTxt, { color: hi[highlight] }]}>
-				Backup token created!
-			</Text>
 			<Text style={[styles.subTxt, { color: color.TEXT }]}>
 				Copy the token and keep it in a safe place.
 			</Text>
 			<Text style={[styles.token, { color: color.TEXT }]}>
-				{token.substring(0, 25)}...
+				Backupt token: {token.substring(0, 25)}...
 			</Text>
 			{mint &&
 				<Text style={[styles.token, { color: color.TEXT }]}>
@@ -63,7 +59,7 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 				/>
 				<View style={{ marginBottom: 20 }} />
 				<Button
-					txt={copied ? 'Copied!' : 'Copy'}
+					txt={copied ? 'Copied!' : 'Copy backup token'}
 					onPress={() => {
 						void Clipboard.setStringAsync(token).then(() => {
 							setCopied(true)
@@ -80,20 +76,12 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 }
 
 const styles = StyleSheet.create({
-	successTxt: {
-		marginTop: 25,
-		fontSize: 32,
-		fontWeight: '600',
-		textAlign: 'center',
-	},
 	subTxt: {
 		marginTop: 20,
 		fontSize: 20,
 		fontWeight: '500',
-		textAlign: 'center',
 	},
 	token: {
-		textAlign: 'center',
 		marginTop: 20,
 		fontSize: 16,
 	},

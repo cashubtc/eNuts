@@ -10,7 +10,7 @@ import { ProofListHeader } from '@pages/Lightning/modal'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { getMintCurrentKeySetId } from '@src/wallet'
-import { globals, mainColors } from '@styles'
+import { mainColors } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
@@ -35,12 +35,8 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Proofs' withBackBtn />
 			<View style={styles.content}>
-				{/* Header */}
-				<Text style={[globals(color).header, styles.header]}>
-					Proofs
-				</Text>
 				{/* Mint url */}
 				<View style={styles.subHeader}>
 					<MintBoardIcon width={19} height={19} color={color.TEXT_SECONDARY} />
@@ -94,18 +90,14 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		flex: 1,
-		marginTop: 130,
+		marginTop: 100,
 		marginBottom: 75,
-	},
-	header: {
-		marginBottom: 0,
-		paddingHorizontal: 20,
 	},
 	subHeader: {
 		flexDirection: 'row',
-		justifyContent: 'flex-start',
+		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 5,
+		marginBottom: 20,
 		paddingHorizontal: 20,
 	},
 	mintUrl: {

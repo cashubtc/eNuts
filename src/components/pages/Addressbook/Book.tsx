@@ -59,18 +59,14 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 		<>
 			{/* Header */}
 			<View style={styles.headerWrap}>
-				<View>
-					<Text style={[globals(color).header, { marginBottom: 0 }]}>
-						Address book
-					</Text>
-					<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
-						{!contacts.length ?
-							''
-							:
-							`${contacts.length} Contact${contacts.length > 1 ? 's' : ''}`
-						}
-					</Text>
-				</View>
+				{isModal &&
+					<View>
+						<Text style={[globals(color).header, { marginBottom: 0 }]}>
+							Address book
+						</Text>
+						<ContactsCount count={contacts.length} colorSecondary />
+					</View>
+				}
 				{isModal ?
 					<TouchableOpacity
 						style={{ paddingVertical: 10 }}
@@ -81,13 +77,16 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						</Text>
 					</TouchableOpacity>
 					:
-					<TouchableOpacity
-						style={{ paddingVertical: 15, paddingLeft: 10 }}
-						onPress={() => setOpenNew({ open: true, isOwner: false })}
-						testID='testNewContact'
-					>
-						<PlusIcon width={22} height={22} color={color.TEXT} />
-					</TouchableOpacity>
+					<>
+						<ContactsCount count={contacts.length} />
+						<TouchableOpacity
+							style={{ paddingLeft: 10 }}
+							onPress={() => setOpenNew({ open: true, isOwner: false })}
+							testID='testNewContact'
+						>
+							<PlusIcon width={20} height={20} color={color.TEXT} />
+						</TouchableOpacity>
+					</>
 				}
 			</View>
 			{/* Address list */}
@@ -206,6 +205,19 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 	)
 }
 
+function ContactsCount({ count, colorSecondary }: { count: number, colorSecondary?: boolean }) {
+	const { color } = useContext(ThemeContext)
+	return (
+		<Text style={[styles.subHeader, { color: colorSecondary ? color.TEXT_SECONDARY : color.TEXT }]}>
+			{!count ?
+				''
+				:
+				`${count} Contact${count > 1 ? 's' : ''}`
+			}
+		</Text>
+	)
+}
+
 const styles = StyleSheet.create({
 	headerWrap: {
 		flexDirection: 'row',
@@ -216,6 +228,7 @@ const styles = StyleSheet.create({
 	},
 	subHeader: {
 		fontSize: 16,
+		fontWeight: '500',
 	},
 	bookContainer: {
 		width: '100%',

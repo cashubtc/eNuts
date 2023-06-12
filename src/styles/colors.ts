@@ -55,7 +55,7 @@ export const mainColors = {
 }
 
 const common = {
-	ERROR: '#FF6666', // LIGHT_RED
+	ERROR: '#FF6666',
 }
 
 // light theme

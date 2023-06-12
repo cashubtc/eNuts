@@ -103,16 +103,6 @@ export default function LNPageContent({
 	return (
 		<>
 			<View style={styles.pickerWrap}>
-				{/* header */}
-				{!isSendingToken &&
-					<Text style={[styles.lnHint, { color: color.TEXT }]}>
-						{nav.route.params?.mint ?
-							'Pay to a Lightning wallet'
-							:
-							`Select a mint ${nav.route.params?.send ? 'to pay from' : 'to top up'}`
-						}
-					</Text>
-				}
 				{/* Single mint with balance, or mint picker */}
 				<MintPanel
 					nav={nav}

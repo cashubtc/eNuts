@@ -31,12 +31,10 @@ export default function SecuritySettings({ navigation }: TSecuritySettingsPagePr
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
+				screenName='Security'
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
-			<Text style={[globals(color).header, { marginBottom: 25 }]}>
-				Security
-			</Text>
 			<TouchableOpacity
 				style={styles.settingsRow}
 				onPress={() => { void handleBackup() }}

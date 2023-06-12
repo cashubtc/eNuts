@@ -6,7 +6,6 @@ import { TSettingsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
-import { globals } from '@styles'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -21,10 +20,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
-			<Text style={[globals(color).header, { marginBottom: 25 }]}>
-				Settings
-			</Text>
+			<TopNav screenName='Settings' withBackBtn />
 			<SettingsMenuItem
 				txt='Security'
 				txtColor={color.TEXT}

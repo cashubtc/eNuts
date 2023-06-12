@@ -53,7 +53,7 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 	}, [selectedMint])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Send Ecash' withBackBtn />
 			<LNPageContent
 				nav={{ navigation, route }}
 				mints={mints}
