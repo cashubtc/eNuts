@@ -48,7 +48,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const handleCashuToken = async (data: string) => {
 		const info = getTokenInfo(data)
 		if (!info) {
-			openPromptAutoClose(false, 'Token invalid or already claimed')
+			openPromptAutoClose({ msg: 'Token invalid or already claimed' })
 			return
 		}
 		// save token info in state
@@ -70,7 +70,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPromptAutoClose(false, 'Invalid cashu token')
+			openPromptAutoClose({ msg: 'Invalid cashu token' })
 			stopLoading()
 			// close modal
 			setTrustModal(false)
@@ -91,17 +91,20 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// close modal
 		setTrustModal(false)
 		if (!success) {
-			openPromptAutoClose(false, 'Token invalid or already claimed')
+			openPromptAutoClose({ msg: 'Token invalid or already claimed' })
 			return
 		}
 		const info = getTokenInfo(data)
 		// TODO show all mints of token
 		if (!info) {
-			openPromptAutoClose(false, 'Error while getting token info')
+			openPromptAutoClose({ msg: 'Error while getting token info' })
 			return
 		}
 		// success prompt
-		openPromptAutoClose(true, `Claimed ${info?.value} Satoshi from${'\n'}${info?.mints[0]}!${'\n'}Memo: ${info?.decoded.memo}`)
+		openPromptAutoClose({
+			msg: `Claimed ${info?.value} Satoshi from${'\n'}${info?.mints[0]}!${'\n'}Memo: ${info?.decoded.memo}`,
+			success: true
+		})
 		// add as history entry
 		await addToHistory({
 			amount: info.value,
@@ -115,7 +118,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		setScanned(true)
 		// early return if barcode is not a QR
 		if (+type !== QRType) {
-			openPromptAutoClose(false, 'Not a QR code!')
+			openPromptAutoClose({ msg: 'Not a QR code!' })
 			return
 		}
 		// handle cashu token claim
@@ -132,7 +135,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			setDetailsOpen(true)
 		} catch (e) {
 			l(e)
-			openPromptAutoClose(false, `Unknown data: ${data}`)
+			openPromptAutoClose({ msg: `Unknown data: ${data}` })
 		}
 	}
 

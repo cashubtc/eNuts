@@ -35,11 +35,11 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleNewContact = async () => {
 		if (!isLnurl(newContactLN)) {
-			openPromptAutoClose(false, 'Invalid LNURL!')
+			openPromptAutoClose({ msg: 'Invalid LNURL!', ms: 1500 })
 			return
 		}
 		if (!newContactName) {
-			openPromptAutoClose(false, 'Invalid name!')
+			openPromptAutoClose({ msg: 'Invalid name!', ms: 1500 })
 			return
 		}
 		const success = await addContact({
@@ -48,11 +48,11 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			isOwner: openNew.isOwner
 		})
 		if (!success) {
-			openPromptAutoClose(false, 'Contact can not be added. Possible name or LNURL duplication.')
+			openPromptAutoClose({ msg: 'Contact can not be added. Possible name or LNURL duplication.' })
 			return
 		}
 		setContacts(await getContacts())
-		openPromptAutoClose(true, 'Added a new contact')
+		openPromptAutoClose({ msg: 'Added a new contact', success: true })
 		setOpenNew({ open: false, isOwner: false })
 	}
 	return (
@@ -171,42 +171,37 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				</View>
 			</ScrollView>
 			{/* Add new contact modal */}
-			{openNew.open &&
-				<MyModal type='bottom' animation='slide' visible={true}>
-					<Text style={globals(color).modalHeader}>
-						{openNew.isOwner ? 'Your LNURL' : 'New contact'}
-					</Text>
-					{!openNew.isOwner &&
-						<TextInput
-							style={[globals(color).input, { marginBottom: 20 }]}
-							placeholder="Name"
-							placeholderTextColor={color.INPUT_PH}
-							selectionColor={hi[highlight]}
-							onChangeText={setNewContactName}
-						/>
-					}
+			<MyModal type='bottom' animation='slide' visible={openNew.open && !prompt.open}>
+				<Text style={globals(color).modalHeader}>
+					{openNew.isOwner ? 'Your LNURL' : 'New contact'}
+				</Text>
+				{!openNew.isOwner &&
 					<TextInput
 						style={[globals(color).input, { marginBottom: 20 }]}
-						placeholder="zap@me.now"
+						placeholder="Name"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
-						onChangeText={setNewContactLN}
+						onChangeText={setNewContactName}
 					/>
-					<Button txt='Save' onPress={() => {
-						void handleNewContact()
-					}}
-					/>
-					<TouchableOpacity
-						style={{ marginTop: 25 }}
-						onPress={() => setOpenNew({ open: false, isOwner: false })}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							Cancel
-						</Text>
-					</TouchableOpacity>
-					{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-				</MyModal>
-			}
+				}
+				<TextInput
+					style={[globals(color).input, { marginBottom: 20 }]}
+					placeholder="zap@me.now"
+					placeholderTextColor={color.INPUT_PH}
+					selectionColor={hi[highlight]}
+					onChangeText={setNewContactLN}
+				/>
+				<Button txt='Save' onPress={() => void handleNewContact()} />
+				<TouchableOpacity
+					style={{ marginTop: 25 }}
+					onPress={() => setOpenNew({ open: false, isOwner: false })}
+				>
+					<Text style={globals(color, highlight).pressTxt}>
+						Cancel
+					</Text>
+				</TouchableOpacity>
+			</MyModal>
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</>
 	)
 }

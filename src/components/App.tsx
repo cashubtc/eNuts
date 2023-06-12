@@ -116,12 +116,12 @@ function _App(_initialProps: IInitialProps) {
 		const encoded = getEncodedToken(tokenInfo.decoded)
 		const success = await claimToken(encoded).catch(l)
 		if (!success) {
-			openPromptAutoClose(false, 'Token invalid or already claimed')
+			openPromptAutoClose({ msg: 'Token invalid or already claimed' })
 			return
 		}
 		const info = getTokenInfo(encoded)
 		if (!info) {
-			openPromptAutoClose(false, 'Error while getting token info')
+			openPromptAutoClose({ msg: 'Error while getting token info' })
 			return
 		}
 		// add as history entry
@@ -131,7 +131,7 @@ function _App(_initialProps: IInitialProps) {
 			value: encoded,
 			mints: info.mints,
 		})
-		openPromptAutoClose(true, `Successfully claimed ${formatInt(info.value)} Satoshi!`)
+		openPromptAutoClose({ msg: `Successfully claimed ${formatInt(info.value)} Satoshi!`, success: true })
 		setClaimed(true)
 	}
 

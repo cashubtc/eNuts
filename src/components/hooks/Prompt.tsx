@@ -14,12 +14,12 @@ export default function usePrompt() {
 	const closePrompt = () => {
 		setPrompt({ open: false, msg: '' })
 	}
-	const openPromptAutoClose = (success: boolean, msg: string) => {
+	const openPromptAutoClose = ({ msg, success, ms }: { msg: string, success?: boolean, ms?: number }) => {
 		setPrompt({ success, open: true, msg })
 		const t = setTimeout(() => {
 			setPrompt({ open: false, msg: '' })
 			clearTimeout(t)
-		}, 2500)
+		}, ms ?? 2500)
 	}
 
 	return {

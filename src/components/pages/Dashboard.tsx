@@ -60,7 +60,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
+			openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -84,7 +84,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const handleTokenSubmit = async (url: string) => {
 		const tokenInfo = getTokenInfo(url)
 		if (!tokenInfo) {
-			openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
+			openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -111,7 +111,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setToken('')
 		stopLoading()
 		if (!success) {
-			openPromptAutoClose(false, 'Token invalid or already claimed')
+			openPromptAutoClose({ msg: 'Token invalid or already claimed' })
 			return
 		}
 		const info = getTokenInfo(encodedToken)
@@ -140,7 +140,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			setModal({ ...modal, mint: !hasUserMints })
 			setBalance(await getBalance())
 		})()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
 
 	// handle initial URL passed on by clicking on a cashu link
@@ -150,7 +150,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			// alert(`URL in dashboard useEffect: ${url}`)
 			await handleTokenSubmit(url)
 		})()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
 
 	// get balance after navigating to this page
@@ -222,7 +222,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 							startLoading()
 							const clipboard = await Clipboard.getStringAsync()
 							if (!isCashuToken(clipboard)) {
-								openPromptAutoClose(false, 'Your clipboard contains an invalid cashu token!')
+								openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
 								setModal({ ...modal, receiveOpts: false })
 								stopLoading()
 								return

@@ -43,24 +43,24 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	// adds a mint via input
 	const handleMintInput = async () => {
 		if (!isUrl(input)) {
-			openPromptAutoClose(false, 'Invalid URL')
+			openPromptAutoClose({ msg: 'Invalid URL', ms: 1500 })
 			return
 		}
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === input)) {
-				openPromptAutoClose(false, 'Mint already added')
+				openPromptAutoClose({ msg: 'Mint already added', ms: 1500 })
 				return
 			}
 			// add mint url to db
 			await addMint(input)
 		} catch (e) {
-			openPromptAutoClose(false, 'Connection to mint failed')
+			openPromptAutoClose({ msg: 'Connection to mint failed', ms: 2000 })
 			l(e)
 			return
 		}
-		openPromptAutoClose(true, `${formatMintUrl(input)} added successfully`)
+		openPromptAutoClose({ msg: `${formatMintUrl(input)} added successfully`, success: true })
 		setNewMintModal(false)
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
@@ -88,13 +88,13 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			await addMint(selectedMint.mintUrl)
 		} catch (e) {
 			// prompt error
-			openPromptAutoClose(false, 'Connection to mint failed')
+			openPromptAutoClose({ msg: 'Connection to mint failed', ms: 2000 })
 			setTrustModalOpen(false)
 			l(e)
 			return
 		}
 		setTrustModalOpen(false)
-		openPromptAutoClose(true, `${formatMintUrl(selectedMint.mintUrl)} added successfully`)
+		openPromptAutoClose({ msg: `${formatMintUrl(selectedMint.mintUrl)} added successfully`, success: true })
 		// update mints list state
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
@@ -188,39 +188,35 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				</View>
 			</View>
 			{/* Submit new mint URL modal */}
-			{newMintModal &&
-				<MyModal type='bottom' animation='slide' visible={newMintModal}>
-					<Text style={globals(color).modalHeader}>
-						Add a new mint
-					</Text>
-					<TextInput
-						style={[globals(color).input, { marginBottom: 20 }]}
-						placeholder="Mint URL"
-						placeholderTextColor={color.BORDER}
-						selectionColor={hi[highlight]}
-						onChangeText={setInput}
-					/>
-					<Button txt='Add mint' onPress={() => { void handleMintInput() }} />
-					<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
-						<Text style={[styles.cancelTxt, { color: hi[highlight] }]}>Cancel</Text>
-					</TouchableOpacity>
-				</MyModal>
-			}
-			{trustModalOpen &&
-				<QuestionModal
-					header={selectedMint?.mintUrl === _mintUrl ?
-						'This is a test mint to play around with. Add it anyway?'
-						:
-						'Are you sure that you want to trust this mint?'
-					}
-					visible={trustModalOpen}
-					// eslint-disable-next-line @typescript-eslint/no-misused-promises
-					confirmFn={() => handleTrustModal()}
-					cancelFn={() => setTrustModalOpen(false)}
+			<MyModal type='bottom' animation='slide' visible={newMintModal && !prompt.open}>
+				<Text style={globals(color).modalHeader}>
+					Add a new mint
+				</Text>
+				<TextInput
+					style={[globals(color).input, { marginBottom: 20 }]}
+					placeholder="Mint URL"
+					placeholderTextColor={color.BORDER}
+					selectionColor={hi[highlight]}
+					onChangeText={setInput}
 				/>
-			}
+				<Button txt='Add mint' onPress={() => { void handleMintInput() }} />
+				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
+					<Text style={[styles.cancelTxt, { color: hi[highlight] }]}>Cancel</Text>
+				</TouchableOpacity>
+			</MyModal>
+			<QuestionModal
+				header={selectedMint?.mintUrl === _mintUrl ?
+					'This is a test mint to play around with. Add it anyway?'
+					:
+					'Are you sure that you want to trust this mint?'
+				}
+				visible={trustModalOpen}
+				// eslint-disable-next-line @typescript-eslint/no-misused-promises
+				confirmFn={() => handleTrustModal()}
+				cancelFn={() => setTrustModalOpen(false)}
+			/>
 			{/* mint added successfully modal */}
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} /> }
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 			{!isKeyboardOpen && !prompt.open && !trustModalOpen && !newMintModal &&
 				<BottomNav navigation={navigation} route={route} />
 			}

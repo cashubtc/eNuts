@@ -58,7 +58,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				const res = await payLnInvoice(route.params.mint.mintUrl, input, selectedProofs)
 				stopLoading()
 				if (!res.result?.isPaid) {
-					openPromptAutoClose(false, 'Invoice could not be payed. Please try again later.')
+					openPromptAutoClose({ msg: 'Invoice could not be payed. Please try again later.' })
 					return
 				}
 				// payment success, add as history entry
@@ -75,7 +75,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				})
 			} catch (e) {
 				l(e)
-				openPromptAutoClose(false, isErr(e) ? e.message : 'An error occured while paying the invoice.')
+				openPromptAutoClose({ msg: isErr(e) ? e.message : 'An error occured while paying the invoice.' })
 				stopLoading()
 			}
 			return
@@ -84,7 +84,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		try {
 			const invoice = await getInvoiceFromLnurl(input.trim(), +LNURLAmount)
 			if (!invoice?.length) {
-				openPromptAutoClose(false, `Unable to generate invoice for "${input}"`)
+				openPromptAutoClose({ msg: `Unable to generate invoice for "${input}"` })
 				stopLoading()
 				return
 			}
@@ -92,14 +92,14 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			const totalSelected = sumProofsValue(selectedProofs)
 			const totalToPay = +LNURLAmount + feeEstimate
 			if (isEnabled && totalSelected < totalToPay) {
-				openPromptAutoClose(false, `Not enough funds! Total after fee: ${totalToPay} Sat. Amount selected: ${LNURLAmount} Sat`)
+				openPromptAutoClose({ msg: `Not enough funds! Total after fee: ${totalToPay} Sat. Amount selected: ${LNURLAmount} Sat` })
 				stopLoading()
 				return
 			}
 			const res = await payLnInvoice(route.params.mint.mintUrl, invoice, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
-				openPromptAutoClose(false, 'Something went wrong while paying the LN invoice')
+				openPromptAutoClose({ msg: 'Something went wrong while paying the LN invoice' })
 				stopLoading()
 				return
 			}
@@ -118,7 +118,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				mints: [route.params.mint.mintUrl]
 			})
 		} catch (e) {
-			openPromptAutoClose(false, isErr(e) ? e.message : 'An error occured while paying the invoice.')
+			openPromptAutoClose({ msg: isErr(e) ? e.message : 'An error occured while paying the invoice.' })
 			stopLoading()
 		}
 	}
@@ -134,7 +134,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			setIsCalculatingFee(true)
 			const invoice = await getInvoiceFromLnurl(input.trim(), +LNURLAmount)
 			if (!invoice?.length || !route.params.mint) {
-				openPromptAutoClose(false, `Unable to estimate fee: Invalid invoice for "${input}". Is it a valid LNURL?`)
+				openPromptAutoClose({ msg: `Unable to estimate fee: Invalid invoice for "${input}". Is it a valid LNURL?` })
 				// reset amount to hide the failed estimated fee render
 				setLNURLAmount('')
 				// remove LNURL from input to re-render the initial page
@@ -160,7 +160,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			setInput(clipboard)
 		} catch (e) {
 			l(e)
-			openPromptAutoClose(false, 'Invalid invoice')
+			openPromptAutoClose({ msg: 'Invalid invoice' })
 		}
 	}
 	// Get proofs for coin selection
