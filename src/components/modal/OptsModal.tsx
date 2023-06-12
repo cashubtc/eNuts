@@ -26,6 +26,7 @@ export default function OptsModal({
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible}>
+			<View style={{ marginVertical: 10 }} />
 			<Button
 				txt={button1Txt}
 				onPress={onPressFirstBtn}
