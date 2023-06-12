@@ -17,7 +17,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
-import { formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
+import { cleanUpNumericStr, formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
@@ -233,8 +233,9 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						placeholderTextColor={hi[highlight]}
 						style={[styles.amount, { color: hi[highlight] }]}
 						caretHidden
-						onChangeText={setLNURLAmount}
+						onChangeText={amount => setLNURLAmount(cleanUpNumericStr(amount))}
 						maxLength={8}
+						value={LNURLAmount}
 					/>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
 						Satoshi

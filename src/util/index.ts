@@ -170,6 +170,18 @@ export function decodeLnInvoice(invoice: string) {
 		paymentHash
 	}
 }
+export function cleanUpNumericStr(str: string) {
+	if (str === '.' || str === ',' || str === '-' || str.startsWith('0')) {
+		return ''
+	}
+	if (str.includes('.') || str.includes(',')) {
+		return Math.trunc(+str).toString()
+	}
+	if (str.includes('-')) {
+		return Math.abs(+str).toString()
+	}
+	return str
+}
 
 // TODO FIXXME
 export function openUrl(url: string) {
