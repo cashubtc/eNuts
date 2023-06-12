@@ -1,10 +1,10 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { PlusIcon, UserIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { addContact, getContacts } from '@db'
 import MyModal from '@modal'
-import { PromptModal } from '@modal/Prompt'
 import { TAddressBookPageProps } from '@model/nav'
 import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
@@ -32,10 +32,14 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 	// new contact input
 	const [newContactName, setNewContactName] = useState('')
 	const [newContactLN, setNewContactLN] = useState('')
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleNewContact = async () => {
 		if (!isLnurl(newContactLN)) {
-			openPrompt('Invalid LN address!')
+			openPromptAutoClose(false, 'Invalid LN address!')
+			return
+		}
+		if (!newContactName) {
+			openPromptAutoClose(false, 'Invalid name!')
 			return
 		}
 		const success = await addContact({
@@ -43,11 +47,12 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			ln: newContactLN,
 			isOwner: openNew.isOwner
 		})
-		setContacts(await getContacts())
 		if (!success) {
-			openPrompt('Contact can not be added. Possible name or address duplication.')
+			openPromptAutoClose(false, 'Contact can not be added. Possible name or address duplication.')
 			return
 		}
+		setContacts(await getContacts())
+		openPromptAutoClose(true, 'Added a new contact')
 		setOpenNew({ open: false, isOwner: false })
 	}
 	return (
@@ -79,6 +84,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					<TouchableOpacity
 						style={{ paddingVertical: 15, paddingLeft: 10 }}
 						onPress={() => setOpenNew({ open: true, isOwner: false })}
+						testID='testNewContact'
 					>
 						<PlusIcon width={22} height={22} color={color.TEXT} />
 					</TouchableOpacity>
@@ -200,11 +206,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					</TouchableOpacity>
 				</MyModal>
 			}
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} /> }
 		</>
 	)
 }

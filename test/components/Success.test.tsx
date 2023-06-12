@@ -65,14 +65,9 @@ describe('Basic test of the Success.tsx component', () => {
 		)
 		// Press the button
 		fireEvent.press(screen.getByText('Back to dashboard'))
-
 		// Verify if the navigate function was called
 		expect(mockedNavigate).toHaveBeenCalledTimes(1)
 		// Verify if the navigate function was called with the correct screen name
 		expect(mockedNavigate).toHaveBeenCalledWith('dashboard')
-
-		// const expectedComponent = screen.getByTestId('dashboard')
-		// // Verify if the expected component is rendered
-		// expect(expectedComponent).toBeDefined()
 	})
 })
