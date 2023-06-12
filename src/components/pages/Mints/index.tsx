@@ -188,7 +188,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				</View>
 			</View>
 			{/* Submit new mint URL modal */}
-			{newMintModal && !prompt.open &&
+			{newMintModal &&
 				<MyModal type='bottom' animation='slide' visible={newMintModal}>
 					<Text style={globals(color).modalHeader}>
 						Add a new mint
@@ -220,7 +220,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				/>
 			}
 			{/* mint added successfully modal */}
-			{prompt.open && <Toaster success txt={prompt.msg} /> }
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} /> }
 			{!isKeyboardOpen && !prompt.open && !trustModalOpen && !newMintModal &&
 				<BottomNav navigation={navigation} route={route} />
 			}
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
 	},
 	cancel: {
 		alignItems: 'center',
-		marginTop: 25,
+		marginTop: 15,
 		padding: 10,
 		width: '100%',
 	},
