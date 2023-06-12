@@ -1,11 +1,11 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
 import { _mintUrl, defaultMints } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
-import { PromptModal } from '@modal/Prompt'
 import { QuestionModal } from '@modal/Question'
 import { IMintBalWithName, IMintUrl } from '@model'
 import { TMintsPageProps } from '@model/nav'
@@ -17,79 +17,84 @@ import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isUrl } from '@util'
 import { useContext, useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
 
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
+	// mint list
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
-	const [mintUrl, setMintUrl] = useState<IMintUrl>()
+	// this state is used to determine which mint has been pressed
+	const [selectedMint, setSelectedMint] = useState<IMintUrl>()
+	// the default mint url if user has set one
 	const [defaultMint, setDefaultM] = useState('')
-	const [input, setInput] = useState('')
-	const [trustModalOpen, setTrustModalOpen] = useState(false)
+	// modal visibility state for adding a new mint
 	const [newMintModal, setNewMintModal] = useState(false)
-	const [success, setSuccess] = useState(false)
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	// the text input for adding a new mint
+	const [input, setInput] = useState('')
+	// visibility state for trusting a new mint that us not in the user mint list
+	const [trustModalOpen, setTrustModalOpen] = useState(false)
+	const { prompt, openPromptAutoClose } = usePrompt()
 
 	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
 
 	// adds a mint via input
 	const handleMintInput = async () => {
 		if (!isUrl(input)) {
-			openPrompt('Invalid URL')
+			openPromptAutoClose(false, 'Invalid URL')
 			return
 		}
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === input)) {
-				openPrompt('Mint already added')
+				openPromptAutoClose(false, 'Mint already added')
 				return
 			}
 			// add mint url to db
 			await addMint(input)
 		} catch (e) {
-			openPrompt('Connection to mint failed')
+			openPromptAutoClose(false, 'Connection to mint failed')
 			l(e)
 			return
 		}
+		openPromptAutoClose(true, `${formatMintUrl(input)} added successfully`)
 		setNewMintModal(false)
-		setSuccess(true)
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
 	}
 
 	// navigates to mint-management page if mint available in db or shows the trust modal
-	const handleMintEntry = (selectedMint: IMintUrl, amount: number) => {
+	const handleMintEntry = (selectedMintEntry: IMintUrl, amount: number) => {
 		// navigate to mint management page
-		if (isTrustedMint(selectedMint.mintUrl)) {
+		if (isTrustedMint(selectedMintEntry.mintUrl)) {
 			navigation.navigate('mintmanagement', {
-				mint: selectedMint,
+				mint: selectedMintEntry,
 				amount
 			})
 			return
 		}
 		// else: add default mint to users mints
-		setMintUrl(selectedMint)
+		setSelectedMint(selectedMintEntry)
 		setTrustModalOpen(true)
 	}
 
 	// trust modal asks user for confirmation on adding a default mint to its trusted list
 	const handleTrustModal = async () => {
-		if (!mintUrl) { return }
+		if (!selectedMint) { return }
 		try {
-			await addMint(mintUrl.mintUrl)
+			await addMint(selectedMint.mintUrl)
 		} catch (e) {
 			// prompt error
-			openPrompt('Connection to mint failed')
+			openPromptAutoClose(false, 'Connection to mint failed')
 			setTrustModalOpen(false)
 			l(e)
 			return
 		}
 		setTrustModalOpen(false)
-		setSuccess(true)
+		openPromptAutoClose(true, `${formatMintUrl(selectedMint.mintUrl)} added successfully`)
 		// update mints list state
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
@@ -104,7 +109,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	useEffect(() => {
 		void (async () => {
 			await handleMintsState()
-			setDefaultM(await getDefaultMint() || '')
+			setDefaultM(await getDefaultMint() ?? '')
 		})()
 	}, [])
 
@@ -113,9 +118,8 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const focusHandler = navigation.addListener('focus', async () => {
 			await handleMintsState()
-			const defaultt = await getDefaultMint() || ''
-			l({ defaultt })
-			setDefaultM(defaultt)
+			const defaultt = await getDefaultMint()
+			setDefaultM(defaultt ?? '')
 		})
 		return focusHandler
 	}, [navigation])
@@ -204,7 +208,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			}
 			{trustModalOpen &&
 				<QuestionModal
-					header={mintUrl?.mintUrl === _mintUrl ?
+					header={selectedMint?.mintUrl === _mintUrl ?
 						'This is a test mint to play around with. Add it anyway?'
 						:
 						'Are you sure that you want to trust this mint?'
@@ -216,21 +220,8 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				/>
 			}
 			{/* mint added successfully modal */}
-			<MyModal type='success' animation='fade' visible={success}>
-				<Image
-					style={styles.modalImg}
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					source={require('../../../../assets/splash.png')}
-				/>
-				<View style={styles.successBody}>
-					<Text style={globals(color).modalHeader}>
-						Mint added successfully!
-					</Text>
-					<Button txt='OK' onPress={() => setSuccess(false)} />
-				</View>
-			</MyModal>
-			<PromptModal header={prompt.msg} visible={prompt.open} close={closePrompt} />
-			{!isKeyboardOpen && !success && !prompt.open && !trustModalOpen && !newMintModal &&
+			{prompt.open && <Toaster success txt={prompt.msg} /> }
+			{!isKeyboardOpen && !prompt.open && !trustModalOpen && !newMintModal &&
 				<BottomNav navigation={navigation} route={route} />
 			}
 		</View>
