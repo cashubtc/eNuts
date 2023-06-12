@@ -9,6 +9,7 @@ import { _mintUrl } from '@consts'
 import { l } from '@log'
 import MyModal from '@modal'
 import { IMintUrl, IProofSelection } from '@model'
+import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
@@ -17,7 +18,6 @@ import { getMintCurrentKeySetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
 
 interface IInvoiceAmountModalProps {
 	visible: boolean
@@ -209,27 +209,27 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 				<KeysetHint />
 				<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} />
 				<ProofListHeader />
-				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-					{lnAmount > 0 &&
-						proofs.map(p => (
-							<CoinSelectionRow
-								key={p.secret}
-								proof={p}
-								isLatestKeysetId={mintKeysetId === p.id}
-								setChecked={() => {
-									const proofIdx = proofs.findIndex(proof => proof.secret === p.secret)
-									const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
-									setProof(updated)
-								}}
-							/>
-						))
-					}
-				</ScrollView>
+				<FlashList
+					data={proofs}
+					estimatedItemSize={300}
+					showsVerticalScrollIndicator={false}
+					renderItem={data => (
+						<CoinSelectionRow
+							key={data.item.secret}
+							proof={data.item}
+							isLatestKeysetId={mintKeysetId === data.item.id}
+							setChecked={() => {
+								const proofIdx = proofs.findIndex(proof => proof.secret === data.item.secret)
+								const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
+								setProof(updated)
+							}}
+						/>
+					)}
+				/>
 			</View>
 			{getSelectedAmount(proofs) >= lnAmount &&
 				<View style={[styles.confirmWrap, { backgroundColor: color.BACKGROUND }]}>
 					<Button
-						outlined
 						txt='Confirm'
 						onPress={() => setVisible(false)}
 					/>
@@ -302,8 +302,8 @@ const styles = StyleSheet.create({
 		width: '100%',
 	},
 	proofContainer: {
+		flex: 1,
 		width: '100%',
-		paddingBottom: 30,
 	},
 	header: {
 		flexDirection: 'row',
@@ -351,9 +351,6 @@ const styles = StyleSheet.create({
 		width: '100%',
 		marginBottom: 10,
 		marginVertical: 25,
-	},
-	scroll: {
-		marginBottom: 140,
 	},
 	tableHeader: {
 		flexDirection: 'row',
