@@ -4,19 +4,20 @@ import { useContext } from 'react'
 import { Modal, StyleSheet, View } from 'react-native'
 
 interface IMyModalProps {
-	type: 'bottom' | 'question' | 'error' | 'invoiceAmount'
+	type: 'bottom' | 'question' | 'success' | 'error' | 'invoiceAmount'
 	animation?: 'slide' | 'fade' | 'none'
 	visible: boolean
+	success?: boolean
 	children: React.ReactNode
 }
 
-export default function MyModal({ type, animation, visible, children }: IMyModalProps) {
+export default function MyModal({ type, animation, visible, success, children }: IMyModalProps) {
 
 	const { color, highlight } = useContext(ThemeContext)
 
 	const getCorrectStyle = () => {
 		if (type === 'bottom') { return styles(color, highlight).bottomView }
-		if (type === 'question' || type === 'error' || type === 'invoiceAmount') {
+		if (type === 'question' || type === 'success' || type === 'error' || type === 'invoiceAmount') {
 			return styles(color, highlight).centeredView
 		}
 	}
@@ -24,6 +25,7 @@ export default function MyModal({ type, animation, visible, children }: IMyModal
 	const getViewStyle = () => {
 		if (type === 'bottom') { return { ...styles(color, highlight).common, ...styles(color, highlight).modalView } }
 		if (type === 'question') { return { ...styles(color, highlight).common, ...styles(color, highlight).centeredModalView } }
+		if (type === 'success') { return { ...styles(color, highlight).common, ...styles(color, highlight).successModalView } }
 		if (type === 'error') { return { ...styles(color, highlight).common, ...styles(color, highlight).promptModalView } }
 		if (type === 'invoiceAmount') { return { ...styles(color, highlight).common, ...styles(color, highlight).invoiceAmountModalView } }
 	}
@@ -37,7 +39,7 @@ export default function MyModal({ type, animation, visible, children }: IMyModal
 					visible={visible}
 				>
 					<View style={getCorrectStyle()}>
-						<View style={getViewStyle()}>
+						<View style={[getViewStyle(), success ? { backgroundColor: hi[highlight] } : {}]}>
 							{children}
 						</View>
 					</View>
@@ -98,6 +100,11 @@ const styles = (pref: TPref, h: string) => StyleSheet.create({
 		paddingBottom: 50,
 		paddingRight: 20,
 		paddingLeft: 20,
+	},
+	// Success Modal
+	successModalView: {
+		width: '90%',
+		borderRadius: 20,
 	},
 	promptModalView: {
 		width: '90%',
