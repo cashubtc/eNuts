@@ -2,6 +2,7 @@ import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
 import { CheckmarkIcon, CopyIcon, MintBoardIcon } from '@comps/Icons'
 import KeysetHint from '@comps/KeysetHint'
+import Txt from '@comps/Txt'
 import { getProofsByMintUrl } from '@db'
 import { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -73,7 +74,11 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 				<ProofListHeader />
 				{/* Proofs list */}
 				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-					{proofs.map(p => <ProofRow key={p.secret} proof={p} isLatestKeysetId={p.id === mintKeysetId} />)}
+					{!proofs.length ?
+						<Txt txt='Loading proofs...' styles={[{ textAlign: 'center', marginTop: 20 }]} />
+						:
+						proofs.map(p => <ProofRow key={p.secret} proof={p} isLatestKeysetId={p.id === mintKeysetId} />)
+					}
 				</ScrollView>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
@@ -85,11 +90,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-	scrollContainer: {
-		marginBottom: 175,
-	},
 	content: {
-		marginTop: 130,
+		marginVertical: 130,
 		paddingHorizontal: 20,
 	},
 	header: {
