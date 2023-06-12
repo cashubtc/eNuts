@@ -35,7 +35,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleNewContact = async () => {
 		if (!isLnurl(newContactLN)) {
-			openPromptAutoClose(false, 'Invalid LN address!')
+			openPromptAutoClose(false, 'Invalid LNURL!')
 			return
 		}
 		if (!newContactName) {
@@ -43,12 +43,12 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			return
 		}
 		const success = await addContact({
-			name: openNew.isOwner ? 'Personal address' : newContactName,
+			name: openNew.isOwner ? 'Personal LNURL' : newContactName,
 			ln: newContactLN,
 			isOwner: openNew.isOwner
 		})
 		if (!success) {
-			openPromptAutoClose(false, 'Contact can not be added. Possible name or address duplication.')
+			openPromptAutoClose(false, 'Contact can not be added. Possible name or LNURL duplication.')
 			return
 		}
 		setContacts(await getContacts())
@@ -92,7 +92,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			</View>
 			{/* Address list */}
 			<ScrollView showsVerticalScrollIndicator={false}>
-				{/* user own address */}
+				{/* user own LNURL */}
 				{hasOwnAddress() ?
 					<View style={styles.bookEntry}>
 						<Text style={[
@@ -133,7 +133,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						</Text>
 						<View style={styles.nameEntry}>
 							<Text style={[globals(color).txt, { color: hi[highlight] }]}>
-								Add your own LN address
+								Add your own LNURL
 							</Text>
 						</View>
 					</TouchableOpacity>
@@ -170,8 +170,8 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					))}
 				</View>
 			</ScrollView>
-			{/* Add new address modal */}
-			{openNew.open && !prompt.open &&
+			{/* Add new contact modal */}
+			{openNew.open &&
 				<MyModal type='bottom' animation='slide' visible={true}>
 					<Text style={globals(color).modalHeader}>
 						{openNew.isOwner ? 'Your LNURL' : 'New contact'}
@@ -204,9 +204,9 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							Cancel
 						</Text>
 					</TouchableOpacity>
+					{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 				</MyModal>
 			}
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} /> }
 		</>
 	)
 }
