@@ -47,10 +47,10 @@ const config: ExpoConfig = {
 	version: `${version}${!IS_PROD ? `-${_appVariant}` : ''}`,
 	scheme: 'cashu',
 	orientation: 'portrait',
-	icon: './assets/icon.png',
+	icon: '../assets/icon.png',
 	userInterfaceStyle: 'light',
 	splash: {
-		image: './assets/splash.png',
+		image: '../assets/splash.png',
 		resizeMode: 'contain',
 		backgroundColor: '#5DB075'
 	},
@@ -79,7 +79,7 @@ const config: ExpoConfig = {
 	},
 	android: {
 		adaptiveIcon: {
-			foregroundImage: './assets/adaptive-icon.png',
+			foregroundImage: '../assets/adaptive-icon.png',
 			backgroundColor: '#5DB075'
 		},
 		package: `com.agron.enuts${!IS_PROD ? `.${_appVariant}` : ''}`

@@ -22,7 +22,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 			/>
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 				<Txt txt={props.error.message} styles={[{ color: '#FF6666' }]} />
-				<Txt txt={props.errorInfo?.componentStack || 'Error stack not available'} />
+				<Txt txt={props.errorInfo?.componentStack ?? 'Error stack not available'} />
 			</ScrollView>
 			<TouchableOpacity
 				onPress={() => void openUrl(repoIssueUrl)}

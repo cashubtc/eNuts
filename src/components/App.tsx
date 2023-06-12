@@ -154,7 +154,7 @@ function _App(_initialProps: IInitialProps) {
 		void setPreferences({ ...pref, theme: highlight })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [highlight])
-
+	// init
 	useEffect(() => {
 		async function initDB() {
 			try {
@@ -250,7 +250,7 @@ function _App(_initialProps: IInitialProps) {
 								<Text style={globals(color, highlight).modalTxt}>
 									Memo: {tokenInfo?.decoded.memo}{'\n'}
 									<Txt
-										txt={formatInt(tokenInfo?.value || 0)}
+										txt={formatInt(tokenInfo?.value ?? 0)}
 										styles={[{ fontWeight: '500' }]}
 									/>
 									{' '}Satoshi from the following mint:{' '}
