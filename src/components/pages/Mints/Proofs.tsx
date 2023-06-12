@@ -2,12 +2,12 @@ import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
 import { CheckmarkIcon, CopyIcon, MintBoardIcon } from '@comps/Icons'
 import KeysetHint from '@comps/KeysetHint'
-import Txt from '@comps/Txt'
 import { getProofsByMintUrl } from '@db'
 import { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ProofListHeader } from '@pages/Lightning/modal'
+import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { getMintCurrentKeySetId } from '@src/wallet'
 import { globals, mainColors } from '@styles'
@@ -15,7 +15,6 @@ import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
 
 export default function MintProofsPage({ navigation, route }: TMintProofsPageProps) {
 	const { color } = useContext(ThemeContext)
@@ -68,18 +67,21 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 						}
 					</TouchableOpacity>
 				</View>
-				{/* Info about latest keyset ids highlighted in green */}
-				<KeysetHint />
-				{/* List header */}
-				<ProofListHeader />
+				<View style={{ paddingHorizontal: 20 }}>
+					{/* Info about latest keyset ids highlighted in green */}
+					<KeysetHint />
+					{/* List header */}
+					<ProofListHeader />
+				</View>
 				{/* Proofs list */}
-				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-					{!proofs.length ?
-						<Txt txt='Loading proofs...' styles={[{ textAlign: 'center', marginTop: 20 }]} />
-						:
-						proofs.map(p => <ProofRow key={p.secret} proof={p} isLatestKeysetId={p.id === mintKeysetId} />)
-					}
-				</ScrollView>
+				<FlashList
+					data={proofs}
+					estimatedItemSize={300}
+					contentContainerStyle={{ paddingHorizontal: 20 }}
+					renderItem={data => (
+						<ProofRow key={data.item.secret} proof={data.item} isLatestKeysetId={data.item.id === mintKeysetId} />
+					)}
+				/>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 		</View>
@@ -91,23 +93,23 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	content: {
-		marginVertical: 130,
-		paddingHorizontal: 20,
+		flex: 1,
+		marginTop: 130,
+		marginBottom: 75,
 	},
 	header: {
 		marginBottom: 0,
+		paddingHorizontal: 20,
 	},
 	subHeader: {
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
-		marginBottom: 5
+		marginBottom: 5,
+		paddingHorizontal: 20,
 	},
 	mintUrl: {
 		fontSize: 16,
 		marginHorizontal: 10,
-	},
-	scroll: {
-		marginBottom: 140,
 	},
 })
