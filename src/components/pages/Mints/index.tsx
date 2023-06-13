@@ -249,6 +249,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		marginBottom: 10,
 	},
+	// TODO add this container style as global
 	listWrap: {
 		borderWidth: 1,
 		borderRadius: 20,

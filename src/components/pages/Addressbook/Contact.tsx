@@ -163,8 +163,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingHorizontal: 20,
-		paddingTop: 130
+		paddingTop: 100
 	},
 	topNav: {
 		position: 'absolute',
