@@ -1,4 +1,5 @@
 import { DayInMs, HourInMs, MinuteInMs } from '@consts'
+import { getShortDateStr } from '@src/util'
 import { useEffect, useState } from 'react'
 
 interface IEntryTimeProps {
@@ -13,7 +14,7 @@ export default function EntryTime({ from, fallback }: IEntryTimeProps) {
 		const ago = new Date().getTime() - from
 		const absAgo = Math.abs(ago)
 		if (absAgo > DayInMs) {
-			return fromDate.toLocaleTimeString().substring(0, 5)
+			return getShortDateStr(fromDate)
 		} else if (absAgo > HourInMs) {
 			const hrs = Math.floor(absAgo / HourInMs)
 			return `${hrs} hour${hrs > 1 ? 's' : ''} ago`

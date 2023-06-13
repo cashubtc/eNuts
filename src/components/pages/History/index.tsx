@@ -33,28 +33,28 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName='History' nav={{ navigation, route }} />
-			<View style={styles.topSection}>
-				<Txt
-					txt='Press on entry to open details.'
-					styles={[{ color: color.TEXT_SECONDARY, textAlign: 'center' }]}
-				/>
-			</View>
 			{/* TODO apply filter for ecash or LN TXs */}
-			{/* TODO check theme change re-render */}
 			<View style={styles.listWrap}>
 				{/* History list grouped by settled date */}
 				<FlashList
 					data={Object.entries(data)}
 					estimatedItemSize={300}
-					contentContainerStyle={{ paddingHorizontal: 20 }}
+					// contentContainerStyle={{ paddingHorizontal: 20 }}
 					renderItem={data => (
 						<>
 							{/* Group date */}
-							<Text style={[styles.date, { color: color.TEXT_SECONDARY }]}>
+							<Text style={[styles.date, { color: color.TEXT }]}>
 								{data.item[0]}
 							</Text>
 							{/* Group entries */}
-							<View style={{ height: data.item[1].length * 70 }}>
+							<View style={[
+								styles.groupWrap,
+								{
+									height: data.item[1].length * 70,
+									backgroundColor: color.INPUT_BG,
+									borderColor: color.BORDER,
+								}
+							]}>
 								<FlashList
 									data={data.item[1]}
 									scrollEnabled={false}
@@ -88,21 +88,23 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 	},
-	topSection: {
-		width: '100%',
-		marginTop: 100,
-		marginBottom: 20,
-		paddingHorizontal: 20,
-	},
 	listWrap: {
 		flex: 1,
 		width: '100%',
+		marginTop: 110,
 		marginBottom: 75,
+	},
+	groupWrap: {
+		borderWidth: 1,
+		borderRadius: 20,
+		paddingHorizontal: 20,
 	},
 	date: {
 		fontSize: 15,
 		fontWeight: '500',
-		marginTop: 10,
+		marginHorizontal: 20,
+		marginBottom: 10,
+		marginTop: 20,
 	},
 	separator: {
 		borderBottomWidth: 1,
