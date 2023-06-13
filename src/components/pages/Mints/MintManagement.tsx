@@ -255,7 +255,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Proof list */}
 					<MintOption
-						txt='Show proofs'
+						txt='Proofs'
 						onPress={() => {
 							if (route.params.amount < 1) {
 								openPromptAutoClose({ msg: 'Mint has no proofs. Balance too low!' })

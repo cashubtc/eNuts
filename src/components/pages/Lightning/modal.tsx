@@ -282,7 +282,7 @@ export function ProofListHeader() {
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
-			<View style={[styles.tableHeader, { borderBottomColor: color.BORDER }]}>
+			<View style={styles.tableHeader}>
 				<Text style={[styles.tableHead, { color: color.TEXT }]}>
 					Amount
 				</Text>
@@ -360,7 +360,6 @@ const styles = StyleSheet.create({
 		paddingBottom: 20,
 		marginHorizontal: -20,
 		paddingHorizontal: 20,
-		borderBottomWidth: 1,
 	},
 	tableHead: {
 		fontSize: 16,
