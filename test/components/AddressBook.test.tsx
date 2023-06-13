@@ -27,7 +27,7 @@ describe('Test the Addressbook page', () => {
 		render(<AddressBook />)
 		fireEvent.press(screen.getByTestId('testNewContact'))
 		fireEvent.press(screen.getByText('Save'))
-		expect(screen.getByText('Invalid LN address!')).toBeDefined()
+		expect(screen.getByText('Invalid LNURL!')).toBeDefined()
 		act(() => jest.runAllTimers())
 	})
 	it('Shows an error popup on empty name input', () => {
