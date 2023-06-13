@@ -4,6 +4,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, themeColors } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
 
 export default function DisplaySettings({ navigation }: TDisplaySettingsPageProps) {
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
@@ -14,25 +15,31 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
-			<View style={styles.settingsRow}>
-				<Text style={globals(color).txt}>
-					Dark mode
+			<ScrollView style={{ width: '100%' }} showsVerticalScrollIndicator={false}>
+				<Text style={[styles.subHeader, { color: color.TEXT }]}>
+					Theme
 				</Text>
-				<Switch
-					trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
-					thumbColor={color.TEXT}
-					onValueChange={() => setTheme(theme === 'Light' ? 'Dark' : 'Light')}
-					value={theme === 'Dark'}
-				/>
-			</View>
-			<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
-			<Text style={[styles.subHeader, { marginBottom: 20, color: color.TEXT }]}>
-				Theme
-			</Text>
-			{themeColors.map(t => (
-				<ThemeSelection key={t} name={t} selected={t === highlight} />
-			))}
-			<View style={[styles.separator, { marginTop: 10, borderBottomColor: color.BORDER }]} />
+				<View style={[styles.wrap, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+					<Text style={globals(color).txt}>
+						Dark mode
+					</Text>
+					<Switch
+						trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
+						thumbColor={color.TEXT}
+						onValueChange={() => setTheme(theme === 'Light' ? 'Dark' : 'Light')}
+						value={theme === 'Dark'}
+					/>
+				</View>
+				<Text style={[styles.subHeader, { color: color.TEXT }]}>
+					Highlight
+				</Text>
+				<View style={[styles.highlightWrap, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+					{themeColors.map((t, i) => (
+						<ThemeSelection key={t} name={t} selected={t === highlight} hasSeparator={i !== themeColors.length - 1} />
+					))}
+				</View>
+			</ScrollView>
+			{/* <View style={[styles.separator, { marginTop: 10, borderBottomColor: color.BORDER }]} /> */}
 		</View>
 	)
 }
@@ -40,47 +47,71 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
 interface IThemeSelectionProps {
 	name: string
 	selected: boolean
+	hasSeparator?: boolean
 }
 
-function ThemeSelection({ name, selected }: IThemeSelectionProps) {
+function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
 	const { color, highlight, setHighlight } = useContext(ThemeContext)
 	return (
-		<TouchableOpacity style={styles.settingsRow}
-			onPress={() => setHighlight(name)}
-		>
-			<Text style={globals(color).txt}>
-				{name}
-			</Text>
-			<View
-				style={[
-					styles.radioBtn,
-					{ borderColor: color.BORDER, backgroundColor: selected ? hi[highlight] : 'transparent' }
-				]}
-			/>
-		</TouchableOpacity>
+		<>
+			<TouchableOpacity style={styles.settingsRow}
+				onPress={() => setHighlight(name)}
+			>
+				<Text style={globals(color).txt}>
+					{name}
+				</Text>
+				<View
+					style={[
+						styles.radioBtn,
+						{ borderColor: color.BORDER, backgroundColor: selected ? hi[highlight] : 'transparent' }
+					]}
+				/>
+			</TouchableOpacity>
+			{hasSeparator &&
+				<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
+			}
+		</>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 130,
-		paddingHorizontal: 20,
+		paddingTop: 120,
 	},
 	subHeader: {
-		fontSize: 18,
+		fontSize: 16,
 		fontWeight: '500',
+		paddingHorizontal: 20,
 		marginBottom: 10,
+	},
+	highlightWrap: {
+		paddingVertical: 10,
+		borderWidth: 1,
+		borderRadius: 20,
+		marginBottom: 20,
+	},
+	wrap: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		paddingVertical: 10,
+		borderWidth: 1,
+		borderRadius: 20,
+		paddingHorizontal: 20,
+		marginBottom: 20,
 	},
 	settingsRow: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingVertical: 10,
+		paddingHorizontal: 20,
 	},
 	separator: {
 		borderBottomWidth: 1,
-		marginBottom: 25,
+		marginHorizontal: 20,
+		marginVertical: 10,
 	},
 	radioBtn: {
 		borderWidth: 1,

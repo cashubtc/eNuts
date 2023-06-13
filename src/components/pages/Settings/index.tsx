@@ -21,24 +21,28 @@ export default function Settings({ navigation }: TSettingsPageProps) {
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName='Settings' withBackBtn />
-			<SettingsMenuItem
-				txt='Security'
-				txtColor={color.TEXT}
-				icon={<LockIcon color={color.TEXT} />}
-				onPress={() => navigation.navigate('Security settings')}
-			/>
-			<SettingsMenuItem
-				txt='Display'
-				txtColor={color.TEXT}
-				icon={<PaletteIcon color={color.TEXT} />}
-				onPress={() => navigation.navigate('Display settings')}
-			/>
-			<SettingsMenuItem
-				txt='Delete transaction history'
-				txtColor={color.ERROR}
-				icon={<TrashbinIcon2 color={color.ERROR} />}
-				onPress={() => setConfirm(true)}
-			/>
+			<View style={[styles.wrap, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+				<SettingsMenuItem
+					txt='Security'
+					txtColor={color.TEXT}
+					icon={<LockIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('Security settings')}
+					hasSeparator
+				/>
+				<SettingsMenuItem
+					txt='Display'
+					txtColor={color.TEXT}
+					icon={<PaletteIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('Display settings')}
+					hasSeparator
+				/>
+				<SettingsMenuItem
+					txt='Delete transaction history'
+					txtColor={color.ERROR}
+					icon={<TrashbinIcon2 color={color.ERROR} />}
+					onPress={() => setConfirm(true)}
+				/>
+			</View>
 			{confirm &&
 				<QuestionModal
 					header='Are you sure that you want to delete the history?'
@@ -65,9 +69,10 @@ interface IMenuItemProps {
 	txtColor: string
 	onPress: () => void
 	icon: React.ReactElement
+	hasSeparator?: boolean
 }
 
-function SettingsMenuItem({ txt, txtColor, icon, onPress }: IMenuItemProps) {
+function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator }: IMenuItemProps) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
@@ -85,7 +90,9 @@ function SettingsMenuItem({ txt, txtColor, icon, onPress }: IMenuItemProps) {
 					<ChevronRightIcon color={txtColor} />
 				}
 			</TouchableOpacity>
-			<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
+			{hasSeparator &&
+				<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
+			}
 		</>
 	)
 }
@@ -93,8 +100,13 @@ function SettingsMenuItem({ txt, txtColor, icon, onPress }: IMenuItemProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 130,
+		paddingTop: 120,
+	},
+	wrap: {
+		borderWidth: 1,
+		borderRadius: 20,
 		paddingHorizontal: 20,
+		paddingVertical: 10,
 	},
 	settingsRow: {
 		flexDirection: 'row',
@@ -105,7 +117,6 @@ const styles = StyleSheet.create({
 	setting: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		// paddingVertical: 10,
 	},
 	settingTxt: {
 		marginLeft: 15,

@@ -35,16 +35,18 @@ export default function SecuritySettings({ navigation }: TSecuritySettingsPagePr
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
-			<TouchableOpacity
-				style={styles.settingsRow}
-				onPress={() => { void handleBackup() }}
-			>
-				<Text style={globals(color).txt}>
-					Create a backup token
-				</Text>
-				<ChevronRightIcon color={color.TEXT} />
-			</TouchableOpacity>
-			<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
+			<View style={[styles.wrap, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+				<TouchableOpacity
+					style={styles.settingsRow}
+					onPress={() => { void handleBackup() }}
+				>
+					<Text style={globals(color).txt}>
+						Create a backup token
+					</Text>
+					<ChevronRightIcon color={color.TEXT} />
+				</TouchableOpacity>
+			</View>
+			{/* <View style={[styles.separator, { borderBottomColor: color.BORDER }]} /> */}
 			<PromptModal
 				header={prompt.msg}
 				visible={prompt.open}
@@ -57,8 +59,7 @@ export default function SecuritySettings({ navigation }: TSecuritySettingsPagePr
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 130,
-		paddingHorizontal: 20,
+		paddingTop: 120,
 	},
 	settingsRow: {
 		flexDirection: 'row',
@@ -66,8 +67,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 10,
 	},
-	separator: {
-		borderBottomWidth: 1,
-		marginVertical: 10,
+	wrap: {
+		borderWidth: 1,
+		borderRadius: 20,
+		paddingHorizontal: 20,
+		paddingVertical: 10,
 	},
+	// separator: {
+	// 	borderBottomWidth: 1,
+	// 	marginVertical: 10,
+	// },
 })
