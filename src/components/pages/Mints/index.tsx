@@ -11,6 +11,7 @@ import { IMintBalWithName, IMintUrl } from '@model'
 import { TMintsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
+import { FlashList } from '@shopify/flash-list'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
@@ -18,7 +19,6 @@ import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isUrl } from '@util'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
 
@@ -138,16 +138,26 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					</TouchableOpacity>
 				</View>
 				{/* Mints list where test mint is always visible */}
-				<ScrollView showsVerticalScrollIndicator={false}>
-					{[...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]
-						.map(m => (
-							<View key={m.mintUrl} style={styles.mintContainer}>
+				<View style={[
+					styles.listWrap,
+					{
+						borderColor: color.BORDER,
+						backgroundColor: color.INPUT_BG,
+						height: [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints].length * 60
+					}
+				]}>
+					<FlashList
+						data={[...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]}
+						estimatedItemSize={300}
+						contentContainerStyle={{ paddingHorizontal: 20 }}
+						renderItem={data => (
+							<View key={data.item.mintUrl} style={styles.mintContainer}>
 								<TouchableOpacity
 									style={styles.mintUrlWrap}
-									onPress={() => handleMintEntry(m, m.amount)}
+									onPress={() => handleMintEntry(data.item, data.item.amount)}
 								>
 									<View style={styles.mintNameWrap}>
-										{defaultMint === m.mintUrl &&
+										{defaultMint === data.item.mintUrl &&
 											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
 										}
 										<Text
@@ -155,20 +165,20 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 												styles.mintUrl,
 												{
 													color: color.TEXT,
-													marginLeft: defaultMint === m.mintUrl ? 10 : 0
+													marginLeft: defaultMint === data.item.mintUrl ? 10 : 0
 												}
 											]}
 										>
 											{/* custom name given by user or show mint URL */}
-											{m.customName || formatMintUrl(m.mintUrl)}
+											{data.item.customName || formatMintUrl(data.item.mintUrl)}
 										</Text>
 									</View>
 									{/* Add mint icon or show balance */}
 									<View>
-										{isTrustedMint(m.mintUrl) ?
+										{isTrustedMint(data.item.mintUrl) ?
 											<View style={styles.mintBal}>
 												<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-													{formatInt(m.amount, 'compact', 'en')}
+													{formatInt(data.item.amount, 'compact', 'en')}
 												</Text>
 												<ZapIcon width={18} height={18} color={color.TEXT} />
 											</View>
@@ -179,8 +189,10 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 								</TouchableOpacity>
 								<View style={{ borderBottomWidth: 1, borderBottomColor: color.BORDER }} />
 							</View>
-						))}
-				</ScrollView>
+						)}
+						ItemSeparatorComponent={() => <View style={{ borderBottomWidth: 1, borderColor: color.BORDER }} />}
+					/>
+				</View>
 			</View>
 			{/* Submit new mint URL modal */}
 			<MyModal type='bottom' animation='slide' visible={newMintModal && !prompt.open}>
@@ -225,16 +237,21 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	topSection: {
+		flex: 1,
 		width: '100%',
-		paddingHorizontal: 20,
 		marginTop: 120,
-		paddingBottom: 225,
+		marginBottom: 75,
 	},
 	headerWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'flex-end',
+		paddingHorizontal: 20,
 		marginBottom: 10,
+	},
+	listWrap: {
+		borderWidth: 1,
+		borderRadius: 20,
 	},
 	mintNameWrap: {
 		flexDirection: 'row',

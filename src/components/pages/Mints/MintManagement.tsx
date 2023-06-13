@@ -173,7 +173,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						icon={copied ?
 							<CheckmarkIcon width={20} height={20} color={mainColors.VALID} />
 							:
-							<CopyIcon color={color.TEXT_SECONDARY} />
+							<CopyIcon color={color.TEXT} />
 						}
 					/>
 					{/* Balance */}
