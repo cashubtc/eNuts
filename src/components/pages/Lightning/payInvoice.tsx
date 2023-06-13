@@ -213,11 +213,11 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			{/* mint overview */}
 			{!input.length &&
 				<View style={styles.amountWrap}>
-					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Mint balance: {formatInt(route.params.mintBal)} Sat.
+					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 10 }]}>
+						Send bitcoin from &quot;{formatMintUrl(route.params.mint?.mintUrl || '')}&quot; to a Lightning wallet.
 					</Text>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Send bitcoin from &quot;{formatMintUrl(route.params.mint?.mintUrl || '')}&quot; to a lightning wallet.
+						Mint balance: <Text style={{ fontWeight: '500' }}>{formatInt(route.params.mintBal)}</Text> Satoshi
 					</Text>
 				</View>
 			}
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
 	},
 	invoiceOverview: {
 		paddingHorizontal: 20,
-		marginTop: 100,
+		marginTop: 110,
 	},
 	coinSelectionOverview: {
 		paddingHorizontal: 20,
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
 	amountWrap: {
 		width: '100%',
 		alignItems: 'center',
-		marginTop: 125,
+		marginTop: 110,
 	},
 	amount: {
 		fontSize: 40,
