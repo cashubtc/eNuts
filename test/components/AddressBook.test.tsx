@@ -39,6 +39,11 @@ describe('Test the Addressbook page', () => {
 		expect(screen.getByText('Invalid name!')).toBeDefined()
 		act(() => jest.runAllTimers())
 	})
+	it('Does not show the name input if adding personal LNURL', () => {
+		render(<AddressBook />)
+		fireEvent.press(screen.getByTestId('addPersonal'))
+		expect(screen.queryByPlaceholderText('Name')).toBeNull()
+	})
 	// TODO test the functionality of adding a new contact and rendering it
 	// eslint-disable-next-line jest/no-commented-out-tests
 	// it('Render the new contact', async () => {

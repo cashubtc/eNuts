@@ -123,6 +123,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					:
 					<TouchableOpacity
 						style={[styles.bookEntry, styles.container, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}
+						testID='addPersonal'
 						onPress={() => {
 							setOpenNew({ open: true, isOwner: true })
 						}}
