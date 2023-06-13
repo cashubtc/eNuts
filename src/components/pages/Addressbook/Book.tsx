@@ -38,7 +38,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			openPromptAutoClose({ msg: 'Invalid LNURL!', ms: 1500 })
 			return
 		}
-		if (!newContactName) {
+		if (!newContactName && !openNew.isOwner) {
 			openPromptAutoClose({ msg: 'Invalid name!', ms: 1500 })
 			return
 		}
@@ -93,7 +93,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			<ScrollView showsVerticalScrollIndicator={false}>
 				{/* user own LNURL */}
 				{hasOwnAddress() ?
-					<View style={styles.bookEntry}>
+					<View style={[styles.bookEntry, styles.container, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
 						<Text style={[
 							styles.circleUser,
 							{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
@@ -122,7 +122,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					</View>
 					:
 					<TouchableOpacity
-						style={styles.bookEntry}
+						style={[styles.bookEntry, styles.container, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}
 						onPress={() => {
 							setOpenNew({ open: true, isOwner: true })
 						}}
@@ -137,37 +137,39 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						</View>
 					</TouchableOpacity>
 				}
-				<View style={styles.bookContainer}>
-					{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
-						!c.isOwner &&
-						<View key={c.ln}>
-							<View style={styles.bookEntry}>
-								<Text style={[
-									styles.circle,
-									{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
-								]}>
-									{c.name.charAt(0).toUpperCase()}
-								</Text>
-								<TouchableOpacity
-									style={styles.nameEntry}
-									onPress={() => {
-										if (isModal) {
-											setInput?.(c.ln)
-											closeModal?.()
-											return
-										}
-										nav?.navigation.navigate('Contact', {
-											contact: c
-										})
-									}}
-								>
-									<Txt txt={c.name} />
-								</TouchableOpacity>
+				{contacts.length > 0 && !contacts.some(c => c.isOwner) &&
+					<View style={[styles.bookContainer, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
+						{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
+							!c.isOwner &&
+							<View key={c.ln}>
+								<View style={styles.bookEntry}>
+									<Text style={[
+										styles.circle,
+										{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
+									]}>
+										{c.name.charAt(0).toUpperCase()}
+									</Text>
+									<TouchableOpacity
+										style={styles.nameEntry}
+										onPress={() => {
+											if (isModal) {
+												setInput?.(c.ln)
+												closeModal?.()
+												return
+											}
+											nav?.navigation.navigate('Contact', {
+												contact: c
+											})
+										}}
+									>
+										<Txt txt={c.name} />
+									</TouchableOpacity>
+								</View>
+								{i < contacts.length - 1 && <View style={[styles.separator, { borderBottomColor: color.BORDER }]} />}
 							</View>
-							{i < contacts.length - 1 && <View style={[styles.separator, { borderBottomColor: color.BORDER }]} />}
-						</View>
-					))}
-				</View>
+						))}
+					</View>
+				}
 			</ScrollView>
 			{/* Add new contact modal */}
 			<MyModal type='bottom' animation='slide' visible={openNew.open && !prompt.open}>
@@ -223,8 +225,15 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'flex-start',
+		paddingHorizontal: 20,
 		marginBottom: 20,
 		width: '100%',
+	},
+	container: {
+		borderWidth: 1,
+		borderRadius: 20,
+		paddingHorizontal: 20,
+		paddingVertical: 10,
 	},
 	subHeader: {
 		fontSize: 16,
@@ -232,6 +241,9 @@ const styles = StyleSheet.create({
 	},
 	bookContainer: {
 		width: '100%',
+		borderWidth: 1,
+		borderRadius: 20,
+		paddingHorizontal: 20,
 		marginBottom: 50,
 	},
 	bookEntry: {
@@ -255,7 +267,7 @@ const styles = StyleSheet.create({
 		marginRight: 20,
 	},
 	addOwnAddress: {
-		paddingHorizontal: 15,
+		// paddingHorizontal: 15,
 		paddingVertical: 10,
 		marginRight: 16,
 	},
