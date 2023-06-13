@@ -369,24 +369,22 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	scrollContainer: {
-		marginBottom: 175,
+		marginBottom: 140,
 	},
 	content: {
 		marginTop: 100,
 		paddingHorizontal: 20,
 	},
-	header: {
-		marginBottom: 0,
-	},
 	subHeader: {
 		flexDirection: 'row',
-		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 20
+		marginTop: 20,
+		marginBottom: 10,
 	},
 	mintUrl: {
 		fontSize: 16,
 		marginRight: 10,
+		fontWeight: '500',
 	},
 	mintOpts: {
 		flexDirection: 'row',

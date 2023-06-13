@@ -52,7 +52,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 						}
 					</View>
 					{/* Message of the day - important announcements */}
-					{info.motd &&
+					{!!info.motd &&
 						<View style={[styles.infoEntry, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
 							<View style={styles.motd}>
 								<View>
@@ -115,12 +115,11 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingHorizontal: 20,
 		paddingTop: 100
 	},
 	mainInfo: {
 		borderWidth: 1,
-		borderRadius: 25,
+		borderRadius: 20,
 		padding: 20,
 		alignItems: 'center',
 		marginTop: 50,
@@ -146,9 +145,9 @@ const styles = StyleSheet.create({
 	},
 	infoEntry: {
 		borderWidth: 1,
-		borderRadius: 25,
+		borderRadius: 20,
 		paddingHorizontal: 20,
-		paddingVertical: 10,
+		paddingVertical: 20,
 		marginBottom: 20,
 	},
 	description: {
@@ -158,7 +157,7 @@ const styles = StyleSheet.create({
 	},
 	separator: {
 		borderBottomWidth: 1,
-		marginVertical: 10,
+		marginVertical: 20,
 	},
 	contactWrap: {
 		flexDirection: 'row',
