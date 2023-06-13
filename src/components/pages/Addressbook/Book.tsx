@@ -61,7 +61,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			<View style={styles.headerWrap}>
 				{isModal &&
 					<View>
-						<Text style={[globals(color).header, { marginBottom: 0 }]}>
+						<Text style={[styles.header, { color: color.TEXT }]}>
 							Address book
 						</Text>
 						<ContactsCount count={contacts.length} colorSecondary />
@@ -90,7 +90,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				}
 			</View>
 			{/* Address list */}
-			<ScrollView showsVerticalScrollIndicator={false}>
+			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 				{/* user own LNURL */}
 				{hasOwnAddress() ?
 					<View style={[styles.bookEntry, styles.container, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
@@ -230,6 +230,13 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		width: '100%',
 	},
+	header: {
+		fontSize: 20,
+		fontWeight: '500',
+	},
+	scroll: {
+		width: '100%'
+	},
 	container: {
 		borderWidth: 1,
 		borderRadius: 20,
@@ -241,7 +248,7 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 	},
 	bookContainer: {
-		width: '100%',
+		// width: '100%',
 		borderWidth: 1,
 		borderRadius: 20,
 		paddingHorizontal: 20,

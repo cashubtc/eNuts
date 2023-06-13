@@ -8,10 +8,11 @@ interface IMyModalProps {
 	animation?: 'slide' | 'fade' | 'none'
 	visible: boolean
 	success?: boolean
+	isContactList?: boolean
 	children: React.ReactNode
 }
 
-export default function MyModal({ type, animation, visible, success, children }: IMyModalProps) {
+export default function MyModal({ type, animation, visible, success, isContactList, children }: IMyModalProps) {
 
 	const { color, highlight } = useContext(ThemeContext)
 
@@ -27,7 +28,13 @@ export default function MyModal({ type, animation, visible, success, children }:
 		if (type === 'question') { return { ...styles(color, highlight).common, ...styles(color, highlight).centeredModalView } }
 		if (type === 'success') { return { ...styles(color, highlight).common, ...styles(color, highlight).successModalView } }
 		if (type === 'error') { return { ...styles(color, highlight).common, ...styles(color, highlight).promptModalView } }
-		if (type === 'invoiceAmount') { return { ...styles(color, highlight).common, ...styles(color, highlight).invoiceAmountModalView } }
+		if (type === 'invoiceAmount') {
+			return {
+				...styles(color, highlight).common,
+				...styles(color, highlight).invoiceAmountModalView,
+				...styles(color, highlight).contactList
+			}
+		}
 	}
 
 	return (
@@ -119,4 +126,7 @@ const styles = (pref: TPref, h: string) => StyleSheet.create({
 		padding: 20,
 		justifyContent: 'space-between',
 	},
+	contactList: {
+		paddingHorizontal: 0,
+	}
 })
