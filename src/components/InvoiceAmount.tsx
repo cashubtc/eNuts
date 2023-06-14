@@ -5,7 +5,7 @@ import type { IDecodedLNInvoice } from '@model/ln'
 import { InvoiceAmountModal, InvoiceModal } from '@pages/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
-import { vib } from '@util'
+import { cleanUpNumericStr, vib } from '@util'
 import { requestMint } from '@wallet'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -87,7 +87,8 @@ export default function LNInvoiceAmountModal({
 						style={[styles.invoiceAmount, { color: hi[highlight] }]}
 						caretHidden
 						ref={inputRef}
-						onChangeText={amount => setInvoice({ ...invoice, amount })}
+						onChangeText={amount => setInvoice({ ...invoice, amount: cleanUpNumericStr(amount) })}
+						value={invoice.amount}
 						onSubmitEditing={handleAmountSubmit}
 						maxLength={8}
 					/>

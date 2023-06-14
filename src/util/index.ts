@@ -167,6 +167,9 @@ export function decodeLnInvoice(invoice: string) {
 		paymentHash
 	}
 }
+export function cleanUpNumericStr(str: string) {
+	return str.replace(/\D/g, '')
+}
 
 // TODO FIXXME
 export function openUrl(url: string) {
