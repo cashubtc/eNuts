@@ -11,7 +11,7 @@ import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
 	const { color } = useContext(ThemeContext)

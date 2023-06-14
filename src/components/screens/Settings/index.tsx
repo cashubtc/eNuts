@@ -9,11 +9,11 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
+import { globals } from '@styles'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { version } from '../../../../package.json'
-import { globals } from '@styles'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { color } = useContext(ThemeContext)

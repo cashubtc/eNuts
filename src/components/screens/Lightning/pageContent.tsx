@@ -2,6 +2,7 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import { ZapIcon } from '@comps/Icons'
 import LNInvoiceAmountModal from '@comps/InvoiceAmount'
+import Txt from '@comps/Txt'
 import { getProofsByMintUrl } from '@db'
 import { l } from '@log'
 import { PromptModal } from '@modal/Prompt'
@@ -18,7 +19,6 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
 import MintPanel from './mintPanel'
-import Txt from '@comps/Txt'
 
 interface ILNPageProps {
 	nav: TLightningPageProps | TSendTokenPageProps
@@ -138,7 +138,7 @@ export default function LNPageContent({
 									{formatInt(mintBal)}
 								</Text>
 								<ZapIcon width={18} height={18} color={color.TEXT} />
-							T</View>
+							</View>
 						</View>
 					}
 					{!mints.length ?

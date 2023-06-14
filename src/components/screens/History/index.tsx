@@ -8,11 +8,11 @@ import { FlashList } from '@shopify/flash-list'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { ThemeContext } from '@src/context/Theme'
 import { getHistory } from '@store/HistoryStore'
+import { globals } from '@styles'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import HistoryEntry from './Entry'
-import { globals } from '@src/styles'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const { color } = useContext(ThemeContext)

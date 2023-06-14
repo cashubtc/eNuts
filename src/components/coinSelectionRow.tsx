@@ -1,9 +1,10 @@
 import type { Proof } from '@cashu/cashu-ts'
 import type { IProofSelection } from '@model'
 import { ThemeContext } from '@src/context/Theme'
-import { globals, highlight as hi, mainColors } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+
 import Txt from './Txt'
 
 interface IProofRowProps {
