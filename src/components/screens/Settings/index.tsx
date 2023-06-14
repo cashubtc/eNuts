@@ -1,5 +1,6 @@
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
+import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { PromptModal } from '@modal/Prompt'
 import { QuestionModal } from '@modal/Question'
@@ -77,7 +78,6 @@ interface IMenuItemProps {
 }
 
 function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator }: IMenuItemProps) {
-	const { color } = useContext(ThemeContext)
 	return (
 		<>
 			<TouchableOpacity
@@ -94,9 +94,7 @@ function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator }: IMenuI
 					<ChevronRightIcon color={txtColor} />
 				}
 			</TouchableOpacity>
-			{hasSeparator &&
-				<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
-			}
+			{hasSeparator && <Separator style={[{ marginVertical: 10 }]} />}
 		</>
 	)
 }
@@ -126,10 +124,6 @@ const styles = StyleSheet.create({
 	settingTxt: {
 		marginLeft: 15,
 		fontSize: 16,
-	},
-	separator: {
-		borderBottomWidth: 1,
-		marginVertical: 10,
 	},
 	version: {
 		fontWeight: '500',

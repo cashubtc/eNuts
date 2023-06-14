@@ -1,6 +1,7 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { PlusIcon, UserIcon } from '@comps/Icons'
+import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { addContact, getContacts } from '@db'
@@ -166,7 +167,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 										<Txt txt={c.name} />
 									</TouchableOpacity>
 								</View>
-								{i < contacts.length - 1 && <View style={[styles.separator, { borderBottomColor: color.BORDER }]} />}
+								{i < contacts.length - 1 && <Separator style={[{marginLeft: 60}]} />}
 							</View>
 						))}
 					</View>
@@ -282,9 +283,5 @@ const styles = StyleSheet.create({
 	nameEntry: {
 		width: '100%',
 		paddingVertical: 6,
-	},
-	separator: {
-		borderBottomWidth: 1,
-		marginLeft: 60,
 	},
 })

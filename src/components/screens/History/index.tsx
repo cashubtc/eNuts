@@ -11,6 +11,7 @@ import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import HistoryEntry from './Entry'
+import Separator from '@comps/Separator'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const { color } = useContext(ThemeContext)
@@ -65,7 +66,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 										/>
 									)}
 									estimatedItemSize={300}
-									ItemSeparatorComponent={() => <View style={[styles.separator, { borderColor: color.BORDER }]} />}
+									ItemSeparatorComponent={() => <Separator />}
 								/>
 							</View>
 						</>
@@ -106,8 +107,4 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		marginTop: 20,
 	},
-	separator: {
-		borderBottomWidth: 1,
-		width: '100%',
-	}
 })

@@ -1,5 +1,6 @@
 import type { GetInfoResponse } from '@cashu/cashu-ts'
 import { ExclamationIcon, MintBoardIcon } from '@comps/Icons'
+import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TMintInfoPageProps } from '@model/nav'
@@ -82,12 +83,12 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 								}
 							</View>
 						))}
-						<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
+						<Separator style={[{ marginVertical: 20 }]} />
 						<Text style={[styles.description, { color: color.TEXT }]}>
 							Supported NUTs
 						</Text>
 						{info.nuts.map((n, i) => <Txt key={i} txt={n} />)}
-						<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
+						<Separator style={[{ marginVertical: 20 }]} />
 						<Text style={[styles.description, { color: color.TEXT }]}>
 							Public key
 						</Text>
@@ -154,10 +155,6 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		fontWeight: '500',
 		marginBottom: 5,
-	},
-	separator: {
-		borderBottomWidth: 1,
-		marginVertical: 20,
 	},
 	contactWrap: {
 		flexDirection: 'row',

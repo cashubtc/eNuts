@@ -1,3 +1,4 @@
+import Separator from '@comps/Separator'
 import type { TDisplaySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
@@ -40,7 +41,6 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 					))}
 				</View>
 			</ScrollView>
-			{/* <View style={[styles.separator, { marginTop: 10, borderBottomColor: color.BORDER }]} /> */}
 			<BottomNav navigation={navigation} route={route} />
 		</View>
 	)
@@ -69,9 +69,7 @@ function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) 
 					]}
 				/>
 			</TouchableOpacity>
-			{hasSeparator &&
-				<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
-			}
+			{hasSeparator && <Separator style={[{ marginHorizontal: 20, marginVertical: 10 }]} />}
 		</>
 	)
 }
@@ -109,11 +107,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 10,
 		paddingHorizontal: 20,
-	},
-	separator: {
-		borderBottomWidth: 1,
-		marginHorizontal: 20,
-		marginVertical: 10,
 	},
 	radioBtn: {
 		borderWidth: 1,

@@ -48,7 +48,6 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 				</TouchableOpacity>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
-			{/* <View style={[styles.separator, { borderBottomColor: color.BORDER }]} /> */}
 			<PromptModal
 				header={prompt.msg}
 				visible={prompt.open}
@@ -75,8 +74,4 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		paddingVertical: 10,
 	},
-	// separator: {
-	// 	borderBottomWidth: 1,
-	// 	marginVertical: 10,
-	// },
 })
