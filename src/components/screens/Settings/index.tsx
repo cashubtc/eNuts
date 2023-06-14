@@ -1,8 +1,8 @@
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
 import Separator from '@comps/Separator'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
-import { PromptModal } from '@modal/Prompt'
 import { QuestionModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -18,10 +18,13 @@ import { version } from '../../../../package.json'
 export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { color } = useContext(ThemeContext)
 	const [confirm, setConfirm] = useState(false)
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleDeleteHistory = async () => {
 		const success = await historyStore.clear()
-		openPrompt(success ? 'History deleted' : 'Could not delete the history.')
+		openPromptAutoClose({
+			msg: success ? 'History deleted' : 'Could not delete the history.',
+			success
+		})
 		setConfirm(false)
 	}
 	return (
@@ -60,12 +63,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 				cancelTxt='No'
 				cancelFn={() => setConfirm(false)}
 			/>
-			<PromptModal
-				hideIcon
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} /> }
 		</View>
 	)
 }

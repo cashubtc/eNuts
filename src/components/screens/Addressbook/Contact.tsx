@@ -1,10 +1,10 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { EditIcon, TrashbinIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
 import { delContact, editContact as editC, getContacts } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
-import { PromptModal } from '@modal/Prompt'
 import type { IContactPageProps } from '@model/nav'
 import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
@@ -20,11 +20,11 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 		ln: route.params.contact?.ln
 	})
 	const [openEdit, setOpenEdit] = useState(false)
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleDelete = async () => {
 		const success = await delContact(route.params.contact?.id || 0)
 		if (!success) {
-			l('delete contact error')
+			openPromptAutoClose({ msg: 'Could not delete contact' })
 			return
 		}
 		setContacts(await getContacts())
@@ -45,7 +45,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			navigation.navigate('Address book')
 		} catch (e) {
 			l(e)
-			openPrompt('Contact could not be saved. Possible name or address duplication.')
+			openPromptAutoClose({ msg: 'Contact could not be saved. Possible name or address duplication.' })
 			setOpenEdit(false)
 		}
 	}
@@ -54,7 +54,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			name: route.params.contact?.name,
 			ln: route.params.contact?.ln
 		})
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [openEdit])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -148,14 +148,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					</TouchableOpacity>
 				</MyModal>
 			}
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={() => {
-					closePrompt()
-					setOpenEdit(true)
-				}}
-			/>
+			{prompt.open && <Toaster txt={prompt.msg} /> }
 		</View >
 	)
 }

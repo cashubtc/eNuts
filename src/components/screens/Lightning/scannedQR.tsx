@@ -2,11 +2,11 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import { ZapIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { getMintsBalances, getMintsUrls, getProofsByMintUrl } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
-import { PromptModal } from '@modal/Prompt'
 import type { IMintUrl, IProofSelection } from '@model'
 import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
@@ -31,7 +31,7 @@ interface IScannedQRProps {
 export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScannedQRProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { loading, startLoading, stopLoading } = useLoading()
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	// user mints
 	const [mints, setMints] = useState<IMintUrl[]>([])
 	const [selectedMint, setSelectedMint] = useState<IMintUrl>()
@@ -52,7 +52,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			const res = await payLnInvoice(selectedMint.mintUrl, lnDecoded.paymentRequest, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
-				openPrompt('Invoice could not be payed. Please try again later.')
+				openPromptAutoClose({ msg: 'Invoice could not be payed. Please try again later.' })
 				return
 			}
 			// payment success, add as history entry
@@ -69,7 +69,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			})
 		} catch (e) {
 			l(e)
-			openPrompt(isErr(e) ? e.message : 'An error occured while paying the invoice.')
+			openPromptAutoClose({ msg: isErr(e) ? e.message : 'An error occured while paying the invoice.' })
 			stopLoading()
 		}
 	}
@@ -224,11 +224,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					setProof={setProofs}
 				/>
 			}
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			{prompt.open && <Toaster txt={prompt.msg} /> }
 		</MyModal>
 	)
 }

@@ -1,10 +1,10 @@
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { getProofs } from '@db'
 import { getBackUpToken } from '@db/backup'
 import { l } from '@log'
-import { PromptModal } from '@modal/Prompt'
 import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
@@ -15,19 +15,19 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
 	const { color } = useContext(ThemeContext)
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleBackup = async () => {
 		try {
 			const proofs = await getProofs()
 			if (!proofs.length) {
-				openPrompt('Found no proofs to create a backup.')
+				openPromptAutoClose({ msg: 'Found no proofs to create a backup.' })
 				return
 			}
 			const token = await getBackUpToken()
 			navigation.navigate('BackupPage', { token })
 		} catch (e) {
 			l(e)
-			openPrompt('Something went wrong while creating the backup token.')
+			openPromptAutoClose({ msg: 'Something went wrong while creating the backup token.' })
 		}
 	}
 	return (
@@ -47,11 +47,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 				</TouchableOpacity>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			{prompt.open && <Toaster txt={prompt.msg} /> }
 		</View>
 	)
 }
