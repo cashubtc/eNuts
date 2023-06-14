@@ -12,7 +12,7 @@ interface IMyModalProps {
 	children: React.ReactNode
 }
 
-export default function MyModal({ type, animation, visible, success, isContactList, children }: IMyModalProps) {
+export default function MyModal({ type, animation, visible, success, children }: IMyModalProps) {
 
 	const { color, highlight } = useContext(ThemeContext)
 

@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 		paddingLeft: 20,
 		paddingRight: 20,
-		marginBottom: 100,
+		marginBottom: 75,
 	},
 	// Modal content
 	cancel: {

@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		marginTop: 100,
-		marginBottom: 75,
+		marginBottom: 60,
 	},
 	listWrap: {
 		flex: 1,

@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: '100%',
 		marginTop: 110,
-		marginBottom: 75,
+		marginBottom: 60,
 	},
 	groupWrap: {
 		borderWidth: 1,

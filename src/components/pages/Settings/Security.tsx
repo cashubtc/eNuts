@@ -5,13 +5,14 @@ import { getBackUpToken } from '@db/backup'
 import { l } from '@log'
 import { PromptModal } from '@modal/Prompt'
 import { TSecuritySettingsPageProps } from '@model/nav'
+import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-export default function SecuritySettings({ navigation }: TSecuritySettingsPageProps) {
+export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPrompt, closePrompt } = usePrompt()
 	const handleBackup = async () => {
@@ -46,6 +47,7 @@ export default function SecuritySettings({ navigation }: TSecuritySettingsPagePr
 					<ChevronRightIcon color={color.TEXT} />
 				</TouchableOpacity>
 			</View>
+			<BottomNav navigation={navigation} route={route} />
 			{/* <View style={[styles.separator, { borderBottomColor: color.BORDER }]} /> */}
 			<PromptModal
 				header={prompt.msg}

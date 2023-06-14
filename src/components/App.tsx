@@ -8,7 +8,7 @@ import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import MyModal from '@modal'
 import { IInitialProps, IPreferences, ITokenInfo } from '@model'
-import { DrawerNav } from '@nav/Navigator'
+import Navigator from '@nav/Navigator'
 import { NavigationContainer } from '@react-navigation/native'
 import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
@@ -240,7 +240,7 @@ function _App(_initialProps: IInitialProps) {
 				<FocusClaimCtx.Provider value={claimData}>
 					<ContactsContext.Provider value={contactData}>
 						<KeyboardProvider>
-							<DrawerNav />
+							<Navigator />
 							<StatusBar style="auto" />
 							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
 							<MyModal type='question' visible={claimOpen}>

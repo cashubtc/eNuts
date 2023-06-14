@@ -3,13 +3,14 @@ import { ChevronRightIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/I
 import { PromptModal } from '@modal/Prompt'
 import { QuestionModal } from '@modal/Question'
 import { TSettingsPageProps } from '@model/nav'
+import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-export default function Settings({ navigation }: TSettingsPageProps) {
+export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { color } = useContext(ThemeContext)
 	const [confirm, setConfirm] = useState(false)
 	const { prompt, openPrompt, closePrompt } = usePrompt()
@@ -20,7 +21,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Settings' withBackBtn />
+			<TopNav screenName='Settings' />
 			<View style={[styles.wrap, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
 				<SettingsMenuItem
 					txt='Security'
@@ -43,17 +44,16 @@ export default function Settings({ navigation }: TSettingsPageProps) {
 					onPress={() => setConfirm(true)}
 				/>
 			</View>
-			{confirm &&
-				<QuestionModal
-					header='Are you sure that you want to delete the history?'
-					txt='The data can not be retrieved afterwards.'
-					visible={confirm}
-					confirmTxt='Yes'
-					confirmFn={() => void handleDeleteHistory()}
-					cancelTxt='No'
-					cancelFn={() => setConfirm(false)}
-				/>
-			}
+			<BottomNav navigation={navigation} route={route} />
+			<QuestionModal
+				header='Are you sure that you want to delete the history?'
+				txt='The data can not be retrieved afterwards.'
+				visible={confirm}
+				confirmTxt='Yes'
+				confirmFn={() => void handleDeleteHistory()}
+				cancelTxt='No'
+				cancelFn={() => setConfirm(false)}
+			/>
 			<PromptModal
 				hideIcon
 				header={prompt.msg}

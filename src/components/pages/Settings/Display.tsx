@@ -1,4 +1,5 @@
 import type { TDisplaySettingsPageProps } from '@model/nav'
+import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, themeColors } from '@styles'
@@ -6,7 +7,7 @@ import { useContext } from 'react'
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
-export default function DisplaySettings({ navigation }: TDisplaySettingsPageProps) {
+export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -15,7 +16,7 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
-			<ScrollView style={{ width: '100%' }} showsVerticalScrollIndicator={false}>
+			<ScrollView style={{ width: '100%', marginBottom: 60 }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Theme
 				</Text>
@@ -40,6 +41,7 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
 				</View>
 			</ScrollView>
 			{/* <View style={[styles.separator, { marginTop: 10, borderBottomColor: color.BORDER }]} /> */}
+			<BottomNav navigation={navigation} route={route} />
 		</View>
 	)
 }

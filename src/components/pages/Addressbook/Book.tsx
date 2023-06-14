@@ -227,12 +227,13 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'flex-start',
 		paddingHorizontal: 20,
-		marginBottom: 20,
+		marginBottom: 10,
 		width: '100%',
 	},
 	header: {
 		fontSize: 20,
 		fontWeight: '500',
+		marginBottom: 10,
 	},
 	scroll: {
 		width: '100%'

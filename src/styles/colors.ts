@@ -1,5 +1,5 @@
-import type { ExtendedTheme } from '@react-navigation/drawer'
 import { DefaultTheme } from '@react-navigation/native'
+import type { ExtendedTheme } from '@react-navigation/native-stack'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type TPref = {

@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
 	scrollContainer: {
 		flex: 1,
 		marginTop: 110,
-		marginBottom: 75,
+		marginBottom: 60,
 	},
 	subHeader: {
 		flexDirection: 'row',

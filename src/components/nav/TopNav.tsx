@@ -1,6 +1,6 @@
-import { HamburgerIcon, QRIcon } from '@comps/Icons'
+import { QRIcon } from '@comps/Icons'
 import type { TBottomNavProps } from '@model/nav'
-import { DrawerActions, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
@@ -30,18 +30,12 @@ export default function TopNav({ screenName, withBackBtn, backHandler, nav }: TT
 	}
 	return (
 		<View style={styles.topNav}>
-			<TouchableOpacity
-				style={styles.topIconL}
-				onPress={() => {
-					navHook.dispatch(DrawerActions.openDrawer())
-				}}
-			>
-				<HamburgerIcon color={color.TEXT} />
-			</TouchableOpacity>
-			{screenName &&
+			{screenName ?
 				<Text style={[styles.screenName, { color: color.TEXT }]}>
 					{screenName}
 				</Text>
+				:
+				<View />
 			}
 			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
 				{withBackBtn ?

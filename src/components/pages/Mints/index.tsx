@@ -134,7 +134,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 						style={{ paddingVertical: 10 }}
 						onPress={() => setNewMintModal(true)}
 					>
-						<PlusIcon width={22} height={22} color={color.TEXT} />
+						<PlusIcon width={20} height={20} color={color.TEXT} />
 					</TouchableOpacity>
 				</View>
 				{/* Mints list where test mint is always visible */}
