@@ -132,15 +132,13 @@ export default function LNPageContent({
 					/>
 					{mints.length > 0 && !nav.route.params?.mint &&
 						<View style={styles.mintOpts}>
-							<Text style={globals(color).txt}>
-								Balance
-							</Text>
+							<Txt txt='Balance' />
 							<View style={styles.mintBal}>
 								<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 									{formatInt(mintBal)}
 								</Text>
 								<ZapIcon width={18} height={18} color={color.TEXT} />
-							</View>
+							T</View>
 						</View>
 					}
 					{!mints.length ?
@@ -153,9 +151,7 @@ export default function LNPageContent({
 					{+amount > 0 && mintBal >= +amount / 1000 && !isKeyboardOpen &&
 						<>
 							<View style={styles.overview}>
-								<Text style={globals(color).txt}>
-									Coin selection
-								</Text>
+								<Txt txt='Coin selection' />
 								<Switch
 									trackColor={{ false: color.BORDER, true: hi[highlight] }}
 									thumbColor={color.TEXT}

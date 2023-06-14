@@ -2,6 +2,7 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import { ArrowDownIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import { l } from '@log'
 import { PromptModal } from '@modal/Prompt'
 import { TIntermintSwapPageProps } from '@model/nav'
@@ -68,9 +69,10 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 			{/* Swap-Out Mint: */}
 			{!isKeyboardOpen && +amount > 0 &&
 				<View>
-					<Text style={[globals(color).txt, styles.mintUrl]}>
-						{route.params.swap_out_mint.customName || formatMintUrl(route.params.swap_out_mint.mintUrl)}
-					</Text>
+					<Txt
+						txt={route.params.swap_out_mint.customName || formatMintUrl(route.params.swap_out_mint.mintUrl)}
+						styles={[styles.mintUrl]}
+					/>
 					<View style={styles.iconWrap}>
 						<ArrowDownIcon width={50} height={50} color={hi[highlight]} />
 					</View>

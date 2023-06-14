@@ -2,6 +2,7 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import { ZapIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import { getMintsBalances, getMintsUrls, getProofsByMintUrl } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -68,7 +69,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			})
 		} catch (e) {
 			l(e)
-			openPrompt(isErr(e)? e.message : 'An error occured while paying the invoice.')
+			openPrompt(isErr(e) ? e.message : 'An error occured while paying the invoice.')
 			stopLoading()
 		}
 	}
@@ -172,9 +173,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								))}
 							</Picker>
 							<View style={[styles.mintOpts, { borderBottomColor: color.BORDER }]}>
-								<Text style={globals(color).txt}>
-									Balance
-								</Text>
+								<Txt txt='Balance' />
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										{formatInt(mintBal)}
@@ -185,9 +184,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 							{invoiceAmount > 0 && mintBal >= invoiceAmount / 1000 &&
 								<>
 									<View style={styles.overview}>
-										<Text style={globals(color).txt}>
-											Coin selection
-										</Text>
+										<Txt txt='Coin selection' />
 										<Switch
 											trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
 											thumbColor={color.TEXT}

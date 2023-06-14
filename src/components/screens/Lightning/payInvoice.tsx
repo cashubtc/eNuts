@@ -251,9 +251,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 							<Txt txt='Calculating fee...' />
 							:
 							<>
-								<Text style={globals(color).txt}>
-									Estimated fees:
-								</Text>
+								<Txt txt='Estimated fees:' />
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										0 to {formatInt(feeEstimate)}
@@ -279,9 +277,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 					</View>
 					{/* Invoice amount */}
 					<View style={styles.overview}>
-						<Text style={globals(color).txt}>
-							Amount:
-						</Text>
+						<Txt txt='Amount:' />
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 								{formatInt(invoiceAmount / 1000)}
@@ -291,15 +287,13 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 					</View>
 					{/* Invoice estimated fees */}
 					<View style={styles.overview}>
-						<Text style={globals(color).txt}>
-							Estimated fees:
-						</Text>
+						<Txt txt='Estimated fees:' />
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 								0 to {formatInt(feeEstimate)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
-						</View>
+						T</View>
 					</View>
 					{/* Total after fee */}
 					<View style={[
@@ -310,9 +304,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 							paddingBottom: 15
 						}
 					]}>
-						<Text style={[globals(color).txt, { fontWeight: '500' }]}>
-							Total:
-						</Text>
+						<Txt txt='Total:' styles={[{ fontWeight: '500' }]} />
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 								{formatInt((invoiceAmount / 1000) + feeEstimate)}
@@ -333,9 +325,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				(isLnurl(input) && +LNURLAmount > 0)) && !isKeyboardOpen &&
 				<View style={styles.coinSelectionOverview}>
 					<View style={styles.overview}>
-						<Text style={globals(color).txt}>
-							Coin selection
-						</Text>
+						<Txt txt='Coin selection' />
 						<Switch
 							trackColor={{ false: color.BORDER, true: hi[highlight] }}
 							thumbColor={color.TEXT}

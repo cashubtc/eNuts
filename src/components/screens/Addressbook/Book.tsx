@@ -108,9 +108,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 								})
 							}}
 						>
-							<Text style={globals(color).txt}>
-								{getPersonalInfo()?.ln}
-							</Text>
+							<Txt txt={getPersonalInfo()?.ln || ''} />
 						</TouchableOpacity>
 					</View>
 					:
@@ -125,9 +123,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							<PlusIcon width={16} height={16} color={hi[highlight]} />
 						</Text>
 						<View style={styles.nameEntry}>
-							<Text style={[globals(color).txt, { color: hi[highlight] }]}>
-								Add your own LNURL
-							</Text>
+							<Txt txt='Add your own LNURL' styles={[{ color: hi[highlight] }]} />
 						</View>
 					</TouchableOpacity>
 				}

@@ -257,21 +257,15 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 	return (
 		<>
 			<View style={styles.overview}>
-				<Text style={globals(color).txt}>
-					Selected
-				</Text>
+				<Txt txt='Selected' />
 				<Text style={globals(color).txt}>
 					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? color.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
 				</Text>
 			</View>
 			{selectedAmount > lnAmount &&
 				<View style={styles.overview}>
-					<Text style={globals(color).txt}>
-						Change
-					</Text>
-					<Text style={globals(color).txt}>
-						{selectedAmount - lnAmount} Sat
-					</Text>
+					<Txt txt='Change' />
+					<Txt txt={`${selectedAmount - lnAmount} Sat`} />
 				</View>
 			}
 		</>

@@ -4,6 +4,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import Txt from './Txt'
 
 interface IProofRowProps {
 	proof: Proof | IProofSelection
@@ -39,9 +40,7 @@ export function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<>
-			<Text style={globals(color).txt}>
-				{proof.amount} Sat
-			</Text>
+			<Txt txt={`${proof.amount} Sat`} />
 			<View style={styles.keyWrap}>
 				<Text style={[
 					styles.keysetID,

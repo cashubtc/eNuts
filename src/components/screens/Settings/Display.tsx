@@ -1,4 +1,5 @@
 import Separator from '@comps/Separator'
+import Txt from '@comps/Txt'
 import type { TDisplaySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
@@ -22,9 +23,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 					Theme
 				</Text>
 				<View style={[globals(color).wrapContainer, styles.wrap]}>
-					<Text style={globals(color).txt}>
-						Dark mode
-					</Text>
+					<Txt txt='Dark mode' />
 					<Switch
 						trackColor={{ false: color.BORDER, true: hi[highlight] }}
 						thumbColor={color.TEXT}
@@ -59,9 +58,7 @@ function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) 
 			<TouchableOpacity style={styles.settingsRow}
 				onPress={() => setHighlight(name)}
 			>
-				<Text style={globals(color).txt}>
-					{name}
-				</Text>
+				<Txt txt={name} />
 				<View
 					style={[
 						styles.radioBtn,

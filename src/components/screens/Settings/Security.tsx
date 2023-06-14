@@ -1,5 +1,6 @@
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import { getProofs } from '@db'
 import { getBackUpToken } from '@db/backup'
 import { l } from '@log'
@@ -41,9 +42,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 					style={styles.settingsRow}
 					onPress={() => { void handleBackup() }}
 				>
-					<Text style={globals(color).txt}>
-						Create a backup token
-					</Text>
+					<Txt txt='Create a backup token' />
 					<ChevronRightIcon color={color.TEXT} />
 				</TouchableOpacity>
 			</View>

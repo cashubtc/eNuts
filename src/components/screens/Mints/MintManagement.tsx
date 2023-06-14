@@ -178,9 +178,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Balance */}
 					<View style={styles.mintOpts}>
-						<Text style={globals(color).txt}>
-							Balance
-						</Text>
+						<Txt txt='Balance' />
 						<Text style={{ color: color.TEXT }}>
 							{formatInt(route.params?.amount)}{' Satoshi'}
 						</Text>
@@ -360,9 +358,7 @@ function MintOption({ txt, onPress, icon, rowColor, hasSeparator }: IMintOption)
 	return (
 		<>
 			<TouchableOpacity onPress={onPress} style={styles.mintOpts}>
-				<Text style={[globals(color).txt, { color: rowColor ?? color.TEXT }]}>
-					{txt}
-				</Text>
+				<Txt txt={txt} styles={[{ color: rowColor || color.TEXT }]} />
 				{icon}
 			</TouchableOpacity>
 			{hasSeparator &&
