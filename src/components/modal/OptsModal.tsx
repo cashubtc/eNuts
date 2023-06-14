@@ -1,4 +1,4 @@
-import Button from '@comps/Button'
+import ActionButtons from '@comps/ActionButtons'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
@@ -27,15 +27,11 @@ export default function OptsModal({
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible}>
 			<View style={{ marginVertical: 10 }} />
-			<Button
-				txt={button1Txt}
-				onPress={onPressFirstBtn}
-			/>
-			<View style={{ marginVertical: 10 }} />
-			<Button
-				txt={button2Txt}
-				outlined
-				onPress={onPressSecondBtn}
+			<ActionButtons
+				topBtnTxt={button1Txt}
+				topBtnAction={onPressFirstBtn}
+				bottomBtnTxt={button2Txt}
+				bottomBtnAction={onPressSecondBtn}
 			/>
 			<TouchableOpacity style={styles.no} onPress={onPressCancel}>
 				<Text style={globals(color, highlight).pressTxt}>
@@ -48,10 +44,7 @@ export default function OptsModal({
 
 const styles = StyleSheet.create({
 	no: {
-		fontSize: 16,
-		fontWeight: '500',
 		marginTop: 15,
-		marginBottom: -15,
 		padding: 10,
 	},
 })

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
+import ActionButtons from '@comps/ActionButtons'
 import Balance from '@comps/Balance'
-import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
@@ -168,20 +168,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Flex space-between empty placeholder */}
 			<View />
 			{/* Token input & submit button */}
-			<View style={styles.actionWrap}>
-				{/* Claim token */}
-				<Button
-					txt='Receive'
-					onPress={() => setModal({ ...modal, receiveOpts: true })}
-				/>
-				<View style={{ marginVertical: 10 }} />
-				{/* Send token */}
-				<Button
-					outlined
-					txt='Send'
-					onPress={() => setModal({ ...modal, sendOpts: true })}
-				/>
-			</View>
+			<ActionButtons
+				ontopOfNav
+				topBtnTxt='Receive'
+				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
+				bottomBtnTxt='Send'
+				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
+			/>
 			{/* Bottom nav icons */}
 			<BottomNav navigation={navigation} route={route} />
 			{/* Question modal for mint trusting */}
@@ -253,24 +246,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		width: '100%',
 	},
-	actionWrap: {
-		width: '100%',
-		paddingLeft: 20,
-		paddingRight: 20,
-		marginBottom: 75,
-	},
-	// Modal content
-	pasteInputTxtWrap: {
-		position: 'absolute',
-		right: 10,
-		top: 10,
-		padding: 10
-	},
 	pasteInputTxt: {
 		fontSize: 16,
 		fontWeight: '500',
 	},
-	historyWrap: {
-		marginVertical: 10
-	}
 })

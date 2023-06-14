@@ -2,6 +2,7 @@ import Button, { IconBtn } from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
+import Txt from '@comps/Txt'
 import { _mintUrl, defaultMints } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
@@ -150,18 +151,10 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 										{defaultMint === data.item.mintUrl &&
 											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
 										}
-										<Text
-											style={[
-												styles.mintUrl,
-												{
-													color: color.TEXT,
-													marginLeft: defaultMint === data.item.mintUrl ? 10 : 0
-												}
-											]}
-										>
-											{/* custom name given by user or show mint URL */}
-											{data.item.customName || formatMintUrl(data.item.mintUrl)}
-										</Text>
+										<Txt
+											txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
+											styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0 }]}
+										/>
 									</View>
 									{/* Add mint icon or show balance */}
 									<View>
@@ -198,7 +191,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				/>
 				<Button txt='Add mint' onPress={() => { void handleMintInput() }} />
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
-					<Text style={[styles.cancelTxt, { color: hi[highlight] }]}>Cancel</Text>
+					<Txt txt='Cancel' styles={[globals(color).pressTxt]} />
 				</TouchableOpacity>
 			</MyModal>
 			<QuestionModal
@@ -247,14 +240,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center'
 	},
-	loading: {
-		fontSize: 16,
-		fontWeight: '500',
-		textAlign: 'center',
-	},
-	mintsWrap: {
-		width: '100%',
-	},
 	mintContainer: {
 		height: 60,
 	},
@@ -266,27 +251,6 @@ const styles = StyleSheet.create({
 		paddingTop: 15,
 		paddingBottom: 15,
 	},
-	mintUrl: {
-		fontSize: 16,
-	},
-	actionWrap: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		paddingTop: 20,
-		paddingRight: 20,
-		paddingLeft: 20,
-	},
-	modalImg: {
-		width: '100%',
-		height: 200,
-		borderTopLeftRadius: 20,
-		borderTopRightRadius: 20,
-	},
-	successBody: {
-		width: '100%',
-		padding: 20,
-	},
 	mintBal: {
 		flex: 1,
 		flexDirection: 'row',
@@ -296,22 +260,10 @@ const styles = StyleSheet.create({
 	mintAmount: {
 		marginRight: 5,
 	},
-	mintHint: {
-		fontSize: 16,
-		marginTop: 20,
-	},
 	cancel: {
 		alignItems: 'center',
 		marginTop: 15,
 		padding: 10,
 		width: '100%',
-	},
-	cancelTxt: {
-		fontSize: 16,
-		fontWeight: '500',
-	},
-	howToLink: {
-		textDecorationLine: 'underline',
-		fontSize: 16,
 	},
 })
