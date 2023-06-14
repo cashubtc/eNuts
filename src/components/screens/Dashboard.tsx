@@ -4,10 +4,10 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
+import InitialModal from '@comps/InitialModal'
 import Toaster from '@comps/Toaster'
 import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
-import MyModal from '@modal'
 import OptsModal from '@modal/OptsModal'
 import TrustMintModal from '@modal/TrustMint'
 import { TDashboardPageProps } from '@model/nav'
@@ -17,19 +17,18 @@ import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { globals, highlight as hi } from '@styles'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url } = useInitialURL()
 	// Theme
-	const { color, highlight } = useContext(ThemeContext)
+	const { color } = useContext(ThemeContext)
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useContext(FocusClaimCtx)
 	// Total Balance state (all mints)
@@ -195,67 +194,52 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				/>
 			}
 			{/* Initial mint modal prompt */}
-			{modal.mint &&
-				<MyModal type='bottom' animation='slide' visible={modal.mint}>
-					<Text style={globals(color, highlight).modalHeader}>
-						Get started
-					</Text>
-					<Text style={globals(color, highlight).modalTxt}>
-						You should add a mint that you trust before sending or receiving tokens.
-					</Text>
-					<Button txt='Add a mint now' onPress={handleMintModal} />
-					<TouchableOpacity onPress={() => setModal({ ...modal, mint: false })}>
-						<Text style={[styles.cancel, { color: hi[highlight] }]}>
-							Will do later
-						</Text>
-					</TouchableOpacity>
-				</MyModal>
-			}
+			<InitialModal
+				visible={modal.mint}
+				onConfirm={handleMintModal}
+				onCancel={() => setModal({ ...modal, mint: false })}
+			/>
 			{/* Receive options */}
-			{modal.receiveOpts &&
-				<OptsModal
-					visible={modal.receiveOpts}
-					button1Txt={loading ? 'claiming...' : 'Paste & redeem Ecash'}
-					onPressFirstBtn={() => {
-						if (token.length) { return }
-						void (async () => {
-							startLoading()
-							const clipboard = await Clipboard.getStringAsync()
-							if (!isCashuToken(clipboard)) {
-								openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
-								setModal({ ...modal, receiveOpts: false })
-								stopLoading()
-								return
-							}
-							setToken(clipboard)
-							await handleTokenSubmit(clipboard)
-						})()
-					}}
-					button2Txt='Create Lightning invoice'
-					onPressSecondBtn={() => {
-						navigation.navigate('lightning', { receive: true })
-						setModal({ ...modal, receiveOpts: false })
-					}}
-					onPressCancel={() => setModal({ ...modal, receiveOpts: false })}
-				/>
-			}
+			<OptsModal
+				visible={modal.receiveOpts}
+				button1Txt={loading ? 'claiming...' : 'Paste & redeem Ecash'}
+				onPressFirstBtn={() => {
+					if (token.length) { return }
+					void (async () => {
+						startLoading()
+						const clipboard = await Clipboard.getStringAsync()
+						if (!isCashuToken(clipboard)) {
+							openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
+							setModal({ ...modal, receiveOpts: false })
+							stopLoading()
+							return
+						}
+						setToken(clipboard)
+						await handleTokenSubmit(clipboard)
+					})()
+				}}
+				button2Txt='Create Lightning invoice'
+				onPressSecondBtn={() => {
+					navigation.navigate('lightning', { receive: true })
+					setModal({ ...modal, receiveOpts: false })
+				}}
+				onPressCancel={() => setModal({ ...modal, receiveOpts: false })}
+			/>
 			{/* Send options */}
-			{modal.sendOpts &&
-				<OptsModal
-					visible={modal.sendOpts}
-					button1Txt='Send Ecash'
-					onPressFirstBtn={() => {
-						navigation.navigate('send')
-						setModal({ ...modal, sendOpts: false })
-					}}
-					button2Txt='Pay Lightning invoice'
-					onPressSecondBtn={() => {
-						navigation.navigate('lightning', { send: true })
-						setModal({ ...modal, sendOpts: false })
-					}}
-					onPressCancel={() => setModal({ ...modal, sendOpts: false })}
-				/>
-			}
+			<OptsModal
+				visible={modal.sendOpts}
+				button1Txt='Send Ecash'
+				onPressFirstBtn={() => {
+					navigation.navigate('send')
+					setModal({ ...modal, sendOpts: false })
+				}}
+				button2Txt='Pay Lightning invoice'
+				onPressSecondBtn={() => {
+					navigation.navigate('lightning', { send: true })
+					setModal({ ...modal, sendOpts: false })
+				}}
+				onPressCancel={() => setModal({ ...modal, sendOpts: false })}
+			/>
 			{/* Prompt toaster */}
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
@@ -276,11 +260,6 @@ const styles = StyleSheet.create({
 		marginBottom: 75,
 	},
 	// Modal content
-	cancel: {
-		fontSize: 16,
-		fontWeight: '500',
-		marginTop: 25,
-	},
 	pasteInputTxtWrap: {
 		position: 'absolute',
 		right: 10,
