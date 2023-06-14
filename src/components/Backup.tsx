@@ -73,9 +73,11 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 const styles = StyleSheet.create({
 	subTxt: {
 		marginTop: 20,
+		paddingHorizontal: 20,
 	},
 	token: {
 		marginTop: 20,
 		fontSize: 16,
+		paddingHorizontal: 20,
 	},
 })

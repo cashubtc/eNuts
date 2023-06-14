@@ -22,7 +22,6 @@ export default function BackupPage({ navigation, route }: TBackupPageProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 110,
-		paddingHorizontal: 20,
+		paddingTop: 100,
 	},
 })
