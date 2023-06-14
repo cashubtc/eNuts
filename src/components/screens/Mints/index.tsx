@@ -1,4 +1,4 @@
-import Button from '@comps/Button'
+import Button, { IconBtn } from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
@@ -128,15 +128,6 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName='Mints' nav={{ navigation, route }} />
 			<View style={styles.topSection}>
-				{/* Header */}
-				<View style={styles.headerWrap}>
-					<TouchableOpacity
-						style={{ paddingVertical: 10 }}
-						onPress={() => setNewMintModal(true)}
-					>
-						<PlusIcon width={20} height={20} color={color.TEXT} />
-					</TouchableOpacity>
-				</View>
 				{/* Mints list where test mint is always visible */}
 				<View style={[
 					styles.listWrap,
@@ -222,7 +213,13 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				confirmFn={() => handleTrustModal()}
 				cancelFn={() => setTrustModalOpen(false)}
 			/>
-			{/* mint added successfully modal */}
+			{/* add new mint button */}
+			<View style={styles.newMint}>
+				<IconBtn
+					icon={<PlusIcon width={15} height={15} color={hi[highlight]} />}
+					onPress={() => setNewMintModal(true)}
+				/>
+			</View>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 			{!isKeyboardOpen && !prompt.open && !trustModalOpen && !newMintModal &&
 				<BottomNav navigation={navigation} route={route} />
@@ -242,12 +239,10 @@ const styles = StyleSheet.create({
 		marginTop: 120,
 		marginBottom: 75,
 	},
-	headerWrap: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'flex-end',
-		paddingHorizontal: 20,
-		marginBottom: 10,
+	newMint: {
+		position: 'absolute',
+		right: 20,
+		bottom: 80,
 	},
 	// TODO add this container style as global
 	listWrap: {

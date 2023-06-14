@@ -1,3 +1,4 @@
+import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
@@ -11,7 +12,6 @@ import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import HistoryEntry from './Entry'
-import Separator from '@comps/Separator'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const { color } = useContext(ThemeContext)

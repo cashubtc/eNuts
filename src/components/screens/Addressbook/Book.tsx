@@ -1,4 +1,4 @@
-import Button from '@comps/Button'
+import Button, { IconBtn } from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { PlusIcon, UserIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
@@ -59,16 +59,15 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 	return (
 		<>
 			{/* Header */}
-			<View style={styles.headerWrap}>
-				{isModal &&
+			{isModal ?
+				<View style={styles.modalHeader}>
 					<View>
 						<Text style={[styles.header, { color: color.TEXT }]}>
 							Address book
 						</Text>
-						<ContactsCount count={contacts.length} colorSecondary />
+						<ContactsCount count={contacts.length} />
 					</View>
-				}
-				{isModal ?
+					{/* cancel modal / go back to payment page */}
 					<TouchableOpacity
 						style={{ paddingVertical: 10 }}
 						onPress={() => closeModal?.()}
@@ -77,19 +76,12 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							Cancel
 						</Text>
 					</TouchableOpacity>
-					:
-					<>
-						<ContactsCount count={contacts.length} />
-						<TouchableOpacity
-							style={{ paddingLeft: 10 }}
-							onPress={() => setOpenNew({ open: true, isOwner: false })}
-							testID='testNewContact'
-						>
-							<PlusIcon width={20} height={20} color={color.TEXT} />
-						</TouchableOpacity>
-					</>
-				}
-			</View>
+				</View>
+				:
+				<View style={styles.bookHeader}>
+					<ContactsCount count={contacts.length} />
+				</View>
+			}
 			{/* Address list */}
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 				{/* user own LNURL */}
@@ -167,12 +159,22 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 										<Txt txt={c.name} />
 									</TouchableOpacity>
 								</View>
-								{i < contacts.length - 1 && <Separator style={[{marginLeft: 60}]} />}
+								{i < contacts.length - 1 && <Separator style={[{ marginLeft: 60 }]} />}
 							</View>
 						))}
 					</View>
 				}
 			</ScrollView>
+			{/* Add new contact button */}
+			{!isModal &&
+				<View style={styles.newContactBtn}>
+					<IconBtn
+						icon={<PlusIcon width={15} height={15} color={hi[highlight]} />}
+						onPress={() => setOpenNew({ open: true, isOwner: false })}
+						testId='testNewContact'
+					/>
+				</View>
+			}
 			{/* Add new contact modal */}
 			<MyModal type='bottom' animation='slide' visible={openNew.open && !prompt.open}>
 				<Text style={globals(color).modalHeader}>
@@ -209,10 +211,10 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 	)
 }
 
-function ContactsCount({ count, colorSecondary }: { count: number, colorSecondary?: boolean }) {
+function ContactsCount({ count }: { count: number }) {
 	const { color } = useContext(ThemeContext)
 	return (
-		<Text style={[styles.subHeader, { color: colorSecondary ? color.TEXT_SECONDARY : color.TEXT }]}>
+		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
 			{!count ?
 				''
 				:
@@ -223,13 +225,17 @@ function ContactsCount({ count, colorSecondary }: { count: number, colorSecondar
 }
 
 const styles = StyleSheet.create({
-	headerWrap: {
+	modalHeader: {
+		width: '100%',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'flex-start',
 		paddingHorizontal: 20,
-		marginBottom: 10,
-		width: '100%',
+		marginBottom: 20,
+	},
+	bookHeader: {
+		paddingHorizontal: 20,
+		marginBottom: 20,
 	},
 	header: {
 		fontSize: 20,
@@ -284,4 +290,9 @@ const styles = StyleSheet.create({
 		width: '100%',
 		paddingVertical: 6,
 	},
+	newContactBtn: {
+		position: 'absolute',
+		right: 20,
+		bottom: 80,
+	}
 })
