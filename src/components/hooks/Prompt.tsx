@@ -9,7 +9,7 @@ interface IPromptState {
 export default function usePrompt() {
 	const [prompt, setPrompt] = useState<IPromptState>({ open: false, msg: '' })
 	const openPrompt = (msg: string) => {
-		setPrompt({ open: true, msg })
+		setTimeout(() => setPrompt({ open: true, msg }))
 	}
 	const closePrompt = () => {
 		setPrompt({ open: false, msg: '' })
