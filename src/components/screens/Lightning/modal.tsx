@@ -185,7 +185,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
 			<View style={styles.proofContainer}>
 				<View style={styles.header}>
-					<Text style={styles.headerTxt}>
+					<Text style={globals(color).navTxt}>
 						Coin selection
 					</Text>
 					<TouchableOpacity
@@ -311,10 +311,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		marginBottom: 20,
 	},
-	headerTxt: {
-		fontSize: 20,
-		fontWeight: '500',
-	},
 	listWrap: {
 		flex: 1,
 	},
@@ -323,10 +319,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		marginBottom: 20,
 		paddingHorizontal: 20,
-	},
-	mintUrl: {
-		fontSize: 16,
-		marginLeft: 10,
 	},
 	invoiceWrap: {
 		alignItems: 'center',

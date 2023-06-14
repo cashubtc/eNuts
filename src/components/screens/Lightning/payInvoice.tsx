@@ -225,7 +225,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			{/* LNURL amount to choose */}
 			{isLnurl(input) &&
 				<View style={styles.amountWrap}>
-					<Text style={[styles.payTo, { color: color.TEXT }]}>
+					<Text style={[globals(color).navTxt, styles.payTo]}>
 						Select amount for &quot;{input}&quot;
 					</Text>
 					<TextInput
@@ -268,7 +268,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				<View style={styles.invoiceOverview}>
 					{/* Invoice expiry */}
 					<View style={styles.overviewWrap}>
-						<Text style={[styles.payOverview, { color: color.TEXT }]}>
+						<Text style={[globals(color).navTxt]}>
 							Invoice overview
 						</Text>
 						<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
@@ -427,8 +427,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	payTo: {
-		fontSize: 20,
-		fontWeight: '500',
 		marginBottom: 10
 	},
 	lnUrlFeeOverview: {
@@ -488,10 +486,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		marginTop: 25,
 		marginBottom: 15,
-	},
-	payOverview: {
-		fontSize: 20,
-		fontWeight: '500',
 	},
 	expiry: {
 		fontSize: 20,

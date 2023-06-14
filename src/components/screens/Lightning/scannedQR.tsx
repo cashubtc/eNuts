@@ -143,15 +143,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 				</Text>
 				<View style={styles.pickerWrap}>
 					{!mints.length &&
-						<Text style={[styles.txt, { color: color.TEXT }]}>
-							Found no mints
-						</Text>
+						<Txt txt='Found no mints' styles={[styles.txt, globals(color).navTxt]} />
 					}
 					{mints.length > 0 && timeLeft > 0 &&
 						<>
-							<Text style={[styles.txt, { color: color.TEXT }]}>
-								Select a mint to send from:
-							</Text>
+							<Txt txt='Select a mint to send from:' styles={[styles.txt, globals(color).navTxt]} />
 							<Picker
 								selectedValue={selectedMint?.mintUrl}
 								onValueChange={(value, _idx) => {
@@ -209,9 +205,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					/>
 				}
 				{mints.length > 0 && mintBal < invoiceAmount && timeLeft > 0 &&
-					<Text style={[styles.txt, { color: color.TEXT }]}>
-						Not enough funds!
-					</Text>
+					<Txt txt='Not enough funds!' styles={[globals(color).navTxt, styles.txt]} />
 				}
 				<View style={{ marginVertical: 10 }} />
 				<Button
@@ -249,8 +243,6 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 	},
 	txt: {
-		fontSize: 20,
-		fontWeight: '500',
 		textAlign: 'center',
 		marginBottom: 10
 	},

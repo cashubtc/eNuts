@@ -62,9 +62,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			{isModal ?
 				<View style={styles.modalHeader}>
 					<View>
-						<Text style={[styles.header, { color: color.TEXT }]}>
-							Address book
-						</Text>
+						<Txt txt='Address book' styles={[globals(color).navTxt, styles.header]} />
 						<ContactsCount count={contacts.length} />
 					</View>
 					{/* cancel modal / go back to payment page */}
@@ -234,8 +232,6 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	header: {
-		fontSize: 20,
-		fontWeight: '500',
 		marginBottom: 10,
 	},
 	scroll: {

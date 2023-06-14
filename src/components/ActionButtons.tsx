@@ -8,6 +8,7 @@ interface IActionBtnsProps {
 	bottomBtnTxt: string
 	bottomBtnAction: () => void
 	ontopOfNav?: boolean
+	absolutePos?: boolean
 }
 
 export default function ActionButtons({
@@ -15,10 +16,17 @@ export default function ActionButtons({
 	topBtnAction,
 	bottomBtnTxt,
 	bottomBtnAction,
-	ontopOfNav
+	ontopOfNav,
+	absolutePos
 }: IActionBtnsProps) {
 	return (
-		<View style={[styles.actionWrap, ontopOfNav ? styles.ontopOfNav : {}]}>
+		<View
+			style={[
+				styles.actionWrap,
+				ontopOfNav ? styles.ontopOfNav : {},
+				absolutePos ? styles.absolute : {},
+			]}
+		>
 			<Button
 				txt={topBtnTxt}
 				onPress={topBtnAction}
@@ -41,5 +49,12 @@ const styles = StyleSheet.create({
 		paddingLeft: 20,
 		paddingRight: 20,
 		marginBottom: 75,
+	},
+	absolute: {
+		position: 'absolute',
+		right: 0,
+		bottom: 0,
+		left: 0,
+		padding: 20,
 	}
 })

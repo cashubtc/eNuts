@@ -1,10 +1,12 @@
-import Button from '@comps/Button'
 import { l } from '@log'
 import { ThemeContext } from '@src/context/Theme'
+import { globals } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
-import { Share, StyleSheet, Text, View } from 'react-native'
+import { Share, StyleSheet, Text } from 'react-native'
+
+import ActionButtons from './ActionButtons'
 
 interface IBackupSuccessProps {
 	token: string
@@ -36,9 +38,17 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 			l(e)
 		}
 	}
+	const handleCopy = async () => {
+		await Clipboard.setStringAsync(token)
+		setCopied(true)
+		const t = setTimeout(() => {
+			setCopied(false)
+			clearTimeout(t)
+		}, 3000)
+	}
 	return (
 		<>
-			<Text style={[styles.subTxt, { color: color.TEXT }]}>
+			<Text style={[globals(color).navTxt, styles.subTxt]}>
 				Copy the token and keep it in a safe place.
 			</Text>
 			<Text style={[styles.token, { color: color.TEXT }]}>
@@ -49,28 +59,13 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 					Mint: {formatMintUrl(mint)}
 				</Text>
 			}
-			<View style={styles.action}>
-				<Button
-					txt='Share'
-					outlined
-					onPress={() => {
-						void handleShare()
-					}}
-				/>
-				<View style={{ marginBottom: 20 }} />
-				<Button
-					txt={copied ? 'Copied!' : 'Copy backup token'}
-					onPress={() => {
-						void Clipboard.setStringAsync(token).then(() => {
-							setCopied(true)
-							const t = setTimeout(() => {
-								setCopied(false)
-								clearTimeout(t)
-							}, 3000)
-						})
-					}}
-				/>
-			</View>
+			<ActionButtons
+				absolutePos
+				topBtnTxt='Share'
+				topBtnAction={() => void handleShare()}
+				bottomBtnTxt={copied ? 'Copied!' : 'Copy backup token'}
+				bottomBtnAction={() => void handleCopy()}
+			/>
 		</>
 	)
 }
@@ -78,19 +73,9 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 const styles = StyleSheet.create({
 	subTxt: {
 		marginTop: 20,
-		fontSize: 20,
-		fontWeight: '500',
 	},
 	token: {
 		marginTop: 20,
 		fontSize: 16,
 	},
-	action: {
-		position: 'absolute',
-		right: 0,
-		bottom: 0,
-		left: 0,
-		padding: 20,
-
-	}
 })

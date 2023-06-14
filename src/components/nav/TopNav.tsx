@@ -31,7 +31,7 @@ export default function TopNav({ screenName, withBackBtn, backHandler, nav }: TT
 	return (
 		<View style={styles.topNav}>
 			{screenName ?
-				<Text style={[styles.screenName, { color: color.TEXT }]}>
+				<Text style={globals(color).navTxt}>
 					{screenName}
 				</Text>
 				:

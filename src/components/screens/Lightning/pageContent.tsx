@@ -142,9 +142,7 @@ export default function LNPageContent({
 						</View>
 					}
 					{!mints.length ?
-						<Text style={[styles.awaitInvoice, { color: color.TEXT }]}>
-							Found no mints
-						</Text>
+						<Txt txt='Found no mints' styles={[globals(color).navTxt, styles.awaitInvoice]} />
 						: null
 					}
 					{/* Coin selection toggle */}
@@ -307,8 +305,6 @@ const styles = StyleSheet.create({
 		marginBottom: 10
 	},
 	awaitInvoice: {
-		fontSize: 20,
-		fontWeight: '500',
 		marginTop: 50,
 		textAlign: 'center',
 	},
@@ -322,13 +318,6 @@ const styles = StyleSheet.create({
 	sendBtnWrap: {
 		marginTop: 25,
 		marginBottom: 25,
-	},
-	lnHint: {
-		fontSize: 20,
-		fontWeight: '500',
-		marginVertical: 15,
-		textAlign: 'center',
-		lineHeight: 30,
 	},
 	tokenHint: {
 		fontSize: 20,

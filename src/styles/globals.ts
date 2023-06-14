@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native'
 
-import { highlight as hi,type TPref } from './colors'
+import { highlight as hi, type TPref } from './colors'
 
 export const globals = (color: TPref, h?: string) => StyleSheet.create({
 	txt: {
@@ -12,6 +12,11 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		fontWeight: '500',
 		textAlign: 'center',
 		color: hi[h || '']
+	},
+	navTxt: {
+		fontSize: 20,
+		fontWeight: '500',
+		color: color.TEXT
 	},
 	input: {
 		borderWidth: 1,

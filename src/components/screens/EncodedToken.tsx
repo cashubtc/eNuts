@@ -1,14 +1,15 @@
 import ActionButtons from '@comps/ActionButtons'
 import QR from '@comps/QR'
+import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { dark, highlight as hi } from '@styles'
+import { dark, globals, highlight as hi } from '@styles'
 import { vib } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
-import { Share, StyleSheet, Text, View } from 'react-native'
+import { Share, StyleSheet, View } from 'react-native'
 
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
@@ -58,17 +59,11 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 			/>
 			{/* The amount of the created token */}
 			<View style={styles.qrWrap}>
-				<Text style={[styles.tokenAmount, { color: hi[highlight] }]}>
-					{route.params.amount}
-				</Text>
-				<Text style={[styles.tokenFormat, { color: color.TEXT }]}>
-					Satoshi
-				</Text>
+				<Txt txt={route.params.amount} styles={[styles.tokenAmount, { color: hi[highlight] }]} />
+				<Txt txt='Satoshi' styles={[styles.tokenFormat]} />
 				{/* The QR code */}
 				{error.open ?
-					<Text style={[styles.errorMsg, { color: color.TEXT }]}>
-						{error.msg}
-					</Text>
+					<Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
 					:
 					<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>
 						<QR
@@ -108,7 +103,6 @@ const styles = StyleSheet.create({
 		marginTop: 25,
 	},
 	tokenFormat: {
-		fontSize: 16,
 		marginBottom: 25,
 	},
 	qrCodeWrap: {
@@ -116,8 +110,6 @@ const styles = StyleSheet.create({
 		borderColor: '#FFF'
 	},
 	errorMsg: {
-		fontSize: 20,
-		fontWeight: '500',
 		marginVertical: 25,
 		textAlign: 'center',
 	}
