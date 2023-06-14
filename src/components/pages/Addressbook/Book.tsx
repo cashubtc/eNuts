@@ -138,7 +138,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						</View>
 					</TouchableOpacity>
 				}
-				{contacts.length > 0 && !contacts.some(c => c.isOwner) &&
+				{contacts.length > 0 &&
 					<View style={[styles.bookContainer, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
 						{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
 							!c.isOwner &&
@@ -243,13 +243,13 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		paddingHorizontal: 20,
 		paddingVertical: 10,
+		marginBottom: 25,
 	},
 	subHeader: {
 		fontSize: 16,
 		fontWeight: '500',
 	},
 	bookContainer: {
-		// width: '100%',
 		borderWidth: 1,
 		borderRadius: 20,
 		paddingHorizontal: 20,
@@ -276,7 +276,6 @@ const styles = StyleSheet.create({
 		marginRight: 20,
 	},
 	addOwnAddress: {
-		// paddingHorizontal: 15,
 		paddingVertical: 10,
 		marginRight: 16,
 	},
