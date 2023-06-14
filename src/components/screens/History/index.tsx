@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
 	listWrap: {
 		flex: 1,
 		width: '100%',
-		marginTop: 110,
+		marginTop: 100,
 		marginBottom: 60,
 	},
 	groupWrap: {

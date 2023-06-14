@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
 	},
 	scrollContainer: {
 		flex: 1,
-		marginTop: 110,
+		marginTop: 100,
 		marginBottom: 60,
 	},
 	subHeader: {

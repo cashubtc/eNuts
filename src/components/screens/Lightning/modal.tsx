@@ -1,10 +1,10 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
-import { MintBoardIcon } from '@comps/Icons'
 import { IInvoiceState } from '@comps/InvoiceAmount'
-import KeysetHint from '@comps/KeysetHint'
 import QR from '@comps/QR'
+import Separator from '@comps/Separator'
 import Success from '@comps/Success'
+import Txt from '@comps/Txt'
 import { _mintUrl } from '@consts'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -13,7 +13,7 @@ import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
-import { formatExpiry, formatMintUrl, getSelectedAmount, isErr, openUrl } from '@util'
+import { formatExpiry, getSelectedAmount, isErr, openUrl } from '@util'
 import { getMintCurrentKeySetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
@@ -185,7 +185,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
 			<View style={styles.proofContainer}>
 				<View style={styles.header}>
-					<Text style={globals(color).header}>
+					<Text style={styles.headerTxt}>
 						Coin selection
 					</Text>
 					<TouchableOpacity
@@ -199,34 +199,42 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 						</Text>
 					</TouchableOpacity>
 				</View>
-				<View style={styles.activeMint}>
-					<MintBoardIcon width={19} height={19} color={color.TEXT_SECONDARY} />
-					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
-						{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
-					</Text>
-				</View>
-				{/* Info about latest keyset ids highlighted in green */}
-				<KeysetHint />
 				<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} />
-				<ProofListHeader />
-				<FlashList
-					data={proofs}
-					estimatedItemSize={300}
-					showsVerticalScrollIndicator={false}
-					renderItem={data => (
-						<CoinSelectionRow
-							key={data.item.secret}
-							proof={data.item}
-							isLatestKeysetId={mintKeysetId === data.item.id}
-							setChecked={() => {
-								const proofIdx = proofs.findIndex(proof => proof.secret === data.item.secret)
-								const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
-								setProof(updated)
-							}}
-						/>
-					)}
-				/>
+				<View style={{ paddingHorizontal: 20 }}>
+					<ProofListHeader />
+				</View>
+				<View
+					style={[
+						styles.listWrap,
+						{
+							backgroundColor: color.INPUT_BG,
+							borderColor: color.BORDER,
+							marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0
+						}
+					]}
+				>
+					<FlashList
+						data={proofs}
+						estimatedItemSize={300}
+						showsVerticalScrollIndicator={false}
+						contentContainerStyle={{ paddingHorizontal: 20 }}
+						ItemSeparatorComponent={() => <Separator />}
+						renderItem={data => (
+							<CoinSelectionRow
+								key={data.item.secret}
+								proof={data.item}
+								isLatestKeysetId={mintKeysetId === data.item.id}
+								setChecked={() => {
+									const proofIdx = proofs.findIndex(proof => proof.secret === data.item.secret)
+									const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
+									setProof(updated)
+								}}
+							/>
+						)}
+					/>
+				</View>
 			</View>
+			{/* Confirm button */}
 			{getSelectedAmount(proofs) >= lnAmount &&
 				<View style={[styles.confirmWrap, { backgroundColor: color.BACKGROUND }]}>
 					<Button
@@ -256,7 +264,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 					Selected
 				</Text>
 				<Text style={globals(color).txt}>
-					{selectedAmount}/{lnAmount} Sat
+					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? color.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
 				</Text>
 			</View>
 			{selectedAmount > lnAmount &&
@@ -309,11 +317,23 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
+		paddingHorizontal: 20,
+		marginBottom: 20,
+	},
+	headerTxt: {
+		fontSize: 20,
+		fontWeight: '500',
+	},
+	listWrap: {
+		flex: 1,
+		borderWidth: 1,
+		borderRadius: 20,
 	},
 	overview: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		marginBottom: 15,
+		marginBottom: 20,
+		paddingHorizontal: 20,
 	},
 	mintUrl: {
 		fontSize: 16,
@@ -368,11 +388,6 @@ const styles = StyleSheet.create({
 	qrCodeWrap: {
 		borderWidth: 5,
 		borderColor: '#FFF'
-	},
-	activeMint: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginBottom: 15,
 	},
 	confirmWrap: {
 		position: 'absolute',

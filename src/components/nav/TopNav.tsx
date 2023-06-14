@@ -53,7 +53,7 @@ export default function TopNav({ screenName, withBackBtn, backHandler, nav }: TT
 const styles = StyleSheet.create({
 	topNav: {
 		position: 'absolute',
-		top: 50,
+		top: 40,
 		left: 20,
 		right: 20,
 		flex: 1,

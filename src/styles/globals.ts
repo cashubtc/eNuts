@@ -3,11 +3,6 @@ import { StyleSheet } from 'react-native'
 import { highlight as hi,type TPref } from './colors'
 
 export const globals = (color: TPref, h?: string) => StyleSheet.create({
-	header: {
-		fontSize: 32,
-		color: color.TEXT,
-		marginBottom: 15,
-	},
 	txt: {
 		fontSize: 16,
 		color: color.TEXT

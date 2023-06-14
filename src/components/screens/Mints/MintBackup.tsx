@@ -25,7 +25,7 @@ export default function MintBackup({ navigation, route }: TMintBackupPageProps) 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 110,
+		paddingTop: 100,
 		paddingHorizontal: 20,
 	},
 })

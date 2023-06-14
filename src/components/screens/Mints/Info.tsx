@@ -116,7 +116,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 100
+		paddingTop: 80
 	},
 	mainInfo: {
 		borderWidth: 1,
