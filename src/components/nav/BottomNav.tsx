@@ -11,7 +11,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 
 	const handleNav = (routeStr: TRouteString) => navigation.navigate(routeStr)
 
-	const isMintRelatedPage =
+	const isMintRelatedScreen =
 		route.name === 'mints' ||
 		route.name === 'mintmanagement' ||
 		route.name === 'mint proofs' ||
@@ -20,10 +20,12 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const isWalletRelatedScreen = route.name === 'dashboard' ||
 		(route.name === 'lightning' && (route.params?.receive || route.params?.send))
 
-	const isSettingsRelatedPage = route.name === 'Settings' ||
+	const isSettingsRelatedScreen = route.name === 'Settings' ||
 		route.name === 'Display settings' ||
 		route.name === 'Security settings' ||
 		route.name === 'BackupPage'
+
+	const isHistoryRelatedScreen = route.name === 'history' || route.name === 'history entry details'
 
 	return (
 		<View style={styles.bottomNav}>
@@ -41,10 +43,10 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				style={styles.navIcon}
 				onPress={() => handleNav('history')}
 			>
-				<HistoryIcon color={route.name === 'history' ? hi[highlight] : color.TEXT} />
+				<HistoryIcon color={isHistoryRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt='History'
-					styles={[{ fontSize: 12, color: route.name === 'history' ? hi[highlight] : color.TEXT }]}
+					styles={[{ fontSize: 12, color: isHistoryRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity
@@ -54,11 +56,11 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				<MintBoardIcon
 					width={20}
 					height={25}
-					color={isMintRelatedPage ? hi[highlight] : color.TEXT}
+					color={isMintRelatedScreen ? hi[highlight] : color.TEXT}
 				/>
 				<Txt
 					txt='Mints'
-					styles={[{ fontSize: 12, marginTop: 1, color: isMintRelatedPage ? hi[highlight] : color.TEXT }]}
+					styles={[{ fontSize: 12, marginTop: 1, color: isMintRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity
@@ -79,10 +81,10 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				style={styles.navIcon}
 				onPress={() => handleNav('Settings')}
 			>
-				<SettingsIcon color={isSettingsRelatedPage ? hi[highlight] : color.TEXT} />
+				<SettingsIcon color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt='Settings'
-					styles={[{ fontSize: 12, color: isSettingsRelatedPage ? hi[highlight] : color.TEXT }]}
+					styles={[{ fontSize: 12, color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
 		</View>

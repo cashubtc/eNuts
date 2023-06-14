@@ -50,7 +50,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							<View style={[
 								styles.groupWrap,
 								{
-									height: data.item[1].length * 70,
+									height: Math.floor(data.item[1].length * 69),
 									backgroundColor: color.INPUT_BG,
 									borderColor: color.BORDER,
 								}

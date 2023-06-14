@@ -120,6 +120,7 @@ export type TBottomNavProps =
 	TSendTokenPageProps |
 	TPayLNInvoicePageProps |
 	THistoryPageProps |
+	THistoryEntryPageProps |
 	TMintProofsPageProps |
 	TAddressBookPageProps |
 	TBackupPageProps |
