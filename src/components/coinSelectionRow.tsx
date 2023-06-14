@@ -1,7 +1,7 @@
 import type { Proof } from '@cashu/cashu-ts'
 import type { IProofSelection } from '@model'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi, mainColors } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -52,8 +52,8 @@ export function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 				{'selected' in proof &&
 					<View
 						style={[
-							styles.radioBtn,
-							{ borderColor: color.BORDER, backgroundColor: proof.selected ? hi[highlight] : 'transparent' }
+							globals(color, highlight).radioBtn,
+							{ backgroundColor: proof.selected ? hi[highlight] : 'transparent' }
 						]}
 					/>
 				}
@@ -68,11 +68,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingVertical: 15,
-	},
-	radioBtn: {
-		borderWidth: 1,
-		borderRadius: 50,
-		padding: 10,
 	},
 	keyWrap: {
 		flexDirection: 'row',

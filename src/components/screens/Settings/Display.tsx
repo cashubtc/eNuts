@@ -61,8 +61,8 @@ function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) 
 				<Txt txt={name} />
 				<View
 					style={[
-						styles.radioBtn,
-						{ borderColor: color.BORDER, backgroundColor: selected ? hi[highlight] : 'transparent' }
+						globals(color, highlight).radioBtn,
+						{ backgroundColor: selected ? hi[highlight] : 'transparent' }
 					]}
 				/>
 			</TouchableOpacity>
@@ -101,9 +101,4 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		paddingHorizontal: 20,
 	},
-	radioBtn: {
-		borderWidth: 1,
-		borderRadius: 50,
-		padding: 10,
-	}
 })
