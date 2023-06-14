@@ -139,7 +139,6 @@ export function getLnInvoiceInfo(invoice: string) {
 	const x = decodeLnInvoice(invoice)
 	return { ...x, hash: x.paymentHash, memo: x.memo }
 }
-
 function getFromSection<T>(sections: ISectionEntry[], name: string, fn: (v: unknown) => boolean, toNum = false) {
 	const section = sections.find(s => s?.name === name && s?.value && fn(s.value))
 	return section?.value ?
@@ -168,9 +167,9 @@ export function decodeLnInvoice(invoice: string) {
 	}
 }
 export function cleanUpNumericStr(str: string) {
+	if (str.startsWith('0')) { return '' }
 	return str.replace(/\D/g, '')
 }
-
 // TODO FIXXME
 export function openUrl(url: string) {
 	if (!url?.trim()) { return }
