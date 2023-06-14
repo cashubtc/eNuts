@@ -24,7 +24,7 @@ export default function InitialModal({ visible, onConfirm, onCancel }: IInitialM
 			</Text>
 			<Button txt='Add a mint now' onPress={onConfirm} />
 			<TouchableOpacity onPress={onCancel}>
-				<Text style={[globals(color).pressTxt, styles.cancel]}>
+				<Text style={[globals(color, highlight).pressTxt, styles.cancel]}>
 					Will do later
 				</Text>
 			</TouchableOpacity>

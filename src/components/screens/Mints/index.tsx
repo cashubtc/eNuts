@@ -191,7 +191,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				/>
 				<Button txt='Add mint' onPress={() => { void handleMintInput() }} />
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
-					<Txt txt='Cancel' styles={[globals(color).pressTxt]} />
+					<Txt txt='Cancel' styles={[globals(color, highlight).pressTxt]} />
 				</TouchableOpacity>
 			</MyModal>
 			<QuestionModal
