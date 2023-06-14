@@ -171,22 +171,13 @@ export function decodeLnInvoice(invoice: string) {
 	}
 }
 export function cleanUpNumericStr(str: string) {
-	if (str === '.' || str === ',' || str === '-' || str.startsWith('0')) {
-		return ''
-	}
-	if (str.includes('.') || str.includes(',')) {
-		return Math.trunc(+str).toString()
-	}
-	if (str.includes('-')) {
-		return Math.abs(+str).toString()
-	}
-	return str
+	return str.replace(/\D/g, '')
 }
 
 // TODO FIXXME
 export function openUrl(url: string) {
 	if (!url?.trim()) { return }
-	return Linking.openURL(url).catch(err=>l('openURL error:',err))
+	return Linking.openURL(url).catch(err => l('openURL error:', err))
 	/* return Linking.canOpenURL(url)
 		.then((canOpen) => canOpen && Linking.openURL(url)) */
 }
