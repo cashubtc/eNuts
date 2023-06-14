@@ -103,7 +103,7 @@ function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator }: IMenuI
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 120,
+		paddingTop: 110,
 	},
 	wrap: {
 		paddingVertical: 10,
