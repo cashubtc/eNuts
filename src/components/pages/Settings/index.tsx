@@ -1,5 +1,6 @@
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import { PromptModal } from '@modal/Prompt'
 import { QuestionModal } from '@modal/Question'
 import { TSettingsPageProps } from '@model/nav'
@@ -9,6 +10,8 @@ import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+
+import { version } from '../../../../package.json'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { color } = useContext(ThemeContext)
@@ -44,6 +47,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					onPress={() => setConfirm(true)}
 				/>
 			</View>
+			<Txt txt={`v${version}`} styles={[styles.version]} />
 			<BottomNav navigation={navigation} route={route} />
 			<QuestionModal
 				header='Are you sure that you want to delete the history?'
@@ -107,6 +111,7 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		paddingHorizontal: 20,
 		paddingVertical: 10,
+		marginBottom: 20,
 	},
 	settingsRow: {
 		flexDirection: 'row',
@@ -126,4 +131,8 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		marginVertical: 10,
 	},
+	version: {
+		fontWeight: '500',
+		textAlign: 'center',
+	}
 })
