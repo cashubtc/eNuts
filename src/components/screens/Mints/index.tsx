@@ -130,10 +130,9 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			<View style={styles.topSection}>
 				{/* Mints list where test mint is always visible */}
 				<View style={[
-					styles.listWrap,
+					globals(color).wrapContainer,
 					{
-						borderColor: color.BORDER,
-						backgroundColor: color.INPUT_BG,
+						paddingHorizontal: 0,
 						height: [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints].length * 60
 					}
 				]}>
@@ -243,11 +242,6 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		right: 20,
 		bottom: 80,
-	},
-	// TODO add this container style as global
-	listWrap: {
-		borderWidth: 1,
-		borderRadius: 20,
 	},
 	mintNameWrap: {
 		flexDirection: 'row',

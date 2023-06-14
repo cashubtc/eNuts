@@ -21,7 +21,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Theme
 				</Text>
-				<View style={[styles.wrap, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+				<View style={[globals(color).wrapContainer, styles.wrap]}>
 					<Text style={globals(color).txt}>
 						Dark mode
 					</Text>
@@ -35,7 +35,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Highlight
 				</Text>
-				<View style={[styles.highlightWrap, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+				<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
 					{themeColors.map((t, i) => (
 						<ThemeSelection key={t} name={t} selected={t === highlight} hasSeparator={i !== themeColors.length - 1} />
 					))}
@@ -86,9 +86,8 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	highlightWrap: {
+		paddingHorizontal: 0,
 		paddingVertical: 10,
-		borderWidth: 1,
-		borderRadius: 20,
 		marginBottom: 20,
 	},
 	wrap: {
@@ -96,9 +95,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingVertical: 10,
-		borderWidth: 1,
-		borderRadius: 20,
-		paddingHorizontal: 20,
 		marginBottom: 20,
 	},
 	settingsRow: {

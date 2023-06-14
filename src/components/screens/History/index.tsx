@@ -12,6 +12,7 @@ import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import HistoryEntry from './Entry'
+import { globals } from '@src/styles'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const { color } = useContext(ThemeContext)
@@ -49,12 +50,8 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							</Text>
 							{/* Group entries */}
 							<View style={[
-								styles.groupWrap,
-								{
-									height: Math.floor(data.item[1].length * 69),
-									backgroundColor: color.INPUT_BG,
-									borderColor: color.BORDER,
-								}
+								globals(color).wrapContainer,
+								{ height: Math.floor(data.item[1].length * 69) }
 							]}>
 								<FlashList
 									data={data.item[1]}
@@ -94,11 +91,6 @@ const styles = StyleSheet.create({
 		width: '100%',
 		marginTop: 100,
 		marginBottom: 60,
-	},
-	groupWrap: {
-		borderWidth: 1,
-		borderRadius: 20,
-		paddingHorizontal: 20,
 	},
 	date: {
 		fontSize: 15,

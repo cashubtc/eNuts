@@ -13,6 +13,7 @@ import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { version } from '../../../../package.json'
+import { globals } from '@styles'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { color } = useContext(ThemeContext)
@@ -26,7 +27,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName='Settings' />
-			<View style={[styles.wrap, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
 					txt='Security'
 					txtColor={color.TEXT}
@@ -105,9 +106,6 @@ const styles = StyleSheet.create({
 		paddingTop: 120,
 	},
 	wrap: {
-		borderWidth: 1,
-		borderRadius: 20,
-		paddingHorizontal: 20,
 		paddingVertical: 10,
 		marginBottom: 20,
 	},

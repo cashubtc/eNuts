@@ -37,5 +37,12 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		marginRight: 20,
 		marginLeft: 20,
 		marginBottom: 40,
+	},
+	wrapContainer: {
+		borderWidth: 1,
+		borderRadius: 20,
+		borderColor: color.BORDER,
+		backgroundColor: color.INPUT_BG,
+		paddingHorizontal: 20,
 	}
 })

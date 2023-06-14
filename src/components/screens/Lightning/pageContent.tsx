@@ -122,7 +122,7 @@ export default function LNPageContent({
 					</View>
 				}
 				{/* Mint balance, updates while selecting different mint */}
-				<View style={[styles.wrap, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
+				<View style={[globals(color).wrapContainer, styles.wrap]}>
 					{/* Single mint with balance, or mint picker */}
 					<MintPanel
 						nav={nav}
@@ -277,9 +277,6 @@ const styles = StyleSheet.create({
 		marginTop: 100,
 	},
 	wrap: {
-		borderWidth: 1,
-		borderRadius: 20,
-		paddingHorizontal: 20,
 		marginHorizontal: -20,
 		marginBottom: 20,
 	},

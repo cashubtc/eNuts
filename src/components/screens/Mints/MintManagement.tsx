@@ -156,7 +156,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			<ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 				{/* General */}
 				<Txt txt='General' styles={[styles.sectionHeader]} />
-				<View style={[styles.sectionWrap, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
+				<View style={globals(color).wrapContainer}>
 					{/* Mint url */}
 					<MintOption
 						txt={formatMintUrl(route.params.mint?.mintUrl)}
@@ -214,7 +214,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 				</View>
 				{/* Fund management */}
 				<Txt txt='Funds' styles={[styles.sectionHeader]} />
-				<View style={[styles.sectionWrap, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
+				<View style={globals(color).wrapContainer}>
 					{/* Mint new tokens */}
 					<MintOption
 						txt='Mint new tokens'
@@ -268,7 +268,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 				</View>
 				{/* Danger zone */}
 				<Txt txt='Danger zone' styles={[styles.sectionHeader]} />
-				<View style={[styles.sectionWrap, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
+				<View style={globals(color).wrapContainer}>
 					{/* Check proofs */}
 					<MintOption
 						txt='Check proofs'
@@ -397,11 +397,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		marginTop: 20,
 		marginBottom: 10
-	},
-	sectionWrap: {
-		borderWidth: 1,
-		borderRadius: 20,
-		paddingHorizontal: 20,
 	},
 	mintOpts: {
 		flexDirection: 'row',

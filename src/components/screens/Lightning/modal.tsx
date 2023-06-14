@@ -205,12 +205,9 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 				</View>
 				<View
 					style={[
+						globals(color).wrapContainer,
 						styles.listWrap,
-						{
-							backgroundColor: color.INPUT_BG,
-							borderColor: color.BORDER,
-							marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0
-						}
+						{marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0}
 					]}
 				>
 					<FlashList
@@ -326,8 +323,6 @@ const styles = StyleSheet.create({
 	},
 	listWrap: {
 		flex: 1,
-		borderWidth: 1,
-		borderRadius: 20,
 	},
 	overview: {
 		flexDirection: 'row',

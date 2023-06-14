@@ -7,6 +7,7 @@ import TopNav from '@nav/TopNav'
 import { ProofListHeader } from '@screens/Lightning/modal'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
+import { globals } from '@src/styles'
 import { getMintCurrentKeySetId } from '@src/wallet'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -36,13 +37,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 					<ProofListHeader />
 				</View>
 				{/* Proofs list */}
-				<View style={[
-					styles.listWrap,
-					{
-						borderColor: color.BORDER,
-						backgroundColor: color.INPUT_BG
-					}
-				]}>
+				<View style={[globals(color).wrapContainer, styles.listWrap]}>
 					<FlashList
 						data={proofs}
 						estimatedItemSize={300}
@@ -70,8 +65,7 @@ const styles = StyleSheet.create({
 	},
 	listWrap: {
 		flex: 1,
-		borderWidth: 1,
-		borderRadius: 20,
+		paddingHorizontal: 0,
 	},
 	mintUrl: {
 		fontSize: 16,

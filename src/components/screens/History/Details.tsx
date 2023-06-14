@@ -11,7 +11,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
-import { mainColors } from '@styles'
+import { globals, mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
@@ -85,7 +85,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						styles={[{ color: color.TEXT_SECONDARY }]}
 					/>
 				</View>
-				<View style={[styles.wrap, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
+				<View style={globals(color).wrapContainer}>
 					{/* Settle Time */}
 					<View style={styles.entryInfo}>
 						<Txt txt='Settle Time' />
@@ -280,11 +280,6 @@ const styles = StyleSheet.create({
 	topSection: {
 		marginBottom: 30,
 		alignItems: 'center',
-	},
-	wrap: {
-		borderWidth: 1,
-		borderRadius: 20,
-		paddingHorizontal: 20,
 	},
 	infoValue: {
 		maxWidth: 200,

@@ -36,7 +36,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
-			<View style={[styles.wrap, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<TouchableOpacity
 					style={styles.settingsRow}
 					onPress={() => { void handleBackup() }}
@@ -69,9 +69,6 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 	},
 	wrap: {
-		borderWidth: 1,
-		borderRadius: 20,
-		paddingHorizontal: 20,
 		paddingVertical: 10,
 	},
 })

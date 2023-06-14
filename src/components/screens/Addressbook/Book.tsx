@@ -86,7 +86,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 				{/* user own LNURL */}
 				{hasOwnAddress() ?
-					<View style={[styles.bookEntry, styles.container, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
+					<View style={[globals(color).wrapContainer, styles.bookEntry, styles.container]}>
 						<Text style={[
 							styles.circleUser,
 							{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
@@ -132,7 +132,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					</TouchableOpacity>
 				}
 				{contacts.length > 0 &&
-					<View style={[styles.bookContainer, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}>
+					<View style={[globals(color).wrapContainer, styles.bookContainer]}>
 						{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
 							!c.isOwner &&
 							<View key={c.ln}>
@@ -246,9 +246,6 @@ const styles = StyleSheet.create({
 		width: '100%'
 	},
 	container: {
-		borderWidth: 1,
-		borderRadius: 20,
-		paddingHorizontal: 20,
 		paddingVertical: 10,
 		marginBottom: 25,
 	},
@@ -257,9 +254,6 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 	},
 	bookContainer: {
-		borderWidth: 1,
-		borderRadius: 20,
-		paddingHorizontal: 20,
 		marginBottom: 50,
 	},
 	bookEntry: {
