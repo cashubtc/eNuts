@@ -26,6 +26,7 @@ interface IScannedQRProps {
 	nav: TQRScanPageProps
 }
 
+// TODO adapt style
 export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScannedQRProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { loading, startLoading, stopLoading } = useLoading()

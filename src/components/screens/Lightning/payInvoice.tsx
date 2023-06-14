@@ -23,6 +23,7 @@ import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
+// TODO adapt style
 export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
@@ -336,7 +337,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 							Coin selection
 						</Text>
 						<Switch
-							trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
+							trackColor={{ false: color.BORDER, true: hi[highlight] }}
 							thumbColor={color.TEXT}
 							onValueChange={toggleSwitch}
 							value={isEnabled}

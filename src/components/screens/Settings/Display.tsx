@@ -26,7 +26,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 						Dark mode
 					</Text>
 					<Switch
-						trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
+						trackColor={{ false: color.BORDER, true: hi[highlight] }}
 						thumbColor={color.TEXT}
 						onValueChange={() => setTheme(theme === 'Light' ? 'Dark' : 'Light')}
 						value={theme === 'Dark'}
