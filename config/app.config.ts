@@ -3,8 +3,6 @@ import { ExpoConfig } from 'expo/config'
 
 import { version } from './../package.json'
 
-
-
 type AppVariant = 'preview' | 'prod' | 'dev' | undefined
 
 function nodeEnvShort(): 'test' | AppVariant {
@@ -17,6 +15,7 @@ function nodeEnvShort(): 'test' | AppVariant {
 	if (process.env.NODE_ENV === 'test') { return 'test' }
 	if (process.env.NODE_ENV === 'preview') { return 'preview' }
 }
+
 function appVariant(): AppVariant {
 	if (!process?.env?.APP_VARIANT) {
 		process.env.APP_VARIANT = 'dev'
@@ -27,7 +26,6 @@ function appVariant(): AppVariant {
 	if (process.env.APP_VARIANT === 'preview') { return 'preview' }
 }
 
-
 const _appVariant = appVariant() || process.env.APP_VARIANT || 'dev'
 
 const _nodeEnvShort = nodeEnvShort()
@@ -36,14 +34,11 @@ try {
 	dotenvConfig({ path: `.env${_nodeEnvShort === 'prod' ? '' : `.${nodeEnvShort()}`}` })
 } catch (e) { console.log('dotenv error:', e) } // eslint-disable-line no-console
 
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const IS_DEV = _appVariant === 'dev'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const IS_PREVIEW = _appVariant === 'preview'
 const IS_PROD = _appVariant === 'prod'
-
-
 
 const config: ExpoConfig = {
 	name: `eNuts${!IS_PROD ? ` (${_appVariant})` : ''}`,
@@ -74,7 +69,7 @@ const config: ExpoConfig = {
 			{
 				cameraPermission: 'Allow eNuts to access camera.'
 			}
-		]
+		],
 	],
 	ios: {
 		supportsTablet: true,
@@ -101,6 +96,5 @@ const config: ExpoConfig = {
 		NODE_ENV_SHORT: _nodeEnvShort,
 	}
 }
-
 
 export default config

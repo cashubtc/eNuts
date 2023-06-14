@@ -14,8 +14,7 @@ import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 const initialCopyState = {
 	value: false,
@@ -47,7 +46,8 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 		handleTimeout()
 	}
 	const copyPreimage = async () => {
-		await Clipboard.setStringAsync(entry.preImage || '')
+		if (!entry.preImage) { return }
+		await Clipboard.setStringAsync(entry.preImage)
 		setCopy({ ...copy, preimage: true })
 		handleTimeout()
 	}
@@ -193,7 +193,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 						<Txt txt='Pre-Image' />
 						<View style={styles.copyWrap}>
 							<Txt
-								txt={entry.preImage || 'Not available'}
+								txt={entry.preImage ?? 'Not available'}
 								styles={[styles.infoValue, entry.preImage && entry.preImage.length > 0 ? styles.mr10 : {}]}
 							/>
 							{entry.preImage && entry.preImage.length > 0 &&

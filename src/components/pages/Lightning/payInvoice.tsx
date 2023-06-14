@@ -3,10 +3,10 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import { ZapIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { getProofsByMintUrl } from '@db'
 import { l } from '@log'
-import { PromptModal } from '@modal/Prompt'
 import { IProofSelection } from '@model'
 import { TPayLNInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -17,16 +17,15 @@ import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
-import { formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isLnurl, openUrl } from '@util'
+import { cleanUpNumericStr, formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { createRef, useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
-	const keyboardRef = createRef<TextInput>()
 	// LNURL amount state
 	const [LNURLAmount, setLNURLAmount] = useState('')
 	// LN invoice amount
@@ -45,7 +44,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	// LN input
 	const [input, setInput] = useState('')
 	const setInputCB = useCallback((val: string) => setInput(val), [])
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// LN payment
 	const handleTokenSend = async () => {
@@ -59,7 +58,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				const res = await payLnInvoice(route.params.mint.mintUrl, input, selectedProofs)
 				stopLoading()
 				if (!res.result?.isPaid) {
-					openPrompt('Invoice could not be payed. Please try again later.')
+					openPromptAutoClose(false, 'Invoice could not be payed. Please try again later.')
 					return
 				}
 				// payment success, add as history entry
@@ -76,7 +75,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				})
 			} catch (e) {
 				l(e)
-				openPrompt(e instanceof Error ? e.message : 'An error occured while paying the invoice.')
+				openPromptAutoClose(false, isErr(e) ? e.message : 'An error occured while paying the invoice.')
 				stopLoading()
 			}
 			return
@@ -85,7 +84,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		try {
 			const invoice = await getInvoiceFromLnurl(input.trim(), +LNURLAmount)
 			if (!invoice?.length) {
-				openPrompt(`Unable to generate invoice for "${input}"`)
+				openPromptAutoClose(false, `Unable to generate invoice for "${input}"`)
 				stopLoading()
 				return
 			}
@@ -93,14 +92,14 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			const totalSelected = sumProofsValue(selectedProofs)
 			const totalToPay = +LNURLAmount + feeEstimate
 			if (isEnabled && totalSelected < totalToPay) {
-				openPrompt(`Not enough funds! Total after fee: ${totalToPay} Sat. Amount selected: ${LNURLAmount} Sat`)
+				openPromptAutoClose(false, `Not enough funds! Total after fee: ${totalToPay} Sat. Amount selected: ${LNURLAmount} Sat`)
 				stopLoading()
 				return
 			}
 			const res = await payLnInvoice(route.params.mint.mintUrl, invoice, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
-				openPrompt('Something went wrong while paying the LN invoice')
+				openPromptAutoClose(false, 'Something went wrong while paying the LN invoice')
 				stopLoading()
 				return
 			}
@@ -119,11 +118,8 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				mints: [route.params.mint.mintUrl]
 			})
 		} catch (e) {
-			if (e instanceof Error) {
-				l(e.message)
-				openPrompt(e instanceof Error ? e.message : 'An error occured while paying the invoice.')
-				stopLoading()
-			}
+			openPromptAutoClose(false, isErr(e) ? e.message : 'An error occured while paying the invoice.')
+			stopLoading()
 		}
 	}
 	// Only for handling fee estimation for the amount selected to send to a LNURL
@@ -138,7 +134,12 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			setIsCalculatingFee(true)
 			const invoice = await getInvoiceFromLnurl(input.trim(), +LNURLAmount)
 			if (!invoice?.length || !route.params.mint) {
-				// TODO show some kind of error message to the user since he can not proceed the payment now
+				openPromptAutoClose(false, `Unable to estimate fee: Invalid invoice for "${input}". Is it a valid LNURL?`)
+				// reset amount to hide the failed estimated fee render
+				setLNURLAmount('')
+				// remove LNURL from input to re-render the initial page
+				setInput('')
+				setIsCalculatingFee(false)
 				return
 			}
 			const fee = await checkFees(route.params.mint.mintUrl, invoice)
@@ -159,7 +160,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			setInput(clipboard)
 		} catch (e) {
 			l(e)
-			openPrompt('Invalid invoice')
+			openPromptAutoClose(false, 'Invalid invoice')
 		}
 	}
 	// Get proofs for coin selection
@@ -179,15 +180,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			setIsEnabled(false)
 			return
 		}
-		// auto open the numeric keyboard to choose amount for LNURL payment
-		if (isLnurl(input)) {
-			const t = setTimeout(() => {
-				l(keyboardRef)
-				keyboardRef.current?.focus()
-				clearTimeout(t)
-			}, 200)
-			return
-		}
+		if (isLnurl(input)) { return }
 		// else: decode LN invoide and show invoice info
 		try {
 			const ln = getDecodedLnInvoice(input)
@@ -200,7 +193,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		} catch (e) {
 			l(e)
 		}
-	}, [input, keyboardRef])
+	}, [input])
 	// LN invoice expiry time
 	useEffect(() => {
 		if (timeLeft < 0) {
@@ -239,10 +232,10 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						placeholder='0'
 						placeholderTextColor={hi[highlight]}
 						style={[styles.amount, { color: hi[highlight] }]}
-						ref={keyboardRef}
 						caretHidden
-						onChangeText={setLNURLAmount}
+						onChangeText={amount => setLNURLAmount(cleanUpNumericStr(amount))}
 						maxLength={8}
+						value={LNURLAmount}
 					/>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
 						Satoshi
@@ -433,11 +426,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 					setProof={setProofs}
 				/>
 			}
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

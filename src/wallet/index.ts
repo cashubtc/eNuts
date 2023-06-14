@@ -9,7 +9,7 @@ import {
 	getMintBalance, getMintsUrls
 } from '@db'
 import { l } from '@log'
-import { isCashuToken } from '@src/util'
+import { isCashuToken } from '@util'
 
 import { sumProofsValue } from './proofs'
 import { getProofsToUse } from './util'
@@ -57,30 +57,23 @@ export function getMintInfo(mintUrl: string) {
 }
 export async function isTokenSpendable(token: string) {
 	try {
-		try {
-			const decoded = getDecodedToken(token)
-			if (!decoded?.token?.length) { return false }
-			const useableTokenProofs: Proof[] = []
-			for (const t of decoded.token) {
-				if (!t?.proofs?.length) { continue }
-				// eslint-disable-next-line no-await-in-loop
-				const w = await getWallet(t.mint)
-				// eslint-disable-next-line no-await-in-loop
-				const usedSecrets = (await w.checkProofsSpent(t.proofs)).map(x => x.secret)
-				if (usedSecrets.length === t.proofs.length) {
-					// usedTokens.push(token)
-					continue
-				}
-				useableTokenProofs.push(...t.proofs.filter(x => !usedSecrets.includes(x.secret)))
+		const decoded = getDecodedToken(token)
+		if (!decoded?.token?.length) { return false }
+		const useableTokenProofs: Proof[] = []
+		for (const t of decoded.token) {
+			if (!t?.proofs?.length) { continue }
+			// eslint-disable-next-line no-await-in-loop
+			const w = await getWallet(t.mint)
+			// eslint-disable-next-line no-await-in-loop
+			const usedSecrets = (await w.checkProofsSpent(t.proofs)).map(x => x.secret)
+			if (usedSecrets.length === t.proofs.length) {
+				// usedTokens.push(token)
+				continue
 			}
-			return !!useableTokenProofs.length
-		} catch (_) { return false }
-	} catch (e) {
-		if (e instanceof Error) {
-			l('[isTokenSpendable]', e.message)
-		} else { l('[isTokenSpendable]', e) }
-	}
-	return false
+			useableTokenProofs.push(...t.proofs.filter(x => !usedSecrets.includes(x.secret)))
+		}
+		return !!useableTokenProofs.length
+	} catch (_) { return false }
 }
 export async function checkProofsSpent(mintUrl: string, toCheck: { secret: string }[]) {
 	return (await getWallet(mintUrl)).checkProofsSpent(toCheck)

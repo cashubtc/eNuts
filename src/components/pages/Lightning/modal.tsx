@@ -12,7 +12,7 @@ import { IMintUrl, IProofSelection } from '@model'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
-import { formatExpiry, formatMintUrl, getSelectedAmount, openUrl } from '@util'
+import { formatExpiry, formatMintUrl, getSelectedAmount, isErr, openUrl } from '@util'
 import { getMintCurrentKeySetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
@@ -63,7 +63,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 				setPaid(success ? 'paid' : 'unpaid')
 			} catch (e) {
 				l(e)
-				if (e instanceof Error) {
+				if (isErr(e)) {
 					if (e.message === 'Tokens already issued for this invoice.') {
 						setPaid('paid')
 						return

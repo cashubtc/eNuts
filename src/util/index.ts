@@ -170,8 +170,14 @@ export function decodeLnInvoice(invoice: string) {
 		paymentHash
 	}
 }
+export function cleanUpNumericStr(str: string) {
+	return str.replace(/\D/g, '')
+}
+
+// TODO FIXXME
 export function openUrl(url: string) {
 	if (!url?.trim()) { return }
-	return Linking.canOpenURL(url)
-		.then((canOpen) => canOpen && Linking.openURL(url))
+	return Linking.openURL(url).catch(err => l('openURL error:', err))
+	/* return Linking.canOpenURL(url)
+		.then((canOpen) => canOpen && Linking.openURL(url)) */
 }

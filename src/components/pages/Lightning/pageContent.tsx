@@ -12,7 +12,7 @@ import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
-import { formatInt, getSelectedAmount, isNum } from '@util'
+import { cleanUpNumericStr, formatInt, getSelectedAmount, isErr, isNum } from '@util'
 import { sendToken } from '@wallet'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native'
@@ -82,7 +82,7 @@ export default function LNPageContent({
 			nav.navigation.navigate('sendToken', { token, amount })
 		} catch (e) {
 			l(e)
-			if (e instanceof Error) {
+			if (isErr(e)) {
 				setPayError({ open: true, msg: e.message })
 				stopLoading()
 				return
@@ -169,7 +169,8 @@ export default function LNPageContent({
 							style={[styles.amount, { color: hi[highlight] }]}
 							autoFocus={isSendingToken}
 							caretHidden
-							onChangeText={setAmount}
+							onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
+							value={amount}
 							maxLength={8}
 						/>
 						<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>

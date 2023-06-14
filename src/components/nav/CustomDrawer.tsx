@@ -4,12 +4,9 @@ import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, light } from '@styles'
 import { skipRoute } from '@util'
 import { useContext } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { version } from '../../../package.json'
-// import { useState } from 'react'
-// import { interpolateNode } from 'react-native-reanimated'
 
 export default function CustomDrawer(props: DrawerContentComponentProps) {
 	const { color, highlight } = useContext(ThemeContext)

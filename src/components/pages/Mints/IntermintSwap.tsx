@@ -11,7 +11,7 @@ import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { getMintName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
+import { cleanUpNumericStr, formatInt, formatMintUrl, isErr } from '@util'
 import { autoMintSwap } from '@wallet'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
@@ -34,13 +34,9 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 			l({ result })
 			openPrompt(`Successfully swaped ${amount} Sat from ${route.params.swap_out_mint.mintUrl} to ${selectedMint.mintUrl}`)
 		} catch (e) {
-			l({ e })
-			if (e instanceof Error) {
-				openPrompt(e.message)
-				stopLoading()
-				return
-			}
-			openPrompt('Could not perform an inter-mint swap')
+			l(e)
+			openPrompt(isErr(e) ? e.message : 'Could not perform an inter-mint swap')
+			stopLoading()
 		}
 		stopLoading()
 	}
@@ -65,8 +61,9 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 					style={[styles.amount, { color: hi[highlight] }]}
 					autoFocus
 					caretHidden
-					onChangeText={setAmount}
+					onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
 					maxLength={8}
+					value={amount}
 				/>
 				<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
 					Mint balance: {formatInt(route.params.balance)} Sat

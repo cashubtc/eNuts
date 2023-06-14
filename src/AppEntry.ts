@@ -8,7 +8,6 @@ import { l } from '@log'
 import { setupReactotron } from '@log/reactotron'
 import { registerRootComponent } from 'expo'
 
-
 // Set up Reactotron, which is a free desktop app for inspecting and debugging
 // React Native apps. Learn more here: https://github.com/infinitered/reactotron
 if (isReactNativeDevMode) {
@@ -26,18 +25,7 @@ if (isReactNativeDevMode) {
 	})
 }
 
-
-// Bugsnag.notify(new Error('Test error from AppEntry'))
-
 l('AppEntryPoint')
-
-
-
-/* const x: IInitialProps = {
-	// expo?:,
-	exp: {},
-	mode: '\nDEV MODE\n'
-} */
 
 // eslint-disable-next-line new-cap
 registerRootComponent(App)
