@@ -7,7 +7,8 @@ import Txt from '@comps/Txt'
 import { _mintUrl } from '@consts'
 import { l } from '@log'
 import MyModal from '@modal'
-import type { IInvoiceState, IMintUrl, IProofSelection } from '@model'
+import type { IMintUrl, IProofSelection } from '@model'
+import type { IInvoiceState } from '@model/ln'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
@@ -206,7 +207,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 					style={[
 						globals(color).wrapContainer,
 						styles.listWrap,
-						{marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0}
+						{ marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0 }
 					]}
 				>
 					<FlashList

@@ -1,7 +1,7 @@
 import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import type { IInvoiceState } from '@model'
+import type { IInvoiceState } from '@model/ln'
 import { InvoiceAmountModal, InvoiceModal } from '@screens/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'

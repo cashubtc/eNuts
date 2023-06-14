@@ -2,8 +2,6 @@ import type { Proof, Token } from '@cashu/cashu-ts'
 import type { ExpoConfig } from 'expo/config'
 import type { SQLStmtCb, SQLStmtErrCb, WebSQLDatabase } from 'expo-sqlite'
 
-import type { IDecodedLNInvoice } from './ln'
-
 export interface IExpoConfig extends ExpoConfig {
 	extra?: {
 		DEBUG?: string | 'full'
@@ -117,9 +115,4 @@ export interface ITx<T = unknown> {
 export interface IKeyValuePair<T> {
 	key: string,
 	value: T
-}
-export interface IInvoiceState {
-	amount: string
-	decoded?: IDecodedLNInvoice
-	hash: string
 }
