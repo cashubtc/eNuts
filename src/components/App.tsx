@@ -7,7 +7,7 @@ import { addAllMintIds, getBalance, getContacts, getMintsBalances, getMintsUrls,
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import MyModal from '@modal'
-import { IInitialProps, IPreferences, ITokenInfo } from '@model'
+import type { IInitialProps, IPreferences, ITokenInfo } from '@model'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer } from '@react-navigation/native'
 import { ContactsContext, type IContact } from '@src/context/Contacts'

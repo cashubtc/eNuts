@@ -2,6 +2,8 @@ import type { Proof, Token } from '@cashu/cashu-ts'
 import type { ExpoConfig } from 'expo/config'
 import type { SQLStmtCb, SQLStmtErrCb, WebSQLDatabase } from 'expo-sqlite'
 
+import type { IDecodedLNInvoice } from './ln'
+
 export interface IExpoConfig extends ExpoConfig {
 	extra?: {
 		DEBUG?: string | 'full'
@@ -35,52 +37,43 @@ export interface IMint {
 	id: string
 	mintUrl: string
 }
-
 export interface IMintUrl {
 	mintUrl: string
 	customName?: string
 }
-
 export interface IMintWithBalance {
 	mintUrl: string
 	amount: number
 }
-
 export interface IMintBalWithName extends IMintWithBalance {
 	customName: string
 }
-
 export interface ITokenInfo {
 	mints: string[]
 	value: number
 	decoded: Token
 }
-
 export interface IPreferencesResp {
 	id: 1
 	formatBalance: string
 	darkmode: string
 	theme: string
 }
-
 export interface IPreferences {
 	id: 1
 	formatBalance: boolean
 	darkmode: boolean
 	theme: string
 }
-
 export interface IContactResp {
 	id?: number
 	name: string,
 	ln: string,
 	isOwner: string
 }
-
 export interface IProofSelection extends Proof {
 	selected: boolean
 }
-
 export interface IHistoryEntry {
 	amount: number
 	type: 1 | 2 // LN invoice or cashu token
@@ -91,8 +84,6 @@ export interface IHistoryEntry {
 	fee?: number,
 	isSpent?: boolean
 }
-
-
 export interface IInvoice {
 	pr: string,
 	hash: string,
@@ -126,4 +117,9 @@ export interface ITx<T = unknown> {
 export interface IKeyValuePair<T> {
 	key: string,
 	value: T
+}
+export interface IInvoiceState {
+	amount: string
+	decoded?: IDecodedLNInvoice
+	hash: string
 }

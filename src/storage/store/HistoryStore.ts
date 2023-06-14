@@ -1,6 +1,6 @@
 import type { IHistoryEntry, IKeyValuePair } from '@model'
 import { getHistoryGroupDate } from '@util'
-import type { payLnInvoice } from '@wallet'
+import { payLnInvoice } from '@wallet'
 
 import { type ISelectParams, StoreBase } from './StoreBase'
 import { getDb } from './utils'

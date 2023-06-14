@@ -1,7 +1,7 @@
 import ActionButtons from '@comps/ActionButtons'
 import QR from '@comps/QR'
 import { l } from '@log'
-import { TEncodedTokenPageProps } from '@model/nav'
+import type { TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { dark, highlight as hi } from '@styles'

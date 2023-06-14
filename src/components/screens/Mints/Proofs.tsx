@@ -1,7 +1,7 @@
 import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
 import { getProofsByMintUrl } from '@db'
-import { TMintProofsPageProps } from '@model/nav'
+import type { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ProofListHeader } from '@screens/Lightning/modal'
