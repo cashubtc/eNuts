@@ -12,7 +12,7 @@ const fn: ConfigFunction = (api: ConfigAPI): TransformOptions => {
 				'alias': {
 					'@nav': './src/components/nav',
 					'@comps': './src/components',
-					'@pages': './src/components/pages',
+					'@screens': './src/components/screens',
 					'@src': './src',
 					'@assets': './assets',
 					'@log': './src/logger',
