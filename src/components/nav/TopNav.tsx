@@ -61,16 +61,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 	},
-	topIconL: {
-		paddingRight: 20,
-		paddingVertical: 20
-	},
 	topIconR: {
 		paddingLeft: 20,
 		paddingVertical: 20
 	},
-	screenName: {
-		fontWeight: '500',
-		fontSize: 20,
-	}
 })

@@ -297,18 +297,4 @@ const styles = StyleSheet.create({
 		padding: 20,
 		borderRadius: 40,
 	},
-	no: {
-		fontSize: 16,
-		fontWeight: '500',
-		marginTop: 15,
-		marginBottom: -15,
-		padding: 10,
-	},
-	mintPrompt: {
-		fontSize: 12,
-		marginBottom: 5,
-	},
-	tokenMintsView: {
-		marginBottom: 20
-	},
 })

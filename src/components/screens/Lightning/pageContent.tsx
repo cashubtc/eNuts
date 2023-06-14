@@ -262,10 +262,6 @@ export default function LNPageContent({
 }
 
 const styles = StyleSheet.create({
-	selectedTxt: {
-		fontSize: 16,
-		fontWeight: '500',
-	},
 	pickerWrap: {
 		width: '100%',
 		marginTop: 100,
@@ -314,10 +310,6 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		paddingHorizontal: 20,
-	},
-	sendBtnWrap: {
-		marginTop: 25,
-		marginBottom: 25,
 	},
 	tokenHint: {
 		fontSize: 20,

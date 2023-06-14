@@ -410,11 +410,6 @@ const styles = StyleSheet.create({
 		marginTop: 25,
 		marginBottom: 10,
 	},
-	cancelDelWrap: {
-		width: '25%',
-		alignItems: 'center',
-		paddingTop: 10,
-	},
 	cancelDel: {
 		fontSize: 16,
 		fontWeight: '500',
