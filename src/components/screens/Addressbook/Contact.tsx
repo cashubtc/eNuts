@@ -87,7 +87,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					style={styles.action}
 					onPress={() => setOpenEdit(true)}
 				>
-					<EditIcon width={26} height={26} color={color.TEXT} />
+					<EditIcon width={20} height={20} color={color.TEXT} />
 					<Text style={[styles.actionTxt, { color: color.TEXT }]}>
 						Edit
 					</Text>
@@ -98,57 +98,53 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						void handleDelete()
 					}}
 				>
-					<TrashbinIcon width={24} height={24} color={color.ERROR} />
+					<TrashbinIcon width={18} height={18} color={color.ERROR} />
 					<Text style={[styles.actionTxt, { color: color.ERROR }]}>
 						Delete
 					</Text>
 				</TouchableOpacity>
 			</View>
 			{/* Edit contact modal */}
-			{openEdit && !prompt.open &&
-				<MyModal type='bottom' animation='slide' visible={true}>
-					<Text style={globals(color).modalHeader}>
-						Edit contact
-					</Text>
-					{!route.params.contact?.isOwner &&
-						<TextInput
-							style={[globals(color).input, { marginBottom: 20 }]}
-							placeholder="Name"
-							placeholderTextColor={color.INPUT_PH}
-							selectionColor={hi[highlight]}
-							onChangeText={name => setEditContact({ ...editContact, name })}
-							value={editContact.name}
-						/>
-					}
+			<MyModal type='bottom' animation='slide' visible={openEdit && !prompt.open}>
+				<Text style={globals(color).modalHeader}>
+					Edit contact
+				</Text>
+				{!route.params.contact?.isOwner &&
 					<TextInput
 						style={[globals(color).input, { marginBottom: 20 }]}
-						placeholder="zap@me.now"
+						placeholder="Name"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
-						onChangeText={ln => setEditContact({ ...editContact, ln })}
-						value={editContact.ln}
+						onChangeText={name => setEditContact({ ...editContact, name })}
+						value={editContact.name}
 					/>
-					<Button txt='Save' onPress={() => {
-						void handleEditContact()
+				}
+				<TextInput
+					style={[globals(color).input, { marginBottom: 20 }]}
+					placeholder="zap@me.now"
+					placeholderTextColor={color.INPUT_PH}
+					selectionColor={hi[highlight]}
+					onChangeText={ln => setEditContact({ ...editContact, ln })}
+					value={editContact.ln}
+				/>
+				<Button txt='Save' onPress={() => void handleEditContact()}
+				/>
+				<TouchableOpacity
+					style={{ marginTop: 25 }}
+					onPress={() => {
+						setOpenEdit(false)
+						setEditContact({
+							name: route.params.contact?.name,
+							ln: route.params.contact?.ln
+						})
 					}}
-					/>
-					<TouchableOpacity
-						style={{ marginTop: 25 }}
-						onPress={() => {
-							setOpenEdit(false)
-							setEditContact({
-								name: route.params.contact?.name,
-								ln: route.params.contact?.ln
-							})
-						}}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							Cancel
-						</Text>
-					</TouchableOpacity>
-				</MyModal>
-			}
-			{prompt.open && <Toaster txt={prompt.msg} /> }
+				>
+					<Text style={globals(color, highlight).pressTxt}>
+						Cancel
+					</Text>
+				</TouchableOpacity>
+			</MyModal>
+			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View >
 	)
 }
@@ -199,13 +195,12 @@ const styles = StyleSheet.create({
 	bottomAction: {
 		position: 'absolute',
 		bottom: 0,
-		left: 20,
-		right: 20,
+		left: 0,
+		right: 0,
 		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		paddingHorizontal: 50,
-		paddingBottom: 15,
+		paddingHorizontal: 80,
 	},
 	action: {
 		alignItems: 'center',
@@ -213,6 +208,6 @@ const styles = StyleSheet.create({
 	},
 	actionTxt: {
 		marginTop: 5,
-		fontSize: 16,
+		fontSize: 12,
 	}
 })
