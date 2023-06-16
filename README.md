@@ -103,7 +103,7 @@ The process of proposing a change to eNuts can be summarized as follows:
 1. Verify the open [issues](https://github.com/cashubtc/eNuts/issues) and [discussions](https://github.com/cashubtc/eNuts/discussions) to see if a related topic is available.
 2. Fork the repository and create your branch from `main`
 3. Make the desired changes to the sources and add tests if required.
-4. Ensure the test suite passes, either locally or on CI once you opened a pull request.
+4. Ensure the test suite passes, either locally with `npm run test` or on CI once you opened a pull request.
 5. Make sure your code lints with `npm run lint`
 6. Push the changes to your fork.
 7. Create a pull request to the eNuts repository.
@@ -114,11 +114,11 @@ If all goes well, your pull request will be merged. If it is not merged, maintai
 
 ## 🚀 Getting started
 
-1. Clone this repository
-2. Navigate inside the repository and run `npm install`
+1. Fork this repository and create a local clone.
+2. Navigate inside the repository and run `npm i`
 3. Start the Expo dev server by running `npm run start`
 4. Download the [Expo Go](https://expo.dev/client) app.
-5. Scan the QR code provided by your dev server's terminal using the app (iOS
+5. Scan the QR code provided by your terminal using the app (iOS
    users will have to use the Camera app).
 6. A browser tab will be opened. Press the "Expo Go" button in the bottom of the page.
 7. eNuts will be bundled up and run on your device.
