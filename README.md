@@ -96,10 +96,20 @@ Each of these tasks is highly impactful, and maintainers will greatly appreciate
 
 If you are eager to start contributing code right away, we have a list of [good first issues](https://github.com/cashubtc/eNuts/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) that contain bugs which have a relatively limited scope.
 
-We use GitHub issues and pull requests to keep track of bug reports and contributions from the community. Pull request have to pass the tests and to be reviewed by a maintainer. So make sure to:
+We use GitHub [issues](https://github.com/cashubtc/eNuts/issues) and [pull requests](https://github.com/cashubtc/eNuts/pulls) to keep track of bug reports and contributions from the community. Pull request have to pass the tests and to be reviewed by a maintainer.
 
-- Run the linter after you made your changes using `npm run lint`
-- Run the tests to avoid a failing CI by using `npm run test`
+The process of proposing a change to eNuts can be summarized as follows:
+
+1. Fork the repository and create your branch from `main`
+2. Make the desired changes to the sources and add tests if required.
+3. Ensure the test suite passes, either locally or on CI once you opened a pull request.
+4. Make sure your code lints with `npm run lint`
+5. Push the changes to your fork.
+6. Create a pull request to the eNuts repository.
+7. Review and address comments on your pull request.
+8. If changes are requested and addressed, please request a new review to notify reviewers to take another look.
+
+If all goes well, your pull request will be merged. If it is not merged, maintainers will do their best to explain the reason why.
 
 ## 🚀 Getting started
 
