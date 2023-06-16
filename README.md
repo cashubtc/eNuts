@@ -2,7 +2,7 @@
   <p>
     <img src="https://i.imgur.com/EI7Uvg1.jpeg">
   </p>
-  <h3>A Cashu wallet for Android and iOS</h3>
+  <h2>A Cashu wallet for Android and iOS</h2>
   <div style="display: flex; align-items: center; justify-content: center">
 
   [![codecov](https://codecov.io/gh/cashubtc/eNuts/branch/main/graph/badge.svg?token=MGBC95KGHQ)](https://codecov.io/gh/cashubtc/eNuts)
@@ -34,7 +34,7 @@ eNuts is a strongly typed mobile Cashu wallet for Android and iOS. It has Lightn
 - [Releases](#-releases)
 - [License](#-license)
 
-### ⚠️ Disclaimer
+## ⚠️ Disclaimer
 
 **The author is NOT a cryptographer and this work has not been reviewed. This means that there is very likely a fatal flaw somewhere. [Cashu](https://github.com/cashubtc) is still experimental.**
 
@@ -59,7 +59,7 @@ Please note that this disclaimer should be taken seriously and should not be ign
 
 We appreciate your interest in this project and will continue to work on improving it. Thank you for your understanding.
 
-### 🥜 Implemented [NUTs](https://github.com/cashubtc/nuts)
+## 🥜 Implemented [NUTs](https://github.com/cashubtc/nuts)
 
 The NUT documents (Notation, Usage, and Terminology) each specify parts of the Cashu protocol.
 
@@ -74,12 +74,12 @@ The NUT documents (Notation, Usage, and Terminology) each specify parts of the C
 - [ ] NUT-08
 - [ ] NUT-09
 
-### 📋 Requirements
+## 📋 Requirements
 
 - eNuts is built using the managed workflow provided by Expo, so the easiest way to run a development environment is their [Expo Go](https://expo.dev/client) app.
 - npm version or higher
 
-### 👏 Contribute
+## 👏 Contribute
 
 The main purpose of this repository is to continue evolving and pushing the adoption of Ecash for Bitcoin using the Cashu protocol. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bug fixes and improvements.
 
@@ -101,7 +101,7 @@ We use GitHub issues and pull requests to keep track of bug reports and contribu
 - Run the linter after you made your changes using `npm run lint`
 - Run the tests to avoid a failing CI by using `npm run test`
 
-### 🚀 Getting started
+## 🚀 Getting started
 
 1. Clone this repository
 2. Navigate inside the repository and run `npm install`
@@ -112,11 +112,11 @@ We use GitHub issues and pull requests to keep track of bug reports and contribu
 6. A browser tab will be opened. Press the "Expo Go" button in the bottom of the page.
 7. eNuts will be bundled up and run on your device.
 
-### 🎉 Releases
+## 🎉 Releases
 
 [https://github.com/cashubtc/eNuts/releases](https://github.com/cashubtc/eNuts/releases)
 
-### 📄 License
+## 📄 License
 
 eNuts is distributed under the GNU Affero General Public License (AGPL v3). See the [LICENSE file](https://github.com/cashubtc/eNuts/blob/main/LICENSE).
 
