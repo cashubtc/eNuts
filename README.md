@@ -38,7 +38,7 @@ eNuts is a strongly typed mobile Cashu wallet that has Lightning support and can
 
 **The author is NOT a cryptographer and this work has not been reviewed. This means that there is very likely a fatal flaw somewhere. [Cashu](https://github.com/cashubtc) is still experimental.**
 
-Please be aware that there may be bugs, errors, and incomplete features that could cause unexpected behavior or loss of data. We do not assume any liability for any issues that may arise from using this project. We strongly encourage users to exercise caution and only use this project for experimental or educational purposes.
+Please be aware that there may be bugs, errors, and incomplete features that could cause unexpected behavior or loss of data. We do not assume any liability for any issues that may arise from using this project. We strongly encourage users to exercise caution and only use this project for **experimental** or **educational** purposes.
 
 The entire db (database) layer of this system has not fully undergone thorough testing. This means that the functionality and performance of this particular layer have not been verified, and there may be unforeseen issues or bugs present.
 
@@ -61,7 +61,7 @@ We appreciate your interest in this project and will continue to work on improvi
 
 ## 🥜 Implemented [NUTs](https://github.com/cashubtc/nuts)
 
-The NUT documents (Notation, Usage, and Terminology) each specify parts of the Cashu protocol.
+The NUT documents (Notation, Usage and Terminology) each specify parts of the Cashu protocol.
 
 - [ ] NUT-00
 - [ ] NUT-01
