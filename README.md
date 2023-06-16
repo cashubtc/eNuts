@@ -2,7 +2,7 @@
   <p>
     <img src="https://i.imgur.com/EI7Uvg1.jpeg">
   </p>
-  <h3>A cashu wallet for Android and iOS</h3>
+  <h3>A Cashu wallet for Android and iOS</h3>
   <div style="display: flex; align-items: center; justify-content: center">
 
   [![codecov](https://codecov.io/gh/cashubtc/eNuts/branch/main/graph/badge.svg?token=MGBC95KGHQ)](https://codecov.io/gh/cashubtc/eNuts)
