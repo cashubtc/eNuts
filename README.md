@@ -100,14 +100,15 @@ We use GitHub [issues](https://github.com/cashubtc/eNuts/issues) and [pull reque
 
 The process of proposing a change to eNuts can be summarized as follows:
 
-1. Fork the repository and create your branch from `main`
-2. Make the desired changes to the sources and add tests if required.
-3. Ensure the test suite passes, either locally or on CI once you opened a pull request.
-4. Make sure your code lints with `npm run lint`
-5. Push the changes to your fork.
-6. Create a pull request to the eNuts repository.
-7. Review and address comments on your pull request.
-8. If changes are requested and addressed, please request a new review to notify reviewers to take another look.
+1. Verify the open [issues](https://github.com/cashubtc/eNuts/issues) and [discussions](https://github.com/cashubtc/eNuts/discussions) to see if a related topic is available.
+2. Fork the repository and create your branch from `main`
+3. Make the desired changes to the sources and add tests if required.
+4. Ensure the test suite passes, either locally or on CI once you opened a pull request.
+5. Make sure your code lints with `npm run lint`
+6. Push the changes to your fork.
+7. Create a pull request to the eNuts repository.
+8. Request a review, link a related issue and describe your pull request.
+9. If changes are requested and addressed, please request a new review to notify reviewers to take another look.
 
 If all goes well, your pull request will be merged. If it is not merged, maintainers will do their best to explain the reason why.
 
