@@ -88,7 +88,7 @@ There are ways you can contribute without writing a single line of code. Here ar
 - **Replying and handling open issues**
 Some issues may lack necessary information. You can help out by guiding people through the process of filling out the issue template, asking for clarifying information, or pointing them to existing issues that match their description of the problem.
 - **Reviewing pull requests for the docs**
-Reviewing Pull requests that contains documentation updates (marked with a documentation label) can be as simple as checking for spelling and grammar. If you encounter situations that can be explained better in the docs, just write a comment and we will or edit the file right away to get started with your own contribution.
+Reviewing Pull requests that contains documentation updates (marked with a documentation label) can be as simple as checking for spelling and grammar. If you encounter situations that can be explained better in the docs, just write a comment or edit the file right away to get started with your own contribution.
 - **Providing translations**
 We will implement translations ASAP and provide a clear contribution guide to how you can help translating the application.
 
