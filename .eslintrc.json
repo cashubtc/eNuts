@@ -95,14 +95,17 @@
 		"import/first": "warn",
 		"import/newline-after-import": "warn",
 		"import/no-duplicates": "warn",
-		"promise/always-return": [ "warn", { "ignoreLastCallback": true } ],
+		"promise/always-return": ["warn", { "ignoreLastCallback": true }],
 		// to enforce using type for object type definitions, can be type or interface
 		"@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
-		"@typescript-eslint/array-type": [ "warn", { "default": "array" } ],
+		"@typescript-eslint/array-type": ["warn", { "default": "array" }],
 		"@typescript-eslint/require-await": "warn",
 		"@typescript-eslint/await-thenable": "warn",
 		"@typescript-eslint/consistent-type-exports": "warn",
-		"@typescript-eslint/restrict-template-expressions": [ "warn", { "allowNumber": true, "allowBoolean": true, "allowNullish": true } ],
+		"@typescript-eslint/restrict-template-expressions": [
+			"warn",
+			{ "allowNumber": true, "allowBoolean": true, "allowNullish": true }
+		],
 		"@typescript-eslint/no-explicit-any": 0,
 		// "@typescript-eslint/explicit-module-boundary-types": 0,
 		/* "@typescript-eslint/naming-convention": [
@@ -221,7 +224,7 @@
 		"no-else-return": "warn",
 		"prefer-const": "warn",
 		"no-console": 1,
-		"indent": [ "warn", "tab", { "SwitchCase": 1 } ],
+		"indent": ["warn", "tab", { "SwitchCase": 1 }],
 		"quotes": ["warn", "single"],
 		"semi": ["warn", "never"]
 	},
