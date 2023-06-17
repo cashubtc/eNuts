@@ -1,9 +1,11 @@
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
 import Separator from '@comps/Separator'
-import { PromptModal } from '@modal/Prompt'
+import Toaster from '@comps/Toaster'
+import Txt from '@comps/Txt'
 import { QuestionModal } from '@modal/Question'
-import { TSettingsPageProps } from '@model/nav'
+import type { TSettingsPageProps } from '@model/nav'
+import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
@@ -11,58 +13,57 @@ import { globals } from '@styles'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-export default function Settings({ navigation }: TSettingsPageProps) {
+import { version } from '../../../../package.json'
+
+export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { color } = useContext(ThemeContext)
 	const [confirm, setConfirm] = useState(false)
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleDeleteHistory = async () => {
 		const success = await historyStore.clear()
-		openPrompt(success ? 'History deleted' : 'Could not delete the history.')
+		openPromptAutoClose({
+			msg: success ? 'History deleted' : 'Could not delete the history.',
+			success
+		})
 		setConfirm(false)
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName='Settings' />
-			<Text style={[globals(color).header, { marginBottom: 25 }]}>
-				Settings
-			</Text>
-			<SettingsMenuItem
-				txt='Security'
-				txtColor={color.TEXT}
-				icon={<LockIcon color={color.TEXT} />}
-				onPress={() => navigation.navigate('Security settings')}
-				hasSeparator
-			/>
-			<SettingsMenuItem
-				txt='Display'
-				txtColor={color.TEXT}
-				icon={<PaletteIcon color={color.TEXT} />}
-				onPress={() => navigation.navigate('Display settings')}
-				hasSeparator
-			/>
-			<SettingsMenuItem
-				txt='Delete transaction history'
-				txtColor={color.ERROR}
-				icon={<TrashbinIcon2 color={color.ERROR} />}
-				onPress={() => setConfirm(true)}
-			/>
-			{confirm &&
-				<QuestionModal
-					header='Are you sure that you want to delete the history?'
-					txt='The data can not be retrieved afterwards.'
-					visible={confirm}
-					confirmTxt='Yes'
-					confirmFn={() => void handleDeleteHistory()}
-					cancelTxt='No'
-					cancelFn={() => setConfirm(false)}
+			<View style={[globals(color).wrapContainer, styles.wrap]}>
+				<SettingsMenuItem
+					txt='Security'
+					txtColor={color.TEXT}
+					icon={<LockIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('Security settings')}
+					hasSeparator
 				/>
-			}
-			<PromptModal
-				hideIcon
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
+				<SettingsMenuItem
+					txt='Display'
+					txtColor={color.TEXT}
+					icon={<PaletteIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('Display settings')}
+					hasSeparator
+				/>
+				<SettingsMenuItem
+					txt='Delete transaction history'
+					txtColor={color.ERROR}
+					icon={<TrashbinIcon2 color={color.ERROR} />}
+					onPress={() => setConfirm(true)}
+				/>
+			</View>
+			<Txt txt={`v${version}`} styles={[styles.version]} />
+			<BottomNav navigation={navigation} route={route} />
+			<QuestionModal
+				header='Are you sure that you want to delete the history?'
+				txt='The data can not be retrieved afterwards.'
+				visible={confirm}
+				confirmTxt='Yes'
+				confirmFn={() => void handleDeleteHistory()}
+				cancelTxt='No'
+				cancelFn={() => setConfirm(false)}
 			/>
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} /> }
 		</View>
 	)
 }
@@ -100,8 +101,11 @@ function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator }: IMenuI
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 130,
-		paddingHorizontal: 20,
+		paddingTop: 110,
+	},
+	wrap: {
+		paddingVertical: 10,
+		marginBottom: 20,
 	},
 	settingsRow: {
 		flexDirection: 'row',
@@ -112,14 +116,13 @@ const styles = StyleSheet.create({
 	setting: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		// paddingVertical: 10,
 	},
 	settingTxt: {
 		marginLeft: 15,
 		fontSize: 16,
 	},
-	separator: {
-		borderBottomWidth: 1,
-		marginVertical: 10,
-	},
+	version: {
+		fontWeight: '500',
+		textAlign: 'center',
+	}
 })

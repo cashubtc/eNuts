@@ -1,31 +1,33 @@
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
+import Txt from '@comps/Txt'
 import { getProofs } from '@db'
 import { getBackUpToken } from '@db/backup'
 import { l } from '@log'
-import { PromptModal } from '@modal/Prompt'
-import { TSecuritySettingsPageProps } from '@model/nav'
+import type { TSecuritySettingsPageProps } from '@model/nav'
+import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
-export default function SecuritySettings({ navigation }: TSecuritySettingsPageProps) {
+export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
 	const { color } = useContext(ThemeContext)
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleBackup = async () => {
 		try {
 			const proofs = await getProofs()
 			if (!proofs.length) {
-				openPrompt('Found no proofs to create a backup.')
+				openPromptAutoClose({ msg: 'Found no proofs to create a backup.' })
 				return
 			}
 			const token = await getBackUpToken()
 			navigation.navigate('BackupPage', { token })
 		} catch (e) {
 			l(e)
-			openPrompt('Something went wrong while creating the backup token.')
+			openPromptAutoClose({ msg: 'Something went wrong while creating the backup token.' })
 		}
 	}
 	return (
@@ -35,24 +37,17 @@ export default function SecuritySettings({ navigation }: TSecuritySettingsPagePr
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
-			<Text style={[globals(color).header, { marginBottom: 25 }]}>
-				Security
-			</Text>
-			<TouchableOpacity
-				style={styles.settingsRow}
-				onPress={() => { void handleBackup() }}
-			>
-				<Text style={globals(color).txt}>
-					Create a backup token
-				</Text>
-				<ChevronRightIcon color={color.TEXT} />
-			</TouchableOpacity>
-			<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			<View style={[globals(color).wrapContainer, styles.wrap]}>
+				<TouchableOpacity
+					style={styles.settingsRow}
+					onPress={() => { void handleBackup() }}
+				>
+					<Txt txt='Create a backup token' />
+					<ChevronRightIcon color={color.TEXT} />
+				</TouchableOpacity>
+			</View>
+			<BottomNav navigation={navigation} route={route} />
+			{prompt.open && <Toaster txt={prompt.msg} /> }
 		</View>
 	)
 }
@@ -60,8 +55,7 @@ export default function SecuritySettings({ navigation }: TSecuritySettingsPagePr
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 130,
-		paddingHorizontal: 20,
+		paddingTop: 120,
 	},
 	settingsRow: {
 		flexDirection: 'row',
@@ -69,8 +63,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 10,
 	},
-	separator: {
-		borderBottomWidth: 1,
-		marginVertical: 10,
+	wrap: {
+		paddingVertical: 10,
 	},
 })

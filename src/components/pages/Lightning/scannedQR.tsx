@@ -2,13 +2,14 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import { ZapIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
+import Txt from '@comps/Txt'
 import { getMintsBalances, getMintsUrls, getProofsByMintUrl } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
-import { PromptModal } from '@modal/Prompt'
-import { IMintUrl, IProofSelection } from '@model'
-import { IDecodedLNInvoice } from '@model/ln'
-import { TQRScanPageProps } from '@model/nav'
+import type { IMintUrl, IProofSelection } from '@model'
+import type { IDecodedLNInvoice } from '@model/ln'
+import type { TQRScanPageProps } from '@model/nav'
 import { CoinSelectionModal, CoinSelectionResume } from '@pages/Lightning/modal'
 import { Picker } from '@react-native-picker/picker'
 import { ThemeContext } from '@src/context/Theme'
@@ -26,10 +27,11 @@ interface IScannedQRProps {
 	nav: TQRScanPageProps
 }
 
+// TODO adapt style
 export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScannedQRProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { loading, startLoading, stopLoading } = useLoading()
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	// user mints
 	const [mints, setMints] = useState<IMintUrl[]>([])
 	const [selectedMint, setSelectedMint] = useState<IMintUrl>()
@@ -50,7 +52,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			const res = await payLnInvoice(selectedMint.mintUrl, lnDecoded.paymentRequest, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
-				openPrompt('Invoice could not be payed. Please try again later.')
+				openPromptAutoClose({ msg: 'Invoice could not be payed. Please try again later.' })
 				return
 			}
 			// payment success, add as history entry
@@ -67,7 +69,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			})
 		} catch (e) {
 			l(e)
-			openPrompt(isErr(e)? e.message : 'An error occured while paying the invoice.')
+			openPromptAutoClose({ msg: isErr(e) ? e.message : 'An error occured while paying the invoice.' })
 			stopLoading()
 		}
 	}
@@ -141,15 +143,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 				</Text>
 				<View style={styles.pickerWrap}>
 					{!mints.length &&
-						<Text style={[styles.txt, { color: color.TEXT }]}>
-							Found no mints
-						</Text>
+						<Txt txt='Found no mints' styles={[styles.txt, globals(color).navTxt]} />
 					}
 					{mints.length > 0 && timeLeft > 0 &&
 						<>
-							<Text style={[styles.txt, { color: color.TEXT }]}>
-								Select a mint to send from:
-							</Text>
+							<Txt txt='Select a mint to send from:' styles={[styles.txt, globals(color).navTxt]} />
 							<Picker
 								selectedValue={selectedMint?.mintUrl}
 								onValueChange={(value, _idx) => {
@@ -171,9 +169,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								))}
 							</Picker>
 							<View style={[styles.mintOpts, { borderBottomColor: color.BORDER }]}>
-								<Text style={globals(color).txt}>
-									Balance
-								</Text>
+								<Txt txt='Balance' />
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										{formatInt(mintBal)}
@@ -184,9 +180,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 							{invoiceAmount > 0 && mintBal >= invoiceAmount / 1000 &&
 								<>
 									<View style={styles.overview}>
-										<Text style={globals(color).txt}>
-											Coin selection
-										</Text>
+										<Txt txt='Coin selection' />
 										<Switch
 											trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
 											thumbColor={color.TEXT}
@@ -211,9 +205,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					/>
 				}
 				{mints.length > 0 && mintBal < invoiceAmount && timeLeft > 0 &&
-					<Text style={[styles.txt, { color: color.TEXT }]}>
-						Not enough funds!
-					</Text>
+					<Txt txt='Not enough funds!' styles={[globals(color).navTxt, styles.txt]} />
 				}
 				<View style={{ marginVertical: 10 }} />
 				<Button
@@ -232,11 +224,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					setProof={setProofs}
 				/>
 			}
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+			{prompt.open && <Toaster txt={prompt.msg} /> }
 		</MyModal>
 	)
 }
@@ -251,8 +239,6 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 	},
 	txt: {
-		fontSize: 20,
-		fontWeight: '500',
 		textAlign: 'center',
 		marginBottom: 10
 	},

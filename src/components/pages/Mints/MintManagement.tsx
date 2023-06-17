@@ -3,13 +3,14 @@ import usePrompt from '@comps/hooks/Prompt'
 import { BackupIcon, CheckmarkIcon, CopyIcon, EyeIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
 import LNInvoiceAmountModal from '@comps/InvoiceAmount'
 import Toaster from '@comps/Toaster'
+import Txt from '@comps/Txt'
 import { _mintUrl } from '@consts'
 import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
 import { getBackUpTokenForMint } from '@db/backup'
 import { l } from '@log'
 import MyModal from '@modal'
 import { QuestionModal } from '@modal/Question'
-import { TMintManagementPageProps } from '@model/nav'
+import type { TMintManagementPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { useKeyboard } from '@src/context/Keyboard'
@@ -54,7 +55,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const handleMintName = async () => {
 		await _setMintName(route.params.mint?.mintUrl, mintName)
 		setCustomNameOpen(false)
-		openPromptAutoClose(true, 'Added a custom name')
+		openPromptAutoClose({ msg: 'Added a custom name', success: true })
 	}
 
 	const hasMintName = async () => {
@@ -69,18 +70,18 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		// needs at least 1 mint after filtering out the current swap-out mint and test mint
 		if (!mints.length) {
 			// promt
-			openPromptAutoClose(false, 'You need at least 2 mints to perform an inter-mint swap.')
+			openPromptAutoClose({ msg: 'You need at least 2 mints to perform an inter-mint swap.' })
 			return
 		}
 		// cant swap out from a test mint
 		if (route.params.mint?.mintUrl === _mintUrl) {
-			openPromptAutoClose(false, 'Swap out from a test mint is not possible.')
+			openPromptAutoClose({ msg: 'Swap out from a test mint is not possible.' })
 			return
 		}
 		// balance must be higher than 0
 		if (route.params.amount < 1) {
 			// promt
-			openPromptAutoClose(false, 'Mint balance too low!')
+			openPromptAutoClose({ msg: 'Mint balance too low!' })
 			return
 		}
 		const swapOutMintName = await getMintName(route.params.mint?.mintUrl)
@@ -96,7 +97,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	const handleMintBackup = async () => {
 		if (route.params.amount < 1) {
-			openPromptAutoClose(false, 'The mint has no balance for a backup!')
+			openPromptAutoClose({ msg: 'The mint has no balance for a backup!' })
 			return
 		}
 		try {
@@ -104,7 +105,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			navigation.navigate('mint backup', { token, mintUrl: route.params.mint?.mintUrl })
 		} catch (e) {
 			l(e)
-			openPromptAutoClose(false, 'Backup token could not be created.')
+			openPromptAutoClose({ msg: 'Backup token could not be created.' })
 		}
 	}
 
@@ -114,7 +115,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		// set or remove default
 		await setDefaultMint(defaultM === mUrl ? '' : mUrl)
 		setIsDefault(defaultM !== mUrl)
-		openPromptAutoClose(true, 'Updated the default mint')
+		openPromptAutoClose({ msg: 'Updated the default mint', success: true })
 	}
 
 	const handleProofCheck = async () => {
@@ -127,10 +128,10 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		l({ proofsToDel })
 		try {
 			await deleteProofs(proofsToDel)
-			openPromptAutoClose(true, `Deleted ${proofsToDel.length} proofs.`)
+			openPromptAutoClose({ msg: `Deleted ${proofsToDel.length} proofs.`, success: true })
 		} catch (e) {
 			l(e)
-			openPromptAutoClose(false, 'Something went wrong while deleting proofs.')
+			openPromptAutoClose({ msg: 'Something went wrong while deleting proofs.' })
 		}
 	}
 
@@ -152,19 +153,14 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName='Mint settings' withBackBtn />
-			<View style={styles.content}>
-				{/* Header */}
-				<Text style={[globals(color).header, styles.header]}>
-					Manage mint
-				</Text>
-				{/* Mint url */}
-				<View style={styles.subHeader}>
-					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
-						{formatMintUrl(route.params.mint?.mintUrl)}
-					</Text>
-					{/* Copy mint url */}
-					<TouchableOpacity
-						style={{ padding: 5 }}
+			<ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+				{/* General */}
+				<Txt txt='General' styles={[styles.sectionHeader]} />
+				<View style={globals(color).wrapContainer}>
+					{/* Mint url */}
+					<MintOption
+						txt={formatMintUrl(route.params.mint?.mintUrl)}
+						hasSeparator
 						onPress={() => {
 							void Clipboard.setStringAsync(route.params.mint?.mintUrl).then(() => {
 								setCopied(true)
@@ -174,34 +170,31 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 								}, 3000)
 							})
 						}}
-					>
-						{copied ?
+						icon={copied ?
 							<CheckmarkIcon width={20} height={20} color={mainColors.VALID} />
 							:
-							<CopyIcon color={color.TEXT_SECONDARY} />
+							<CopyIcon color={color.TEXT} />
 						}
-					</TouchableOpacity>
-				</View>
-				<ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+					/>
 					{/* Balance */}
 					<View style={styles.mintOpts}>
-						<Text style={globals(color).txt}>
-							Balance
-						</Text>
+						<Txt txt='Balance' />
 						<Text style={{ color: color.TEXT }}>
-							{formatInt(route.params?.amount)}{' Sat'}
+							{formatInt(route.params?.amount)}{' Satoshi'}
 						</Text>
 					</View>
 					<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
 					{/* Mint info */}
 					<MintOption
 						txt='Mint info'
+						hasSeparator
 						onPress={() => navigation.navigate('mint info', { mintUrl: route.params.mint?.mintUrl })}
 						icon={<InfoIcon width={18} height={18} color={color.TEXT} />}
 					/>
 					{/* Add custom name */}
 					<MintOption
 						txt='Custom name'
+						hasSeparator
 						onPress={() => {
 							void (async () => {
 								await hasMintName()
@@ -210,18 +203,30 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						}}
 						icon={<PenIcon width={15} height={15} color={color.TEXT} />}
 					/>
+					{/* Default */}
+					<MintOption
+						txt={isDefault ? 'Remove from default' : 'Set as default mint'}
+						onPress={() => void handleDefaultMint()}
+						icon={<MintBoardIcon width={19} height={19} color={color.TEXT} />}
+					/>
+				</View>
+				{/* Fund management */}
+				<Txt txt='Funds' styles={[styles.sectionHeader]} />
+				<View style={globals(color).wrapContainer}>
 					{/* Mint new tokens */}
 					<MintOption
 						txt='Mint new tokens'
+						hasSeparator
 						onPress={() => setLNAmountModal(true)}
 						icon={<PlusIcon color={color.TEXT} />}
 					/>
 					{/* Redeem to lightning */}
 					<MintOption
 						txt='Melt tokens'
+						hasSeparator
 						onPress={() => {
 							if (route.params.amount < 1) {
-								openPromptAutoClose(false, 'Not enough funds!')
+								openPromptAutoClose({ msg: 'Not enough funds!' })
 								return
 							}
 							navigation.navigate('lightning', {
@@ -232,46 +237,40 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						}}
 						icon={<ZapIcon width={18} height={18} color={color.TEXT} />}
 					/>
-					{/* Refresh mint-key */}
-					{/* <TouchableOpacity style={styles.mintOpts}>
-					<Text style={globals(color).txt}>
-						Refresh mint key
-					</Text>
-					<RefreshIcon width={20} height={20} color={color.TEXT} />
-				</TouchableOpacity>
-				<View style={[styles.line, { borderBottomColor: color.BORDER }]} /> */}
 					{/* Inter-mint swap */}
 					<MintOption
 						txt='Inter-mint swap'
+						hasSeparator
 						onPress={() => void handleMintSwap()}
 						icon={<SwapIcon width={20} height={20} color={color.TEXT} />}
 					/>
 					{/* Backup mint */}
 					<MintOption
 						txt='Backup mint'
+						hasSeparator
 						onPress={() => void handleMintBackup()}
 						icon={<BackupIcon width={20} height={20} color={color.TEXT} />}
 					/>
-					{/* Remove from default */}
+					{/* Proof list */}
 					<MintOption
-						txt={isDefault ? 'Remove from default' : 'Set as default mint'}
-						onPress={() => void handleDefaultMint()}
-						icon={<MintBoardIcon width={19} height={19} color={color.TEXT} />}
-					/>
-					<MintOption
-						txt='Show proofs'
+						txt='Proofs'
 						onPress={() => {
 							if (route.params.amount < 1) {
-								openPromptAutoClose(false, 'Mint has no proofs. Balance too low!')
+								openPromptAutoClose({ msg: 'Mint has no proofs. Balance too low!' })
 								return
 							}
 							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
 						}}
 						icon={<EyeIcon width={19} height={19} color={color.TEXT} />}
 					/>
+				</View>
+				{/* Danger zone */}
+				<Txt txt='Danger zone' styles={[styles.sectionHeader]} />
+				<View style={globals(color).wrapContainer}>
 					{/* Check proofs */}
 					<MintOption
 						txt='Check proofs'
+						hasSeparator
 						onPress={() => setCheckProofsOpen(true)}
 						icon={<ValidateIcon width={22} height={22} color='#FF9900' />}
 						rowColor='#FF9900'
@@ -283,8 +282,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						icon={<TrashbinIcon width={16} height={16} color={color.ERROR} />}
 						rowColor={color.ERROR}
 					/>
-				</ScrollView>
-			</View>
+				</View>
+			</ScrollView>
 			{/* Choose amount for LN invoice (minting) */}
 			<LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
@@ -351,19 +350,20 @@ interface IMintOption {
 	onPress: () => void
 	icon: React.ReactNode
 	rowColor?: string
+	hasSeparator?: boolean
 }
 
-function MintOption({ txt, onPress, icon, rowColor }: IMintOption) {
+function MintOption({ txt, onPress, icon, rowColor, hasSeparator }: IMintOption) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
 			<TouchableOpacity onPress={onPress} style={styles.mintOpts}>
-				<Text style={[globals(color).txt, { color: rowColor || color.TEXT }]}>
-					{txt}
-				</Text>
+				<Txt txt={txt} styles={[{ color: rowColor || color.TEXT }]} />
 				{icon}
 			</TouchableOpacity>
-			<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
+			{hasSeparator &&
+				<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
+			}
 		</>
 	)
 }
@@ -373,24 +373,26 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	scrollContainer: {
-		marginBottom: 175,
-	},
-	content: {
-		marginTop: 130,
-		paddingHorizontal: 20,
-	},
-	header: {
-		marginBottom: 0,
+		flex: 1,
+		marginTop: 100,
+		marginBottom: 60,
 	},
 	subHeader: {
 		flexDirection: 'row',
-		justifyContent: 'flex-start',
 		alignItems: 'center',
-		marginBottom: 20
+		marginVertical: 20,
+		paddingHorizontal: 20,
 	},
 	mintUrl: {
 		fontSize: 16,
 		marginRight: 10,
+		fontWeight: '500',
+	},
+	sectionHeader: {
+		fontWeight: '500',
+		paddingHorizontal: 20,
+		marginTop: 20,
+		marginBottom: 10
 	},
 	mintOpts: {
 		flexDirection: 'row',
@@ -407,11 +409,6 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 		marginTop: 25,
 		marginBottom: 10,
-	},
-	cancelDelWrap: {
-		width: '25%',
-		alignItems: 'center',
-		paddingTop: 10,
 	},
 	cancelDel: {
 		fontSize: 16,

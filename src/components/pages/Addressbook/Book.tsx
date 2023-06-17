@@ -1,12 +1,12 @@
-import Button from '@comps/Button'
+import Button, { IconBtn } from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { PlusIcon, UserIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { addContact, getContacts } from '@db'
 import MyModal from '@modal'
-import { PromptModal } from '@modal/Prompt'
-import { TAddressBookPageProps } from '@model/nav'
+import type { TAddressBookPageProps } from '@model/nav'
 import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
@@ -33,41 +33,39 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 	// new contact input
 	const [newContactName, setNewContactName] = useState('')
 	const [newContactLN, setNewContactLN] = useState('')
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleNewContact = async () => {
 		if (!isLnurl(newContactLN)) {
-			openPrompt('Invalid LN address!')
+			openPromptAutoClose({ msg: 'Invalid LNURL!', ms: 1500 })
+			return
+		}
+		if (!newContactName && !openNew.isOwner) {
+			openPromptAutoClose({ msg: 'Invalid name!', ms: 1500 })
 			return
 		}
 		const success = await addContact({
-			name: openNew.isOwner ? 'Personal address' : newContactName,
+			name: openNew.isOwner ? 'Personal LNURL' : newContactName,
 			ln: newContactLN,
 			isOwner: openNew.isOwner
 		})
-		setContacts(await getContacts())
 		if (!success) {
-			openPrompt('Contact can not be added. Possible name or address duplication.')
+			openPromptAutoClose({ msg: 'Contact can not be added. Possible name or LNURL duplication.' })
 			return
 		}
+		setContacts(await getContacts())
+		openPromptAutoClose({ msg: 'Added a new contact', success: true })
 		setOpenNew({ open: false, isOwner: false })
 	}
 	return (
 		<>
 			{/* Header */}
-			<View style={styles.headerWrap}>
-				<View>
-					<Text style={[globals(color).header, { marginBottom: 0 }]}>
-						Address book
-					</Text>
-					<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
-						{!contacts.length ?
-							''
-							:
-							`${contacts.length} Contact${contacts.length > 1 ? 's' : ''}`
-						}
-					</Text>
-				</View>
-				{isModal ?
+			{isModal ?
+				<View style={styles.modalHeader}>
+					<View>
+						<Txt txt='Address book' styles={[globals(color).navTxt, styles.header]} />
+						<ContactsCount count={contacts.length} />
+					</View>
+					{/* cancel modal / go back to payment page */}
 					<TouchableOpacity
 						style={{ paddingVertical: 10 }}
 						onPress={() => closeModal?.()}
@@ -76,20 +74,17 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							Cancel
 						</Text>
 					</TouchableOpacity>
-					:
-					<TouchableOpacity
-						style={{ paddingVertical: 15, paddingLeft: 10 }}
-						onPress={() => setOpenNew({ open: true, isOwner: false })}
-					>
-						<PlusIcon width={22} height={22} color={color.TEXT} />
-					</TouchableOpacity>
-				}
-			</View>
+				</View>
+				:
+				<View style={styles.bookHeader}>
+					<ContactsCount count={contacts.length} />
+				</View>
+			}
 			{/* Address list */}
-			<ScrollView showsVerticalScrollIndicator={false}>
-				{/* user own address */}
+			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+				{/* user own LNURL */}
 				{hasOwnAddress() ?
-					<View style={styles.bookEntry}>
+					<View style={[globals(color).wrapContainer, styles.bookEntry, styles.container]}>
 						<Text style={[
 							styles.circleUser,
 							{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
@@ -111,14 +106,13 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 								})
 							}}
 						>
-							<Text style={globals(color).txt}>
-								{getPersonalInfo()?.ln}
-							</Text>
+							<Txt txt={getPersonalInfo()?.ln || ''} />
 						</TouchableOpacity>
 					</View>
 					:
 					<TouchableOpacity
-						style={styles.bookEntry}
+						style={[styles.bookEntry, styles.container, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}
+						testID='addPersonal'
 						onPress={() => {
 							setOpenNew({ open: true, isOwner: true })
 						}}
@@ -127,102 +121,131 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							<PlusIcon width={16} height={16} color={hi[highlight]} />
 						</Text>
 						<View style={styles.nameEntry}>
-							<Text style={[globals(color).txt, { color: hi[highlight] }]}>
-								Add your own LN address
-							</Text>
+							<Txt txt='Add your own LNURL' styles={[{ color: hi[highlight] }]} />
 						</View>
 					</TouchableOpacity>
 				}
-				<View style={styles.bookContainer}>
-					{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
-						!c.isOwner &&
-						<View key={c.ln}>
-							<View style={styles.bookEntry}>
-								<Text style={[
-									styles.circle,
-									{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
-								]}>
-									{c.name.charAt(0).toUpperCase()}
-								</Text>
-								<TouchableOpacity
-									style={styles.nameEntry}
-									onPress={() => {
-										if (isModal) {
-											setInput?.(c.ln)
-											closeModal?.()
-											return
-										}
-										nav?.navigation.navigate('Contact', {
-											contact: c
-										})
-									}}
-								>
-									<Txt txt={c.name} />
-								</TouchableOpacity>
+				{contacts.length > 0 &&
+					<View style={[globals(color).wrapContainer, styles.bookContainer]}>
+						{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
+							!c.isOwner &&
+							<View key={c.ln}>
+								<View style={styles.bookEntry}>
+									<Text style={[
+										styles.circle,
+										{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
+									]}>
+										{c.name.charAt(0).toUpperCase()}
+									</Text>
+									<TouchableOpacity
+										style={styles.nameEntry}
+										onPress={() => {
+											if (isModal) {
+												setInput?.(c.ln)
+												closeModal?.()
+												return
+											}
+											nav?.navigation.navigate('Contact', {
+												contact: c
+											})
+										}}
+									>
+										<Txt txt={c.name} />
+									</TouchableOpacity>
+								</View>
+								{i < contacts.length - 1 && <Separator style={[{ marginLeft: 60 }]} />}
 							</View>
-							{i < contacts.length - 1 && <Separator style={[{ marginLeft: 60 }]} />}
-						</View>
-					))}
-				</View>
+						))}
+					</View>
+				}
 			</ScrollView>
-			{/* Add new address modal */}
-			{openNew.open && !prompt.open &&
-				<MyModal type='bottom' animation='slide' visible={true}>
-					<Text style={globals(color).modalHeader}>
-						{openNew.isOwner ? 'Your LNURL' : 'New contact'}
-					</Text>
-					{!openNew.isOwner &&
-						<TextInput
-							style={[globals(color).input, { marginBottom: 20 }]}
-							placeholder="Name"
-							placeholderTextColor={color.INPUT_PH}
-							selectionColor={hi[highlight]}
-							onChangeText={setNewContactName}
-						/>
-					}
+			{/* Add new contact button */}
+			{!isModal &&
+				<View style={styles.newContactBtn}>
+					<IconBtn
+						icon={<PlusIcon width={15} height={15} color={hi[highlight]} />}
+						onPress={() => setOpenNew({ open: true, isOwner: false })}
+						testId='testNewContact'
+					/>
+				</View>
+			}
+			{/* Add new contact modal */}
+			<MyModal type='bottom' animation='slide' visible={openNew.open && !prompt.open}>
+				<Text style={globals(color).modalHeader}>
+					{openNew.isOwner ? 'Your LNURL' : 'New contact'}
+				</Text>
+				{!openNew.isOwner &&
 					<TextInput
 						style={[globals(color).input, { marginBottom: 20 }]}
-						placeholder="zap@me.now"
+						placeholder="Name"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
-						onChangeText={setNewContactLN}
+						onChangeText={setNewContactName}
 					/>
-					<Button txt='Save' onPress={() => {
-						void handleNewContact()
-					}}
-					/>
-					<TouchableOpacity
-						style={{ marginTop: 25 }}
-						onPress={() => setOpenNew({ open: false, isOwner: false })}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							Cancel
-						</Text>
-					</TouchableOpacity>
-				</MyModal>
-			}
-			<PromptModal
-				header={prompt.msg}
-				visible={prompt.open}
-				close={closePrompt}
-			/>
+				}
+				<TextInput
+					style={[globals(color).input, { marginBottom: 20 }]}
+					placeholder="zap@me.now"
+					placeholderTextColor={color.INPUT_PH}
+					selectionColor={hi[highlight]}
+					onChangeText={setNewContactLN}
+				/>
+				<Button txt='Save' onPress={() => void handleNewContact()} />
+				<TouchableOpacity
+					style={{ marginTop: 25 }}
+					onPress={() => setOpenNew({ open: false, isOwner: false })}
+				>
+					<Text style={globals(color, highlight).pressTxt}>
+						Cancel
+					</Text>
+				</TouchableOpacity>
+			</MyModal>
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</>
 	)
 }
 
+function ContactsCount({ count }: { count: number }) {
+	const { color } = useContext(ThemeContext)
+	return (
+		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
+			{!count ?
+				''
+				:
+				`${count} Contact${count > 1 ? 's' : ''}`
+			}
+		</Text>
+	)
+}
+
 const styles = StyleSheet.create({
-	headerWrap: {
+	modalHeader: {
+		width: '100%',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'flex-start',
+		paddingHorizontal: 20,
 		marginBottom: 20,
-		width: '100%',
+	},
+	bookHeader: {
+		paddingHorizontal: 20,
+		marginBottom: 20,
+	},
+	header: {
+		marginBottom: 10,
+	},
+	scroll: {
+		width: '100%'
+	},
+	container: {
+		paddingVertical: 10,
+		marginBottom: 25,
 	},
 	subHeader: {
 		fontSize: 16,
+		fontWeight: '500',
 	},
 	bookContainer: {
-		width: '100%',
 		marginBottom: 50,
 	},
 	bookEntry: {
@@ -246,7 +269,6 @@ const styles = StyleSheet.create({
 		marginRight: 20,
 	},
 	addOwnAddress: {
-		paddingHorizontal: 15,
 		paddingVertical: 10,
 		marginRight: 16,
 	},
@@ -254,8 +276,9 @@ const styles = StyleSheet.create({
 		width: '100%',
 		paddingVertical: 6,
 	},
-	separator: {
-		borderBottomWidth: 1,
-		marginLeft: 60,
-	},
+	newContactBtn: {
+		position: 'absolute',
+		right: 20,
+		bottom: 80,
+	}
 })
