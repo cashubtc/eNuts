@@ -167,7 +167,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<Balance balance={balance} />
 			{/* Flex space-between empty placeholder */}
 			<View />
-			{/* Token input & submit button */}
+			{/* Receive and send buttons */}
 			<ActionButtons
 				ontopOfNav
 				topBtnTxt='Receive'
