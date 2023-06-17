@@ -7,8 +7,8 @@ import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { getProofsByMintUrl } from '@db'
 import { l } from '@log'
-import { IProofSelection } from '@model'
-import { TPayLNInvoicePageProps } from '@model/nav'
+import type { IProofSelection } from '@model'
+import type { TPayLNInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import AddressbookModal from '@pages/Addressbook/modal'
 import { CoinSelectionModal, CoinSelectionResume } from '@pages/Lightning/modal'
@@ -23,6 +23,7 @@ import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
+// TODO adapt style
 export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
@@ -58,7 +59,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				const res = await payLnInvoice(route.params.mint.mintUrl, input, selectedProofs)
 				stopLoading()
 				if (!res.result?.isPaid) {
-					openPromptAutoClose(false, 'Invoice could not be payed. Please try again later.')
+					openPromptAutoClose({ msg: 'Invoice could not be payed. Please try again later.' })
 					return
 				}
 				// payment success, add as history entry
@@ -75,7 +76,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				})
 			} catch (e) {
 				l(e)
-				openPromptAutoClose(false, isErr(e) ? e.message : 'An error occured while paying the invoice.')
+				openPromptAutoClose({ msg: isErr(e) ? e.message : 'An error occured while paying the invoice.' })
 				stopLoading()
 			}
 			return
@@ -84,7 +85,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 		try {
 			const invoice = await getInvoiceFromLnurl(input.trim(), +LNURLAmount)
 			if (!invoice?.length) {
-				openPromptAutoClose(false, `Unable to generate invoice for "${input}"`)
+				openPromptAutoClose({ msg: `Unable to generate invoice for "${input}"` })
 				stopLoading()
 				return
 			}
@@ -92,14 +93,14 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			const totalSelected = sumProofsValue(selectedProofs)
 			const totalToPay = +LNURLAmount + feeEstimate
 			if (isEnabled && totalSelected < totalToPay) {
-				openPromptAutoClose(false, `Not enough funds! Total after fee: ${totalToPay} Sat. Amount selected: ${LNURLAmount} Sat`)
+				openPromptAutoClose({ msg: `Not enough funds! Total after fee: ${totalToPay} Sat. Amount selected: ${LNURLAmount} Sat` })
 				stopLoading()
 				return
 			}
 			const res = await payLnInvoice(route.params.mint.mintUrl, invoice, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
-				openPromptAutoClose(false, 'Something went wrong while paying the LN invoice')
+				openPromptAutoClose({ msg: 'Something went wrong while paying the LN invoice' })
 				stopLoading()
 				return
 			}
@@ -118,7 +119,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				mints: [route.params.mint.mintUrl]
 			})
 		} catch (e) {
-			openPromptAutoClose(false, isErr(e) ? e.message : 'An error occured while paying the invoice.')
+			openPromptAutoClose({ msg: isErr(e) ? e.message : 'An error occured while paying the invoice.' })
 			stopLoading()
 		}
 	}
@@ -134,7 +135,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			setIsCalculatingFee(true)
 			const invoice = await getInvoiceFromLnurl(input.trim(), +LNURLAmount)
 			if (!invoice?.length || !route.params.mint) {
-				openPromptAutoClose(false, `Unable to estimate fee: Invalid invoice for "${input}". Is it a valid LNURL?`)
+				openPromptAutoClose({ msg: `Unable to estimate fee: Invalid invoice for "${input}". Is it a valid LNURL?` })
 				// reset amount to hide the failed estimated fee render
 				setLNURLAmount('')
 				// remove LNURL from input to re-render the initial page
@@ -160,7 +161,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			setInput(clipboard)
 		} catch (e) {
 			l(e)
-			openPromptAutoClose(false, 'Invalid invoice')
+			openPromptAutoClose({ msg: 'Invalid invoice' })
 		}
 	}
 	// Get proofs for coin selection
@@ -213,18 +214,18 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			{/* mint overview */}
 			{!input.length &&
 				<View style={styles.amountWrap}>
-					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Mint balance: {formatInt(route.params.mintBal)} Sat.
+					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 10 }]}>
+						Send bitcoin from &quot;{formatMintUrl(route.params.mint?.mintUrl || '')}&quot; to a Lightning wallet.
 					</Text>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Send bitcoin from &quot;{formatMintUrl(route.params.mint?.mintUrl || '')}&quot; to a lightning wallet.
+						Mint balance: <Text style={{ fontWeight: '500' }}>{formatInt(route.params.mintBal)}</Text> Satoshi
 					</Text>
 				</View>
 			}
 			{/* LNURL amount to choose */}
 			{isLnurl(input) &&
 				<View style={styles.amountWrap}>
-					<Text style={[styles.payTo, { color: color.TEXT }]}>
+					<Text style={[globals(color).navTxt, styles.payTo]}>
 						Select amount for &quot;{input}&quot;
 					</Text>
 					<TextInput
@@ -250,9 +251,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 							<Txt txt='Calculating fee...' />
 							:
 							<>
-								<Text style={globals(color).txt}>
-									Estimated fees:
-								</Text>
+								<Txt txt='Estimated fees:' />
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										0 to {formatInt(feeEstimate)}
@@ -269,7 +268,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				<View style={styles.invoiceOverview}>
 					{/* Invoice expiry */}
 					<View style={styles.overviewWrap}>
-						<Text style={[styles.payOverview, { color: color.TEXT }]}>
+						<Text style={[globals(color).navTxt]}>
 							Invoice overview
 						</Text>
 						<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
@@ -278,9 +277,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 					</View>
 					{/* Invoice amount */}
 					<View style={styles.overview}>
-						<Text style={globals(color).txt}>
-							Amount:
-						</Text>
+						<Txt txt='Amount:' />
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 								{formatInt(invoiceAmount / 1000)}
@@ -290,15 +287,13 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 					</View>
 					{/* Invoice estimated fees */}
 					<View style={styles.overview}>
-						<Text style={globals(color).txt}>
-							Estimated fees:
-						</Text>
+						<Txt txt='Estimated fees:' />
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 								0 to {formatInt(feeEstimate)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
-						</View>
+						T</View>
 					</View>
 					{/* Total after fee */}
 					<View style={[
@@ -309,9 +304,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 							paddingBottom: 15
 						}
 					]}>
-						<Text style={[globals(color).txt, { fontWeight: '500' }]}>
-							Total:
-						</Text>
+						<Txt txt='Total:' styles={[{ fontWeight: '500' }]} />
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 								{formatInt((invoiceAmount / 1000) + feeEstimate)}
@@ -332,11 +325,9 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				(isLnurl(input) && +LNURLAmount > 0)) && !isKeyboardOpen &&
 				<View style={styles.coinSelectionOverview}>
 					<View style={styles.overview}>
-						<Text style={globals(color).txt}>
-							Coin selection
-						</Text>
+						<Txt txt='Coin selection' />
 						<Switch
-							trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
+							trackColor={{ false: color.BORDER, true: hi[highlight] }}
 							thumbColor={color.TEXT}
 							onValueChange={toggleSwitch}
 							value={isEnabled}
@@ -436,8 +427,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	payTo: {
-		fontSize: 20,
-		fontWeight: '500',
 		marginBottom: 10
 	},
 	lnUrlFeeOverview: {
@@ -446,7 +435,7 @@ const styles = StyleSheet.create({
 	},
 	invoiceOverview: {
 		paddingHorizontal: 20,
-		marginTop: 100,
+		marginTop: 110,
 	},
 	coinSelectionOverview: {
 		paddingHorizontal: 20,
@@ -454,7 +443,7 @@ const styles = StyleSheet.create({
 	amountWrap: {
 		width: '100%',
 		alignItems: 'center',
-		marginTop: 125,
+		marginTop: 110,
 	},
 	amount: {
 		fontSize: 40,
@@ -497,10 +486,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		marginTop: 25,
 		marginBottom: 15,
-	},
-	payOverview: {
-		fontSize: 20,
-		fontWeight: '500',
 	},
 	expiry: {
 		fontSize: 20,

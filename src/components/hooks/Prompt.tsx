@@ -6,6 +6,12 @@ interface IPromptState {
 	msg: string
 }
 
+interface IOpenPromptAutoCloseProps {
+	msg: string
+	success?: boolean
+	ms?: number
+}
+
 export default function usePrompt() {
 	const [prompt, setPrompt] = useState<IPromptState>({ open: false, msg: '' })
 	const openPrompt = (msg: string) => {
@@ -14,12 +20,12 @@ export default function usePrompt() {
 	const closePrompt = () => {
 		setPrompt({ open: false, msg: '' })
 	}
-	const openPromptAutoClose = (success: boolean, msg: string) => {
+	const openPromptAutoClose = ({ msg, success, ms }: IOpenPromptAutoCloseProps) => {
 		setPrompt({ success, open: true, msg })
 		const t = setTimeout(() => {
 			setPrompt({ open: false, msg: '' })
 			clearTimeout(t)
-		}, 2500)
+		}, ms ?? 2500)
 	}
 
 	return {
@@ -28,5 +34,4 @@ export default function usePrompt() {
 		closePrompt,
 		openPromptAutoClose
 	}
-
 }

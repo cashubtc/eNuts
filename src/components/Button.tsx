@@ -37,6 +37,29 @@ export default function Button({ txt, border, outlined, filled, disabled, onPres
 	)
 }
 
+interface IIconBtnProps {
+	icon: React.ReactNode
+	onPress: () => void
+	testId?: string
+}
+
+export function IconBtn({ icon, onPress, testId }: IIconBtnProps) {
+	const { color, highlight } = useContext(ThemeContext)
+	return (
+		<SafeAreaView>
+			<TouchableOpacity
+				accessibilityRole='button'
+				activeOpacity={.5}
+				style={[styles.iconBtn, { backgroundColor: color.BACKGROUND, borderColor: hi[highlight] }]}
+				onPress={onPress}
+				testID={testId}
+			>
+				{icon}
+			</TouchableOpacity>
+		</SafeAreaView>
+	)
+}
+
 const styles = StyleSheet.create({
 	safeArea: {
 		width: '100%'
@@ -50,5 +73,11 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		fontSize: 16,
 		fontWeight: '500'
+	},
+	// icon button
+	iconBtn: {
+		padding: 20,
+		borderWidth: 1,
+		borderRadius: 50,
 	}
 })
