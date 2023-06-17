@@ -1,7 +1,8 @@
+import { isIOS } from '@consts'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, TPref } from '@styles'
 import { useContext } from 'react'
-import { KeyboardAvoidingView, Modal, Platform, StyleSheet, View } from 'react-native'
+import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
 
 interface IMyModalProps {
 	type: 'bottom' | 'question' | 'success' | 'error' | 'invoiceAmount'
@@ -57,7 +58,7 @@ export default function MyModal({
 				>
 					<KeyboardAvoidingView
 						style={getCorrectStyle()}
-						behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+						behavior={isIOS ? 'padding' : 'height'}
 					>
 						<View style={[getViewStyle(), success ? { backgroundColor: hi[highlight] } : {}]}>
 							{children}

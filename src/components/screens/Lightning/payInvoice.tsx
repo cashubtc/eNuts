@@ -12,6 +12,7 @@ import type { TPayLNInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import AddressbookModal from '@screens/Addressbook/modal'
 import { CoinSelectionModal, CoinSelectionResume } from '@screens/Lightning/modal'
+import { isIOS } from '@src/consts'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
@@ -21,7 +22,7 @@ import { cleanUpNumericStr, formatExpiry, formatInt, formatMintUrl, getInvoiceFr
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 // TODO adapt style
 export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageProps) {
@@ -342,7 +343,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				</View>
 			}
 			{/* Bottom section */}
-			<View style={styles.action}>
+			<KeyboardAvoidingView style={styles.action} behavior={isIOS ? 'padding' : 'height'}>
 				{/* Open LNURL address book */}
 				{invoiceAmount === 0 &&
 					<TouchableOpacity
@@ -399,7 +400,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						}}
 					/>
 				}
-			</View>
+			</KeyboardAvoidingView>
 			{/* address book */}
 			{showAddressBook &&
 				<AddressbookModal
