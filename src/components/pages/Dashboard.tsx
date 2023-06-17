@@ -246,29 +246,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		width: '100%',
 	},
-	actionWrap: {
-		width: '100%',
-		paddingLeft: 20,
-		paddingRight: 20,
-		marginBottom: 100,
-	},
-	// Modal content
-	cancel: {
-		fontSize: 16,
-		fontWeight: '500',
-		marginTop: 25,
-	},
-	pasteInputTxtWrap: {
-		position: 'absolute',
-		right: 10,
-		top: 10,
-		padding: 10
-	},
 	pasteInputTxt: {
 		fontSize: 16,
 		fontWeight: '500',
 	},
-	historyWrap: {
-		marginVertical: 10
-	}
 })
