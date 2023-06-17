@@ -12,10 +12,7 @@
 			"version": "detect"
 		},
 		"import/parsers": {
-			"@typescript-eslint/parser": [
-				".ts",
-				".tsx"
-			]
+			"@typescript-eslint/parser": [".ts", ".tsx"]
 		} /* ,
 		"import/resolver": {
 			/* "typescript": {
@@ -52,11 +49,7 @@
 	],
 	"overrides": [
 		{
-			"files": [
-				"*.ts",
-				"*.tsx",
-				"*.d.ts"
-			]
+			"files": ["*.ts", "*.tsx", "*.d.ts"]
 		}
 	],
 	"globals": {
@@ -109,10 +102,7 @@
 			}
 		],
 		// to enforce using type for object type definitions, can be type or interface
-		"@typescript-eslint/consistent-type-definitions": [
-			"warn",
-			"interface"
-		],
+		"@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
 		"@typescript-eslint/array-type": [
 			"warn",
 			{
@@ -236,19 +226,13 @@
 		"no-return-await": "warn",
 		"no-prototype-builtins": "warn",
 		"no-empty": "warn",
-		"arrow-body-style": [
-			"warn",
-			"as-needed"
-		],
+		"arrow-body-style": ["warn", "as-needed"],
 		"no-useless-return": "warn",
 		"require-await": "warn",
 		"prefer-arrow-callback": "warn",
 		"no-var": "warn",
 		"no-fallthrough": "warn",
-		"no-extra-parens": [
-			"warn",
-			"functions"
-		],
+		"no-extra-parens": ["warn", "functions"],
 		"no-extra-semi": "warn",
 		"curly": "warn",
 		"eqeqeq": "warn",
@@ -262,16 +246,8 @@
 				"SwitchCase": 1
 			}
 		],
-		"quotes": [
-			"warn",
-			"single"
-		],
-		"semi": [
-			"warn",
-			"never"
-		]
+		"quotes": ["warn", "single"],
+		"semi": ["warn", "never"]
 	},
-	"ignorePatterns": [
-		"dist"
-	]
+	"ignorePatterns": ["dist"]
 }
