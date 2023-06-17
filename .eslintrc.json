@@ -206,7 +206,6 @@
 				"argsIgnorePattern": "^_"
 			}
 		],
-		"mocha/no-mocha-arrows": 0,
 		"prefer-promise-reject-errors": "warn",
 		"no-await-in-loop": "warn",
 		"no-return-await": "warn",
@@ -226,7 +225,6 @@
 		"prefer-const": "warn",
 		"no-console": 1,
 		"indent": ["warn", "tab", { "SwitchCase": 1 }],
-		"linebreak-style": ["warn", "windows"],
 		"quotes": ["warn", "single"],
 		"semi": ["warn", "never"]
 	},
