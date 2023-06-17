@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import AddressBook from '@comps/pages/Addressbook/Book'
+import AddressBook from '@comps/screens/Addressbook/Book'
 import { act, fireEvent, render, screen } from '@testing-library/react-native'
 
 jest.useFakeTimers()
