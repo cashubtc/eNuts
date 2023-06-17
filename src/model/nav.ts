@@ -1,26 +1,7 @@
-import { Theme } from '@react-navigation/native'
-import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { IContact } from '@src/context/Contacts'
 
 import type { IHistoryEntry, IMintUrl } from '.'
-
-// Override the theme in react native navigation to accept our custom theme props.
-declare module '@react-navigation/native-stack' {
-	export interface ExtendedTheme extends Theme {
-		dark: boolean
-		custom: {
-			ERROR: string,
-			BACKGROUND: string,
-			DRAWER: string,
-			TEXT: string,
-			TEXT_SECONDARY: string,
-			INPUT_BG: string,
-			INPUT_PH: string,
-			BORDER: string,
-		}
-	}
-	export function useTheme(): ExtendedTheme
-}
 
 /**
  * Stack Navigator
