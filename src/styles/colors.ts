@@ -1,5 +1,5 @@
-import type { ExtendedTheme } from '@react-navigation/drawer'
 import { DefaultTheme } from '@react-navigation/native'
+import type { ExtendedTheme } from '@react-navigation/native-stack'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type TPref = {
@@ -55,7 +55,7 @@ export const mainColors = {
 }
 
 const common = {
-	ERROR: '#FF6666', // LIGHT_RED
+	ERROR: '#FF6666',
 }
 
 // light theme
