@@ -18,6 +18,11 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		textAlign: 'center',
 		color: hi[h || '']
 	},
+	navTxt: {
+		fontSize: 20,
+		fontWeight: '500',
+		color: color.TEXT
+	},
 	input: {
 		borderWidth: 1,
 		color: color.TEXT,

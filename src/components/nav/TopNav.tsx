@@ -1,18 +1,19 @@
-import { HamburgerIcon, QRIcon } from '@comps/Icons'
+import { QRIcon } from '@comps/Icons'
 import type { TBottomNavProps } from '@model/nav'
-import { DrawerActions, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface TTopNavProps {
+	screenName?: string
 	withBackBtn?: boolean
 	backHandler?: () => void
 	nav?: TBottomNavProps
 }
 
-export default function TopNav({ withBackBtn, backHandler, nav }: TTopNavProps) {
+export default function TopNav({ screenName, withBackBtn, backHandler, nav }: TTopNavProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const navHook = useNavigation()
 	const handlePress = () => {
@@ -29,14 +30,13 @@ export default function TopNav({ withBackBtn, backHandler, nav }: TTopNavProps) 
 	}
 	return (
 		<View style={styles.topNav}>
-			<TouchableOpacity
-				style={styles.topIconL}
-				onPress={() => {
-					navHook.dispatch(DrawerActions.openDrawer())
-				}}
-			>
-				<HamburgerIcon color={color.TEXT} />
-			</TouchableOpacity>
+			{screenName ?
+				<Text style={globals(color).navTxt}>
+					{screenName}
+				</Text>
+				:
+				<View />
+			}
 			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
 				{withBackBtn ?
 					<Text style={globals(color, highlight).pressTxt}>
@@ -53,19 +53,16 @@ export default function TopNav({ withBackBtn, backHandler, nav }: TTopNavProps) 
 const styles = StyleSheet.create({
 	topNav: {
 		position: 'absolute',
-		top: 75,
+		top: 40,
 		left: 20,
 		right: 20,
 		flex: 1,
 		flexDirection: 'row',
+		alignItems: 'center',
 		justifyContent: 'space-between',
-	},
-	topIconL: {
-		paddingRight: 20,
-		paddingBottom: 20
 	},
 	topIconR: {
 		paddingLeft: 20,
-		paddingBottom: 20
+		paddingVertical: 20
 	},
 })
