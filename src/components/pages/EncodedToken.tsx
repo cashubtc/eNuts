@@ -1,4 +1,4 @@
-import Button from '@comps/Button'
+import ActionButtons from '@comps/ActionButtons'
 import QR from '@comps/QR'
 import { l } from '@log'
 import { TEncodedTokenPageProps } from '@model/nav'
@@ -80,18 +80,12 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 				}
 			</View>
 			{/* Action buttons */}
-			<View style={styles.actionWrap}>
-				<Button
-					txt='Share'
-					onPress={() => { void handleShare() }}
-				/>
-				<View style={{ marginVertical: 10 }} />
-				<Button
-					txt={copied ? 'Copied!' : 'Copy token'}
-					outlined
-					onPress={() => void handleCopy()}
-				/>
-			</View>
+			<ActionButtons
+				topBtnTxt='Share'
+				topBtnAction={() => void handleShare()}
+				bottomBtnTxt={copied ? 'Copied!' : 'Copy token'}
+				bottomBtnAction={() => void handleCopy()}
+			/>
 		</View>
 	)
 }

@@ -1,8 +1,8 @@
-import Button from '@comps/Button'
+import ActionButtons from '@comps/ActionButtons'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 
 import MyModal from '.'
 
@@ -26,15 +26,11 @@ export default function OptsModal({
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible}>
-			<Button
-				txt={button1Txt}
-				onPress={onPressFirstBtn}
-			/>
-			<View style={{ marginVertical: 10 }} />
-			<Button
-				txt={button2Txt}
-				outlined
-				onPress={onPressSecondBtn}
+			<ActionButtons
+				topBtnTxt={button1Txt}
+				topBtnAction={onPressFirstBtn}
+				bottomBtnTxt={button2Txt}
+				bottomBtnAction={onPressSecondBtn}
 			/>
 			<TouchableOpacity style={styles.no} onPress={onPressCancel}>
 				<Text style={globals(color, highlight).pressTxt}>

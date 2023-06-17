@@ -1,11 +1,12 @@
-import Button from '@comps/Button'
 import { l } from '@log'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
-import { Share, StyleSheet, Text, View } from 'react-native'
+import { Share, StyleSheet, Text } from 'react-native'
+
+import ActionButtons from './ActionButtons'
 
 interface IBackupSuccessProps {
 	token: string
@@ -37,6 +38,14 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 			l(e)
 		}
 	}
+	const handleCopy = async () => {
+		await Clipboard.setStringAsync(token)
+		setCopied(true)
+		const t = setTimeout(() => {
+			setCopied(false)
+			clearTimeout(t)
+		}, 3000)
+	}
 	return (
 		<>
 			<Text style={[styles.successTxt, { color: hi[highlight] }]}>
@@ -53,28 +62,13 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 					Mint: {formatMintUrl(mint)}
 				</Text>
 			}
-			<View style={styles.action}>
-				<Button
-					txt='Share'
-					outlined
-					onPress={() => {
-						void handleShare()
-					}}
-				/>
-				<View style={{ marginBottom: 20 }} />
-				<Button
-					txt={copied ? 'Copied!' : 'Copy'}
-					onPress={() => {
-						void Clipboard.setStringAsync(token).then(() => {
-							setCopied(true)
-							const t = setTimeout(() => {
-								setCopied(false)
-								clearTimeout(t)
-							}, 3000)
-						})
-					}}
-				/>
-			</View>
+			<ActionButtons
+				absolutePos
+				topBtnTxt='Share'
+				topBtnAction={() => void handleShare()}
+				bottomBtnTxt={copied ? 'Copied!' : 'Copy backup token'}
+				bottomBtnAction={() => void handleCopy()}
+			/>
 		</>
 	)
 }

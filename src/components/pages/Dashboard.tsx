@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
+import ActionButtons from '@comps/ActionButtons'
 import Balance from '@comps/Balance'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
@@ -140,7 +141,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			setModal({ ...modal, mint: !hasUserMints })
 			setBalance(await getBalance())
 		})()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
 
 	// handle initial URL passed on by clicking on a cashu link
@@ -150,7 +151,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			// alert(`URL in dashboard useEffect: ${url}`)
 			await handleTokenSubmit(url)
 		})()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
 
 	// get balance after navigating to this page
@@ -168,21 +169,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<Balance balance={balance} />
 			{/* Flex space-between empty placeholder */}
 			<View />
-			{/* Token input & submit button */}
-			<View style={styles.actionWrap}>
-				{/* Claim token */}
-				<Button
-					txt='Receive'
-					onPress={() => setModal({ ...modal, receiveOpts: true })}
-				/>
-				<View style={{ marginVertical: 10 }} />
-				{/* Send token */}
-				<Button
-					outlined
-					txt='Send'
-					onPress={() => setModal({ ...modal, sendOpts: true })}
-				/>
-			</View>
+			{/* Receive and send buttons */}
+			<ActionButtons
+				ontopOfNav
+				topBtnTxt='Receive'
+				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
+				bottomBtnTxt='Send'
+				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
+			/>
 			{/* Bottom nav icons */}
 			<BottomNav navigation={navigation} route={route} />
 			{/* Question modal for mint trusting */}
