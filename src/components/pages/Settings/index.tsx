@@ -22,7 +22,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Settings' />
 			<Text style={[globals(color).header, { marginBottom: 25 }]}>
 				Settings
 			</Text>

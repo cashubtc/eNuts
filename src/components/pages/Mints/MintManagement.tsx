@@ -151,7 +151,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Mint settings' withBackBtn />
 			<View style={styles.content}>
 				{/* Header */}
 				<Text style={[globals(color).header, styles.header]}>

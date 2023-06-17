@@ -209,7 +209,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	useEffect(() => void handleKeyboard(), [isKeyboardOpen])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Zap' withBackBtn />
 			{/* mint overview */}
 			{!input.length &&
 				<View style={styles.amountWrap}>

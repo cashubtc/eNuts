@@ -1,4 +1,5 @@
 import type { TAddressBookPageProps } from '@model/nav'
+import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { useContext } from 'react'
@@ -10,8 +11,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Address book' />
 			<AddressBook nav={{ navigation, route }} />
+			<BottomNav navigation={navigation} route={route} />
 		</View>
 	)
 }
