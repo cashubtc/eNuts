@@ -1,3 +1,5 @@
+import Separator from '@comps/Separator'
+import Txt from '@comps/Txt'
 import type { TDisplaySettingsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
@@ -31,8 +33,13 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
 			<Text style={[styles.subHeader, { marginBottom: 20, color: color.TEXT }]}>
 				Theme
 			</Text>
-			{themeColors.map(t => (
-				<ThemeSelection key={t} name={t} selected={t === highlight} />
+			{themeColors.map((t, i) => (
+				<ThemeSelection
+					key={t}
+					name={t}
+					selected={t === highlight}
+					hasSeparator={i !== themeColors.length - 1}
+				/>
 			))}
 			<View style={[styles.separator, { marginTop: 10, borderBottomColor: color.BORDER }]} />
 		</View>
@@ -42,24 +49,26 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
 interface IThemeSelectionProps {
 	name: string
 	selected: boolean
+	hasSeparator?: boolean
 }
 
-function ThemeSelection({ name, selected }: IThemeSelectionProps) {
+function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
 	const { color, highlight, setHighlight } = useContext(ThemeContext)
 	return (
-		<TouchableOpacity style={styles.settingsRow}
-			onPress={() => setHighlight(name)}
-		>
-			<Text style={globals(color).txt}>
-				{name}
-			</Text>
-			<View
-				style={[
-					styles.radioBtn,
-					{ borderColor: color.BORDER, backgroundColor: selected ? hi[highlight] : 'transparent' }
-				]}
-			/>
-		</TouchableOpacity>
+		<>
+			<TouchableOpacity style={styles.settingsRow}
+				onPress={() => setHighlight(name)}
+			>
+				<Txt txt={name} />
+				<View
+					style={[
+						globals(color, highlight).radioBtn,
+						{ backgroundColor: selected ? hi[highlight] : 'transparent' }
+					]}
+				/>
+			</TouchableOpacity>
+			{hasSeparator && <Separator style={[{ marginHorizontal: 20, marginVertical: 10 }]} />}
+		</>
 	)
 }
 

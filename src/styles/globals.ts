@@ -47,5 +47,11 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		marginRight: 20,
 		marginLeft: 20,
 		marginBottom: 40,
+	},
+	radioBtn: {
+		borderWidth: 1,
+		borderRadius: 50,
+		padding: 10,
+		borderColor: color.BORDER
 	}
 })

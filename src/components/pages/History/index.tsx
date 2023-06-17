@@ -1,3 +1,4 @@
+import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
@@ -69,7 +70,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 										/>
 									)}
 									estimatedItemSize={300}
-									ItemSeparatorComponent={() => <View style={[styles.separator, { borderColor: color.BORDER }]} />}
+									ItemSeparatorComponent={() => <Separator />}
 								/>
 							</View>
 						</>

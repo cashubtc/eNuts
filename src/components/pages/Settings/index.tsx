@@ -1,5 +1,6 @@
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
+import Separator from '@comps/Separator'
 import { PromptModal } from '@modal/Prompt'
 import { QuestionModal } from '@modal/Question'
 import { TSettingsPageProps } from '@model/nav'
@@ -30,12 +31,14 @@ export default function Settings({ navigation }: TSettingsPageProps) {
 				txtColor={color.TEXT}
 				icon={<LockIcon color={color.TEXT} />}
 				onPress={() => navigation.navigate('Security settings')}
+				hasSeparator
 			/>
 			<SettingsMenuItem
 				txt='Display'
 				txtColor={color.TEXT}
 				icon={<PaletteIcon color={color.TEXT} />}
 				onPress={() => navigation.navigate('Display settings')}
+				hasSeparator
 			/>
 			<SettingsMenuItem
 				txt='Delete transaction history'
@@ -69,10 +72,10 @@ interface IMenuItemProps {
 	txtColor: string
 	onPress: () => void
 	icon: React.ReactElement
+	hasSeparator?: boolean
 }
 
-function SettingsMenuItem({ txt, txtColor, icon, onPress }: IMenuItemProps) {
-	const { color } = useContext(ThemeContext)
+function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator }: IMenuItemProps) {
 	return (
 		<>
 			<TouchableOpacity
@@ -89,7 +92,7 @@ function SettingsMenuItem({ txt, txtColor, icon, onPress }: IMenuItemProps) {
 					<ChevronRightIcon color={txtColor} />
 				}
 			</TouchableOpacity>
-			<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
+			{hasSeparator && <Separator style={[{ marginVertical: 10 }]} />}
 		</>
 	)
 }

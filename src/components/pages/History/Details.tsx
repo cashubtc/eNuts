@@ -4,6 +4,7 @@ import useLoading from '@comps/hooks/Loading'
 import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon, QRIcon } from '@comps/Icons'
 import MyModal from '@comps/modal'
 import QR from '@comps/QR'
+import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -90,7 +91,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 				<Txt txt='Settle Time' />
 				<Txt txt={new Date(entry.timestamp * 1000).toLocaleString()} />
 			</View>
-			<View style={[styles.separator, { borderColor: color.BORDER }]} />
+			<Separator />
 			{/* Memo */}
 			<View style={styles.entryInfo}>
 				<Txt txt='Memo' />
@@ -99,14 +100,14 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 					styles={[styles.infoValue]}
 				/>
 			</View>
-			<View style={[styles.separator, { borderColor: color.BORDER }]} />
+			<Separator />
 			{/* Mints */}
 			{/* TODO update style to fit multiple mints */}
 			<View style={styles.entryInfo}>
 				<Txt txt={isLn ? 'Mint' : 'Mints'} />
 				<Txt txt={entry.mints.map(m => formatMintUrl(m)).join(', ')} />
 			</View>
-			<View style={[styles.separator, { borderColor: color.BORDER }]} />
+			<Separator />
 			{/* cashu token or ln invoice */}
 			<TouchableOpacity
 				style={styles.entryInfo}
@@ -132,7 +133,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 					}
 				</View>
 			</TouchableOpacity>
-			<View style={[styles.separator, { borderColor: color.BORDER }]} />
+			<Separator />
 			{/* check is token spendable */}
 			{isPayment && !isLn &&
 				<IsSpentContainer
@@ -152,7 +153,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 					}
 				</IsSpentContainer>
 			}
-			<View style={[styles.separator, { borderColor: color.BORDER }]} />
+			<Separator />
 			{/* Lightning related */}
 			{isLn &&
 				<>
@@ -181,7 +182,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 							}
 						</View>
 					</TouchableOpacity>
-					<View style={[styles.separator, { borderColor: color.BORDER }]} />
+					<Separator />
 					{/* LN payment preImage */}
 					<TouchableOpacity
 						style={styles.entryInfo}
@@ -207,13 +208,13 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 							}
 						</View>
 					</TouchableOpacity>
-					<View style={[styles.separator, { borderColor: color.BORDER }]} />
+					<Separator />
 					{/* LN payment fees */}
 					<View style={styles.entryInfo}>
 						<Txt txt='Fee' />
 						<Txt txt={entry.fee ? `${entry.fee} Satoshi` : 'Not available'} />
 					</View>
-					<View style={[styles.separator, { borderColor: color.BORDER }]} />
+					<Separator />
 				</>
 			}
 			{/* QR code */}
