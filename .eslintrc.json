@@ -1,19 +1,22 @@
 {
-  "env": {
-    "es6": true,
-    "node": true,
-    "es2021": true,
-    // "react-native/react-native": true,
-    "jest/globals": true
-  },
-  "settings": {
-    "react": {
-      "pragma": "React",
-      "version": "detect"
-    },
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
-    } /* ,
+	"env": {
+		"es6": true,
+		"node": true,
+		"es2021": true,
+		// "react-native/react-native": true,
+		"jest/globals": true
+	},
+	"settings": {
+		"react": {
+			"pragma": "React",
+			"version": "detect"
+		},
+		"import/parsers": {
+			"@typescript-eslint/parser": [
+				".ts",
+				".tsx"
+			]
+		} /* ,
 		"import/resolver": {
 			/* "typescript": {
 				"paths": "./tsconfig.json",
@@ -29,86 +32,107 @@
 				]
 			}
 		} */
-  },
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:promise/recommended",
-    "plugin:json/recommended",
-    // "plugin:import/recommended",
-    "plugin:import/typescript",
-    "plugin:jest/recommended",
-    // "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:react/jsx-runtime"
-    // "plugin:import/errors",
-    // "plugin:import/warnings"
-  ],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.d.ts"]
-    }
-  ],
-  "globals": {
-    "__dirname": true,
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": "latest",
-    // "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true,
-      "globalReturn": true,
-      "impliedStrict": true
-    },
-    "project": "tsconfig.json"
-  },
-  "plugins": [
-    "react",
-    "react-hooks",
-    "jest",
-    "es5",
-    "html",
-    "@typescript-eslint",
-    "simple-import-sort",
-    "promise",
-    "deprecate",
-    "node",
-    "import",
-    "compat",
-    "@getify/proper-arrows",
-    "eslint-plugin",
-    "eslint-plugin-tsdoc",
-    "@typescript-eslint/eslint-plugin",
-    "jsdoc"
-  ],
-  "rules": {
-    "react/no-unescaped-entities": "warn",
-    "no-dupe-class-members": 0,
-    "simple-import-sort/imports": "warn",
-    "simple-import-sort/exports": "warn",
-    "import/first": "warn",
-    "import/newline-after-import": "warn",
-    "import/no-duplicates": "warn",
-    "promise/always-return": ["warn", { "ignoreLastCallback": true }],
-    // to enforce using type for object type definitions, can be type or interface
-    "@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
-    "@typescript-eslint/array-type": ["warn", { "default": "array" }],
-    "@typescript-eslint/require-await": "warn",
-    "@typescript-eslint/await-thenable": "warn",
-    "@typescript-eslint/consistent-type-exports": "warn",
-    "@typescript-eslint/restrict-template-expressions": [
-      "warn",
-      { "allowNumber": true, "allowBoolean": true, "allowNullish": true }
-    ],
-    "@typescript-eslint/no-explicit-any": 0,
-    // "@typescript-eslint/explicit-module-boundary-types": 0,
-    /* "@typescript-eslint/naming-convention": [
+	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/eslint-recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:@typescript-eslint/recommended-requiring-type-checking",
+		"plugin:promise/recommended",
+		"plugin:json/recommended",
+		// "plugin:import/recommended",
+		"plugin:import/typescript",
+		"plugin:jest/recommended",
+		// "eslint:recommended",
+		"plugin:react/recommended",
+		"plugin:react-hooks/recommended",
+		"plugin:react/jsx-runtime"
+		// "plugin:import/errors",
+		// "plugin:import/warnings"
+	],
+	"overrides": [
+		{
+			"files": [
+				"*.ts",
+				"*.tsx",
+				"*.d.ts"
+			]
+		}
+	],
+	"globals": {
+		"__dirname": true,
+		"Atomics": "readonly",
+		"SharedArrayBuffer": "readonly"
+	},
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": "latest",
+		// "sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true,
+			"globalReturn": true,
+			"impliedStrict": true
+		},
+		"project": "tsconfig.json"
+	},
+	"plugins": [
+		"react",
+		"react-hooks",
+		"jest",
+		"es5",
+		"html",
+		"@typescript-eslint",
+		"simple-import-sort",
+		"promise",
+		"deprecate",
+		"node",
+		"import",
+		"compat",
+		"@getify/proper-arrows",
+		"eslint-plugin",
+		"eslint-plugin-tsdoc",
+		"@typescript-eslint/eslint-plugin",
+		"jsdoc"
+	],
+	"rules": {
+		"react/no-unescaped-entities": "warn",
+		"no-dupe-class-members": 0,
+		"simple-import-sort/imports": "warn",
+		"simple-import-sort/exports": "warn",
+		"import/first": "warn",
+		"import/newline-after-import": "warn",
+		"import/no-duplicates": "warn",
+		"promise/always-return": [
+			"warn",
+			{
+				"ignoreLastCallback": true
+			}
+		],
+		// to enforce using type for object type definitions, can be type or interface
+		"@typescript-eslint/consistent-type-definitions": [
+			"warn",
+			"interface"
+		],
+		"@typescript-eslint/array-type": [
+			"warn",
+			{
+				"default": "array"
+			}
+		],
+		"@typescript-eslint/require-await": "warn",
+		"@typescript-eslint/await-thenable": "warn",
+		"@typescript-eslint/consistent-type-exports": "warn",
+		"@typescript-eslint/restrict-template-expressions": [
+			"warn",
+			{
+				"allowNumber": true,
+				"allowBoolean": true,
+				"allowNullish": true
+			}
+		],
+		"@typescript-eslint/no-explicit-any": 0,
+		// "@typescript-eslint/explicit-module-boundary-types": 0,
+		/* "@typescript-eslint/naming-convention": [
 			"warn",
 			{
 				"selector": "variableLike",
@@ -186,9 +210,9 @@
 				]
 			}
 		], */
-    "new-cap": 1,
-    "camelcase": 0,
-    /* "@getify/proper-arrows/params": ["warn", {
+		"new-cap": 1,
+		"camelcase": 0,
+		/* "@getify/proper-arrows/params": ["warn", {
 			"unused": "trailing",
 			"allow": ["e", "err"],
 			"length": 3, "trivial": true
@@ -196,38 +220,58 @@
 		"@getify/proper-arrows/return": ["warn", {
 			"object": true
 		}] */
-    // "@getify/proper-arrows/where": 0,
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      {
-        "vars": "all",
-        "args": "all",
-        "ignoreRestSiblings": false,
-        "argsIgnorePattern": "^_"
-      }
-    ],
-    "mocha/no-mocha-arrows": 0,
-    "prefer-promise-reject-errors": "warn",
-    "no-await-in-loop": "warn",
-    "no-return-await": "warn",
-    "no-prototype-builtins": "warn",
-    "no-empty": "warn",
-    "arrow-body-style": ["warn", "as-needed"],
-    "no-useless-return": "warn",
-    "require-await": "warn",
-    "prefer-arrow-callback": "warn",
-    "no-var": "warn",
-    "no-fallthrough": "warn",
-    "no-extra-parens": ["warn", "functions"],
-    "no-extra-semi": "warn",
-    "curly": "warn",
-    "eqeqeq": "warn",
-    "no-else-return": "warn",
-    "prefer-const": "warn",
-    "no-console": 1,
-    "indent": ["warn", "tab", { "SwitchCase": 1 }],
-    "quotes": ["warn", "single"],
-    "semi": ["warn", "never"]
-  },
-  "ignorePatterns": ["dist"]
+		// "@getify/proper-arrows/where": 0,
+		"@typescript-eslint/no-unused-vars": [
+			"warn",
+			{
+				"vars": "all",
+				"args": "all",
+				"ignoreRestSiblings": false,
+				"argsIgnorePattern": "^_"
+			}
+		],
+		"mocha/no-mocha-arrows": 0,
+		"prefer-promise-reject-errors": "warn",
+		"no-await-in-loop": "warn",
+		"no-return-await": "warn",
+		"no-prototype-builtins": "warn",
+		"no-empty": "warn",
+		"arrow-body-style": [
+			"warn",
+			"as-needed"
+		],
+		"no-useless-return": "warn",
+		"require-await": "warn",
+		"prefer-arrow-callback": "warn",
+		"no-var": "warn",
+		"no-fallthrough": "warn",
+		"no-extra-parens": [
+			"warn",
+			"functions"
+		],
+		"no-extra-semi": "warn",
+		"curly": "warn",
+		"eqeqeq": "warn",
+		"no-else-return": "warn",
+		"prefer-const": "warn",
+		"no-console": 1,
+		"indent": [
+			"warn",
+			"tab",
+			{
+				"SwitchCase": 1
+			}
+		],
+		"quotes": [
+			"warn",
+			"single"
+		],
+		"semi": [
+			"warn",
+			"never"
+		]
+	},
+	"ignorePatterns": [
+		"dist"
+	]
 }
