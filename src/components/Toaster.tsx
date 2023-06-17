@@ -18,7 +18,6 @@ export default function Toaster({ success, txt }: { success?: boolean, txt: stri
 
 const styles = StyleSheet.create({
 	container: {
-		width: '90%',
 		position: 'absolute',
 		padding: 20,
 		alignItems: 'center',

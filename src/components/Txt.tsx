@@ -1,12 +1,12 @@
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
-import { StyleProp, Text, TextStyle } from 'react-native'
+import { type StyleProp, Text, type TextStyle } from 'react-native'
 
 export default function Txt({ txt, styles }: { txt: string, styles?: StyleProp<TextStyle>[] }) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { color } = useContext(ThemeContext)
 	return (
-		<Text style={[globals(color, highlight).txt, ...(styles || [])]}>
+		<Text style={[globals(color).txt, ...(styles || [])]}>
 			{txt}
 		</Text>
 	)

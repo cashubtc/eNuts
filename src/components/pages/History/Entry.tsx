@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	amount: {
-		minWidth: 50,
 		textAlign: 'right',
 	},
 })

@@ -61,7 +61,7 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 
 const styles = StyleSheet.create({
 	picker: {
-		marginHorizontal: -15
+		marginHorizontal: -15,
 	},
 	minBalWrap: {
 		flexDirection: 'row',

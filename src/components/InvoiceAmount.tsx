@@ -1,7 +1,7 @@
 import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import type { IDecodedLNInvoice } from '@model/ln'
+import type { IInvoiceState } from '@model/ln'
 import { InvoiceAmountModal, InvoiceModal } from '@pages/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
@@ -16,12 +16,6 @@ interface IInvoiceModalProps {
 	lnAmountModal: boolean
 	mintUrl: string
 	setLNAmountModal: (val: boolean) => void
-}
-
-export interface IInvoiceState {
-	amount: string
-	decoded?: IDecodedLNInvoice
-	hash: string
 }
 
 export default function LNInvoiceAmountModal({

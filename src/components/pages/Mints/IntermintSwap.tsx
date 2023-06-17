@@ -2,9 +2,9 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import { ArrowDownIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import { l } from '@log'
-import { PromptModal } from '@modal/Prompt'
-import { TIntermintSwapPageProps } from '@model/nav'
+import type { TIntermintSwapPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { Picker } from '@react-native-picker/picker'
 import { useKeyboard } from '@src/context/Keyboard'
@@ -23,30 +23,31 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 	const [selectedMint, setSelectedMint] = useState(route.params.mints[0])
 	const [amount, setAmount] = useState('')
 	const { loading, startLoading, stopLoading } = useLoading()
-	const { prompt, openPrompt, closePrompt } = usePrompt()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	// const [fee, setFee] = useState(0)
 	const handleSwap = async () => {
-		l('swap')
 		startLoading()
 		// simple way
 		try {
 			const result = await autoMintSwap(route.params.swap_out_mint.mintUrl, selectedMint.mintUrl, +amount)
-			l({ result })
-			openPrompt(`Successfully swaped ${amount} Sat from ${route.params.swap_out_mint.mintUrl} to ${selectedMint.mintUrl}`)
+			l({ swapResult: result })
+			openPromptAutoClose({
+				msg: `Successfully swaped ${amount} Sat from ${route.params.swap_out_mint.mintUrl} to ${selectedMint.mintUrl}`,
+				success: true
+			})
 		} catch (e) {
 			l(e)
-			openPrompt(isErr(e) ? e.message : 'Could not perform an inter-mint swap')
+			openPromptAutoClose({ msg: isErr(e) ? e.message : 'Could not perform an inter-mint swap' })
 			stopLoading()
 		}
 		stopLoading()
+		if (prompt.msg.includes('Successfully')) {
+			navigation.navigate('mints')
+		}
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName='Swap' withBackBtn />
-			{/* Header */}
-			<Text style={[globals(color).header, styles.header]}>
-				Inter-Mint Swap
-			</Text>
 			{/* sub header */}
 			<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
 				Swap tokens from one mint for tokens from another mint.
@@ -72,9 +73,10 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 			{/* Swap-Out Mint: */}
 			{!isKeyboardOpen && +amount > 0 &&
 				<View>
-					<Text style={[globals(color).txt, styles.mintUrl]}>
-						{route.params.swap_out_mint.customName || formatMintUrl(route.params.swap_out_mint.mintUrl)}
-					</Text>
+					<Txt
+						txt={route.params.swap_out_mint.customName || formatMintUrl(route.params.swap_out_mint.mintUrl)}
+						styles={[styles.mintUrl]}
+					/>
 					<View style={styles.iconWrap}>
 						<ArrowDownIcon width={50} height={50} color={hi[highlight]} />
 					</View>
@@ -101,18 +103,6 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 					</Picker>
 				</View>
 			}
-			<PromptModal
-				header={prompt.msg.includes('Successfully') ? 'Inter-mint swap success!' : 'Something went wrong'}
-				txt={prompt.msg}
-				hideIcon
-				visible={prompt.open}
-				close={() => {
-					closePrompt()
-					if (prompt.msg.includes('Successfully')) {
-						navigation.navigate('mints')
-					}
-				}}
-			/>
 			{!isKeyboardOpen && +amount > 0 && !prompt.open &&
 				<View style={styles.actions}>
 					<Button
@@ -133,9 +123,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingTop: 130,
 		paddingHorizontal: 20,
-	},
-	header: {
-		marginBottom: 0,
 	},
 	subHeader: {
 		fontSize: 16,

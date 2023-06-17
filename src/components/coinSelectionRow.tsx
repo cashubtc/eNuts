@@ -5,6 +5,8 @@ import { globals, highlight as hi, mainColors } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
+import Txt from './Txt'
+
 interface IProofRowProps {
 	proof: Proof | IProofSelection
 	isLatestKeysetId: boolean
@@ -39,9 +41,7 @@ export function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<>
-			<Text style={globals(color).txt}>
-				{proof.amount} Sat
-			</Text>
+			<Txt txt={`${proof.amount} Sat`} />
 			<View style={styles.keyWrap}>
 				<Text style={[
 					styles.keysetID,
@@ -52,8 +52,8 @@ export function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 				{'selected' in proof &&
 					<View
 						style={[
-							styles.radioBtn,
-							{ borderColor: color.BORDER, backgroundColor: proof.selected ? hi[highlight] : 'transparent' }
+							globals(color, highlight).radioBtn,
+							{ backgroundColor: proof.selected ? hi[highlight] : 'transparent' }
 						]}
 					/>
 				}
@@ -67,12 +67,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingVertical: 10,
-	},
-	radioBtn: {
-		borderWidth: 1,
-		borderRadius: 50,
-		padding: 10,
+		paddingVertical: 15,
 	},
 	keyWrap: {
 		flexDirection: 'row',

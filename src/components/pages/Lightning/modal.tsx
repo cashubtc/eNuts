@@ -1,23 +1,23 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
-import { MintBoardIcon } from '@comps/Icons'
-import { IInvoiceState } from '@comps/InvoiceAmount'
-import KeysetHint from '@comps/KeysetHint'
 import QR from '@comps/QR'
+import Separator from '@comps/Separator'
 import Success from '@comps/Success'
+import Txt from '@comps/Txt'
 import { _mintUrl } from '@consts'
 import { l } from '@log'
 import MyModal from '@modal'
-import { IMintUrl, IProofSelection } from '@model'
+import type { IMintUrl, IProofSelection } from '@model'
+import type { IInvoiceState } from '@model/ln'
+import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
-import { formatExpiry, formatMintUrl, getSelectedAmount, isErr, openUrl } from '@util'
+import { formatExpiry, getSelectedAmount, isErr, openUrl } from '@util'
 import { getMintCurrentKeySetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
 
 interface IInvoiceAmountModalProps {
 	visible: boolean
@@ -41,7 +41,7 @@ interface IInvoiceModalProps {
 
 export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModalProps) {
 	const { color, highlight } = useContext(ThemeContext)
-	const [expiry, setExpiry] = useState(invoice.decoded?.expiry || 600)
+	const [expiry, setExpiry] = useState(invoice.decoded?.expiry ?? 600)
 	const [expiryTime,] = useState(expiry * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const [copied, setCopied] = useState(false)
@@ -56,7 +56,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 					await addToHistory({
 						amount: +invoice.amount,
 						type: 2,
-						value: invoice.decoded?.paymentRequest || '',
+						value: invoice.decoded?.paymentRequest ?? '',
 						mints: [mintUrl],
 					})
 				}
@@ -127,7 +127,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							txt={copied ? 'Copied!' : 'Copy invoice'}
 							outlined
 							onPress={() => {
-								void Clipboard.setStringAsync(invoice.decoded?.paymentRequest || '').then(() => {
+								void Clipboard.setStringAsync(invoice.decoded?.paymentRequest ?? '').then(() => {
 									setCopied(true)
 									const t = setTimeout(() => {
 										setCopied(false)
@@ -141,7 +141,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							txt='Pay with your LN wallet'
 							onPress={() => {
 								void (async () => {
-									await openUrl(`lightning:${invoice.decoded?.paymentRequest || ''}`)
+									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)
 								})()
 							}}
 						/>
@@ -171,7 +171,7 @@ interface ICoinSelectionProps {
  * This component is the main container of the pressable proofs-list aka coin selection list.
  */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
-	const { color } = useContext(ThemeContext)
+	const { color, highlight } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
 	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
@@ -184,54 +184,62 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
 			<View style={styles.proofContainer}>
-				<Text style={globals(color).header}>
-					Coin selection
-				</Text>
-				<View style={styles.activeMint}>
-					<MintBoardIcon width={19} height={19} color={color.TEXT_SECONDARY} />
-					<Text style={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}>
-						{formatMintUrl(mint?.customName || mint?.mintUrl || 'Not available')}
+				<View style={styles.header}>
+					<Text style={globals(color).navTxt}>
+						Coin selection
 					</Text>
-				</View>
-				{/* Info about latest keyset ids highlighted in green */}
-				<KeysetHint />
-				<ProofListHeader margin={40} />
-				<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-					{lnAmount > 0 &&
-						proofs.map(p => (
-							<CoinSelectionRow
-								key={p.secret}
-								proof={p}
-								isLatestKeysetId={mintKeysetId === p.id}
-								setChecked={() => {
-									const proofIdx = proofs.findIndex(proof => proof.secret === p.secret)
-									const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
-									setProof(updated)
-								}}
-							/>
-						))
-					}
-					<View style={{ marginVertical: 25, borderBottomColor: color.BORDER, borderBottomWidth: 1 }} />
-					<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} />
-					<View style={{ marginVertical: 10 }} />
-					{getSelectedAmount(proofs) >= lnAmount &&
-						<Button
-							txt='Confirm'
-							onPress={() => setVisible(false)}
-						/>
-					}
-					<View style={{ marginVertical: 10 }} />
-					<Button
-						txt='Cancel'
-						outlined
+					<TouchableOpacity
 						onPress={() => {
 							setVisible(false)
 							disableCS()
 						}}
+					>
+						<Text style={globals(color, highlight).pressTxt}>
+							Cancel
+						</Text>
+					</TouchableOpacity>
+				</View>
+				<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} />
+				<View style={{ paddingHorizontal: 20 }}>
+					<ProofListHeader />
+				</View>
+				<View
+					style={[
+						globals(color).wrapContainer,
+						styles.listWrap,
+						{ marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0 }
+					]}
+				>
+					<FlashList
+						data={proofs}
+						estimatedItemSize={300}
+						showsVerticalScrollIndicator={false}
+						contentContainerStyle={{ paddingHorizontal: 20 }}
+						ItemSeparatorComponent={() => <Separator />}
+						renderItem={data => (
+							<CoinSelectionRow
+								key={data.item.secret}
+								proof={data.item}
+								isLatestKeysetId={mintKeysetId === data.item.id}
+								setChecked={() => {
+									const proofIdx = proofs.findIndex(proof => proof.secret === data.item.secret)
+									const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
+									setProof(updated)
+								}}
+							/>
+						)}
 					/>
-					<View style={{ marginVertical: 10 }} />
-				</ScrollView>
+				</View>
 			</View>
+			{/* Confirm button */}
+			{getSelectedAmount(proofs) >= lnAmount &&
+				<View style={[styles.confirmWrap, { backgroundColor: color.BACKGROUND }]}>
+					<Button
+						txt='Confirm'
+						onPress={() => setVisible(false)}
+					/>
+				</View>
+			}
 		</MyModal>
 	)
 }
@@ -249,21 +257,15 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 	return (
 		<>
 			<View style={styles.overview}>
+				<Txt txt='Selected' />
 				<Text style={globals(color).txt}>
-					Selected
-				</Text>
-				<Text style={globals(color).txt}>
-					{selectedAmount}/{lnAmount} Sat
+					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? color.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
 				</Text>
 			</View>
 			{selectedAmount > lnAmount &&
 				<View style={styles.overview}>
-					<Text style={globals(color).txt}>
-						Change
-					</Text>
-					<Text style={globals(color).txt}>
-						{selectedAmount - lnAmount} Sat
-					</Text>
+					<Txt txt='Change' />
+					<Txt txt={`${selectedAmount - lnAmount} Sat`} />
 				</View>
 			}
 		</>
@@ -275,15 +277,15 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
  * Margin is used for the pressable coin-selection row.
  * If the row of the proofs-list is non-pressable, margin is not required.
  */
-export function ProofListHeader({ margin }: { margin?: number }) {
+export function ProofListHeader() {
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
-			<View style={[styles.tableHeader, { borderBottomColor: color.BORDER }]}>
+			<View style={styles.tableHeader}>
 				<Text style={[styles.tableHead, { color: color.TEXT }]}>
 					Amount
 				</Text>
-				<Text style={[styles.tableHead, { color: color.TEXT, marginRight: margin || 0 }]}>
+				<Text style={[styles.tableHead, { color: color.TEXT }]}>
 					Keyset ID
 				</Text>
 			</View>
@@ -299,16 +301,24 @@ const styles = StyleSheet.create({
 		width: '100%',
 	},
 	proofContainer: {
+		flex: 1,
 		width: '100%',
+	},
+	header: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		paddingHorizontal: 20,
+		marginBottom: 20,
+	},
+	listWrap: {
+		flex: 1,
 	},
 	overview: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		marginBottom: 15,
-	},
-	mintUrl: {
-		fontSize: 16,
-		marginLeft: 10,
+		marginBottom: 20,
+		paddingHorizontal: 20,
 	},
 	invoiceWrap: {
 		alignItems: 'center',
@@ -343,9 +353,6 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		marginVertical: 25,
 	},
-	scroll: {
-		marginBottom: 140,
-	},
 	tableHeader: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -354,7 +361,6 @@ const styles = StyleSheet.create({
 		paddingBottom: 20,
 		marginHorizontal: -20,
 		paddingHorizontal: 20,
-		borderBottomWidth: 1,
 	},
 	tableHead: {
 		fontSize: 16,
@@ -364,9 +370,11 @@ const styles = StyleSheet.create({
 		borderWidth: 5,
 		borderColor: '#FFF'
 	},
-	activeMint: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginBottom: 15,
+	confirmWrap: {
+		position: 'absolute',
+		bottom: 0,
+		right: 0,
+		left: 0,
+		padding: 20,
 	}
 })

@@ -38,7 +38,7 @@ export default function MyModal({ type, animation, visible, success, children }:
 					transparent={true}
 					visible={visible}
 				>
-					<KeyboardAvoidingView 
+					<KeyboardAvoidingView
 						style={getCorrectStyle()}
 						behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 					>
