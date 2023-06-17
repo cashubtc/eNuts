@@ -8,10 +8,18 @@ interface IMyModalProps {
 	animation?: 'slide' | 'fade' | 'none'
 	visible: boolean
 	success?: boolean
+	isContactList?: boolean
 	children: React.ReactNode
 }
 
-export default function MyModal({ type, animation, visible, success, children }: IMyModalProps) {
+export default function MyModal({
+	type,
+	animation,
+	visible,
+	success,
+	isContactList,
+	children
+}: IMyModalProps) {
 
 	const { color, highlight } = useContext(ThemeContext)
 
@@ -27,7 +35,16 @@ export default function MyModal({ type, animation, visible, success, children }:
 		if (type === 'question') { return { ...styles(color, highlight).common, ...styles(color, highlight).centeredModalView } }
 		if (type === 'success') { return { ...styles(color, highlight).common, ...styles(color, highlight).successModalView } }
 		if (type === 'error') { return { ...styles(color, highlight).common, ...styles(color, highlight).promptModalView } }
-		if (type === 'invoiceAmount') { return { ...styles(color, highlight).common, ...styles(color, highlight).invoiceAmountModalView } }
+		if (type === 'invoiceAmount') {
+			let styling = {
+				...styles(color, highlight).common,
+				...styles(color, highlight).invoiceAmountModalView,
+			}
+			if (isContactList) {
+				styling = { ...styling, ...styles(color, highlight).contactList }
+			}
+			return styling
+		}
 	}
 
 	return (
@@ -38,7 +55,7 @@ export default function MyModal({ type, animation, visible, success, children }:
 					transparent={true}
 					visible={visible}
 				>
-					<KeyboardAvoidingView 
+					<KeyboardAvoidingView
 						style={getCorrectStyle()}
 						behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 					>
@@ -83,10 +100,7 @@ const styles = (pref: TPref, h: string) => StyleSheet.create({
 		width: '100%',
 		borderTopLeftRadius: 20,
 		borderTopRightRadius: 20,
-		paddingTop: 50,
-		paddingBottom: 50,
-		paddingRight: 20,
-		paddingLeft: 20,
+		padding: 20,
 	},
 	// Centered Modal
 	centeredView: {
@@ -122,4 +136,7 @@ const styles = (pref: TPref, h: string) => StyleSheet.create({
 		padding: 20,
 		justifyContent: 'space-between',
 	},
+	contactList: {
+		paddingHorizontal: 0,
+	}
 })

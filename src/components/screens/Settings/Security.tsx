@@ -4,7 +4,6 @@ import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { getProofs } from '@db'
 import { getBackUpToken } from '@db/backup'
-import { l } from '@log'
 import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
@@ -26,7 +25,6 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 			const token = await getBackUpToken()
 			navigation.navigate('BackupPage', { token })
 		} catch (e) {
-			l(e)
 			openPromptAutoClose({ msg: 'Something went wrong while creating the backup token.' })
 		}
 	}

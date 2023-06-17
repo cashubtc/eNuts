@@ -1,13 +1,15 @@
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TDisplaySettingsPageProps } from '@model/nav'
+import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, themeColors } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
 
-export default function DisplaySettings({ navigation }: TDisplaySettingsPageProps) {
+export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -16,33 +18,29 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
-			<Text style={[globals(color).header, { marginBottom: 25 }]}>
-				Display
-			</Text>
-			<View style={styles.settingsRow}>
-				<Text style={globals(color).txt}>
-					Dark mode
+			<ScrollView style={{ width: '100%', marginBottom: 60 }} showsVerticalScrollIndicator={false}>
+				<Text style={[styles.subHeader, { color: color.TEXT }]}>
+					Theme
 				</Text>
-				<Switch
-					trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
-					thumbColor={color.TEXT}
-					onValueChange={() => setTheme(theme === 'Light' ? 'Dark' : 'Light')}
-					value={theme === 'Dark'}
-				/>
-			</View>
-			<View style={[styles.separator, { borderBottomColor: color.BORDER }]} />
-			<Text style={[styles.subHeader, { marginBottom: 20, color: color.TEXT }]}>
-				Theme
-			</Text>
-			{themeColors.map((t, i) => (
-				<ThemeSelection
-					key={t}
-					name={t}
-					selected={t === highlight}
-					hasSeparator={i !== themeColors.length - 1}
-				/>
-			))}
-			<View style={[styles.separator, { marginTop: 10, borderBottomColor: color.BORDER }]} />
+				<View style={[globals(color).wrapContainer, styles.wrap]}>
+					<Txt txt='Dark mode' />
+					<Switch
+						trackColor={{ false: color.BORDER, true: hi[highlight] }}
+						thumbColor={color.TEXT}
+						onValueChange={() => setTheme(theme === 'Light' ? 'Dark' : 'Light')}
+						value={theme === 'Dark'}
+					/>
+				</View>
+				<Text style={[styles.subHeader, { color: color.TEXT }]}>
+					Highlight
+				</Text>
+				<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
+					{themeColors.map((t, i) => (
+						<ThemeSelection key={t} name={t} selected={t === highlight} hasSeparator={i !== themeColors.length - 1} />
+					))}
+				</View>
+			</ScrollView>
+			<BottomNav navigation={navigation} route={route} />
 		</View>
 	)
 }
@@ -76,27 +74,31 @@ function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 130,
-		paddingHorizontal: 20,
+		paddingTop: 120,
 	},
 	subHeader: {
-		fontSize: 18,
+		fontSize: 16,
 		fontWeight: '500',
+		paddingHorizontal: 20,
 		marginBottom: 10,
+	},
+	highlightWrap: {
+		paddingHorizontal: 0,
+		paddingVertical: 10,
+		marginBottom: 20,
+	},
+	wrap: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		paddingVertical: 10,
+		marginBottom: 20,
 	},
 	settingsRow: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingVertical: 10,
+		paddingHorizontal: 20,
 	},
-	separator: {
-		borderBottomWidth: 1,
-		marginBottom: 25,
-	},
-	radioBtn: {
-		borderWidth: 1,
-		borderRadius: 50,
-		padding: 10,
-	}
 })

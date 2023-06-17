@@ -6,7 +6,7 @@ import { l } from '@log'
 import type { TMintInfoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles'
+import { globals, highlight as hi } from '@styles'
 import { getMintInfo } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
@@ -36,7 +36,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 			{info ?
 				<ScrollView>
 					{/* Name, Version & short description */}
-					<View style={[styles.mainInfo, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+					<View style={[globals(color).wrapContainer, styles.mainInfo]}>
 						<Text style={[styles.mintIcon, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER, color: color.TEXT }]}>
 							<MintBoardIcon width={30} height={28} color={hi[highlight]} />
 						</Text>
@@ -53,8 +53,8 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 						}
 					</View>
 					{/* Message of the day - important announcements */}
-					{info.motd &&
-						<View style={[styles.infoEntry, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+					{!!info.motd &&
+						<View style={[globals(color).wrapContainer, styles.infoEntry]}>
 							<View style={styles.motd}>
 								<View>
 									<Text style={[styles.description, { color: color.TEXT }]}>
@@ -67,7 +67,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 						</View>
 					}
 					{/* Contact, Supported NUTs, Public Key */}
-					<View style={[styles.infoEntry, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+					<View style={[globals(color).wrapContainer, styles.infoEntry]}>
 						<Text style={[styles.description, { color: color.TEXT }]}>
 							Contact
 						</Text>
@@ -95,7 +95,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 						<Txt txt={info.pubkey} />
 					</View>
 					{/* Long description */}
-					<View style={[styles.infoEntry, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+					<View style={[globals(color).wrapContainer, styles.infoEntry]}>
 						<Text style={[styles.description, { color: color.TEXT }]}>
 							Additional information
 						</Text>
@@ -116,12 +116,9 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingHorizontal: 20,
-		paddingTop: 130
+		paddingTop: 80
 	},
 	mainInfo: {
-		borderWidth: 1,
-		borderRadius: 25,
 		padding: 20,
 		alignItems: 'center',
 		marginTop: 50,
@@ -146,20 +143,13 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 	},
 	infoEntry: {
-		borderWidth: 1,
-		borderRadius: 25,
-		paddingHorizontal: 20,
-		paddingVertical: 10,
+		paddingVertical: 20,
 		marginBottom: 20,
 	},
 	description: {
 		fontSize: 14,
 		fontWeight: '500',
 		marginBottom: 5,
-	},
-	separator: {
-		borderBottomWidth: 1,
-		marginVertical: 10,
 	},
 	contactWrap: {
 		flexDirection: 'row',

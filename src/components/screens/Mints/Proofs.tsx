@@ -1,15 +1,14 @@
 import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
-import Separator from '@comps/Separator'
 import { getProofsByMintUrl } from '@db'
 import type { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
-import { ProofListHeader } from '@pages/Lightning/modal'
+import { ProofListHeader } from '@screens/Lightning/modal'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
-import { getMintCurrentKeySetId } from '@src/wallet'
 import { globals } from '@styles'
+import { getMintCurrentKeySetId } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
@@ -46,7 +45,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 						renderItem={data => (
 							<ProofRow key={data.item.secret} proof={data.item} isLatestKeysetId={data.item.id === mintKeysetId} />
 						)}
-						ItemSeparatorComponent={() => <Separator />}
+						ItemSeparatorComponent={() => <View style={{ borderBottomWidth: 1, borderColor: color.BORDER }} />}
 					/>
 				</View>
 			</View>

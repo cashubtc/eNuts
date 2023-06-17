@@ -2,7 +2,7 @@ import MyModal from '@modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet,Text, TouchableOpacity } from 'react-native'
 
 import Button from './Button'
 

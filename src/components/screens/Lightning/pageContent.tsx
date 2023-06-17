@@ -2,12 +2,13 @@ import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import { ZapIcon } from '@comps/Icons'
 import LNInvoiceAmountModal from '@comps/InvoiceAmount'
+import Txt from '@comps/Txt'
 import { getProofsByMintUrl } from '@db'
 import { l } from '@log'
 import { PromptModal } from '@modal/Prompt'
-import { IMintUrl, IProofSelection } from '@model'
+import type { IMintUrl, IProofSelection } from '@model'
 import { TLightningPageProps, TSendTokenPageProps } from '@model/nav'
-import { CoinSelectionModal, CoinSelectionResume } from '@pages/Lightning/modal'
+import { CoinSelectionModal, CoinSelectionResume } from '@screens/Lightning/modal'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
@@ -103,62 +104,6 @@ export default function LNPageContent({
 	return (
 		<>
 			<View style={styles.pickerWrap}>
-				{/* header */}
-				{!isSendingToken &&
-					<Text style={[styles.lnHint, { color: color.TEXT }]}>
-						{nav.route.params?.mint ?
-							'Pay to a Lightning wallet'
-							:
-							`Select a mint ${nav.route.params?.send ? 'to pay from' : 'to top up'}`
-						}
-					</Text>
-				}
-				{/* Single mint with balance, or mint picker */}
-				<MintPanel
-					nav={nav}
-					mints={mints}
-					selectedMint={selectedMint}
-					setSelectedMint={setSelectedMint}
-				/>
-				{/* Mint balance, updates while selecting different mint */}
-				{mints.length > 0 && !nav.route.params?.mint &&
-					<View style={[styles.mintOpts, { borderBottomColor: color.BORDER }]}>
-						<Text style={globals(color).txt}>
-							Balance
-						</Text>
-						<View style={styles.mintBal}>
-							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								{formatInt(mintBal)}
-							</Text>
-							<ZapIcon width={18} height={18} color={color.TEXT} />
-						</View>
-					</View>
-				}
-				{!mints.length ?
-					<Text style={[styles.awaitInvoice, { color: color.TEXT }]}>
-						Found no mints
-					</Text>
-					: null
-				}
-				{/* Coin selection toggle */}
-				{+amount > 0 && mintBal >= +amount / 1000 && !isKeyboardOpen &&
-					<>
-						<View style={styles.overview}>
-							<Text style={globals(color).txt}>
-								Coin selection
-							</Text>
-							<Switch
-								trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
-								thumbColor={color.TEXT}
-								onValueChange={toggleSwitch}
-								value={isEnabled}
-							/>
-						</View>
-						{getSelectedAmount(proofs) > 0 && isEnabled &&
-							<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} />
-						}
-					</>
-				}
 				{/* Amount to send */}
 				{mints.length > 0 && mintBal > 0 && isSendingToken &&
 					<View style={styles.amountWrap}>
@@ -173,11 +118,53 @@ export default function LNPageContent({
 							value={amount}
 							maxLength={8}
 						/>
-						<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
-							Satoshi
-						</Text>
+						<Txt txt='Satoshi' styles={[{ color: color.TEXT_SECONDARY, marginBottom: 20 }]} />
 					</View>
 				}
+				{/* Mint balance, updates while selecting different mint */}
+				<View style={[globals(color).wrapContainer, styles.wrap]}>
+					{/* Single mint with balance, or mint picker */}
+					<MintPanel
+						nav={nav}
+						mints={mints}
+						selectedMint={selectedMint}
+						setSelectedMint={setSelectedMint}
+					/>
+					{mints.length > 0 && !nav.route.params?.mint &&
+						<View style={styles.mintOpts}>
+							<Txt txt='Balance' />
+							<View style={styles.mintBal}>
+								<Text style={[styles.mintAmount, { color: color.TEXT }]}>
+									{formatInt(mintBal)}
+								</Text>
+								<ZapIcon width={18} height={18} color={color.TEXT} />
+							</View>
+						</View>
+					}
+					{!mints.length ?
+						<Txt txt='Found no mints' styles={[globals(color).navTxt, styles.awaitInvoice]} />
+						: null
+					}
+					{/* Coin selection toggle */}
+					{+amount > 0 && mintBal >= +amount / 1000 && !isKeyboardOpen &&
+						<>
+							<View style={styles.overview}>
+								<Txt txt='Coin selection' />
+								<Switch
+									trackColor={{ false: color.BORDER, true: hi[highlight] }}
+									thumbColor={color.TEXT}
+									onValueChange={toggleSwitch}
+									value={isEnabled}
+								/>
+							</View>
+							{getSelectedAmount(proofs) > 0 && isEnabled &&
+								<View style={{ marginHorizontal: -20 }}>
+									<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} />
+								</View>
+							}
+						</>
+					}
+				</View>
 				{/* Token memo only if isSendingToken (sending a cashu token) */}
 				{+amount > 0 && isSendingToken &&
 					<TextInput
@@ -232,8 +219,8 @@ export default function LNPageContent({
 						: // user wants to create a cashu token
 						<>
 							{+amount < 1 &&
-								<Text style={[styles.tokenHint, { color: mintBal > 0 ? color.TEXT_SECONDARY : color.ERROR }]}>
-									{mintBal > 0 ? 'Create a cashu token' : 'Chosen mint has not enough funds!'}
+								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
+									{mintBal > 0 ? '' : 'Chosen mint has not enough funds!'}
 								</Text>
 							}
 							{+amount > 0 && mintBal > 0 && mintBal >= +amount && !isKeyboardOpen &&
@@ -252,7 +239,7 @@ export default function LNPageContent({
 			<LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
 				setLNAmountModal={setLnAmountModalCB}
-				mintUrl={selectedMint?.mintUrl || ''}
+				mintUrl={selectedMint?.mintUrl ?? ''}
 			/>
 			{/* coin selection page */}
 			{isEnabled &&
@@ -277,15 +264,17 @@ export default function LNPageContent({
 const styles = StyleSheet.create({
 	pickerWrap: {
 		width: '100%',
-		marginTop: 110,
+		marginTop: 100,
+	},
+	wrap: {
+		marginHorizontal: -20,
+		marginBottom: 20,
 	},
 	mintOpts: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingTop: 5,
-		paddingBottom: 15,
-		borderBottomWidth: 1,
+		paddingVertical: 10,
 	},
 	mintBal: {
 		flex: 1,
@@ -299,7 +288,6 @@ const styles = StyleSheet.create({
 	amountWrap: {
 		width: '100%',
 		alignItems: 'center',
-		marginTop: 20,
 	},
 	amount: {
 		fontSize: 40,
@@ -310,11 +298,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingTop: 15,
+		marginBottom: 10
 	},
 	awaitInvoice: {
-		fontSize: 20,
-		fontWeight: '500',
 		marginTop: 50,
 		textAlign: 'center',
 	},
@@ -324,17 +310,6 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		paddingHorizontal: 20,
-	},
-	sendBtnWrap: {
-		marginTop: 25,
-		marginBottom: 25,
-	},
-	lnHint: {
-		fontSize: 20,
-		fontWeight: '500',
-		marginVertical: 15,
-		textAlign: 'center',
-		lineHeight: 30,
 	},
 	tokenHint: {
 		fontSize: 20,
