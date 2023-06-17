@@ -40,6 +40,13 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		textAlign: 'center',
 		color: color.TEXT,
 	},
+	wrapContainer: {
+		borderWidth: 1,
+		borderRadius: 20,
+		borderColor: color.BORDER,
+		backgroundColor: color.INPUT_BG,
+		paddingHorizontal: 20,
+	},
 	modalTxt: {
 		fontSize: 16,
 		textAlign: 'center',
