@@ -130,7 +130,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				<Button txt='Save' onPress={() => void handleEditContact()}
 				/>
 				<TouchableOpacity
-					style={{ marginTop: 25 }}
+					style={styles.cancel}
 					onPress={() => {
 						setOpenEdit(false)
 						setEditContact({
@@ -204,10 +204,15 @@ const styles = StyleSheet.create({
 	},
 	action: {
 		alignItems: 'center',
-		padding: 10
+		paddingHorizontal: 20,
+		paddingVertical: 5,
 	},
 	actionTxt: {
 		marginTop: 5,
 		fontSize: 12,
+	},
+	cancel: {
+		marginTop: 25,
+		marginBottom: 10
 	}
 })

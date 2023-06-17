@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
 	minBalWrap: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		marginTop: 20,
+		marginVertical: 20,
 	},
 	singleMint: {
 		fontSize: 16,

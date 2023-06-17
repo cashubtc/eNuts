@@ -192,7 +192,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				/>
 				<Button txt='Save' onPress={() => void handleNewContact()} />
 				<TouchableOpacity
-					style={{ marginTop: 25 }}
+					style={styles.cancel}
 					onPress={() => setOpenNew({ open: false, isOwner: false })}
 				>
 					<Text style={globals(color, highlight).pressTxt}>
@@ -280,5 +280,9 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		right: 20,
 		bottom: 80,
+	},
+	cancel: {
+		marginTop: 25,
+		marginBottom: 10
 	}
 })

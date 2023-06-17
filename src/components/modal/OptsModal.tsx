@@ -2,7 +2,7 @@ import ActionButtons from '@comps/ActionButtons'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import MyModal from '.'
 
@@ -26,6 +26,7 @@ export default function OptsModal({
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible}>
+			<View style={{ marginVertical: 10 }} />
 			<ActionButtons
 				topBtnTxt={button1Txt}
 				topBtnAction={onPressFirstBtn}
@@ -46,7 +47,6 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: '500',
 		marginTop: 15,
-		marginBottom: -15,
 		padding: 10,
 	},
 })

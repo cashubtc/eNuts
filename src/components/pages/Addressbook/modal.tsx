@@ -9,7 +9,7 @@ interface IAddressBookModalProps {
 
 export default function AddressbookModal({ closeModal, setInput }: IAddressBookModalProps) {
 	return (
-		<MyModal type='invoiceAmount' animation='slide' visible>
+		<MyModal type='invoiceAmount' animation='slide' visible isContactList>
 			<AddressBook
 				isModal
 				closeModal={closeModal}
