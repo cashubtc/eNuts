@@ -10,6 +10,7 @@ export default function MintBackup({ navigation, route }: TMintBackupPageProps) 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
+				screenName='Mint Backup'
 				withBackBtn
 				backHandler={() => navigation.goBack()}
 			/>

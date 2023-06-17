@@ -31,6 +31,7 @@ export default function SecuritySettings({ navigation }: TSecuritySettingsPagePr
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
+				screenName='Security'
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>

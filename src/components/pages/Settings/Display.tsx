@@ -10,6 +10,7 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
+				screenName='Display'
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>

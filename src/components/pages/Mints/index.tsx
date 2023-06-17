@@ -123,7 +123,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<View style={styles.topSection}>
-				<TopNav nav={{ navigation, route }} />
+				<TopNav screenName='Mints' nav={{ navigation, route }} />
 				<View style={styles.topContent}>
 					{/* Header */}
 					<View style={[styles.headerWrap, { marginBottom: 20 }]}>

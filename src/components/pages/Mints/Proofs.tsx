@@ -35,7 +35,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Proofs' withBackBtn />
 			<View style={styles.content}>
 				{/* Header */}
 				<Text style={[globals(color).header, styles.header]}>

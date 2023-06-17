@@ -33,7 +33,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav nav={{ navigation, route }} />
+			<TopNav screenName='History' nav={{ navigation, route }} />
 			<View style={styles.topSection}>
 				<Text style={[globals(color).header, { marginBottom: 0 }]}>
 					History

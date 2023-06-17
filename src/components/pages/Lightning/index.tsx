@@ -62,7 +62,14 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav
+				screenName={route.params?.mint || route.params?.send ?
+					'Zap'
+					:
+					'Receive'
+				}
+				withBackBtn
+			/>
 			<LNPageContent
 				nav={{ navigation, route }}
 				mints={mints}

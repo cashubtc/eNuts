@@ -42,7 +42,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName='Swap' withBackBtn />
 			{/* Header */}
 			<Text style={[globals(color).header, styles.header]}>
 				Inter-Mint Swap

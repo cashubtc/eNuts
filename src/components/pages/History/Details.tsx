@@ -71,7 +71,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav withBackBtn />
+			<TopNav screenName={isLn ? LNstr : Ecash} withBackBtn />
 			<View style={styles.topSection}>
 				<Txt
 					txt={isLn ? LNstr : Ecash}
