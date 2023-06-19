@@ -1,6 +1,7 @@
 import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
+import { isIOS } from '@consts'
 import type { IInvoiceState } from '@model/ln'
 import { InvoiceAmountModal, InvoiceModal } from '@screens/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
@@ -8,7 +9,7 @@ import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, vib } from '@util'
 import { requestMint } from '@wallet'
 import { createRef, useContext, useEffect, useState } from 'react'
-import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Animated, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native'
 
 import { useShakeAnimation } from './animation/Shake'
 
@@ -90,7 +91,10 @@ export default function LNInvoiceAmountModal({
 						Satoshi
 					</Text>
 				</Animated.View>
-				<View style={styles.invoiceBtns}>
+				<KeyboardAvoidingView
+					style={styles.invoiceBtns}
+					behavior={isIOS ? 'padding' : 'height'}
+				>
 					<Button
 						txt={loading ? 'Invoice incoming...' : 'Create invoice'}
 						onPress={handleAmountSubmit}
@@ -100,7 +104,7 @@ export default function LNInvoiceAmountModal({
 							Cancel
 						</Text>
 					</TouchableOpacity>
-				</View>
+				</KeyboardAvoidingView>
 			</InvoiceAmountModal>
 			<InvoiceModal
 				invoice={invoice}

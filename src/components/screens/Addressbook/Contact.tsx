@@ -6,6 +6,7 @@ import { delContact, editContact as editC, getContacts } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
 import type { IContactPageProps } from '@model/nav'
+import TopNav from '@nav/TopNav'
 import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
@@ -58,17 +59,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	}, [openEdit])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			{/* Go back button */}
-			<View style={styles.topNav}>
-				<TouchableOpacity
-					style={styles.topIconR}
-					onPress={() => navigation.navigate('Address book')}
-				>
-					<Text style={globals(color, highlight).pressTxt}>
-						Back
-					</Text>
-				</TouchableOpacity>
-			</View>
+			<TopNav withBackBtn />
 			{/* Contact info */}
 			<View style={[styles.contactContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
 				<Text style={[styles.contactPic, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER, color: color.TEXT }]}>
@@ -153,19 +144,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: 100
-	},
-	topNav: {
-		position: 'absolute',
-		top: 75,
-		left: 20,
-		right: 20,
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'flex-end',
-	},
-	topIconR: {
-		paddingLeft: 20,
-		paddingBottom: 20
 	},
 	contactContainer: {
 		borderWidth: 1,

@@ -1,6 +1,7 @@
 
 import { IExpoConfig } from '@model'
 import { default as Consts, ExecutionEnvironment as ExecEnv } from 'expo-constants'
+import { Platform } from 'react-native'
 
 const { executionEnvironment: execEnv } = Consts
 // `true` when running in Expo Go.
@@ -63,5 +64,5 @@ export const isTestMode = (typeof __TEST__ === 'boolean' && __TEST__)
 	|| (env?.NODE_ENV === 'test' && env?.NODE_ENV_SHORT === 'test')
 	|| process.env.NODE_ENV === 'test' || config?.extra?.NODE_ENV === 'test'
 
-
+export const isIOS = Platform.OS === 'ios'
 
