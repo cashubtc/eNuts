@@ -8,6 +8,7 @@ import { Linking, Vibration } from 'react-native'
 
 import { getLanguageCode } from './localization'
 import { isArr, isBuf, isNum, isStr } from './typeguards'
+import usePrompt from '@comps/hooks/Prompt'
 
 export * from './typeguards'
 
@@ -172,8 +173,12 @@ export function cleanUpNumericStr(str: string) {
 }
 // TODO FIXXME
 export function openUrl(url: string) {
+	// Prompt modal
+	const { prompt, openPromptAutoClose } = usePrompt()
 	if (!url?.trim()) { return }
-	return Linking.openURL(url).catch(err => l('openURL error:', err))
+	return Linking.openURL(url).catch(err => openPromptAutoClose({ msg: err }) )
 	/* return Linking.canOpenURL(url)
 		.then((canOpen) => canOpen && Linking.openURL(url)) */
 }
+
+//l('openURL error:', err))
