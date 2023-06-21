@@ -163,7 +163,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			{!isModal &&
 				<View style={styles.newContactBtn}>
 					<IconBtn
-						icon={<PlusIcon width={15} height={15} color={hi[highlight]} />}
+						icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
 						onPress={() => setOpenNew({ open: true, isOwner: false })}
 						testId='testNewContact'
 					/>
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
 	},
 	addOwnAddress: {
 		paddingVertical: 10,
-		marginRight: 16,
+		marginHorizontal: 20,
 	},
 	nameEntry: {
 		width: '100%',

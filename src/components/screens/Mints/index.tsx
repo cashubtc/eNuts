@@ -209,7 +209,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			{/* add new mint button */}
 			<View style={styles.newMint}>
 				<IconBtn
-					icon={<PlusIcon width={15} height={15} color={hi[highlight]} />}
+					icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
 					onPress={() => setNewMintModal(true)}
 				/>
 			</View>

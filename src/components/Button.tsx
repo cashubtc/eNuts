@@ -44,13 +44,13 @@ interface IIconBtnProps {
 }
 
 export function IconBtn({ icon, onPress, testId }: IIconBtnProps) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { highlight } = useContext(ThemeContext)
 	return (
 		<SafeAreaView>
 			<TouchableOpacity
 				accessibilityRole='button'
 				activeOpacity={.5}
-				style={[styles.iconBtn, { backgroundColor: color.BACKGROUND, borderColor: hi[highlight] }]}
+				style={[styles.iconBtn, { backgroundColor: hi[highlight], borderColor: hi[highlight] }]}
 				onPress={onPress}
 				testID={testId}
 			>
