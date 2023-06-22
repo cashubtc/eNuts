@@ -22,10 +22,10 @@ export default function Button({ txt, border, outlined, filled, disabled, onPres
 				disabled={disabled}
 				style={[
 					styles.touchableOpacity,
-					{ backgroundColor: hi[highlight] },
+					{ backgroundColor: hi[highlight], padding: 20 },
 					border ? { borderWidth: 1, borderColor: '#FAFAFA' } : {},
 					filled ? { backgroundColor: '#FAFAFA' } : {},
-					outlined ? { backgroundColor: 'transparent', borderWidth: 1, borderColor: hi[highlight] } : {}
+					outlined ? { backgroundColor: 'transparent', padding: 18, borderWidth: 1, borderColor: hi[highlight] } : {}
 				]}
 				onPress={onPress}
 			>
@@ -65,8 +65,7 @@ const styles = StyleSheet.create({
 		width: '100%'
 	},
 	touchableOpacity: {
-		padding: 20,
-		borderRadius: 50
+		borderRadius: 50,
 	},
 	btnTxt: {
 		color: '#FAFAFA',
