@@ -50,6 +50,13 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			setOpenEdit(false)
 		}
 	}
+	const handleEditCancel = () => {
+		setOpenEdit(false)
+		setEditContact({
+			name: route.params.contact?.name,
+			ln: route.params.contact?.ln
+		})
+	}
 	useEffect(() => {
 		setEditContact({
 			name: route.params.contact?.name,
@@ -96,7 +103,12 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				</TouchableOpacity>
 			</View>
 			{/* Edit contact modal */}
-			<MyModal type='bottom' animation='slide' visible={openEdit && !prompt.open}>
+			<MyModal
+				type='bottom'
+				animation='slide'
+				visible={openEdit && !prompt.open}
+				close={handleEditCancel}
+			>
 				<Text style={globals(color).modalHeader}>
 					Edit contact
 				</Text>
@@ -122,13 +134,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				/>
 				<TouchableOpacity
 					style={styles.cancel}
-					onPress={() => {
-						setOpenEdit(false)
-						setEditContact({
-							name: route.params.contact?.name,
-							ln: route.params.contact?.ln
-						})
-					}}
+					onPress={handleEditCancel}
 				>
 					<Text style={globals(color, highlight).pressTxt}>
 						Cancel

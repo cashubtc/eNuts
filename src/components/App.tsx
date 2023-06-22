@@ -243,7 +243,7 @@ function _App(_initialProps: IInitialProps) {
 							<Navigator />
 							<StatusBar style="auto" />
 							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-							<MyModal type='question' visible={claimOpen}>
+							<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
 								<Text style={globals(color, highlight).modalHeader}>
 									Found a cashu token in your clipboard
 								</Text>

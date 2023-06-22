@@ -312,7 +312,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			}
 			{/* Custom mint name */}
 			{customNameOpen &&
-				<MyModal type='bottom' animation='slide' visible={true}>
+				<MyModal type='bottom' animation='slide' visible close={() => setCustomNameOpen(false)}>
 					<Text style={globals(color).modalHeader}>
 						{edit ? 'Edit mint name' : 'Add a custom name'}
 					</Text>

@@ -127,7 +127,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		}
 	}, [timeLeft])
 	return (
-		<MyModal type='invoiceAmount' animation='slide' visible>
+		<MyModal type='invoiceAmount' animation='slide' visible close={closeDetails}>
 			<View style={styles.topContainer}>
 				<Text style={globals(color, highlight).modalHeader}>
 					Lightning payment request

@@ -86,7 +86,13 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 		}
 	}, [expiry, expiryTime])
 	return (
-		<MyModal type='invoiceAmount' animation='fade' visible={visible} success={paid === 'paid' || mintUrl === _mintUrl}>
+		<MyModal
+			type='invoiceAmount'
+			animation='fade'
+			visible={visible}
+			success={paid === 'paid' || mintUrl === _mintUrl}
+			close={close}
+		>
 			{invoice.decoded && mintUrl !== _mintUrl && (!paid || paid === 'unpaid') ?
 				<View style={styles.container}>
 					<View style={styles.invoiceWrap}>
@@ -174,6 +180,10 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	const { color, highlight } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
+	const cancelCoinSelection = () => {
+		setVisible(false)
+		disableCS()
+	}
 	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
 	useEffect(() => {
 		if (!mint?.mintUrl) { return }
@@ -182,17 +192,14 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 		})()
 	}, [mint?.mintUrl])
 	return (
-		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
+		<MyModal type='invoiceAmount' animation='slide' visible={visible} close={cancelCoinSelection}>
 			<View style={styles.proofContainer}>
 				<View style={styles.header}>
 					<Text style={globals(color).navTxt}>
 						Coin selection
 					</Text>
 					<TouchableOpacity
-						onPress={() => {
-							setVisible(false)
-							disableCS()
-						}}
+						onPress={cancelCoinSelection}
 					>
 						<Text style={globals(color, highlight).pressTxt}>
 							Cancel

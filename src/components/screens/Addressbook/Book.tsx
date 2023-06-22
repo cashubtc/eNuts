@@ -176,7 +176,12 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				</View>
 			}
 			{/* Add new contact modal */}
-			<MyModal type='bottom' animation='slide' visible={openNew.open && !prompt.open}>
+			<MyModal
+				type='bottom'
+				animation='slide'
+				visible={openNew.open && !prompt.open}
+				close={() => setOpenNew({ open: false, isOwner: false })}
+			>
 				<Text style={globals(color).modalHeader}>
 					{openNew.isOwner ? 'Your LNURL' : 'New contact'}
 				</Text>
