@@ -186,7 +186,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						placeholder="Name"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
-						onChangeText={name => setNewContact({ ...newContact, name })}
+						onChangeText={name => setNewContact(prev => ({ ...prev, name }))}
 					/>
 				}
 				<TextInput
@@ -194,7 +194,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					placeholder="zap@me.now"
 					placeholderTextColor={color.INPUT_PH}
 					selectionColor={hi[highlight]}
-					onChangeText={lnUrl => setNewContact({ ...newContact, lnUrl })}
+					onChangeText={lnUrl => setNewContact(prev => ({ ...prev, lnUrl }))}
 				/>
 				<Button txt='Save' onPress={() => void handleNewContact()} />
 				<TouchableOpacity
