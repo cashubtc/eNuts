@@ -25,7 +25,7 @@ export default function OptsModal({
 }: IOptsModal) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
-		<MyModal type='bottom' animation='slide' visible={visible}>
+		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
 			<View style={{ marginVertical: 10 }} />
 			<ActionButtons
 				topBtnTxt={button1Txt}

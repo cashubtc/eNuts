@@ -10,6 +10,7 @@ interface IMyModalProps {
 	visible: boolean
 	success?: boolean
 	isContactList?: boolean
+	close?: () => void
 	children: React.ReactNode
 }
 
@@ -19,6 +20,7 @@ export default function MyModal({
 	visible,
 	success,
 	isContactList,
+	close,
 	children
 }: IMyModalProps) {
 
@@ -52,9 +54,10 @@ export default function MyModal({
 		visible ?
 			<View style={styles(color, highlight).modalParent}>
 				<Modal
+					visible
+					transparent
 					animationType={animation}
-					transparent={true}
-					visible={visible}
+					onRequestClose={close}
 				>
 					<KeyboardAvoidingView
 						style={getCorrectStyle()}
