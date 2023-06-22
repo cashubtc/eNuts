@@ -15,7 +15,7 @@ interface IInitialModalProps {
 export default function InitialModal({ visible, onConfirm, onCancel }: IInitialModalProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
-		<MyModal type='bottom' animation='slide' visible={visible}>
+		<MyModal type='bottom' animation='slide' visible={visible} close={onCancel}>
 			<Text style={globals(color, highlight).modalHeader}>
 				Get started
 			</Text>

@@ -230,7 +230,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				</View>
 			</ScrollView>
 			<BottomNav navigation={navigation} route={route} />
-			<MyModal type='question' visible={qr.open}>
+			<MyModal type='question' visible={qr.open} close={() => setQr({ open: false, error: false })}>
 				{qr.error ?
 					<Txt txt='The amount of data is too big for a QR code.' styles={[{ textAlign: 'center' }]} />
 					:
