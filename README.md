@@ -93,9 +93,7 @@ Reviewing Pull requests that contains documentation updates (marked with a docum
 - **Providing translations**  
 We will implement translations ASAP and provide a clear contribution guide to how you can help translating the application.
 
-Each of these tasks is highly impactful, and maintainers will greatly appreciate your help.
-
-If you are eager to start contributing code right away, we have a list of [good first issues](https://github.com/cashubtc/eNuts/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) that contain bugs which have a relatively limited scope.
+Each of these tasks is highly impactful, and maintainers will greatly appreciate your help. If you are eager to start contributing code right away, we have a list of [good first issues](https://github.com/cashubtc/eNuts/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) that contain bugs which have a relatively limited scope.
 
 We use GitHub [issues](https://github.com/cashubtc/eNuts/issues) and [pull requests](https://github.com/cashubtc/eNuts/pulls) to keep track of bug reports and contributions from the community. Pull request have to pass the tests and to be reviewed by a maintainer.
 
