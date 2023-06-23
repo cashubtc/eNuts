@@ -1,4 +1,5 @@
-import { getDecodedToken, Proof, Token } from '@cashu/cashu-ts'
+import type { Proof, Token } from '@cashu/cashu-ts'
+import { getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
 
 export function getTokenInfo(encodedToken: string) {

@@ -1,1 +1,1 @@
-export * from './reactotron'
+export { isReactotronRunnig, setupReactotron } from './reactotron'

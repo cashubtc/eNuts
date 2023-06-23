@@ -1,6 +1,7 @@
 import { isIOS } from '@consts'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi, TPref } from '@styles'
+import type { TPref } from '@styles'
+import { highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
 

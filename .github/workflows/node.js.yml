@@ -1,4 +1,4 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI
@@ -21,16 +21,28 @@ jobs:
 
         steps:
             - uses: actions/checkout@v3
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8.6.3
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
-                  cache: "npm"
-            - run: npm ci
-            - run: npm run lint
-            - run: npm run build --if-present
-            - run: npm run test:coverage
-            # - run: npm run testtsx:coverage
+                  cache: "pnpm"
+            - run: pnpm ci
+            - run: pnpm lint
+            - run: pnpm build --if-present
+            - run: |
+                  pnpm metro build \
+                  -c metro.config.js \
+                  -p android -g \
+                  --reset-cache \
+                  -O build \
+                  src/AppEntry.ts
+
+            - run: pnpm tsc
+
+            - run: pnpm test:coverage
             - name: Upload coverage reports to Codecov
               uses: codecov/codecov-action@v3
               with:

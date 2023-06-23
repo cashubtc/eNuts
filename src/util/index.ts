@@ -3,13 +3,13 @@ import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
 import type { ILnUrl, IProofSelection } from '@model'
 import axios from 'axios'
-import { Buffer } from 'buffer/'
+import type { Buffer } from 'buffer/'
 import { Linking, Vibration } from 'react-native'
 
 import { getLanguageCode } from './localization'
 import { isArr, isBuf, isNum, isStr } from './typeguards'
 
-export * from './typeguards'
+export { isArr, isArrOf, isArrOfNonNullable, isArrOfNum, isArrOfObj, isArrOfStr, isBool, isBuf, isErr, isFunc, isNonNullable, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
 
 export function rndInt(min: number, max: number) { // min and max included
 	return Math.floor(Math.random() * (max - min + 1) + min)
@@ -125,7 +125,8 @@ export function isCashuToken(token: string) {
 	try { getDecodedToken(token.trim()) } catch (_) { return }
 	return token.trim()
 }
-export function* arrToChunks<T>(arr: T[], n: number) {
+
+export function* arrToChunks<T extends T[number][]>(arr: T, n: number) {
 	for (let i = 0; i < arr.length; i += n) {
 		yield arr.slice(i, i + n)
 	}
