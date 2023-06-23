@@ -77,7 +77,7 @@ The NUT documents (**N**otation, **U**sage and **T**erminology) each specify par
 ## 📋 Requirements
 
 - eNuts is built using the managed workflow provided by Expo, so the easiest way to run a development environment is their [Expo Go](https://expo.dev/client) app.
-- npm version or higher
+- NodeJS 16 or higher.
 
 ## 👏 Contribute
 
