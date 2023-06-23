@@ -29,7 +29,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Settings' />
+			<TopNav screenName='Settings' nav={{ navigation, route }} />
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
 					txt='Security'
