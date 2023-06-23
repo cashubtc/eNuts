@@ -192,7 +192,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 		})()
 	}, [mint?.mintUrl])
 	return (
-		<MyModal type='invoiceAmount' animation='slide' visible={visible} close={cancelCoinSelection}>
+		<MyModal type='invoiceAmount' animation='slide' visible={visible} close={cancelCoinSelection} hasNoPadding>
 			<View style={styles.proofContainer}>
 				<View style={styles.header}>
 					<Text style={globals(color).navTxt}>
