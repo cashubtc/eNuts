@@ -31,7 +31,7 @@ jobs:
                   token: ${{ secrets.EXPO_TOKEN }}
 
             - name: 📦 Install dependencies
-              run: pnpm ci
+              run: pnpm install
 
             - name: 🚀 Build app
               run: pnpm build:ci
