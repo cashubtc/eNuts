@@ -1,5 +1,6 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
+import useLoading from '@comps/hooks/Loading'
 import QR from '@comps/QR'
 import Separator from '@comps/Separator'
 import Success from '@comps/Success'
@@ -180,6 +181,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	const { color, highlight } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
+	const { loading, startLoading, stopLoading } = useLoading()
 	const cancelCoinSelection = () => {
 		setVisible(false)
 		disableCS()
@@ -188,8 +190,11 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	useEffect(() => {
 		if (!mint?.mintUrl) { return }
 		void (async () => {
+			startLoading()
 			setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
+			stopLoading()
 		})()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [mint?.mintUrl])
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible} close={cancelCoinSelection} hasNoPadding>
@@ -210,33 +215,39 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 				<View style={{ paddingHorizontal: 20 }}>
 					<ProofListHeader />
 				</View>
-				<View
-					style={[
-						globals(color).wrapContainer,
-						styles.listWrap,
-						{ marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0 }
-					]}
-				>
-					<FlashList
-						data={proofs}
-						estimatedItemSize={300}
-						showsVerticalScrollIndicator={false}
-						contentContainerStyle={{ paddingHorizontal: 20 }}
-						ItemSeparatorComponent={() => <Separator />}
-						renderItem={data => (
-							<CoinSelectionRow
-								key={data.item.secret}
-								proof={data.item}
-								isLatestKeysetId={mintKeysetId === data.item.id}
-								setChecked={() => {
-									const proofIdx = proofs.findIndex(proof => proof.secret === data.item.secret)
-									const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
-									setProof(updated)
-								}}
-							/>
-						)}
-					/>
-				</View>
+				{!loading &&
+					<View
+						style={[
+							globals(color).wrapContainer,
+							{
+								paddingHorizontal: 0,
+								height: Math.floor(proofs.length * 56),
+								// adds a margin bottom if the "confirm" button is visible
+								marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0
+							},
+						]}
+					>
+						<FlashList
+							data={proofs}
+							estimatedItemSize={300}
+							showsVerticalScrollIndicator={false}
+							contentContainerStyle={{ paddingHorizontal: 20 }}
+							ItemSeparatorComponent={() => <Separator />}
+							renderItem={data => (
+								<CoinSelectionRow
+									key={data.item.secret}
+									proof={data.item}
+									isLatestKeysetId={mintKeysetId === data.item.id}
+									setChecked={() => {
+										const proofIdx = proofs.findIndex(proof => proof.secret === data.item.secret)
+										const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
+										setProof(updated)
+									}}
+								/>
+							)}
+						/>
+					</View>
+				}
 			</View>
 			{/* Confirm button */}
 			{getSelectedAmount(proofs) >= lnAmount &&
@@ -317,9 +328,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingHorizontal: 20,
 		marginBottom: 20,
-	},
-	listWrap: {
-		flex: 1,
 	},
 	overview: {
 		flexDirection: 'row',
