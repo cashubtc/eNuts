@@ -1,4 +1,4 @@
-import { Theme } from '@react-navigation/native'
+import type { Theme } from '@react-navigation/native'
 
 // Override the theme in react native navigation to accept our custom theme props.
 declare module '@react-navigation/native-stack' {

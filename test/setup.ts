@@ -2,7 +2,7 @@
 // eslint-disable-next-line simple-import-sort/imports
 import 'react-native'
 
-import { Locale } from 'expo-localization'
+import type { Locale } from 'expo-localization'
 
 import { getDatabase } from './wrapper/getTestDb'
 

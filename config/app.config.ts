@@ -1,5 +1,5 @@
 import { config as dotenvConfig } from 'dotenv'
-import { ExpoConfig } from 'expo/config'
+import type { ExpoConfig } from 'expo/config'
 
 import { version } from './../package.json'
 
