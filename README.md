@@ -18,14 +18,14 @@ eNuts is a strongly typed mobile [**Cashu**](https://github.com/cashubtc) wallet
 
 ## Contents
 
-- [🐿️R&D](#-join-the-research-and-development-groups)
-- [⚠️Disclaimer](#-disclaimer)
-- [🥜Implemented NUTs](#-implemented-nuts)
-- [📋Requirements](#-requirements)
-- [👏Contribute](#-contribute)
-- [🚀Getting started](#-getting-started)
-- [🎉Releases](#-releases)
-- [📄License](#-license)
+- 🐿️[R&D](#-join-the-research-and-development-groups)
+- ⚠️[Disclaimer](#-disclaimer)
+- 🥜[Implemented NUTs](#-implemented-nuts)
+- 📋[Requirements](#-requirements)
+- 👏[Contribute](#-contribute)
+- 🚀[Getting started](#-getting-started)
+- 🎉[Releases](#-releases)
+- 📄[License](#-license)
 
 ## 🐿️ Join the research and development groups
 
