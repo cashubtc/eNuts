@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import AddressBook from '@comps/screens/Addressbook/Book'
-import AddressbookModal from '@comps/screens/Addressbook/modal'
-import { l } from '@src/logger'
+import { l } from '@log'
+import AddressBook from '@screens/Addressbook/Book'
+import AddressbookModal from '@screens/Addressbook/modal'
 import { act, fireEvent, render, screen } from '@testing-library/react-native'
 
 jest.useFakeTimers()
