@@ -112,7 +112,7 @@ export default function LNPageContent({
 							placeholder='0'
 							placeholderTextColor={hi[highlight]}
 							style={[styles.amount, { color: hi[highlight] }]}
-							autoFocus={isSendingToken}
+							autoFocus
 							caretHidden
 							onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
 							value={amount}
