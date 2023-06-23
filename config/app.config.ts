@@ -48,7 +48,7 @@ const config: ExpoConfig = {
 	scheme: 'cashu',
 	orientation: 'portrait',
 	icon: './assets/icon_transparent.png',
-	userInterfaceStyle: 'light',
+	userInterfaceStyle: 'automatic',
 	splash: {
 		image: './assets/splash.png',
 		resizeMode: 'contain',
