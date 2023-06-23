@@ -19,7 +19,8 @@ import { NativeModules } from 'react-native'
 import { openInEditor, trackGlobalErrors } from 'reactotron-react-native'
 
 import { Reactotron } from './reactotronClient'
-import { DEFAULT_REACTOTRON_CONFIG, ReactotronConfig } from './reactotronConfig'
+import type { ReactotronConfig } from './reactotronConfig'
+import { DEFAULT_REACTOTRON_CONFIG } from './reactotronConfig'
 import { fakeReactotron } from './reactotronFake'
 
 /**

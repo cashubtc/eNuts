@@ -8,16 +8,21 @@ jobs:
     build:
         env:
             BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
+            CI: true
         runs-on: ubuntu-latest
         steps:
             - name: 🏗 Setup repo
               uses: actions/checkout@v3
 
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8.6.3
+
             - name: 🏗 Setup Node
               uses: actions/setup-node@v3
               with:
                   node-version: 18.x
-                  cache: npm
+                  cache: pnpm
 
             - name: 🏗 Setup EAS
               uses: expo/expo-github-action@v8
@@ -26,7 +31,7 @@ jobs:
                   token: ${{ secrets.EXPO_TOKEN }}
 
             - name: 📦 Install dependencies
-              run: npm install
+              run: pnpm install
 
             - name: 🚀 Build app
-              run: npm run build:ci
+              run: pnpm build:ci

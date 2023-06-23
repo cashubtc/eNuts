@@ -1,4 +1,4 @@
-import { Db } from '@db/Db'
+import type { Db } from '@db/Db'
 import { l } from '@log'
 import type { IKeyValuePair } from '@model'
 import type { Query, SQLResultSetRowList } from 'expo-sqlite'

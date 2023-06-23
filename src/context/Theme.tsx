@@ -1,5 +1,5 @@
 import { l } from '@log'
-import { IPreferences } from '@model'
+import type { IPreferences } from '@model'
 import { dark, light } from '@styles'
 import { createContext, useState } from 'react'
 

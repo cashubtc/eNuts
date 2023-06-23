@@ -1,7 +1,8 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
 import { isCashuToken } from '@util'
 import { useEffect,useState } from 'react'
-import { EmitterSubscription, Linking } from 'react-native'
+import type { EmitterSubscription} from 'react-native'
+import { Linking } from 'react-native'
 
 export interface EventType {
 	url: string
