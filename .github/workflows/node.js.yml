@@ -34,7 +34,6 @@ jobs:
                   cache: "pnpm"
             - run: pnpm install
             - run: pnpm lint
-            - run: pnpm build --if-present
             - run: |
                   pnpm metro build \
                   -c metro.config.js \
