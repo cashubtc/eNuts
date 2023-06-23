@@ -58,6 +58,7 @@ export default function MyModal({
 					transparent
 					animationType={animation}
 					onRequestClose={close}
+					testID='testCoinSelectionModal'
 				>
 					<KeyboardAvoidingView
 						style={getCorrectStyle()}
