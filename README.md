@@ -2,18 +2,31 @@
   <p>
     <img src="https://i.imgur.com/EI7Uvg1.jpeg">
   </p>
-  <h1>A Cashu wallet for Android and iOS</h1>
+  <h2>A Cashu wallet for Android and iOS</h2>
   <div style="display: flex; align-items: center; justify-content: center">
 
   [![codecov](https://codecov.io/gh/cashubtc/eNuts/branch/main/graph/badge.svg?token=MGBC95KGHQ)](https://codecov.io/gh/cashubtc/eNuts)
   ![example workflow](https://github.com/cashubtc/eNuts/actions/workflows/node.js.yml/badge.svg)
-  ![ts](https://badgen.net/badge/Built%20With/TypeScript/blue)
+  ![ts](https://badgen.net/badge/Built%20with/TypeScript/blue)
+  [![runs with Expo Go](https://img.shields.io/badge/Runs%20with%20Expo%20Go-4630EB.svg?style=flat-square&logo=EXPO&labelColor=f3f3f3&logoColor=000)](https://expo.dev/client)
 
   </div>
 </div>
 
 <!-- <a  href="cashu://cashuAeyJ0b2tlbiI6W3sicHJvb2ZzIjpbeyJpZCI6InVUWTFBTE5ZZmQ2ZyIsImFtb3VudCI6MSwic2VjcmV0IjoiRnRIL2EvWUppMGtPVHAvL2R0UkxHcFk2Mjl1VzcxNHBQZE1YZmJTRTFmQT0iLCJDIjoiMDJhZTg2ZWZjODk1OWZiYmU2MzUyM2NiMGVjMDY2MDMzOGNiZjAwNDUxZmFhNTYyNDQ2NGYxNDQ0Zjc4ODhiMDFhIn0seyJpZCI6InVUWTFBTE5ZZmQ2ZyIsImFtb3VudCI6NCwic2VjcmV0IjoiS3lJTDRrOWtNZkhrMjdQeER4MGFBV3E0Qk9RMWZUYzc3RmRjdG1sZVNFRT0iLCJDIjoiMDNiYWNjMjU3ZDFlYmRlNWQ0OThiOTQxNzZkZTFlNmEyYWM5Y2I0Njg4MjYwZDJkMjE1NzU3NWFkYTM1ODFmMjQyIn0seyJpZCI6InVUWTFBTE5ZZmQ2ZyIsImFtb3VudCI6NjQsInNlY3JldCI6IjZoYmptak1ZT01LMVpaS0pmek1LR0NjeXM3TEpUeE9MQ3p2VmJSZ1dqZ289IiwiQyI6IjAyODkwMTk5ODIyOTY4YzM1NWZlZDgzOTBkMDQxOWU2MjY3MjBlNWQ1NjQzMzNjYzRlOGQyOWM2NzdjZDA1MGM1NSJ9XSwibWludCI6Imh0dHBzOi8vdGVzdG51dC5jYXNodS5zcGFjZSJ9XX0"> token</a> -->
 eNuts is a strongly typed mobile [**Cashu**](https://github.com/cashubtc) wallet that has Lightning support and can connect to multiple mints. This project uses the [**cashu-ts**](https://github.com/cashubtc/cashu-ts) library and manages proofs using SQLite. We aim to provide a great user experience by implementing features that make the usage of Ecash easier and safer at the same time. This project is in early stage and we strongly encourage you to exercise caution and only use it for **experimental** or **educational** purposes. Read more about Cashu at [https://docs.cashu.space/](https://docs.cashu.space/)
+
+---
+## Contents
+
+- [🐿️R&D Groups](#-join-the-research-and-development-groups)
+- [⚠️Disclaimer](#-disclaimer)
+- [🥜Implemented NUTs](#-implemented-nuts)
+- [📋Requirements](#-requirements)
+- [👏Contribute](#-contribute)
+- [🚀Getting started](#-getting-started)
+- [🎉Releases](#-releases)
+- [📄License](#-license)
 
 ## 🐿️ Join the research and development groups
 
@@ -22,17 +35,6 @@ eNuts is a strongly typed mobile [**Cashu**](https://github.com/cashubtc) wallet
 [![Cashu R&D](https://img.shields.io/badge/Cashu_R&D-Telegram-0088cc.svg)](https://t.me/CashuBTC)
 [![Cashu R&D](https://img.shields.io/badge/eNuts_R&D-Telegram-0088cc.svg)](https://t.me/eNutsWallet)
 </div>
-
-
-## Contents
-
-- [Disclaimer](#-disclaimer)
-- [Implemented NUTs](#-implemented-nuts)
-- [Requirements](#-requirements)
-- [Contribute](#-contribute)
-- [Getting started](#-getting-started)
-- [Releases](#-releases)
-- [License](#-license)
 
 ## ⚠️ Disclaimer
 
