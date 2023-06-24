@@ -29,7 +29,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 				<Txt txt={props.errorInfo?.componentStack ?? 'Error stack not available'} />
 			</ScrollView>
 			<TouchableOpacity
-				onPress={() => void openUrl(repoIssueUrl)?.catch(err => openPromptAutoClose({ msg: err as string}) )}
+				onPress={() => void openUrl(repoIssueUrl)?.catch((err: string) => openPromptAutoClose({ msg: err }) )}
 				style={styles.bugReport}
 			>
 				<Text style={styles.bugTxt}>

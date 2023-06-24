@@ -144,7 +144,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							txt='Pay with your LN wallet'
 							onPress={() => {
 								void (async () => {
-									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch(err => openPromptAutoClose({ msg: err as string}) )
+									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch((err: string) => openPromptAutoClose({ msg: err }) )
 								})()
 							}}
 						/>

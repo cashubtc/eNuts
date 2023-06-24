@@ -53,7 +53,7 @@ export default function Balance({ balance }: IBalanceProps) {
 				</Text>
 				<TouchableOpacity
 					style={styles.submitIssue}
-					onPress={() => void openUrl(repoIssueUrl)?.catch(err => openPromptAutoClose({ msg: err as string}) )}
+					onPress={() => void openUrl(repoIssueUrl)?.catch((err: string) => openPromptAutoClose({ msg: err }) )}
 				>
 					<Text style={styles.issue}>
 						Submit issue on Github
