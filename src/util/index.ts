@@ -8,7 +8,6 @@ import { Linking, Vibration } from 'react-native'
 
 import { getLanguageCode } from './localization'
 import { isArr, isBuf, isNum, isStr } from './typeguards'
-import usePrompt from '@comps/hooks/Prompt'
 
 export { isArr, isArrOf, isArrOfNonNullable, isArrOfNum, isArrOfObj, isArrOfStr, isBool, isBuf, isErr, isFunc, isNonNullable, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
 

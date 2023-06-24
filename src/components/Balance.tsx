@@ -3,9 +3,10 @@ import { repoIssueUrl } from '@consts/urls'
 import { setPreferences } from '@db'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
-import { formatBalance, formatInt, isBool, openUrl } from '@util'
+import { formatBalance, formatInt, isBool, isErr, openUrl } from '@util'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+
 import usePrompt from './hooks/Prompt'
 import Toaster from './Toaster'
 
@@ -53,7 +54,8 @@ export default function Balance({ balance }: IBalanceProps) {
 				</Text>
 				<TouchableOpacity
 					style={styles.submitIssue}
-					onPress={() => void openUrl(repoIssueUrl)?.catch((err: string) => openPromptAutoClose({ msg: err }) )}
+					onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) => 
+						openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )}
 				>
 					<Text style={styles.issue}>
 						Submit issue on Github

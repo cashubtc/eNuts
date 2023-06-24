@@ -1,10 +1,10 @@
-import Txt from '@comps/Txt'
-import { repoIssueUrl } from '@consts/urls'
-import { openUrl } from '@util'
-import type { ErrorInfo } from 'react'
-import { ScrollView, StyleSheet, Text, TouchableOpacity,View } from 'react-native'
 import usePrompt from '@comps/hooks/Prompt'
 import Toaster from '@comps/Toaster'
+import Txt from '@comps/Txt'
+import { repoIssueUrl } from '@consts/urls'
+import { isErr, openUrl } from '@util'
+import type { ErrorInfo } from 'react'
+import { ScrollView, StyleSheet, Text, TouchableOpacity,View } from 'react-native'
 
 
 export interface ErrorDetailsProps {
@@ -29,7 +29,8 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 				<Txt txt={props.errorInfo?.componentStack ?? 'Error stack not available'} />
 			</ScrollView>
 			<TouchableOpacity
-				onPress={() => void openUrl(repoIssueUrl)?.catch((err: string) => openPromptAutoClose({ msg: err }) )}
+				onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) =>
+					openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )}
 				style={styles.bugReport}
 			>
 				<Text style={styles.bugTxt}>

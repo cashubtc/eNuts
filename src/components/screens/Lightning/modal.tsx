@@ -1,7 +1,7 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
-import usePrompt from '@comps/hooks/Prompt'
 import useLoading from '@comps/hooks/Loading'
+import usePrompt from '@comps/hooks/Prompt'
 import QR from '@comps/QR'
 import Separator from '@comps/Separator'
 import Success from '@comps/Success'
@@ -151,7 +151,8 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							txt='Pay with your LN wallet'
 							onPress={() => {
 								void (async () => {
-									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch((err: string) => openPromptAutoClose({ msg: err }) )
+									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch((err: unknown) => 
+										openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )
 								})()
 							}}
 						/>
