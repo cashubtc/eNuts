@@ -31,21 +31,27 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 		isOwner: false,
 	})
 	// new contact input
-	const [newContactName, setNewContactName] = useState('')
-	const [newContactLN, setNewContactLN] = useState('')
+	const [newContact, setNewContact] = useState({
+		name: '',
+		lnUrl: ''
+	})
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleNewContact = async () => {
-		if (!isLnurl(newContactLN)) {
+		const contact = {
+			name: newContact.name.trim(),
+			lnUrl: newContact.lnUrl.trim(),
+		}
+		if (!isLnurl(contact.lnUrl)) {
 			openPromptAutoClose({ msg: 'Invalid LNURL!', ms: 1500 })
 			return
 		}
-		if (!newContactName && !openNew.isOwner) {
+		if (!contact.name && !openNew.isOwner) {
 			openPromptAutoClose({ msg: 'Invalid name!', ms: 1500 })
 			return
 		}
 		const success = await addContact({
-			name: openNew.isOwner ? 'Personal LNURL' : newContactName,
-			ln: newContactLN,
+			name: openNew.isOwner ? 'Personal LNURL' : contact.name,
+			ln: contact.lnUrl,
 			isOwner: openNew.isOwner
 		})
 		if (!success) {
@@ -163,14 +169,19 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			{!isModal &&
 				<View style={styles.newContactBtn}>
 					<IconBtn
-						icon={<PlusIcon width={15} height={15} color={hi[highlight]} />}
+						icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
 						onPress={() => setOpenNew({ open: true, isOwner: false })}
 						testId='testNewContact'
 					/>
 				</View>
 			}
 			{/* Add new contact modal */}
-			<MyModal type='bottom' animation='slide' visible={openNew.open && !prompt.open}>
+			<MyModal
+				type='bottom'
+				animation='slide'
+				visible={openNew.open && !prompt.open}
+				close={() => setOpenNew({ open: false, isOwner: false })}
+			>
 				<Text style={globals(color).modalHeader}>
 					{openNew.isOwner ? 'Your LNURL' : 'New contact'}
 				</Text>
@@ -180,7 +191,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						placeholder="Name"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
-						onChangeText={setNewContactName}
+						onChangeText={name => setNewContact(prev => ({ ...prev, name }))}
 					/>
 				}
 				<TextInput
@@ -188,7 +199,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					placeholder="zap@me.now"
 					placeholderTextColor={color.INPUT_PH}
 					selectionColor={hi[highlight]}
-					onChangeText={setNewContactLN}
+					onChangeText={lnUrl => setNewContact(prev => ({ ...prev, lnUrl }))}
 				/>
 				<Button txt='Save' onPress={() => void handleNewContact()} />
 				<TouchableOpacity
@@ -270,7 +281,7 @@ const styles = StyleSheet.create({
 	},
 	addOwnAddress: {
 		paddingVertical: 10,
-		marginRight: 16,
+		marginHorizontal: 20,
 	},
 	nameEntry: {
 		width: '100%',

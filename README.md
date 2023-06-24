@@ -2,18 +2,30 @@
   <p>
     <img src="https://i.imgur.com/EI7Uvg1.jpeg">
   </p>
-  <h1>A Cashu wallet for Android and iOS</h1>
+  <h2>A Cashu wallet for Android and iOS</h2>
   <div style="display: flex; align-items: center; justify-content: center">
 
   [![codecov](https://codecov.io/gh/cashubtc/eNuts/branch/main/graph/badge.svg?token=MGBC95KGHQ)](https://codecov.io/gh/cashubtc/eNuts)
   ![example workflow](https://github.com/cashubtc/eNuts/actions/workflows/node.js.yml/badge.svg)
-  ![ts](https://badgen.net/badge/Built%20With/TypeScript/blue)
+  ![ts](https://badgen.net/badge/Built%20with/TypeScript/blue)
+  [![runs with Expo Go](https://img.shields.io/badge/Runs%20with%20Expo%20Go-4630EB.svg?style=flat-square&logo=EXPO&labelColor=f3f3f3&logoColor=000)](https://expo.dev/client)
 
   </div>
 </div>
 
 <!-- <a  href="cashu://cashuAeyJ0b2tlbiI6W3sicHJvb2ZzIjpbeyJpZCI6InVUWTFBTE5ZZmQ2ZyIsImFtb3VudCI6MSwic2VjcmV0IjoiRnRIL2EvWUppMGtPVHAvL2R0UkxHcFk2Mjl1VzcxNHBQZE1YZmJTRTFmQT0iLCJDIjoiMDJhZTg2ZWZjODk1OWZiYmU2MzUyM2NiMGVjMDY2MDMzOGNiZjAwNDUxZmFhNTYyNDQ2NGYxNDQ0Zjc4ODhiMDFhIn0seyJpZCI6InVUWTFBTE5ZZmQ2ZyIsImFtb3VudCI6NCwic2VjcmV0IjoiS3lJTDRrOWtNZkhrMjdQeER4MGFBV3E0Qk9RMWZUYzc3RmRjdG1sZVNFRT0iLCJDIjoiMDNiYWNjMjU3ZDFlYmRlNWQ0OThiOTQxNzZkZTFlNmEyYWM5Y2I0Njg4MjYwZDJkMjE1NzU3NWFkYTM1ODFmMjQyIn0seyJpZCI6InVUWTFBTE5ZZmQ2ZyIsImFtb3VudCI6NjQsInNlY3JldCI6IjZoYmptak1ZT01LMVpaS0pmek1LR0NjeXM3TEpUeE9MQ3p2VmJSZ1dqZ289IiwiQyI6IjAyODkwMTk5ODIyOTY4YzM1NWZlZDgzOTBkMDQxOWU2MjY3MjBlNWQ1NjQzMzNjYzRlOGQyOWM2NzdjZDA1MGM1NSJ9XSwibWludCI6Imh0dHBzOi8vdGVzdG51dC5jYXNodS5zcGFjZSJ9XX0"> token</a> -->
 eNuts is a strongly typed mobile [**Cashu**](https://github.com/cashubtc) wallet that has Lightning support and can connect to multiple mints. This project uses the [**cashu-ts**](https://github.com/cashubtc/cashu-ts) library and manages proofs using SQLite. We aim to provide a great user experience by implementing features that make the usage of Ecash easier and safer at the same time. This project is in early stage and we strongly encourage you to exercise caution and only use it for **experimental** or **educational** purposes. Read more about Cashu at [https://docs.cashu.space/](https://docs.cashu.space/)
+
+## Contents
+
+- 🐿️[R&D](#%EF%B8%8F-join-the-research-and-development-groups)
+- ⚠️[Disclaimer](#%EF%B8%8F-disclaimer)
+- 🥜[Implemented NUTs](#-implemented-nuts)
+- 📋[Requirements](#-requirements)
+- 👏[Contribute](#-contribute)
+- 🚀[Getting started](#-getting-started)
+- 🎉[Releases](#-releases)
+- 📄[License](#-license)
 
 ## 🐿️ Join the research and development groups
 
@@ -22,17 +34,6 @@ eNuts is a strongly typed mobile [**Cashu**](https://github.com/cashubtc) wallet
 [![Cashu R&D](https://img.shields.io/badge/Cashu_R&D-Telegram-0088cc.svg)](https://t.me/CashuBTC)
 [![Cashu R&D](https://img.shields.io/badge/eNuts_R&D-Telegram-0088cc.svg)](https://t.me/eNutsWallet)
 </div>
-
-
-## Contents
-
-- [Disclaimer](#-disclaimer)
-- [Implemented NUTs](#-implemented-nuts)
-- [Requirements](#-requirements)
-- [Contribute](#-contribute)
-- [Getting started](#-getting-started)
-- [Releases](#-releases)
-- [License](#-license)
 
 ## ⚠️ Disclaimer
 
@@ -63,21 +64,22 @@ We appreciate your interest in this project and will continue to work on improvi
 
 The NUT documents (**N**otation, **U**sage and **T**erminology) each specify parts of the Cashu protocol.
 
-- [ ] [NUT-00](https://github.com/cashubtc/nuts/blob/main/00.md)
-- [ ] [NUT-01](https://github.com/cashubtc/nuts/blob/main/01.md)
-- [ ] [NUT-02](https://github.com/cashubtc/nuts/blob/main/02.md)
-- [ ] [NUT-03](https://github.com/cashubtc/nuts/blob/main/03.md)
-- [ ] [NUT-04](https://github.com/cashubtc/nuts/blob/main/04.md)
-- [ ] [NUT-05](https://github.com/cashubtc/nuts/blob/main/05.md)
-- [ ] [NUT-06](https://github.com/cashubtc/nuts/blob/main/06.md)
-- [ ] [NUT-07](https://github.com/cashubtc/nuts/blob/main/07.md)
-- [ ] [NUT-08](https://github.com/cashubtc/nuts/blob/main/08.md)
-- [ ] [NUT-09](https://github.com/cashubtc/nuts/blob/main/09.md)
+- [x] [NUT-00](https://github.com/cashubtc/nuts/blob/main/00.md)
+- [x] [NUT-01](https://github.com/cashubtc/nuts/blob/main/01.md)
+- [x] [NUT-02](https://github.com/cashubtc/nuts/blob/main/02.md)
+- [x] [NUT-03](https://github.com/cashubtc/nuts/blob/main/03.md)
+- [x] [NUT-04](https://github.com/cashubtc/nuts/blob/main/04.md)
+- [x] [NUT-05](https://github.com/cashubtc/nuts/blob/main/05.md)
+- [x] [NUT-06](https://github.com/cashubtc/nuts/blob/main/06.md)
+- [x] [NUT-07](https://github.com/cashubtc/nuts/blob/main/07.md)
+- [x] [NUT-08](https://github.com/cashubtc/nuts/blob/main/08.md)
+- [x] [NUT-09](https://github.com/cashubtc/nuts/blob/main/09.md)
 
 ## 📋 Requirements
 
 - eNuts is built using the managed workflow provided by Expo, so the easiest way to run a development environment is their [Expo Go](https://expo.dev/client) app.
-- npm version or higher
+- NodeJS 16 or higher.
+- pnpm [pnpm.io](https://pnpm.io/installation)
 
 ## 👏 Contribute
 
@@ -94,17 +96,15 @@ We will implement translations ASAP and provide a clear contribution guide to ho
 
 Each of these tasks is highly impactful, and maintainers will greatly appreciate your help.
 
-If you are eager to start contributing code right away, we have a list of [good first issues](https://github.com/cashubtc/eNuts/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) that contain bugs which have a relatively limited scope.
-
-We use GitHub [issues](https://github.com/cashubtc/eNuts/issues) and [pull requests](https://github.com/cashubtc/eNuts/pulls) to keep track of bug reports and contributions from the community. Pull request have to pass the tests and to be reviewed by a maintainer.
+If you are eager to start contributing code right away, we have a list of [good first issues](https://github.com/cashubtc/eNuts/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) that contain bugs which have a relatively limited scope. We use GitHub [issues](https://github.com/cashubtc/eNuts/issues) and [pull requests](https://github.com/cashubtc/eNuts/pulls) to keep track of bug reports and contributions from the community. Pull request have to pass the tests and to be reviewed by a maintainer.
 
 The process of proposing a change to eNuts can be summarized as follows:
 
 1. Verify the open [issues](https://github.com/cashubtc/eNuts/issues) and [discussions](https://github.com/cashubtc/eNuts/discussions) to see if a related topic is available.
 2. Fork the repository and create your branch from `main`
 3. Make the desired changes to the sources and add tests if required.
-4. Ensure the test suite passes, either locally with `npm run test` or on CI once you opened a pull request.
-5. Make sure your code lints with `npm run lint`
+4. Ensure the test suite passes, either locally with `pnpm test` or on CI once you opened a pull request.
+5. Make sure your code lints with `pnpm lint`
 6. Push the changes to your fork.
 7. Create a pull request to the eNuts repository.
 8. Request a review, link a related issue and describe your pull request.
@@ -115,8 +115,8 @@ If all goes well, your pull request will be merged. If it is not merged, maintai
 ## 🚀 Getting started
 
 1. Fork this repository and create a local clone.
-2. Navigate inside the repository and run `npm i`
-3. Start the Expo dev server by running `npm run start`
+2. Navigate inside the repository and run `pnpm i`
+3. Start the Expo dev server by running `pnpm start`
 4. Download the [Expo Go](https://expo.dev/client) app.
 5. Scan the QR code provided by your terminal using the app (iOS users will have to use the Camera app).
 6. A browser tab will be opened. Press the "Expo Go" button in the bottom of the page.

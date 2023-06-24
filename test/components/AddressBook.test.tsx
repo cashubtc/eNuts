@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import AddressBook from '@comps/screens/Addressbook/Book'
+import { l } from '@log'
+import AddressBook from '@screens/Addressbook/Book'
+import AddressbookModal from '@screens/Addressbook/modal'
 import { act, fireEvent, render, screen } from '@testing-library/react-native'
 
 jest.useFakeTimers()
@@ -39,6 +42,16 @@ describe('Test the Addressbook page', () => {
 		render(<AddressBook />)
 		fireEvent.press(screen.getByTestId('addPersonal'))
 		expect(screen.queryByPlaceholderText('Name')).toBeNull()
+	})
+	it('Addressbook modal has a specific style applied', () => {
+		render(
+			<AddressbookModal
+				closeModal={() => l('test')}
+				setInput={() => l('test')}
+			/>
+		)
+		const modal = screen.getByTestId('testCoinSelectionModal')
+		expect(modal.props.children.props.children.props.style[0].paddingHorizontal).toBe(0)
 	})
 	// TODO test the functionality of adding a new contact and rendering it
 	// eslint-disable-next-line jest/no-commented-out-tests

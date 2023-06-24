@@ -1,6 +1,7 @@
 import { isIOS } from '@consts'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi, TPref } from '@styles'
+import type { TPref } from '@styles'
+import { highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
 
@@ -9,7 +10,8 @@ interface IMyModalProps {
 	animation?: 'slide' | 'fade' | 'none'
 	visible: boolean
 	success?: boolean
-	isContactList?: boolean
+	hasNoPadding?: boolean
+	close?: () => void
 	children: React.ReactNode
 }
 
@@ -18,7 +20,8 @@ export default function MyModal({
 	animation,
 	visible,
 	success,
-	isContactList,
+	hasNoPadding,
+	close,
 	children
 }: IMyModalProps) {
 
@@ -41,7 +44,7 @@ export default function MyModal({
 				...styles(color, highlight).common,
 				...styles(color, highlight).invoiceAmountModalView,
 			}
-			if (isContactList) {
+			if (hasNoPadding) {
 				styling = { ...styling, ...styles(color, highlight).contactList }
 			}
 			return styling
@@ -52,9 +55,11 @@ export default function MyModal({
 		visible ?
 			<View style={styles(color, highlight).modalParent}>
 				<Modal
+					visible
+					transparent
 					animationType={animation}
-					transparent={true}
-					visible={visible}
+					onRequestClose={close}
+					testID='testCoinSelectionModal'
 				>
 					<KeyboardAvoidingView
 						style={getCorrectStyle()}

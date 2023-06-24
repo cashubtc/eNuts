@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import Success from '@comps/Success'
-import Nav,{ NavigationContainer } from '@react-navigation/native'
+import type Nav from '@react-navigation/native'
+import { NavigationContainer } from '@react-navigation/native'
 import { fireEvent, render, screen } from '@testing-library/react-native'
 
 const mockedNavigate = jest.fn()

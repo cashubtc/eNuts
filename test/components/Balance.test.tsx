@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Balance from '@comps/Balance'
-import { initDb } from '@src/storage/db'
+import { initDb } from '@db'
 import { fireEvent, render, screen } from '@testing-library/react-native'
 
 describe('Basic test of the Txt.tsx component', () => {

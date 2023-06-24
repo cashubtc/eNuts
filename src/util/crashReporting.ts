@@ -7,7 +7,7 @@
 // import Bugsnag from "@bugsnag/react-native"
 import Bugsnag from '@bugsnag/expo'
 import { env, isReactNativeDevMode } from '@consts'
-import { ErrorInfo } from 'react'
+import type { ErrorInfo } from 'react'
 
 /**
  *  This is where you put your crash reporting service initialization code to call in `./app/app.tsx`

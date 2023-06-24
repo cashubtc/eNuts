@@ -1,5 +1,5 @@
 import { config as dotenvConfig } from 'dotenv'
-import { ExpoConfig } from 'expo/config'
+import type { ExpoConfig } from 'expo/config'
 
 import { version } from './../package.json'
 
@@ -47,8 +47,8 @@ const config: ExpoConfig = {
 	version: `${version}${!IS_PROD ? `-${_appVariant}` : ''}`,
 	scheme: 'cashu',
 	orientation: 'portrait',
-	icon: './assets/icon.png',
-	userInterfaceStyle: 'light',
+	icon: './assets/icon_transparent.png',
+	userInterfaceStyle: 'automatic',
 	splash: {
 		image: './assets/splash.png',
 		resizeMode: 'contain',

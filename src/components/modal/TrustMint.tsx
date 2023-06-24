@@ -18,7 +18,7 @@ interface ITrustModalProps {
 export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, closeModal }: ITrustModalProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
-		<MyModal type='question' animation='fade' visible>
+		<MyModal type='question' animation='fade' visible close={closeModal}>
 			<Text style={globals(color, highlight).modalHeader}>
 				Do you want to trust this mint?
 			</Text>

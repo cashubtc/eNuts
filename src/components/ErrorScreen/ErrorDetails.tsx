@@ -1,7 +1,7 @@
 import Txt from '@comps/Txt'
 import { repoIssueUrl } from '@consts/urls'
 import { openUrl } from '@util'
-import { ErrorInfo } from 'react'
+import type { ErrorInfo } from 'react'
 import { ScrollView, StyleSheet, Text, TouchableOpacity,View } from 'react-native'
 import usePrompt from '@comps/hooks/Prompt'
 import Toaster from '@comps/Toaster'
