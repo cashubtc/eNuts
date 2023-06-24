@@ -1,5 +1,5 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { IContact } from '@src/context/Contacts'
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import type { IContact } from '@src/context/Contacts'
 
 import type { IHistoryEntry, IMintUrl } from '.'
 

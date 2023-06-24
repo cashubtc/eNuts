@@ -1,5 +1,5 @@
 
-import { IExpoConfig } from '@model'
+import type { IExpoConfig } from '@model'
 import { default as Consts, ExecutionEnvironment as ExecEnv } from 'expo-constants'
 import { Platform } from 'react-native'
 

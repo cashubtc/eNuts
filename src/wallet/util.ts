@@ -1,4 +1,4 @@
-import { Proof } from '@cashu/cashu-ts'
+import type { Proof } from '@cashu/cashu-ts'
 import { getProofsByMintUrl } from '@db'
 
 export async function getProofsToUse(mintUrl: string, amount: number, order: 'asc' | 'desc' = 'desc') {

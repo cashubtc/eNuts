@@ -19,7 +19,7 @@ interface IQuestionModalProps {
 export function QuestionModal({ header, txt, visible, confirmTxt, confirmFn, cancelTxt, cancelFn }: IQuestionModalProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
-		<MyModal type='question' animation='fade' visible={visible} >
+		<MyModal type='question' animation='fade' visible={visible} close={cancelFn} >
 			<Text style={[globals(color).modalHeader, !txt?.length ? { marginBottom: 0 } : {}]}>
 				{header}
 			</Text>

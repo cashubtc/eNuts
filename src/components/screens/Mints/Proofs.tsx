@@ -1,5 +1,6 @@
 import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
+import Separator from '@comps/Separator'
 import { getProofsByMintUrl } from '@db'
 import type { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -37,17 +38,27 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 					<ProofListHeader />
 				</View>
 				{/* Proofs list */}
-				<View style={[globals(color).wrapContainer, styles.listWrap]}>
-					<FlashList
-						data={proofs}
-						estimatedItemSize={300}
-						contentContainerStyle={{ paddingHorizontal: 20 }}
-						renderItem={data => (
-							<ProofRow key={data.item.secret} proof={data.item} isLatestKeysetId={data.item.id === mintKeysetId} />
-						)}
-						ItemSeparatorComponent={() => <View style={{ borderBottomWidth: 1, borderColor: color.BORDER }} />}
-					/>
-				</View>
+				{proofs.length > 0 &&
+					<View
+						style={[
+							globals(color).wrapContainer,
+							{
+								paddingHorizontal: 0,
+								height: Math.floor(proofs.length * 56),
+							}
+						]}
+					>
+						<FlashList
+							data={proofs}
+							estimatedItemSize={300}
+							contentContainerStyle={{ paddingHorizontal: 20 }}
+							renderItem={data => (
+								<ProofRow key={data.item.secret} proof={data.item} isLatestKeysetId={data.item.id === mintKeysetId} />
+							)}
+							ItemSeparatorComponent={() => <Separator />}
+						/>
+					</View>
+				}
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 		</View>
@@ -62,10 +73,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		marginTop: 80,
 		marginBottom: 60,
-	},
-	listWrap: {
-		flex: 1,
-		paddingHorizontal: 0,
 	},
 	mintUrl: {
 		fontSize: 16,

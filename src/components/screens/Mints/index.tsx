@@ -179,7 +179,12 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				</View>
 			</View>
 			{/* Submit new mint URL modal */}
-			<MyModal type='bottom' animation='slide' visible={newMintModal && !prompt.open}>
+			<MyModal
+				type='bottom'
+				animation='slide'
+				visible={newMintModal && !prompt.open}
+				close={() => setNewMintModal(false)}
+			>
 				<Text style={globals(color).modalHeader}>
 					Add a new mint
 				</Text>
@@ -209,7 +214,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			{/* add new mint button */}
 			<View style={styles.newMint}>
 				<IconBtn
-					icon={<PlusIcon width={15} height={15} color={hi[highlight]} />}
+					icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
 					onPress={() => setNewMintModal(true)}
 				/>
 			</View>

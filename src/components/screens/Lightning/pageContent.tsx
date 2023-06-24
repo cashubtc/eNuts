@@ -7,7 +7,7 @@ import { getProofsByMintUrl } from '@db'
 import { l } from '@log'
 import { PromptModal } from '@modal/Prompt'
 import type { IMintUrl, IProofSelection } from '@model'
-import { TLightningPageProps, TSendTokenPageProps } from '@model/nav'
+import type { TLightningPageProps, TSendTokenPageProps } from '@model/nav'
 import { CoinSelectionModal, CoinSelectionResume } from '@screens/Lightning/modal'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
@@ -112,7 +112,7 @@ export default function LNPageContent({
 							placeholder='0'
 							placeholderTextColor={hi[highlight]}
 							style={[styles.amount, { color: hi[highlight] }]}
-							autoFocus={isSendingToken}
+							autoFocus
 							caretHidden
 							onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
 							value={amount}
