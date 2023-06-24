@@ -1,8 +1,10 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
+import usePrompt from '@comps/hooks/Prompt'
 import QR from '@comps/QR'
 import Separator from '@comps/Separator'
 import Success from '@comps/Success'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { _mintUrl } from '@consts'
 import { l } from '@log'
@@ -45,6 +47,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 	const [expiryTime,] = useState(expiry * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const [copied, setCopied] = useState(false)
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const handlePayment = () => {
 		// state "unpaid" is temporary to prevent btn press spam
 		if (paid === 'unpaid') { return }
@@ -141,7 +144,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							txt='Pay with your LN wallet'
 							onPress={() => {
 								void (async () => {
-									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)
+									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch(err => openPromptAutoClose({ msg: err as string}) )
 								})()
 							}}
 						/>
@@ -150,6 +153,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 								Close
 							</Text>
 						</TouchableOpacity>
+						{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 					</View>
 				</View>
 				:

@@ -380,7 +380,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				{!input.length && !isKeyboardOpen &&
 					<TouchableOpacity style={{ marginVertical: 10 }} onPress={() => {
 						void (async () => {
-							await openUrl('lightning://')
+							await openUrl('lightning://')?.catch(err => openPromptAutoClose({ msg: err as string}) )
 						})()
 					}}>
 						<Text style={globals(color, highlight).pressTxt}>

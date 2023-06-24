@@ -3,6 +3,9 @@ import { repoIssueUrl } from '@consts/urls'
 import { openUrl } from '@util'
 import { ErrorInfo } from 'react'
 import { ScrollView, StyleSheet, Text, TouchableOpacity,View } from 'react-native'
+import usePrompt from '@comps/hooks/Prompt'
+import Toaster from '@comps/Toaster'
+
 
 export interface ErrorDetailsProps {
 	error: Error
@@ -11,6 +14,7 @@ export interface ErrorDetailsProps {
 }
 
 export function ErrorDetails(props: ErrorDetailsProps) {
+	const { prompt, openPromptAutoClose } = usePrompt()
 	return (
 		<View style={styles.container}>
 			<Text style={styles.header}>
@@ -25,13 +29,14 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 				<Txt txt={props.errorInfo?.componentStack ?? 'Error stack not available'} />
 			</ScrollView>
 			<TouchableOpacity
-				onPress={() => void openUrl(repoIssueUrl)}
+				onPress={() => void openUrl(repoIssueUrl)?.catch(err => openPromptAutoClose({ msg: err as string}) )}
 				style={styles.bugReport}
 			>
 				<Text style={styles.bugTxt}>
 					Report the bug{'  '}🐛
 				</Text>
 			</TouchableOpacity>
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

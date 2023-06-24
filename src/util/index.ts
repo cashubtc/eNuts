@@ -173,12 +173,8 @@ export function cleanUpNumericStr(str: string) {
 }
 // TODO FIXXME
 export function openUrl(url: string) {
-	// Prompt modal
-	const { prompt, openPromptAutoClose } = usePrompt()
 	if (!url?.trim()) { return }
-	return Linking.openURL(url).catch(err => openPromptAutoClose({ msg: err }) )
+	return Linking.openURL(url)
 	/* return Linking.canOpenURL(url)
 		.then((canOpen) => canOpen && Linking.openURL(url)) */
 }
-
-//l('openURL error:', err))
