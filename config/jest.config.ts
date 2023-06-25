@@ -6,7 +6,7 @@ import { pathsToModuleNameMapper } from 'ts-jest'
 import { compilerOptions } from '../tsconfig.json'
 
 export default (): JestConfigWithTsJest => ({
-	'rootDir': '..',
+	rootDir: '..',
 	// ...defaults,
 	// setupFiles: ['<rootDir>/test/envSetup.ts'],
 	// setupFilesAfterEnv: ['<rootDir>/test/testSetupFile.ts'],
@@ -16,8 +16,8 @@ export default (): JestConfigWithTsJest => ({
 			['ts-jest',
 				{
 					// babelConfig: true,
-					'tsconfig': '<rootDir>/tsconfig.json',
-					'diagnostics': true
+					tsconfig: '<rootDir>/tsconfig.json',
+					diagnostics: true
 				}]
 	},
 	resolver: 'ts-jest-resolver',
