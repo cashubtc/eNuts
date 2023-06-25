@@ -142,9 +142,6 @@ devDependencies:
     "@bugsnag/source-maps":
         specifier: ^2.3.1
         version: 2.3.1
-    "@esbuild-kit/cjs-loader":
-        specifier: ^2.4.2
-        version: 2.4.2
     "@getify/eslint-plugin-proper-arrows":
         specifier: ^11.0.3
         version: 11.0.3(eslint@8.43.0)

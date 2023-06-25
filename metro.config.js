@@ -2,7 +2,7 @@
 
 const configPath = `${__dirname}/config/metro.config.ts`
 
-require('@esbuild-kit/cjs-loader')
+require('ts-node/register')
 
 module.exports = require(configPath)
 
