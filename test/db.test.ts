@@ -1,4 +1,3 @@
-
 import { getEncodedToken } from '@cashu/cashu-ts'
 import {
 	addInvoice,
@@ -12,13 +11,13 @@ import {
 	getMints,
 	getMintsBalances,
 	hasMints,
-	initDb
+	initDb,
 } from '@db'
 
-
-
 describe('test db helper', () => {
-	beforeEach(async () => { await initDb() })
+	beforeEach(async () => {
+		await initDb()
+	})
 
 	// setup vars
 	const mints = [
@@ -36,26 +35,28 @@ describe('test db helper', () => {
 						amount: 1,
 						secret: '1',
 						C: '1',
-						id: 'mint1-id1'
-					}, {
+						id: 'mint1-id1',
+					},
+					{
 						amount: 2,
 						secret: '2',
 						C: '2',
-						id: 'mint1-id2'
+						id: 'mint1-id2',
 					},
-				]
-			}, {
+				],
+			},
+			{
 				mint: 'mint2',
 				proofs: [
 					{
 						amount: 3,
 						secret: '3',
 						C: '3',
-						id: 'mint2-id'
-					}
-				]
-			}
-		]
+						id: 'mint2-id',
+					},
+				],
+			},
+		],
 	}
 	const token = getEncodedToken(rawToken)
 
@@ -71,26 +72,20 @@ describe('test db helper', () => {
 		// test hasMints
 		expect(await hasMints()).toBe(true)
 		// test getMints
-		expect(await getMints()).toMatchObject(
-			[{ mintUrl: 'test', id: 'testid' }, ...mints,]
-		)
+		expect(await getMints()).toMatchObject([{ mintUrl: 'test', id: 'testid' }, ...mints])
 	})
 	test('db Invoice', async () => {
 		// setup vars
 		const time = Math.ceil(Date.now() / 1000) - 60
 		const invoiceTest = { pr: 'pr', hash: 'hash', amount: 100, mintUrl: 'minturl' }
 
-
 		// test addInvoice
-		expect(await addInvoice(
-			{ pr: 'pr', hash: 'hash', amount: 100, mintUrl: 'minturl' }
-		)).toBe(true)
+		expect(await addInvoice({ pr: 'pr', hash: 'hash', amount: 100, mintUrl: 'minturl' })).toBe(true)
 
 		// test getInvoice
 		const invoice = await getInvoice('hash')
 		expect(invoice).toBeTruthy()
-		expect(invoice)
-			.toMatchObject(invoiceTest)
+		expect(invoice).toMatchObject(invoiceTest)
 		expect(invoice?.time).toBeGreaterThanOrEqual(time)
 		// test getAllInvoices
 		expect(await getAllInvoices()).toMatchObject([invoiceTest])

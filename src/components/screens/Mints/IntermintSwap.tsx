@@ -33,7 +33,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 			l({ swapResult: result })
 			openPromptAutoClose({
 				msg: `Successfully swaped ${amount} Sat from ${route.params.swap_out_mint.mintUrl} to ${selectedMint.mintUrl}`,
-				success: true
+				success: true,
 			})
 		} catch (e) {
 			l(e)
@@ -47,22 +47,21 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Swap' withBackBtn />
+			<TopNav screenName="Swap" withBackBtn />
 			{/* sub header */}
 			<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
-				Swap tokens from one mint for tokens from another mint.
-				For a brief moment, you will be trusting two mints at the same time.
-				There is things that can go wrong. Use at own risk.
+				Swap tokens from one mint for tokens from another mint. For a brief moment, you will be trusting two
+				mints at the same time. There is things that can go wrong. Use at own risk.
 			</Text>
 			<View style={styles.amountWrap}>
 				<TextInput
-					keyboardType='numeric' // Platform.OS === 'android' ? 'number-pad' : 'numeric'
-					placeholder='0'
+					keyboardType="numeric" // Platform.OS === 'android' ? 'number-pad' : 'numeric'
+					placeholder="0"
 					placeholderTextColor={hi[highlight]}
 					style={[styles.amount, { color: hi[highlight] }]}
 					autoFocus
 					caretHidden
-					onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
+					onChangeText={(amount) => setAmount(cleanUpNumericStr(amount))}
 					maxLength={8}
 					value={amount}
 				/>
@@ -71,7 +70,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 				</Text>
 			</View>
 			{/* Swap-Out Mint: */}
-			{!isKeyboardOpen && +amount > 0 &&
+			{!isKeyboardOpen && +amount > 0 && (
 				<View>
 					<Txt
 						txt={route.params.swap_out_mint.customName || formatMintUrl(route.params.swap_out_mint.mintUrl)}
@@ -92,7 +91,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 						dropdownIconColor={color.TEXT}
 						style={styles.picker}
 					>
-						{route.params.mints.map(m => (
+						{route.params.mints.map((m) => (
 							<Picker.Item
 								key={m.mintUrl}
 								label={m.customName || formatMintUrl(m.mintUrl)}
@@ -102,18 +101,20 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 						))}
 					</Picker>
 				</View>
-			}
-			{!isKeyboardOpen && +amount > 0 && !prompt.open &&
+			)}
+			{!isKeyboardOpen && +amount > 0 && !prompt.open && (
 				<View style={styles.actions}>
 					<Button
 						txt={loading ? 'Performing swap...' : 'Swap now'}
 						onPress={() => {
-							if (loading) { return }
+							if (loading) {
+								return
+							}
 							void handleSwap()
 						}}
 					/>
 				</View>
-			}
+			)}
 		</View>
 	)
 }
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
 	amountWrap: {
 		width: '100%',
 		alignItems: 'center',
-		marginTop: -20
+		marginTop: -20,
 	},
 	amount: {
 		fontSize: 40,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 20,
 	},
 	picker: {
-		marginHorizontal: -15
+		marginHorizontal: -15,
 	},
 	actions: {
 		position: 'absolute',
@@ -155,5 +156,5 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		padding: 20,
-	}
+	},
 })

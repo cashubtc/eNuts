@@ -1,6 +1,5 @@
 import type { IMintBalWithName } from '@model'
 
-
 export const _mintUrl = 'https://testnut.cashu.space'
 
 export const defaultMints: Readonly<IMintBalWithName[]> = [
@@ -17,8 +16,8 @@ export const defaultMints: Readonly<IMintBalWithName[]> = [
 	{
 		mintUrl: _mintUrl,
 		amount: 0,
-		customName: ''
-	}
+		customName: '',
+	},
 ] as const
 
 // https://reactnative.dev/docs/platform

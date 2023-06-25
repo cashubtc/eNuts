@@ -17,10 +17,11 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		route.name === 'mint proofs' ||
 		(route.name === 'lightning' && !route.params?.receive && !route.params?.send)
 
-	const isWalletRelatedScreen = route.name === 'dashboard' ||
-		(route.name === 'lightning' && (route.params?.receive || route.params?.send))
+	const isWalletRelatedScreen =
+		route.name === 'dashboard' || (route.name === 'lightning' && (route.params?.receive || route.params?.send))
 
-	const isSettingsRelatedScreen = route.name === 'Settings' ||
+	const isSettingsRelatedScreen =
+		route.name === 'Settings' ||
 		route.name === 'Display settings' ||
 		route.name === 'Security settings' ||
 		route.name === 'BackupPage'
@@ -29,61 +30,44 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 
 	return (
 		<View style={styles.bottomNav}>
-			<TouchableOpacity
-				style={styles.navIcon}
-				onPress={() => handleNav('dashboard')}
-			>
+			<TouchableOpacity style={styles.navIcon} onPress={() => handleNav('dashboard')}>
 				<WalletIcon color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt='Wallet'
+					txt="Wallet"
 					styles={[{ fontSize: 12, marginTop: 2, color: isWalletRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.navIcon}
-				onPress={() => handleNav('history')}
-			>
+			<TouchableOpacity style={styles.navIcon} onPress={() => handleNav('history')}>
 				<HistoryIcon color={isHistoryRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt='History'
+					txt="History"
 					styles={[{ fontSize: 12, color: isHistoryRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.navIcon}
-				onPress={() => handleNav('mints')}
-			>
-				<MintBoardIcon
-					width={20}
-					height={25}
-					color={isMintRelatedScreen ? hi[highlight] : color.TEXT}
-				/>
+			<TouchableOpacity style={styles.navIcon} onPress={() => handleNav('mints')}>
+				<MintBoardIcon width={20} height={25} color={isMintRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt='Mints'
+					txt="Mints"
 					styles={[{ fontSize: 12, marginTop: 1, color: isMintRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.navIcon}
-				onPress={() => handleNav('Address book')}
-			>
+			<TouchableOpacity style={styles.navIcon} onPress={() => handleNav('Address book')}>
 				<ContactsIcon color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt='Contacts'
-					styles={[{
-						fontSize: 12,
-						marginTop: -2,
-						color: route.name === 'Address book' ? hi[highlight] : color.TEXT
-					}]}
+					txt="Contacts"
+					styles={[
+						{
+							fontSize: 12,
+							marginTop: -2,
+							color: route.name === 'Address book' ? hi[highlight] : color.TEXT,
+						},
+					]}
 				/>
 			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.navIcon}
-				onPress={() => handleNav('Settings')}
-			>
+			<TouchableOpacity style={styles.navIcon} onPress={() => handleNav('Settings')}>
 				<SettingsIcon color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt='Settings'
+					txt="Settings"
 					styles={[{ fontSize: 12, color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
@@ -106,5 +90,5 @@ const styles = StyleSheet.create({
 		minWidth: 70,
 		minHeight: 50,
 		alignItems: 'center',
-	}
+	},
 })

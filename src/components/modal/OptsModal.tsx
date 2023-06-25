@@ -21,11 +21,11 @@ export default function OptsModal({
 	onPressFirstBtn,
 	button2Txt,
 	onPressSecondBtn,
-	onPressCancel
+	onPressCancel,
 }: IOptsModal) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
-		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
+		<MyModal type="bottom" animation="slide" visible={visible} close={onPressCancel}>
 			<View style={{ marginVertical: 10 }} />
 			<ActionButtons
 				topBtnTxt={button1Txt}
@@ -34,9 +34,7 @@ export default function OptsModal({
 				bottomBtnAction={onPressSecondBtn}
 			/>
 			<TouchableOpacity style={styles.no} onPress={onPressCancel}>
-				<Text style={globals(color, highlight).pressTxt}>
-					cancel
-				</Text>
+				<Text style={globals(color, highlight).pressTxt}>cancel</Text>
 			</TouchableOpacity>
 		</MyModal>
 	)

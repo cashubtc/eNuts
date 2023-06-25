@@ -9,7 +9,7 @@ import { ErrorDetails } from './ErrorDetails'
 interface IProps {
 	children: ReactNode
 	catchErrors: 'always' | 'dev' | 'prod' | 'never'
-	fallbackComponent?: (() => JSX.Element)
+	fallbackComponent?: () => JSX.Element
 }
 
 interface IState {
@@ -32,7 +32,7 @@ export class CustomErrorBoundary extends Component<IProps, IState> {
 	// If an error in a child is encountered, this will run
 	componentDidCatch(error: Error, errorInfo: ErrorInfo) {
 		// Catch errors in any components below and re-render with error message
-		this.setState({ error, errorInfo, })
+		this.setState({ error, errorInfo })
 		reportCrash(error, errorInfo)
 		err(error, errorInfo)
 	}
@@ -59,13 +59,10 @@ export class CustomErrorBoundary extends Component<IProps, IState> {
 
 	// Render an error UI if there's an error; otherwise, render children
 	render() {
-		return this.isEnabled() && this.state.error ?
-			<ErrorDetails
-				onReset={this.resetError}
-				error={this.state.error}
-				errorInfo={this.state.errorInfo}
-			/>
-			:
+		return this.isEnabled() && this.state.error ? (
+			<ErrorDetails onReset={this.resetError} error={this.state.error} errorInfo={this.state.errorInfo} />
+		) : (
 			this.props.children
+		)
 	}
 }

@@ -19,11 +19,7 @@ interface IInvoiceModalProps {
 	setLNAmountModal: (val: boolean) => void
 }
 
-export default function LNInvoiceAmountModal({
-	lnAmountModal,
-	mintUrl,
-	setLNAmountModal,
-}: IInvoiceModalProps) {
+export default function LNInvoiceAmountModal({ lnAmountModal, mintUrl, setLNAmountModal }: IInvoiceModalProps) {
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// workaround: amount input ref for auto-focus (input property "autoFocus" does not work here)
@@ -33,14 +29,16 @@ export default function LNInvoiceAmountModal({
 	// invoice state
 	const [invoice, setInvoice] = useState<IInvoiceState>({
 		amount: '',
-		hash: ''
+		hash: '',
 	})
 	const { loading, startLoading, stopLoading } = useLoading()
 	// invoice amount error
 	const [err, setErr] = useState(false)
 	// add tokens to the mint
 	const handleAmountSubmit = () => {
-		if (loading) { return }
+		if (loading) {
+			return
+		}
 		// shake animation
 		if (!invoice.amount || +invoice.amount < 1) {
 			vib(400)
@@ -64,7 +62,9 @@ export default function LNInvoiceAmountModal({
 	}
 	// auto-focus numeric keyboard
 	useEffect(() => {
-		if (!lnAmountModal) { return }
+		if (!lnAmountModal) {
+			return
+		}
 		const t = setTimeout(() => {
 			inputRef.current?.focus()
 			clearTimeout(t)
@@ -73,36 +73,26 @@ export default function LNInvoiceAmountModal({
 
 	return (
 		<>
-			<InvoiceAmountModal visible={lnAmountModal} >
+			<InvoiceAmountModal visible={lnAmountModal}>
 				<Animated.View style={[styles.invoiceAmountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
-						keyboardType='numeric' // Platform.OS === 'android' ? 'number-pad' : 'numeric'
-						placeholder='0'
+						keyboardType="numeric" // Platform.OS === 'android' ? 'number-pad' : 'numeric'
+						placeholder="0"
 						placeholderTextColor={err ? color.ERROR : hi[highlight]}
 						style={[styles.invoiceAmount, { color: hi[highlight] }]}
 						caretHidden
 						ref={inputRef}
-						onChangeText={amount => setInvoice({ ...invoice, amount: cleanUpNumericStr(amount) })}
+						onChangeText={(amount) => setInvoice({ ...invoice, amount: cleanUpNumericStr(amount) })}
 						value={invoice.amount}
 						onSubmitEditing={handleAmountSubmit}
 						maxLength={8}
 					/>
-					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
-						Satoshi
-					</Text>
+					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>Satoshi</Text>
 				</Animated.View>
-				<KeyboardAvoidingView
-					style={styles.invoiceBtns}
-					behavior={isIOS ? 'padding' : 'height'}
-				>
-					<Button
-						txt={loading ? 'Invoice incoming...' : 'Create invoice'}
-						onPress={handleAmountSubmit}
-					/>
+				<KeyboardAvoidingView style={styles.invoiceBtns} behavior={isIOS ? 'padding' : 'height'}>
+					<Button txt={loading ? 'Invoice incoming...' : 'Create invoice'} onPress={handleAmountSubmit} />
 					<TouchableOpacity onPress={() => setLNAmountModal(false)}>
-						<Text style={[styles.cancel, { color: hi[highlight] }]}>
-							Cancel
-						</Text>
+						<Text style={[styles.cancel, { color: hi[highlight] }]}>Cancel</Text>
 					</TouchableOpacity>
 				</KeyboardAvoidingView>
 			</InvoiceAmountModal>
@@ -113,7 +103,6 @@ export default function LNInvoiceAmountModal({
 				close={() => setShowInvoice(false)}
 			/>
 		</>
-
 	)
 }
 

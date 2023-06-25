@@ -19,7 +19,7 @@ export default function QR({ size, value, onError }: QRProps) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				logo={require('../../assets/qr-icon.png')}
 				logoBorderRadius={10}
-				logoBackgroundColor='#fafafa'
+				logoBackgroundColor="#fafafa"
 				logoMargin={3}
 				onError={onError}
 			/>
@@ -30,6 +30,6 @@ export default function QR({ size, value, onError }: QRProps) {
 const styles = StyleSheet.create({
 	qrWrap: {
 		borderWidth: 5,
-		borderColor: '#FFF'
-	}
+		borderColor: '#FFF',
+	},
 })

@@ -18,7 +18,17 @@ import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
-import { cleanUpNumericStr, formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
+import {
+	cleanUpNumericStr,
+	formatExpiry,
+	formatInt,
+	formatMintUrl,
+	getInvoiceFromLnurl,
+	getSelectedAmount,
+	isErr,
+	isLnurl,
+	openUrl,
+} from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
@@ -40,7 +50,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	// Coin selection
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
 	const [isEnabled, setIsEnabled] = useState(false)
-	const toggleSwitch = () => setIsEnabled(prev => !prev)
+	const toggleSwitch = () => setIsEnabled((prev) => !prev)
 	// address book page
 	const [showAddressBook, setShowAddressBook] = useState(false)
 	// LN input
@@ -50,10 +60,12 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	const { loading, startLoading, stopLoading } = useLoading()
 	// LN payment
 	const handleTokenSend = async () => {
-		if (!route.params.mint) { return }
+		if (!route.params.mint) {
+			return
+		}
 		startLoading()
 		// coin selection
-		const selectedProofs = proofs.filter(p => p.selected)
+		const selectedProofs = proofs.filter((p) => p.selected)
 		// Pay invoice
 		if (!isLnurl(input)) {
 			try {
@@ -64,16 +76,11 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 					return
 				}
 				// payment success, add as history entry
-				await addLnPaymentToHistory(
-					res,
-					[route.params.mint.mintUrl],
-					-invoiceAmount,
-					input
-				)
+				await addLnPaymentToHistory(res, [route.params.mint.mintUrl], -invoiceAmount, input)
 				navigation.navigate('success', {
 					amount: invoiceAmount + res.realFee,
 					fee: res.realFee,
-					mints: [route.params.mint.mintUrl]
+					mints: [route.params.mint.mintUrl],
 				})
 			} catch (e) {
 				l(e)
@@ -94,7 +101,9 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			const totalSelected = sumProofsValue(selectedProofs)
 			const totalToPay = +LNURLAmount + feeEstimate
 			if (isEnabled && totalSelected < totalToPay) {
-				openPromptAutoClose({ msg: `Not enough funds! Total after fee: ${totalToPay} Sat. Amount selected: ${LNURLAmount} Sat` })
+				openPromptAutoClose({
+					msg: `Not enough funds! Total after fee: ${totalToPay} Sat. Amount selected: ${LNURLAmount} Sat`,
+				})
 				stopLoading()
 				return
 			}
@@ -108,16 +117,11 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			// payment success
 			stopLoading()
 			// add as history entry
-			await addLnPaymentToHistory(
-				res,
-				[route.params.mint.mintUrl],
-				-LNURLAmount,
-				invoice
-			)
+			await addLnPaymentToHistory(res, [route.params.mint.mintUrl], -LNURLAmount, invoice)
 			navigation.navigate('success', {
 				amount: +LNURLAmount + res.realFee,
 				fee: res.realFee,
-				mints: [route.params.mint.mintUrl]
+				mints: [route.params.mint.mintUrl],
 			})
 		} catch (e) {
 			openPromptAutoClose({ msg: isErr(e) ? e.message : 'An error occured while paying the invoice.' })
@@ -136,7 +140,9 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			setIsCalculatingFee(true)
 			const invoice = await getInvoiceFromLnurl(input.trim(), +LNURLAmount)
 			if (!invoice?.length || !route.params.mint) {
-				openPromptAutoClose({ msg: `Unable to estimate fee: Invalid invoice for "${input}". Is it a valid LNURL?` })
+				openPromptAutoClose({
+					msg: `Unable to estimate fee: Invalid invoice for "${input}". Is it a valid LNURL?`,
+				})
 				// reset amount to hide the failed estimated fee render
 				setLNURLAmount('')
 				// remove LNURL from input to re-render the initial page
@@ -156,7 +162,9 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			return
 		}
 		const clipboard = await Clipboard.getStringAsync()
-		if (!clipboard || clipboard === 'null' || !route.params.mint) { return }
+		if (!clipboard || clipboard === 'null' || !route.params.mint) {
+			return
+		}
 		try {
 			setFeeEstimate(await checkFees(route.params.mint.mintUrl, clipboard))
 			setInput(clipboard)
@@ -168,8 +176,13 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	// Get proofs for coin selection
 	useEffect(() => {
 		void (async () => {
-			if (!route.params.mint) { return }
-			const proofsDB = (await getProofsByMintUrl(route.params.mint.mintUrl)).map(p => ({ ...p, selected: false }))
+			if (!route.params.mint) {
+				return
+			}
+			const proofsDB = (await getProofsByMintUrl(route.params.mint.mintUrl)).map((p) => ({
+				...p,
+				selected: false,
+			}))
 			setProofs(proofsDB)
 		})()
 	}, [route.params.mint])
@@ -182,7 +195,9 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			setIsEnabled(false)
 			return
 		}
-		if (isLnurl(input)) { return }
+		if (isLnurl(input)) {
+			return
+		}
 		// else: decode LN invoide and show invoice info
 		try {
 			const ln = getDecodedLnInvoice(input)
@@ -191,7 +206,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const timePassed = Math.ceil(Date.now() / 1000) - (ln.sections[4]!.value as number)
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			setTimeLeft(ln.sections[8]!.value as number - timePassed)
+			setTimeLeft((ln.sections[8]!.value as number) - timePassed)
 		} catch (e) {
 			l(e)
 		}
@@ -211,31 +226,31 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	useEffect(() => void handleKeyboard(), [isKeyboardOpen])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Zap' withBackBtn />
+			<TopNav screenName="Zap" withBackBtn />
 			{/* mint overview */}
-			{!input.length &&
+			{!input.length && (
 				<View style={styles.amountWrap}>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 10 }]}>
-						Send bitcoin from &quot;{formatMintUrl(route.params.mint?.mintUrl || '')}&quot; to a Lightning wallet.
+						Send bitcoin from &quot;{formatMintUrl(route.params.mint?.mintUrl || '')}&quot; to a Lightning
+						wallet.
 					</Text>
 					<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY, marginBottom: 0 }]}>
-						Mint balance: <Text style={{ fontWeight: '500' }}>{formatInt(route.params.mintBal)}</Text> Satoshi
+						Mint balance: <Text style={{ fontWeight: '500' }}>{formatInt(route.params.mintBal)}</Text>{' '}
+						Satoshi
 					</Text>
 				</View>
-			}
+			)}
 			{/* LNURL amount to choose */}
-			{isLnurl(input) &&
+			{isLnurl(input) && (
 				<View style={styles.amountWrap}>
-					<Text style={[globals(color).navTxt, styles.payTo]}>
-						Select amount for &quot;{input}&quot;
-					</Text>
+					<Text style={[globals(color).navTxt, styles.payTo]}>Select amount for &quot;{input}&quot;</Text>
 					<TextInput
-						keyboardType='numeric' // Platform.OS === 'android' ? 'number-pad' : 'numeric'
-						placeholder='0'
+						keyboardType="numeric" // Platform.OS === 'android' ? 'number-pad' : 'numeric'
+						placeholder="0"
 						placeholderTextColor={hi[highlight]}
 						style={[styles.amount, { color: hi[highlight] }]}
 						caretHidden
-						onChangeText={amount => setLNURLAmount(cleanUpNumericStr(amount))}
+						onChangeText={(amount) => setLNURLAmount(cleanUpNumericStr(amount))}
 						maxLength={8}
 						value={LNURLAmount}
 					/>
@@ -243,16 +258,16 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						Satoshi
 					</Text>
 				</View>
-			}
+			)}
 			{/* Only for LNURL: Show the estimated fees after keyboard dissapears and amount has been provided */}
-			{+LNURLAmount > 0 && !isKeyboardOpen &&
+			{+LNURLAmount > 0 && !isKeyboardOpen && (
 				<View style={styles.lnUrlFeeOverview}>
 					<View style={styles.overview}>
-						{isCalculatingFee ?
-							<Txt txt='Calculating fee...' />
-							:
+						{isCalculatingFee ? (
+							<Txt txt="Calculating fee..." />
+						) : (
 							<>
-								<Txt txt='Estimated fees:' />
+								<Txt txt="Estimated fees:" />
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										0 to {formatInt(feeEstimate)}
@@ -260,25 +275,23 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 									<ZapIcon width={18} height={18} color={color.TEXT} />
 								</View>
 							</>
-						}
+						)}
 					</View>
 				</View>
-			}
+			)}
 			{/* LN invoice info overview */}
-			{invoiceAmount > 0 &&
+			{invoiceAmount > 0 && (
 				<View style={styles.invoiceOverview}>
 					{/* Invoice expiry */}
 					<View style={styles.overviewWrap}>
-						<Text style={[globals(color).navTxt]}>
-							Invoice overview
-						</Text>
+						<Text style={[globals(color).navTxt]}>Invoice overview</Text>
 						<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
 							{timeLeft > 0 ? formatExpiry(timeLeft) : 'Expired!'}
 						</Text>
 					</View>
 					{/* Invoice amount */}
 					<View style={styles.overview}>
-						<Txt txt='Amount:' />
+						<Txt txt="Amount:" />
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 								{formatInt(invoiceAmount / 1000)}
@@ -288,77 +301,74 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 					</View>
 					{/* Invoice estimated fees */}
 					<View style={styles.overview}>
-						<Txt txt='Estimated fees:' />
+						<Txt txt="Estimated fees:" />
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 								0 to {formatInt(feeEstimate)}
 							</Text>
-							<ZapIcon width={18} height={18} color={color.TEXT} />
-						T</View>
+							<ZapIcon width={18} height={18} color={color.TEXT} />T
+						</View>
 					</View>
 					{/* Total after fee */}
-					<View style={[
-						styles.overview,
-						{
-							borderBottomWidth: 1,
-							borderBottomColor: color.BORDER,
-							paddingBottom: 15
-						}
-					]}>
-						<Txt txt='Total:' styles={[{ fontWeight: '500' }]} />
+					<View
+						style={[
+							styles.overview,
+							{
+								borderBottomWidth: 1,
+								borderBottomColor: color.BORDER,
+								paddingBottom: 15,
+							},
+						]}
+					>
+						<Txt txt="Total:" styles={[{ fontWeight: '500' }]} />
 						<View style={styles.mintBal}>
 							<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-								{formatInt((invoiceAmount / 1000) + feeEstimate)}
+								{formatInt(invoiceAmount / 1000 + feeEstimate)}
 							</Text>
 							<ZapIcon width={18} height={18} color={color.TEXT} />
 						</View>
 					</View>
 				</View>
-			}
+			)}
 			{/*
 				Show coin selection if:
 				- LN invoice: needs amount>0, needs balance > invoice amount and invoice not expired
 				OR
 				- LNURL: amount provided and keyboard is not visible
 			*/}
-			{((invoiceAmount > 0 && route.params.mintBal >= (invoiceAmount / 1000) + feeEstimate && timeLeft > 0)
-				||
-				(isLnurl(input) && +LNURLAmount > 0)) && !isKeyboardOpen &&
-				<View style={styles.coinSelectionOverview}>
-					<View style={styles.overview}>
-						<Txt txt='Coin selection' />
-						<Switch
-							trackColor={{ false: color.BORDER, true: hi[highlight] }}
-							thumbColor={color.TEXT}
-							onValueChange={toggleSwitch}
-							value={isEnabled}
-						/>
+			{((invoiceAmount > 0 && route.params.mintBal >= invoiceAmount / 1000 + feeEstimate && timeLeft > 0) ||
+				(isLnurl(input) && +LNURLAmount > 0)) &&
+				!isKeyboardOpen && (
+					<View style={styles.coinSelectionOverview}>
+						<View style={styles.overview}>
+							<Txt txt="Coin selection" />
+							<Switch
+								trackColor={{ false: color.BORDER, true: hi[highlight] }}
+								thumbColor={color.TEXT}
+								onValueChange={toggleSwitch}
+								value={isEnabled}
+							/>
+						</View>
+						{getSelectedAmount(proofs) > 0 && isEnabled && (
+							<CoinSelectionResume
+								lnAmount={(isLnurl(input) ? +LNURLAmount : invoiceAmount / 1000) + feeEstimate}
+								selectedAmount={getSelectedAmount(proofs)}
+							/>
+						)}
 					</View>
-					{getSelectedAmount(proofs) > 0 && isEnabled &&
-						<CoinSelectionResume
-							lnAmount={(isLnurl(input) ? +LNURLAmount : invoiceAmount / 1000) + feeEstimate}
-							selectedAmount={getSelectedAmount(proofs)}
-						/>
-					}
-				</View>
-			}
+				)}
 			{/* Bottom section */}
 			<KeyboardAvoidingView style={styles.action} behavior={isIOS ? 'padding' : 'height'}>
 				{/* Open LNURL address book */}
-				{invoiceAmount === 0 &&
-					<TouchableOpacity
-						style={styles.addrBookBtnWrap}
-						onPress={() => setShowAddressBook(true)}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							Address book
-						</Text>
+				{invoiceAmount === 0 && (
+					<TouchableOpacity style={styles.addrBookBtnWrap} onPress={() => setShowAddressBook(true)}>
+						<Text style={globals(color, highlight).pressTxt}>Address book</Text>
 					</TouchableOpacity>
-				}
+				)}
 				{/* LN invoice / LNURL Input field */}
 				<View style={{ position: 'relative' }}>
 					<TextInput
-						keyboardType='email-address'
+						keyboardType="email-address"
 						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="LN invoice or LNURL"
 						placeholderTextColor={color.INPUT_PH}
@@ -371,46 +381,44 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						style={[styles.pasteInputTxtWrap, { backgroundColor: color.INPUT_BG }]}
 						onPress={() => void handleInput()}
 					>
-						<Text style={globals(color, highlight).pressTxt}>
-							{!input.length ? 'Paste' : 'Clear'}
-						</Text>
+						<Text style={globals(color, highlight).pressTxt}>{!input.length ? 'Paste' : 'Clear'}</Text>
 					</TouchableOpacity>
 				</View>
 				{/* Open LN wallet to create invoice */}
-				{!input.length && !isKeyboardOpen &&
-					<TouchableOpacity style={{ marginVertical: 10 }} onPress={() => {
-						void (async () => {
-							await openUrl('lightning://')?.catch((err: unknown) => 
-								openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )
-						})()
-					}}>
-						<Text style={globals(color, highlight).pressTxt}>
-							Create invoice via your LN wallet
-						</Text>
+				{!input.length && !isKeyboardOpen && (
+					<TouchableOpacity
+						style={{ marginVertical: 10 }}
+						onPress={() => {
+							void (async () => {
+								await openUrl('lightning://')?.catch((err: unknown) =>
+									openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' })
+								)
+							})()
+						}}
+					>
+						<Text style={globals(color, highlight).pressTxt}>Create invoice via your LN wallet</Text>
 					</TouchableOpacity>
-				}
+				)}
 				{/*
 					Show Payment button if:
 					- LNURL or invoice available, Invoice not expired, Payment amounts > 0, estimated fee > 0 and closed keyboard
 				*/}
-				{input.length > 0 && ((invoiceAmount > 0 && timeLeft > 0) || +LNURLAmount > 0) && !isKeyboardOpen && feeEstimate > 0 &&
-					<Button
-						txt={loading ? 'Processing payment...' : 'Pay'}
-						onPress={() => {
-							void handleTokenSend()
-						}}
-					/>
-				}
+				{input.length > 0 &&
+					((invoiceAmount > 0 && timeLeft > 0) || +LNURLAmount > 0) &&
+					!isKeyboardOpen &&
+					feeEstimate > 0 && (
+						<Button
+							txt={loading ? 'Processing payment...' : 'Pay'}
+							onPress={() => {
+								void handleTokenSend()
+							}}
+						/>
+					)}
 			</KeyboardAvoidingView>
 			{/* address book */}
-			{showAddressBook &&
-				<AddressbookModal
-					closeModal={() => setShowAddressBook(false)}
-					setInput={setInputCB}
-				/>
-			}
+			{showAddressBook && <AddressbookModal closeModal={() => setShowAddressBook(false)} setInput={setInputCB} />}
 			{/* coin selection page */}
-			{isEnabled &&
+			{isEnabled && (
 				<CoinSelectionModal
 					mint={route.params.mint}
 					lnAmount={(isLnurl(input) ? +LNURLAmount : invoiceAmount / 1000) + feeEstimate}
@@ -418,7 +426,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 					proofs={proofs}
 					setProof={setProofs}
 				/>
-			}
+			)}
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
@@ -429,7 +437,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	payTo: {
-		marginBottom: 10
+		marginBottom: 10,
 	},
 	lnUrlFeeOverview: {
 		paddingHorizontal: 20,
@@ -456,7 +464,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		right: 20,
 		bottom: 20,
-		left: 20
+		left: 20,
 	},
 	addrBookBtnWrap: {
 		marginBottom: 25,
@@ -465,7 +473,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		right: 10,
 		top: 10,
-		padding: 10
+		padding: 10,
 	},
 	overview: {
 		flexDirection: 'row',
@@ -480,7 +488,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end',
 	},
 	mintAmount: {
-		marginRight: 5
+		marginRight: 5,
 	},
 	overviewWrap: {
 		flexDirection: 'row',

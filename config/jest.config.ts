@@ -1,6 +1,6 @@
 // import type { Config } from 'jest'
 // import { defaults } from 'jest-config'
-import type { JestConfigWithTsJest} from 'ts-jest'
+import type { JestConfigWithTsJest } from 'ts-jest'
 import { pathsToModuleNameMapper } from 'ts-jest'
 
 import { compilerOptions } from '../tsconfig.json'
@@ -12,13 +12,14 @@ export default (): JestConfigWithTsJest => ({
 	// setupFilesAfterEnv: ['<rootDir>/test/testSetupFile.ts'],
 	// testEnvironment: 'node',
 	transform: {
-		'^.+\\.ts?$':
-			['ts-jest',
-				{
-					// babelConfig: true,
-					tsconfig: '<rootDir>/tsconfig.json',
-					diagnostics: true
-				}]
+		'^.+\\.ts?$': [
+			'ts-jest',
+			{
+				// babelConfig: true,
+				tsconfig: '<rootDir>/tsconfig.json',
+				diagnostics: true,
+			},
+		],
 	},
 	resolver: 'ts-jest-resolver',
 	testRegex: 'test/.*\\.(test|spec)?\\.(ts|tsx)$',
@@ -34,7 +35,7 @@ export default (): JestConfigWithTsJest => ({
 		// '^@db(.*)$': '<rootDir>/src/storage/db$1',
 		// '^@src/(.*)$': '<rootDir>/src/$1',
 		'^@log$': '<rootDir>/src/logger',
-		...pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' })
+		...pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
 	},
 	collectCoverage: false,
 	collectCoverageFrom: [

@@ -30,22 +30,20 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav
-				screenName='Security'
-				withBackBtn
-				backHandler={() => navigation.navigate('Settings')}
-			/>
+			<TopNav screenName="Security" withBackBtn backHandler={() => navigation.navigate('Settings')} />
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<TouchableOpacity
 					style={styles.settingsRow}
-					onPress={() => { void handleBackup() }}
+					onPress={() => {
+						void handleBackup()
+					}}
 				>
-					<Txt txt='Create a backup token' />
+					<Txt txt="Create a backup token" />
 					<ChevronRightIcon color={color.TEXT} />
 				</TouchableOpacity>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
-			{prompt.open && <Toaster txt={prompt.msg} /> }
+			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View>
 	)
 }

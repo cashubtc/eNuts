@@ -16,21 +16,23 @@ interface IQuestionModalProps {
 	cancelFn: () => void
 }
 
-export function QuestionModal({ header, txt, visible, confirmTxt, confirmFn, cancelTxt, cancelFn }: IQuestionModalProps) {
+export function QuestionModal({
+	header,
+	txt,
+	visible,
+	confirmTxt,
+	confirmFn,
+	cancelTxt,
+	cancelFn,
+}: IQuestionModalProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
-		<MyModal type='question' animation='fade' visible={visible} close={cancelFn} >
-			<Text style={[globals(color).modalHeader, !txt?.length ? { marginBottom: 0 } : {}]}>
-				{header}
-			</Text>
-			<Text style={globals(color).modalTxt}>
-				{txt}
-			</Text>
+		<MyModal type="question" animation="fade" visible={visible} close={cancelFn}>
+			<Text style={[globals(color).modalHeader, !txt?.length ? { marginBottom: 0 } : {}]}>{header}</Text>
+			<Text style={globals(color).modalTxt}>{txt}</Text>
 			<Button txt={confirmTxt || 'Yes'} onPress={confirmFn} />
 			<TouchableOpacity style={styles.cancelWrap} onPress={cancelFn}>
-				<Text style={globals(color, highlight).pressTxt}>
-					{cancelTxt || 'No'}
-				</Text>
+				<Text style={globals(color, highlight).pressTxt}>{cancelTxt || 'No'}</Text>
 			</TouchableOpacity>
 		</MyModal>
 	)

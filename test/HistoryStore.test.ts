@@ -1,11 +1,11 @@
 import type { IHistoryEntry } from '@model'
 import { historyStore } from '@store/HistoryStore'
 
-
-
 describe('test HistoryStore', () => {
 	// eslint-disable-next-line @typescript-eslint/await-thenable
-	afterAll(async () => { await store.close() })
+	afterAll(async () => {
+		await store.close()
+	})
 	const store = historyStore
 	const entry: IHistoryEntry = {
 		amount: 1,
@@ -43,13 +43,9 @@ describe('test HistoryStore', () => {
 			{ key: '0', value: entry },
 		])
 		// test get value with limit
-		expect(await store.getHistoryWithKeys({ count: 1 })).toStrictEqual([
-			{ key: '1', value: entry },
-		])
+		expect(await store.getHistoryWithKeys({ count: 1 })).toStrictEqual([{ key: '1', value: entry }])
 		// test get value skip first item
-		expect(await store.getHistoryWithKeys({ start: 1 })).toStrictEqual([
-			{ key: '0', value: entry },
-		])
+		expect(await store.getHistoryWithKeys({ start: 1 })).toStrictEqual([{ key: '0', value: entry }])
 		// test update value by old value
 		expect(await store.updateHistoryEntry(entry, { ...entry, amount: 69 })).toBe(true)
 		expect(await store.getHistoryWithKeys()).toStrictEqual([

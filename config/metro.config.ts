@@ -15,22 +15,21 @@ const metroSymlinksResolver = MetroSymlinksResolver()
 const c = {
 	...config,
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-	...makeMetroConfig({
-		serializer: { ...config?.serializer ?? {}},
+	...(makeMetroConfig({
+		serializer: { ...(config?.serializer ?? {}) },
 		projectRoot: config?.projectRoot ?? join(__dirname, '..', ''),
 		resolver: {
-			...config?.resolver ?? {},
+			...(config?.resolver ?? {}),
 			// eslint-disable-next-line new-cap
 			resolveRequest: (context: ResolutionContext, moduleName: string, platform: string | null) => {
 				if (moduleName === 'missing-asset-registry-path') {
 					return { type: 'assetFiles', filePaths: [context.originModulePath] }
 				}
-				return  metroSymlinksResolver(context, moduleName, platform)
+				return metroSymlinksResolver(context, moduleName, platform)
 			},
-			assetExts: [...config?.resolver?.assetExts ?? [], 'db']
+			assetExts: [...(config?.resolver?.assetExts ?? []), 'db'],
 		},
-	}) as InputConfigT,
+	}) as InputConfigT),
 }
 
 module.exports = c
-

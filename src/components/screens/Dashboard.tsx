@@ -36,25 +36,20 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// Prompt modal
 	const { prompt, openPromptAutoClose } = usePrompt()
 	// Cashu token hook
-	const {
-		token,
-		setToken,
-		tokenInfo,
-		setTokenInfo,
-		trustModal,
-		setTrustModal
-	} = useCashuToken()
+	const { token, setToken, tokenInfo, setTokenInfo, trustModal, setTrustModal } = useCashuToken()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// modals
 	const [modal, setModal] = useState({
 		mint: false,
 		receiveOpts: false,
-		sendOpts: false
+		sendOpts: false,
 	})
 
 	// This function is only called if the mints of the received token are not in the user DB
 	const handleTrustModal = async () => {
-		if (loading) { return }
+		if (loading) {
+			return
+		}
 		startLoading()
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
@@ -128,7 +123,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		navigation.navigate('success', {
 			amount: info?.value,
 			mints: info?.mints,
-			memo: info?.decoded.memo
+			memo: info?.decoded.memo,
 		})
 	}
 
@@ -145,7 +140,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// handle initial URL passed on by clicking on a cashu link
 	useEffect(() => {
 		void (async () => {
-			if (!url) { return }
+			if (!url) {
+				return
+			}
 			// alert(`URL in dashboard useEffect: ${url}`)
 			await handleTokenSubmit(url)
 		})()
@@ -170,22 +167,22 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive and send buttons */}
 			<ActionButtons
 				ontopOfNav
-				topBtnTxt='Receive'
+				topBtnTxt="Receive"
 				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
-				bottomBtnTxt='Send'
+				bottomBtnTxt="Send"
 				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
 			/>
 			{/* Bottom nav icons */}
 			<BottomNav navigation={navigation} route={route} />
 			{/* Question modal for mint trusting */}
-			{trustModal &&
+			{trustModal && (
 				<TrustMintModal
 					loading={loading}
 					tokenInfo={tokenInfo}
 					handleTrustModal={handleTrustModal}
 					closeModal={() => setTrustModal(false)}
 				/>
-			}
+			)}
 			{/* Initial mint modal prompt */}
 			<InitialModal
 				visible={modal.mint}
@@ -197,7 +194,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				visible={modal.receiveOpts}
 				button1Txt={loading ? 'claiming...' : 'Paste & redeem Ecash'}
 				onPressFirstBtn={() => {
-					if (token.length) { return }
+					if (token.length) {
+						return
+					}
 					void (async () => {
 						startLoading()
 						const clipboard = await Clipboard.getStringAsync()
@@ -211,7 +210,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						await handleTokenSubmit(clipboard)
 					})()
 				}}
-				button2Txt='Create Lightning invoice'
+				button2Txt="Create Lightning invoice"
 				onPressSecondBtn={() => {
 					navigation.navigate('lightning', { receive: true })
 					setModal({ ...modal, receiveOpts: false })
@@ -221,12 +220,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}
-				button1Txt='Send Ecash'
+				button1Txt="Send Ecash"
 				onPressFirstBtn={() => {
 					navigation.navigate('send')
 					setModal({ ...modal, sendOpts: false })
 				}}
-				button2Txt='Pay Lightning invoice'
+				button2Txt="Pay Lightning invoice"
 				onPressSecondBtn={() => {
 					navigation.navigate('lightning', { send: true })
 					setModal({ ...modal, sendOpts: false })

@@ -1,4 +1,3 @@
-
 import type { IExpoConfig } from '@model'
 import { default as Consts, ExecutionEnvironment as ExecEnv } from 'expo-constants'
 import { Platform } from 'react-native'
@@ -21,23 +20,37 @@ function nodeEnvShort(): 'test' | AppVariant {
 		process.env.NODE_ENV = 'development'
 		return
 	}
-	if (process.env.NODE_ENV === 'production') { return 'prod' }
-	if (process.env.NODE_ENV === 'development') { return 'dev' }
-	if (process.env.NODE_ENV === 'test') { return 'test' }
-	if (process.env.NODE_ENV === 'preview') { return 'preview' }
+	if (process.env.NODE_ENV === 'production') {
+		return 'prod'
+	}
+	if (process.env.NODE_ENV === 'development') {
+		return 'dev'
+	}
+	if (process.env.NODE_ENV === 'test') {
+		return 'test'
+	}
+	if (process.env.NODE_ENV === 'preview') {
+		return 'preview'
+	}
 }
 function appVariant(): AppVariant {
 	if (!process?.env?.APP_VARIANT) {
 		process.env.APP_VARIANT = 'dev'
 		return
 	}
-	if (process.env.APP_VARIANT === 'prod') { return 'prod' }
-	if (process.env.APP_VARIANT === 'dev') { return 'dev' }
-	if (process.env.APP_VARIANT === 'preview') { return 'preview' }
+	if (process.env.APP_VARIANT === 'prod') {
+		return 'prod'
+	}
+	if (process.env.APP_VARIANT === 'dev') {
+		return 'dev'
+	}
+	if (process.env.APP_VARIANT === 'preview') {
+		return 'preview'
+	}
 }
 
 const config: Readonly<IExpoConfig | undefined | null> = Consts?.expoConfig
-export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> */ = {
+export const env /* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> */ = {
 	DEBUG: process.env.DEBUG || config?.extra?.DEBUG,
 
 	NODE_ENV: process.env.NODE_ENV || config?.extra?.NODE_ENV,
@@ -46,9 +59,7 @@ export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string 
 
 	APP_VARIANT: process.env.APP_VARIANT || config?.extra?.APP_VARIANT || appVariant() || nodeEnvShort(),
 
-	BUGSNAG_API_KEY: process.env.BUGSNAG_API_KEY
-		|| process.env.BUGSNAG_APIKEY
-		|| config?.extra?.bugsnag?.apiKey,
+	BUGSNAG_API_KEY: process.env.BUGSNAG_API_KEY || process.env.BUGSNAG_APIKEY || config?.extra?.bugsnag?.apiKey,
 
 	isExpo,
 	isExpoDev,
@@ -56,13 +67,15 @@ export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string 
 	isReactNativeDevMode,
 } as const
 
-
-export const isTestMode = (typeof __TEST__ === 'boolean' && __TEST__)
-	|| (typeof jest !== 'undefined' && jest.isMockFunction(jest))
-	|| (env?.NODE_ENV_SHORT === 'test' || env?.NODE_ENV === 'test')
-	|| (env?.APP_VARIANT === 'test' || env?.NODE_ENV === 'test')
-	|| (env?.NODE_ENV === 'test' && env?.NODE_ENV_SHORT === 'test')
-	|| process.env.NODE_ENV === 'test' || config?.extra?.NODE_ENV === 'test'
+export const isTestMode =
+	(typeof __TEST__ === 'boolean' && __TEST__) ||
+	(typeof jest !== 'undefined' && jest.isMockFunction(jest)) ||
+	env?.NODE_ENV_SHORT === 'test' ||
+	env?.NODE_ENV === 'test' ||
+	env?.APP_VARIANT === 'test' ||
+	env?.NODE_ENV === 'test' ||
+	(env?.NODE_ENV === 'test' && env?.NODE_ENV_SHORT === 'test') ||
+	process.env.NODE_ENV === 'test' ||
+	config?.extra?.NODE_ENV === 'test'
 
 export const isIOS = Platform.OS === 'ios'
-

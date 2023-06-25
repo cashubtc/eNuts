@@ -17,7 +17,7 @@ export interface IInitialProps {
 	expo?: IExpoConfig
 	exp: {
 		notification?: any
-		manifestString?: string;
+		manifestString?: string
 		[key: string]: any
 	}
 	shell?: boolean
@@ -72,8 +72,8 @@ export interface IPreferences {
 
 export interface IContactResp {
 	id?: number
-	name: string,
-	ln: string,
+	name: string
+	ln: string
 	isOwner: string
 }
 
@@ -87,25 +87,24 @@ export interface IHistoryEntry {
 	timestamp: number
 	value: string
 	mints: string[]
-	preImage?: string,
-	fee?: number,
+	preImage?: string
+	fee?: number
 	isSpent?: boolean
 }
 
-
 export interface IInvoice {
-	pr: string,
-	hash: string,
-	amount: number,
-	time: number,
+	pr: string
+	hash: string
+	amount: number
+	time: number
 	mintUrl: string
 }
 export interface IOpenDBParams {
-	name: string,
-	version?: string,
-	description?: string,
-	size?: number,
-	callback?: ((db: WebSQLDatabase) => void)
+	name: string
+	version?: string
+	description?: string
+	size?: number
+	callback?: (db: WebSQLDatabase) => void
 }
 export interface IOpenDB {
 	(
@@ -113,17 +112,17 @@ export interface IOpenDB {
 		version?: string,
 		description?: string,
 		size?: number,
-		callback?: ((db: WebSQLDatabase) => void)
+		callback?: (db: WebSQLDatabase) => void
 	): WebSQLDatabase
 }
 export type QueryArgs = (number | string | null)[]
 export interface ITx<T = unknown> {
-	sql: string,
-	args?: QueryArgs,
-	cb?: SQLStmtCb<T>,
+	sql: string
+	args?: QueryArgs
+	cb?: SQLStmtCb<T>
 	errorCb?: SQLStmtErrCb
 }
 export interface IKeyValuePair<T> {
-	key: string,
+	key: string
 	value: T
 }

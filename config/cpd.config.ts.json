@@ -1,5 +1,5 @@
 {
-	"output":"./report/ts/",
+	"output": "./report/ts/",
 	"pattern": "**/*.ts",
 	"format": "typescript",
 	"silent": true,

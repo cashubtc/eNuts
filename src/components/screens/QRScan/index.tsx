@@ -36,14 +36,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// cashu token
-	const {
-		token,
-		setToken,
-		tokenInfo,
-		setTokenInfo,
-		trustModal,
-		setTrustModal
-	} = useCashuToken()
+	const { token, setToken, tokenInfo, setTokenInfo, trustModal, setTrustModal } = useCashuToken()
 
 	const handleCashuToken = async (data: string) => {
 		const info = getTokenInfo(data)
@@ -65,7 +58,9 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	}
 
 	const handleTrustModal = async () => {
-		if (loading) { return }
+		if (loading) {
+			return
+		}
 		startLoading()
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
@@ -103,7 +98,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// success prompt
 		openPromptAutoClose({
 			msg: `Claimed ${info?.value} Satoshi from${'\n'}${info?.mints[0]}!${'\n'}Memo: ${info?.decoded.memo}`,
-			success: true
+			success: true,
 		})
 		// add as history entry
 		await addToHistory({
@@ -114,7 +109,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		})
 	}
 
-	const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {
+	const handleBarCodeScanned = ({ type, data }: { type: string; data: string }) => {
 		setScanned(true)
 		// early return if barcode is not a QR
 		if (+type !== QRType) {
@@ -150,7 +145,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			{hasPermission && !detailsOpen ?
+			{hasPermission && !detailsOpen ? (
 				<>
 					<Camera
 						flashMode={flash ? FlashMode.torch : FlashMode.off}
@@ -163,31 +158,21 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					/>
 					<QRMarker size={300} />
 					<View style={styles.hint}>
-						<Text style={styles.hintTxt}>
-							Scan cashu token or Lightning invoice
-						</Text>
+						<Text style={styles.hintTxt}>Scan cashu token or Lightning invoice</Text>
 					</View>
-					{scanned &&
-						<TouchableOpacity
-							style={styles.scanAgain}
-							onPress={() => setScanned(false)}
-						>
-							<Text style={styles.scanAgainTxt}>
-								Tap to Scan Again
-							</Text>
+					{scanned && (
+						<TouchableOpacity style={styles.scanAgain} onPress={() => setScanned(false)}>
+							<Text style={styles.scanAgainTxt}>Tap to Scan Again</Text>
 						</TouchableOpacity>
-					}
-					<TouchableOpacity
-						style={styles.actionLeft}
-						onPress={() => setFlash(prev => !prev)}
-					>
-						<FlashlightOffIcon width={30} height={30} color='#FFF' />
+					)}
+					<TouchableOpacity style={styles.actionLeft} onPress={() => setFlash((prev) => !prev)}>
+						<FlashlightOffIcon width={30} height={30} color="#FFF" />
 					</TouchableOpacity>
-					{flash &&
+					{flash && (
 						<View style={styles.flashOn}>
-							<ZapIcon width={30} height={30} color='#FFCC00' />
+							<ZapIcon width={30} height={30} color="#FFCC00" />
 						</View>
-					}
+					)}
 					<TouchableOpacity
 						style={styles.actionRight}
 						onPress={() => {
@@ -195,24 +180,22 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 							navigation.goBack()
 						}}
 					>
-						<CloseIcon width={30} height={30} color='#FFF' />
+						<CloseIcon width={30} height={30} color="#FFF" />
 					</TouchableOpacity>
 				</>
-				:
-				<Text style={styles.noAccess}>
-					No access to camera
-				</Text>
-			}
+			) : (
+				<Text style={styles.noAccess}>No access to camera</Text>
+			)}
 			{/* Question modal for mint trusting */}
-			{trustModal &&
+			{trustModal && (
 				<TrustMintModal
 					loading={loading}
 					tokenInfo={tokenInfo}
 					handleTrustModal={() => void handleTrustModal()}
 					closeModal={() => setTrustModal(false)}
 				/>
-			}
-			{detailsOpen &&
+			)}
+			{detailsOpen && (
 				<ScannedQRDetails
 					lnDecoded={lnDecoded}
 					closeDetails={() => {
@@ -221,13 +204,8 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					}}
 					nav={{ navigation, route }}
 				/>
-			}
-			{prompt.open &&
-				<Toaster
-					success={prompt.success}
-					txt={prompt.msg}
-				/>
-			}
+			)}
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }
@@ -241,14 +219,14 @@ const styles = StyleSheet.create({
 	noAccess: {
 		fontSize: 16,
 		fontWeight: '500',
-		color: '#FFF'
+		color: '#FFF',
 	},
 	flashOn: {
 		position: 'absolute',
 		bottom: 40,
 		padding: 20,
 		backgroundColor: '#000',
-		opacity: .8,
+		opacity: 0.8,
 		borderRadius: 40,
 	},
 	scanAgain: {
@@ -256,7 +234,7 @@ const styles = StyleSheet.create({
 		bottom: 150,
 		padding: 20,
 		backgroundColor: '#000',
-		opacity: .5,
+		opacity: 0.5,
 		borderRadius: 40,
 	},
 	scanAgainTxt: {
@@ -269,7 +247,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		top: 75,
 		backgroundColor: '#000',
-		opacity: .5,
+		opacity: 0.5,
 		padding: 20,
 		borderRadius: 40,
 	},
@@ -277,14 +255,14 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		fontSize: 16,
 		fontWeight: '500',
-		color: '#FFF'
+		color: '#FFF',
 	},
 	actionLeft: {
 		position: 'absolute',
 		bottom: 40,
 		left: 40,
 		backgroundColor: '#000',
-		opacity: .5,
+		opacity: 0.5,
 		padding: 20,
 		borderRadius: 40,
 	},
@@ -293,7 +271,7 @@ const styles = StyleSheet.create({
 		bottom: 40,
 		right: 40,
 		backgroundColor: '#000',
-		opacity: .5,
+		opacity: 0.5,
 		padding: 20,
 		borderRadius: 40,
 	},

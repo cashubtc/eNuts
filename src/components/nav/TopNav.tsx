@@ -30,21 +30,13 @@ export default function TopNav({ screenName, withBackBtn, backHandler, nav }: TT
 	}
 	return (
 		<View style={styles.topNav}>
-			{screenName ?
-				<Text style={globals(color).navTxt}>
-					{screenName}
-				</Text>
-				:
-				<View />
-			}
+			{screenName ? <Text style={globals(color).navTxt}>{screenName}</Text> : <View />}
 			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
-				{withBackBtn ?
-					<Text style={globals(color, highlight).pressTxt}>
-						Back
-					</Text>
-					:
+				{withBackBtn ? (
+					<Text style={globals(color, highlight).pressTxt}>Back</Text>
+				) : (
 					<QRIcon color={color.TEXT} />
-				}
+				)}
 			</TouchableOpacity>
 		</View>
 	)
@@ -63,6 +55,6 @@ const styles = StyleSheet.create({
 	},
 	topIconR: {
 		paddingLeft: 20,
-		paddingVertical: 20
+		paddingVertical: 20,
 	},
 })

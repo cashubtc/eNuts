@@ -32,8 +32,15 @@ export class AsyncStore {
 		return AsyncStorage.multiGet(keys)
 	}
 	public static async getManyObj<T extends object>(keys: string[]) {
-		return (await AsyncStorage.multiGet(keys)).map(([k, v]) => ({ key: k, value: v ? JSON.parse(v) as T : null })) || []
+		return (
+			(await AsyncStorage.multiGet(keys)).map(([k, v]) => ({ key: k, value: v ? (JSON.parse(v) as T) : null })) ||
+			[]
+		)
 	}
-	public static clear() { return AsyncStorage.clear() }
-	public static setMany(keyValuePairs: [string, string][]) { return AsyncStorage.multiSet(keyValuePairs) }
+	public static clear() {
+		return AsyncStorage.clear()
+	}
+	public static setMany(keyValuePairs: [string, string][]) {
+		return AsyncStorage.multiSet(keyValuePairs)
+	}
 }

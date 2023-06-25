@@ -9,18 +9,14 @@ const mockedNavigate = jest.fn()
 
 jest.mock('@react-navigation/native', () => ({
 	...jest.requireActual<typeof Nav>('@react-navigation/native'),
-	useNavigation: () => ({ navigate: mockedNavigate })
+	useNavigation: () => ({ navigate: mockedNavigate }),
 }))
 
 describe('Basic test of the Success.tsx component', () => {
 	it('renders the success screen for payment from the mint to a LN wallet', () => {
 		render(
 			<NavigationContainer>
-				<Success
-					amount={21}
-					fee={0}
-					mints={['test-mint']}
-				/>
+				<Success amount={21} fee={0} mints={['test-mint']} />
 			</NavigationContainer>
 		)
 		const textElement = screen.getByText('Payment successfull!')
@@ -29,11 +25,7 @@ describe('Basic test of the Success.tsx component', () => {
 	it('renders the success screen for minting new tokens', () => {
 		render(
 			<NavigationContainer>
-				<Success
-					amount={21}
-					hash='test-hash'
-					mint='test-mint'
-				/>
+				<Success amount={21} hash="test-hash" mint="test-mint" />
 			</NavigationContainer>
 		)
 		const textElement = screen.getByText('21 Satoshi minted!')
@@ -42,11 +34,7 @@ describe('Basic test of the Success.tsx component', () => {
 	it('renders the success screen after claiming a new token', () => {
 		render(
 			<NavigationContainer>
-				<Success
-					amount={21}
-					mints={['test-mint']}
-					memo='Just a test'
-				/>
+				<Success amount={21} mints={['test-mint']} memo="Just a test" />
 			</NavigationContainer>
 		)
 		const textElement = screen.getByText('21 Satoshi claimed!')
@@ -57,11 +45,7 @@ describe('Basic test of the Success.tsx component', () => {
 	it('navigates to a specific screen', () => {
 		render(
 			<NavigationContainer>
-				<Success
-					amount={21}
-					mints={['test-mint']}
-					memo='Just a test'
-				/>
+				<Success amount={21} mints={['test-mint']} memo="Just a test" />
 			</NavigationContainer>
 		)
 		// Press the button

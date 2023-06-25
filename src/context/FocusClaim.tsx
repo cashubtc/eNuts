@@ -5,7 +5,7 @@ const useFocusClaim = () => {
 	const [claimed, setClaimed] = useState(false)
 	return {
 		claimed,
-		setClaimed
+		setClaimed,
 	}
 }
 type useFocusClaimType = ReturnType<typeof useFocusClaim>
@@ -16,5 +16,5 @@ type useFocusClaimType = ReturnType<typeof useFocusClaim>
  */
 export const FocusClaimCtx = createContext<useFocusClaimType>({
 	claimed: false,
-	setClaimed: () => l('')
+	setClaimed: () => l(''),
 })

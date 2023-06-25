@@ -11,10 +11,11 @@ export async function getProofsToUse(mintUrl: string, amount: number, order: 'as
 		usableProofs.sort((a, b) => a.amount - b.amount)
 	}
 	usableProofs.forEach((proof) => {
-		if (amountAvailable >= amount) { return }
+		if (amountAvailable >= amount) {
+			return
+		}
 		amountAvailable = amountAvailable + proof.amount
 		proofsToSend.push(proof)
 	})
 	return { proofsToUse: proofsToSend }
 }
-

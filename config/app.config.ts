@@ -10,10 +10,18 @@ function nodeEnvShort(): 'test' | AppVariant {
 		process.env.NODE_ENV = 'development'
 		return
 	}
-	if (process.env.NODE_ENV === 'production') { return 'prod' }
-	if (process.env.NODE_ENV === 'development') { return 'dev' }
-	if (process.env.NODE_ENV === 'test') { return 'test' }
-	if (process.env.NODE_ENV === 'preview') { return 'preview' }
+	if (process.env.NODE_ENV === 'production') {
+		return 'prod'
+	}
+	if (process.env.NODE_ENV === 'development') {
+		return 'dev'
+	}
+	if (process.env.NODE_ENV === 'test') {
+		return 'test'
+	}
+	if (process.env.NODE_ENV === 'preview') {
+		return 'preview'
+	}
 }
 
 function appVariant(): AppVariant {
@@ -21,9 +29,15 @@ function appVariant(): AppVariant {
 		process.env.APP_VARIANT = 'dev'
 		return
 	}
-	if (process.env.APP_VARIANT === 'prod') { return 'prod' }
-	if (process.env.APP_VARIANT === 'dev') { return 'dev' }
-	if (process.env.APP_VARIANT === 'preview') { return 'preview' }
+	if (process.env.APP_VARIANT === 'prod') {
+		return 'prod'
+	}
+	if (process.env.APP_VARIANT === 'dev') {
+		return 'dev'
+	}
+	if (process.env.APP_VARIANT === 'preview') {
+		return 'preview'
+	}
 }
 
 const _appVariant = appVariant() || process.env.APP_VARIANT || 'dev'
@@ -32,7 +46,9 @@ const _nodeEnvShort = nodeEnvShort()
 
 try {
 	dotenvConfig({ path: `.env${_nodeEnvShort === 'prod' ? '' : `.${nodeEnvShort()}`}` })
-} catch (e) { console.log('dotenv error:', e) } // eslint-disable-line no-console
+} catch (e) {
+	console.log('dotenv error:', e)
+} // eslint-disable-line no-console
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const IS_DEV = _appVariant === 'dev'
@@ -52,7 +68,7 @@ const config: ExpoConfig = {
 	splash: {
 		image: './assets/splash.png',
 		resizeMode: 'contain',
-		backgroundColor: '#5DB075'
+		backgroundColor: '#5DB075',
 	},
 	assetBundlePatterns: ['**/*'],
 	plugins: [
@@ -61,40 +77,40 @@ const config: ExpoConfig = {
 		[
 			'expo-barcode-scanner',
 			{
-				cameraPermission: 'Allow eNuts to access camera.'
-			}
+				cameraPermission: 'Allow eNuts to access camera.',
+			},
 		],
 		[
 			'expo-camera',
 			{
-				cameraPermission: 'Allow eNuts to access camera.'
-			}
+				cameraPermission: 'Allow eNuts to access camera.',
+			},
 		],
 	],
 	ios: {
 		supportsTablet: true,
 		infoPlist: {
-			LSApplicationQueriesSchemes: ['cashu']
-		}
+			LSApplicationQueriesSchemes: ['cashu'],
+		},
 	},
 	android: {
 		adaptiveIcon: {
 			foregroundImage: './assets/adaptive-icon.png',
-			backgroundColor: '#5DB075'
+			backgroundColor: '#5DB075',
 		},
-		package: `com.agron.enuts${!IS_PROD ? `.${_appVariant}` : ''}`
+		package: `com.agron.enuts${!IS_PROD ? `.${_appVariant}` : ''}`,
 	},
 	web: {
-		favicon: './assets/favicon.png'
+		favicon: './assets/favicon.png',
 	},
 	extra: {
 		eas: { projectId: 'edb75ccd-71ac-4934-9147-baf1c7f2b068' },
 		DEBUG: process.env.DEBUG,
 		APP_VARIANT: _appVariant,
-		bugsnag: { apiKey: process.env.BUGSNAG_API_KEY, },
+		bugsnag: { apiKey: process.env.BUGSNAG_API_KEY },
 		NODE_ENV: process.env.NODE_ENV,
 		NODE_ENV_SHORT: _nodeEnvShort,
-	}
+	},
 }
 
 export default config

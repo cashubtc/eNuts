@@ -11,7 +11,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Address book' nav={{ navigation, route }} />
+			<TopNav screenName="Address book" nav={{ navigation, route }} />
 			<AddressBook nav={{ navigation, route }} />
 			<BottomNav navigation={navigation} route={route} />
 		</View>
@@ -21,6 +21,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 100
+		paddingTop: 100,
 	},
 })

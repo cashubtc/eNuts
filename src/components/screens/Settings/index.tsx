@@ -23,30 +23,30 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 		const success = await historyStore.clear()
 		openPromptAutoClose({
 			msg: success ? 'History deleted' : 'Could not delete the history.',
-			success
+			success,
 		})
 		setConfirm(false)
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Settings' nav={{ navigation, route }} />
+			<TopNav screenName="Settings" nav={{ navigation, route }} />
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
-					txt='Security'
+					txt="Security"
 					txtColor={color.TEXT}
 					icon={<LockIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Security settings')}
 					hasSeparator
 				/>
 				<SettingsMenuItem
-					txt='Display'
+					txt="Display"
 					txtColor={color.TEXT}
 					icon={<PaletteIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Display settings')}
 					hasSeparator
 				/>
 				<SettingsMenuItem
-					txt='Delete transaction history'
+					txt="Delete transaction history"
 					txtColor={color.ERROR}
 					icon={<TrashbinIcon2 color={color.ERROR} />}
 					onPress={() => setConfirm(true)}
@@ -55,15 +55,15 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 			<Txt txt={`v${version}`} styles={[styles.version]} />
 			<BottomNav navigation={navigation} route={route} />
 			<QuestionModal
-				header='Are you sure that you want to delete the history?'
-				txt='The data can not be retrieved afterwards.'
+				header="Are you sure that you want to delete the history?"
+				txt="The data can not be retrieved afterwards."
 				visible={confirm}
-				confirmTxt='Yes'
+				confirmTxt="Yes"
 				confirmFn={() => void handleDeleteHistory()}
-				cancelTxt='No'
+				cancelTxt="No"
 				cancelFn={() => setConfirm(false)}
 			/>
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} /> }
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }
@@ -79,19 +79,12 @@ interface IMenuItemProps {
 function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator }: IMenuItemProps) {
 	return (
 		<>
-			<TouchableOpacity
-				style={styles.settingsRow}
-				onPress={onPress}
-			>
+			<TouchableOpacity style={styles.settingsRow} onPress={onPress}>
 				<View style={styles.setting}>
 					{icon}
-					<Text style={[styles.settingTxt, { color: txtColor }]}>
-						{txt}
-					</Text>
+					<Text style={[styles.settingTxt, { color: txtColor }]}>{txt}</Text>
 				</View>
-				{!txt.includes('Delete') &&
-					<ChevronRightIcon color={txtColor} />
-				}
+				{!txt.includes('Delete') && <ChevronRightIcon color={txtColor} />}
 			</TouchableOpacity>
 			{hasSeparator && <Separator style={[{ marginVertical: 10 }]} />}
 		</>
@@ -124,5 +117,5 @@ const styles = StyleSheet.create({
 	version: {
 		fontWeight: '500',
 		textAlign: 'center',
-	}
+	},
 })

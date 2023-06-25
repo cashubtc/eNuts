@@ -55,42 +55,43 @@ export default function Success({ amount, fee, mints, mint, memo, nav, hash }: I
 				/>
 				{/* TODO show payment summary */}
 				<Text style={styles.successTxt}>
-					{isNum(fee) ?
+					{isNum(fee) ? (
 						'Payment successfull!'
-						:
-						<>{formatInt(amount)} Satoshi {mints ? 'claimed' : 'minted'}!</>
-					}
+					) : (
+						<>
+							{formatInt(amount)} Satoshi {mints ? 'claimed' : 'minted'}!
+						</>
+					)}
 				</Text>
-				{memo &&
-					<Text style={styles.mints}>
-						{memo}
-					</Text>
-				}
-				{mints && mints.map(m => (
-					<Text style={styles.mints} key={m}>
-						{formatMintUrl(m)}
-					</Text>
-				))}
-				{mint && mint.length > 0 &&
-					<Text style={styles.mints}>
-						{formatMintUrl(mint)}
-					</Text>
-				}
+				{memo && <Text style={styles.mints}>{memo}</Text>}
+				{mints &&
+					mints.map((m) => (
+						<Text style={styles.mints} key={m}>
+							{formatMintUrl(m)}
+						</Text>
+					))}
+				{mint && mint.length > 0 && <Text style={styles.mints}>{formatMintUrl(mint)}</Text>}
 			</View>
 			<View style={styles.btnWrap}>
-				{(testMintTokenRdy || mint !== _mintUrl) ?
+				{testMintTokenRdy || mint !== _mintUrl ? (
 					<>
-						<Button border txt='Manage mints' onPress={() => nav ? nav.navigate('mints') : navigation.navigate('mints')} />
+						<Button
+							border
+							txt="Manage mints"
+							onPress={() => (nav ? nav.navigate('mints') : navigation.navigate('mints'))}
+						/>
 						<View style={{ marginBottom: 20 }} />
-						<Button filled txt='Back to dashboard' onPress={() => nav ? nav.navigate('dashboard') : navigation.navigate('dashboard')} />
+						<Button
+							filled
+							txt="Back to dashboard"
+							onPress={() => (nav ? nav.navigate('dashboard') : navigation.navigate('dashboard'))}
+						/>
 					</>
-					:
+				) : (
 					<>
-						<Text style={styles.awaitTestMint}>
-							Awaiting test-mint tokens...
-						</Text>
+						<Text style={styles.awaitTestMint}>Awaiting test-mint tokens...</Text>
 					</>
-				}
+				)}
 			</View>
 		</>
 	)
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
 	mints: {
 		marginTop: 10,
 		fontSize: 16,
-		color: '#FAFAFA'
+		color: '#FAFAFA',
 	},
 	btnWrap: {
 		width: '100%',
@@ -127,5 +128,5 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 		color: '#FFF',
 		textAlign: 'center',
-	}
+	},
 })

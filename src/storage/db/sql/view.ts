@@ -21,8 +21,4 @@ CREATE VIEW IF NOT EXISTS MintBalances AS
 ;
 `
 
-export const views: readonly string[] = [
-	createBalanceView,
-	createBalanceUsedView,
-	createMintBalancesView
-]
+export const views: readonly string[] = [createBalanceView, createBalanceUsedView, createMintBalancesView]

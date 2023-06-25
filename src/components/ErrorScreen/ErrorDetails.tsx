@@ -4,8 +4,7 @@ import Txt from '@comps/Txt'
 import { repoIssueUrl } from '@consts/urls'
 import { isErr, openUrl } from '@util'
 import type { ErrorInfo } from 'react'
-import { ScrollView, StyleSheet, Text, TouchableOpacity,View } from 'react-native'
-
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export interface ErrorDetailsProps {
 	error: Error
@@ -17,11 +16,9 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 	const { prompt, openPromptAutoClose } = usePrompt()
 	return (
 		<View style={styles.container}>
-			<Text style={styles.header}>
-				An error occured!
-			</Text>
+			<Text style={styles.header}>An error occured!</Text>
 			<Txt
-				txt='We are sorry that you encountered this problem. You can help us improve the software by taking a screenshot and creating a short bug report.'
+				txt="We are sorry that you encountered this problem. You can help us improve the software by taking a screenshot and creating a short bug report."
 				styles={[{ marginBottom: 20 }]}
 			/>
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -29,13 +26,14 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 				<Txt txt={props.errorInfo?.componentStack ?? 'Error stack not available'} />
 			</ScrollView>
 			<TouchableOpacity
-				onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) =>
-					openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )}
+				onPress={() =>
+					void openUrl(repoIssueUrl)?.catch((err: unknown) =>
+						openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' })
+					)
+				}
 				style={styles.bugReport}
 			>
-				<Text style={styles.bugTxt}>
-					Report the bug{'  '}🐛
-				</Text>
+				<Text style={styles.bugTxt}>Report the bug{'  '}🐛</Text>
 			</TouchableOpacity>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
@@ -65,5 +63,5 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: '500',
 		textAlign: 'center',
-	}
+	},
 })

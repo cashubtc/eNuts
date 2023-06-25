@@ -1,4 +1,3 @@
-
 /**
  * If you're using Bugsnag:
  *   RN   https://docs.bugsnag.com/platforms/react-native/)
@@ -44,5 +43,7 @@ export function reportCrash(error: Error, errInfo: ErrorInfo, type: ErrorType = 
 		console.log(message, type)
 		// eslint-disable-next-line no-console
 		console?.tron?.error?.({ error, errInfo }, error.stack)
-	} else if (env.BUGSNAG_API_KEY) { Bugsnag.notify(error) }
+	} else if (env.BUGSNAG_API_KEY) {
+		Bugsnag.notify(error)
+	}
 }

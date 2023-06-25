@@ -18,7 +18,7 @@ describe('test AsyncStore', () => {
 		const value = await AsyncStore.getObj<typeof VALUE_OBJECT>(KEY)
 		expect(value).toEqual(JSON.parse(VALUE_STRING))
 		expect(AsyncStorage.getItem).toHaveBeenCalledWith(KEY)
-		// bad case 
+		// bad case
 		expect(await AsyncStore.getObj<typeof VALUE_OBJECT>(KEY)).toBe(null)
 	})
 
@@ -26,22 +26,23 @@ describe('test AsyncStore', () => {
 		const value = await AsyncStore.get(KEY)
 		expect(value).toEqual(VALUE_STRING)
 		expect(AsyncStorage.getItem).toHaveBeenCalledWith(KEY)
-		// bad case 
+		// bad case
 		expect(await AsyncStore.get(KEY)).toBe(null)
 	})
 
 	test('AsyncStore setObj', async () => {
 		await AsyncStore.setObj(KEY, VALUE_OBJECT)
 		expect(AsyncStorage.setItem).toHaveBeenCalledWith(KEY, VALUE_STRING)
-		// bad case 
-		expect(() => AsyncStore.setObj(KEY, BigInt(0) as unknown as object))
-			.toThrow('Do not know how to serialize a BigInt')
+		// bad case
+		expect(() => AsyncStore.setObj(KEY, BigInt(0) as unknown as object)).toThrow(
+			'Do not know how to serialize a BigInt'
+		)
 	})
 
 	test('AsyncStore set', async () => {
 		await AsyncStore.set(KEY, VALUE_STRING)
 		expect(AsyncStorage.setItem).toHaveBeenCalledWith(KEY, VALUE_STRING)
-		// bad case 
+		// bad case
 		// await expect(()=>AsyncStore.set(KEY, undefined as unknown as string)).rejects.toThrow()
 	})
 

@@ -22,19 +22,10 @@ export const highlight: { [key: string]: string } = {
 	Sky: '#027DFF',
 	Azyre: '#03DDFF',
 	Rosy: '#FC7ED0',
-	Zap: '#FFCC00'
+	Zap: '#FFCC00',
 }
 
-export const themeColors = [
-	'Default',
-	'Bitcoin',
-	'Nuts',
-	'Nostr',
-	'Sky',
-	'Azyre',
-	'Rosy',
-	'Zap',
-]
+export const themeColors = ['Default', 'Bitcoin', 'Nuts', 'Nostr', 'Sky', 'Azyre', 'Rosy', 'Zap']
 
 // light theme
 const WHITE = '#FAFAFA'
@@ -85,11 +76,11 @@ const darkTheme: TPref = {
 export const light: ExtendedTheme = {
 	dark: false,
 	colors: { ...DefaultTheme.colors },
-	custom: lightTheme
+	custom: lightTheme,
 }
 
 export const dark: ExtendedTheme = {
 	dark: true,
 	colors: { ...DefaultTheme.colors },
-	custom: darkTheme
+	custom: darkTheme,
 }

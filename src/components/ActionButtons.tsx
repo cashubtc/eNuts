@@ -17,26 +17,13 @@ export default function ActionButtons({
 	bottomBtnTxt,
 	bottomBtnAction,
 	ontopOfNav,
-	absolutePos
+	absolutePos,
 }: IActionBtnsProps) {
 	return (
-		<View
-			style={[
-				styles.actionWrap,
-				ontopOfNav ? styles.ontopOfNav : {},
-				absolutePos ? styles.absolute : {},
-			]}
-		>
-			<Button
-				txt={topBtnTxt}
-				onPress={topBtnAction}
-			/>
+		<View style={[styles.actionWrap, ontopOfNav ? styles.ontopOfNav : {}, absolutePos ? styles.absolute : {}]}>
+			<Button txt={topBtnTxt} onPress={topBtnAction} />
 			<View style={{ marginVertical: 10 }} />
-			<Button
-				txt={bottomBtnTxt}
-				outlined
-				onPress={bottomBtnAction}
-			/>
+			<Button txt={bottomBtnTxt} outlined onPress={bottomBtnAction} />
 		</View>
 	)
 }
@@ -56,5 +43,5 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		padding: 20,
-	}
+	},
 })

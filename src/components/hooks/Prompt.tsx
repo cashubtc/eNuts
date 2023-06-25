@@ -32,6 +32,6 @@ export default function usePrompt() {
 		prompt,
 		openPrompt,
 		closePrompt,
-		openPromptAutoClose
+		openPromptAutoClose,
 	}
 }

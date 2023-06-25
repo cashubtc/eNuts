@@ -16,7 +16,7 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 
 interface IAddressBookProps {
 	nav?: TAddressBookPageProps
-	isModal?: boolean,
+	isModal?: boolean
 	closeModal?: () => void
 	setInput?: (val: string) => void
 }
@@ -33,7 +33,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 	// new contact input
 	const [newContact, setNewContact] = useState({
 		name: '',
-		lnUrl: ''
+		lnUrl: '',
 	})
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleNewContact = async () => {
@@ -52,7 +52,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 		const success = await addContact({
 			name: openNew.isOwner ? 'Personal LNURL' : contact.name,
 			ln: contact.lnUrl,
-			isOwner: openNew.isOwner
+			isOwner: openNew.isOwner,
 		})
 		if (!success) {
 			openPromptAutoClose({ msg: 'Contact can not be added. Possible name or LNURL duplication.' })
@@ -65,60 +65,63 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 	return (
 		<>
 			{/* Header */}
-			{isModal ?
+			{isModal ? (
 				<View style={styles.modalHeader}>
 					<View>
-						<Txt txt='Address book' styles={[globals(color).navTxt, styles.header]} />
+						<Txt txt="Address book" styles={[globals(color).navTxt, styles.header]} />
 						<ContactsCount count={contacts.length} />
 					</View>
 					{/* cancel modal / go back to payment page */}
-					<TouchableOpacity
-						style={{ paddingVertical: 10 }}
-						onPress={() => closeModal?.()}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							Cancel
-						</Text>
+					<TouchableOpacity style={{ paddingVertical: 10 }} onPress={() => closeModal?.()}>
+						<Text style={globals(color, highlight).pressTxt}>Cancel</Text>
 					</TouchableOpacity>
 				</View>
-				:
+			) : (
 				<View style={styles.bookHeader}>
 					<ContactsCount count={contacts.length} />
 				</View>
-			}
+			)}
 			{/* Address list */}
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 				{/* user own LNURL */}
-				{hasOwnAddress() ?
+				{hasOwnAddress() ? (
 					<View style={[globals(color).wrapContainer, styles.bookEntry, styles.container]}>
-						<Text style={[
-							styles.circleUser,
-							{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
-						]}>
+						<Text
+							style={[
+								styles.circleUser,
+								{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT },
+							]}
+						>
 							<UserIcon width={20} height={20} color={hi[highlight]} />
 						</Text>
 						<TouchableOpacity
 							style={styles.nameEntry}
 							onPress={() => {
 								const personalInfo = getPersonalInfo()
-								if (!personalInfo) { return }
+								if (!personalInfo) {
+									return
+								}
 								if (isModal) {
 									setInput?.(personalInfo.ln)
 									closeModal?.()
 									return
 								}
 								nav?.navigation.navigate('Contact', {
-									contact: personalInfo
+									contact: personalInfo,
 								})
 							}}
 						>
 							<Txt txt={getPersonalInfo()?.ln || ''} />
 						</TouchableOpacity>
 					</View>
-					:
+				) : (
 					<TouchableOpacity
-						style={[styles.bookEntry, styles.container, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}
-						testID='addPersonal'
+						style={[
+							styles.bookEntry,
+							styles.container,
+							{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG },
+						]}
+						testID="addPersonal"
 						onPress={() => {
 							setOpenNew({ open: true, isOwner: true })
 						}}
@@ -127,88 +130,91 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							<PlusIcon width={16} height={16} color={hi[highlight]} />
 						</Text>
 						<View style={styles.nameEntry}>
-							<Txt txt='Add your own LNURL' styles={[{ color: hi[highlight] }]} />
+							<Txt txt="Add your own LNURL" styles={[{ color: hi[highlight] }]} />
 						</View>
 					</TouchableOpacity>
-				}
-				{contacts.length > 0 &&
+				)}
+				{contacts.length > 0 && (
 					<View style={[globals(color).wrapContainer, styles.bookContainer]}>
-						{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
-							!c.isOwner &&
-							<View key={c.ln}>
-								<View style={styles.bookEntry}>
-									<Text style={[
-										styles.circle,
-										{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
-									]}>
-										{c.name.charAt(0).toUpperCase()}
-									</Text>
-									<TouchableOpacity
-										style={styles.nameEntry}
-										onPress={() => {
-											if (isModal) {
-												setInput?.(c.ln)
-												closeModal?.()
-												return
-											}
-											nav?.navigation.navigate('Contact', {
-												contact: c
-											})
-										}}
-									>
-										<Txt txt={c.name} />
-									</TouchableOpacity>
-								</View>
-								{i < contacts.length - 1 && <Separator style={[{ marginLeft: 60 }]} />}
-							</View>
-						))}
+						{contacts
+							.sort((a, b) => a.name.localeCompare(b.name))
+							.map(
+								(c, i) =>
+									!c.isOwner && (
+										<View key={c.ln}>
+											<View style={styles.bookEntry}>
+												<Text
+													style={[
+														styles.circle,
+														{
+															borderColor: color.BORDER,
+															backgroundColor: color.INPUT_BG,
+															color: color.TEXT,
+														},
+													]}
+												>
+													{c.name.charAt(0).toUpperCase()}
+												</Text>
+												<TouchableOpacity
+													style={styles.nameEntry}
+													onPress={() => {
+														if (isModal) {
+															setInput?.(c.ln)
+															closeModal?.()
+															return
+														}
+														nav?.navigation.navigate('Contact', {
+															contact: c,
+														})
+													}}
+												>
+													<Txt txt={c.name} />
+												</TouchableOpacity>
+											</View>
+											{i < contacts.length - 1 && <Separator style={[{ marginLeft: 60 }]} />}
+										</View>
+									)
+							)}
 					</View>
-				}
+				)}
 			</ScrollView>
 			{/* Add new contact button */}
-			{!isModal &&
+			{!isModal && (
 				<View style={styles.newContactBtn}>
 					<IconBtn
-						icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
+						icon={<PlusIcon width={15} height={15} color="#FAFAFA" />}
 						onPress={() => setOpenNew({ open: true, isOwner: false })}
-						testId='testNewContact'
+						testId="testNewContact"
 					/>
 				</View>
-			}
+			)}
 			{/* Add new contact modal */}
 			<MyModal
-				type='bottom'
-				animation='slide'
+				type="bottom"
+				animation="slide"
 				visible={openNew.open && !prompt.open}
 				close={() => setOpenNew({ open: false, isOwner: false })}
 			>
-				<Text style={globals(color).modalHeader}>
-					{openNew.isOwner ? 'Your LNURL' : 'New contact'}
-				</Text>
-				{!openNew.isOwner &&
+				<Text style={globals(color).modalHeader}>{openNew.isOwner ? 'Your LNURL' : 'New contact'}</Text>
+				{!openNew.isOwner && (
 					<TextInput
 						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="Name"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
-						onChangeText={name => setNewContact(prev => ({ ...prev, name }))}
+						onChangeText={(name) => setNewContact((prev) => ({ ...prev, name }))}
 					/>
-				}
+				)}
 				<TextInput
 					style={[globals(color).input, { marginBottom: 20 }]}
 					placeholder="zap@me.now"
 					placeholderTextColor={color.INPUT_PH}
 					selectionColor={hi[highlight]}
-					onChangeText={lnUrl => setNewContact(prev => ({ ...prev, lnUrl }))}
+					onChangeText={(lnUrl) => setNewContact((prev) => ({ ...prev, lnUrl }))}
 				/>
-				<Button txt='Save' onPress={() => void handleNewContact()} />
-				<TouchableOpacity
-					style={styles.cancel}
-					onPress={() => setOpenNew({ open: false, isOwner: false })}
-				>
-					<Text style={globals(color, highlight).pressTxt}>
-						Cancel
-					</Text>
+				<Button txt="Save" onPress={() => void handleNewContact()} />
+				<TouchableOpacity style={styles.cancel} onPress={() => setOpenNew({ open: false, isOwner: false })}>
+					<Text style={globals(color, highlight).pressTxt}>Cancel</Text>
 				</TouchableOpacity>
 			</MyModal>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
@@ -220,11 +226,7 @@ function ContactsCount({ count }: { count: number }) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
-			{!count ?
-				''
-				:
-				`${count} Contact${count > 1 ? 's' : ''}`
-			}
+			{!count ? '' : `${count} Contact${count > 1 ? 's' : ''}`}
 		</Text>
 	)
 }
@@ -246,7 +248,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	scroll: {
-		width: '100%'
+		width: '100%',
 	},
 	container: {
 		paddingVertical: 10,
@@ -294,6 +296,6 @@ const styles = StyleSheet.create({
 	},
 	cancel: {
 		marginTop: 25,
-		marginBottom: 10
-	}
+		marginBottom: 10,
+	},
 })

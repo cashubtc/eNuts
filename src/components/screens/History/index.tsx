@@ -34,7 +34,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='History' nav={{ navigation, route }} />
+			<TopNav screenName="History" nav={{ navigation, route }} />
 			{/* TODO apply filter for ecash or LN TXs */}
 			<View style={styles.listWrap}>
 				{/* History list grouped by settled date */}
@@ -42,26 +42,18 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 					data={Object.entries(data)}
 					estimatedItemSize={300}
 					// contentContainerStyle={{ paddingHorizontal: 20 }}
-					renderItem={data => (
+					renderItem={(data) => (
 						<>
 							{/* Group date */}
-							<Text style={[styles.date, { color: color.TEXT }]}>
-								{data.item[0]}
-							</Text>
+							<Text style={[styles.date, { color: color.TEXT }]}>{data.item[0]}</Text>
 							{/* Group entries */}
-							<View style={[
-								globals(color).wrapContainer,
-								{ height: Math.floor(data.item[1].length * 69) }
-							]}>
+							<View
+								style={[globals(color).wrapContainer, { height: Math.floor(data.item[1].length * 69) }]}
+							>
 								<FlashList
 									data={data.item[1]}
 									scrollEnabled={false}
-									renderItem={({ item }) => (
-										<HistoryEntry
-											item={item}
-											nav={{ navigation, route }}
-										/>
-									)}
+									renderItem={({ item }) => <HistoryEntry item={item} nav={{ navigation, route }} />}
 									estimatedItemSize={300}
 									ItemSeparatorComponent={() => <Separator />}
 								/>
@@ -70,7 +62,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 					)}
 					ListEmptyComponent={
 						<Txt
-							txt='No transactions yet...'
+							txt="No transactions yet..."
 							styles={[{ textAlign: 'center', marginTop: 20, color: color.TEXT_SECONDARY }]}
 						/>
 					}
