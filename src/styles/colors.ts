@@ -15,14 +15,14 @@ export type TPref = {
 
 // highlight theme
 export const highlight: { [key: string]: string } = {
-	'Default': '#5DB075',
-	'Bitcoin': '#FF9900',
-	'Nuts': '#B37436',
-	'Nostr': '#B780FF',
-	'Sky': '#027DFF',
-	'Azyre': '#03DDFF',
-	'Rosy': '#FC7ED0',
-	'Zap': '#FFCC00'
+	Default: '#5DB075',
+	Bitcoin: '#FF9900',
+	Nuts: '#B37436',
+	Nostr: '#B780FF',
+	Sky: '#027DFF',
+	Azyre: '#03DDFF',
+	Rosy: '#FC7ED0',
+	Zap: '#FFCC00'
 }
 
 export const themeColors = [

@@ -3,7 +3,6 @@
 		"es6": true,
 		"node": true,
 		"es2021": true,
-		// "react-native/react-native": true,
 		"jest/globals": true
 	},
 	"settings": {
@@ -13,22 +12,7 @@
 		},
 		"import/parsers": {
 			"@typescript-eslint/parser": [".ts", ".tsx"]
-		} /* ,
-		"import/resolver": {
-			/* "typescript": {
-				"paths": "./tsconfig.json",
-				"alwaysTryTypes": true
-			},
-			// "typescript": {}, // this loads <rootdir>/tsconfig.json to ESLint
-			"node": {
-				"extensions": [
-					".js",
-					".jsx",
-					".ts",
-					".tsx"
-				]
-			}
-		} */
+		}
 	},
 	"extends": [
 		"eslint:recommended",
@@ -37,16 +21,12 @@
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"plugin:promise/recommended",
 		"plugin:json/recommended",
-		// "plugin:import/recommended",
 		"plugin:import/typescript",
 		"plugin:jest/recommended",
-		// "eslint:recommended",
 		"plugin:react/recommended",
 		"plugin:react-hooks/recommended",
 		"plugin:@rnx-kit/recommended",
 		"plugin:react/jsx-runtime"
-		// "plugin:import/errors",
-		// "plugin:import/warnings"
 	],
 	"overrides": [
 		{
@@ -94,6 +74,7 @@
 		"jsdoc"
 	],
 	"rules": {
+		"quote-props": ["warn", "as-needed"],
 		"react/no-unescaped-entities": "warn",
 		"no-dupe-class-members": 0,
 		"simple-import-sort/imports": "warn",
@@ -113,96 +94,8 @@
 			{ "allowNumber": true, "allowBoolean": true, "allowNullish": true }
 		],
 		"@typescript-eslint/no-explicit-any": 0,
-		// "@typescript-eslint/explicit-module-boundary-types": 0,
-		/* "@typescript-eslint/naming-convention": [
-			"warn",
-			{
-				"selector": "variableLike",
-				"format": [
-					"camelCase"
-				]
-			},
-			{
-				"selector": "memberLike",
-				"format": [
-					"camelCase"
-				]
-			},
-			{
-				"selector": "variable",
-				"types": [
-					"boolean"
-				],
-				"format": [
-					"camelCase"
-				],
-				"prefix": [
-					"is",
-					"should",
-					"has",
-					"can",
-					"did",
-					"will"
-				]
-			},
-			{
-				"selector": "typeParameter",
-				"format": [
-					"PascalCase"
-				],
-				"prefix": [
-					"T"
-				]
-			},
-			{
-				"selector": "default",
-				"format": [
-					"camelCase"
-				]
-			},
-			{
-				"selector": "variable",
-				"format": [
-					"camelCase",
-					"UPPER_CASE"
-				],
-				"leadingUnderscore": "allow"
-			},
-			{
-				"selector": "parameter",
-				"format": [
-					"camelCase"
-				],
-				"leadingUnderscore": "allow"
-			},
-			{
-				"selector": "memberLike",
-				"modifiers": [
-					"private"
-				],
-				"format": [
-					"camelCase"
-				],
-				"leadingUnderscore": "require"
-			},
-			{
-				"selector": "typeLike",
-				"format": [
-					"PascalCase"
-				]
-			}
-		], */
 		"new-cap": 1,
 		"camelcase": 0,
-		/* "@getify/proper-arrows/params": ["warn", {
-			"unused": "trailing",
-			"allow": ["e", "err"],
-			"length": 3, "trivial": true
-		}],,
-		"@getify/proper-arrows/return": ["warn", {
-			"object": true
-		}] */
-		// "@getify/proper-arrows/where": 0,
 		"@typescript-eslint/no-unused-vars": [
 			"warn",
 			{

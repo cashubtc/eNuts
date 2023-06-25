@@ -91,7 +91,7 @@ const config: ExpoConfig = {
 		eas: { projectId: 'edb75ccd-71ac-4934-9147-baf1c7f2b068' },
 		DEBUG: process.env.DEBUG,
 		APP_VARIANT: _appVariant,
-		bugsnag: { 'apiKey': process.env.BUGSNAG_API_KEY, },
+		bugsnag: { apiKey: process.env.BUGSNAG_API_KEY, },
 		NODE_ENV: process.env.NODE_ENV,
 		NODE_ENV_SHORT: _nodeEnvShort,
 	}

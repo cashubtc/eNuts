@@ -7,9 +7,9 @@ const fn: ConfigFunction = (api: ConfigAPI): TransformOptions => {
 		plugins: [
 			'@babel/plugin-syntax-jsx',
 			'react-native-reanimated/plugin',
-			['@babel/plugin-proposal-private-methods', { 'loose': true }],
+			['@babel/plugin-proposal-private-methods', { loose: true }],
 			['module-resolver', {
-				'alias': {
+				alias: {
 					'@nav': './src/components/nav',
 					'@comps': './src/components',
 					'@screens': './src/components/screens',
@@ -25,7 +25,7 @@ const fn: ConfigFunction = (api: ConfigAPI): TransformOptions => {
 					'@store': './src/storage/store',
 					'@consts': './src/consts',
 				},
-				'extensions': [
+				extensions: [
 					'.js',
 					'.jsx',
 					'.ts',

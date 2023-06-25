@@ -1,6 +1,6 @@
 
-const configPath = `${__dirname}/config/app.config.ts`;
+const configPath = `${__dirname}/config/app.config.ts`
 
-require('ts-node/register');
+require('ts-node/register')
 
-module.exports = require(configPath);
+module.exports = require(configPath)
