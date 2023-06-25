@@ -1,6 +1,5 @@
 import { hasTrustedMint } from '@util'
 
-
 describe('test utils', () => {
 	const userMints = ['mint1', 'mint2', 'mint3']
 	const userMintsObjArr = [{ mintUrl: 'mint1' }, { mintUrl: 'mint2' }, { mintUrl: 'mint3' }]

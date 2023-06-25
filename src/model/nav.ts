@@ -20,12 +20,14 @@ export type RootStackParamList = {
 		mints?: string[]
 		memo?: string
 	}
-	lightning: {
-		mint?: IMintUrl
-		balance?: number
-		receive?: boolean
-		send?: boolean
-	} | undefined
+	lightning:
+		| {
+				mint?: IMintUrl
+				balance?: number
+				receive?: boolean
+				send?: boolean
+		  }
+		| undefined
 	'pay invoice': {
 		mint?: IMintUrl
 		mintBal: number
@@ -55,7 +57,7 @@ export type RootStackParamList = {
 		mintUrl: string
 	}
 	'qr scan': undefined
-	'history': undefined
+	history: undefined
 	'history entry details': {
 		entry: IHistoryEntry
 	}
@@ -94,18 +96,18 @@ export type TBackupPageProps = NativeStackScreenProps<RootStackParamList, 'Backu
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
 export type TBottomNavProps =
-	TDashboardPageProps |
-	TLightningPageProps |
-	TMintsPageProps |
-	TMintManagementPageProps |
-	TSendTokenPageProps |
-	TPayLNInvoicePageProps |
-	THistoryPageProps |
-	THistoryEntryPageProps |
-	TMintProofsPageProps |
-	TAddressBookPageProps |
-	TBackupPageProps |
-	TSecuritySettingsPageProps |
-	TDisplaySettingsPageProps |
-	TSettingsPageProps |
-	IContactPageProps
+	| TDashboardPageProps
+	| TLightningPageProps
+	| TMintsPageProps
+	| TMintManagementPageProps
+	| TSendTokenPageProps
+	| TPayLNInvoicePageProps
+	| THistoryPageProps
+	| THistoryEntryPageProps
+	| TMintProofsPageProps
+	| TAddressBookPageProps
+	| TBackupPageProps
+	| TSecuritySettingsPageProps
+	| TDisplaySettingsPageProps
+	| TSettingsPageProps
+	| IContactPageProps

@@ -1,7 +1,7 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
 import { isCashuToken } from '@util'
-import { useEffect,useState } from 'react'
-import type { EmitterSubscription} from 'react-native'
+import { useEffect, useState } from 'react'
+import type { EmitterSubscription } from 'react-native'
 import { Linking } from 'react-native'
 
 export interface EventType {
@@ -36,11 +36,19 @@ export const useInitialURL = () => {
 	useEffect(() => {
 		const getUrlAsync = async () => {
 			// Get the deep link used to open the app
-			let initialUrl = await Linking.getInitialURL() || ''
-			if (!initialUrl) { return }
+			let initialUrl = (await Linking.getInitialURL()) || ''
+			if (!initialUrl) {
+				return
+			}
 			initialUrl = isCashuToken(initialUrl) || ''
-			if (!initialUrl) { return }
-			try { getDecodedToken(initialUrl) } catch (_) { return }
+			if (!initialUrl) {
+				return
+			}
+			try {
+				getDecodedToken(initialUrl)
+			} catch (_) {
+				return
+			}
 			// The setTimeout is just for testing purpose
 			setTimeout(() => {
 				setUrl(initialUrl || '')

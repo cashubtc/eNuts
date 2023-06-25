@@ -12,7 +12,7 @@ import { getDatabase } from './wrapper/getTestDb'
 jest.mock('expo-sqlite', () => ({
 	get openDatabase() {
 		return (_: string) => getDatabase(':memory:')
-	}
+	},
 }))
 
 jest.mock('expo-constants', () => ({}))
@@ -23,7 +23,7 @@ jest.mock('expo-localization', () => ({
 	getLgetLocales: () => {
 		const arr: Locale[] = []
 		return arr
-	}
+	},
 }))
 jest.mock('reactotron-react-native', () => ({}))
 // jest.mock('react-native', () => ({}))
@@ -32,7 +32,9 @@ jest.mock('expo/config', () => ({}))
 
 jest.doMock('@react-native-async-storage/async-storage', () =>
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-	require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+	require('@react-native-async-storage/async-storage/jest/async-storage-mock')
 )
 
-declare global { const __TEST__ = true }
+declare global {
+	const __TEST__ = true
+}

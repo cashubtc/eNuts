@@ -9,14 +9,36 @@ import { Linking, Vibration } from 'react-native'
 import { getLanguageCode } from './localization'
 import { isArr, isBuf, isNum, isStr } from './typeguards'
 
-export { isArr, isArrOf, isArrOfNonNullable, isArrOfNum, isArrOfObj, isArrOfStr, isBool, isBuf, isErr, isFunc, isNonNullable, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
+export {
+	isArr,
+	isArrOf,
+	isArrOfNonNullable,
+	isArrOfNum,
+	isArrOfObj,
+	isArrOfStr,
+	isBool,
+	isBuf,
+	isErr,
+	isFunc,
+	isNonNullable,
+	isNull,
+	isNum,
+	isObj,
+	isStr,
+	isUndef,
+} from './typeguards'
 
-export function rndInt(min: number, max: number) { // min and max included
+export function rndInt(min: number, max: number) {
+	// min and max included
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
-export function sleep(ms: number) { return new Promise<void>(resolve => setTimeout(resolve, ms)) }
+export function sleep(ms: number) {
+	return new Promise<void>((resolve) => setTimeout(resolve, ms))
+}
 
-export function formatBalance(bal: number) { return (bal / 100_000_000).toFixed(8) }
+export function formatBalance(bal: number) {
+	return (bal / 100_000_000).toFixed(8)
+}
 /**
  * format a number to a string with a given locale. Compact notation is not yet supported for all locales.
  *
@@ -31,7 +53,7 @@ export function formatBalance(bal: number) { return (bal / 100_000_000).toFixed(
 export function formatInt(
 	val: number,
 	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard',
-	locale?: string,
+	locale?: string
 ): string {
 	try {
 		const lan = getLanguageCode()
@@ -53,19 +75,27 @@ export function getShortDateStr(date: Date) {
 }
 export function isToday(someDate: Date) {
 	const today = new Date()
-	return someDate.getDate() === today.getDate() &&
+	return (
+		someDate.getDate() === today.getDate() &&
 		someDate.getMonth() === today.getMonth() &&
 		someDate.getFullYear() === today.getFullYear()
+	)
 }
 export function getHistoryGroupDate(date: Date) {
 	return isToday(date) ? 'Today' : getShortDateStr(date)
 }
 export function isUrl(url: string) {
-	try { return !!new URL(url) } catch { /* ignore*/ }
+	try {
+		return !!new URL(url)
+	} catch {
+		/* ignore*/
+	}
 	return false
 }
 export function formatMintUrl(url: string) {
-	if (url.length < 30) { return url }
+	if (url.length < 30) {
+		return url
+	}
 	const u = new URL(url)
 	return `${u.hostname.slice(0, 25)}...${u.pathname.slice(-10)}`
 }
@@ -75,11 +105,9 @@ export function formatExpiry(time: number) {
 	return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 export function skipRoute(r: string) {
-	return r !== 'root' &&
-		r !== 'Contact' &&
-		r !== 'Display settings' &&
-		r !== 'Security settings' &&
-		r !== 'BackupPage'
+	return (
+		r !== 'root' && r !== 'Contact' && r !== 'Display settings' && r !== 'Security settings' && r !== 'BackupPage'
+	)
 }
 export function getSelectedAmount(proofs: IProofSelection[]) {
 	return proofs.reduce((acc, p) => acc + (p.selected ? p.amount : 0), 0)
@@ -89,40 +117,58 @@ export function vib(pattern?: number | number[]) {
 }
 export function isLnurl(addr: string) {
 	const [user, host] = addr.split('@')
-	return addr.includes('.')
-		&& addr.split('@').length === 2
-		&& isUrl(`https://${host}/.well-known/lnurlp/${user}`)
+	return addr.includes('.') && addr.split('@').length === 2 && isUrl(`https://${host}/.well-known/lnurlp/${user}`)
 }
 export function hasTrustedMint(userMints: string[], tokenMints: string[]): boolean
 export function hasTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]): boolean
 export function hasTrustedMint(uMints: ({ mintUrl: string } | string)[], tMints: string[]) {
-	if (!uMints?.length || !isArr(uMints) || !tMints?.length || !isArr(tMints)) { return false }
-	return uMints.some(m => tMints.includes(isStr(m) ? m : m.mintUrl))
+	if (!uMints?.length || !isArr(uMints) || !tMints?.length || !isArr(tMints)) {
+		return false
+	}
+	return uMints.some((m) => tMints.includes(isStr(m) ? m : m.mintUrl))
 }
 export async function getInvoiceFromLnurl(address: string, amount: number) {
 	try {
-		if (!isLnurl(address)) { throw new Error('invalid address') }
+		if (!isLnurl(address)) {
+			throw new Error('invalid address')
+		}
 		const [user, host] = address.split('@')
 		amount *= 1000
-		const { data: { tag, callback, minSendable, maxSendable } } = await axios.get<ILnUrl>(`https://${host}/.well-known/lnurlp/${user}`)
+		const {
+			data: { tag, callback, minSendable, maxSendable },
+		} = await axios.get<ILnUrl>(`https://${host}/.well-known/lnurlp/${user}`)
 		if (tag === 'payRequest' && minSendable <= amount && amount <= maxSendable) {
 			const resp = await axios.get<{ pr: string }>(`${callback}?amount=${amount}`)
-			if (!resp?.data?.pr) { l('[getInvoiceFromLnurl]', { resp }) }
+			if (!resp?.data?.pr) {
+				l('[getInvoiceFromLnurl]', { resp })
+			}
 			return resp?.data?.pr || ''
 		}
-	} catch (err) { l('[getInvoiceFromLnurl]', err) }
+	} catch (err) {
+		l('[getInvoiceFromLnurl]', err)
+	}
 	return ''
 }
 export function isCashuToken(token: string) {
-	if (!token || !isStr(token)) { return }
+	if (!token || !isStr(token)) {
+		return
+	}
 	token = token.trim()
 	const uriPrefixes = ['web+cashu://', 'cashu://', 'cashu:']
 	uriPrefixes.forEach((prefix) => {
-		if (!token.startsWith(prefix)) { return }
+		if (!token.startsWith(prefix)) {
+			return
+		}
 		token = token.slice(prefix.length).trim()
 	})
-	if (!token) { return }
-	try { getDecodedToken(token.trim()) } catch (_) { return }
+	if (!token) {
+		return
+	}
+	try {
+		getDecodedToken(token.trim())
+	} catch (_) {
+		return
+	}
 	return token.trim()
 }
 
@@ -136,15 +182,15 @@ export function* arrToChunks<T extends T[number][]>(arr: T, n: number) {
  * @param invoice The LN invoice
  */
 export function getLnInvoiceInfo(invoice: string) {
-	if (!invoice) { return { hash: '', memo: 'Mint new tokens test' } }
+	if (!invoice) {
+		return { hash: '', memo: 'Mint new tokens test' }
+	}
 	const x = decodeLnInvoice(invoice)
 	return { ...x, hash: x.paymentHash, memo: x.memo }
 }
 function getFromSection<T>(sections: ISectionEntry[], name: string, fn: (v: unknown) => boolean, toNum = false) {
-	const section = sections.find(s => s?.name === name && s?.value && fn(s.value))
-	return section?.value ?
-		toNum ? +section.value as T : section.value as T
-		: undefined
+	const section = sections.find((s) => s?.name === name && s?.value && fn(s.value))
+	return section?.value ? (toNum ? (+section.value as T) : (section.value as T)) : undefined
 }
 export function decodeLnInvoice(invoice: string) {
 	const x = getDecodedLnInvoice(invoice)
@@ -164,16 +210,20 @@ export function decodeLnInvoice(invoice: string) {
 		timestamp,
 		expiry,
 		memo,
-		paymentHash
+		paymentHash,
 	}
 }
 export function cleanUpNumericStr(str: string) {
-	if (str.startsWith('0')) { return '' }
+	if (str.startsWith('0')) {
+		return ''
+	}
 	return str.replace(/\D/g, '')
 }
 // TODO FIXXME
 export function openUrl(url: string) {
-	if (!url?.trim()) { return }
+	if (!url?.trim()) {
+		return
+	}
 	return Linking.openURL(url)
 	/* return Linking.canOpenURL(url)
 		.then((canOpen) => canOpen && Linking.openURL(url)) */

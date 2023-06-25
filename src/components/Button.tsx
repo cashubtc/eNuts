@@ -17,21 +17,21 @@ export default function Button({ txt, border, outlined, filled, disabled, onPres
 	return (
 		<SafeAreaView style={styles.safeArea}>
 			<TouchableOpacity
-				accessibilityRole='button'
-				activeOpacity={.5}
+				accessibilityRole="button"
+				activeOpacity={0.5}
 				disabled={disabled}
 				style={[
 					styles.touchableOpacity,
 					{ backgroundColor: hi[highlight], padding: 20 },
 					border ? { borderWidth: 1, borderColor: '#FAFAFA' } : {},
 					filled ? { backgroundColor: '#FAFAFA' } : {},
-					outlined ? { backgroundColor: 'transparent', padding: 18, borderWidth: 1, borderColor: hi[highlight] } : {}
+					outlined
+						? { backgroundColor: 'transparent', padding: 18, borderWidth: 1, borderColor: hi[highlight] }
+						: {},
 				]}
 				onPress={onPress}
 			>
-				<Text style={[styles.btnTxt, filled || outlined ? { color: hi[highlight] } : {}]}>
-					{txt}
-				</Text>
+				<Text style={[styles.btnTxt, filled || outlined ? { color: hi[highlight] } : {}]}>{txt}</Text>
 			</TouchableOpacity>
 		</SafeAreaView>
 	)
@@ -48,8 +48,8 @@ export function IconBtn({ icon, onPress, testId }: IIconBtnProps) {
 	return (
 		<SafeAreaView>
 			<TouchableOpacity
-				accessibilityRole='button'
-				activeOpacity={.5}
+				accessibilityRole="button"
+				activeOpacity={0.5}
 				style={[styles.iconBtn, { backgroundColor: hi[highlight], borderColor: hi[highlight] }]}
 				onPress={onPress}
 				testID={testId}
@@ -62,7 +62,7 @@ export function IconBtn({ icon, onPress, testId }: IIconBtnProps) {
 
 const styles = StyleSheet.create({
 	safeArea: {
-		width: '100%'
+		width: '100%',
 	},
 	touchableOpacity: {
 		borderRadius: 50,
@@ -71,12 +71,12 @@ const styles = StyleSheet.create({
 		color: '#FAFAFA',
 		textAlign: 'center',
 		fontSize: 16,
-		fontWeight: '500'
+		fontWeight: '500',
 	},
 	// icon button
 	iconBtn: {
 		padding: 20,
 		borderWidth: 1,
 		borderRadius: 50,
-	}
+	},
 })

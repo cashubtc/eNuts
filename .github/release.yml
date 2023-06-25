@@ -1,21 +1,21 @@
 changelog:
-  exclude:
-    labels:
-      - ignore-for-release
-      - bot
-  categories:
-    - title: Bug fixes 🐛
-      labels:
-        - bug
-    - title: Breaking Changes 🛠
-      labels:
-        - breaking-change
-    - title: New Features 🎉
-      labels:
-        - enhancement
-    - title: Tests 💯
-      labels:
-        - "test"
-    - title: Documentation 📄
-      labels:
-        - "documentation"
+    exclude:
+        labels:
+            - ignore-for-release
+            - bot
+    categories:
+        - title: Bug fixes 🐛
+          labels:
+              - bug
+        - title: Breaking Changes 🛠
+          labels:
+              - breaking-change
+        - title: New Features 🎉
+          labels:
+              - enhancement
+        - title: Tests 💯
+          labels:
+              - 'test'
+        - title: Documentation 📄
+          labels:
+              - 'documentation'

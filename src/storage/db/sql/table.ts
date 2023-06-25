@@ -1,6 +1,3 @@
-
-
-
 const createProofsTable = `
 CREATE TABLE IF NOT EXISTS proofs (
 	id TEXT NOT NULL,   
@@ -66,5 +63,5 @@ export const tables: readonly string[] = [
 	createMintKeysTable,
 	createInvoicesTable,
 	createPreferencesTable,
-	createContactsTable
+	createContactsTable,
 ]

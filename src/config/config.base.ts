@@ -15,16 +15,16 @@ const BaseConfig = {
 	persistNavigation: 'dev',
 
 	/**
-   * Only enable if we're catching errors in the right environment
-   */
+	 * Only enable if we're catching errors in the right environment
+	 */
 	catchErrors: 'always',
 
 	/**
-   * This is a list of all the route names that will exit the app if the back button
-   * is pressed while in that screen. Only affects Android.
-   */
+	 * This is a list of all the route names that will exit the app if the back button
+	 * is pressed while in that screen. Only affects Android.
+	 */
 	exitRoutes: ['Welcome'],
-	env
+	env,
 } as const
 
 export default BaseConfig

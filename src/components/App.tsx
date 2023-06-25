@@ -3,7 +3,16 @@ import { getEncodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { env } from '@consts'
-import { addAllMintIds, getBalance, getContacts, getMintsBalances, getMintsUrls, getPreferences, initDb, setPreferences } from '@db'
+import {
+	addAllMintIds,
+	getBalance,
+	getContacts,
+	getMintsBalances,
+	getMintsUrls,
+	getPreferences,
+	initDb,
+	setPreferences,
+} from '@db'
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -49,7 +58,7 @@ export default function App(initialProps: IInitialProps) {
 		)
 	}
 	return (
-		<CustomErrorBoundary catchErrors='always'>
+		<CustomErrorBoundary catchErrors="always">
 			<_App _initialProps={initialProps} exp={initialProps.exp} />
 		</CustomErrorBoundary>
 	)
@@ -69,8 +78,8 @@ function _App(_initialProps: IInitialProps) {
 	const themeData = useMemo(() => ({ pref, theme, setTheme, color, highlight, setHighlight }), [pref])
 	// address book
 	const [contacts, setContacts] = useState<IContact[]>([])
-	const hasOwnAddress = () => contacts.some(c => c.isOwner)
-	const getPersonalInfo = () => contacts.find(c => c.isOwner)
+	const hasOwnAddress = () => contacts.some((c) => c.isOwner)
+	const getPersonalInfo = () => contacts.find((c) => c.isOwner)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const contactData = useMemo(() => ({ contacts, setContacts, hasOwnAddress, getPersonalInfo }), [contacts])
 	// app foregorund, background
@@ -85,17 +94,25 @@ function _App(_initialProps: IInitialProps) {
 		let isSpent = false
 		const fn = async () => {
 			const clipboard = await Clipboard.getStringAsync()
-			if (!isCashuToken(clipboard)) { return false }
+			if (!isCashuToken(clipboard)) {
+				return false
+			}
 			const info = getTokenInfo(clipboard)
-			if (!info) { return false }
+			if (!info) {
+				return false
+			}
 			// check if mint is a trusted one
 			const userMints = await getMintsUrls()
 			// do not claim from clipboard when app comes to the foreground if mint from token is not trusted
-			if (!hasTrustedMint(userMints, info.mints)) { return false }
+			if (!hasTrustedMint(userMints, info.mints)) {
+				return false
+			}
 			// check if token is spendable
 			const isSpendable = await isTokenSpendable(clipboard)
 			isSpent = !isSpendable
-			if (!isSpendable) { return false }
+			if (!isSpendable) {
+				return false
+			}
 			setTokenInfo(info)
 			l('open modal!')
 			setClaimOpen(true)
@@ -103,7 +120,9 @@ function _App(_initialProps: IInitialProps) {
 		}
 		for (let i = 0; i < 10; i++) {
 			// eslint-disable-next-line no-await-in-loop
-			if (await fn() || isSpent) { return }
+			if ((await fn()) || isSpent) {
+				return
+			}
 			// eslint-disable-next-line no-await-in-loop
 			await sleep(50)
 		}
@@ -111,7 +130,9 @@ function _App(_initialProps: IInitialProps) {
 
 	const handleRedeem = async () => {
 		// startLoading()
-		if (!tokenInfo) { return }
+		if (!tokenInfo) {
+			return
+		}
 		setClaimOpen(false)
 		const encoded = getEncodedToken(tokenInfo.decoded)
 		const success = await claimToken(encoded).catch(l)
@@ -138,7 +159,9 @@ function _App(_initialProps: IInitialProps) {
 	// update theme
 	useEffect(() => {
 		setColors(theme === 'Light' ? light.custom : dark.custom)
-		if (!pref) { return }
+		if (!pref) {
+			return
+		}
 		// update state
 		setPref({ ...pref, darkmode: theme === 'Dark' })
 		// update DB
@@ -147,7 +170,9 @@ function _App(_initialProps: IInitialProps) {
 	}, [theme])
 	// update highlighting color
 	useEffect(() => {
-		if (!pref) { return }
+		if (!pref) {
+			return
+		}
 		// update state
 		setPref({ ...pref, theme: highlight })
 		// update DB
@@ -182,7 +207,7 @@ function _App(_initialProps: IInitialProps) {
 					id: 1,
 					darkmode: false,
 					formatBalance: false,
-					theme: 'Default'
+					theme: 'Default',
 				})
 			} finally {
 				await SplashScreen.hideAsync()
@@ -217,11 +242,8 @@ function _App(_initialProps: IInitialProps) {
 		}
 		void init().then(fsInfo)
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
-		const subscription = AppState.addEventListener('change', async nextAppState => {
-			if (
-				appState.current.match(/inactive|background/) &&
-				nextAppState === 'active'
-			) {
+		const subscription = AppState.addEventListener('change', async (nextAppState) => {
+			if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
 				l('App has come to the foreground!')
 				setClaimed(false)
 				// check for clipboard valid cashu token when the app comes to the foregorund
@@ -232,7 +254,9 @@ function _App(_initialProps: IInitialProps) {
 		return () => subscription.remove()
 	}, [])
 
-	if (!isRdy) { return null }
+	if (!isRdy) {
+		return null
+	}
 
 	return (
 		<ThemeContext.Provider value={themeData}>
@@ -243,29 +267,19 @@ function _App(_initialProps: IInitialProps) {
 							<Navigator />
 							<StatusBar style="auto" />
 							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-							<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
+							<MyModal type="question" visible={claimOpen} close={() => setClaimOpen(false)}>
 								<Text style={globals(color, highlight).modalHeader}>
 									Found a cashu token in your clipboard
 								</Text>
 								<Text style={globals(color, highlight).modalTxt}>
-									Memo: {tokenInfo?.decoded.memo}{'\n'}
-									<Txt
-										txt={formatInt(tokenInfo?.value ?? 0)}
-										styles={[{ fontWeight: '500' }]}
-									/>
-									{' '}Satoshi from the following mint:{' '}
-									{tokenInfo?.mints.join(', ')}
+									Memo: {tokenInfo?.decoded.memo}
+									{'\n'}
+									<Txt txt={formatInt(tokenInfo?.value ?? 0)} styles={[{ fontWeight: '500' }]} />{' '}
+									Satoshi from the following mint: {tokenInfo?.mints.join(', ')}
 								</Text>
-								<Button
-									txt='Claim now!'
-									onPress={() => void handleRedeem()}
-								/>
+								<Button txt="Claim now!" onPress={() => void handleRedeem()} />
 								<View style={{ marginVertical: 10 }} />
-								<Button
-									txt='Cancel'
-									outlined
-									onPress={() => setClaimOpen(false)}
-								/>
+								<Button txt="Cancel" outlined onPress={() => setClaimOpen(false)} />
 							</MyModal>
 							{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 						</KeyboardProvider>

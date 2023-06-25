@@ -9,9 +9,13 @@ export class SimpleKeyValueStore extends StoreBase {
 		void this.#init()
 	}
 	async #init(rerun = false) {
-		if (this._isReady) { return }
+		if (this._isReady) {
+			return
+		}
 		await super._createStore()
-		if (rerun) { return }
+		if (rerun) {
+			return
+		}
 		await this.#init(true)
 	}
 	public get(key: string): Promise<string | null | undefined> {
@@ -48,7 +52,10 @@ export class SimpleKeyValueStore extends StoreBase {
 	public keysByPrefix(prefix: string): Promise<string[]> {
 		return super.keysByPrefix(prefix)
 	}
-	public clear(): Promise<boolean> { return super.clear() }
-	public close(): void { return super.close() }
+	public clear(): Promise<boolean> {
+		return super.clear()
+	}
+	public close(): void {
+		return super.close()
+	}
 }
-

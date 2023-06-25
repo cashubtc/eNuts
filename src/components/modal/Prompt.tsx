@@ -18,20 +18,15 @@ interface IPromptModalProps {
 export function PromptModal({ header, txt, hideIcon, visible, close }: IPromptModalProps) {
 	const { color } = useContext(ThemeContext)
 	return (
-		<MyModal type='error' animation='fade' visible={visible}>
-			{!hideIcon &&
+		<MyModal type="error" animation="fade" visible={visible}>
+			{!hideIcon && (
 				<View style={styles.promptIcon}>
 					<ExclamationIcon width={60} height={60} color={color.TEXT} />
 				</View>
-			}
-			<Text style={globals(color).modalHeader}>
-				{header}
-			</Text>
-			{txt &&
-				<Text style={globals(color).modalTxt}>
-					{txt}
-				</Text>}
-			<Button txt='OK' onPress={close} />
+			)}
+			<Text style={globals(color).modalHeader}>{header}</Text>
+			{txt && <Text style={globals(color).modalTxt}>{txt}</Text>}
+			<Button txt="OK" onPress={close} />
 		</MyModal>
 	)
 }

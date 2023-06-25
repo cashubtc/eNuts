@@ -14,7 +14,7 @@ const useTheme = () => {
 		setTheme,
 		color,
 		highlight,
-		setHighlight
+		setHighlight,
 	}
 }
 type useThemeType = ReturnType<typeof useTheme>
@@ -23,7 +23,7 @@ export const ThemeContext = createContext<useThemeType>({
 		id: 1,
 		darkmode: false,
 		formatBalance: false,
-		theme: 'Default'
+		theme: 'Default',
 	},
 	theme: 'Light',
 	setTheme: () => l(''),
@@ -35,8 +35,8 @@ export const ThemeContext = createContext<useThemeType>({
 		INPUT_BG: '#F6F6F6',
 		INPUT_PH: '#656565',
 		BORDER: '#E8E8E8',
-		ERROR: '#FF6666'
+		ERROR: '#FF6666',
 	},
 	highlight: '#5DB075',
-	setHighlight: () => l('')
+	setHighlight: () => l(''),
 })

@@ -43,8 +43,6 @@ declare global {
 	}
 }
 
-
-
 // in dev, we attach Reactotron, in prod we attach a interface-compatible mock.
 if (isReactNativeDevMode) {
 	// eslint-disable-next-line no-console
@@ -53,11 +51,10 @@ if (isReactNativeDevMode) {
 	// attach a mock so if things sneak by our isReactNativeDevMode guards, we won't crash.
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-expect-error
-	console.tron = fakeReactotron// eslint-disable-line no-console
+	console.tron = fakeReactotron // eslint-disable-line no-console
 }
 
 const config = DEFAULT_REACTOTRON_CONFIG
-
 
 // Avoid setting up Reactotron multiple times with Fast Refresh
 let _reactotronIsSetUp = false
@@ -69,15 +66,18 @@ export function setupReactotron(customConfig: ReactotronConfig = {}) {
 	// only run this in dev... metro bundler will ignore this block: 🎉
 	if (isReactNativeDevMode) {
 		// only setup once.
-		if (_reactotronIsSetUp) { return }
+		if (_reactotronIsSetUp) {
+			return
+		}
 
 		// merge the passed in config with our default config
 		Object.assign(config, customConfig)
-		if (config?.host) {// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+		if (config?.host) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
 			config.host = NativeModules.SourceCode.scriptURL
 				.split('://')[1] // Remove the scheme
 				.split('/')[0] // Remove the path
-				.split(':')[0] // Remove the port 
+				.split(':')[0] // Remove the port
 		}
 
 		// configure reactotron
@@ -89,7 +89,7 @@ export function setupReactotron(customConfig: ReactotronConfig = {}) {
 		})
 			.useReactNative({
 				networking: {
-					ignoreUrls: /\/(logs|symbolicate|127.0.0.1)$//* gi */
+					ignoreUrls: /\/(logs|symbolicate|127.0.0.1)$/ /* gi */,
 					//new RegExp(`symbolicate|127.0.0.1|http://${config.host}:19000/logs`),
 				},
 			})
@@ -101,10 +101,7 @@ export function setupReactotron(customConfig: ReactotronConfig = {}) {
 		_reactotronIsSetUp = true
 		isReactotronRunnig = isReactNativeDevMode && _reactotronIsSetUp
 		// eslint-disable-next-line no-console
-		console.log(
-			'Reactotron Configured', isReactotronRunnig,
-			isReactNativeDevMode, _reactotronIsSetUp
-		)
+		console.log('Reactotron Configured', isReactotronRunnig, isReactNativeDevMode, _reactotronIsSetUp)
 	}
 }
 

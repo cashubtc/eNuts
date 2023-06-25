@@ -6,7 +6,7 @@ import * as _SecureStore from 'expo-secure-store'
  * key–value pairs locally on the device.
  * Each Expo project has a separate storage system
  * and has no access to the storage of other Expo projects
- * 
+ *
  * Size limit for a value is 2048 bytes. An attempt to store larger values may fail.
  * Currently, we print a warning when the limit is reached, however,
  * in a future SDK version an error might be thrown.
@@ -15,7 +15,9 @@ import * as _SecureStore from 'expo-secure-store'
  */
 export class SecureStore {
 	#options?: SecureStoreOptions
-	constructor(options?: SecureStoreOptions) { this.#options = options }
+	constructor(options?: SecureStoreOptions) {
+		this.#options = options
+	}
 	public static set(key: string, value: string, options?: SecureStoreOptions): Promise<void> {
 		return _SecureStore.setItemAsync(key, value, options)
 	}
@@ -41,6 +43,3 @@ export class SecureStore {
 		return SecureStore.isAvailable()
 	}
 }
-
-
-

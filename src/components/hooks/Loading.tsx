@@ -8,7 +8,6 @@ export default function useLoading() {
 	return {
 		loading,
 		startLoading,
-		stopLoading
+		stopLoading,
 	}
-
 }

@@ -13,17 +13,11 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav
-				screenName='Display'
-				withBackBtn
-				backHandler={() => navigation.navigate('Settings')}
-			/>
+			<TopNav screenName="Display" withBackBtn backHandler={() => navigation.navigate('Settings')} />
 			<ScrollView style={{ width: '100%', marginBottom: 60 }} showsVerticalScrollIndicator={false}>
-				<Text style={[styles.subHeader, { color: color.TEXT }]}>
-					Theme
-				</Text>
+				<Text style={[styles.subHeader, { color: color.TEXT }]}>Theme</Text>
 				<View style={[globals(color).wrapContainer, styles.wrap]}>
-					<Txt txt='Dark mode' />
+					<Txt txt="Dark mode" />
 					<Switch
 						trackColor={{ false: color.BORDER, true: hi[highlight] }}
 						thumbColor={color.TEXT}
@@ -31,12 +25,15 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 						value={theme === 'Dark'}
 					/>
 				</View>
-				<Text style={[styles.subHeader, { color: color.TEXT }]}>
-					Highlight
-				</Text>
+				<Text style={[styles.subHeader, { color: color.TEXT }]}>Highlight</Text>
 				<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
 					{themeColors.map((t, i) => (
-						<ThemeSelection key={t} name={t} selected={t === highlight} hasSeparator={i !== themeColors.length - 1} />
+						<ThemeSelection
+							key={t}
+							name={t}
+							selected={t === highlight}
+							hasSeparator={i !== themeColors.length - 1}
+						/>
 					))}
 				</View>
 			</ScrollView>
@@ -55,14 +52,12 @@ function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) 
 	const { color, highlight, setHighlight } = useContext(ThemeContext)
 	return (
 		<>
-			<TouchableOpacity style={styles.settingsRow}
-				onPress={() => setHighlight(name)}
-			>
+			<TouchableOpacity style={styles.settingsRow} onPress={() => setHighlight(name)}>
 				<Txt txt={name} />
 				<View
 					style={[
 						globals(color, highlight).radioBtn,
-						{ backgroundColor: selected ? hi[highlight] : 'transparent' }
+						{ backgroundColor: selected ? hi[highlight] : 'transparent' },
 					]}
 				/>
 			</TouchableOpacity>

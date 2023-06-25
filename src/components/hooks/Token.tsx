@@ -12,6 +12,6 @@ export default function useCashuToken() {
 		tokenInfo,
 		setTokenInfo,
 		trustModal,
-		setTrustModal
+		setTrustModal,
 	}
 }

@@ -43,20 +43,25 @@ export function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 		<>
 			<Txt txt={`${proof.amount} Sat`} />
 			<View style={styles.keyWrap}>
-				<Text style={[
-					styles.keysetID,
-					{ color: isLatestKeysetId ? mainColors.VALID : color.TEXT_SECONDARY, marginRight: 'selected' in proof ? 20 : 0 }
-				]}>
+				<Text
+					style={[
+						styles.keysetID,
+						{
+							color: isLatestKeysetId ? mainColors.VALID : color.TEXT_SECONDARY,
+							marginRight: 'selected' in proof ? 20 : 0,
+						},
+					]}
+				>
 					{proof.id}
 				</Text>
-				{'selected' in proof &&
+				{'selected' in proof && (
 					<View
 						style={[
 							globals(color, highlight).radioBtn,
-							{ backgroundColor: proof.selected ? hi[highlight] : 'transparent' }
+							{ backgroundColor: proof.selected ? hi[highlight] : 'transparent' },
 						]}
 					/>
-				}
+				)}
 			</View>
 		</>
 	)

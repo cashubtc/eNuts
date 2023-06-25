@@ -1,12 +1,23 @@
 import {
-	CashuMint, CashuWallet, deriveKeysetId,
-	getDecodedLnInvoice, getDecodedToken,
-	getEncodedToken, type MintKeys, type Proof
+	CashuMint,
+	CashuWallet,
+	deriveKeysetId,
+	getDecodedLnInvoice,
+	getDecodedToken,
+	getEncodedToken,
+	type MintKeys,
+	type Proof,
 } from '@cashu/cashu-ts'
 import {
-	addInvoice, addMint, addToken, deleteProofs,
-	delInvoice, getAllInvoices, getInvoice,
-	getMintBalance, getMintsUrls
+	addInvoice,
+	addMint,
+	addToken,
+	deleteProofs,
+	delInvoice,
+	getAllInvoices,
+	getInvoice,
+	getMintBalance,
+	getMintsUrls,
 } from '@db'
 import { l } from '@log'
 import { isCashuToken } from '@util'
@@ -17,20 +28,26 @@ import { getProofsToUse } from './util'
 const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
 const wallets: { [mintUrl: string]: CashuWallet } = {}
 
-
 function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string) {
-	if (!keySetId) { keySetId = deriveKeysetId(keys) }
-	if (!_mintKeysMap[mintUrl]) { _mintKeysMap[mintUrl] = {} }
+	if (!keySetId) {
+		keySetId = deriveKeysetId(keys)
+	}
+	if (!_mintKeysMap[mintUrl]) {
+		_mintKeysMap[mintUrl] = {}
+	}
 	if (!_mintKeysMap[mintUrl][keySetId]) {
 		_mintKeysMap[mintUrl][keySetId] = keys
-		if (!wallets[mintUrl] || wallets[mintUrl].keysetId === keySetId) { return }
+		if (!wallets[mintUrl] || wallets[mintUrl].keysetId === keySetId) {
+			return
+		}
 		wallets[mintUrl].keys = keys
 	}
 }
 
-
 async function getWallet(mintUrl: string) {
-	if (wallets[mintUrl]) { return wallets[mintUrl] }
+	if (wallets[mintUrl]) {
+		return wallets[mintUrl]
+	}
 	const mint = new CashuMint(mintUrl)
 	const keys = await mint.getKeys()
 	const wallet = new CashuWallet(mint, keys)
@@ -45,7 +62,6 @@ async function getCurrentKeySetId(mintUrl: string) {
 	return keySetId
 }
 
-
 export function getMintCurrentKeySetId(mintUrl: string) {
 	return getCurrentKeySetId(mintUrl)
 }
@@ -58,22 +74,28 @@ export function getMintInfo(mintUrl: string) {
 export async function isTokenSpendable(token: string) {
 	try {
 		const decoded = getDecodedToken(token)
-		if (!decoded?.token?.length) { return false }
+		if (!decoded?.token?.length) {
+			return false
+		}
 		const useableTokenProofs: Proof[] = []
 		for (const t of decoded.token) {
-			if (!t?.proofs?.length) { continue }
+			if (!t?.proofs?.length) {
+				continue
+			}
 			// eslint-disable-next-line no-await-in-loop
 			const w = await getWallet(t.mint)
 			// eslint-disable-next-line no-await-in-loop
-			const usedSecrets = (await w.checkProofsSpent(t.proofs)).map(x => x.secret)
+			const usedSecrets = (await w.checkProofsSpent(t.proofs)).map((x) => x.secret)
 			if (usedSecrets.length === t.proofs.length) {
 				// usedTokens.push(token)
 				continue
 			}
-			useableTokenProofs.push(...t.proofs.filter(x => !usedSecrets.includes(x.secret)))
+			useableTokenProofs.push(...t.proofs.filter((x) => !usedSecrets.includes(x.secret)))
 		}
 		return !!useableTokenProofs.length
-	} catch (_) { return false }
+	} catch (_) {
+		return false
+	}
 }
 export async function checkProofsSpent(mintUrl: string, toCheck: { secret: string }[]) {
 	return (await getWallet(mintUrl)).checkProofsSpent(toCheck)
@@ -84,17 +106,27 @@ export async function checkFees(mintUrl: string, invoice: string) {
 }
 export async function claimToken(encodedToken: string): Promise<boolean> {
 	encodedToken = isCashuToken(encodedToken) || ''
-	if (!encodedToken?.trim()) { return false }
+	if (!encodedToken?.trim()) {
+		return false
+	}
 	const decoded = getDecodedToken(encodedToken)
-	if (!decoded?.token?.length) { return false }
+	if (!decoded?.token?.length) {
+		return false
+	}
 	const trustedMints = await getMintsUrls()
-	const tokenEntries = decoded.token.filter(x => trustedMints.includes(x.mint))
-	if (!tokenEntries?.length) { return false }
-	const mintUrls = tokenEntries.map(x => x.mint).filter(x => x)
-	if (!mintUrls?.length) { return false }
+	const tokenEntries = decoded.token.filter((x) => trustedMints.includes(x.mint))
+	if (!tokenEntries?.length) {
+		return false
+	}
+	const mintUrls = tokenEntries.map((x) => x.mint).filter((x) => x)
+	if (!mintUrls?.length) {
+		return false
+	}
 	const wallet = await getWallet(mintUrls[0])
 	const { token, tokensWithErrors, newKeys } = await wallet.receive(encodedToken)
-	if (newKeys) { _setKeys(mintUrls[0], newKeys) }
+	if (newKeys) {
+		_setKeys(mintUrls[0], newKeys)
+	}
 	l('[claimToken]', { token, tokensWithErrors }, getEncodedToken(token))
 	await addToken(token)
 	if (tokensWithErrors) {
@@ -107,7 +139,9 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
 		// eslint-disable-next-line no-await-in-loop
 		await addMint(mint)
 	}
-	if (!token?.token?.length) { return false }
+	if (!token?.token?.length) {
+		return false
+	}
 	return true
 }
 export async function requestMint(mintUrl: string, amount: number) {
@@ -123,7 +157,9 @@ export async function requestToken(mintUrl: string, amount: number, hash: string
 	const wallet = await getWallet(mintUrl)
 	const { proofs, newKeys } = await wallet.requestTokens(amount, hash)
 	l('[requestToken]', { proofs, mintUrl, amount, hash })
-	if (newKeys) { _setKeys(mintUrl, newKeys) }
+	if (newKeys) {
+		_setKeys(mintUrl, newKeys)
+	}
 	await addToken({ token: [{ mint: mintUrl, proofs }] })
 	await delInvoice(hash)
 	return { success: true, invoice }
@@ -134,7 +170,7 @@ export async function payLnInvoice(mintUrl: string, invoice: string, proofs: Pro
 	l({ fee })
 	const decoded = getDecodedLnInvoice(invoice)
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const amount = decoded.sections[2]!.value as number / 1000
+	const amount = (decoded.sections[2]!.value as number) / 1000
 	const amountToPay = amount + fee
 	if (!proofs?.length) {
 		const { proofsToUse } = await getProofsToUse(mintUrl, amountToPay)
@@ -143,15 +179,25 @@ export async function payLnInvoice(mintUrl: string, invoice: string, proofs: Pro
 	l({ amountToPay })
 	const { send, returnChange, newKeys } = await wallet.send(amountToPay, proofs)
 	l({ send })
-	if (newKeys) { _setKeys(mintUrl, newKeys) }
+	if (newKeys) {
+		_setKeys(mintUrl, newKeys)
+	}
 	// add change back to db
-	if (returnChange.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
-	if (send?.length) { await deleteProofs(proofs) }
+	if (returnChange.length) {
+		await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] })
+	}
+	if (send?.length) {
+		await deleteProofs(proofs)
+	}
 	try {
 		const result = await wallet.payLnInvoice(invoice, send, fee)
 		l('[payLnInvoice]', { result, mintUrl, amount })
-		if (result?.newKeys) { _setKeys(mintUrl, result.newKeys) }
-		if (result?.change?.length) { await addToken({ token: [{ mint: mintUrl, proofs: result.change }] }) }
+		if (result?.newKeys) {
+			_setKeys(mintUrl, result.newKeys)
+		}
+		if (result?.change?.length) {
+			await addToken({ token: [{ mint: mintUrl, proofs: result.change }] })
+		}
 		if (result.isPaid) {
 			await deleteProofs(send)
 		}
@@ -159,9 +205,7 @@ export async function payLnInvoice(mintUrl: string, invoice: string, proofs: Pro
 			result,
 			error: undefined,
 			fee,
-			realFee: fee - result?.change?.length
-				? sumProofsValue(result.change)
-				: 0
+			realFee: fee - result?.change?.length ? sumProofsValue(result.change) : 0,
 		}
 	} catch (error) {
 		await addToken({ token: [{ mint: mintUrl, proofs: send }] })
@@ -176,18 +220,20 @@ export async function sendToken(mintUrl: string, amount: number, memo: string, p
 	}
 	// will throw if not enough proofs are available
 	const { send, returnChange, newKeys } = await wallet.send(amount, proofs)
-	if (newKeys) { _setKeys(mintUrl, newKeys) }
+	if (newKeys) {
+		_setKeys(mintUrl, newKeys)
+	}
 	// add change back to db
-	if (returnChange.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
+	if (returnChange.length) {
+		await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] })
+	}
 	await deleteProofs(proofs)
-	return getEncodedToken({ token: [{ mint: mintUrl, proofs: send }], memo: memo.length > 0 ? memo : 'Sent via eNuts.' })
+	return getEncodedToken({
+		token: [{ mint: mintUrl, proofs: send }],
+		memo: memo.length > 0 ? memo : 'Sent via eNuts.',
+	})
 }
-export async function autoMintSwap(
-	srcMintUrl: string,
-	destMintUrl: string,
-	amount: number,
-	proofs: Proof[] = []
-) {
+export async function autoMintSwap(srcMintUrl: string, destMintUrl: string, amount: number, proofs: Proof[] = []) {
 	let { pr, hash } = await requestMint(destMintUrl, amount)
 	const fee = await checkFees(destMintUrl, pr)
 	if (fee > 0) {
@@ -206,10 +252,14 @@ export async function autoMintSwap(
 	}
 	const payResult = await payLnInvoice(srcMintUrl, pr, proofs)
 	l('[autoMintSwap]', { payResult })
-	if (!payResult?.result?.isPaid) { throw new Error('Swap Error: pay failed') }
+	if (!payResult?.result?.isPaid) {
+		throw new Error('Swap Error: pay failed')
+	}
 	const requestTokenResult = await requestToken(destMintUrl, amount, hash)
 	l('[autoMintSwap]', { requestTokenResult })
-	if (!requestTokenResult) { throw new Error('Swap Error: request token failed') }
+	if (!requestTokenResult) {
+		throw new Error('Swap Error: request token failed')
+	}
 	return {
 		payResult,
 		requestTokenResult,
@@ -220,11 +270,15 @@ export async function fullAutoMintSwap(srcMintUrl: string, destMintUrl: string) 
 	let result = await autoMintSwap(srcMintUrl, destMintUrl, amount)
 	amount = await getMintBalance(srcMintUrl)
 	l('[fullAutoMintSwap]', result, 'srcMint new Bal:', amount)
-	if (amount <= 0) { return { result } }
+	if (amount <= 0) {
+		return { result }
+	}
 	try {
 		result = await autoMintSwap(srcMintUrl, destMintUrl, amount)
 		l('[fullAutoMintSwap][round: 2]', result)
-	} catch (error) { return { result, error } }
+	} catch (error) {
+		return { result, error }
+	}
 	return { result }
 }
 
@@ -235,7 +289,9 @@ export function runRequestTokenLoop() {
 	loopHandel = setTimeout(requestTokenLoop, 60000)
 }
 async function requestTokenLoop() {
-	if (isRequestTokenLoopRunning) { return }
+	if (isRequestTokenLoopRunning) {
+		return
+	}
 	isRequestTokenLoopRunning = true
 	const invoices = await getAllInvoices()
 	if (!invoices.length) {
@@ -245,11 +301,15 @@ async function requestTokenLoop() {
 		try {
 			// eslint-disable-next-line no-await-in-loop
 			await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
-		} catch (_) {/* ignore */ }
+		} catch (_) {
+			/* ignore */
+		}
 		const decoded = getDecodedLnInvoice(invoice.pr)
-		const date = new Date((invoice.time * 1000) + (decoded.expiry * 1000)).getTime()
+		const date = new Date(invoice.time * 1000 + decoded.expiry * 1000).getTime()
 		// eslint-disable-next-line no-await-in-loop
-		if (Date.now() > date) { await delInvoice(invoice.hash) }
+		if (Date.now() > date) {
+			await delInvoice(invoice.hash)
+		}
 	}
 	isRequestTokenLoopRunning = false
 }

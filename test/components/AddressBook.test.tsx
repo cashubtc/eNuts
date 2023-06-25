@@ -44,12 +44,7 @@ describe('Test the Addressbook page', () => {
 		expect(screen.queryByPlaceholderText('Name')).toBeNull()
 	})
 	it('Addressbook modal has a specific style applied', () => {
-		render(
-			<AddressbookModal
-				closeModal={() => l('test')}
-				setInput={() => l('test')}
-			/>
-		)
+		render(<AddressbookModal closeModal={() => l('test')} setInput={() => l('test')} />)
 		const modal = screen.getByTestId('testCoinSelectionModal')
 		expect(modal.props.children.props.children.props.style[0].paddingHorizontal).toBe(0)
 	})

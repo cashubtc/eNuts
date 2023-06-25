@@ -9,11 +9,7 @@ export default function BackupPage({ navigation, route }: TBackupPageProps) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav
-				screenName='Backup'
-				withBackBtn
-				backHandler={() => navigation.navigate('Security settings')}
-			/>
+			<TopNav screenName="Backup" withBackBtn backHandler={() => navigation.navigate('Security settings')} />
 			<BackupSuccess token={route.params.token} />
 		</View>
 	)

@@ -19,7 +19,9 @@ class HistoryStore extends StoreBase {
 	 * @readonly
 	 * @memberof HistoryStore
 	 */
-	public get entryCount(): number { return this.#idx < 0 ? 0 : this.#idx }
+	public get entryCount(): number {
+		return this.#idx < 0 ? 0 : this.#idx
+	}
 	/**
 	 * Creates an instance of HistoryStore.
 	 * @memberof HistoryStore
@@ -29,10 +31,16 @@ class HistoryStore extends StoreBase {
 		void this.#init()
 	}
 	async #init(rerun = false): Promise<void> {
-		if (this._isReady && this.#idx !== -1) { return }
-		if (!this._isReady) { await super._createStore() }
+		if (this._isReady && this.#idx !== -1) {
+			return
+		}
+		if (!this._isReady) {
+			await super._createStore()
+		}
 		this.#idx = await super.count()
-		if (rerun) { return }
+		if (rerun) {
+			return
+		}
 		await this.#init(true)
 	}
 
@@ -50,7 +58,12 @@ class HistoryStore extends StoreBase {
 	 * get history entries
 	 * @returns Promise<IHistoryEntry[]>
 	 */
-	public async getHistory({ order = 'DESC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<IHistoryEntry[]> {
+	public async getHistory({
+		order = 'DESC',
+		start = 0,
+		count = -1,
+		orderBy = 'insertionOrder',
+	}: ISelectParams = {}): Promise<IHistoryEntry[]> {
 		await this.#init()
 		return super.valuesObjs<IHistoryEntry>({ order, start, count, orderBy })
 	}
@@ -58,7 +71,12 @@ class HistoryStore extends StoreBase {
 	 * get history entries with keys
 	 * @returns Promise<IKeyValuePair<IHistoryEntry>[]>
 	 */
-	public async getHistoryWithKeys({ order = 'DESC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<IKeyValuePair<IHistoryEntry>[]> {
+	public async getHistoryWithKeys({
+		order = 'DESC',
+		start = 0,
+		count = -1,
+		orderBy = 'insertionOrder',
+	}: ISelectParams = {}): Promise<IKeyValuePair<IHistoryEntry>[]> {
 		await this.#init()
 		return super.getObjsAll<IHistoryEntry>({ order, start, count, orderBy })
 	}
@@ -78,7 +96,9 @@ class HistoryStore extends StoreBase {
 	 * close store
 	 * @returns void
 	 */
-	public close(): void { return super.close() }
+	public close(): void {
+		return super.close()
+	}
 }
 
 export const historyStore = new HistoryStore()
@@ -98,20 +118,25 @@ export async function addLnPaymentToHistory(
 		value: invoice,
 		mints,
 		fee: payResp?.realFee,
-		timestamp: Math.ceil(Date.now() / 1000)
+		timestamp: Math.ceil(Date.now() / 1000),
 	})
 }
-export async function getHistory({ order = 'DESC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}) {
+export async function getHistory({
+	order = 'DESC',
+	start = 0,
+	count = -1,
+	orderBy = 'insertionOrder',
+}: ISelectParams = {}) {
 	const history = await historyStore.getHistory({ order, start, count, orderBy })
 	return groupEntries(history)
 }
 function groupEntries(history: IHistoryEntry[]) {
-	return groupBy(history, i => getHistoryGroupDate(new Date(i.timestamp * 1000)))
+	return groupBy(history, (i) => getHistoryGroupDate(new Date(i.timestamp * 1000)))
 }
 // https://stackoverflow.com/questions/42136098/array-groupby-in-typescript
 function groupBy(arr: IHistoryEntry[], key: (i: IHistoryEntry) => string) {
 	return arr.reduce((groups, item) => {
-		(groups[key(item)] ??= []).push(item)
+		;(groups[key(item)] ??= []).push(item)
 		return groups
 	}, {} as Record<string, IHistoryEntry[]>)
 }

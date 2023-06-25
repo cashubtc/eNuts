@@ -2,7 +2,9 @@ import { SimpleKeyValueStore } from '@store'
 
 describe('test SimpleKeyValueStore', () => {
 	// eslint-disable-next-line @typescript-eslint/await-thenable
-	afterAll(async () => { await store.close() })
+	afterAll(async () => {
+		await store.close()
+	})
 	const store = new SimpleKeyValueStore('store')
 
 	test('methods', async () => {
@@ -28,24 +30,27 @@ describe('test SimpleKeyValueStore', () => {
 		// test get by prefix
 		expect(await store.getByKeyPrefix('test')).toMatchObject([{ key: 'testkey', value: 'valuetest' }])
 		// test get obj by prefix
-		expect(await store.getObjsByKeyPrefix<{ object: string }>('objKey')).toMatchObject([{ key: 'objKey', value: { object: 'objPropUpdated' } }])
+		expect(await store.getObjsByKeyPrefix<{ object: string }>('objKey')).toMatchObject([
+			{ key: 'objKey', value: { object: 'objPropUpdated' } },
+		])
 		// test get all
 		expect(await store.getAll()).toMatchObject([
 			{ key: 'testkey', value: 'valuetest' },
 			{ key: 'key2', value: 'value2' },
 			{ key: 'key', value: 'valueUpdated' },
-			{ key: 'objKey', value: '{"object":"objPropUpdated"}' }
+			{ key: 'objKey', value: '{"object":"objPropUpdated"}' },
 		])
 		await store.clear()
 		// test clear
 		expect(await store.keys()).toStrictEqual([])
 		await store.setObj('objKey', { object: 'objProp' })
-		expect(await store.getObjsAll<{ object: string }>())
-			.toMatchObject([{ key: 'objKey', value: { object: 'objProp' } }])
+		expect(await store.getObjsAll<{ object: string }>()).toMatchObject([
+			{ key: 'objKey', value: { object: 'objProp' } },
+		])
 		expect(await store.count()).toBe(1)
 		// test special chars
-		expect(await store.set('? : // = \\ \' ´ § ¶ ± « » ° £ ¥ € ® © § ¶ ± « » �', 'value')).toBe(true)
+		expect(await store.set("? : // = \\ ' ´ § ¶ ± « » ° £ ¥ € ® © § ¶ ± « » �", 'value')).toBe(true)
 		expect(await store.count()).toBe(2)
-		expect(await store.get('? : // = \\ \' ´ § ¶ ± « » ° £ ¥ € ® © § ¶ ± « » �')).toBe('value')
+		expect(await store.get("? : // = \\ ' ´ § ¶ ± « » ° £ ¥ € ® © § ¶ ± « » �")).toBe('value')
 	})
 })

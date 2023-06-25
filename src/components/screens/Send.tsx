@@ -22,7 +22,9 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 	useEffect(() => {
 		void (async () => {
 			const userMints = await getMintsUrls(true)
-			if (!userMints.length) { return }
+			if (!userMints.length) {
+				return
+			}
 			// get mints with custom names
 			const mintsWithName = await getCustomMintNames(userMints)
 			setMints(mintsWithName)
@@ -53,7 +55,7 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 	}, [selectedMint])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Send Ecash' withBackBtn />
+			<TopNav screenName="Send Ecash" withBackBtn />
 			<LNPageContent
 				nav={{ navigation, route }}
 				mints={mints}

@@ -24,7 +24,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 		try {
 			const res = await Share.share({
 				message: route.params.token, // `cashu://${route.params.token}`
-				url: `cashu://${route.params.token}`
+				url: `cashu://${route.params.token}`,
 			})
 			if (res.action === Share.sharedAction) {
 				if (res.activityType) {
@@ -53,30 +53,29 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav
-				withBackBtn
-				backHandler={() => navigation.navigate('dashboard')}
-			/>
+			<TopNav withBackBtn backHandler={() => navigation.navigate('dashboard')} />
 			{/* The amount of the created token */}
 			<View style={styles.qrWrap}>
 				<Txt txt={route.params.amount} styles={[styles.tokenAmount, { color: hi[highlight] }]} />
-				<Txt txt='Satoshi' styles={[styles.tokenFormat]} />
+				<Txt txt="Satoshi" styles={[styles.tokenFormat]} />
 				{/* The QR code */}
-				{error.open ?
+				{error.open ? (
 					<Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
-					:
+				) : (
 					<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>
 						<QR
 							size={320}
 							value={`cashu://${route.params.token}`}
-							onError={() => setError({ msg: 'The amount of data is too big for a QR code.', open: true })}
+							onError={() =>
+								setError({ msg: 'The amount of data is too big for a QR code.', open: true })
+							}
 						/>
 					</View>
-				}
+				)}
 			</View>
 			{/* Action buttons */}
 			<ActionButtons
-				topBtnTxt='Share'
+				topBtnTxt="Share"
 				topBtnAction={() => void handleShare()}
 				bottomBtnTxt={copied ? 'Copied!' : 'Copy token'}
 				bottomBtnAction={() => void handleCopy()}
@@ -107,10 +106,10 @@ const styles = StyleSheet.create({
 	},
 	qrCodeWrap: {
 		borderWidth: 5,
-		borderColor: '#FFF'
+		borderColor: '#FFF',
 	},
 	errorMsg: {
 		marginVertical: 25,
 		textAlign: 'center',
-	}
+	},
 })

@@ -24,11 +24,15 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 	const [mintBal, setMintBal] = useState(0)
 	const handleMintPicker = async () => {
 		const userMints = await getMintsUrls(true)
-		if (!userMints.length) { return }
+		if (!userMints.length) {
+			return
+		}
 		// get mints with custom names
 		const mintsWithName = await getCustomMintNames(userMints)
 		setMints(mintsWithName)
-		if (!userMints.length) { return }
+		if (!userMints.length) {
+			return
+		}
 		// set first selected mint
 		const defaultMint = await getDefaultMint()
 		if (!defaultMint) {
@@ -48,7 +52,7 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 	useEffect(() => {
 		void (async () => {
 			const mintsBals = await getMintsBalances()
-			mintsBals.forEach(m => {
+			mintsBals.forEach((m) => {
 				if (m.mintUrl === selectedMint?.mintUrl) {
 					setMintBal(m.amount)
 				}
@@ -62,14 +66,7 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav
-				screenName={route.params?.mint || route.params?.send ?
-					'Zap'
-					:
-					'Receive'
-				}
-				withBackBtn
-			/>
+			<TopNav screenName={route.params?.mint || route.params?.send ? 'Zap' : 'Receive'} withBackBtn />
 			<LNPageContent
 				nav={{ navigation, route }}
 				mints={mints}

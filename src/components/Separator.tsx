@@ -9,6 +9,6 @@ export default function Separator({ style }: { style?: StyleProp<TextStyle>[] })
 
 const styles = StyleSheet.create({
 	separator: {
-		borderBottomWidth: 1
-	}
+		borderBottomWidth: 1,
+	},
 })

@@ -20,7 +20,7 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 		try {
 			const res = await Share.share({
 				message: token, // `cashu://${route.params.token}`
-				url: `cashu://${token}`
+				url: `cashu://${token}`,
 			})
 			if (res.action === Share.sharedAction) {
 				if (res.activityType) {
@@ -48,20 +48,12 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 	}
 	return (
 		<>
-			<Text style={[globals(color).navTxt, styles.subTxt]}>
-				Copy the token and keep it in a safe place.
-			</Text>
-			<Text style={[styles.token, { color: color.TEXT }]}>
-				Backupt token: {token.substring(0, 25)}...
-			</Text>
-			{mint &&
-				<Text style={[styles.token, { color: color.TEXT }]}>
-					Mint: {formatMintUrl(mint)}
-				</Text>
-			}
+			<Text style={[globals(color).navTxt, styles.subTxt]}>Copy the token and keep it in a safe place.</Text>
+			<Text style={[styles.token, { color: color.TEXT }]}>Backupt token: {token.substring(0, 25)}...</Text>
+			{mint && <Text style={[styles.token, { color: color.TEXT }]}>Mint: {formatMintUrl(mint)}</Text>}
 			<ActionButtons
 				absolutePos
-				topBtnTxt='Share'
+				topBtnTxt="Share"
 				topBtnAction={() => void handleShare()}
 				bottomBtnTxt={copied ? 'Copied!' : 'Copy backup token'}
 				bottomBtnAction={() => void handleCopy()}

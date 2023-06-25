@@ -18,17 +18,26 @@ import { isReactotronRunnig } from './reactotron'
 } */
 export function l(msg?: unknown, ...optionalParams: unknown[]) {
 	if (
-		env?.NODE_ENV_SHORT === 'test' || env?.NODE_ENV === 'test'
-		|| env?.NODE_ENV_SHORT === 'prod' || env?.NODE_ENV === 'prod'
-		|| env?.NODE_ENV === 'production' || env.NODE_ENV === 'production'
-		|| isTestMode
+		env?.NODE_ENV_SHORT === 'test' ||
+		env?.NODE_ENV === 'test' ||
+		env?.NODE_ENV_SHORT === 'prod' ||
+		env?.NODE_ENV === 'prod' ||
+		env?.NODE_ENV === 'production' ||
+		env.NODE_ENV === 'production' ||
+		isTestMode
 	) {
 		return
 	}
-	if (env.DEBUG === 'full') { return debug(msg, ...optionalParams) }
+	if (env.DEBUG === 'full') {
+		return debug(msg, ...optionalParams)
+	}
 	let fnName = callerInfo()?.name
-	if (!fnName || fnName === '?anon_0_') { fnName = '' }
-	if (fnName) { fnName = `[${fnName}]` }
+	if (!fnName || fnName === '?anon_0_') {
+		fnName = ''
+	}
+	if (fnName) {
+		fnName = `[${fnName}]`
+	}
 
 	/* (isReactotronRunnig
 		// eslint-disable-next-line no-console
@@ -37,14 +46,16 @@ export function l(msg?: unknown, ...optionalParams: unknown[]) {
 		: console.log
 	) */
 	// eslint-disable-next-line no-console
-	console.log(`[${new Date().toLocaleTimeString()}]${fnName}`,
+	console.log(
+		`[${new Date().toLocaleTimeString()}]${fnName}`,
 		msg,
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		...optionalParams
 	)
 	if (isReactotronRunnig) {
 		// eslint-disable-next-line no-console
-		console.tron?.log?.(`[${new Date().toLocaleTimeString()}]${fnName}`,
+		console.tron?.log?.(
+			`[${new Date().toLocaleTimeString()}]${fnName}`,
 			msg,
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			...optionalParams
@@ -78,12 +89,18 @@ export function err(msg: unknown, ...args: unknown[]) {
 export function callerInfo(skipOf = 3) {
 	skipOf = skipOf || 3
 	let eStack
-	try { eStack = new Error().stack } catch (err) { l('kaka', undefined) }
+	try {
+		eStack = new Error().stack
+	} catch (err) {
+		l('kaka', undefined)
+	}
 	// const arr = eStack?.split('at ').map(x => x?.split(' (')[0]?.split(' ('))
 	// log( arr?.slice(1,5),eStack)
 	// console.log(eStack?.split('at '), '\n', eStack?.split('at ')[skipOf])
 	let tmpv = eStack?.split('at ')[skipOf]?.split(')\n')[0]?.split(' (')
-	if (!tmpv || !tmpv[1] || !tmpv[0]) { tmpv = eStack?.split('at ')[skipOf + 1]?.split(')\n')[0]?.split(' (') }
+	if (!tmpv || !tmpv[1] || !tmpv[0]) {
+		tmpv = eStack?.split('at ')[skipOf + 1]?.split(')\n')[0]?.split(' (')
+	}
 	/* const error = new Error('')
 	// console.log(error.stack, '\n', '\n')
 	if (error.stack) {
@@ -97,6 +114,8 @@ export function callerInfo(skipOf = 3) {
 		}
 	}
 	if (!tmpv || !tmpv[1] || tmpv[1] === undefined) { console.log(eStack?.stack) }*/
-	if (tmpv) { return { name: tmpv[0].replace('Object.exports.', '').replace('Object.', ''), path: tmpv[1] } }
+	if (tmpv) {
+		return { name: tmpv[0].replace('Object.exports.', '').replace('Object.', ''), path: tmpv[1] }
+	}
 	return null
 }

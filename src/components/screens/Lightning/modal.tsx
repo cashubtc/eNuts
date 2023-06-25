@@ -29,7 +29,7 @@ interface IInvoiceAmountModalProps {
 
 export function InvoiceAmountModal({ visible, children }: IInvoiceAmountModalProps) {
 	return (
-		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
+		<MyModal type="invoiceAmount" animation="slide" visible={visible}>
 			{children}
 		</MyModal>
 	)
@@ -45,13 +45,15 @@ interface IInvoiceModalProps {
 export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModalProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const [expiry, setExpiry] = useState(invoice.decoded?.expiry ?? 600)
-	const [expiryTime,] = useState(expiry * 1000 + Date.now())
+	const [expiryTime] = useState(expiry * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const [copied, setCopied] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const handlePayment = () => {
 		// state "unpaid" is temporary to prevent btn press spam
-		if (paid === 'unpaid') { return }
+		if (paid === 'unpaid') {
+			return
+		}
 		void (async () => {
 			try {
 				const { success } = await requestToken(mintUrl, +invoice.amount, invoice.hash)
@@ -91,13 +93,13 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 	}, [expiry, expiryTime])
 	return (
 		<MyModal
-			type='invoiceAmount'
-			animation='fade'
+			type="invoiceAmount"
+			animation="fade"
 			visible={visible}
 			success={paid === 'paid' || mintUrl === _mintUrl}
 			close={close}
 		>
-			{invoice.decoded && mintUrl !== _mintUrl && (!paid || paid === 'unpaid') ?
+			{invoice.decoded && mintUrl !== _mintUrl && (!paid || paid === 'unpaid') ? (
 				<View style={styles.container}>
 					<View style={styles.invoiceWrap}>
 						<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>
@@ -112,25 +114,17 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 						</Text>
 					</View>
 					<View>
-						<Text style={[styles.lnExpiry, { color: expiry < 1 ? color.ERROR : hi[highlight], fontSize: 28 }]}>
-							{expiry > 0 ?
-								formatExpiry(expiry)
-								:
-								'Invoice expired!'
-							}
+						<Text
+							style={[styles.lnExpiry, { color: expiry < 1 ? color.ERROR : hi[highlight], fontSize: 28 }]}
+						>
+							{expiry > 0 ? formatExpiry(expiry) : 'Invoice expired!'}
 						</Text>
-						{expiry > 0 && !paid &&
+						{expiry > 0 && !paid && (
 							<TouchableOpacity onPress={handlePayment}>
-								<Text style={[styles.checkPaymentTxt, { color: hi[highlight] }]}>
-									Check payment
-								</Text>
+								<Text style={[styles.checkPaymentTxt, { color: hi[highlight] }]}>Check payment</Text>
 							</TouchableOpacity>
-						}
-						{paid === 'unpaid' &&
-							<Text style={styles.pendingTxt}>
-								Payment pending...
-							</Text>
-						}
+						)}
+						{paid === 'unpaid' && <Text style={styles.pendingTxt}>Payment pending...</Text>}
 					</View>
 					<View style={styles.lnBtnWrap}>
 						<Button
@@ -148,25 +142,27 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 						/>
 						<View style={{ marginBottom: 20 }} />
 						<Button
-							txt='Pay with your LN wallet'
+							txt="Pay with your LN wallet"
 							onPress={() => {
 								void (async () => {
-									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch((err: unknown) => 
-										openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )
+									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch(
+										(err: unknown) =>
+											openPromptAutoClose({
+												msg: isErr(err) ? err.message : 'Link could not be opened',
+											})
+									)
 								})()
 							}}
 						/>
 						<TouchableOpacity style={styles.closeBtn} onPress={close}>
-							<Text style={globals(color, highlight).pressTxt}>
-								Close
-							</Text>
+							<Text style={globals(color, highlight).pressTxt}>Close</Text>
 						</TouchableOpacity>
 						{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 					</View>
 				</View>
-				:
+			) : (
 				<Success amount={+invoice.amount} mint={mintUrl} hash={invoice.hash} />
-			}
+			)}
 		</MyModal>
 	)
 }
@@ -193,34 +189,30 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	}
 	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
 	useEffect(() => {
-		if (!mint?.mintUrl) { return }
+		if (!mint?.mintUrl) {
+			return
+		}
 		void (async () => {
 			startLoading()
 			setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
 			stopLoading()
 		})()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [mint?.mintUrl])
 	return (
-		<MyModal type='invoiceAmount' animation='slide' visible={visible} close={cancelCoinSelection} hasNoPadding>
+		<MyModal type="invoiceAmount" animation="slide" visible={visible} close={cancelCoinSelection} hasNoPadding>
 			<View style={styles.proofContainer}>
 				<View style={styles.header}>
-					<Text style={globals(color).navTxt}>
-						Coin selection
-					</Text>
-					<TouchableOpacity
-						onPress={cancelCoinSelection}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							Cancel
-						</Text>
+					<Text style={globals(color).navTxt}>Coin selection</Text>
+					<TouchableOpacity onPress={cancelCoinSelection}>
+						<Text style={globals(color, highlight).pressTxt}>Cancel</Text>
 					</TouchableOpacity>
 				</View>
 				<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} />
 				<View style={{ paddingHorizontal: 20 }}>
 					<ProofListHeader />
 				</View>
-				{!loading &&
+				{!loading && (
 					<View
 						style={[
 							globals(color).wrapContainer,
@@ -228,7 +220,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 								paddingHorizontal: 0,
 								height: Math.floor(proofs.length * 56),
 								// adds a margin bottom if the "confirm" button is visible
-								marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0
+								marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0,
 							},
 						]}
 					>
@@ -238,31 +230,30 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 							showsVerticalScrollIndicator={false}
 							contentContainerStyle={{ paddingHorizontal: 20 }}
 							ItemSeparatorComponent={() => <Separator />}
-							renderItem={data => (
+							renderItem={(data) => (
 								<CoinSelectionRow
 									key={data.item.secret}
 									proof={data.item}
 									isLatestKeysetId={mintKeysetId === data.item.id}
 									setChecked={() => {
-										const proofIdx = proofs.findIndex(proof => proof.secret === data.item.secret)
-										const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
+										const proofIdx = proofs.findIndex((proof) => proof.secret === data.item.secret)
+										const updated = proofs.map((p, i) =>
+											proofIdx === i ? { ...p, selected: !p.selected } : p
+										)
 										setProof(updated)
 									}}
 								/>
 							)}
 						/>
 					</View>
-				}
+				)}
 			</View>
 			{/* Confirm button */}
-			{getSelectedAmount(proofs) >= lnAmount &&
+			{getSelectedAmount(proofs) >= lnAmount && (
 				<View style={[styles.confirmWrap, { backgroundColor: color.BACKGROUND }]}>
-					<Button
-						txt='Confirm'
-						onPress={() => setVisible(false)}
-					/>
+					<Button txt="Confirm" onPress={() => setVisible(false)} />
 				</View>
-			}
+			)}
 		</MyModal>
 	)
 }
@@ -280,17 +271,21 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
 	return (
 		<>
 			<View style={styles.overview}>
-				<Txt txt='Selected' />
+				<Txt txt="Selected" />
 				<Text style={globals(color).txt}>
-					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? color.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
+					<Txt
+						txt={`${selectedAmount}`}
+						styles={[{ color: selectedAmount < lnAmount ? color.ERROR : color.TEXT }]}
+					/>
+					/{lnAmount} Satoshi
 				</Text>
 			</View>
-			{selectedAmount > lnAmount &&
+			{selectedAmount > lnAmount && (
 				<View style={styles.overview}>
-					<Txt txt='Change' />
+					<Txt txt="Change" />
 					<Txt txt={`${selectedAmount - lnAmount} Sat`} />
 				</View>
-			}
+			)}
 		</>
 	)
 }
@@ -305,12 +300,8 @@ export function ProofListHeader() {
 	return (
 		<>
 			<View style={styles.tableHeader}>
-				<Text style={[styles.tableHead, { color: color.TEXT }]}>
-					Amount
-				</Text>
-				<Text style={[styles.tableHead, { color: color.TEXT }]}>
-					Keyset ID
-				</Text>
+				<Text style={[styles.tableHead, { color: color.TEXT }]}>Amount</Text>
+				<Text style={[styles.tableHead, { color: color.TEXT }]}>Keyset ID</Text>
 			</View>
 		</>
 	)
@@ -353,7 +344,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	lnBtnWrap: {
-		width: '100%'
+		width: '100%',
 	},
 	checkPaymentTxt: {
 		fontSize: 16,
@@ -388,7 +379,7 @@ const styles = StyleSheet.create({
 	},
 	qrCodeWrap: {
 		borderWidth: 5,
-		borderColor: '#FFF'
+		borderColor: '#FFF',
 	},
 	confirmWrap: {
 		position: 'absolute',
@@ -396,5 +387,5 @@ const styles = StyleSheet.create({
 		right: 0,
 		left: 0,
 		padding: 20,
-	}
+	},
 })

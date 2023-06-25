@@ -2,7 +2,7 @@
 	"output": "./report/tsx/",
 	"pattern": "**/*.tsx",
 	"format": "tsx",
-	"silent":true,
+	"silent": true,
 	"ignoreCase": true,
 	"max-lines": 10000,
 	"minTokens": 75,

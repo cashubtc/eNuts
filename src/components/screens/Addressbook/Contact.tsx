@@ -18,7 +18,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const { setContacts } = useContext(ContactsContext)
 	const [editContact, setEditContact] = useState({
 		name: route.params.contact?.name,
-		ln: route.params.contact?.ln
+		ln: route.params.contact?.ln,
 	})
 	const [openEdit, setOpenEdit] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()
@@ -33,13 +33,15 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	}
 	const handleEditContact = async () => {
 		const c = route.params.contact
-		if (!c) { return }
+		if (!c) {
+			return
+		}
 		try {
 			await editC({
 				...c,
 				id: c.id || 0,
 				name: editContact.name || '',
-				ln: editContact.ln || ''
+				ln: editContact.ln || '',
 			})
 			setContacts(await getContacts())
 			setOpenEdit(false)
@@ -54,13 +56,13 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 		setOpenEdit(false)
 		setEditContact({
 			name: route.params.contact?.name,
-			ln: route.params.contact?.ln
+			ln: route.params.contact?.ln,
 		})
 	}
 	useEffect(() => {
 		setEditContact({
 			name: route.params.contact?.name,
-			ln: route.params.contact?.ln
+			ln: route.params.contact?.ln,
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [openEdit])
@@ -69,26 +71,22 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			<TopNav withBackBtn />
 			{/* Contact info */}
 			<View style={[styles.contactContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
-				<Text style={[styles.contactPic, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER, color: color.TEXT }]}>
+				<Text
+					style={[
+						styles.contactPic,
+						{ backgroundColor: color.INPUT_BG, borderColor: color.BORDER, color: color.TEXT },
+					]}
+				>
 					{route.params?.contact?.name.charAt(0).toUpperCase()}
 				</Text>
-				<Text style={[styles.contactName, { color: color.TEXT }]}>
-					{route.params?.contact?.name}
-				</Text>
-				<Text style={[styles.contactAddress, { color: color.TEXT, }]}>
-					{route.params?.contact?.ln}
-				</Text>
+				<Text style={[styles.contactName, { color: color.TEXT }]}>{route.params?.contact?.name}</Text>
+				<Text style={[styles.contactAddress, { color: color.TEXT }]}>{route.params?.contact?.ln}</Text>
 			</View>
 			{/* Edit/Delete contact */}
 			<View style={styles.bottomAction}>
-				<TouchableOpacity
-					style={styles.action}
-					onPress={() => setOpenEdit(true)}
-				>
+				<TouchableOpacity style={styles.action} onPress={() => setOpenEdit(true)}>
 					<EditIcon width={20} height={20} color={color.TEXT} />
-					<Text style={[styles.actionTxt, { color: color.TEXT }]}>
-						Edit
-					</Text>
+					<Text style={[styles.actionTxt, { color: color.TEXT }]}>Edit</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
 					style={styles.action}
@@ -97,59 +95,44 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					}}
 				>
 					<TrashbinIcon width={18} height={18} color={color.ERROR} />
-					<Text style={[styles.actionTxt, { color: color.ERROR }]}>
-						Delete
-					</Text>
+					<Text style={[styles.actionTxt, { color: color.ERROR }]}>Delete</Text>
 				</TouchableOpacity>
 			</View>
 			{/* Edit contact modal */}
-			<MyModal
-				type='bottom'
-				animation='slide'
-				visible={openEdit && !prompt.open}
-				close={handleEditCancel}
-			>
-				<Text style={globals(color).modalHeader}>
-					Edit contact
-				</Text>
-				{!route.params.contact?.isOwner &&
+			<MyModal type="bottom" animation="slide" visible={openEdit && !prompt.open} close={handleEditCancel}>
+				<Text style={globals(color).modalHeader}>Edit contact</Text>
+				{!route.params.contact?.isOwner && (
 					<TextInput
 						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder="Name"
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
-						onChangeText={name => setEditContact({ ...editContact, name })}
+						onChangeText={(name) => setEditContact({ ...editContact, name })}
 						value={editContact.name}
 					/>
-				}
+				)}
 				<TextInput
 					style={[globals(color).input, { marginBottom: 20 }]}
 					placeholder="zap@me.now"
 					placeholderTextColor={color.INPUT_PH}
 					selectionColor={hi[highlight]}
-					onChangeText={ln => setEditContact({ ...editContact, ln })}
+					onChangeText={(ln) => setEditContact({ ...editContact, ln })}
 					value={editContact.ln}
 				/>
-				<Button txt='Save' onPress={() => void handleEditContact()}
-				/>
-				<TouchableOpacity
-					style={styles.cancel}
-					onPress={handleEditCancel}
-				>
-					<Text style={globals(color, highlight).pressTxt}>
-						Cancel
-					</Text>
+				<Button txt="Save" onPress={() => void handleEditContact()} />
+				<TouchableOpacity style={styles.cancel} onPress={handleEditCancel}>
+					<Text style={globals(color, highlight).pressTxt}>Cancel</Text>
 				</TouchableOpacity>
 			</MyModal>
 			{prompt.open && <Toaster txt={prompt.msg} />}
-		</View >
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 100
+		paddingTop: 100,
 	},
 	contactContainer: {
 		borderWidth: 1,
@@ -170,7 +153,7 @@ const styles = StyleSheet.create({
 	},
 	contactName: {
 		fontSize: 26,
-		fontWeight: '500'
+		fontWeight: '500',
 	},
 	contactAddress: {
 		fontSize: 16,
@@ -197,6 +180,6 @@ const styles = StyleSheet.create({
 	},
 	cancel: {
 		marginTop: 25,
-		marginBottom: 10
-	}
+		marginBottom: 10,
+	},
 })

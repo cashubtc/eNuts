@@ -7,11 +7,11 @@ import * as c from 'expo-crypto'
 // eslint-disable-next-line no-console
 console.log('shim.ts')
 
-
-
-if (typeof global?.Crypto === 'undefined' &&
+if (
+	typeof global?.Crypto === 'undefined' &&
 	typeof global?.crypto === 'undefined' &&
-	typeof global?.window?.crypto === 'undefined') {
+	typeof global?.window?.crypto === 'undefined'
+) {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-expect-error
 	global.crypto = c

@@ -1,7 +1,6 @@
 import { Db } from '@db/Db'
 import * as SQLite from 'expo-sqlite'
 
-
 /* const _storeDbs: { [k: string]: SimpleKeyValueStore } = {} */
 
 export function getDb(name: string) {
@@ -15,7 +14,9 @@ export function getDb(name: string) {
 	return store
 } */
 
-export function getBlankSQLResultSetRowList<T>() { return { length: 0, _array: [] as T[] } }
+export function getBlankSQLResultSetRowList<T>() {
+	return { length: 0, _array: [] as T[] }
+}
 
 export function cTo<T extends object>(s: string) {
 	return JSON.parse(s) as T
@@ -23,4 +24,3 @@ export function cTo<T extends object>(s: string) {
 export function toJson<T extends object>(o: T) {
 	return JSON.stringify(o)
 }
-

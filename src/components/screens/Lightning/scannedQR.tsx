@@ -42,12 +42,14 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 	const [timeLeft, setTimeLeft] = useState(0)
 	// coin selection
 	const [isEnabled, setIsEnabled] = useState(false)
-	const toggleSwitch = () => setIsEnabled(prev => !prev)
+	const toggleSwitch = () => setIsEnabled((prev) => !prev)
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
 	const handlePayment = async () => {
-		if (!lnDecoded || !selectedMint?.mintUrl) { return }
+		if (!lnDecoded || !selectedMint?.mintUrl) {
+			return
+		}
 		startLoading()
-		const selectedProofs = proofs.filter(p => p.selected)
+		const selectedProofs = proofs.filter((p) => p.selected)
 		try {
 			const res = await payLnInvoice(selectedMint.mintUrl, lnDecoded.paymentRequest, selectedProofs)
 			stopLoading()
@@ -56,16 +58,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 				return
 			}
 			// payment success, add as history entry
-			await addLnPaymentToHistory(
-				res,
-				[selectedMint.mintUrl],
-				-invoiceAmount,
-				lnDecoded.paymentRequest
-			)
+			await addLnPaymentToHistory(res, [selectedMint.mintUrl], -invoiceAmount, lnDecoded.paymentRequest)
 			nav.navigation.navigate('success', {
 				amount: invoiceAmount + res.realFee,
 				fee: res.realFee,
-				mints: [selectedMint.mintUrl]
+				mints: [selectedMint.mintUrl],
 			})
 		} catch (e) {
 			l(e)
@@ -75,7 +72,9 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 	}
 	// initiate user mints
 	useEffect(() => {
-		if (!lnDecoded) { return }
+		if (!lnDecoded) {
+			return
+		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
 		setInvoiceAmount(lnDecoded.sections[2].value / 1000)
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
@@ -84,7 +83,9 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		setTimeLeft(lnDecoded.sections[8].value - timePassed)
 		void (async () => {
 			const userMints = await getMintsUrls(true)
-			if (!userMints.length) { return }
+			if (!userMints.length) {
+				return
+			}
 			// get mints with custom names
 			setMints(await getCustomMintNames(userMints))
 			// set first selected mint
@@ -105,14 +106,16 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 	useEffect(() => {
 		void (async () => {
 			const mintsBals = await getMintsBalances()
-			mintsBals.forEach(m => {
+			mintsBals.forEach((m) => {
 				if (m.mintUrl === selectedMint?.mintUrl) {
 					setMintBal(m.amount)
 				}
 			})
-			if (!selectedMint?.mintUrl) { return }
+			if (!selectedMint?.mintUrl) {
+				return
+			}
 			// proofs
-			const proofsDB = (await getProofsByMintUrl(selectedMint.mintUrl)).map(p => ({ ...p, selected: false }))
+			const proofsDB = (await getProofsByMintUrl(selectedMint.mintUrl)).map((p) => ({ ...p, selected: false }))
 			setProofs(proofsDB)
 		})()
 	}, [selectedMint])
@@ -127,27 +130,19 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		}
 	}, [timeLeft])
 	return (
-		<MyModal type='invoiceAmount' animation='slide' visible close={closeDetails}>
+		<MyModal type="invoiceAmount" animation="slide" visible close={closeDetails}>
 			<View style={styles.topContainer}>
-				<Text style={globals(color, highlight).modalHeader}>
-					Lightning payment request
-				</Text>
-				<Text style={[styles.amount, { color: hi[highlight] }]}>
-					{formatInt(invoiceAmount)}
-				</Text>
-				<Text style={[styles.sat, { color: color.TEXT_SECONDARY }]}>
-					Satoshi
-				</Text>
+				<Text style={globals(color, highlight).modalHeader}>Lightning payment request</Text>
+				<Text style={[styles.amount, { color: hi[highlight] }]}>{formatInt(invoiceAmount)}</Text>
+				<Text style={[styles.sat, { color: color.TEXT_SECONDARY }]}>Satoshi</Text>
 				<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
 					{timeLeft > 0 ? formatExpiry(timeLeft) : 'Invoice expired!'}
 				</Text>
 				<View style={styles.pickerWrap}>
-					{!mints.length &&
-						<Txt txt='Found no mints' styles={[styles.txt, globals(color).navTxt]} />
-					}
-					{mints.length > 0 && timeLeft > 0 &&
+					{!mints.length && <Txt txt="Found no mints" styles={[styles.txt, globals(color).navTxt]} />}
+					{mints.length > 0 && timeLeft > 0 && (
 						<>
-							<Txt txt='Select a mint to send from:' styles={[styles.txt, globals(color).navTxt]} />
+							<Txt txt="Select a mint to send from:" styles={[styles.txt, globals(color).navTxt]} />
 							<Picker
 								selectedValue={selectedMint?.mintUrl}
 								onValueChange={(value, _idx) => {
@@ -159,7 +154,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								dropdownIconColor={color.TEXT}
 								style={styles.picker}
 							>
-								{mints.map(m => (
+								{mints.map((m) => (
 									<Picker.Item
 										key={m.mintUrl}
 										label={m.customName || formatMintUrl(m.mintUrl)}
@@ -169,18 +164,16 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								))}
 							</Picker>
 							<View style={[styles.mintOpts, { borderBottomColor: color.BORDER }]}>
-								<Txt txt='Balance' />
+								<Txt txt="Balance" />
 								<View style={styles.mintBal}>
-									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-										{formatInt(mintBal)}
-									</Text>
+									<Text style={[styles.mintAmount, { color: color.TEXT }]}>{formatInt(mintBal)}</Text>
 									<ZapIcon width={18} height={18} color={color.TEXT} />
 								</View>
 							</View>
-							{invoiceAmount > 0 && mintBal >= invoiceAmount / 1000 &&
+							{invoiceAmount > 0 && mintBal >= invoiceAmount / 1000 && (
 								<>
 									<View style={styles.overview}>
-										<Txt txt='Coin selection' />
+										<Txt txt="Coin selection" />
 										<Switch
 											trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
 											thumbColor={color.TEXT}
@@ -188,34 +181,30 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 											value={isEnabled}
 										/>
 									</View>
-									{getSelectedAmount(proofs) > 0 && isEnabled &&
-										<CoinSelectionResume lnAmount={invoiceAmount} selectedAmount={getSelectedAmount(proofs)} />
-									}
+									{getSelectedAmount(proofs) > 0 && isEnabled && (
+										<CoinSelectionResume
+											lnAmount={invoiceAmount}
+											selectedAmount={getSelectedAmount(proofs)}
+										/>
+									)}
 								</>
-							}
+							)}
 						</>
-					}
+					)}
 				</View>
 			</View>
 			<View style={styles.actions}>
-				{mintBal >= invoiceAmount && mints.length > 0 && timeLeft > 0 &&
-					<Button
-						txt={loading ? 'Processing payment...' : 'Pay'}
-						onPress={() => void handlePayment()}
-					/>
-				}
-				{mints.length > 0 && mintBal < invoiceAmount && timeLeft > 0 &&
-					<Txt txt='Not enough funds!' styles={[globals(color).navTxt, styles.txt]} />
-				}
+				{mintBal >= invoiceAmount && mints.length > 0 && timeLeft > 0 && (
+					<Button txt={loading ? 'Processing payment...' : 'Pay'} onPress={() => void handlePayment()} />
+				)}
+				{mints.length > 0 && mintBal < invoiceAmount && timeLeft > 0 && (
+					<Txt txt="Not enough funds!" styles={[globals(color).navTxt, styles.txt]} />
+				)}
 				<View style={{ marginVertical: 10 }} />
-				<Button
-					txt='Cancel'
-					outlined
-					onPress={closeDetails}
-				/>
+				<Button txt="Cancel" outlined onPress={closeDetails} />
 			</View>
 			{/* coin selection page */}
-			{isEnabled &&
+			{isEnabled && (
 				<CoinSelectionModal
 					mint={selectedMint}
 					lnAmount={invoiceAmount}
@@ -223,8 +212,8 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					proofs={proofs}
 					setProof={setProofs}
 				/>
-			}
-			{prompt.open && <Toaster txt={prompt.msg} /> }
+			)}
+			{prompt.open && <Toaster txt={prompt.msg} />}
 		</MyModal>
 	)
 }
@@ -240,7 +229,7 @@ const styles = StyleSheet.create({
 	},
 	txt: {
 		textAlign: 'center',
-		marginBottom: 10
+		marginBottom: 10,
 	},
 	sat: {
 		fontSize: 16,
@@ -249,7 +238,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 	},
 	picker: {
-		marginHorizontal: -15
+		marginHorizontal: -15,
 	},
 	mintOpts: {
 		flexDirection: 'row',
@@ -265,10 +254,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end',
 	},
 	mintAmount: {
-		marginRight: 5
+		marginRight: 5,
 	},
 	actions: {
-		width: '100%'
+		width: '100%',
 	},
 	expiry: {
 		marginTop: 20,

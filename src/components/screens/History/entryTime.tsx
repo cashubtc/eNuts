@@ -28,7 +28,7 @@ export default function EntryTime({ from, fallback }: IEntryTimeProps) {
 	useEffect(() => {
 		setTime(calcTime())
 		const t = setInterval(() => {
-			setTime(s => {
+			setTime((s) => {
 				const newTime = calcTime()
 				if (newTime !== s) {
 					return newTime
@@ -37,7 +37,7 @@ export default function EntryTime({ from, fallback }: IEntryTimeProps) {
 			})
 		}, MinuteInMs)
 		return () => clearInterval(t)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [time])
 
 	return <>{time}</>

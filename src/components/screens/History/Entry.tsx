@@ -22,18 +22,20 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			style={styles.listItem}
 			onPress={() => nav.navigation.navigate('history entry details', { entry: item })}
 		>
-			{item.amount < 0 ?
-				<OutgoingArrowIcon color={color.TEXT} />
-				:
-				<IncomingArrowIcon color={color.TEXT} />
-			}
+			{item.amount < 0 ? <OutgoingArrowIcon color={color.TEXT} /> : <IncomingArrowIcon color={color.TEXT} />}
 			<View style={styles.infoWrap}>
 				<Txt txt={item.type === 1 ? 'Ecash' : 'Lightning'} />
 				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY }]}>
-					<EntryTime from={item.timestamp * 1000} fallback='Just now' />
+					<EntryTime from={item.timestamp * 1000} fallback="Just now" />
 				</Text>
 			</View>
-			<Text style={[globals(color, highlight).txt, styles.amount, { color: item.amount < 0 ? color.ERROR : mainColors.VALID }]}>
+			<Text
+				style={[
+					globals(color, highlight).txt,
+					styles.amount,
+					{ color: item.amount < 0 ? color.ERROR : mainColors.VALID },
+				]}
+			>
 				{formatInt(item.amount < 0 ? Math.abs(item.amount) : item.amount, 'compact', 'en')}
 				<ZapIcon width={15} height={15} color={item.amount < 0 ? color.ERROR : mainColors.VALID} />
 			</Text>

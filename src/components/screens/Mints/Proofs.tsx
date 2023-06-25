@@ -22,7 +22,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 		void (async () => {
 			const [proofs, keysetId] = await Promise.all([
 				getProofsByMintUrl(route.params.mintUrl),
-				getMintCurrentKeySetId(route.params.mintUrl)
+				getMintCurrentKeySetId(route.params.mintUrl),
 			])
 			setProofs(proofs)
 			setMintKeysetId(keysetId)
@@ -31,34 +31,38 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Proofs' withBackBtn />
+			<TopNav screenName="Proofs" withBackBtn />
 			<View style={styles.content}>
 				{/* List header */}
 				<View style={{ paddingHorizontal: 20, marginTop: 20 }}>
 					<ProofListHeader />
 				</View>
 				{/* Proofs list */}
-				{proofs.length > 0 &&
+				{proofs.length > 0 && (
 					<View
 						style={[
 							globals(color).wrapContainer,
 							{
 								paddingHorizontal: 0,
 								height: Math.floor(proofs.length * 56),
-							}
+							},
 						]}
 					>
 						<FlashList
 							data={proofs}
 							estimatedItemSize={300}
 							contentContainerStyle={{ paddingHorizontal: 20 }}
-							renderItem={data => (
-								<ProofRow key={data.item.secret} proof={data.item} isLatestKeysetId={data.item.id === mintKeysetId} />
+							renderItem={(data) => (
+								<ProofRow
+									key={data.item.secret}
+									proof={data.item}
+									isLatestKeysetId={data.item.id === mintKeysetId}
+								/>
 							)}
 							ItemSeparatorComponent={() => <Separator />}
 						/>
 					</View>
-				}
+				)}
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 		</View>

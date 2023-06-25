@@ -12,19 +12,19 @@ export const useShakeAnimation = () => {
 				Animated.timing(anim.current, {
 					toValue: -2,
 					duration: 40,
-					useNativeDriver: true
+					useNativeDriver: true,
 				}),
 				// shift element to the right by 2 units
 				Animated.timing(anim.current, {
 					toValue: 2,
 					duration: 40,
-					useNativeDriver: true
+					useNativeDriver: true,
 				}),
 				// bring the element back to its original position
 				Animated.timing(anim.current, {
 					toValue: 0,
 					duration: 40,
-					useNativeDriver: true
+					useNativeDriver: true,
 				}),
 			]),
 			// loops the above animation config 3 times
