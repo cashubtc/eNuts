@@ -3,9 +3,12 @@ import { repoIssueUrl } from '@consts/urls'
 import { setPreferences } from '@db'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
-import { formatBalance, formatInt, isBool, openUrl } from '@util'
+import { formatBalance, formatInt, isBool, isErr, openUrl } from '@util'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+
+import usePrompt from './hooks/Prompt'
+import Toaster from './Toaster'
 
 interface IBalanceProps {
 	balance: number
@@ -14,7 +17,7 @@ interface IBalanceProps {
 export default function Balance({ balance }: IBalanceProps) {
 	const { pref, color, highlight } = useContext(ThemeContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
-
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const toggleBalanceFormat = () => {
 		setFormatSats(prev => !prev)
 		if (!pref || !isBool(formatSats)) { return }
@@ -51,12 +54,14 @@ export default function Balance({ balance }: IBalanceProps) {
 				</Text>
 				<TouchableOpacity
 					style={styles.submitIssue}
-					onPress={() => void openUrl(repoIssueUrl)}
+					onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) => 
+						openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )}
 				>
 					<Text style={styles.issue}>
 						Submit issue on Github
 					</Text>
 				</TouchableOpacity>
+				{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 			</View>
 		</View>
 	)
