@@ -156,7 +156,7 @@ export default function LNPageContent({
 									/>
 								</View>
 								{getSelectedAmount(proofs) > 0 && isEnabled &&
-									<View style={{ marginHorizontal: -20 }}>
+									<View style={{ marginHorizontal: -20, marginTop: 8 }}>
 										<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} />
 									</View>
 								}
@@ -266,17 +266,19 @@ export default function LNPageContent({
 const styles = StyleSheet.create({
 	pickerWrap: {
 		width: '100%',
-		marginTop: 100,
+		marginTop: 110,
 	},
 	wrap: {
 		marginHorizontal: -20,
 		marginBottom: 20,
+		paddingTop: 5,
+		paddingBottom: 20,
 	},
 	mintOpts: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingVertical: 10,
+		marginTop: 2,
 	},
 	mintBal: {
 		flex: 1,
@@ -300,7 +302,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginBottom: 10
+		marginTop: 8,
 	},
 	actionWrap: {
 		position: 'absolute',
