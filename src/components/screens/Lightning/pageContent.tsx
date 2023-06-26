@@ -19,6 +19,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
 import MintPanel from './mintPanel'
+import Empty from '@comps/Empty'
 
 interface ILNPageProps {
 	nav: TLightningPageProps | TSendTokenPageProps
@@ -122,49 +123,49 @@ export default function LNPageContent({
 					</View>
 				}
 				{/* Mint balance, updates while selecting different mint */}
-				<View style={[globals(color).wrapContainer, styles.wrap]}>
-					{/* Single mint with balance, or mint picker */}
-					<MintPanel
-						nav={nav}
-						mints={mints}
-						selectedMint={selectedMint}
-						setSelectedMint={setSelectedMint}
-					/>
-					{mints.length > 0 && !nav.route.params?.mint &&
-						<View style={styles.mintOpts}>
-							<Txt txt='Balance' />
-							<View style={styles.mintBal}>
-								<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-									{formatInt(mintBal)}
-								</Text>
-								<ZapIcon width={18} height={18} color={color.TEXT} />
-							</View>
-						</View>
-					}
-					{!mints.length ?
-						<Txt txt='Found no mints' styles={[globals(color).navTxt, styles.awaitInvoice]} />
-						: null
-					}
-					{/* Coin selection toggle */}
-					{+amount > 0 && mintBal >= +amount / 1000 && !isKeyboardOpen &&
-						<>
-							<View style={styles.overview}>
-								<Txt txt='Coin selection' />
-								<Switch
-									trackColor={{ false: color.BORDER, true: hi[highlight] }}
-									thumbColor={color.TEXT}
-									onValueChange={toggleSwitch}
-									value={isEnabled}
-								/>
-							</View>
-							{getSelectedAmount(proofs) > 0 && isEnabled &&
-								<View style={{ marginHorizontal: -20 }}>
-									<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} />
+				{mints.length > 0 ?
+					<View style={[globals(color).wrapContainer, styles.wrap]}>
+						{/* Single mint with balance, or mint picker */}
+						<MintPanel
+							nav={nav}
+							mints={mints}
+							selectedMint={selectedMint}
+							setSelectedMint={setSelectedMint}
+						/>
+						{mints.length > 0 && !nav.route.params?.mint &&
+							<View style={styles.mintOpts}>
+								<Txt txt='Balance' />
+								<View style={styles.mintBal}>
+									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
+										{formatInt(mintBal)}
+									</Text>
+									<ZapIcon width={18} height={18} color={color.TEXT} />
 								</View>
-							}
-						</>
-					}
-				</View>
+							</View>
+						}
+						{/* Coin selection toggle */}
+						{+amount > 0 && mintBal >= +amount / 1000 && !isKeyboardOpen &&
+							<>
+								<View style={styles.overview}>
+									<Txt txt='Coin selection' />
+									<Switch
+										trackColor={{ false: color.BORDER, true: hi[highlight] }}
+										thumbColor={color.TEXT}
+										onValueChange={toggleSwitch}
+										value={isEnabled}
+									/>
+								</View>
+								{getSelectedAmount(proofs) > 0 && isEnabled &&
+									<View style={{ marginHorizontal: -20 }}>
+										<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} />
+									</View>
+								}
+							</>
+						}
+					</View>
+					:
+					<Empty txt='Found no mint...' />
+				}
 				{/* Token memo only if isSendingToken (sending a cashu token) */}
 				{+amount > 0 && isSendingToken &&
 					<TextInput
@@ -300,10 +301,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		marginBottom: 10
-	},
-	awaitInvoice: {
-		marginTop: 50,
-		textAlign: 'center',
 	},
 	actionWrap: {
 		position: 'absolute',
