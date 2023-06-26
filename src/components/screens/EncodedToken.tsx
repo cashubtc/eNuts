@@ -53,10 +53,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav
-				withBackBtn
-				backHandler={() => navigation.navigate('dashboard')}
-			/>
+			<TopNav withBackBtn />
 			{/* The amount of the created token */}
 			<View style={styles.qrWrap}>
 				<Txt txt={route.params.amount} styles={[styles.tokenAmount, { color: hi[highlight] }]} />
