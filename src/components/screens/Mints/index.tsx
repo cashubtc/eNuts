@@ -219,7 +219,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				/>
 			</View>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-			{!isKeyboardOpen && !prompt.open && !trustModalOpen && !newMintModal &&
+			{!isKeyboardOpen && !trustModalOpen && !newMintModal &&
 				<BottomNav navigation={navigation} route={route} />
 			}
 		</View>
