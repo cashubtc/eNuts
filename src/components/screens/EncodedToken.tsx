@@ -14,7 +14,7 @@ import { Share, StyleSheet, View } from 'react-native'
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
  */
-export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
+export default function EncodedTokenPage({ route }: TEncodedTokenPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const [error, setError] = useState({ msg: '', open: false })
