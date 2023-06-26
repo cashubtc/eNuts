@@ -73,7 +73,6 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					</View>
 					{/* cancel modal / go back to payment page */}
 					<TouchableOpacity
-						style={{ paddingVertical: 10 }}
 						onPress={() => closeModal?.()}
 					>
 						<Text style={globals(color, highlight).pressTxt}>
@@ -87,7 +86,10 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				</View>
 			}
 			{/* Address list */}
-			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+			<ScrollView
+				style={[styles.scroll, { marginTop: contacts.length > 0 ? 0 : -40 }]}
+				showsVerticalScrollIndicator={false}
+			>
 				{/* user own LNURL */}
 				{hasOwnAddress() ?
 					<View style={[globals(color).wrapContainer, styles.bookEntry, styles.container]}>
@@ -107,9 +109,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 									closeModal?.()
 									return
 								}
-								nav?.navigation.navigate('Contact', {
-									contact: personalInfo
-								})
+								nav?.navigation.navigate('Contact', { contact: personalInfo })
 							}}
 						>
 							<Txt txt={getPersonalInfo()?.ln || ''} />
@@ -117,11 +117,9 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 					</View>
 					:
 					<TouchableOpacity
-						style={[styles.bookEntry, styles.container, { borderColor: color.BORDER, backgroundColor: color.INPUT_BG }]}
+						style={[styles.bookEntry, styles.container, globals(color).wrapContainer]}
 						testID='addPersonal'
-						onPress={() => {
-							setOpenNew({ open: true, isOwner: true })
-						}}
+						onPress={() => setOpenNew({ open: true, isOwner: true })}
 					>
 						<Text style={styles.addOwnAddress}>
 							<PlusIcon width={16} height={16} color={hi[highlight]} />
@@ -131,7 +129,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						</View>
 					</TouchableOpacity>
 				}
-				{contacts.length > 0 &&
+				{((contacts.length > 1 && contacts.some(c => c.isOwner)) || (contacts.length > 0 && !contacts.some(c => c.isOwner)))  &&
 					<View style={[globals(color).wrapContainer, styles.bookContainer]}>
 						{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
 							!c.isOwner &&
@@ -241,6 +239,7 @@ const styles = StyleSheet.create({
 	bookHeader: {
 		paddingHorizontal: 20,
 		marginBottom: 20,
+		marginTop: 100,
 	},
 	header: {
 		marginBottom: 10,
@@ -249,7 +248,7 @@ const styles = StyleSheet.create({
 		width: '100%'
 	},
 	container: {
-		paddingVertical: 10,
+		paddingVertical: 15,
 		marginBottom: 25,
 	},
 	subHeader: {
@@ -270,6 +269,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		paddingHorizontal: 15,
 		paddingVertical: 10,
+		marginVertical: 5,
 		marginRight: 20,
 	},
 	circleUser: {
@@ -280,8 +280,7 @@ const styles = StyleSheet.create({
 		marginRight: 20,
 	},
 	addOwnAddress: {
-		paddingVertical: 10,
-		marginHorizontal: 20,
+		marginRight: 20,
 	},
 	nameEntry: {
 		width: '100%',
