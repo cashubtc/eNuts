@@ -256,7 +256,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt='Proofs'
 						onPress={() => {
 							if (route.params.amount < 1) {
-								openPromptAutoClose({ msg: 'Mint has no proofs. Balance too low!' })
+								openPromptAutoClose({ msg: 'Found no proofs for this mint.' })
 								return
 							}
 							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })

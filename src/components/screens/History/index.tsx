@@ -68,7 +68,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							</View>
 						</>
 					)}
-					ListEmptyComponent={<Empty />}
+					ListEmptyComponent={<Empty txt='No transactions yet...' />}
 				/>
 			</View>
 			<BottomNav navigation={navigation} route={route} />

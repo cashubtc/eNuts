@@ -4,7 +4,7 @@ import { Image, StyleSheet } from 'react-native'
 
 import Txt from './Txt'
 
-export default function Empty() {
+export default function Empty({txt}: {txt: string}) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
@@ -14,7 +14,7 @@ export default function Empty() {
 				source={require('../../assets/mixed_forest.png')}
 			/>
 			<Txt
-				txt='No transactions yet...'
+				txt={txt}
 				styles={[styles.emptyTxt, { color: color.TEXT_SECONDARY }]}
 			/>
 		</>
