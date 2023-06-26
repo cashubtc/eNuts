@@ -10,6 +10,8 @@ import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
+import Loading from './Loading'
+
 interface ISuccessProps {
 	amount: number
 	fee?: number
@@ -85,11 +87,7 @@ export default function Success({ amount, fee, mints, mint, memo, nav, hash }: I
 						<Button filled txt='Back to dashboard' onPress={() => nav ? nav.navigate('dashboard') : navigation.navigate('dashboard')} />
 					</>
 					:
-					<>
-						<Text style={styles.awaitTestMint}>
-							Awaiting test-mint tokens...
-						</Text>
-					</>
+					<Loading size='large' white />
 				}
 			</View>
 		</>
