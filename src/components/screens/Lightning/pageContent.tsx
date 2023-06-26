@@ -1,4 +1,5 @@
 import Button from '@comps/Button'
+import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import { ZapIcon } from '@comps/Icons'
 import LNInvoiceAmountModal from '@comps/InvoiceAmount'
@@ -19,7 +20,6 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
 import MintPanel from './mintPanel'
-import Empty from '@comps/Empty'
 
 interface ILNPageProps {
 	nav: TLightningPageProps | TSendTokenPageProps
