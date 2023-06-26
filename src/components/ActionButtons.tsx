@@ -9,6 +9,7 @@ interface IActionBtnsProps {
 	bottomBtnAction: () => void
 	ontopOfNav?: boolean
 	absolutePos?: boolean
+	loading?: boolean
 }
 
 export default function ActionButtons({
@@ -17,7 +18,8 @@ export default function ActionButtons({
 	bottomBtnTxt,
 	bottomBtnAction,
 	ontopOfNav,
-	absolutePos
+	absolutePos,
+	loading
 }: IActionBtnsProps) {
 	return (
 		<View
@@ -28,6 +30,7 @@ export default function ActionButtons({
 			]}
 		>
 			<Button
+				loading={loading}
 				txt={topBtnTxt}
 				onPress={topBtnAction}
 			/>

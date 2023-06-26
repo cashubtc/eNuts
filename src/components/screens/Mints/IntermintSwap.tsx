@@ -107,6 +107,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 				<View style={styles.actions}>
 					<Button
 						txt={loading ? 'Performing swap...' : 'Swap now'}
+						loading={loading}
 						onPress={() => {
 							if (loading) { return }
 							void handleSwap()

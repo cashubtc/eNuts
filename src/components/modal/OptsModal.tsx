@@ -13,6 +13,7 @@ interface IOptsModal {
 	button2Txt: string
 	onPressSecondBtn: () => void
 	onPressCancel: () => void
+	loading?: boolean
 }
 
 export default function OptsModal({
@@ -21,7 +22,8 @@ export default function OptsModal({
 	onPressFirstBtn,
 	button2Txt,
 	onPressSecondBtn,
-	onPressCancel
+	onPressCancel,
+	loading
 }: IOptsModal) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
@@ -32,6 +34,7 @@ export default function OptsModal({
 				topBtnAction={onPressFirstBtn}
 				bottomBtnTxt={button2Txt}
 				bottomBtnAction={onPressSecondBtn}
+				loading={loading}
 			/>
 			<TouchableOpacity style={styles.no} onPress={onPressCancel}>
 				<Text style={globals(color, highlight).pressTxt}>

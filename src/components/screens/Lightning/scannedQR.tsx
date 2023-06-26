@@ -201,7 +201,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 				{mintBal >= invoiceAmount && mints.length > 0 && timeLeft > 0 &&
 					<Button
 						txt={loading ? 'Processing payment...' : 'Pay'}
-						onPress={() => void handlePayment()}
+						loading={loading}
+						onPress={() => {
+							if (loading) { return }
+							void handlePayment()
+						}}
 					/>
 				}
 				{mints.length > 0 && mintBal < invoiceAmount && timeLeft > 0 &&

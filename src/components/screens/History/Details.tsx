@@ -2,6 +2,7 @@ import { getDecodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon, QRIcon } from '@comps/Icons'
+import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import QR from '@comps/QR'
 import Separator from '@comps/Separator'
@@ -148,7 +149,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 									<CheckCircleIcon width={18} height={18} color={mainColors.VALID} />
 									:
 									loading ?
-										<Txt txt='Loading...' />
+										<Loading />
 										:
 										<BackupIcon width={20} height={20} color={color.TEXT} />
 								}

@@ -226,6 +226,7 @@ export default function LNPageContent({
 							{+amount > 0 && mintBal > 0 && mintBal >= +amount && !isKeyboardOpen &&
 								<Button
 									txt={loading ? 'Creating...' : 'Create token'}
+									loading={loading}
 									onPress={() => {
 										if (loading) { return }
 										void generateToken()

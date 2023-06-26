@@ -98,6 +98,7 @@ export default function LNInvoiceAmountModal({
 					<Button
 						txt={loading ? 'Invoice incoming...' : 'Create invoice'}
 						onPress={handleAmountSubmit}
+						loading={loading}
 					/>
 					<TouchableOpacity onPress={() => setLNAmountModal(false)}>
 						<Text style={[styles.cancel, { color: hi[highlight] }]}>

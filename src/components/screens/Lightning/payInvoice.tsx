@@ -396,6 +396,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				{input.length > 0 && ((invoiceAmount > 0 && timeLeft > 0) || +LNURLAmount > 0) && !isKeyboardOpen && feeEstimate > 0 &&
 					<Button
 						txt={loading ? 'Processing payment...' : 'Pay'}
+						loading={loading}
 						onPress={() => {
 							void handleTokenSend()
 						}}

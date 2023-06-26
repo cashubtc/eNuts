@@ -3,16 +3,19 @@ import { highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native'
 
+import Loading from './Loading'
+
 interface IButtonProps {
 	txt: string
 	border?: boolean
 	outlined?: boolean
 	filled?: boolean
 	disabled?: boolean
+	loading?: boolean
 	onPress: () => void
 }
 
-export default function Button({ txt, border, outlined, filled, disabled, onPress }: IButtonProps) {
+export default function Button({ txt, border, outlined, filled, disabled, loading, onPress }: IButtonProps) {
 	const { highlight } = useContext(ThemeContext)
 	return (
 		<SafeAreaView style={styles.safeArea}>
@@ -29,9 +32,14 @@ export default function Button({ txt, border, outlined, filled, disabled, onPres
 				]}
 				onPress={onPress}
 			>
-				<Text style={[styles.btnTxt, filled || outlined ? { color: hi[highlight] } : {}]}>
+				<Text style={[
+					styles.btnTxt,
+					filled || outlined ? { color: hi[highlight] } : {},
+					loading ? { marginRight: 10 } : {}
+				]}>
 					{txt}
 				</Text>
+				{loading && <Loading white />}
 			</TouchableOpacity>
 		</SafeAreaView>
 	)
@@ -65,6 +73,10 @@ const styles = StyleSheet.create({
 		width: '100%'
 	},
 	touchableOpacity: {
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
 		borderRadius: 50,
 	},
 	btnTxt: {

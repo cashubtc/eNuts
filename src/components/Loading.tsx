@@ -9,6 +9,6 @@ interface ILoadingProps {
 }
 
 export default function Loading({ white, size }: ILoadingProps) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { highlight } = useContext(ThemeContext)
 	return <ActivityIndicator size={size} color={white ? '#FAFAFA' : hi[highlight]} />
 }
