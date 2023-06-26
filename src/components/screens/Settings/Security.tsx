@@ -35,7 +35,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
-			<View style={[globals(color).wrapContainer, styles.wrap]}>
+			<View style={globals(color).wrapContainer}>
 				<TouchableOpacity
 					style={styles.settingsRow}
 					onPress={() => { void handleBackup() }}
@@ -53,15 +53,12 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 120,
+		paddingTop: 110,
 	},
 	settingsRow: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingVertical: 10,
-	},
-	wrap: {
-		paddingVertical: 10,
+		paddingVertical: 20,
 	},
 })
