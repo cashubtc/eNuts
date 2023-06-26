@@ -1,5 +1,5 @@
+import Empty from '@comps/Empty'
 import Separator from '@comps/Separator'
-import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -68,12 +68,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							</View>
 						</>
 					)}
-					ListEmptyComponent={
-						<Txt
-							txt='No transactions yet...'
-							styles={[{ textAlign: 'center', marginTop: 20, color: color.TEXT_SECONDARY }]}
-						/>
-					}
+					ListEmptyComponent={<Empty />}
 				/>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
