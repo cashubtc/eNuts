@@ -20,21 +20,56 @@
 		"plugin:@typescript-eslint/recommended",
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"plugin:promise/recommended",
-		"plugin:json/recommended",
+		"plugin:json/recommended-with-comments",
 		"plugin:import/typescript",
 		"plugin:jest/recommended",
 		"plugin:react/recommended",
 		"plugin:react-hooks/recommended",
-		"plugin:@rnx-kit/recommended",
 		"plugin:react/jsx-runtime"
 	],
 	"overrides": [
 		{
-			"files": ["*.ts", "*.tsx", "*.d.ts"]
+			"files": ["*.js", "*.jsx", "*.cjs", "*.mjs"],
+			"rules": {
+				"@typescript-eslint/no-unsafe-assignment": "off",
+				"@typescript-eslint/require-await": "off",
+				"@typescript-eslint/await-thenable": "off",
+				"@typescript-eslint/consistent-type-exports": "off",
+				"@typescript-eslint/restrict-template-expressions": "off",
+				"@typescript-eslint/no-floating-promises": "off",
+				"@typescript-eslint/no-implied-eval": "off",
+				"@typescript-eslint/no-misused-promises": "off",
+				"@typescript-eslint/no-unnecessary-type-assertion": "off",
+				"@typescript-eslint/no-unsafe-argument": "off",
+				"@typescript-eslint/no-unsafe-call": "off",
+				"@typescript-eslint/no-unsafe-member-access": "off",
+				"@typescript-eslint/no-unsafe-return": "off",
+				"@typescript-eslint/restrict-plus-operands": "off",
+				"@typescript-eslint/unbound-method": "off",
+				"@typescript-eslint/no-var-requires": "off"
+			}
 		},
 		{
 			"files": ["*.json"],
-			"parser": "espree"
+			"parser": "espree",
+			"rules": {
+				"@typescript-eslint/require-await": "off",
+				"@typescript-eslint/await-thenable": "off",
+				"@typescript-eslint/consistent-type-exports": "off",
+				"@typescript-eslint/restrict-template-expressions": "off",
+				"@typescript-eslint/no-floating-promises": "off",
+				"@typescript-eslint/no-implied-eval": "off",
+				"@typescript-eslint/no-misused-promises": "off",
+				"@typescript-eslint/no-unnecessary-type-assertion": "off",
+				"@typescript-eslint/no-unsafe-argument": "off",
+				"@typescript-eslint/no-unsafe-assignment": "off",
+				"@typescript-eslint/no-unsafe-call": "off",
+				"@typescript-eslint/no-unsafe-member-access": "off",
+				"@typescript-eslint/no-unsafe-return": "off",
+				"@typescript-eslint/restrict-plus-operands": "off",
+				"@typescript-eslint/unbound-method": "off",
+				"@typescript-eslint/no-var-requires": "off"
+			}
 		}
 	],
 	"globals": {
@@ -138,6 +173,9 @@
 		"patches",
 		"report",
 		"assets",
-		"scripts"
+		"scripts",
+		"scripts/dev",
+		"scripts/**/*.*",
+		"scripts/dev/*"
 	]
 }

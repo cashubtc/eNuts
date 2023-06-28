@@ -1,5 +1,4 @@
 {
-	"include": ["src", "config", "typings", "test"],
 	"compilerOptions": {
 		"strict": true,
 		"target": "ESNext",

@@ -1,36 +1,22 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
+
 import { getDefaultConfig } from '@expo/metro-config'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { makeMetroConfig } from '@rnx-kit/metro-config'
-import MetroSymlinksResolver from '@rnx-kit/metro-resolver-symlinks'
-import type { InputConfigT } from 'metro-config'
-import type { ResolutionContext } from 'metro-resolver/src/types'
-import { join } from 'path'
+import { readdirSync } from 'fs'
+// import { mergeConfig } from 'metro-config'
+import { join, resolve } from 'path'
 
-const config = getDefaultConfig(join(__dirname, '..', ''))
+const root = resolve(join(__dirname, '..', ''))
+const assertDir = resolve(join(root, 'assets'))
 
-// eslint-disable-next-line new-cap
-const metroSymlinksResolver = MetroSymlinksResolver()
-const c = {
-	...config,
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-	...makeMetroConfig({
-		serializer: { ...config?.serializer ?? {}},
-		projectRoot: config?.projectRoot ?? join(__dirname, '..', ''),
-		resolver: {
-			...config?.resolver ?? {},
-			// eslint-disable-next-line new-cap
-			resolveRequest: (context: ResolutionContext, moduleName: string, platform: string | null) => {
-				if (moduleName === 'missing-asset-registry-path') {
-					return { type: 'assetFiles', filePaths: [context.originModulePath] }
-				}
-				return  metroSymlinksResolver(context, moduleName, platform)
-			},
-			assetExts: [...config?.resolver?.assetExts ?? [], 'db']
-		},
-	}) as InputConfigT,
-}
+export const config = getDefaultConfig(root)
 
-module.exports = c
+const assetExts = [...new Set([
+	...config?.resolver?.assetExts ?? [],
+	'db',
+	...readdirSync(assertDir, { withFileTypes: true, recursive: true })
+		.filter(x => x.isFile())
+		.map(x => x.name.slice(x.name.lastIndexOf('.') + 1))
+])]
+if (config.resolver?.assetExts) { config.resolver.assetExts = assetExts }
 
+// config mergeConfig(config, { resolver: { ...config.resolver, assetExts } })
