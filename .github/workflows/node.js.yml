@@ -24,27 +24,24 @@ jobs:
 
         steps:
             - uses: actions/checkout@v3
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 8.6.3
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
-                  cache: "pnpm"
-            - run: pnpm install
-            - run: pnpm lint
+                  cache: "npm"
+            - run: npm install
+            - run: npm run lint
             - run: |
-                  pnpm metro build \
+                  npx -y metro build \
                   -c metro.config.js \
                   -p android -g \
                   --reset-cache \
                   -O build \
                   src/AppEntry.ts
 
-            - run: pnpm tsc
+            - run: npx tsc
 
-            - run: pnpm test:coverage
+            - run: npm run test:coverage
             - name: Upload coverage reports to Codecov
               uses: codecov/codecov-action@v3
               with:
