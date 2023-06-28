@@ -33,7 +33,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			<Text style={globals(color, highlight).modalTxt}>
 				If you choose &quot;No&quot;, the tokens will not be claimed.
 			</Text>
-			<Button txt={loading ? 'Claiming...' : 'Yes'} onPress={handleTrustModal} />
+			<Button loading={loading} txt={loading ? 'Claiming...' : 'Yes'} onPress={handleTrustModal} />
 			<View style={{ marginVertical: 10 }} />
 			<Button
 				outlined

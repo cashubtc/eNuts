@@ -93,11 +93,12 @@ export default function LNInvoiceAmountModal({
 				</Animated.View>
 				<KeyboardAvoidingView
 					style={styles.invoiceBtns}
-					behavior={isIOS ? 'padding' : 'height'}
+					behavior={isIOS ? 'padding' : undefined}
 				>
 					<Button
 						txt={loading ? 'Invoice incoming...' : 'Create invoice'}
 						onPress={handleAmountSubmit}
+						loading={loading}
 					/>
 					<TouchableOpacity onPress={() => setLNAmountModal(false)}>
 						<Text style={[styles.cancel, { color: hi[highlight] }]}>

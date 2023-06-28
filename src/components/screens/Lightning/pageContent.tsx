@@ -1,4 +1,5 @@
 import Button from '@comps/Button'
+import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import { ZapIcon } from '@comps/Icons'
 import LNInvoiceAmountModal from '@comps/InvoiceAmount'
@@ -122,49 +123,49 @@ export default function LNPageContent({
 					</View>
 				}
 				{/* Mint balance, updates while selecting different mint */}
-				<View style={[globals(color).wrapContainer, styles.wrap]}>
-					{/* Single mint with balance, or mint picker */}
-					<MintPanel
-						nav={nav}
-						mints={mints}
-						selectedMint={selectedMint}
-						setSelectedMint={setSelectedMint}
-					/>
-					{mints.length > 0 && !nav.route.params?.mint &&
-						<View style={styles.mintOpts}>
-							<Txt txt='Balance' />
-							<View style={styles.mintBal}>
-								<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-									{formatInt(mintBal)}
-								</Text>
-								<ZapIcon width={18} height={18} color={color.TEXT} />
-							</View>
-						</View>
-					}
-					{!mints.length ?
-						<Txt txt='Found no mints' styles={[globals(color).navTxt, styles.awaitInvoice]} />
-						: null
-					}
-					{/* Coin selection toggle */}
-					{+amount > 0 && mintBal >= +amount / 1000 && !isKeyboardOpen &&
-						<>
-							<View style={styles.overview}>
-								<Txt txt='Coin selection' />
-								<Switch
-									trackColor={{ false: color.BORDER, true: hi[highlight] }}
-									thumbColor={color.TEXT}
-									onValueChange={toggleSwitch}
-									value={isEnabled}
-								/>
-							</View>
-							{getSelectedAmount(proofs) > 0 && isEnabled &&
-								<View style={{ marginHorizontal: -20 }}>
-									<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} />
+				{mints.length > 0 ?
+					<View style={[globals(color).wrapContainer, styles.wrap]}>
+						{/* Single mint with balance, or mint picker */}
+						<MintPanel
+							nav={nav}
+							mints={mints}
+							selectedMint={selectedMint}
+							setSelectedMint={setSelectedMint}
+						/>
+						{mints.length > 0 && !nav.route.params?.mint &&
+							<View style={styles.mintOpts}>
+								<Txt txt='Balance' />
+								<View style={styles.mintBal}>
+									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
+										{formatInt(mintBal)}
+									</Text>
+									<ZapIcon width={18} height={18} color={color.TEXT} />
 								</View>
-							}
-						</>
-					}
-				</View>
+							</View>
+						}
+						{/* Coin selection toggle */}
+						{+amount > 0 && mintBal >= +amount / 1000 && !isKeyboardOpen &&
+							<>
+								<View style={styles.overview}>
+									<Txt txt='Coin selection' />
+									<Switch
+										trackColor={{ false: color.BORDER, true: hi[highlight] }}
+										thumbColor={color.TEXT}
+										onValueChange={toggleSwitch}
+										value={isEnabled}
+									/>
+								</View>
+								{getSelectedAmount(proofs) > 0 && isEnabled &&
+									<View style={{ marginHorizontal: -20, marginTop: 8 }}>
+										<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} />
+									</View>
+								}
+							</>
+						}
+					</View>
+					:
+					<Empty txt='Found no mint...' />
+				}
 				{/* Token memo only if isSendingToken (sending a cashu token) */}
 				{+amount > 0 && isSendingToken &&
 					<TextInput
@@ -226,6 +227,7 @@ export default function LNPageContent({
 							{+amount > 0 && mintBal > 0 && mintBal >= +amount && !isKeyboardOpen &&
 								<Button
 									txt={loading ? 'Creating...' : 'Create token'}
+									loading={loading}
 									onPress={() => {
 										if (loading) { return }
 										void generateToken()
@@ -264,17 +266,19 @@ export default function LNPageContent({
 const styles = StyleSheet.create({
 	pickerWrap: {
 		width: '100%',
-		marginTop: 100,
+		marginTop: 110,
 	},
 	wrap: {
 		marginHorizontal: -20,
 		marginBottom: 20,
+		paddingTop: 5,
+		paddingBottom: 20,
 	},
 	mintOpts: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingVertical: 10,
+		marginTop: 2,
 	},
 	mintBal: {
 		flex: 1,
@@ -298,11 +302,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginBottom: 10
-	},
-	awaitInvoice: {
-		marginTop: 50,
-		textAlign: 'center',
+		marginTop: 8,
 	},
 	actionWrap: {
 		position: 'absolute',

@@ -1,6 +1,6 @@
 {
 	"name": "enuts",
-	"description": "A cashu wallet for Android and IOS",
+	"description": "A Cashu wallet for Android and iOS",
 	"author": "Agron Kadriaj <m.echerbebo@gmail.com> (https://agron.dev)",
 	"scripts": {
 		"s:debug:full": "pnpm dlx cross-env@latest DEBUG=full pnpm s:c",
@@ -152,7 +152,7 @@
 		"blind-signatures",
 		"lightning-network"
 	],
-	"version": "0.0.5-alpha",
+	"version": "0.0.6-alpha",
 	"license": "AGPL-3.0-only",
 	"bugs": {
 		"url": "https://github.com/cashubtc/eNuts/issues"

@@ -5,15 +5,11 @@ import { ThemeContext } from '@src/context/Theme'
 import { useContext } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-export default function BackupPage({ navigation, route }: TBackupPageProps) {
+export default function BackupPage({ route }: TBackupPageProps) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav
-				screenName='Backup'
-				withBackBtn
-				backHandler={() => navigation.navigate('Security settings')}
-			/>
+			<TopNav screenName='Backup' withBackBtn />
 			<BackupSuccess token={route.params.token} />
 		</View>
 	)

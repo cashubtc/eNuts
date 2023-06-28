@@ -21,6 +21,5 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 100
 	},
 })

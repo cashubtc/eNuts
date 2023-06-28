@@ -256,7 +256,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt='Proofs'
 						onPress={() => {
 							if (route.params.amount < 1) {
-								openPromptAutoClose({ msg: 'Mint has no proofs. Balance too low!' })
+								openPromptAutoClose({ msg: 'Found no proofs for this mint.' })
 								return
 							}
 							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
@@ -377,12 +377,6 @@ const styles = StyleSheet.create({
 		marginTop: 100,
 		marginBottom: 60,
 	},
-	subHeader: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginVertical: 20,
-		paddingHorizontal: 20,
-	},
 	mintUrl: {
 		fontSize: 16,
 		marginRight: 10,
@@ -398,8 +392,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingTop: 15,
-		paddingBottom: 15,
+		paddingVertical: 20,
 	},
 	line: {
 		borderBottomWidth: 1,

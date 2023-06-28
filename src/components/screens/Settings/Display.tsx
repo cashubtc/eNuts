@@ -13,11 +13,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav
-				screenName='Display'
-				withBackBtn
-				backHandler={() => navigation.navigate('Settings')}
-			/>
+			<TopNav screenName='Display' withBackBtn />
 			<ScrollView style={{ width: '100%', marginBottom: 60 }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Theme
@@ -74,7 +70,7 @@ function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 120,
+		paddingTop: 110,
 	},
 	subHeader: {
 		fontSize: 16,

@@ -343,7 +343,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				</View>
 			}
 			{/* Bottom section */}
-			<KeyboardAvoidingView style={styles.action} behavior={isIOS ? 'padding' : 'height'}>
+			<KeyboardAvoidingView style={styles.action} behavior={isIOS ? 'padding' : undefined}>
 				{/* Open LNURL address book */}
 				{invoiceAmount === 0 &&
 					<TouchableOpacity
@@ -396,6 +396,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				{input.length > 0 && ((invoiceAmount > 0 && timeLeft > 0) || +LNURLAmount > 0) && !isKeyboardOpen && feeEstimate > 0 &&
 					<Button
 						txt={loading ? 'Processing payment...' : 'Pay'}
+						loading={loading}
 						onPress={() => {
 							void handleTokenSend()
 						}}

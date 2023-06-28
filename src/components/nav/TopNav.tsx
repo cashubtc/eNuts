@@ -9,19 +9,14 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 interface TTopNavProps {
 	screenName?: string
 	withBackBtn?: boolean
-	backHandler?: () => void
 	nav?: TBottomNavProps
 }
 
-export default function TopNav({ screenName, withBackBtn, backHandler, nav }: TTopNavProps) {
+export default function TopNav({ screenName, withBackBtn, nav }: TTopNavProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const navHook = useNavigation()
 	const handlePress = () => {
 		if (withBackBtn) {
-			if (backHandler) {
-				backHandler()
-				return
-			}
 			navHook.goBack()
 			return
 		}

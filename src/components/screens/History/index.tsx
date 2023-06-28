@@ -1,5 +1,5 @@
+import Empty from '@comps/Empty'
 import Separator from '@comps/Separator'
-import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -51,7 +51,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							{/* Group entries */}
 							<View style={[
 								globals(color).wrapContainer,
-								{ height: Math.floor(data.item[1].length * 69) }
+								{ height: Math.floor(data.item[1].length * 74) }
 							]}>
 								<FlashList
 									data={data.item[1]}
@@ -68,12 +68,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							</View>
 						</>
 					)}
-					ListEmptyComponent={
-						<Txt
-							txt='No transactions yet...'
-							styles={[{ textAlign: 'center', marginTop: 20, color: color.TEXT_SECONDARY }]}
-						/>
-					}
+					ListEmptyComponent={<Empty txt='No transactions yet...' />}
 				/>
 			</View>
 			<BottomNav navigation={navigation} route={route} />

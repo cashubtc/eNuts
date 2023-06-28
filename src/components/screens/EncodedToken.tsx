@@ -14,7 +14,7 @@ import { Share, StyleSheet, View } from 'react-native'
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
  */
-export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
+export default function EncodedTokenPage({ route }: TEncodedTokenPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const [error, setError] = useState({ msg: '', open: false })
@@ -53,10 +53,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav
-				withBackBtn
-				backHandler={() => navigation.navigate('dashboard')}
-			/>
+			<TopNav withBackBtn />
 			{/* The amount of the created token */}
 			<View style={styles.qrWrap}>
 				<Txt txt={route.params.amount} styles={[styles.tokenAmount, { color: hi[highlight] }]} />

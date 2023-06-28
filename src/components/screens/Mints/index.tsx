@@ -135,7 +135,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					globals(color).wrapContainer,
 					{
 						paddingHorizontal: 0,
-						height: [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints].length * 60
+						height: [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints].length * 65
 					}
 				]}>
 					<FlashList
@@ -143,36 +143,34 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 						estimatedItemSize={300}
 						contentContainerStyle={{ paddingHorizontal: 20 }}
 						renderItem={data => (
-							<View key={data.item.mintUrl} style={styles.mintContainer}>
-								<TouchableOpacity
-									style={styles.mintUrlWrap}
-									onPress={() => handleMintEntry(data.item, data.item.amount)}
-								>
-									<View style={styles.mintNameWrap}>
-										{defaultMint === data.item.mintUrl &&
-											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-										}
-										<Txt
-											txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
-											styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0 }]}
-										/>
-									</View>
-									{/* Add mint icon or show balance */}
-									<View>
-										{isTrustedMint(data.item.mintUrl) ?
-											<View style={styles.mintBal}>
-												<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-													{formatInt(data.item.amount, 'compact', 'en')}
-												</Text>
-												<ZapIcon width={18} height={18} color={color.TEXT} />
-											</View>
-											:
-											<PlusIcon color={color.TEXT} />
-										}
-									</View>
-								</TouchableOpacity>
-								<View style={{ borderBottomWidth: 1, borderBottomColor: color.BORDER }} />
-							</View>
+							<TouchableOpacity
+								key={data.item.mintUrl}
+								style={styles.mintUrlWrap}
+								onPress={() => handleMintEntry(data.item, data.item.amount)}
+							>
+								<View style={styles.mintNameWrap}>
+									{defaultMint === data.item.mintUrl &&
+										<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+									}
+									<Txt
+										txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
+										styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0 }]}
+									/>
+								</View>
+								{/* Add mint icon or show balance */}
+								<View>
+									{isTrustedMint(data.item.mintUrl) ?
+										<View style={styles.mintBal}>
+											<Text style={[styles.mintAmount, { color: color.TEXT }]}>
+												{formatInt(data.item.amount, 'compact', 'en')}
+											</Text>
+											<ZapIcon width={18} height={18} color={color.TEXT} />
+										</View>
+										:
+										<PlusIcon color={color.TEXT} />
+									}
+								</View>
+							</TouchableOpacity>
 						)}
 						ItemSeparatorComponent={() => <Separator />}
 					/>
@@ -207,8 +205,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					'Are you sure that you want to trust this mint?'
 				}
 				visible={trustModalOpen}
-				// eslint-disable-next-line @typescript-eslint/no-misused-promises
-				confirmFn={() => handleTrustModal()}
+				confirmFn={() => void handleTrustModal()}
 				cancelFn={() => setTrustModalOpen(false)}
 			/>
 			{/* add new mint button */}
@@ -219,7 +216,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				/>
 			</View>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-			{!isKeyboardOpen && !prompt.open && !trustModalOpen && !newMintModal &&
+			{!isKeyboardOpen && !trustModalOpen && !newMintModal &&
 				<BottomNav navigation={navigation} route={route} />
 			}
 		</View>
@@ -234,7 +231,7 @@ const styles = StyleSheet.create({
 	topSection: {
 		flex: 1,
 		width: '100%',
-		marginTop: 120,
+		marginTop: 110,
 		marginBottom: 75,
 	},
 	newMint: {
@@ -246,16 +243,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center'
 	},
-	mintContainer: {
-		height: 60,
-	},
 	mintUrlWrap: {
 		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingTop: 15,
-		paddingBottom: 15,
+		paddingVertical: 20,
 	},
 	mintBal: {
 		flex: 1,

@@ -1,4 +1,5 @@
 import type { GetInfoResponse } from '@cashu/cashu-ts'
+import Empty from '@comps/Empty'
 import { ExclamationIcon, MintBoardIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
@@ -103,11 +104,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 					</View>
 				</ScrollView>
 				:
-				<View style={styles.errorWrap}>
-					<Text style={[styles.errorMsg, { color: color.TEXT }]}>
-						Found no info...
-					</Text>
-				</View>
+				<Empty txt='Mint has no info...' />
 			}
 		</View>
 	)
@@ -161,13 +158,4 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 	},
-	errorWrap: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	errorMsg: {
-		fontSize: 18,
-		fontWeight: '500',
-	}
 })
