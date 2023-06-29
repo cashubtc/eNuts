@@ -14,10 +14,12 @@ import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, formatInt, formatMintUrl, isErr } from '@util'
 import { autoMintSwap } from '@wallet'
 import { useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 export default function IntermintSwap({ navigation, route }: TIntermintSwapPageProps) {
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	const [selectedMint, setSelectedMint] = useState(route.params.mints[0])
@@ -47,7 +49,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Swap' withBackBtn />
+			<TopNav screenName={t('topNav.swap')} withBackBtn />
 			{/* sub header */}
 			<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
 				Swap tokens from one mint for tokens from another mint.

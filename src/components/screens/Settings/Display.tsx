@@ -6,14 +6,16 @@ import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, themeColors } from '@styles'
 import { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
+	const { t } = useTranslation()
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Display' withBackBtn />
+			<TopNav screenName={t('display')} withBackBtn />
 			<ScrollView style={{ width: '100%', marginBottom: 60 }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Theme

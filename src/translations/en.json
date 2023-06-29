@@ -1,10 +1,35 @@
 {
-  "disclaimer": "Please note that this is an alpha version in its early stage and is still undergoing testing before its official release. The software and all content found on it are provided on an “as is” and “as available” basis. We do not give any warranties, whether express or implied, as to the suitability or usability of the software or any of its content.",
-  "submitIssue": "Submit issue on GitHub",
-
-  "send": "Send",
-  "receive": "Receive",
-
+  "common": {
+    "cancel": "Cancel",
+    "back": "Back"
+  },
+  "wallet": {
+    "disclaimer": "Please note that this is an alpha version in its early stage and is still undergoing testing before its official release. The software and all content found on it are provided on an “as is” and “as available” basis. We do not give any warranties, whether express or implied, as to the suitability or usability of the software or any of its content.",
+    "submitIssue": "Submit issue on GitHub",
+    "send": "Send",
+    "sendEcash": "Send Ecash",
+    "receive": "Receive",
+    "pasteToken": "Paste & redeem Ecash",
+    "payInvoice": "Pay Lightning invoice",
+    "createInvoice": "Create Lightning invoice",
+    "claiming": "Claiming"
+  },
+  "topNav": {
+    "history": "History",
+    "addressBook": "Address book",
+	"swap": "Swap",
+	"mintBackup": "Mint Backup",
+	"mintSettings": "Mint settings",
+	"display": "Display",
+	"settings": "Settings",
+	"language": "Language",
+	"security": "Security",
+	"backup": "Backup"
+  },
   "english": "English",
-  "german": "German"
+  "german": "German",
+
+  "lnPayment": "Lightning payment",
+  "lnInvoice": "Lightning invoice",
+  "ecashPayment": "Ecash payment"
 }

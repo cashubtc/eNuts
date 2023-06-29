@@ -17,6 +17,7 @@ import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
@@ -27,6 +28,7 @@ const initialCopyState = {
 }
 
 export default function DetailsPage({ navigation, route }: THistoryEntryPageProps) {
+	const { t } = useTranslation()
 	const entry = route.params.entry
 	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)
@@ -35,8 +37,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const [qr, setQr] = useState({ open: false, error: false })
 	const isPayment = entry.amount < 0
 	const isLn = entry.type === 2
-	const LNstr = `Lightning ${isPayment ? 'payment' : 'invoice'}`
-	const Ecash = 'Ecash payment'
+	const LNstr = t(isPayment ? 'lnPayment' : 'lnInvoice')
+	const Ecash = t('ecashPayment')
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
 	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : 'No Memo'
 	const copyValue = async () => {

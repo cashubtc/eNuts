@@ -172,9 +172,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive and send buttons */}
 			<ActionButtons
 				ontopOfNav
-				topBtnTxt={t('receive')}
+				topBtnTxt={t('wallet.receive')}
 				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
-				bottomBtnTxt={t('send')}
+				bottomBtnTxt={t('wallet.send')}
 				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
 			/>
 			{/* Bottom nav icons */}
@@ -197,7 +197,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive options */}
 			<OptsModal
 				visible={modal.receiveOpts}
-				button1Txt={loading ? 'claiming...' : 'Paste & redeem Ecash'}
+				button1Txt={loading ? t('wallet.claiming') + '...' : t('wallet.pasteToken')}
 				onPressFirstBtn={() => {
 					if (token.length) { return }
 					void (async () => {
@@ -213,7 +213,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						await handleTokenSubmit(clipboard)
 					})()
 				}}
-				button2Txt='Create Lightning invoice'
+				button2Txt={t('wallet.createInvoice')}
 				onPressSecondBtn={() => {
 					navigation.navigate('lightning', { receive: true })
 					setModal({ ...modal, receiveOpts: false })
@@ -223,12 +223,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}
-				button1Txt='Send Ecash'
+				button1Txt={t('wallet.sendEcash')}
 				onPressFirstBtn={() => {
 					navigation.navigate('send')
 					setModal({ ...modal, sendOpts: false })
 				}}
-				button2Txt='Pay Lightning invoice'
+				button2Txt={t('wallet.payInvoice')}
 				onPressSecondBtn={() => {
 					navigation.navigate('lightning', { send: true })
 					setModal({ ...modal, sendOpts: false })

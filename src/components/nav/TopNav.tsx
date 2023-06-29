@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface TTopNavProps {
@@ -13,6 +14,7 @@ interface TTopNavProps {
 }
 
 export default function TopNav({ screenName, withBackBtn, nav }: TTopNavProps) {
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	const navHook = useNavigation()
 	const handlePress = () => {
@@ -35,7 +37,7 @@ export default function TopNav({ screenName, withBackBtn, nav }: TTopNavProps) {
 			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
 				{withBackBtn ?
 					<Text style={globals(color, highlight).pressTxt}>
-						Back
+						{t('common.back')}
 					</Text>
 					:
 					<QRIcon color={color.TEXT} />

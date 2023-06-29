@@ -1,10 +1,35 @@
 {
-  "disclaimer": "Bitte beachten Sie, dass es sich hierbei um eine Alpha-Version in einem frühen Stadium handelt und diese noch vor der offiziellen Veröffentlichung getestet wird. Die Software und alle darauf enthaltenen Inhalte werden als „wie besehen“ und „wie verfügbar“ bereitgestellt. Wir geben keine Garantien, ob ausdrücklich oder stillschweigend, hinsichtlich der Eignung oder Verwendbarkeit der Software oder deren Inhalte.",
-  "submitIssue": "Problem auf GitHub melden",
-
-  "send": "Senden",
-  "receive": "Empfangen",
-
+  "common": {
+    "cancel": "Abbrechen",
+    "back": "Zurück"
+  },
+  "wallet": {
+    "disclaimer": "Bitte beachten Sie, dass es sich hierbei um eine Alpha-Version in einem frühen Stadium handelt und diese noch vor der offiziellen Veröffentlichung getestet wird. Die Software und alle darauf enthaltenen Inhalte werden als „wie besehen“ und „wie verfügbar“ bereitgestellt. Wir geben keine Garantien, ob ausdrücklich oder stillschweigend, hinsichtlich der Eignung oder Verwendbarkeit der Software oder deren Inhalte.",
+    "submitIssue": "Problem auf GitHub melden",
+    "send": "Senden",
+    "sendEcash": "Ecash senden",
+    "receive": "Empfangen",
+    "pasteToken": "Ecash aus Zwischenablage",
+    "payInvoice": "Lightning invoice bezahlen",
+    "createInvoice": "Lightning invoice erstellen",
+    "claiming": "Überprüft"
+  },
+  "topNav": {
+    "history": "Verlauf",
+    "addressBook": "Adressbuch",
+	"swap": "Tausch",
+	"mintBackup": "Mint Sicherung",
+	"mintSettings": "Mint Einstellungen",
+	"display": "Anzeige",
+	"settings": "Einstellungen",
+	"language": "Sprache",
+	"security": "Sicherheit",
+	"backup": "Sicherung"
+  },
   "english": "Englisch",
-  "german": "Deutsch"
+  "german": "Deutsch",
+
+  "lnPayment": "Lightning Zahlung",
+  "lnInvoice": "Lightning invoice",
+  "ecashPayment": "Ecash Zahlung"
 }

@@ -2,7 +2,6 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { l } from '@src/logger'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,12 +13,11 @@ const langs = [
 ]
 
 export default function LanguageSettings() {
-	const { i18n } = useTranslation()
-	l({ nextLang: i18n.language })
+	const { t, i18n } = useTranslation()
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Language' withBackBtn />
+			<TopNav screenName={t('language')} withBackBtn />
 			<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
 				{langs.map((l, i) => (
 					<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />
@@ -42,7 +40,10 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 	return (
 		<>
 			<TouchableOpacity style={styles.langRow}
-				onPress={() => void i18n.changeLanguage(code)}
+				onPress={() => {
+					// TODO store language value
+					void i18n.changeLanguage(code)
+				}}
 			>
 				<Txt txt={t(name)} />
 				<View

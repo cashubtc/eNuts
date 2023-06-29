@@ -21,9 +21,11 @@ import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// invoice amount modal
@@ -152,7 +154,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Mint settings' withBackBtn />
+			<TopNav screenName={t('topNav.mintSettings')} withBackBtn />
 			<ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 				{/* General */}
 				<Txt txt='General' styles={[styles.sectionHeader]} />

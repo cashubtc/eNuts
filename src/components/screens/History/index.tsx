@@ -10,11 +10,13 @@ import { ThemeContext } from '@src/context/Theme'
 import { getHistory } from '@store/HistoryStore'
 import { globals } from '@styles'
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
 import HistoryEntry from './Entry'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
+	const { t } = useTranslation()
 	const { color } = useContext(ThemeContext)
 	const { claimed } = useContext(FocusClaimCtx)
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})
@@ -34,7 +36,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='History' nav={{ navigation, route }} />
+			<TopNav screenName={t('topNav.history')} nav={{ navigation, route }} />
 			{/* TODO apply filter for ecash or LN TXs */}
 			<View style={styles.listWrap}>
 				{/* History list grouped by settled date */}

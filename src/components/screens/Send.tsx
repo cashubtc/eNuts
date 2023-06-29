@@ -5,11 +5,13 @@ import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { useCallback, useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 import LNPageContent from './Lightning/pageContent'
 
 export default function SendTokenPage({ navigation, route }: TSendTokenPageProps) {
+	const { t } = useTranslation()
 	const { color } = useContext(ThemeContext)
 	// user mints
 	const [mints, setMints] = useState<IMintUrl[]>([])
@@ -53,7 +55,7 @@ export default function SendTokenPage({ navigation, route }: TSendTokenPageProps
 	}, [selectedMint])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Send Ecash' withBackBtn />
+			<TopNav screenName={t('wallet.sendEcash')} withBackBtn />
 			<LNPageContent
 				nav={{ navigation, route }}
 				mints={mints}

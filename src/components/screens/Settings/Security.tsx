@@ -10,9 +10,11 @@ import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
+	const { t } = useTranslation()
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleBackup = async () => {
@@ -30,7 +32,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Security' withBackBtn />
+			<TopNav screenName={t('security')} withBackBtn />
 			<View style={globals(color).wrapContainer}>
 				<TouchableOpacity
 					style={styles.settingsRow}

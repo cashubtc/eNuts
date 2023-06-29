@@ -47,7 +47,7 @@ export default function Balance({ balance }: IBalanceProps) {
 			<View style={styles.disclaimerWrap}>
 				<ExclamationIcon width={22} height={22} color={mainColors.WARN} />
 				<Text style={[styles.disclaimerTxt, { color: color.TEXT }]}>
-					{t('disclaimer')}
+					{t('wallet.disclaimer')}
 				</Text>
 				<TouchableOpacity
 					style={styles.submitIssue}
@@ -55,7 +55,7 @@ export default function Balance({ balance }: IBalanceProps) {
 						openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )}
 				>
 					<Text style={styles.issue}>
-						{t('submitIssue')}
+						{t('wallet.submitIssue')}
 					</Text>
 				</TouchableOpacity>
 				{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
