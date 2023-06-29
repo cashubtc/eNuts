@@ -22,9 +22,12 @@ import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
+	// translation
+	const { t } = useTranslation()
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url } = useInitialURL()
 	// Theme
@@ -170,9 +173,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive and send buttons */}
 			<ActionButtons
 				ontopOfNav
-				topBtnTxt='Receive'
+				topBtnTxt={t('receive')}
 				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
-				bottomBtnTxt='Send'
+				bottomBtnTxt={t('send')}
 				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
 			/>
 			{/* Bottom nav icons */}
