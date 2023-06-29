@@ -20,6 +20,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
 import MintPanel from './mintPanel'
+import { useTranslation } from 'react-i18next'
 
 interface ILNPageProps {
 	nav: TLightningPageProps | TSendTokenPageProps
@@ -38,6 +39,7 @@ export default function LNPageContent({
 	setSelectedMint,
 	isSendingToken
 }: ILNPageProps) {
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// invoice amount modal
@@ -89,7 +91,7 @@ export default function LNPageContent({
 				stopLoading()
 				return
 			}
-			setPayError({ open: true, msg: 'Could not create a cashu token. Please try again later.' })
+			setPayError({ open: true, msg: t('common.createTokenErr') })
 		}
 		stopLoading()
 	}
@@ -109,7 +111,7 @@ export default function LNPageContent({
 				{mints.length > 0 && mintBal > 0 && isSendingToken &&
 					<View style={styles.amountWrap}>
 						<TextInput
-							keyboardType={Platform.OS === 'android' ? 'number-pad' : 'numeric'}
+							keyboardType='numeric'
 							placeholder='0'
 							placeholderTextColor={hi[highlight]}
 							style={[styles.amount, { color: hi[highlight] }]}
@@ -134,7 +136,7 @@ export default function LNPageContent({
 						/>
 						{mints.length > 0 && !nav.route.params?.mint &&
 							<View style={styles.mintOpts}>
-								<Txt txt='Balance' />
+								<Txt txt={t('common.balance')} />
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										{formatInt(mintBal)}
@@ -147,7 +149,7 @@ export default function LNPageContent({
 						{+amount > 0 && mintBal >= +amount / 1000 && !isKeyboardOpen &&
 							<>
 								<View style={styles.overview}>
-									<Txt txt='Coin selection' />
+									<Txt txt={t('common.coinSelection')} />
 									<Switch
 										trackColor={{ false: color.BORDER, true: hi[highlight] }}
 										thumbColor={color.TEXT}
@@ -164,13 +166,13 @@ export default function LNPageContent({
 						}
 					</View>
 					:
-					<Empty txt='Found no mint...' />
+					<Empty txt={t('common.noMint') + '...'} />
 				}
 				{/* Token memo only if isSendingToken (sending a cashu token) */}
 				{+amount > 0 && isSendingToken &&
 					<TextInput
 						style={globals(color, highlight).input}
-						placeholder='Add a memo with max. 21 chars.'
+						placeholder={t('common.addMemo')}
 						placeholderTextColor={color.INPUT_PH}
 						maxLength={21}
 						onChangeText={setMemo}
@@ -185,7 +187,7 @@ export default function LNPageContent({
 				{!mints.length ?
 					<>
 						<Button
-							txt='Add a mint'
+							txt={t('common.addMint')}
 							onPress={() => nav.navigation.navigate('mints')}
 						/>
 						<View style={{ marginVertical: 5 }} />
@@ -196,11 +198,11 @@ export default function LNPageContent({
 							{/* Show a message if mint has not enough funds and the payment is an outgoing TX */}
 							{!hasEnoughFunds() ?
 								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
-									Chosen mint has not enough funds!
+									{t('common.noEnoughFunds')}!
 								</Text>
 								:
 								<Button
-									txt={nav.route.params?.send ? 'Create invoice' : 'Select amount'}
+									txt={nav.route.params?.send ? t('common.createInvoice') : t('common.selectAmount')}
 									onPress={() => {
 										// send
 										if (nav.route.params?.send) {
@@ -221,12 +223,12 @@ export default function LNPageContent({
 						<>
 							{+amount < 1 &&
 								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
-									{mintBal > 0 ? '' : 'Chosen mint has not enough funds!'}
+									{mintBal > 0 ? '' : t('common.noEnoughFunds')}
 								</Text>
 							}
 							{+amount > 0 && mintBal > 0 && mintBal >= +amount && !isKeyboardOpen &&
 								<Button
-									txt={loading ? 'Creating...' : 'Create token'}
+									txt={loading ? t('common.creating') + '...' : t('common.createToken')}
 									loading={loading}
 									onPress={() => {
 										if (loading) { return }

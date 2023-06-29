@@ -12,6 +12,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { isLnurl } from '@util'
 import { useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 interface IAddressBookProps {
@@ -22,6 +23,7 @@ interface IAddressBookProps {
 }
 
 export default function AddressBook({ nav, isModal, closeModal, setInput }: IAddressBookProps) {
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	// contacts hook
 	const { contacts, setContacts, hasOwnAddress, getPersonalInfo } = useContext(ContactsContext)
@@ -76,7 +78,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						onPress={() => closeModal?.()}
 					>
 						<Text style={globals(color, highlight).pressTxt}>
-							Cancel
+							{t('common.cancel')}
 						</Text>
 					</TouchableOpacity>
 				</View>
@@ -125,7 +127,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							<PlusIcon width={16} height={16} color={hi[highlight]} />
 						</Text>
 						<View style={styles.nameEntry}>
-							<Txt txt='Add your own LNURL' styles={[{ color: hi[highlight] }]} />
+							<Txt txt={t('addrBook.addOwnLnurl')} styles={[{ color: hi[highlight] }]} />
 						</View>
 					</TouchableOpacity>
 				}
@@ -181,12 +183,12 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				close={() => setOpenNew({ open: false, isOwner: false })}
 			>
 				<Text style={globals(color).modalHeader}>
-					{openNew.isOwner ? 'Your LNURL' : 'New contact'}
+					{openNew.isOwner ? t('addrBook.yourLnurl') : t('addrBook.newContact')}
 				</Text>
 				{!openNew.isOwner &&
 					<TextInput
 						style={[globals(color).input, { marginBottom: 20 }]}
-						placeholder="Name"
+						placeholder={t('common.name')}
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
 						onChangeText={name => setNewContact(prev => ({ ...prev, name }))}
@@ -194,18 +196,18 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				}
 				<TextInput
 					style={[globals(color).input, { marginBottom: 20 }]}
-					placeholder="zap@me.now"
+					placeholder={t('addrBook.zapMeNow')}
 					placeholderTextColor={color.INPUT_PH}
 					selectionColor={hi[highlight]}
 					onChangeText={lnUrl => setNewContact(prev => ({ ...prev, lnUrl }))}
 				/>
-				<Button txt='Save' onPress={() => void handleNewContact()} />
+				<Button txt={t('common.save')} onPress={() => void handleNewContact()} />
 				<TouchableOpacity
 					style={styles.cancel}
 					onPress={() => setOpenNew({ open: false, isOwner: false })}
 				>
 					<Text style={globals(color, highlight).pressTxt}>
-						Cancel
+						{t('common.cancel')}
 					</Text>
 				</TouchableOpacity>
 			</MyModal>
@@ -215,13 +217,14 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 }
 
 function ContactsCount({ count }: { count: number }) {
+	const {t} = useTranslation()
 	const { color } = useContext(ThemeContext)
 	return (
 		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
 			{!count ?
 				''
 				:
-				`${count} Contact${count > 1 ? 's' : ''}`
+				t('contact', {count})
 			}
 		</Text>
 	)

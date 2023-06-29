@@ -4,7 +4,8 @@ import Txt from '@comps/Txt'
 import { repoIssueUrl } from '@consts/urls'
 import { isErr, openUrl } from '@util'
 import type { ErrorInfo } from 'react'
-import { ScrollView, StyleSheet, Text, TouchableOpacity,View } from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 
 export interface ErrorDetailsProps {
@@ -14,27 +15,28 @@ export interface ErrorDetailsProps {
 }
 
 export function ErrorDetails(props: ErrorDetailsProps) {
+	const { t } = useTranslation()
 	const { prompt, openPromptAutoClose } = usePrompt()
 	return (
 		<View style={styles.container}>
 			<Text style={styles.header}>
-				An error occured!
+				{t('error.header')}!
 			</Text>
 			<Txt
-				txt='We are sorry that you encountered this problem. You can help us improve the software by taking a screenshot and creating a short bug report.'
+				txt={t('error.msg')}
 				styles={[{ marginBottom: 20 }]}
 			/>
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 				<Txt txt={props.error.message} styles={[{ color: '#FF6666' }]} />
-				<Txt txt={props.errorInfo?.componentStack ?? 'Error stack not available'} />
+				<Txt txt={props.errorInfo?.componentStack || t('error.stackNA')} />
 			</ScrollView>
 			<TouchableOpacity
 				onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) =>
-					openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )}
+					openPromptAutoClose({ msg: isErr(err) ? err.message : t('common.deepLinkErr') }))}
 				style={styles.bugReport}
 			>
 				<Text style={styles.bugTxt}>
-					Report the bug{'  '}🐛
+					{t('error.reportBug')}{'  '}🐛
 				</Text>
 			</TouchableOpacity>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
