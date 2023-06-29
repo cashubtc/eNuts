@@ -1,6 +1,10 @@
 {
+  "disclaimer": "Bitte beachten Sie, dass es sich hierbei um eine Alpha-Version in einem frühen Stadium handelt und diese noch vor der offiziellen Veröffentlichung getestet wird. Die Software und alle darauf enthaltenen Inhalte werden als „wie besehen“ und „wie verfügbar“ bereitgestellt. Wir geben keine Garantien, ob ausdrücklich oder stillschweigend, hinsichtlich der Eignung oder Verwendbarkeit der Software oder deren Inhalte.",
+  "submitIssue": "Problem auf GitHub melden",
+
   "send": "Senden",
   "receive": "Empfangen",
+
   "english": "Englisch",
   "german": "Deutsch"
 }
