@@ -1,5 +1,5 @@
 import usePrompt from '@comps/hooks/Prompt'
-import { ChevronRightIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
+import { ChevronRightIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
@@ -43,6 +43,13 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					txtColor={color.TEXT}
 					icon={<PaletteIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Display settings')}
+					hasSeparator
+				/>
+				<SettingsMenuItem
+					txt='Language'
+					txtColor={color.TEXT}
+					icon={<LanguageIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('Language settings')}
 					hasSeparator
 				/>
 				<SettingsMenuItem

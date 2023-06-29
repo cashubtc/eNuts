@@ -1,4 +1,6 @@
 {
-	"send": "Send",
-	"receive": "Receive"
+  "send": "Send",
+  "receive": "Receive",
+  "english": "English",
+  "german": "German"
 }

@@ -26,7 +26,6 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
-	// translation
 	const { t } = useTranslation()
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url } = useInitialURL()

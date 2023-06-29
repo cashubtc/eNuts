@@ -62,6 +62,7 @@ export type RootStackParamList = {
 	Settings: undefined
 	'Display settings': undefined
 	'Security settings': undefined
+	'Language settings': undefined
 	BackupPage: {
 		token: string
 	}
@@ -90,6 +91,7 @@ export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 
 export type TSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Settings'>
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
 export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>
+export type TLanguageSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Language settings'>
 export type TBackupPageProps = NativeStackScreenProps<RootStackParamList, 'BackupPage'>
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
