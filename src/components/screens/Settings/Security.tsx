@@ -32,7 +32,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('security')} withBackBtn />
+			<TopNav screenName={t('topNav.security')} withBackBtn />
 			<View style={globals(color).wrapContainer}>
 				<TouchableOpacity
 					style={styles.settingsRow}

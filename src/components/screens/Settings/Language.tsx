@@ -17,7 +17,7 @@ export default function LanguageSettings() {
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('language')} withBackBtn />
+			<TopNav screenName={t('topNav.language')} withBackBtn />
 			<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
 				{langs.map((l, i) => (
 					<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />

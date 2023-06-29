@@ -31,31 +31,31 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('settings')} nav={{ navigation, route }} />
+			<TopNav screenName={t('topNav.settings')} nav={{ navigation, route }} />
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
-					txt='Security'
+					txt={t('topNav.security')}
 					txtColor={color.TEXT}
 					icon={<LockIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Security settings')}
 					hasSeparator
 				/>
 				<SettingsMenuItem
-					txt='Display'
+					txt={t('topNav.display')}
 					txtColor={color.TEXT}
 					icon={<PaletteIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Display settings')}
 					hasSeparator
 				/>
 				<SettingsMenuItem
-					txt='Language'
+					txt={t('topNav.language')}
 					txtColor={color.TEXT}
 					icon={<LanguageIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Language settings')}
 					hasSeparator
 				/>
 				<SettingsMenuItem
-					txt='Delete transaction history'
+					txt={t('delHistory')}
 					txtColor={color.ERROR}
 					icon={<TrashbinIcon2 color={color.ERROR} />}
 					onPress={() => setConfirm(true)}

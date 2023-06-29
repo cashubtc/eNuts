@@ -29,6 +29,7 @@
   "english": "English",
   "german": "German",
 
+  "delHistory": "Delete transaction history",
   "lnPayment": "Lightning payment",
   "lnInvoice": "Lightning invoice",
   "ecashPayment": "Ecash payment"
