@@ -6,9 +6,9 @@ import { getLanguageCode } from '@util/localization'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
-import de from './translations/de.json'
-import en from './translations/en.json'
-import fr from './translations/fr.json'
+import de from '../assets/translations/de.json'
+import en from '../assets/translations/en.json'
+import fr from '../assets/translations/fr.json'
 
 i18n.use(initReactI18next)
 	// .use(languageDetector)

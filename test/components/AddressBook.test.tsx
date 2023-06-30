@@ -8,7 +8,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
-import en from '../../src/translations/en.json'
+import en from '../../assets/translations/en.json'
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 i18n.use(initReactI18next).init({
