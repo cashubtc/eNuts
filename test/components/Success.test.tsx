@@ -4,19 +4,6 @@ import Success from '@comps/Success'
 import type Nav from '@react-navigation/native'
 import { NavigationContainer } from '@react-navigation/native'
 import { fireEvent, render, screen } from '@testing-library/react-native'
-import i18n from 'i18next'
-import { initReactI18next } from 'react-i18next'
-
-import en from '../../assets/translations/en.json'
-
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-i18n.use(initReactI18next).init({
-	lng: 'en',
-	fallbackLng: 'en',
-	resources: {
-		en: { translation: en }
-	},
-})
 
 const mockedNavigate = jest.fn()
 
