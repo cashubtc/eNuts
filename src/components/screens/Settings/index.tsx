@@ -24,7 +24,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const handleDeleteHistory = async () => {
 		const success = await historyStore.clear()
 		openPromptAutoClose({
-			msg: success ? 'History deleted' : 'Could not delete the history.',
+			msg: success ? t('common.historyDeleted') : t('common.delHistoryErr'),
 			success
 		})
 		setConfirm(false)
@@ -64,12 +64,12 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 			<Txt txt={`v${version}`} styles={[styles.version]} />
 			<BottomNav navigation={navigation} route={route} />
 			<QuestionModal
-				header='Are you sure that you want to delete the history?'
-				txt='The data can not be retrieved afterwards.'
+				header={t('common.delHistoryQ')}
+				txt={t('common.delHistoryTxt')}
 				visible={confirm}
-				confirmTxt='Yes'
+				confirmTxt={t('common.yes')}
 				confirmFn={() => void handleDeleteHistory()}
-				cancelTxt='No'
+				cancelTxt={t('common.no')}
 				cancelFn={() => setConfirm(false)}
 			/>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} /> }

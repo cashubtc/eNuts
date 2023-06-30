@@ -21,13 +21,13 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		try {
 			const proofs = await getProofs()
 			if (!proofs.length) {
-				openPromptAutoClose({ msg: 'Found no proofs to create a backup.' })
+				openPromptAutoClose({ msg: t('common.noProofsToBackup') })
 				return
 			}
 			const token = await getBackUpToken()
 			navigation.navigate('BackupPage', { token })
 		} catch (e) {
-			openPromptAutoClose({ msg: 'Something went wrong while creating the backup token.' })
+			openPromptAutoClose({ msg: t('common.backupErr') })
 		}
 	}
 	return (
@@ -38,7 +38,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 					style={styles.settingsRow}
 					onPress={() => { void handleBackup() }}
 				>
-					<Txt txt='Create a backup token' />
+					<Txt txt={t('common.createBackup')} />
 					<ChevronRightIcon color={color.TEXT} />
 				</TouchableOpacity>
 			</View>

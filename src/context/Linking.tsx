@@ -20,7 +20,7 @@ export interface EventType {
  */
 export function addEventListener(type: 'url', handler: (event: EventType) => void): EmitterSubscription {
 	return Linking.addEventListener(type, (e) => {
-		alert('calling link event')
+		// alert('calling link event')
 		handler(e)
 	})
 }

@@ -21,7 +21,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 					Theme
 				</Text>
 				<View style={[globals(color).wrapContainer, styles.wrap]}>
-					<Txt txt='Dark mode' />
+					<Txt txt={t('common.darkMode')} />
 					<Switch
 						trackColor={{ false: color.BORDER, true: hi[highlight] }}
 						thumbColor={color.TEXT}
@@ -50,13 +50,14 @@ interface IThemeSelectionProps {
 }
 
 function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
+	const { t } = useTranslation()
 	const { color, highlight, setHighlight } = useContext(ThemeContext)
 	return (
 		<>
 			<TouchableOpacity style={styles.settingsRow}
 				onPress={() => setHighlight(name)}
 			>
-				<Txt txt={name} />
+				<Txt txt={name === 'Default' ? t('common.default') : name} />
 				<View
 					style={[
 						globals(color, highlight).radioBtn,

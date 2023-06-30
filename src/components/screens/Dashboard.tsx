@@ -61,7 +61,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
+			openPromptAutoClose({ msg: t('common.clipboardInvalid') })
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -85,7 +85,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const handleTokenSubmit = async (url: string) => {
 		const tokenInfo = getTokenInfo(url)
 		if (!tokenInfo) {
-			openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
+			openPromptAutoClose({ msg: t('common.clipboardInvalid') })
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -112,12 +112,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setToken('')
 		stopLoading()
 		if (!success) {
-			openPromptAutoClose({ msg: 'Token invalid or already claimed' })
+			openPromptAutoClose({ msg: t('common.invalidOrSpent') })
 			return
 		}
 		const info = getTokenInfo(encodedToken)
 		if (!info) {
-			openPromptAutoClose({ msg: 'Error while getting token info' })
+			openPromptAutoClose({ msg: t('common.tokenInfoErr') })
 			return
 		}
 		// add as history entry
@@ -204,7 +204,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						startLoading()
 						const clipboard = await Clipboard.getStringAsync()
 						if (!isCashuToken(clipboard)) {
-							openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
+							openPromptAutoClose({ msg: t('common.invalidOrSpent') })
 							setModal({ ...modal, receiveOpts: false })
 							stopLoading()
 							return

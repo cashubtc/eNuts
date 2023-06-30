@@ -19,11 +19,13 @@ import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import QRMarker from './Marker'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
+	const { t } = useTranslation()
 	const { color } = useContext(ThemeContext)
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)
@@ -48,7 +50,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const handleCashuToken = async (data: string) => {
 		const info = getTokenInfo(data)
 		if (!info) {
-			openPromptAutoClose({ msg: 'Token invalid or already claimed' })
+			openPromptAutoClose({ msg: t('common.invalidOrSpent') })
 			return
 		}
 		// save token info in state
@@ -70,7 +72,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPromptAutoClose({ msg: 'Invalid cashu token' })
+			openPromptAutoClose({ msg: t('common.invalidToken') })
 			stopLoading()
 			// close modal
 			setTrustModal(false)
@@ -91,18 +93,18 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// close modal
 		setTrustModal(false)
 		if (!success) {
-			openPromptAutoClose({ msg: 'Token invalid or already claimed' })
+			openPromptAutoClose({ msg: t('common.invalidOrSpent') })
 			return
 		}
 		const info = getTokenInfo(data)
 		// TODO show all mints of token
 		if (!info) {
-			openPromptAutoClose({ msg: 'Error while getting token info' })
+			openPromptAutoClose({ msg: t('common.tokenInfoErr') })
 			return
 		}
 		// success prompt
 		openPromptAutoClose({
-			msg: `Claimed ${info?.value} Satoshi from${'\n'}${info?.mints[0]}!${'\n'}Memo: ${info?.decoded.memo}`,
+			msg: t('common.claimSuccess', { amount: info?.value, mintUrl: info?.mints[0], memo: info?.decoded.memo }),
 			success: true
 		})
 		// add as history entry
@@ -118,7 +120,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		setScanned(true)
 		// early return if barcode is not a QR
 		if (+type !== QRType) {
-			openPromptAutoClose({ msg: 'Not a QR code!' })
+			openPromptAutoClose({ msg: t('common.notQrCode') })
 			return
 		}
 		// handle cashu token claim
@@ -135,7 +137,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			setDetailsOpen(true)
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: `Unknown data: ${data}` })
+			openPromptAutoClose({ msg: t('common.unknownType' + `:${data}`) })
 		}
 	}
 
@@ -164,7 +166,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					<QRMarker size={300} />
 					<View style={styles.hint}>
 						<Text style={styles.hintTxt}>
-							Scan cashu token or Lightning invoice
+							{t('common.scanTokenOrLn')}
 						</Text>
 					</View>
 					{scanned &&
@@ -173,7 +175,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 							onPress={() => setScanned(false)}
 						>
 							<Text style={styles.scanAgainTxt}>
-								Tap to Scan Again
+								{t('common.scanAgain')}
 							</Text>
 						</TouchableOpacity>
 					}
@@ -200,7 +202,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				</>
 				:
 				<Text style={styles.noAccess}>
-					No access to camera
+					{t('common.noCamAccess')}
 				</Text>
 			}
 			{/* Question modal for mint trusting */}

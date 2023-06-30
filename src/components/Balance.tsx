@@ -52,7 +52,7 @@ export default function Balance({ balance }: IBalanceProps) {
 				<TouchableOpacity
 					style={styles.submitIssue}
 					onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) => 
-						openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )}
+						openPromptAutoClose({ msg: isErr(err) ? err.message : t('common.deepLinkErr') }) )}
 				>
 					<Text style={styles.issue}>
 						{t('wallet.submitIssue')}

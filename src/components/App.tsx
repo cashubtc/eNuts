@@ -16,7 +16,7 @@ import { KeyboardProvider } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
-import { formatInt, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
+import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
 import { initCrashReporting } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -30,6 +30,7 @@ import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './ErrorScreen/ErrorDetails'
 import Toaster from './Toaster'
 import Txt from './Txt'
+import { useTranslation } from 'react-i18next'
 
 initCrashReporting()
 
@@ -57,6 +58,7 @@ export default function App(initialProps: IInitialProps) {
 
 function _App(_initialProps: IInitialProps) {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
+	const { t } = useTranslation()
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
 	const claimData = useMemo(() => ({ claimed, setClaimed }), [claimed])
@@ -97,7 +99,6 @@ function _App(_initialProps: IInitialProps) {
 			isSpent = !isSpendable
 			if (!isSpendable) { return false }
 			setTokenInfo(info)
-			l('open modal!')
 			setClaimOpen(true)
 			return true
 		}
@@ -116,12 +117,12 @@ function _App(_initialProps: IInitialProps) {
 		const encoded = getEncodedToken(tokenInfo.decoded)
 		const success = await claimToken(encoded).catch(l)
 		if (!success) {
-			openPromptAutoClose({ msg: 'Token invalid or already claimed' })
+			openPromptAutoClose({ msg: t('common.invalidOrSpent') })
 			return
 		}
 		const info = getTokenInfo(encoded)
 		if (!info) {
-			openPromptAutoClose({ msg: 'Error while getting token info' })
+			openPromptAutoClose({ msg: t('common.tokenInfoErr') })
 			return
 		}
 		// add as history entry
@@ -131,7 +132,18 @@ function _App(_initialProps: IInitialProps) {
 			value: encoded,
 			mints: info.mints,
 		})
-		openPromptAutoClose({ msg: `Successfully claimed ${formatInt(info.value)} Satoshi!`, success: true })
+		openPromptAutoClose(
+			{
+				msg: t(
+					'common.claimSuccess',
+					{
+						amount: formatInt(info.value),
+						mintUrl: formatMintUrl(info.mints[0]),
+						memo: info.decoded.memo
+					}
+				),
+				success: true
+			})
 		setClaimed(true)
 	}
 
@@ -166,7 +178,7 @@ function _App(_initialProps: IInitialProps) {
 				l(await getBalancesByKeysetId()) */
 			} catch (e) {
 				l(e)
-				alert(`Something went wrong while initializing the DB! ${isErr(e) ? e.message : ''}`)
+				alert(t('common.dbErr') + `${isErr(e) ? e.message : ''}`)
 			}
 		}
 		async function initPreferences() {
@@ -245,24 +257,24 @@ function _App(_initialProps: IInitialProps) {
 							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
 							<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
 								<Text style={globals(color, highlight).modalHeader}>
-									Found a cashu token in your clipboard
+									{t('common.foundCashuClipboard')}
 								</Text>
 								<Text style={globals(color, highlight).modalTxt}>
-									Memo: {tokenInfo?.decoded.memo}{'\n'}
+									{t('common.memo')}: {tokenInfo?.decoded.memo}{'\n'}
 									<Txt
 										txt={formatInt(tokenInfo?.value ?? 0)}
 										styles={[{ fontWeight: '500' }]}
 									/>
-									{' '}Satoshi from the following mint:{' '}
+									{' '}Satoshi {t('common.fromMint')}:{' '}
 									{tokenInfo?.mints.join(', ')}
 								</Text>
 								<Button
-									txt='Claim now!'
+									txt={t('common.claimNow')}
 									onPress={() => void handleRedeem()}
 								/>
 								<View style={{ marginVertical: 10 }} />
 								<Button
-									txt='Cancel'
+									txt={t('common.cancel')}
 									outlined
 									onPress={() => setClaimOpen(false)}
 								/>
