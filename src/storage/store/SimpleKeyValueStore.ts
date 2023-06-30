@@ -51,4 +51,3 @@ export class SimpleKeyValueStore extends StoreBase {
 	public clear(): Promise<boolean> { return super.clear() }
 	public close(): void { return super.close() }
 }
-

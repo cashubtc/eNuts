@@ -2,6 +2,8 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { l } from '@src/logger'
+import { SimpleKeyValueStore } from '@src/storage/store'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -37,13 +39,18 @@ interface ILangSelectionProps {
 function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionProps) {
 	const { t, i18n } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
+	const handleLangChange = async () => {
+		await i18n.changeLanguage(code)
+		const langStore = new SimpleKeyValueStore('lang')
+		const success = await langStore.set('lang', code)
+		if (!success) {
+			l('new language could not be stored')
+		}
+	}
 	return (
 		<>
 			<TouchableOpacity style={styles.langRow}
-				onPress={() => {
-					// TODO store language value
-					void i18n.changeLanguage(code)
-				}}
+				onPress={() => void handleLangChange()}
 			>
 				<Txt txt={t(name)} />
 				<View

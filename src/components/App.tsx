@@ -14,6 +14,7 @@ import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
+import { SimpleKeyValueStore } from '@src/storage/store'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
@@ -58,7 +59,7 @@ export default function App(initialProps: IInitialProps) {
 
 function _App(_initialProps: IInitialProps) {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	const { t } = useTranslation()
+	const { t, i18n } = useTranslation()
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
 	const claimData = useMemo(() => ({ claimed, setClaimed }), [claimed])
@@ -212,6 +213,11 @@ function _App(_initialProps: IInitialProps) {
 			await initDB()
 			await initContacts()
 			await initPreferences()
+			const langStore = new SimpleKeyValueStore('lang')
+			const storedLng = await langStore.get('lang')
+			if (storedLng?.length) {
+				await i18n.changeLanguage(storedLng)
+			}
 			// await dropTable('proofs')
 			// await dropTable('proofsUsed')
 			// await dropTable('keysetIds')
