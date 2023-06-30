@@ -3,7 +3,7 @@ import Txt from '@comps/Txt'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { l } from '@src/logger'
-import { SimpleKeyValueStore } from '@src/storage/store'
+import { store } from '@store'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,8 +42,7 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 	const { color, highlight } = useContext(ThemeContext)
 	const handleLangChange = async () => {
 		await i18n.changeLanguage(code)
-		const langStore = new SimpleKeyValueStore('lang')
-		const success = await langStore.set('lang', code)
+		const success = await store.set('settings:lang', code)
 		if (!success) {
 			l('new language could not be stored')
 		}

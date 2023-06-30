@@ -14,7 +14,7 @@ import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
-import { SimpleKeyValueStore } from '@src/storage/store'
+import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
@@ -213,8 +213,7 @@ function _App(_initialProps: IInitialProps) {
 			await initDB()
 			await initContacts()
 			await initPreferences()
-			const langStore = new SimpleKeyValueStore('lang')
-			const storedLng = await langStore.get('lang')
+			const storedLng = await store.get('settings:lang')
 			if (storedLng?.length) {
 				await i18n.changeLanguage(storedLng)
 			}
