@@ -41,7 +41,7 @@
     "addMint": "Add a mint",
     "noEnoughFunds": "Chosen mint has not enough funds",
     "createInvoice": "Create invoice",
-	"invoiceIncoming": "Invoice incoming",
+    "invoiceIncoming": "Invoice incoming",
     "selectAmount": "Select amount",
     "createToken": "Create token",
     "creating": "Creating",
@@ -89,12 +89,12 @@
     "dbErr": "Something went wrong while initializing the DB!",
     "foundCashuClipboard": "Found a cashu token in your clipboard",
     "fromMint": "from the following mint",
-	"paymentSuccess": "Payment successfull!",
-	"claimed": "claimed",
-	"minted": "minted",
-	"manageMints": "Manage mints",
-	"backToDashboard": "Back to dashboard",
-	"default": "Default"
+    "paymentSuccess": "Payment successfull!",
+    "claimed": "claimed",
+    "minted": "minted",
+    "manageMints": "Manage mints",
+    "backToDashboard": "Back to dashboard",
+    "default": "Default"
   },
   "wallet": {
     "disclaimer": "Please note that this is an alpha version in its early stage and is still undergoing testing before its official release. The software and all content found on it are provided on an “as is” and “as available” basis. We do not give any warranties, whether express or implied, as to the suitability or usability of the software or any of its content.",
@@ -183,7 +183,7 @@
     "addCustomName": "Add a custom name"
   },
   "backup": {
-	"copyBackup": "Copy the token and keep it in a safe place."
+    "copyBackup": "Copy the token and keep it in a safe place."
   },
   "addrBook": {
     "addOwnLnurl": "Add your own LNURL",
@@ -194,6 +194,7 @@
   },
   "english": "English",
   "german": "German",
+  "french": "French",
   "delHistory": "Delete transaction history",
   "lnPayment": "Lightning payment",
   "lnInvoice": "Lightning invoice",

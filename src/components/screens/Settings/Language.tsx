@@ -12,6 +12,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 const langs = [
 	{ name: 'english', code: 'en' },
 	{ name: 'german', code: 'de' },
+	{ name: 'french', code: 'fr' },
 ]
 
 export default function LanguageSettings() {
