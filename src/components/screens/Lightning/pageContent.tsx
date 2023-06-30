@@ -17,10 +17,10 @@ import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, formatInt, getSelectedAmount, isErr, isNum } from '@util'
 import { sendToken } from '@wallet'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
 import MintPanel from './mintPanel'
-import { useTranslation } from 'react-i18next'
 
 interface ILNPageProps {
 	nav: TLightningPageProps | TSendTokenPageProps
