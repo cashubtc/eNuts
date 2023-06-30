@@ -24,13 +24,13 @@ import * as Clipboard from 'expo-clipboard'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { AppState, Text, View } from 'react-native'
 
 import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './ErrorScreen/ErrorDetails'
 import Toaster from './Toaster'
 import Txt from './Txt'
-import { useTranslation } from 'react-i18next'
 
 initCrashReporting()
 
@@ -242,6 +242,7 @@ function _App(_initialProps: IInitialProps) {
 			appState.current = nextAppState
 		})
 		return () => subscription.remove()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	if (!isRdy) { return null }
