@@ -8,6 +8,7 @@ import { addToHistory } from '@store/HistoryStore'
 import { formatInt, formatMintUrl, isNum, vib } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import Loading from './Loading'
@@ -23,6 +24,7 @@ interface ISuccessProps {
 }
 
 export default function Success({ amount, fee, mints, mint, memo, nav, hash }: ISuccessProps) {
+	const { t } = useTranslation()
 	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 	const [testMintTokenRdy, setTestMintTokenRdy] = useState(false)
 	// Only for the hard-coded test mint. Otherwise this is done for other mints before landing in this page
@@ -58,9 +60,9 @@ export default function Success({ amount, fee, mints, mint, memo, nav, hash }: I
 				{/* TODO show payment summary */}
 				<Text style={styles.successTxt}>
 					{isNum(fee) ?
-						'Payment successfull!'
+						t('common.paymentSuccess')
 						:
-						<>{formatInt(amount)} Satoshi {mints ? 'claimed' : 'minted'}!</>
+						<>{formatInt(amount)} Satoshi {mints ? t('common.claimed') : t('common.minted')}!</>
 					}
 				</Text>
 				{memo &&
@@ -82,9 +84,9 @@ export default function Success({ amount, fee, mints, mint, memo, nav, hash }: I
 			<View style={styles.btnWrap}>
 				{(testMintTokenRdy || mint !== _mintUrl) ?
 					<>
-						<Button border txt='Manage mints' onPress={() => nav ? nav.navigate('mints') : navigation.navigate('mints')} />
+						<Button border txt={t('common.manageMints')} onPress={() => nav ? nav.navigate('mints') : navigation.navigate('mints')} />
 						<View style={{ marginBottom: 20 }} />
-						<Button filled txt='Back to dashboard' onPress={() => nav ? nav.navigate('dashboard') : navigation.navigate('dashboard')} />
+						<Button filled txt={t('common.backToDashboard')} onPress={() => nav ? nav.navigate('dashboard') : navigation.navigate('dashboard')} />
 					</>
 					:
 					<Loading size='large' white />

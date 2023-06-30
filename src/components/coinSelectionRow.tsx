@@ -41,7 +41,7 @@ export function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<>
-			<Txt txt={`${proof.amount} Sat`} />
+			<Txt txt={`${proof.amount} Satoshi`} />
 			<View style={styles.keyWrap}>
 				<Text style={[
 					styles.keysetID,

@@ -4,6 +4,10 @@ import Balance from '@comps/Balance'
 import { initDb } from '@db'
 import { fireEvent, render, screen } from '@testing-library/react-native'
 
+jest.mock('react-i18next', () => ({
+	useTranslation: () => ({ t: (key: string) => key }),
+}))
+
 describe('Basic test of the Txt.tsx component', () => {
 	// eslint-disable-next-line no-return-await
 	beforeAll(async () => await initDb())

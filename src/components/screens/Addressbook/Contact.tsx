@@ -11,9 +11,11 @@ import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function ContactPage({ navigation, route }: IContactPageProps) {
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	const { setContacts } = useContext(ContactsContext)
 	const [editContact, setEditContact] = useState({
@@ -25,7 +27,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const handleDelete = async () => {
 		const success = await delContact(route.params.contact?.id || 0)
 		if (!success) {
-			openPromptAutoClose({ msg: 'Could not delete contact' })
+			openPromptAutoClose({ msg: t('common.contactDel') })
 			return
 		}
 		setContacts(await getContacts())
@@ -46,7 +48,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			navigation.navigate('Address book')
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: 'Contact could not be saved. Possible name or address duplication.' })
+			openPromptAutoClose({ msg: t('common.contactNotSaved') })
 			setOpenEdit(false)
 		}
 	}
@@ -87,7 +89,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				>
 					<EditIcon width={20} height={20} color={color.TEXT} />
 					<Text style={[styles.actionTxt, { color: color.TEXT }]}>
-						Edit
+						{t('common.edit')}
 					</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
@@ -98,7 +100,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				>
 					<TrashbinIcon width={18} height={18} color={color.ERROR} />
 					<Text style={[styles.actionTxt, { color: color.ERROR }]}>
-						Delete
+						{t('common.delete')}
 					</Text>
 				</TouchableOpacity>
 			</View>
@@ -110,12 +112,12 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				close={handleEditCancel}
 			>
 				<Text style={globals(color).modalHeader}>
-					Edit contact
+					{t('addrBook.editContact')}
 				</Text>
 				{!route.params.contact?.isOwner &&
 					<TextInput
 						style={[globals(color).input, { marginBottom: 20 }]}
-						placeholder="Name"
+						placeholder={t('common.name')}
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
 						onChangeText={name => setEditContact({ ...editContact, name })}
@@ -124,20 +126,20 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				}
 				<TextInput
 					style={[globals(color).input, { marginBottom: 20 }]}
-					placeholder="zap@me.now"
+					placeholder={t('addrBook.zapMeNow')}
 					placeholderTextColor={color.INPUT_PH}
 					selectionColor={hi[highlight]}
 					onChangeText={ln => setEditContact({ ...editContact, ln })}
 					value={editContact.ln}
 				/>
-				<Button txt='Save' onPress={() => void handleEditContact()}
+				<Button txt={t('common.save')} onPress={() => void handleEditContact()}
 				/>
 				<TouchableOpacity
 					style={styles.cancel}
 					onPress={handleEditCancel}
 				>
 					<Text style={globals(color, highlight).pressTxt}>
-						Cancel
+						{t('common.cancel')}
 					</Text>
 				</TouchableOpacity>
 			</MyModal>

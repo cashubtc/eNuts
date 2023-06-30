@@ -19,6 +19,7 @@ import { globals, highlight as hi } from '@styles'
 import { formatExpiry, formatInt, formatMintUrl, getSelectedAmount, isErr } from '@util'
 import { payLnInvoice } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Switch, Text, View } from 'react-native'
 
 interface IScannedQRProps {
@@ -29,6 +30,7 @@ interface IScannedQRProps {
 
 // TODO adapt style
 export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScannedQRProps) {
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	const { loading, startLoading, stopLoading } = useLoading()
 	const { prompt, openPromptAutoClose } = usePrompt()
@@ -52,7 +54,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			const res = await payLnInvoice(selectedMint.mintUrl, lnDecoded.paymentRequest, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
-				openPromptAutoClose({ msg: 'Invoice could not be payed. Please try again later.' })
+				openPromptAutoClose({ msg: t('common.invoiceErr') })
 				return
 			}
 			// payment success, add as history entry
@@ -69,7 +71,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			})
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: isErr(e) ? e.message : 'An error occured while paying the invoice.' })
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('common.invoicePayErr') })
 			stopLoading()
 		}
 	}
@@ -130,7 +132,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		<MyModal type='invoiceAmount' animation='slide' visible close={closeDetails}>
 			<View style={styles.topContainer}>
 				<Text style={globals(color, highlight).modalHeader}>
-					Lightning payment request
+					{t('common.lnPaymentReq')}
 				</Text>
 				<Text style={[styles.amount, { color: hi[highlight] }]}>
 					{formatInt(invoiceAmount)}
@@ -139,15 +141,15 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					Satoshi
 				</Text>
 				<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
-					{timeLeft > 0 ? formatExpiry(timeLeft) : 'Invoice expired!'}
+					{timeLeft > 0 ? formatExpiry(timeLeft) : t('common.invoiceExpired')}
 				</Text>
 				<View style={styles.pickerWrap}>
 					{!mints.length &&
-						<Txt txt='Found no mints' styles={[styles.txt, globals(color).navTxt]} />
+						<Txt txt={t('common.noMint')} styles={[styles.txt, globals(color).navTxt]} />
 					}
 					{mints.length > 0 && timeLeft > 0 &&
 						<>
-							<Txt txt='Select a mint to send from:' styles={[styles.txt, globals(color).navTxt]} />
+							<Txt txt={t('common.selectMint') + ':'} styles={[styles.txt, globals(color).navTxt]} />
 							<Picker
 								selectedValue={selectedMint?.mintUrl}
 								onValueChange={(value, _idx) => {
@@ -169,7 +171,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								))}
 							</Picker>
 							<View style={[styles.mintOpts, { borderBottomColor: color.BORDER }]}>
-								<Txt txt='Balance' />
+								<Txt txt={t('common.balance')} />
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										{formatInt(mintBal)}
@@ -180,7 +182,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 							{invoiceAmount > 0 && mintBal >= invoiceAmount / 1000 &&
 								<>
 									<View style={styles.overview}>
-										<Txt txt='Coin selection' />
+										<Txt txt={t('common.coinSelection')} />
 										<Switch
 											trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
 											thumbColor={color.TEXT}
@@ -200,7 +202,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			<View style={styles.actions}>
 				{mintBal >= invoiceAmount && mints.length > 0 && timeLeft > 0 &&
 					<Button
-						txt={loading ? 'Processing payment...' : 'Pay'}
+						txt={loading ? t('common.processingPayment') + '...' : t('common.pay')}
 						loading={loading}
 						onPress={() => {
 							if (loading) { return }
@@ -209,11 +211,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					/>
 				}
 				{mints.length > 0 && mintBal < invoiceAmount && timeLeft > 0 &&
-					<Txt txt='Not enough funds!' styles={[globals(color).navTxt, styles.txt]} />
+					<Txt txt={t('common.noFunds') + '!'} styles={[globals(color).navTxt, styles.txt]} />
 				}
 				<View style={{ marginVertical: 10 }} />
 				<Button
-					txt='Cancel'
+					txt={t('common.cancel')}
 					outlined
 					onPress={closeDetails}
 				/>

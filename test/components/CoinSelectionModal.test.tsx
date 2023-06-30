@@ -58,7 +58,7 @@ describe('Basic styling test of the CoinSelectionModal component', () => {
 			/>
 		)
 		expect(screen.getByText('Change')).toBeDefined()
-		expect(screen.getByText('2 Sat')).toBeDefined()
+		expect(screen.getByText('2 Satoshi')).toBeDefined()
 	})
 	it('should not display the change after selecting the exact proofs needed', () => {
 		render(

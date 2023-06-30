@@ -2,6 +2,7 @@ import Button from '@comps/Button'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 
 import MyModal from '.'
@@ -17,6 +18,7 @@ interface IQuestionModalProps {
 }
 
 export function QuestionModal({ header, txt, visible, confirmTxt, confirmFn, cancelTxt, cancelFn }: IQuestionModalProps) {
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='question' animation='fade' visible={visible} close={cancelFn} >
@@ -26,10 +28,10 @@ export function QuestionModal({ header, txt, visible, confirmTxt, confirmFn, can
 			<Text style={globals(color).modalTxt}>
 				{txt}
 			</Text>
-			<Button txt={confirmTxt || 'Yes'} onPress={confirmFn} />
+			<Button txt={confirmTxt || t('common.yes')} onPress={confirmFn} />
 			<TouchableOpacity style={styles.cancelWrap} onPress={cancelFn}>
 				<Text style={globals(color, highlight).pressTxt}>
-					{cancelTxt || 'No'}
+					{cancelTxt || t('common.no')}
 				</Text>
 			</TouchableOpacity>
 		</MyModal>

@@ -14,10 +14,12 @@ import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, formatInt, formatMintUrl, isErr } from '@util'
 import { autoMintSwap } from '@wallet'
 import { useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 export default function IntermintSwap({ navigation, route }: TIntermintSwapPageProps) {
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	const [selectedMint, setSelectedMint] = useState(route.params.mints[0])
@@ -32,27 +34,23 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 			const result = await autoMintSwap(route.params.swap_out_mint.mintUrl, selectedMint.mintUrl, +amount)
 			l({ swapResult: result })
 			openPromptAutoClose({
-				msg: `Successfully swaped ${amount} Sat from ${route.params.swap_out_mint.mintUrl} to ${selectedMint.mintUrl}`,
+				msg: t('mints.swapSuccess', { amount, srcMint: route.params.swap_out_mint.mintUrl, targetMint: selectedMint.mintUrl }),
 				success: true
 			})
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: isErr(e) ? e.message : 'Could not perform an inter-mint swap' })
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mints.swapFail') })
 			stopLoading()
 		}
 		stopLoading()
-		if (prompt.msg.includes('Successfully')) {
-			navigation.navigate('mints')
-		}
+		if (prompt.success) { navigation.navigate('mints') }
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName='Swap' withBackBtn />
+			<TopNav screenName={t('topNav.swap')} withBackBtn />
 			{/* sub header */}
 			<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
-				Swap tokens from one mint for tokens from another mint.
-				For a brief moment, you will be trusting two mints at the same time.
-				There is things that can go wrong. Use at own risk.
+				{t('mints.swapRisk')}
 			</Text>
 			<View style={styles.amountWrap}>
 				<TextInput
@@ -67,7 +65,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 					value={amount}
 				/>
 				<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
-					Mint balance: {formatInt(route.params.balance)} Sat
+					{t('common.mintBalance')}: {formatInt(route.params.balance)} Satoshi
 				</Text>
 			</View>
 			{/* Swap-Out Mint: */}
@@ -106,7 +104,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 			{!isKeyboardOpen && +amount > 0 && !prompt.open &&
 				<View style={styles.actions}>
 					<Button
-						txt={loading ? 'Performing swap...' : 'Swap now'}
+						txt={loading ? t('mints.performingSwap') + '...' : t('mints.swapNow')}
 						loading={loading}
 						onPress={() => {
 							if (loading) { return }

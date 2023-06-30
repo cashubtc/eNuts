@@ -22,9 +22,11 @@ import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
+	const { t } = useTranslation()
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url } = useInitialURL()
 	// Theme
@@ -59,7 +61,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
+			openPromptAutoClose({ msg: t('common.clipboardInvalid') })
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -83,7 +85,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const handleTokenSubmit = async (url: string) => {
 		const tokenInfo = getTokenInfo(url)
 		if (!tokenInfo) {
-			openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
+			openPromptAutoClose({ msg: t('common.clipboardInvalid') })
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -110,12 +112,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setToken('')
 		stopLoading()
 		if (!success) {
-			openPromptAutoClose({ msg: 'Token invalid or already claimed' })
+			openPromptAutoClose({ msg: t('common.invalidOrSpent') })
 			return
 		}
 		const info = getTokenInfo(encodedToken)
 		if (!info) {
-			openPromptAutoClose({ msg: 'Error while getting token info' })
+			openPromptAutoClose({ msg: t('common.tokenInfoErr') })
 			return
 		}
 		// add as history entry
@@ -170,9 +172,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive and send buttons */}
 			<ActionButtons
 				ontopOfNav
-				topBtnTxt='Receive'
+				topBtnTxt={t('wallet.receive')}
 				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
-				bottomBtnTxt='Send'
+				bottomBtnTxt={t('wallet.send')}
 				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
 			/>
 			{/* Bottom nav icons */}
@@ -195,14 +197,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive options */}
 			<OptsModal
 				visible={modal.receiveOpts}
-				button1Txt={loading ? 'claiming...' : 'Paste & redeem Ecash'}
+				button1Txt={loading ? t('wallet.claiming') + '...' : t('wallet.pasteToken')}
 				onPressFirstBtn={() => {
 					if (token.length) { return }
 					void (async () => {
 						startLoading()
 						const clipboard = await Clipboard.getStringAsync()
 						if (!isCashuToken(clipboard)) {
-							openPromptAutoClose({ msg: 'Your clipboard contains an invalid cashu token!' })
+							openPromptAutoClose({ msg: t('common.invalidOrSpent') })
 							setModal({ ...modal, receiveOpts: false })
 							stopLoading()
 							return
@@ -211,7 +213,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						await handleTokenSubmit(clipboard)
 					})()
 				}}
-				button2Txt='Create Lightning invoice'
+				button2Txt={t('wallet.createInvoice')}
 				onPressSecondBtn={() => {
 					navigation.navigate('lightning', { receive: true })
 					setModal({ ...modal, receiveOpts: false })
@@ -221,12 +223,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}
-				button1Txt='Send Ecash'
+				button1Txt={t('wallet.sendEcash')}
 				onPressFirstBtn={() => {
 					navigation.navigate('send')
 					setModal({ ...modal, sendOpts: false })
 				}}
-				button2Txt='Pay Lightning invoice'
+				button2Txt={t('wallet.payInvoice')}
 				onPressSecondBtn={() => {
 					navigation.navigate('lightning', { send: true })
 					setModal({ ...modal, sendOpts: false })

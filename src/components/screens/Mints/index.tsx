@@ -20,10 +20,11 @@ import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isUrl } from '@util'
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
-
+	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// mint list
@@ -45,24 +46,24 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	// adds a mint via input
 	const handleMintInput = async () => {
 		if (!isUrl(input)) {
-			openPromptAutoClose({ msg: 'Invalid URL', ms: 1500 })
+			openPromptAutoClose({ msg: t('mints.invalidUrl'), ms: 1500 })
 			return
 		}
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === input)) {
-				openPromptAutoClose({ msg: 'Mint already added', ms: 1500 })
+				openPromptAutoClose({ msg: t('mints.mntAlreadyAdded'), ms: 1500 })
 				return
 			}
 			// add mint url to db
 			await addMint(input)
 		} catch (e) {
-			openPromptAutoClose({ msg: 'Connection to mint failed', ms: 2000 })
+			openPromptAutoClose({ msg: t('mints.mintConnectionFail'), ms: 2000 })
 			l(e)
 			return
 		}
-		openPromptAutoClose({ msg: `${formatMintUrl(input)} added successfully`, success: true })
+		openPromptAutoClose({ msg: t('mints.newMintSuccess', { mintUrl: formatMintUrl(input) }), success: true })
 		setNewMintModal(false)
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
@@ -90,13 +91,13 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			await addMint(selectedMint.mintUrl)
 		} catch (e) {
 			// prompt error
-			openPromptAutoClose({ msg: 'Connection to mint failed', ms: 2000 })
+			openPromptAutoClose({ msg: t('mints.mintConnectionFail'), ms: 2000 })
 			setTrustModalOpen(false)
 			l(e)
 			return
 		}
 		setTrustModalOpen(false)
-		openPromptAutoClose({ msg: `${formatMintUrl(selectedMint.mintUrl)} added successfully`, success: true })
+		openPromptAutoClose({ msg: t('mints.newMintSuccess', { mintUrl: formatMintUrl(selectedMint.mintUrl) }), success: true })
 		// update mints list state
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
@@ -184,7 +185,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				close={() => setNewMintModal(false)}
 			>
 				<Text style={globals(color).modalHeader}>
-					Add a new mint
+					{t('mints.addNewMint')}
 				</Text>
 				<TextInput
 					style={[globals(color).input, { marginBottom: 20 }]}
@@ -193,16 +194,16 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					selectionColor={hi[highlight]}
 					onChangeText={setInput}
 				/>
-				<Button txt='Add mint' onPress={() => { void handleMintInput() }} />
+				<Button txt={t('mints.addMintBtn')} onPress={() => { void handleMintInput() }} />
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
-					<Txt txt='Cancel' styles={[globals(color, highlight).pressTxt]} />
+					<Txt txt={t('common.cancel')} styles={[globals(color, highlight).pressTxt]} />
 				</TouchableOpacity>
 			</MyModal>
 			<QuestionModal
 				header={selectedMint?.mintUrl === _mintUrl ?
-					'This is a test mint to play around with. Add it anyway?'
+					t('mints.testMintHint')
 					:
-					'Are you sure that you want to trust this mint?'
+					t('mints.trustMintSure')
 				}
 				visible={trustModalOpen}
 				confirmFn={() => void handleTrustModal()}

@@ -5,6 +5,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
 import { formatBalance, formatInt, isBool, isErr, openUrl } from '@util'
 import { useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import usePrompt from './hooks/Prompt'
@@ -15,6 +16,7 @@ interface IBalanceProps {
 }
 
 export default function Balance({ balance }: IBalanceProps) {
+	const { t } = useTranslation()
 	const { pref, color, highlight } = useContext(ThemeContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const { prompt, openPromptAutoClose } = usePrompt()
@@ -45,20 +47,15 @@ export default function Balance({ balance }: IBalanceProps) {
 			<View style={styles.disclaimerWrap}>
 				<ExclamationIcon width={22} height={22} color={mainColors.WARN} />
 				<Text style={[styles.disclaimerTxt, { color: color.TEXT }]}>
-					Please note that this is an alpha version in its early stage
-					and is still undergoing testing before its official release.
-					The software and all content found on it are provided on an
-					“as is” and “as available” basis. We do not give any warranties,
-					whether express or implied, as to the suitability or usability of the
-					software or any of its content.
+					{t('wallet.disclaimer')}
 				</Text>
 				<TouchableOpacity
 					style={styles.submitIssue}
 					onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) => 
-						openPromptAutoClose({ msg: isErr(err) ? err.message : 'Link could not be opened' }) )}
+						openPromptAutoClose({ msg: isErr(err) ? err.message : t('common.deepLinkErr') }) )}
 				>
 					<Text style={styles.issue}>
-						Submit issue on Github
+						{t('wallet.submitIssue')}
 					</Text>
 				</TouchableOpacity>
 				{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}

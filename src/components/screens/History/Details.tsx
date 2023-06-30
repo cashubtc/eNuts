@@ -17,6 +17,7 @@ import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
@@ -27,6 +28,7 @@ const initialCopyState = {
 }
 
 export default function DetailsPage({ navigation, route }: THistoryEntryPageProps) {
+	const { t } = useTranslation()
 	const entry = route.params.entry
 	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)
@@ -35,10 +37,10 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const [qr, setQr] = useState({ open: false, error: false })
 	const isPayment = entry.amount < 0
 	const isLn = entry.type === 2
-	const LNstr = `Lightning ${isPayment ? 'payment' : 'invoice'}`
-	const Ecash = 'Ecash payment'
+	const LNstr = t(isPayment ? 'lnPayment' : 'lnInvoice')
+	const Ecash = t('ecashPayment')
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
-	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : 'No Memo'
+	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('history.noMemo')
 	const copyValue = async () => {
 		await Clipboard.setStringAsync(entry.value)
 		setCopy({ ...copy, value: true })
@@ -89,15 +91,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				<View style={globals(color).wrapContainer}>
 					{/* Settle Time */}
 					<View style={styles.entryInfo}>
-						<Txt txt='Settle Time' />
+						<Txt txt={t('history.settleTime')} />
 						<Txt txt={new Date(entry.timestamp * 1000).toLocaleString()} />
 					</View>
 					<Separator />
 					{/* Memo */}
 					<View style={styles.entryInfo}>
-						<Txt txt='Memo' />
+						<Txt txt={t('history.memo')} />
 						<Txt
-							txt={isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : 'No Memo'}
+							txt={isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : t('history.noMemo')}
 							styles={[styles.infoValue]}
 						/>
 					</View>
@@ -117,10 +119,10 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							void copyValue()
 						}}
 					>
-						<Txt txt={isLn ? 'Invoice' : 'Token'} />
+						<Txt txt={isLn ? t('common.invoice') : 'Token'} />
 						<View style={styles.copyWrap}>
 							<Txt
-								txt={entry.value.length ? `${entry.value.slice(0, 16)}...` : 'Not available'}
+								txt={entry.value.length ? `${entry.value.slice(0, 16)}...` : t('common.n/a')}
 								styles={[styles.infoValue, entry.value.length > 0 ? styles.mr10 : {}]}
 							/>
 							{entry.value.length > 0 &&
@@ -143,7 +145,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 								handleCheckSpendable={() => void handleCheckSpendable()}
 							>
 								<Txt
-									txt={isUndef(isSpent) ? 'Check if token has been spent' : `Token ${isSpent ? 'has been spent' : 'is pending...'}`}
+									txt={isUndef(isSpent) ? t('history.checkSpent') : t(isSpent ? 'history.isSpent' : 'history.isPending') + '...'}
 								/>
 								{isSpent ?
 									<CheckCircleIcon width={18} height={18} color={mainColors.VALID} />
@@ -168,10 +170,10 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 									void copyHash()
 								}}
 							>
-								<Txt txt='Payment Hash' />
+								<Txt txt={t('history.paymentHash')} />
 								<View style={styles.copyWrap}>
 									<Txt
-										txt={hash.length > 0 ? `${hash.slice(0, 16)}...` : 'Not available'}
+										txt={hash.length > 0 ? `${hash.slice(0, 16)}...` : t('common.n/a')}
 										styles={[styles.infoValue, hash.length > 0 ? styles.mr10 : {}]}
 									/>
 									{hash.length > 0 &&
@@ -197,7 +199,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 								<Txt txt='Pre-Image' />
 								<View style={styles.copyWrap}>
 									<Txt
-										txt={entry.preImage ?? 'Not available'}
+										txt={entry.preImage || t('common.n/a')}
 										styles={[styles.infoValue, entry.preImage && entry.preImage.length > 0 ? styles.mr10 : {}]}
 									/>
 									{entry.preImage && entry.preImage.length > 0 &&
@@ -214,8 +216,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							<Separator />
 							{/* LN payment fees */}
 							<View style={styles.entryInfo}>
-								<Txt txt='Fee' />
-								<Txt txt={entry.fee ? `${entry.fee} Satoshi` : 'Not available'} />
+								<Txt txt={t('common.fee')} />
+								<Txt txt={entry.fee ? `${entry.fee} Satoshi` : t('common.n/a')} />
 							</View>
 							<Separator />
 						</>
@@ -225,7 +227,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						style={styles.entryInfo}
 						onPress={handleQR}
 					>
-						<Txt txt='Show QR code' />
+						<Txt txt={t('history.showQr')} />
 						<QRIcon width={17} height={17} color={color.TEXT} />
 					</TouchableOpacity>
 				</View>
@@ -233,7 +235,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			<BottomNav navigation={navigation} route={route} />
 			<MyModal type='question' visible={qr.open} close={() => setQr({ open: false, error: false })}>
 				{qr.error ?
-					<Txt txt='The amount of data is too big for a QR code.' styles={[{ textAlign: 'center' }]} />
+					<Txt txt={t('common.bigQrMsg')} styles={[{ textAlign: 'center' }]} />
 					:
 					<QR
 						value={entry.value}

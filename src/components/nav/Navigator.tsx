@@ -19,6 +19,7 @@ import SendTokenPage from '@screens/Send'
 import Settings from '@screens/Settings'
 import BackupPage from '@screens/Settings/Backup'
 import DisplaySettings from '@screens/Settings/Display'
+import LanguageSettings from '@screens/Settings/Language'
 import SecuritySettings from '@screens/Settings/Security'
 import SuccessPage from '@screens/Success'
 import { ThemeContext } from '@src/context/Theme'
@@ -86,6 +87,7 @@ export default function Navigator() {
 				<Stack.Screen name='Settings' component={Settings} />
 				<Stack.Screen name='Display settings' component={DisplaySettings} />
 				<Stack.Screen name='Security settings' component={SecuritySettings} />
+				<Stack.Screen name='Language settings' component={LanguageSettings} />
 				<Stack.Screen name='BackupPage' component={BackupPage} />
 			</Stack.Navigator>
 		</View>

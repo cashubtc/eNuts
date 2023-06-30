@@ -9,6 +9,7 @@ import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, vib } from '@util'
 import { requestMint } from '@wallet'
 import { createRef, useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native'
 
 import { useShakeAnimation } from './animation/Shake'
@@ -24,6 +25,7 @@ export default function LNInvoiceAmountModal({
 	mintUrl,
 	setLNAmountModal,
 }: IInvoiceModalProps) {
+	const { t } = useTranslation()
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// workaround: amount input ref for auto-focus (input property "autoFocus" does not work here)
@@ -96,13 +98,13 @@ export default function LNInvoiceAmountModal({
 					behavior={isIOS ? 'padding' : undefined}
 				>
 					<Button
-						txt={loading ? 'Invoice incoming...' : 'Create invoice'}
+						txt={loading ? t('common.invoiceIncoming') + '...' : t('common.createInvoice')}
 						onPress={handleAmountSubmit}
 						loading={loading}
 					/>
 					<TouchableOpacity onPress={() => setLNAmountModal(false)}>
 						<Text style={[styles.cancel, { color: hi[highlight] }]}>
-							Cancel
+							{t('common.cancel')}
 						</Text>
 					</TouchableOpacity>
 				</KeyboardAvoidingView>
