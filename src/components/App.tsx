@@ -58,6 +58,13 @@ export default function App(initialProps: IInitialProps) {
 }
 
 function _App(_initialProps: IInitialProps) {
+	// auth
+	// const [shouldAuth, setShouldAuth] = useState(true)
+
+	// // check if auth setup page should be shown. Condition: User has not skipped process previously and has no auth
+	// useEffect(() => {
+
+	// }, [])
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { t, i18n } = useTranslation()
 	const [isRdy, setIsRdy] = useState(false)
@@ -247,7 +254,7 @@ function _App(_initialProps: IInitialProps) {
 			appState.current = nextAppState
 		})
 		return () => subscription.remove()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	if (!isRdy) { return null }
@@ -258,7 +265,7 @@ function _App(_initialProps: IInitialProps) {
 				<FocusClaimCtx.Provider value={claimData}>
 					<ContactsContext.Provider value={contactData}>
 						<KeyboardProvider>
-							<Navigator />
+							<Navigator shouldSetup={true} shouldAuth={false} />
 							<StatusBar style="auto" />
 							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
 							<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>

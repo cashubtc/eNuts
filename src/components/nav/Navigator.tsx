@@ -1,3 +1,4 @@
+import AuthPage from '@comps/screens/Auth'
 import AboutSettings from '@comps/screens/Settings/About'
 import type { RootStackParamList } from '@model/nav'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -29,7 +30,12 @@ import { View } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
-export default function Navigator() {
+interface INavigatorProps {
+	shouldSetup: boolean
+	shouldAuth: boolean
+}
+
+export default function Navigator({ shouldSetup, shouldAuth }: INavigatorProps) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={{
@@ -39,6 +45,7 @@ export default function Navigator() {
 			backgroundColor: color.BACKGROUND,
 		}}>
 			<Stack.Navigator
+				initialRouteName={shouldSetup || shouldAuth ? 'auth' : 'dashboard'}
 				screenOptions={{
 					headerShown: false,
 					animation: 'fade',
@@ -46,6 +53,7 @@ export default function Navigator() {
 				}}
 			>
 				<Stack.Screen name='dashboard' component={Dashboard} />
+				<Stack.Screen name='auth' component={AuthPage} />
 				{/* create sendable token page */}
 				<Stack.Screen
 					name='send'
