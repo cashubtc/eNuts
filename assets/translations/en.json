@@ -94,7 +94,9 @@
     "minted": "minted",
     "manageMints": "Manage mints",
     "backToDashboard": "Back to dashboard",
-    "default": "Default"
+    "default": "Default",
+    "accept": "Accept",
+    "today": "Today"
   },
   "wallet": {
     "disclaimer": "Please note that this is an alpha version in its early stage and is still undergoing testing before its official release. The software and all content found on it are provided on an “as is” and “as available” basis. We do not give any warranties, whether express or implied, as to the suitability or usability of the software or any of its content.",
@@ -105,7 +107,7 @@
     "pasteToken": "Paste & redeem Ecash",
     "payInvoice": "Pay Lightning invoice",
     "createInvoice": "Create Lightning invoice",
-    "claiming": "Claiming"
+    "claiming": "Claiming..."
   },
   "topNav": {
     "history": "History",
@@ -161,7 +163,7 @@
     "noInfo": "Mint has no info",
     "swapSuccess": "Successfully swaped {{amount}} Satoshi from {{srcMint}} to {{targetMint}}",
     "swapFail": "Could not perform an inter-mint swap",
-    "swapRisk": "Swap tokens from one mint for tokens from another mint. For a brief moment, you will be trusting two mints at the same time. There is things that can go wrong. Use at own risk.",
+    "swapRisk": "Swap token from one mint for token from another mint. For a brief moment, you will be trusting two mints at the same time. There is things that can go wrong. Use at own risk.",
     "swapNow": "Swap now",
     "performingSwap": "Performing swap",
     "general": "General",
@@ -169,18 +171,19 @@
     "customName": "Custom name",
     "setDefault": "Set as default mint",
     "removeDefault": "Remove from default",
-    "mintNewTokens": "Mint new tokens",
-    "meltToken": "Melt tokens",
+    "mintNewTokens": "Mint new token",
+    "meltToken": "Melt token",
     "noProofs": "Found no proofs for this mint.",
     "dangerZone": "Danger zone",
     "checkProofs": "Check proofs",
     "delMint": "Delete mint",
     "delMintSure": "Are you sure that you want to remove this mint?",
-    "delMintHint": "Deleting a mint with balance can result in an unexpected total balance. You will keep the tokens associated with the mint, but you will not be able to redeem them until you re-add the mint.",
+    "delMintHint": "Deleting a mint with balance can result in an unexpected total balance. You will keep the token associated with the mint, but you will not be able to redeem them until you re-add the mint.",
     "checkProofsQ": "Are you sure that you want to check all the proofs?",
-    "checkProofsTxt": "This will check if your tokens are spendable and will otherwise delete them.",
+    "checkProofsTxt": "This will check if your token are spendable and will otherwise delete them.",
     "editMintName": "Edit mint name",
-    "addCustomName": "Add a custom name"
+    "addCustomName": "Add a custom name",
+    "funds": "Funds"
   },
   "backup": {
     "copyBackup": "Copy the token and keep it in a safe place."
@@ -190,7 +193,12 @@
     "yourLnurl": "Your LNURL",
     "newContact": "New contact",
     "editContact": "Edit contact",
-    "zapMeNow": "zap@me.now"
+    "zapMeNow": "zap@me.now",
+    "invalidLnurl": "Invalid LNURL!",
+    "invalidName": "Invalid name!",
+    "personalLnurl": "Personal LNURL",
+    "addContactErr": "Contact can not be added. Possible name or LNURL duplication.",
+    "addedContact": "New contact added"
   },
   "english": "English",
   "german": "German",
@@ -204,6 +212,7 @@
   "contact_one": "Contact",
   "contact_other": "Contacts",
   "getStarted": "Get started",
-  "startHint": "You should add a mint that you trust before sending or receiving tokens.",
+  "startHint": "You should add a mint that you trust before sending or receiving token.",
+  "addMintNow": "Add a mint now",
   "willDoLater": "Will do later"
 }

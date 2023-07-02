@@ -94,7 +94,9 @@
     "minted": "bekommen",
     "manageMints": "Mints verwalten",
     "backToDashboard": "Zurück zu wallet",
-    "default": "Standard"
+    "default": "Standard",
+    "accept": "Annehmen",
+    "today": "Heute"
   },
   "wallet": {
     "disclaimer": "Bitte beachten Sie, dass es sich hierbei um eine Alpha-Version in einem frühen Stadium handelt und diese noch vor der offiziellen Veröffentlichung getestet wird. Die Software und alle darauf enthaltenen Inhalte werden als „wie besehen“ und „wie verfügbar“ bereitgestellt. Wir geben keine Garantien, ob ausdrücklich oder stillschweigend, hinsichtlich der Eignung oder Verwendbarkeit der Software oder deren Inhalte.",
@@ -105,7 +107,7 @@
     "pasteToken": "Ecash aus Zwischenablage",
     "payInvoice": "Lightning Rechnung bezahlen",
     "createInvoice": "Lightning Rechnung erstellen",
-    "claiming": "Überprüft"
+    "claiming": "Überprüft..."
   },
   "topNav": {
     "history": "Verlauf",
@@ -157,7 +159,7 @@
     "supportedNuts": "Unterstütze NUTs",
     "pubKey": "Öffentlicher Schlüssel",
     "additionalInfo": "Zusätzliche Informationen",
-    "noAdditional": "Diese Mint verfügt über keine zusätzliche Informationen",
+    "noAdditional": "Diese Mint verfügt über keine zusätzlichen Informationen",
     "noInfo": "Keine Informationen verfügbar",
     "swapSuccess": "{{amount}} Satoshi erfolgreich von {{srcMint}} zu {{targetMint}} getauscht",
     "swapFail": "Tausch konnte nicht vollbracht werden",
@@ -180,17 +182,23 @@
     "checkProofsQ": "Sind Sie sicher, dass Sie alle Proofs überprüfen möchten?",
     "checkProofsTxt": "Dadurch wird überprüft, ob Ihre Token ausgegeben werden können und werden andernfalls gelöscht.",
     "editMintName": "Mint Name bearbeiten",
-    "addCustomName": "Benutzerdefinierten Namen hinzufügen"
+    "addCustomName": "Benutzerdefinierten Namen hinzufügen",
+    "funds": "Guthaben"
   },
   "backup": {
     "copyBackup": "Kopieren Sie den Token und bewahren Sie ihn an einem sicheren Ort."
   },
   "addrBook": {
-    "addOwnLnurl": "füge deine eigene LNURL hinzu",
+    "addOwnLnurl": "Füge deine eigene LNURL hinzu",
     "yourLnurl": "Deine LNURL",
     "newContact": "Neuer Kontakt",
     "editContact": "Kontakt bearbeiten",
-    "zapMeNow": "zap@mich.jetzt"
+    "zapMeNow": "zap@mich.jetzt",
+    "invalidLnurl": "Invalide LNURL!",
+    "invalidName": "Invalider Name!",
+    "personalLnurl": "Persönliche LNURL",
+    "addContactErr": "Kontakt konnte nicht hinzugefügt werden. Möglicher Name oder LNURL Duplikat.",
+    "addedContact": "Neue Kontakt hinzugefügt"
   },
   "english": "Englisch",
   "german": "Deutsch",
@@ -205,5 +213,6 @@
   "contact_other": "Kontakte",
   "getStarted": "Loslegen",
   "startHint": "Sie sollten eine Mint hinzufügen, der Sie vertrauen, bevor Sie Token senden oder empfangen.",
+  "addMintNow": "Füge eine mint hinzu",
   "willDoLater": "Mache ich später"
 }

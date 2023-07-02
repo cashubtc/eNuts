@@ -94,7 +94,9 @@
     "minted": "émis",
     "manageMints": "Gérer les Mints",
     "backToDashboard": "Retour au tableau de bord",
-    "default": "Par défaut"
+    "default": "Par défaut",
+    "accept": "Accepter",
+    "today": "Aujourd'hui"
   },
   "wallet": {
     "disclaimer": "Veuillez noter qu'il s'agit d'une version alpha à un stade précoce et qu'elle est encore en cours de test avant sa sortie officielle. Le logiciel et tous les contenus qui s'y trouvent sont fournis « tels quels » et « tels que disponibles ». Nous n'offrons aucune garantie, expresse ou implicite, quant à l'adéquation ou à l'utilisabilité du logiciel ou de l'un de ses contenus.",
@@ -105,7 +107,7 @@
     "pasteToken": "Coller et échanger Ecash",
     "payInvoice": "Payer une facture Lightning",
     "createInvoice": "Créer une facture Lightning",
-    "claiming": "Réclamation en cours"
+    "claiming": "En cours..."
   },
   "topNav": {
     "history": "Historique",
@@ -161,7 +163,7 @@
     "noInfo": "Aucune information disponible",
     "swapSuccess": "{{amount}} Satoshi échangés avec succès de {{srcMint}} à {{targetMint}}",
     "swapFail": "Impossible d'effectuer un échange inter-mint",
-    "swapRisk": "Échangez des jetons d'une mint contre des jetons d'une autre mint. Pendant un court instant, vous ferez confiance à deux mints en même temps. Des problèmes peuvent survenir. Utilisez à vos propres risques.",
+    "swapRisk": "Échangez des token d'une mint contre des token d'une autre mint. Pendant un court instant, vous ferez confiance à deux mints en même temps. Des problèmes peuvent survenir. Utilisez à vos propres risques.",
     "swapNow": "Échanger maintenant",
     "performingSwap": "Échange en cours",
     "general": "Général",
@@ -169,18 +171,19 @@
     "customName": "Nom personnalisé",
     "setDefault": "Définir comme mint par défaut",
     "removeDefault": "Supprimer de la mint par défaut",
-    "mintNewTokens": "Créer de nouveaux jetons",
-    "meltToken": "Échanger des jetons",
+    "mintNewTokens": "Créer de nouveaux token",
+    "meltToken": "Échanger des token",
     "noProofs": "Aucune preuve trouvée pour cette mint.",
     "dangerZone": "Zone dangereuse",
     "checkProofs": "Vérifier les preuves",
     "delMint": "Supprimer la mint",
     "delMintSure": "Êtes-vous sûr de vouloir supprimer cette mint?",
-    "delMintHint": "Supprimer une mint avec un solde peut entraîner un solde total inattendu. Vous conserverez les jetons associés à la mint, mais vous ne pourrez pas les échanger tant que vous n'aurez pas réajouté la mint.",
+    "delMintHint": "Supprimer une mint avec un solde peut entraîner un solde total inattendu. Vous conserverez les token associés à la mint, mais vous ne pourrez pas les échanger tant que vous n'aurez pas réajouté la mint.",
     "checkProofsQ": "Êtes-vous sûr de vouloir vérifier toutes les preuves?",
-    "checkProofsTxt": "Cela vérifiera si vos jetons peuvent être dépensés et les supprimera sinon.",
+    "checkProofsTxt": "Cela vérifiera si vos token peuvent être dépensés et les supprimera sinon.",
     "editMintName": "Modifier le nom de la mint",
-    "addCustomName": "Ajouter un nom personnalisé"
+    "addCustomName": "Ajouter un nom personnalisé",
+    "funds": "Argent"
   },
   "backup": {
     "copyBackup": "Copiez le jeton et gardez-le dans un endroit sûr."
@@ -190,7 +193,12 @@
     "yourLnurl": "Votre LNURL",
     "newContact": "Nouveau contact",
     "editContact": "Modifier le contact",
-    "zapMeNow": "zap@moi.maintenant"
+    "zapMeNow": "zap@moi.maintenant",
+    "invalidLnurl": "Invalide LNURL!",
+    "invalidName": "Nom invalide!",
+    "personalLnurl": "LNURL personnel",
+    "addContactErr": "Le contact ne peut pas être ajouté. Duplication possible du nom ou du LNURL.",
+    "addedContact": "Nouveau contact ajouter"
   },
   "english": "Anglais",
   "german": "Allemand",
@@ -204,6 +212,7 @@
   "contact_one": "Contact",
   "contact_other": "Contacts",
   "getStarted": "Commencer",
-  "startHint": "Vous devriez ajouter une mint à laquelle vous faites confiance avant d'envoyer ou de recevoir des jetons.",
+  "startHint": "Vous devriez ajouter une mint à laquelle vous faites confiance avant d'envoyer ou de recevoir des token.",
+  "addMintNow": "Ajoutez une mint",
   "willDoLater": "Je ferai plus tard"
 }
