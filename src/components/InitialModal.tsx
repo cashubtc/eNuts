@@ -24,7 +24,7 @@ export default function InitialModal({ visible, onConfirm, onCancel }: IInitialM
 			<Text style={globals(color, highlight).modalTxt}>
 				{t('startHint')}
 			</Text>
-			<Button txt='Add a mint now' onPress={onConfirm} />
+			<Button txt={t('addMintNow')} onPress={onConfirm} />
 			<TouchableOpacity onPress={onCancel}>
 				<Text style={[globals(color, highlight).pressTxt, styles.cancel]}>
 					{t('willDoLater')}

@@ -48,7 +48,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 						<>
 							{/* Group date */}
 							<Text style={[styles.date, { color: color.TEXT }]}>
-								{data.item[0]}
+								{data.item[0] === 'Today' ? t('common.today') : data.item[0]}
 							</Text>
 							{/* Group entries */}
 							<View style={[

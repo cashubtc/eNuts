@@ -178,8 +178,8 @@ function _App(_initialProps: IInitialProps) {
 				l({ test }, await getBalance())
 				l(await getBalancesByKeysetId()) */
 			} catch (e) {
-				l(e)
-				alert(t('common.dbErr') + `${isErr(e) ? e.message : ''}`)
+				l(isErr(e) ? e.message : '')
+				alert(t('common.dbErr'))
 			}
 		}
 		async function initPreferences() {
@@ -266,7 +266,7 @@ function _App(_initialProps: IInitialProps) {
 									{t('common.foundCashuClipboard')}
 								</Text>
 								<Text style={globals(color, highlight).modalTxt}>
-									{t('common.memo')}: {tokenInfo?.decoded.memo}{'\n'}
+									{t('history.memo')}: {tokenInfo?.decoded.memo}{'\n'}
 									<Txt
 										txt={formatInt(tokenInfo?.value ?? 0)}
 										styles={[{ fontWeight: '500' }]}
@@ -275,7 +275,7 @@ function _App(_initialProps: IInitialProps) {
 									{tokenInfo?.mints.join(', ')}
 								</Text>
 								<Button
-									txt={t('common.claimNow')}
+									txt={t('common.accept')}
 									onPress={() => void handleRedeem()}
 								/>
 								<View style={{ marginVertical: 10 }} />

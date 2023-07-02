@@ -81,7 +81,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 										<Txt txt={c[1]} />
 									</>
 									:
-									<Txt txt={t('common.mintNoContact')} />
+									<Txt txt={t('mints.mintNoContact')} />
 								}
 							</View>
 						))}

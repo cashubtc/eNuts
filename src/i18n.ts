@@ -1,14 +1,13 @@
 
+import de from '@assets/translations/de.json'
+import en from '@assets/translations/en.json'
+import fr from '@assets/translations/fr.json'
 import { isReactNativeDevMode as debug } from '@consts'
 import { l } from '@log'
 import { isErr } from '@util'
 import { getLanguageCode } from '@util/localization'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-
-import de from '../assets/translations/de.json'
-import en from '../assets/translations/en.json'
-import fr from '../assets/translations/fr.json'
 
 i18n.use(initReactI18next)
 	.init({

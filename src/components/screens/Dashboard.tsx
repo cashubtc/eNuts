@@ -197,7 +197,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive options */}
 			<OptsModal
 				visible={modal.receiveOpts}
-				button1Txt={loading ? t('wallet.claiming') + '...' : t('wallet.pasteToken')}
+				button1Txt={loading ? t('wallet.claiming') : t('wallet.pasteToken')}
 				onPressFirstBtn={() => {
 					if (token.length) { return }
 					void (async () => {

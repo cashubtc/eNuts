@@ -55,7 +55,7 @@ export default function Success({ amount, fee, mints, mint, memo, nav, hash }: I
 				<Image
 					style={styles.img}
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					source={require('../../assets/icon_transparent.png')}
+					source={require('@assets/icon_transparent.png')}
 				/>
 				{/* TODO show payment summary */}
 				<Text style={styles.successTxt}>

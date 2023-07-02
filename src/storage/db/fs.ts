@@ -28,4 +28,4 @@ export async function openDatabase(_pathToDatabaseFile: string): Promise<SQLite.
 		`${path}myDatabaseName.db`
 	) */
 	return SQLite.openDatabase('../../assets/myDatabaseName.db')
-}  
+}

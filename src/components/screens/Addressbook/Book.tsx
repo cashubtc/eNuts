@@ -44,24 +44,24 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			lnUrl: newContact.lnUrl.trim(),
 		}
 		if (!isLnurl(contact.lnUrl)) {
-			openPromptAutoClose({ msg: 'Invalid LNURL!', ms: 1500 })
+			openPromptAutoClose({ msg: t('addrBook.invalidLnurl'), ms: 1500 })
 			return
 		}
 		if (!contact.name && !openNew.isOwner) {
-			openPromptAutoClose({ msg: 'Invalid name!', ms: 1500 })
+			openPromptAutoClose({ msg: t('addrBook.invalidName'), ms: 1500 })
 			return
 		}
 		const success = await addContact({
-			name: openNew.isOwner ? 'Personal LNURL' : contact.name,
+			name: openNew.isOwner ? t('addrBook.personalLnurl') : contact.name,
 			ln: contact.lnUrl,
 			isOwner: openNew.isOwner
 		})
 		if (!success) {
-			openPromptAutoClose({ msg: 'Contact can not be added. Possible name or LNURL duplication.' })
+			openPromptAutoClose({ msg: t('addrBook.addContactErr') })
 			return
 		}
 		setContacts(await getContacts())
-		openPromptAutoClose({ msg: 'Added a new contact', success: true })
+		openPromptAutoClose({ msg: t('addrBook.addedContact'), success: true })
 		setOpenNew({ open: false, isOwner: false })
 	}
 	return (
@@ -70,7 +70,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			{isModal ?
 				<View style={styles.modalHeader}>
 					<View>
-						<Txt txt='Address book' styles={[globals(color).navTxt, styles.header]} />
+						<Txt txt={t('topNav.addressBook')} styles={[globals(color).navTxt, styles.header]} />
 						<ContactsCount count={contacts.length} />
 					</View>
 					{/* cancel modal / go back to payment page */}
@@ -131,7 +131,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						</View>
 					</TouchableOpacity>
 				}
-				{((contacts.length > 1 && contacts.some(c => c.isOwner)) || (contacts.length > 0 && !contacts.some(c => c.isOwner)))  &&
+				{((contacts.length > 1 && contacts.some(c => c.isOwner)) || (contacts.length > 0 && !contacts.some(c => c.isOwner))) &&
 					<View style={[globals(color).wrapContainer, styles.bookContainer]}>
 						{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
 							!c.isOwner &&
@@ -217,14 +217,14 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 }
 
 function ContactsCount({ count }: { count: number }) {
-	const {t} = useTranslation()
+	const { t } = useTranslation()
 	const { color } = useContext(ThemeContext)
 	return (
 		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
 			{!count ?
 				''
 				:
-				t('contact', {count})
+				t('contact', { count })
 			}
 		</Text>
 	)

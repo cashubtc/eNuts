@@ -213,7 +213,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 				</View>
 				{/* Fund management */}
-				<Txt txt='Funds' styles={[styles.sectionHeader]} />
+				<Txt txt={t('mints.funds')} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
 					{/* Mint new tokens */}
 					<MintOption

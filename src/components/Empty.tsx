@@ -11,7 +11,7 @@ export default function Empty({txt}: {txt: string}) {
 			<Image
 				style={styles.img}
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				source={require('../../assets/mixed_forest.png')}
+				source={require('@assets/mixed_forest.png')}
 			/>
 			<Txt
 				txt={txt}
