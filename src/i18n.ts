@@ -11,11 +11,13 @@ import en from '../assets/translations/en.json'
 import fr from '../assets/translations/fr.json'
 
 i18n.use(initReactI18next)
-	// .use(languageDetector)
 	.init({
 		compatibilityJSON: 'v3',
 		cleanCode: true,
 		fallbackLng: 'en',
+		interpolation: {
+			escapeValue: false
+		},
 		lng: getLanguageCode(),
 		debug,
 		// Consider external storing of translations and fetch needed language on demand
