@@ -18,14 +18,14 @@ eNuts is a strictly typed mobile [**Cashu**](https://github.com/cashubtc) wallet
 
 ## Contents
 
-- 🐿️[R&D](#%EF%B8%8F-join-the-research-and-development-groups)
-- ⚠️[Disclaimer](#%EF%B8%8F-disclaimer)
-- 🥜[Implemented NUTs](#-implemented-nuts)
-- 📋[Requirements](#-requirements)
-- 👏[Contribute](#-contribute)
-- 🚀[Getting started](#-getting-started)
-- 🎉[Releases](#-releases)
-- 📄[License](#-license)
+- 🐿️ [R&D](#%EF%B8%8F-join-the-research-and-development-groups)
+- ⚠️ [Disclaimer](#%EF%B8%8F-disclaimer)
+- 🥜 [Implemented NUTs](#-implemented-nuts)
+- 📋 [Requirements](#-requirements)
+- 🚀 [Getting started](#-getting-started)
+- 👏 [Contribute](#-contribute)
+- 🎉 [Releases](#-releases)
+- 📄 [License](#-license)
 
 ## 🐿️ Join the research and development groups
 
@@ -80,37 +80,6 @@ The NUT documents (**N**otation, **U**sage and **T**erminology) each specify par
 - eNuts is built using the managed workflow provided by Expo, so the easiest way to run a development environment is their [Expo Go](https://expo.dev/client) app.
 - NodeJS 16 or higher.
 
-## 👏 Contribute
-
-The main purpose of this repository is to continue evolving and pushing the adoption of Ecash for Bitcoin using the Cashu protocol. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bug fixes and improvements.
-
-There are ways you can contribute without writing a single line of code. Here are a few things you can do to help out:
-
-- **Replying and handling open issues**  
-Some issues may lack necessary information. You can help out by guiding people through the process of filling out the issue template, asking for clarifying information, or pointing them to existing issues that match their description of the problem.
-- **Reviewing pull requests for the docs**  
-Reviewing Pull requests that contains documentation updates (marked with a documentation label) can be as simple as checking for spelling and grammar. If you encounter situations that can be explained better in the docs, just write a comment or edit the file right away to get started with your own contribution.
-- **Providing translations**  
-We will implement translations ASAP and provide a clear contribution guide to how you can help translating the application.
-
-Each of these tasks is highly impactful, and maintainers will greatly appreciate your help.
-
-If you are eager to start contributing code right away, we have a list of [good first issues](https://github.com/cashubtc/eNuts/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) that contain bugs which have a relatively limited scope. We use GitHub [issues](https://github.com/cashubtc/eNuts/issues) and [pull requests](https://github.com/cashubtc/eNuts/pulls) to keep track of bug reports and contributions from the community. Pull request have to pass the tests and to be reviewed by a maintainer.
-
-The process of proposing a change to eNuts can be summarized as follows:
-
-1. Verify the open [issues](https://github.com/cashubtc/eNuts/issues) and [discussions](https://github.com/cashubtc/eNuts/discussions) to see if a related topic is available.
-2. Fork the repository and create your branch from `main`
-3. Make the desired changes to the sources and add tests if required.
-4. Ensure the test suite passes, either locally with `npm run test` or on CI once you opened a pull request.
-5. Make sure your code lints with `npm run lint`
-6. Push the changes to your fork.
-7. Create a pull request to the eNuts repository.
-8. Request a review, link a related issue and describe your pull request.
-9. If changes are requested and addressed, please request a new review to notify reviewers to take another look.
-
-If all goes well, your pull request will be merged. If it is not merged, maintainers will do their best to explain the reason why.
-
 ## 🚀 Getting started
 
 1. Fork this repository and create a local clone.
@@ -119,7 +88,11 @@ If all goes well, your pull request will be merged. If it is not merged, maintai
 4. Download the [Expo Go](https://expo.dev/client) app.
 5. Scan the QR code provided by your terminal using the app (iOS users will have to use the Camera app).
 6. A browser tab will be opened. Press the "Expo Go" button in the bottom of the page.
-7. eNuts will be bundled up and run on your device.
+7. eNuts will be bundled up and will run on your device.
+
+## 👏 Contribute
+
+The main purpose of this repository is to continue evolving and pushing the adoption of Ecash for Bitcoin using the Cashu protocol. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bug fixes and improvements. Read more on [how to contribute](https://github.com/cashubtc/eNuts/blob/main/CONTRIBUTING.md).
 
 ## 🎉 Releases
 
