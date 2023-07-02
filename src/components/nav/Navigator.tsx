@@ -1,3 +1,4 @@
+import AboutSettings from '@comps/screens/Settings/About'
 import type { RootStackParamList } from '@model/nav'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import AddressbookPage from '@screens/Addressbook'
@@ -88,6 +89,7 @@ export default function Navigator() {
 				<Stack.Screen name='Display settings' component={DisplaySettings} />
 				<Stack.Screen name='Security settings' component={SecuritySettings} />
 				<Stack.Screen name='Language settings' component={LanguageSettings} />
+				<Stack.Screen name='About settings' component={AboutSettings} />
 				<Stack.Screen name='BackupPage' component={BackupPage} />
 			</Stack.Navigator>
 		</View>

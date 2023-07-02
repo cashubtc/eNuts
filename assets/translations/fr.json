@@ -96,7 +96,12 @@
     "backToDashboard": "Retour au tableau de bord",
     "default": "Par défaut",
     "accept": "Accepter",
-    "today": "Aujourd'hui"
+    "continue": "Continuer",
+    "today": "Aujourd'hui",
+    "readme": "Lisez-moi",
+    "githubIssues": "GitHub problèmes et questions",
+    "cashuRandD": "Cashu Telegram",
+    "enutsRandD": "eNuts Telegram"
   },
   "wallet": {
     "disclaimer": "Veuillez noter qu'il s'agit d'une version alpha à un stade précoce et qu'elle est encore en cours de test avant sa sortie officielle. Le logiciel et tous les contenus qui s'y trouvent sont fournis « tels quels » et « tels que disponibles ». Nous n'offrons aucune garantie, expresse ou implicite, quant à l'adéquation ou à l'utilisabilité du logiciel ou de l'un de ses contenus.",
@@ -119,7 +124,8 @@
     "settings": "Paramètres",
     "language": "Langue",
     "security": "Sécurité",
-    "backup": "Sauvegarde"
+    "backup": "Sauvegarde",
+    "about": "À propos de nous"
   },
   "bottomNav": {
     "contacts": "Contacts"
@@ -214,5 +220,6 @@
   "getStarted": "Commencer",
   "startHint": "Vous devriez ajouter une mint à laquelle vous faites confiance avant d'envoyer ou de recevoir des token.",
   "addMintNow": "Ajoutez une mint",
-  "willDoLater": "Je ferai plus tard"
+  "willDoLater": "Je ferai plus tard",
+  "aboutToLeaveTo": "Vous êtes sur le point de quitter"
 }

@@ -1,5 +1,5 @@
 import usePrompt from '@comps/hooks/Prompt'
-import { ChevronRightIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
+import { AboutIcon, ChevronRightIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
@@ -39,6 +39,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					icon={<LockIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Security settings')}
 					hasSeparator
+					hasChevron
 				/>
 				<SettingsMenuItem
 					txt={t('topNav.display')}
@@ -46,6 +47,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					icon={<PaletteIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Display settings')}
 					hasSeparator
+					hasChevron
 				/>
 				<SettingsMenuItem
 					txt={t('topNav.language')}
@@ -53,6 +55,15 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					icon={<LanguageIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Language settings')}
 					hasSeparator
+					hasChevron
+				/>
+				<SettingsMenuItem
+					txt={t('topNav.about')}
+					txtColor={color.TEXT}
+					icon={<AboutIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('About settings')}
+					hasSeparator
+					hasChevron
 				/>
 				<SettingsMenuItem
 					txt={t('delHistory')}
@@ -61,7 +72,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					onPress={() => setConfirm(true)}
 				/>
 			</View>
-			<Txt txt={`v${version}`} styles={[styles.version]} />
+			<Txt txt={`eNuts v${version}`} styles={[styles.version]} />
 			<BottomNav navigation={navigation} route={route} />
 			<QuestionModal
 				header={t('common.delHistoryQ')}
@@ -83,9 +94,10 @@ interface IMenuItemProps {
 	onPress: () => void
 	icon: React.ReactElement
 	hasSeparator?: boolean
+	hasChevron?: boolean
 }
 
-function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator }: IMenuItemProps) {
+function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator, hasChevron }: IMenuItemProps) {
 	return (
 		<>
 			<TouchableOpacity
@@ -98,7 +110,7 @@ function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator }: IMenuI
 						{txt}
 					</Text>
 				</View>
-				{!txt.includes('Delete') &&
+				{hasChevron &&
 					<ChevronRightIcon color={txtColor} />
 				}
 			</TouchableOpacity>
