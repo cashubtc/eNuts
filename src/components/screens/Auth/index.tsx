@@ -53,7 +53,9 @@ export default function AuthPage() {
 							<Text style={styles.num}>
 								2
 							</Text>
-							<Text></Text>
+							<Text style={styles.char}>
+								ABC
+							</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={() => handleInput(3)}
@@ -61,6 +63,9 @@ export default function AuthPage() {
 						>
 							<Text style={styles.num}>
 								3
+							</Text>
+							<Text style={styles.char}>
+								DEF
 							</Text>
 						</TouchableOpacity>
 					</View>
@@ -73,6 +78,9 @@ export default function AuthPage() {
 							<Text style={styles.num}>
 								4
 							</Text>
+							<Text style={styles.char}>
+								GHI
+							</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={() => handleInput(5)}
@@ -81,6 +89,9 @@ export default function AuthPage() {
 							<Text style={styles.num}>
 								5
 							</Text>
+							<Text style={styles.char}>
+								JKL
+							</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={() => handleInput(6)}
@@ -88,6 +99,9 @@ export default function AuthPage() {
 						>
 							<Text style={styles.num}>
 								6
+							</Text>
+							<Text style={styles.char}>
+								MNO
 							</Text>
 						</TouchableOpacity>
 					</View>
@@ -100,6 +114,9 @@ export default function AuthPage() {
 							<Text style={styles.num}>
 								7
 							</Text>
+							<Text style={styles.char}>
+								PQRS
+							</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
 							style={styles.numWrap}
@@ -108,6 +125,9 @@ export default function AuthPage() {
 							<Text style={styles.num}>
 								8
 							</Text>
+							<Text style={styles.char}>
+								TUV
+							</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
 							style={styles.numWrap}
@@ -115,6 +135,9 @@ export default function AuthPage() {
 						>
 							<Text style={styles.num}>
 								9
+							</Text>
+							<Text style={styles.char}>
+								WXYZ
 							</Text>
 						</TouchableOpacity>
 					</View>
@@ -188,14 +211,21 @@ const styles = StyleSheet.create({
 	},
 	numWrap: {
 		backgroundColor: '#73BD88',
-		borderRadius: 50,
-		paddingVertical: 13,
-		paddingHorizontal: 25,
+		width: 70,
+		height: 70,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderRadius: 35,
 	},
 	num: {
 		fontSize: 28,
 		fontWeight: '300',
 		color: '#FAFAFA',
+	},
+	char: {
+		fontSize: 10,
+		color: '#FAFAFA',
+		marginTop: -5,
 	},
 	skip: {
 		color: '#FAFAFA',
