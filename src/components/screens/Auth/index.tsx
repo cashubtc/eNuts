@@ -10,7 +10,7 @@ export default function AuthPage() {
 	const { color, highlight } = useContext(ThemeContext)
 	const [input, setInput] = useState<number[]>([])
 	const handleInput = (val: number) => {
-		if (input.length === 4) { return }
+		if (input.length === 4 && val !== 10 && val !== 11) { return }
 		vib(25)
 		// handle delete -> val === 10
 		if (val === 10) {
