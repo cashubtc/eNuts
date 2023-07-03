@@ -1,26 +1,48 @@
 import { BackspaceIcon, CheckmarkIcon, LockIcon } from '@comps/Icons'
 import { ThemeContext } from '@src/context/Theme'
 import { l } from '@src/logger'
+import type { TAuthPageProps } from '@src/model/nav'
 import { vib } from '@src/util'
 import { globals, highlight as hi } from '@styles'
 import { useContext, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-export default function AuthPage() {
+// the number pad data where 10 is "backspace" and 11 is "submit"
+const pad = [
+	[{ n: 1 }, { n: 2, t: 'ABC' }, { n: 3, t: 'DEF' }],
+	[{ n: 4, t: 'GHI' }, { n: 5, t: 'JKL' }, { n: 6, t: 'MNO' }],
+	[{ n: 7, t: 'PQRS' }, { n: 8, t: 'TUV' }, { n: 9, t: 'WXYZ' }],
+	[{ n: 10 }, { n: 0 }, { n: 11 }],
+]
+
+export default function AuthPage({ navigation }: TAuthPageProps ) {
+	// TODO check if user should setup PIN or login with his PIN
 	const { color, highlight } = useContext(ThemeContext)
+	// PIN input state
 	const [input, setInput] = useState<number[]>([])
+	// handle pad press
 	const handleInput = (val: number) => {
+		// disable number pad once PIN has 4 digit
 		if (input.length === 4 && val !== 10 && val !== 11) { return }
+		// vibrate 25ms
 		vib(25)
-		// handle delete -> val === 10
+		// handle delete
 		if (val === 10) {
-			setInput(prev => (prev.slice(0, -1)))
-			l({ input })
+			setInput(prev => prev.slice(0, -1))
 			return
 		}
-		// handle submit -> val === 11
-		setInput([...input, val])
-		l({ input })
+		// handle submit
+		if (val === 11) {
+			// TODO 1: submit - 2: confirm PIN - 3: store hash of PIN and redirect to dashboard
+			l(`submit input ${input.join('')}`)
+			// TODO handle wrong submit and activate a lock countdown after N wrong attempts
+			return
+		}
+		setInput(prev => [...prev, val])
+	}
+	const handleSkip = () => {
+		// TODO store a boolean to remember that user skipped to avoid rendering this page on next start
+		navigation.navigate('dashboard')
 	}
 	return (
 		/* this is the initial pin setup page */
@@ -29,142 +51,53 @@ export default function AuthPage() {
 				<LockIcon width={40} height={40} color='#FAFAFA' />
 			</View>
 			<View style={styles.bottomSection}>
-				<Text style={styles.welcome}>
-					Welcome
-				</Text>
-				<Text style={styles.txt}>
-					You can setup a PIN to secure your app.
-				</Text>
+				{input.length > 0 ?
+					/* hidden pin after input */
+					<View style={[styles.pinWrap, { width: 25 * input.length }]}>
+						{input.map((_n, i) => <View key={i} style={styles.pinCircle} />)}
+					</View>
+					:
+					<>
+						{/* initial welcome on empty input // TODO update text content if user is logging in */}
+						<Text style={styles.welcome}>
+							Welcome
+						</Text>
+						<Text style={styles.txt}>
+							You can setup a PIN to secure your app.
+						</Text>
+					</>
+				}
+				{/* number pad */}
 				<View>
-					{/* 1 - 2 - 3 */}
-					<View style={styles.numberRow}>
-						<TouchableOpacity
-							onPress={() => handleInput(1)}
-							style={styles.numWrap}
-						>
-							<Text style={styles.num}>
-								1
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleInput(2)}
-							style={styles.numWrap}
-						>
-							<Text style={styles.num}>
-								2
-							</Text>
-							<Text style={styles.char}>
-								ABC
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleInput(3)}
-							style={styles.numWrap}
-						>
-							<Text style={styles.num}>
-								3
-							</Text>
-							<Text style={styles.char}>
-								DEF
-							</Text>
-						</TouchableOpacity>
-					</View>
-					{/* 4 - 5 - 6 */}
-					<View style={styles.numberRow}>
-						<TouchableOpacity
-							onPress={() => handleInput(4)}
-							style={styles.numWrap}
-						>
-							<Text style={styles.num}>
-								4
-							</Text>
-							<Text style={styles.char}>
-								GHI
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleInput(5)}
-							style={styles.numWrap}
-						>
-							<Text style={styles.num}>
-								5
-							</Text>
-							<Text style={styles.char}>
-								JKL
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleInput(6)}
-							style={styles.numWrap}
-						>
-							<Text style={styles.num}>
-								6
-							</Text>
-							<Text style={styles.char}>
-								MNO
-							</Text>
-						</TouchableOpacity>
-					</View>
-					{/* 7 - 8 - 9 */}
-					<View style={styles.numberRow}>
-						<TouchableOpacity
-							style={styles.numWrap}
-							onPress={() => handleInput(7)}
-						>
-							<Text style={styles.num}>
-								7
-							</Text>
-							<Text style={styles.char}>
-								PQRS
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={styles.numWrap}
-							onPress={() => handleInput(8)}
-						>
-							<Text style={styles.num}>
-								8
-							</Text>
-							<Text style={styles.char}>
-								TUV
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={styles.numWrap}
-							onPress={() => handleInput(9)}
-						>
-							<Text style={styles.num}>
-								9
-							</Text>
-							<Text style={styles.char}>
-								WXYZ
-							</Text>
-						</TouchableOpacity>
-					</View>
-					{/* del - 0 - OK */}
-					<View style={styles.numberRow}>
-						<TouchableOpacity
-							onPress={() => handleInput(10)}
-						>
-							<BackspaceIcon width={32} height={32} color='#FAFAFA' />
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleInput(0)}
-							style={styles.numWrap}
-						>
-							<Text style={styles.num}>
-								0
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleInput(11)}
-							disabled
-						>
-							<CheckmarkIcon width={32} height={32} color='#FAFAFA' />
-						</TouchableOpacity>
-					</View>
-					{/* skip */}
-					<TouchableOpacity>
+					{pad.map((row, i) => (
+						<View key={i} style={styles.numberRow}>
+							{row.map(pad => (
+								<TouchableOpacity
+									key={`${i}${pad.n}`}
+									onPress={() => handleInput(pad.n)}
+									style={pad.n < 10 ? styles.numWrap : styles.iconWrap}
+									disabled={(pad.n === 11 && input.length < 4) || (pad.n < 10 && input.length === 4) || (pad.n === 10 && !input.length)}
+								>
+									{pad.n === 10 ? <BackspaceIcon width={32} height={32} color='#FAFAFA' /> // backspace
+										: pad.n === 11 ? <CheckmarkIcon width={32} height={32} color={input.length < 4 ? '#999' : '#FAFAFA'} /> // submit
+											: // number pads
+											<>
+												<Text style={styles.num}>
+													{pad.n}
+												</Text>
+												{pad.t &&
+													<Text style={styles.char}>
+														{pad.t}
+													</Text>
+												}
+											</>
+									}
+								</TouchableOpacity>
+							))}
+						</View>
+					))}
+					{/* skip // TODO hide this if user is logging in - Provide a "back" button on PIN confirm state */}
+					<TouchableOpacity onPress={handleSkip}>
 						<Text style={[globals(color).pressTxt, styles.skip]}>
 							Will do later
 						</Text>
@@ -182,6 +115,18 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingTop: 20,
 		paddingHorizontal: 20,
+	},
+	pinWrap: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-around',
+		marginVertical: 40
+	},
+	pinCircle: {
+		width: 10,
+		height: 10,
+		borderRadius: 5,
+		backgroundColor: '#FAFAFA'
 	},
 	lockWrap: {
 		marginTop: 60,
@@ -211,6 +156,13 @@ const styles = StyleSheet.create({
 	},
 	numWrap: {
 		backgroundColor: '#73BD88',
+		width: 70,
+		height: 70,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderRadius: 35,
+	},
+	iconWrap: {
 		width: 70,
 		height: 70,
 		justifyContent: 'center',

@@ -58,13 +58,19 @@ export default function App(initialProps: IInitialProps) {
 }
 
 function _App(_initialProps: IInitialProps) {
-	// auth
-	// const [shouldAuth, setShouldAuth] = useState(true)
+	// TODO:
+	// check if user has previously skipped PIN setup
+	// check if user has a PIN
 
-	// // check if auth setup page should be shown. Condition: User has not skipped process previously and has no auth
+	// const [auth, setAuth] = useState({
+	// 	shouldSetup: false,
+	// 	shouldAuth: false
+	// })
+
 	// useEffect(() => {
 
 	// }, [])
+
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { t, i18n } = useTranslation()
 	const [isRdy, setIsRdy] = useState(false)
