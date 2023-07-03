@@ -18,7 +18,7 @@ i18n.use(initReactI18next)
 			escapeValue: false
 		},
 		lng: getLanguageCode(),
-		debug,
+		// debug,
 		// Consider external storing of translations and fetch needed language on demand
 		// https://www.i18next.com/how-to/backend-fallback
 		resources: {

@@ -372,3 +372,11 @@ export function AboutIcon({ width, height, color }: TIconProps) {
 		</Svg>
 	)
 }
+export function BackspaceIcon({ width, height, color }: TIconProps) {
+	return (
+		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+			<Path d="M14.3855 12.0034L17.2139 14.8319L16.5068 15.539L13.6783 12.7105L10.8499 15.5389L10.1428 14.8318L12.9712 12.0034L10.1428 9.17505L10.85 8.46794L13.6783 11.2963L16.5068 8.4679L17.2139 9.175L14.3855 12.0034Z" fill={color} />
+			<Path fill-rule="evenodd" clip-rule="evenodd" d="M7.38559 4.5H21.4999V19.5H7.38559L1.87964 12L7.38559 4.5ZM7.89201 5.5L3.12018 12L7.892 18.5H20.4999V5.5H7.89201Z" fill={color} />
+		</Svg>
+	)
+}

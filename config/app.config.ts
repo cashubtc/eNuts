@@ -51,7 +51,7 @@ const config: ExpoConfig = {
 	version: `${version}${!IS_PROD ? `-${_appVariant}` : ''}`,
 	scheme: 'cashu',
 	orientation: 'portrait',
-	icon: './assets/icon_transparent.png',
+	icon: './assets/adaptive-icon.png',
 	userInterfaceStyle: 'automatic',
 	splash: {
 		image: './assets/splash.png',
