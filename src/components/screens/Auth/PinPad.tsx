@@ -17,19 +17,27 @@ interface IPinPadProps {
 	pinInput: number[]
 	confirmInput: number[]
 	confirm: boolean
-	handleInput: (val: number) => void
+	handleInput: (val: number) => Promise<void>
 }
 
 export default function PinPad({ pinInput, confirmInput, confirm, handleInput }: IPinPadProps) {
 	// should pad input be disabled
 	const shouldDisablePad = (val: number) => (
+		shouldDisableSubmit(val) ||
+		// disable backspace button in input is empty
+		(!pinInput.length && val === 10 && !confirm) ||
+		// disable backspace button in confirm input is empty
+		(!confirmInput.length && val === 10 && confirm) ||
+		// disable pad number buttons if any input (initial or confirm) >= 12
 		(pinInput.length >= 12 && val !== 10 && val !== 11 && !confirm) ||
 		(confirmInput.length >= 12 && val !== 10 && val !== 11 && confirm)
 	)
 	// should submit be disabled
-	const shouldDisableSubmit = () => (
-		(!confirm && pinInput.length < 4) ||
-		(confirm && confirmInput.length < 4)
+	const shouldDisableSubmit = (val: number) => (
+		val === 11 && (
+			(!confirm && pinInput.length < 4) ||
+			(confirm && confirmInput.length < 4)
+		)
 	)
 	return (
 		<>
@@ -38,12 +46,12 @@ export default function PinPad({ pinInput, confirmInput, confirm, handleInput }:
 					{row.map(pad => (
 						<TouchableOpacity
 							key={`${i}${pad.n}`}
-							onPress={() => handleInput(pad.n)}
+							onPress={() => void handleInput(pad.n)}
 							style={[styles.numWrap, pad.n < 10 ? { backgroundColor: padBgColor } : {}]}
 							disabled={shouldDisablePad(pad.n)}
 						>
 							{pad.n === 10 ? <BackspaceIcon width={32} height={32} color={white} /> // backspace
-								: pad.n === 11 ? <CheckmarkIcon width={32} height={32} color={shouldDisableSubmit() ? grey : white} /> // submit
+								: pad.n === 11 ? <CheckmarkIcon width={32} height={32} color={shouldDisableSubmit(pad.n) ? grey : white} /> // submit
 									: // number pads
 									<>
 										<Text style={styles.num}>

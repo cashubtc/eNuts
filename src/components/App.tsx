@@ -252,6 +252,10 @@ function _App(_initialProps: IInitialProps) {
 				setClaimed(false)
 				// check for clipboard valid cashu token when the app comes to the foregorund
 				await handleForeground()
+			} else {
+				// app lost focus and is in the backgroud
+				// TODO fix pin lock countdown does not work if app goes to the background.
+				l('App is in the background!')
 			}
 			appState.current = nextAppState
 		})

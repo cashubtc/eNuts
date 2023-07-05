@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer/'
+
 import { BytesFormat } from './types'
 
 export function uint8ArrTo(result: Uint8Array, format: BytesFormat = 'hex') {

@@ -5,7 +5,6 @@ import { SimpleKeyValueStore } from './SimpleKeyValueStore'
 
 const store = new SimpleKeyValueStore('__store__')
 
-const asyncStore = new AsyncStore()
+const secureStore = new SecureStore()
 
-export { asyncStore, historyStore, SecureStore, SimpleKeyValueStore, store }
-
+export { AsyncStore, historyStore, secureStore, SimpleKeyValueStore, store }

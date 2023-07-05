@@ -1,11 +1,13 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
-import { LockIcon } from '@comps/Icons'
-import { l } from '@log'
+import { LockIcon, UnlockIcon } from '@comps/Icons'
+import Loading from '@comps/Loading'
+import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
-import { store } from '@store'
+import { AsyncStore, secureStore, store } from '@store'
 import { globals, highlight as hi } from '@styles'
-import { formatSeconds, vib } from '@util'
+import { formatSeconds, isNull, vib } from '@util'
+import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -13,10 +15,20 @@ import PinHint from './Hint'
 import PinDots from './PinDots'
 import PinPad from './PinPad'
 
+interface ILockData {
+	mismatch: boolean
+	mismatchCount: number
+	locked: boolean
+	lockedCount: number
+	lockedTime: number,
+	timestamp: number
+}
+
 export default function AuthPage({ navigation }: TAuthPageProps) {
 	const { anim, shake } = useShakeAnimation()
-	// TODO check if user should setup PIN or login with his PIN
 	const { color, highlight } = useContext(ThemeContext)
+	// should login or initial pin setup
+	const [hash, setHash] = useState<string | null>(null)
 	// initial PIN input state
 	const [pinInput, setPinInput] = useState<number[]>([])
 	// confirm PIN input state
@@ -31,6 +43,8 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 		lockedCount: 0,
 		lockedTime: 0,
 	})
+	const [success, setSuccess] = useState(false)
+	// backspace handler
 	const handleDelete = () => {
 		// handle delete the confirmation pin input
 		if (confirm) {
@@ -40,54 +54,83 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 		// else: handle delete the initial pin input
 		setPinInput(prev => prev.slice(0, -1))
 	}
-	const handleConfirmMismatch = () => {
+	// pin mismatch handler
+	const handlePinMismatch = async () => {
 		// shake pin dots
 		shake()
+		const maxMismatchCount = attempts.mismatchCount + 1 === 3
+		const increasedLockedCount = attempts.lockedCount + 1
 		// vibrate longer if locked activated
-		vib(attempts.mismatchCount + 1 === 3 ? 1000 : 400)
-		// TODO store this info to avoid bypass state on app restart
-		setAttempts(prev => ({
-			...prev,
+		vib(maxMismatchCount ? 1000 : 400)
+		const attemptState = {
 			mismatch: true,
-			mismatchCount: prev.mismatchCount + 1 === 3 ? 0 : prev.mismatchCount + 1,
-			// set to true after 3 failing confirmation, to bring user back to pin setup
-			locked: prev.mismatchCount + 1 === 3,
-			// lockedCount: prev.mismatchCount + 1 === 3 ? prev.lockedCount + 1 : prev.lockedCount,
-			// lockedTime: MinuteInMs * (prev.lockedCount + 1) * (prev.lockedCount + 1) // 1min * 1 * 1 -> 1min * 2 * 2 -> ...
-		}))
+			mismatchCount: maxMismatchCount ? 0 : attempts.mismatchCount + 1,
+			locked: maxMismatchCount,
+			lockedCount: maxMismatchCount ? increasedLockedCount : attempts.lockedCount,
+			lockedTime: MinuteInS * Math.pow(increasedLockedCount, 2) // 1min * 1 * 1 -> 1min * 2 * 2 -> ...
+		}
+		// store this info to avoid bypass state on app restart
+		if (!confirm) {
+			await AsyncStore.setObj('lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
+		}
+		setAttempts(attemptState)
 		// reset mismatch state
 		const t = setTimeout(() => {
 			// if user fails confirming pin after 3 attemps, reset back to initial setup
-			if (attempts.locked) {
+			setConfirmInput([])
+			if (confirm && maxMismatchCount) {
 				setPinInput([])
 				setConfirm(false)
 			}
-			setConfirmInput([])
+			// hash is available === login state. Reset pin input
+			if (hash?.length) { setPinInput([]) }
 			setAttempts(prev => ({
 				...prev,
 				mismatch: false,
-				locked: false
+				locked: confirm ? false : prev.locked
 			}))
 			clearTimeout(t)
 		}, 1000)
 	}
-	const handleSubmit = () => {
-		// user is submitting a pin confirmation
-		if (confirm) {
-			// mismatch while confirming pin
-			if (pinInput.join('') !== confirmInput.join('')) {
-				handleConfirmMismatch()
+	// pin submit handler
+	const handleSubmit = async () => {
+		// user has setup a pin previously
+		if (hash?.length) {
+			// user is providing a wrong pin
+			if (hash256(pinInput.join('')) !== hash) {
+				await handlePinMismatch()
 				return
 			}
-			// else: PIN confirm is matching, // TODO hash & store the PIN and redirect to dashboard
+			// remove the lock data in storage
+			await AsyncStore.delete('lock')
+			// else: navigate to dashboard
+			navigation.navigate('dashboard')
 			return
 		}
-		// bring user in the confirm state
+		// user is submitting a pin confirmation
+		if (confirm) {
+			const pinStr = pinInput.join('')
+			// mismatch while confirming pin
+			if (pinStr !== confirmInput.join('')) {
+				await handlePinMismatch()
+				return
+			}
+			// else: PIN confirm is matching
+			setSuccess(true)
+			setPinInput([])
+			setConfirmInput([])
+			const hash = hash256(pinStr)
+			await secureStore.set('pin', hash)
+			// remove the lock data in storage
+			await AsyncStore.delete('lock')
+			navigation.navigate('dashboard')
+			return
+		}
+		// else: bring user in the confirm state after entering his first pin in setup
 		setConfirm(true)
 	}
 	// handle pad press
-	const handleInput = (val: number) => {
-		// TODO handle PIN login if user has setup a PIN
+	const handleInput = async (val: number) => {
 		// vibrate 25ms per pad touch
 		vib(25)
 		// backspace
@@ -97,7 +140,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 		}
 		// submit pin
 		if (val === 11) {
-			handleSubmit()
+			await handleSubmit()
 			return
 		}
 		// set pin-confirm input on initial setup
@@ -125,46 +168,70 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 		(pinInput.length > 0 && !confirm) ||
 		(confirm && confirmInput.length > 0)
 	)
-	// TODO lock input on login depending on wrong attempt count and locked count
-
-	// check if app is locked
-	// if is not locked, just proceed normally
-	// else
-	// check when app has been locked exactly
-	// calculate time in seconds since locked time
-	// substract calculated time from locktime
-	// if locktime <= 0 after calc, unlock
-	// else keep locked and set remaining locktime
-
+	// init
+	useEffect(() => {
+		void (async () => {
+			// check if app is locked
+			const lockData = await AsyncStore.getObj<ILockData>('lock')
+			if (lockData?.locked) {
+				// set state acccording to lockData timestamp
+				const now = Math.ceil(Date.now() / 1000)
+				const secsPassed = now - lockData.timestamp
+				const lockedTime = lockData.lockedTime - secsPassed
+				setAttempts({
+					mismatch: false,
+					mismatchCount: lockData.mismatchCount,
+					locked: lockedTime > 0,
+					lockedCount: lockData.lockedCount,
+					lockedTime
+				})
+			}
+			// check if a pin has been saved
+			const pinHash = await secureStore.get('pin')
+			setHash(isNull(pinHash) ? '' : pinHash)
+		})()
+	}, [])
 	// handle locked time
 	useEffect(() => {
-		if (!attempts.locked) { return }
-		l({ timeLocked: attempts.lockedTime })
+		if (!attempts.locked || confirm) { return }
 		const t = setInterval(() => {
 			if (attempts.lockedTime <= 0) {
 				clearInterval(t)
 				setAttempts(prev => ({ ...prev, locked: false }))
 				return
 			}
-			setAttempts(prev => ({ ...prev, lockedTime: prev.lockedTime - 1000 }))
+			setAttempts(prev => ({ ...prev, lockedTime: prev.lockedTime - 1 }))
 		}, 1000)
 		return () => clearInterval(t)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [attempts.locked, attempts.lockedTime])
-
+	// loading
+	if (isNull(hash)) {
+		return (
+			<View style={[styles.loadingContainer, { backgroundColor: hi[highlight] }]}>
+				<Loading white />
+			</View>
+		)
+	}
 	return (
 		/* this is the initial pin setup page */
 		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>
-			{attempts.locked && <View />}
-			<View style={attempts.locked ? { alignItems: 'center' } : styles.lockWrap}>
-				<LockIcon width={40} height={40} color={attempts.locked ? color.ERROR : '#FAFAFA'} />
-				{attempts.locked &&
+			{attempts.locked && !confirm && <View />}
+			<View style={attempts.locked && !confirm ? { alignItems: 'center' } : styles.lockWrap}>
+				{success ?
+					<UnlockIcon width={40} height={40} color={attempts.locked && !confirm ? color.ERROR : '#FAFAFA'} />
+					:
+					<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
+						<LockIcon width={40} height={40} color={attempts.locked ? color.ERROR : '#FAFAFA'} />
+					</Animated.View>
+				}
+				{attempts.locked && !confirm &&
 					<Text style={styles.lockedTime}>
-						{formatSeconds(attempts.lockedTime / 1000)}
+						{formatSeconds(attempts.lockedTime)}
 					</Text>
 				}
 			</View>
-			{attempts.locked ?
+			{attempts.locked && !confirm ?
 				<View />
 				:
 				<View style={styles.bottomSection}>
@@ -178,7 +245,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 							<PinDots mismatch={attempts.mismatch} input={confirm ? confirmInput : pinInput} />
 						</Animated.View>
 						:
-						<PinHint confirm={confirm} />
+						<PinHint confirm={confirm} login={hash.length > 0} />
 					}
 					{/* number pad */}
 					<View>
@@ -188,12 +255,14 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 							confirm={confirm}
 							handleInput={handleInput}
 						/>
-						{/* skip // TODO hide this if user is logging in */}
-						<TouchableOpacity onPress={() => void handleSkip()}>
-							<Text style={[globals(color).pressTxt, styles.skip]}>
-								{confirm ? 'Back' : 'Will do later'}
-							</Text>
-						</TouchableOpacity>
+						{/* skip or go back from confirm */}
+						{!hash.length &&
+							<TouchableOpacity onPress={() => void handleSkip()}>
+								<Text style={[globals(color).pressTxt, styles.skip]}>
+									{confirm ? 'Back' : 'Will do later'}
+								</Text>
+							</TouchableOpacity>
+						}
 					</View>
 				</View>
 			}
@@ -202,6 +271,11 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 }
 
 const styles = StyleSheet.create({
+	loadingContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	container: {
 		flex: 1,
 		justifyContent: 'space-between',
@@ -229,6 +303,7 @@ const styles = StyleSheet.create({
 	},
 	lockedTime: {
 		fontSize: 24,
-		marginTop: 20
+		marginTop: 20,
+		color: '#FAFAFA'
 	}
 })
