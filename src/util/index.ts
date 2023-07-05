@@ -69,7 +69,11 @@ export function formatMintUrl(url: string) {
 	const u = new URL(url)
 	return `${u.hostname.slice(0, 25)}...${u.pathname.slice(-10)}`
 }
-export function formatExpiry(time: number) {
+/**
+ * @param time a number in seconds
+ * @returns the following format: 00:00
+ */
+export function formatSeconds(time: number) {
 	const minutes = Math.floor(time / 60)
 	const seconds = time % 60
 	return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`

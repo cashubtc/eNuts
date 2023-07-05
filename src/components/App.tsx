@@ -17,7 +17,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
-import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
+import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isStr, sleep } from '@util'
 import { initCrashReporting } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -58,19 +58,11 @@ export default function App(initialProps: IInitialProps) {
 }
 
 function _App(_initialProps: IInitialProps) {
-	// TODO:
-	// check if user has previously skipped PIN setup
-	// check if user has a PIN
-
-	// const [auth, setAuth] = useState({
-	// 	shouldSetup: false,
-	// 	shouldAuth: false
-	// })
-
-	// useEffect(() => {
-
-	// }, [])
-
+	// TODO check if user has a PIN
+	const [auth, setAuth] = useState({
+		shouldSetup: false,
+		shouldAuth: false
+	})
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { t, i18n } = useTranslation()
 	const [isRdy, setIsRdy] = useState(false)
@@ -125,7 +117,6 @@ function _App(_initialProps: IInitialProps) {
 	}
 
 	const handleRedeem = async () => {
-		// startLoading()
 		if (!tokenInfo) { return }
 		setClaimOpen(false)
 		const encoded = getEncodedToken(tokenInfo.decoded)
@@ -222,6 +213,10 @@ function _App(_initialProps: IInitialProps) {
 				l('Error while initializing contacts from DB')
 			}
 		}
+		async function initAuth() {
+			const skipped = await store.get('pinSkipped')
+			setAuth(prev => ({ ...prev, shouldSetup: !isStr(skipped) || !skipped.length }))
+		}
 		async function init() {
 			await initDB()
 			await initContacts()
@@ -230,6 +225,7 @@ function _App(_initialProps: IInitialProps) {
 			if (storedLng?.length) {
 				await i18n.changeLanguage(storedLng)
 			}
+			await initAuth()
 			// await dropTable('proofs')
 			// await dropTable('proofsUsed')
 			// await dropTable('keysetIds')

@@ -1,8 +1,11 @@
+import { AsyncStore } from './AsyncStore'
 import { historyStore } from './HistoryStore'
 import { SecureStore } from './SecureStore'
 import { SimpleKeyValueStore } from './SimpleKeyValueStore'
 
 const store = new SimpleKeyValueStore('__store__')
 
-export { historyStore, SecureStore, SimpleKeyValueStore, store }
+const asyncStore = new AsyncStore()
+
+export { asyncStore, historyStore, SecureStore, SimpleKeyValueStore, store }
 
