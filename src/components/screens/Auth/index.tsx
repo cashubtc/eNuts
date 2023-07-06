@@ -1,13 +1,12 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
 import { LockIcon, UnlockIcon } from '@comps/Icons'
-import Loading from '@comps/Loading'
 import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
-import { AsyncStore, secureStore, store } from '@store'
+import { AsyncStore, secureStore } from '@store'
 import { globals, highlight as hi } from '@styles'
-import { formatSeconds, isNull, vib } from '@util'
+import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -86,8 +85,11 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				await handlePinMismatch()
 				return
 			}
-			// remove the lock data in storage
-			await AsyncStore.delete('lock')
+			// remove the lock data and authbg in storage
+			await Promise.all([
+				AsyncStore.delete('lock'),
+				AsyncStore.delete('authBg')
+			])
 			// else: navigate to dashboard
 			navigation.navigate('dashboard')
 			return
@@ -145,7 +147,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			return
 		}
 		// skip pin setup
-		await store.set('pinSkipped', '1')
+		await AsyncStore.set('pinSkipped', '1')
 		navigation.navigate('dashboard')
 	}
 	// conditional rendering dots of pin input
@@ -153,18 +155,13 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		(pinInput.length > 0 && !isConfirm) ||
 		(isConfirm && confirmInput.length > 0)
 	)
-	// init
-	// useEffect(() => {
-	// 	void (async () => {
-
-	// 		// check if a pin has been saved
-	// 		const pinHash = await secureStore.get('pin')
-	// 		setHash(isNull(pinHash) ? '' : pinHash)
-	// 	})()
-	// }, [])
 	// handle locked time
 	useEffect(() => {
 		if (!attempts.locked || isConfirm) { return }
+		if (attempts.lockedTime <= 0) {
+			setAttempts(prev => ({ ...prev, locked: false }))
+			return
+		}
 		const t = setInterval(() => {
 			if (attempts.lockedTime <= 0) {
 				clearInterval(t)
@@ -176,14 +173,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		return () => clearInterval(t)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [attempts.locked, attempts.lockedTime])
-	// loading
-	if (isNull(route.params.shouldAuth)) {
-		return (
-			<View style={[styles.loadingContainer, { backgroundColor: hi[highlight] }]}>
-				<Loading white />
-			</View>
-		)
-	}
 	return (
 		/* this is the initial pin setup page */
 		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>

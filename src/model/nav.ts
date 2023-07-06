@@ -11,7 +11,7 @@ export type RootStackParamList = {
 	dashboard: undefined
 	auth: {
 		shouldSetup: boolean
-		shouldAuth: string | null
+		shouldAuth: string
 	}
 	send: undefined
 	sendToken: {
@@ -120,5 +120,6 @@ export type TBottomNavProps =
 	IContactPageProps
 export interface INavigatorProps {
 	shouldSetup: boolean
-	shouldAuth: string | null
+	shouldAuth: string
+	bgAuth?: boolean
 }

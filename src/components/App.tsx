@@ -16,10 +16,10 @@ import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
-import { AsyncStore, secureStore, store } from '@store'
+import { AsyncStore, secureStore } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
-import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isStr, sleep } from '@util'
+import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
 import { initCrashReporting } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -71,7 +71,7 @@ export default function App(initialProps: IInitialProps) {
 function _App(_initialProps: IInitialProps) {
 	const [auth, setAuth] = useState<INavigatorProps>({
 		shouldSetup: false,
-		shouldAuth: null
+		shouldAuth: ''
 	})
 	// PIN mismatch state
 	const [attempts, setAttempts] = useState({
@@ -82,10 +82,10 @@ function _App(_initialProps: IInitialProps) {
 		lockedTime: 0,
 	})
 	const handlePinForeground = async () => {
+		const now = Math.ceil(Date.now() / 1000)
 		const lockData = await AsyncStore.getObj<ILockData>('lock')
 		if (lockData) {
 			// set state acccording to lockData timestamp
-			const now = Math.ceil(Date.now() / 1000)
 			const secsPassed = now - lockData.timestamp
 			const lockedTime = lockData.lockedTime - secsPassed
 			setAttempts({
@@ -94,6 +94,13 @@ function _App(_initialProps: IInitialProps) {
 				lockedTime
 			})
 		}
+		// TODO find a way to navigate to the auth page
+		// const bgTimestamp = await AsyncStore.get('authBg')
+		// if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
+		// 	if (now - +bgTimestamp > FiveMins) {
+		// 		setAuth(prev => ({ ...prev }))
+		// 	}
+		// }
 	}
 	const pinData = { attempts, setAttempts }
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -247,20 +254,20 @@ function _App(_initialProps: IInitialProps) {
 			}
 		}
 		async function initAuth() {
-			const skipped = await store.get('pinSkipped')
+			const skipped = await AsyncStore.get('pinSkipped')
 			const pinHash = await secureStore.get('pin')
-			// check for pin attempts and app locked state
-			await handlePinForeground()
 			setAuth({
-				shouldAuth: pinHash,
+				shouldAuth: isNull(pinHash) ? '' : pinHash,
 				shouldSetup: !isStr(skipped) || !skipped.length
 			})
+			// check for pin attempts and app locked state
+			await handlePinForeground()
 		}
 		async function init() {
 			await initDB()
 			await initContacts()
 			await initPreferences()
-			const storedLng = await store.get('settings:lang')
+			const storedLng = await AsyncStore.get('settings:lang')
 			if (storedLng?.length) {
 				await i18n.changeLanguage(storedLng)
 			}
@@ -293,6 +300,10 @@ function _App(_initialProps: IInitialProps) {
 				await handlePinForeground()
 				// check for clipboard valid cashu token when the app comes to the foregorund
 				await handleForeground()
+			} else {
+				l('App has gone to the background!')
+				// store timestamp to activate auth after > 5mins in background
+				await AsyncStore.set('authBg', `${Math.ceil(Date.now() / 1000)}`)
 			}
 			appState.current = nextAppState
 		})

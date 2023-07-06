@@ -1,4 +1,5 @@
 export const MinuteInS = 60 as const /*  */
+export const FiveMins = 5 /*  */
 export const MinuteInMs = 60_000 as const /* 1_000 * 60 */
 export const HourInMs = 3_600_000 as const /* MinuteInMs * 60 */
 export const DayInMs = 86_400_000 as const /* HourInMs * 24 */

@@ -30,7 +30,7 @@ import { View } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
-export default function Navigator({ shouldSetup, shouldAuth }: INavigatorProps) {
+export default function Navigator({ shouldSetup, shouldAuth, bgAuth }: INavigatorProps) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={{
@@ -40,7 +40,7 @@ export default function Navigator({ shouldSetup, shouldAuth }: INavigatorProps) 
 			backgroundColor: color.BACKGROUND,
 		}}>
 			<Stack.Navigator
-				initialRouteName={shouldSetup || shouldAuth ? 'auth' : 'dashboard'}
+				initialRouteName={shouldSetup || shouldAuth || bgAuth ? 'auth' : 'dashboard'}
 				screenOptions={{
 					headerShown: false,
 					animation: 'fade',

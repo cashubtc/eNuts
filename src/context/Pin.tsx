@@ -1,5 +1,5 @@
 import { l } from '@log'
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 
 const usePin = () => {
 	const [attempts, setAttempts] = useState({
@@ -9,6 +9,9 @@ const usePin = () => {
 		lockedCount: 0,
 		lockedTime: 0,
 	})
+	useEffect(() => {
+		l('testtttttttttttttt')
+	}, [])
 	return { attempts, setAttempts }
 }
 
