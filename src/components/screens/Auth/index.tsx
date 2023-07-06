@@ -34,7 +34,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 	// confirm PIN input state
 	const [confirmInput, setConfirmInput] = useState<number[]>([])
 	// PIN confirm
-	const [confirm, setConfirm] = useState(false)
+	const [isConfirm, setIsConfirm] = useState(false)
 	// PIN confirmation mismatch
 	const [attempts, setAttempts] = useState({
 		mismatch: false,
@@ -47,7 +47,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 	// backspace handler
 	const handleDelete = () => {
 		// handle delete the confirmation pin input
-		if (confirm) {
+		if (isConfirm) {
 			setConfirmInput(prev => prev.slice(0, -1))
 			return
 		}
@@ -78,16 +78,16 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 		const t = setTimeout(() => {
 			// if user fails confirming pin after 3 attemps, reset back to initial setup
 			setConfirmInput([])
-			if (confirm && maxMismatchCount) {
+			if (isConfirm && maxMismatchCount) {
 				setPinInput([])
-				setConfirm(false)
+				setIsConfirm(false)
 			}
 			// hash is available === login state. Reset pin input
 			if (hash?.length) { setPinInput([]) }
 			setAttempts(prev => ({
 				...prev,
 				mismatch: false,
-				locked: confirm ? false : prev.locked
+				locked: isConfirm ? false : prev.locked
 			}))
 			clearTimeout(t)
 		}, 1000)
@@ -108,7 +108,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 			return
 		}
 		// user is submitting a pin confirmation
-		if (confirm) {
+		if (isConfirm) {
 			const pinStr = pinInput.join('')
 			// mismatch while confirming pin
 			if (pinStr !== confirmInput.join('')) {
@@ -127,7 +127,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 			return
 		}
 		// else: bring user in the confirm state after entering his first pin in setup
-		setConfirm(true)
+		setIsConfirm(true)
 	}
 	// handle pad press
 	const handleInput = async (val: number) => {
@@ -144,7 +144,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 			return
 		}
 		// set pin-confirm input on initial setup
-		if (confirm) {
+		if (isConfirm) {
 			setConfirmInput(prev => [...prev, val])
 			return
 		}
@@ -153,8 +153,8 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 	}
 	// skip pin setup || go back from confirm state to initial pin setup
 	const handleSkip = async () => {
-		if (confirm) {
-			setConfirm(false)
+		if (isConfirm) {
+			setIsConfirm(false)
 			setConfirmInput([])
 			setPinInput([])
 			return
@@ -166,7 +166,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 	// conditional rendering dots of pin input
 	const shouldShowPinSection = () => (
 		(pinInput.length > 0 && !confirm) ||
-		(confirm && confirmInput.length > 0)
+		(isConfirm && confirmInput.length > 0)
 	)
 	// init
 	useEffect(() => {
@@ -193,7 +193,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 	}, [])
 	// handle locked time
 	useEffect(() => {
-		if (!attempts.locked || confirm) { return }
+		if (!attempts.locked || isConfirm) { return }
 		const t = setInterval(() => {
 			if (attempts.lockedTime <= 0) {
 				clearInterval(t)
@@ -242,24 +242,24 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 					}
 					{shouldShowPinSection() ?
 						<Animated.View style={{ transform: [{ translateX: anim.current }] }}>
-							<PinDots mismatch={attempts.mismatch} input={confirm ? confirmInput : pinInput} />
+							<PinDots mismatch={attempts.mismatch} input={isConfirm ? confirmInput : pinInput} />
 						</Animated.View>
 						:
-						<PinHint confirm={confirm} login={hash.length > 0} />
+						<PinHint confirm={isConfirm} login={hash.length > 0} />
 					}
 					{/* number pad */}
 					<View>
 						<PinPad
 							pinInput={pinInput}
 							confirmInput={confirmInput}
-							confirm={confirm}
+							isConfirm={isConfirm}
 							handleInput={handleInput}
 						/>
 						{/* skip or go back from confirm */}
 						{!hash.length &&
 							<TouchableOpacity onPress={() => void handleSkip()}>
 								<Text style={[globals(color).pressTxt, styles.skip]}>
-									{confirm ? 'Back' : 'Will do later'}
+									{isConfirm ? 'Back' : 'Will do later'}
 								</Text>
 							</TouchableOpacity>
 						}

@@ -16,27 +16,27 @@ const pad = [
 interface IPinPadProps {
 	pinInput: number[]
 	confirmInput: number[]
-	confirm: boolean
+	isConfirm: boolean
 	handleInput: (val: number) => Promise<void>
 }
 
-export default function PinPad({ pinInput, confirmInput, confirm, handleInput }: IPinPadProps) {
+export default function PinPad({ pinInput, confirmInput, isConfirm, handleInput }: IPinPadProps) {
 	// should pad input be disabled
 	const shouldDisablePad = (val: number) => (
 		shouldDisableSubmit(val) ||
 		// disable backspace button in input is empty
-		(!pinInput.length && val === 10 && !confirm) ||
+		(!pinInput.length && val === 10 && !isConfirm) ||
 		// disable backspace button in confirm input is empty
-		(!confirmInput.length && val === 10 && confirm) ||
+		(!confirmInput.length && val === 10 && isConfirm) ||
 		// disable pad number buttons if any input (initial or confirm) >= 12
-		(pinInput.length >= 12 && val !== 10 && val !== 11 && !confirm) ||
-		(confirmInput.length >= 12 && val !== 10 && val !== 11 && confirm)
+		(pinInput.length >= 12 && val !== 10 && val !== 11 && !isConfirm) ||
+		(confirmInput.length >= 12 && val !== 10 && val !== 11 && isConfirm)
 	)
 	// should submit be disabled
 	const shouldDisableSubmit = (val: number) => (
 		val === 11 && (
-			(!confirm && pinInput.length < 4) ||
-			(confirm && confirmInput.length < 4)
+			(!isConfirm && pinInput.length < 4) ||
+			(isConfirm && confirmInput.length < 4)
 		)
 	)
 	return (
