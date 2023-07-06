@@ -21,8 +21,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context
 	const { attempts, setAttempts } = useContext(PinCtx)
-	// should login or initial pin setup
-	const hash = route.params.shouldAuth
 	// initial PIN input state
 	const [pinInput, setPinInput] = useState<number[]>([])
 	// confirm PIN input state
@@ -70,7 +68,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				setIsConfirm(false)
 			}
 			// hash is available === login state. Reset pin input
-			if (hash?.length) { setPinInput([]) }
+			if (route.params.shouldAuth?.length) { setPinInput([]) }
 			setAttempts(prev => ({
 				...prev,
 				mismatch: false,
@@ -82,9 +80,9 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	// pin submit handler
 	const handleSubmit = async () => {
 		// user has setup a pin previously
-		if (hash?.length) {
+		if (route.params.shouldAuth?.length) {
 			// user is providing a wrong pin
-			if (hash256(pinInput.join('')) !== hash) {
+			if (hash256(pinInput.join('')) !== route.params.shouldAuth) {
 				await handlePinMismatch()
 				return
 			}
@@ -179,7 +177,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [attempts.locked, attempts.lockedTime])
 	// loading
-	if (isNull(hash)) {
+	if (isNull(route.params.shouldAuth)) {
 		return (
 			<View style={[styles.loadingContainer, { backgroundColor: hi[highlight] }]}>
 				<Loading white />
@@ -218,7 +216,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 							<PinDots mismatch={attempts.mismatch} input={isConfirm ? confirmInput : pinInput} />
 						</Animated.View>
 						:
-						<PinHint confirm={isConfirm} login={hash.length > 0} />
+						<PinHint confirm={isConfirm} login={route.params.shouldAuth.length > 0} />
 					}
 					{/* number pad */}
 					<View>
@@ -229,7 +227,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 							handleInput={handleInput}
 						/>
 						{/* skip or go back from confirm */}
-						{!hash.length &&
+						{!route.params.shouldAuth.length &&
 							<TouchableOpacity onPress={() => void handleSkip()}>
 								<Text style={[globals(color).pressTxt, styles.skip]}>
 									{isConfirm ? 'Back' : 'Will do later'}
