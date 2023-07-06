@@ -9,7 +9,10 @@ import type { IHistoryEntry, IMintUrl } from '.'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RootStackParamList = {
 	dashboard: undefined
-	auth: undefined
+	auth: {
+		shouldSetup: boolean
+		shouldAuth: string | null
+	}
 	send: undefined
 	sendToken: {
 		token: string
@@ -115,3 +118,7 @@ export type TBottomNavProps =
 	TDisplaySettingsPageProps |
 	TSettingsPageProps |
 	IContactPageProps
+export interface INavigatorProps {
+	shouldSetup: boolean
+	shouldAuth: string | null
+}

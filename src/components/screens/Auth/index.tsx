@@ -3,6 +3,7 @@ import { LockIcon, UnlockIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
+import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
 import { AsyncStore, secureStore, store } from '@store'
 import { globals, highlight as hi } from '@styles'
@@ -15,34 +16,20 @@ import PinHint from './Hint'
 import PinDots from './PinDots'
 import PinPad from './PinPad'
 
-interface ILockData {
-	mismatch: boolean
-	mismatchCount: number
-	locked: boolean
-	lockedCount: number
-	lockedTime: number,
-	timestamp: number
-}
-
-export default function AuthPage({ navigation }: TAuthPageProps) {
+export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
+	// PIN mismatch context
+	const { attempts, setAttempts } = useContext(PinCtx)
 	// should login or initial pin setup
-	const [hash, setHash] = useState<string | null>(null)
+	const hash = route.params.shouldAuth
 	// initial PIN input state
 	const [pinInput, setPinInput] = useState<number[]>([])
 	// confirm PIN input state
 	const [confirmInput, setConfirmInput] = useState<number[]>([])
 	// PIN confirm
 	const [isConfirm, setIsConfirm] = useState(false)
-	// PIN confirmation mismatch
-	const [attempts, setAttempts] = useState({
-		mismatch: false,
-		mismatchCount: 0,
-		locked: false,
-		lockedCount: 0,
-		lockedTime: 0,
-	})
+	// pin confirm success
 	const [success, setSuccess] = useState(false)
 	// backspace handler
 	const handleDelete = () => {
@@ -169,28 +156,14 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 		(isConfirm && confirmInput.length > 0)
 	)
 	// init
-	useEffect(() => {
-		void (async () => {
-			// check if app is locked
-			const lockData = await AsyncStore.getObj<ILockData>('lock')
-			if (lockData) {
-				// set state acccording to lockData timestamp
-				const now = Math.ceil(Date.now() / 1000)
-				const secsPassed = now - lockData.timestamp
-				const lockedTime = lockData.lockedTime - secsPassed
-				setAttempts({
-					mismatch: false,
-					mismatchCount: lockData.mismatchCount,
-					locked: lockData.locked,
-					lockedCount: lockData.lockedCount,
-					lockedTime
-				})
-			}
-			// check if a pin has been saved
-			const pinHash = await secureStore.get('pin')
-			setHash(isNull(pinHash) ? '' : pinHash)
-		})()
-	}, [])
+	// useEffect(() => {
+	// 	void (async () => {
+
+	// 		// check if a pin has been saved
+	// 		const pinHash = await secureStore.get('pin')
+	// 		setHash(isNull(pinHash) ? '' : pinHash)
+	// 	})()
+	// }, [])
 	// handle locked time
 	useEffect(() => {
 		if (!attempts.locked || isConfirm) { return }

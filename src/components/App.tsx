@@ -8,13 +8,15 @@ import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import MyModal from '@modal'
 import type { IInitialProps, IPreferences, ITokenInfo } from '@model'
+import type { INavigatorProps } from '@model/nav'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer } from '@react-navigation/native'
 import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
+import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
-import { store } from '@store'
+import { AsyncStore, secureStore, store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isStr, sleep } from '@util'
@@ -32,6 +34,15 @@ import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './ErrorScreen/ErrorDetails'
 import Toaster from './Toaster'
 import Txt from './Txt'
+
+interface ILockData {
+	mismatch: boolean
+	mismatchCount: number
+	locked: boolean
+	lockedCount: number
+	lockedTime: number,
+	timestamp: number
+}
 
 initCrashReporting()
 
@@ -58,11 +69,33 @@ export default function App(initialProps: IInitialProps) {
 }
 
 function _App(_initialProps: IInitialProps) {
-	// TODO check if user has a PIN
-	const [auth, setAuth] = useState({
+	const [auth, setAuth] = useState<INavigatorProps>({
 		shouldSetup: false,
-		shouldAuth: false
+		shouldAuth: null
 	})
+	// PIN mismatch state
+	const [attempts, setAttempts] = useState({
+		mismatch: false,
+		mismatchCount: 0,
+		locked: false,
+		lockedCount: 0,
+		lockedTime: 0,
+	})
+	const handlePinForeground = async () => {
+		const lockData = await AsyncStore.getObj<ILockData>('lock')
+		if (lockData) {
+			// set state acccording to lockData timestamp
+			const now = Math.ceil(Date.now() / 1000)
+			const secsPassed = now - lockData.timestamp
+			const lockedTime = lockData.lockedTime - secsPassed
+			setAttempts({
+				...lockData,
+				mismatch: false,
+				lockedTime
+			})
+		}
+	}
+	const pinData = { attempts, setAttempts }
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { t, i18n } = useTranslation()
 	const [isRdy, setIsRdy] = useState(false)
@@ -215,7 +248,11 @@ function _App(_initialProps: IInitialProps) {
 		}
 		async function initAuth() {
 			const skipped = await store.get('pinSkipped')
-			setAuth(prev => ({ ...prev, shouldSetup: !isStr(skipped) || !skipped.length }))
+			const pinHash = await secureStore.get('pin')
+			setAuth({
+				shouldAuth: pinHash,
+				shouldSetup: !isStr(skipped) || !skipped.length
+			})
 		}
 		async function init() {
 			await initDB()
@@ -235,7 +272,7 @@ function _App(_initialProps: IInitialProps) {
 			// await dropTable('contacts')
 			const mintBalsTotal = (await getMintsBalances()).reduce((acc, cur) => acc + cur.amount, 0)
 			const bal = await getBalance()
-			l({ bal, mintBalsTotal })
+			// l({ bal, mintBalsTotal })
 			if (mintBalsTotal !== bal) {
 				await addAllMintIds()
 			}
@@ -250,12 +287,10 @@ function _App(_initialProps: IInitialProps) {
 			) {
 				l('App has come to the foreground!')
 				setClaimed(false)
+				// check for pin attempts and app locked state
+				await handlePinForeground()
 				// check for clipboard valid cashu token when the app comes to the foregorund
 				await handleForeground()
-			} else {
-				// app lost focus and is in the backgroud
-				// TODO fix pin lock countdown does not work if app goes to the background.
-				l('App is in the background!')
 			}
 			appState.current = nextAppState
 		})
@@ -268,40 +303,42 @@ function _App(_initialProps: IInitialProps) {
 	return (
 		<ThemeContext.Provider value={themeData}>
 			<NavigationContainer theme={theme === 'Light' ? light : dark}>
-				<FocusClaimCtx.Provider value={claimData}>
-					<ContactsContext.Provider value={contactData}>
-						<KeyboardProvider>
-							<Navigator shouldSetup={true} shouldAuth={false} />
-							<StatusBar style="auto" />
-							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-							<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
-								<Text style={globals(color, highlight).modalHeader}>
-									{t('common.foundCashuClipboard')}
-								</Text>
-								<Text style={globals(color, highlight).modalTxt}>
-									{t('history.memo')}: {tokenInfo?.decoded.memo}{'\n'}
-									<Txt
-										txt={formatInt(tokenInfo?.value ?? 0)}
-										styles={[{ fontWeight: '500' }]}
+				<PinCtx.Provider value={pinData}>
+					<FocusClaimCtx.Provider value={claimData}>
+						<ContactsContext.Provider value={contactData}>
+							<KeyboardProvider>
+								<Navigator shouldSetup={auth.shouldSetup} shouldAuth={auth.shouldAuth} />
+								<StatusBar style="auto" />
+								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
+								<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
+									<Text style={globals(color, highlight).modalHeader}>
+										{t('common.foundCashuClipboard')}
+									</Text>
+									<Text style={globals(color, highlight).modalTxt}>
+										{t('history.memo')}: {tokenInfo?.decoded.memo}{'\n'}
+										<Txt
+											txt={formatInt(tokenInfo?.value ?? 0)}
+											styles={[{ fontWeight: '500' }]}
+										/>
+										{' '}Satoshi {t('common.fromMint')}:{' '}
+										{tokenInfo?.mints.join(', ')}
+									</Text>
+									<Button
+										txt={t('common.accept')}
+										onPress={() => void handleRedeem()}
 									/>
-									{' '}Satoshi {t('common.fromMint')}:{' '}
-									{tokenInfo?.mints.join(', ')}
-								</Text>
-								<Button
-									txt={t('common.accept')}
-									onPress={() => void handleRedeem()}
-								/>
-								<View style={{ marginVertical: 10 }} />
-								<Button
-									txt={t('common.cancel')}
-									outlined
-									onPress={() => setClaimOpen(false)}
-								/>
-							</MyModal>
-							{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-						</KeyboardProvider>
-					</ContactsContext.Provider>
-				</FocusClaimCtx.Provider>
+									<View style={{ marginVertical: 10 }} />
+									<Button
+										txt={t('common.cancel')}
+										outlined
+										onPress={() => setClaimOpen(false)}
+									/>
+								</MyModal>
+								{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+							</KeyboardProvider>
+						</ContactsContext.Provider>
+					</FocusClaimCtx.Provider>
+				</PinCtx.Provider>
 			</NavigationContainer>
 		</ThemeContext.Provider>
 	)

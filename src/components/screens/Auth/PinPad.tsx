@@ -24,7 +24,7 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, handleInput 
 	// should pad input be disabled
 	const shouldDisablePad = (val: number) => (
 		shouldDisableSubmit(val) ||
-		// disable backspace button in input is empty
+		// disable backspace button if pin input is empty
 		(!pinInput.length && val === 10 && !isConfirm) ||
 		// disable backspace button in confirm input is empty
 		(!confirmInput.length && val === 10 && isConfirm) ||
