@@ -249,6 +249,8 @@ function _App(_initialProps: IInitialProps) {
 		async function initAuth() {
 			const skipped = await store.get('pinSkipped')
 			const pinHash = await secureStore.get('pin')
+			// check for pin attempts and app locked state
+			await handlePinForeground()
 			setAuth({
 				shouldAuth: pinHash,
 				shouldSetup: !isStr(skipped) || !skipped.length
