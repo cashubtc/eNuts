@@ -17,10 +17,11 @@ interface IPinPadProps {
 	pinInput: number[]
 	confirmInput: number[]
 	isConfirm: boolean
+	mismatch: boolean
 	handleInput: (val: number) => Promise<void>
 }
 
-export default function PinPad({ pinInput, confirmInput, isConfirm, handleInput }: IPinPadProps) {
+export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, handleInput }: IPinPadProps) {
 	// should pad input be disabled
 	const shouldDisablePad = (val: number) => (
 		shouldDisableSubmit(val) ||
@@ -35,6 +36,7 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, handleInput 
 	// should submit be disabled
 	const shouldDisableSubmit = (val: number) => (
 		val === 11 && (
+			mismatch ||
 			(!isConfirm && pinInput.length < 4) ||
 			(isConfirm && confirmInput.length < 4)
 		)

@@ -224,6 +224,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 							pinInput={pinInput}
 							confirmInput={confirmInput}
 							isConfirm={isConfirm}
+							mismatch={attempts.mismatch}
 							handleInput={handleInput}
 						/>
 						{/* skip or go back from confirm */}
