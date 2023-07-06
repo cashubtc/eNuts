@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
 		color: white,
 	},
 	char: {
-		fontSize: 10,
+		fontSize: 8,
 		color: white,
 		marginTop: -5,
 	},

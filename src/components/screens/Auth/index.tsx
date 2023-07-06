@@ -70,7 +70,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 			lockedTime: MinuteInS * Math.pow(increasedLockedCount, 2) // 1min * 1 * 1 -> 1min * 2 * 2 -> ...
 		}
 		// store this info to avoid bypass state on app restart
-		if (!confirm) {
+		if (!isConfirm) {
 			await AsyncStore.setObj('lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
 		}
 		setAttempts(attemptState)
@@ -165,7 +165,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 	}
 	// conditional rendering dots of pin input
 	const shouldShowPinSection = () => (
-		(pinInput.length > 0 && !confirm) ||
+		(pinInput.length > 0 && !isConfirm) ||
 		(isConfirm && confirmInput.length > 0)
 	)
 	// init
@@ -173,7 +173,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 		void (async () => {
 			// check if app is locked
 			const lockData = await AsyncStore.getObj<ILockData>('lock')
-			if (lockData?.locked) {
+			if (lockData) {
 				// set state acccording to lockData timestamp
 				const now = Math.ceil(Date.now() / 1000)
 				const secsPassed = now - lockData.timestamp
@@ -181,7 +181,7 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 				setAttempts({
 					mismatch: false,
 					mismatchCount: lockData.mismatchCount,
-					locked: lockedTime > 0,
+					locked: lockData.locked,
 					lockedCount: lockData.lockedCount,
 					lockedTime
 				})
@@ -216,22 +216,22 @@ export default function AuthPage({ navigation }: TAuthPageProps) {
 	return (
 		/* this is the initial pin setup page */
 		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>
-			{attempts.locked && !confirm && <View />}
-			<View style={attempts.locked && !confirm ? { alignItems: 'center' } : styles.lockWrap}>
+			{attempts.locked && !isConfirm && <View />}
+			<View style={attempts.locked && !isConfirm ? { alignItems: 'center' } : styles.lockWrap}>
 				{success ?
-					<UnlockIcon width={40} height={40} color={attempts.locked && !confirm ? color.ERROR : '#FAFAFA'} />
+					<UnlockIcon width={40} height={40} color={attempts.locked && !isConfirm ? color.ERROR : '#FAFAFA'} />
 					:
 					<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
 						<LockIcon width={40} height={40} color={attempts.locked ? color.ERROR : '#FAFAFA'} />
 					</Animated.View>
 				}
-				{attempts.locked && !confirm &&
+				{attempts.locked && !isConfirm &&
 					<Text style={styles.lockedTime}>
 						{formatSeconds(attempts.lockedTime)}
 					</Text>
 				}
 			</View>
-			{attempts.locked && !confirm ?
+			{attempts.locked && !isConfirm ?
 				<View />
 				:
 				<View style={styles.bottomSection}>
