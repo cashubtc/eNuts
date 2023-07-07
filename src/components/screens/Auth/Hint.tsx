@@ -8,17 +8,17 @@ export default function PinHint({ confirm, login }: { confirm?: boolean, login?:
 			{(login || !confirm) &&
 				<Text style={styles.welcome}>
 					{login ?
-						'Welcome back!'
+						t('auth.welcomeBack')
 						:
-						'Welcome'
+						t('auth.welcome')
 					}
 				</Text>
 			}
 			<Text style={styles.txt}>
 				{!login && !confirm ?
-					t('pinSetup')
+					t('auth.pinSetup')
 					:
-					confirm ? t('pleaseConfirm') : t('pleaseEnter')
+					confirm ? t('auth.pleaseConfirm') : t('auth.pleaseEnter')
 				}
 			</Text>
 		</>
