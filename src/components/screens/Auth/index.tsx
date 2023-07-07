@@ -1,5 +1,5 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
-import { LockIcon } from '@comps/Icons'
+import { LockIcon, UnlockIcon } from '@comps/Icons'
 import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
@@ -15,6 +15,7 @@ import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import PinHint from './Hint'
 import PinDots from './PinDots'
 import PinPad from './PinPad'
+import { l } from '@src/logger'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { shouldAuth, shouldEdit, shouldRemove } = route.params
@@ -31,6 +32,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const [confirmInput, setConfirmInput] = useState<number[]>([])
 	// PIN confirm
 	const [isConfirm, setIsConfirm] = useState(false)
+	const [success, setSuccess] = useState(false)
 	const resetStates = () => {
 		setPinInput([])
 		setConfirmInput([])
@@ -112,6 +114,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				setAuth('')
 				return
 			}
+			setSuccess(true)
 			// navigate to dashboard
 			navigation.navigate(shouldRemove ? 'Security settings' : 'dashboard')
 			return
@@ -131,6 +134,8 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				AsyncStore.delete('lock')
 			])
 			resetStates()
+			setSuccess(true)
+			setAuth(hash)
 			navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
 			return
 		}
@@ -194,70 +199,84 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		return () => clearInterval(t)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [attempts.locked, attempts.lockedTime])
+	// handle pin state
 	useEffect(() => {
 		setAuth(shouldAuth)
 	}, [shouldAuth])
+	// reset success state after navigating to this screen
+	useEffect(() => {
+		const focusHandler = navigation.addListener('focus', () => setSuccess(false))
+		return focusHandler
+	}, [navigation])
+	l({ shouldAuth })
+	l({ auth })
 	return (
 		/* this is the initial pin setup page */
-		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>
-			{attempts.locked && !isConfirm && <View />}
-			<View style={attempts.locked && !isConfirm ? { alignItems: 'center' } : styles.lockWrap}>
-				<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
-					<LockIcon width={40} height={40} color={attempts.locked ? color.ERROR : '#FAFAFA'} />
-				</Animated.View>
-				{attempts.locked && !isConfirm &&
-					<Text style={styles.lockedTime}>
-						{formatSeconds(attempts.lockedTime)}
-					</Text>
-				}
-			</View>
-			{attempts.locked && !isConfirm ?
-				<View />
+		<View style={[styles.container, { backgroundColor: hi[highlight], justifyContent: success ? 'center' : 'space-between' }]}>
+			{success ?
+				<UnlockIcon width={40} height={40} color='#FAFAFA' />
 				:
-				<View style={styles.bottomSection}>
-					{attempts.mismatch &&
-						<Text style={[styles.mismatch, { color: color.ERROR }]}>
-							{t('auth.pinMismatch')}
-						</Text>
-					}
-					{shouldShowPinSection() ?
-						<Animated.View style={{ transform: [{ translateX: anim.current }] }}>
-							<PinDots mismatch={attempts.mismatch} input={isConfirm ? confirmInput : pinInput} />
+				<>
+					{attempts.locked && !isConfirm && <View />}
+					<View style={attempts.locked && !isConfirm ? { alignItems: 'center' } : styles.lockWrap}>
+						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
+							<LockIcon width={40} height={40} color={attempts.locked ? color.ERROR : '#FAFAFA'} />
 						</Animated.View>
-						:
-						<PinHint
-							confirm={isConfirm}
-							login={auth.length > 0}
-							shouldEdit={shouldEdit}
-							shouldRemove={shouldRemove}
-						/>
-					}
-					{/* number pad */}
-					<View>
-						<PinPad
-							pinInput={pinInput}
-							confirmInput={confirmInput}
-							isConfirm={isConfirm}
-							mismatch={attempts.mismatch}
-							handleInput={handleInput}
-						/>
-						{/* skip or go back from confirm */}
-						{!auth.length && !shouldEdit &&
-							<TouchableOpacity onPress={() => void handleSkip()}>
-								<Text style={[globals(color).pressTxt, styles.skip]}>
-									{isConfirm ? t('common.back') : t('willDoLater')}
-								</Text>
-							</TouchableOpacity>
-						}
-						{(((shouldRemove || shouldEdit) && auth.length > 0) || (shouldEdit && !auth.length)) &&
-							<TouchableOpacity onPress={() => navigation.navigate('Security settings')}>
-								<Text style={[globals(color).pressTxt, styles.skip]}>
-									{t('common.cancel')}
-								</Text>
-							</TouchableOpacity>
+						{attempts.locked && !isConfirm &&
+							<Text style={styles.lockedTime}>
+								{formatSeconds(attempts.lockedTime)}
+							</Text>
 						}
 					</View>
-				</View>
+					{attempts.locked && !isConfirm ?
+						<View />
+						:
+						<View style={styles.bottomSection}>
+							{attempts.mismatch &&
+								<Text style={[styles.mismatch, { color: color.ERROR }]}>
+									{t('auth.pinMismatch')}
+								</Text>
+							}
+							{shouldShowPinSection() ?
+								<Animated.View style={{ transform: [{ translateX: anim.current }] }}>
+									<PinDots mismatch={attempts.mismatch} input={isConfirm ? confirmInput : pinInput} />
+								</Animated.View>
+								:
+								<PinHint
+									confirm={isConfirm}
+									login={auth.length > 0}
+									shouldEdit={shouldEdit}
+									shouldRemove={shouldRemove}
+								/>
+							}
+							{/* number pad */}
+							<View>
+								<PinPad
+									pinInput={pinInput}
+									confirmInput={confirmInput}
+									isConfirm={isConfirm}
+									mismatch={attempts.mismatch}
+									handleInput={handleInput}
+								/>
+								{/* skip or go back from confirm */}
+								{!auth.length && !shouldEdit &&
+									<TouchableOpacity onPress={() => void handleSkip()}>
+										<Text style={[globals(color).pressTxt, styles.skip]}>
+											{isConfirm ? t('common.back') : t('willDoLater')}
+										</Text>
+									</TouchableOpacity>
+								}
+								{(((shouldRemove || shouldEdit) && auth.length > 0) || (shouldEdit && !auth.length)) &&
+									<TouchableOpacity onPress={() => navigation.navigate('Security settings')}>
+										<Text style={[globals(color).pressTxt, styles.skip]}>
+											{t('common.cancel')}
+										</Text>
+									</TouchableOpacity>
+								}
+							</View>
+						</View>
+					}
+				</>
 			}
 		</View>
 	)
@@ -271,7 +290,6 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		flex: 1,
-		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingTop: 20,
 		paddingHorizontal: 20,
