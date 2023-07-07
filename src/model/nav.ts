@@ -11,6 +11,8 @@ export type RootStackParamList = {
 	dashboard: undefined
 	auth: {
 		shouldAuth: string
+		shouldEdit?: boolean
+		shouldRemove?: boolean
 	}
 	send: undefined
 	sendToken: {

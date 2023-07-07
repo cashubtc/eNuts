@@ -11,14 +11,19 @@ interface TTopNavProps {
 	screenName?: string
 	withBackBtn?: boolean
 	nav?: TBottomNavProps
+	backHandler?: () => void
 }
 
-export default function TopNav({ screenName, withBackBtn, nav }: TTopNavProps) {
+export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TTopNavProps) {
 	const { t } = useTranslation()
 	const { color, highlight } = useContext(ThemeContext)
 	const navHook = useNavigation()
 	const handlePress = () => {
 		if (withBackBtn) {
+			if (backHandler) {
+				backHandler()
+				return
+			}
 			navHook.goBack()
 			return
 		}

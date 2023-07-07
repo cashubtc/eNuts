@@ -17,18 +17,25 @@ import PinDots from './PinDots'
 import PinPad from './PinPad'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
-	const { shouldAuth } = route.params
+	const { shouldAuth, shouldEdit, shouldRemove } = route.params
 	const { t } = useTranslation()
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context
 	const { attempts, setAttempts } = useContext(PinCtx)
+	// auth state
+	const [auth, setAuth] = useState(shouldAuth)
 	// initial PIN input state
 	const [pinInput, setPinInput] = useState<number[]>([])
 	// confirm PIN input state
 	const [confirmInput, setConfirmInput] = useState<number[]>([])
 	// PIN confirm
 	const [isConfirm, setIsConfirm] = useState(false)
+	const resetStates = () => {
+		setPinInput([])
+		setConfirmInput([])
+		setIsConfirm(false)
+	}
 	// backspace handler
 	const handleDelete = () => {
 		// handle delete the confirmation pin input
@@ -67,8 +74,8 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				setPinInput([])
 				setIsConfirm(false)
 			}
-			// hash is available === login state. Reset pin input
-			if (shouldAuth.length) { setPinInput([]) }
+			// Reset pin input
+			if (auth.length) { setPinInput([]) }
 			setAttempts(prev => ({
 				...prev,
 				mismatch: false,
@@ -80,22 +87,33 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	// pin submit handler
 	const handleSubmit = async () => {
 		// user has setup a pin previously
-		if (shouldAuth.length) {
+		if (auth.length) {
 			// user is providing a wrong pin
-			if (hash256(pinInput.join('')) !== shouldAuth) {
+			if (hash256(pinInput.join('')) !== auth) {
 				await handlePinMismatch()
 				return
+			}
+			// user wants to delete his PIN
+			if (shouldRemove) {
+				await Promise.all([
+					secureStore.delete('pin'),
+					AsyncStore.set('pinSkipped', '1')
+				])
+				setAuth('')
 			}
 			// remove the lock data and authbg in storage
 			await Promise.all([
 				AsyncStore.delete('lock'),
 				AsyncStore.delete('authBg')
 			])
+			resetStates()
+			// User wants to edit his PIN, do not navigate away, just update the state as he had no PIN so he can enter a new PIN
+			if (shouldEdit) {
+				setAuth('')
+				return
+			}
 			// navigate to dashboard
-			navigation.navigate('dashboard')
-			// reset states
-			setPinInput([])
-			setConfirmInput([])
+			navigation.navigate(shouldRemove ? 'Security settings' : 'dashboard')
 			return
 		}
 		// user is submitting a pin confirmation
@@ -108,12 +126,12 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			}
 			// else: PIN confirm is matching
 			const hash = hash256(pinStr)
-			await secureStore.set('pin', hash)
-			// remove the lock data in storage
-			await AsyncStore.delete('lock')
-			navigation.navigate('dashboard')
-			setPinInput([])
-			setConfirmInput([])
+			await Promise.all([
+				secureStore.set('pin', hash),
+				AsyncStore.delete('lock')
+			])
+			resetStates()
+			navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
 			return
 		}
 		// else: bring user in the confirm state after entering his first pin in setup
@@ -176,6 +194,9 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		return () => clearInterval(t)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [attempts.locked, attempts.lockedTime])
+	useEffect(() => {
+		setAuth(shouldAuth)
+	}, [shouldAuth])
 	return (
 		/* this is the initial pin setup page */
 		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>
@@ -204,7 +225,12 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 							<PinDots mismatch={attempts.mismatch} input={isConfirm ? confirmInput : pinInput} />
 						</Animated.View>
 						:
-						<PinHint confirm={isConfirm} login={shouldAuth.length > 0} />
+						<PinHint
+							confirm={isConfirm}
+							login={auth.length > 0}
+							shouldEdit={shouldEdit}
+							shouldRemove={shouldRemove}
+						/>
 					}
 					{/* number pad */}
 					<View>
@@ -216,10 +242,17 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 							handleInput={handleInput}
 						/>
 						{/* skip or go back from confirm */}
-						{!shouldAuth.length &&
+						{!auth.length && !shouldEdit &&
 							<TouchableOpacity onPress={() => void handleSkip()}>
 								<Text style={[globals(color).pressTxt, styles.skip]}>
 									{isConfirm ? t('common.back') : t('willDoLater')}
+								</Text>
+							</TouchableOpacity>
+						}
+						{(((shouldRemove || shouldEdit) && auth.length > 0) || (shouldEdit && !auth.length)) &&
+							<TouchableOpacity onPress={() => navigation.navigate('Security settings')}>
+								<Text style={[globals(color).pressTxt, styles.skip]}>
+									{t('common.cancel')}
 								</Text>
 							</TouchableOpacity>
 						}

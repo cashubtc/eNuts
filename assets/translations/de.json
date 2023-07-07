@@ -209,13 +209,17 @@
   "auth": {
     "welcome": "Willkommen",
     "welcomeBack": "Willkommen zurück!",
-    "pleaseEnter": "Bitte geben Sie eine PIN ein.",
+    "pleaseEnter": "Bitte geben Sie Ihre PIN ein.",
     "pleaseConfirm": "Bitte bestätigen Sie Ihre PIN.",
     "pinSetup": "Sie können ein PIN erstellen um Ihre App zu schützen.",
     "pinMismatch": "PIN inkorrekt!",
     "createPin": "PIN erstellen",
-    "editPin":"PIN bearbeiten",
-    "removePin":"PIN löschen"
+    "editPin":"PIN ändern",
+    "removePin":"PIN löschen",
+    "confirmAction": "Bitte bestätigen Sie die Aktion.",
+    "pleaseNewPin": "Bitte geben Sie eine neue PIN ein.",
+    "pleaseConfirmNewPin": "Bitte bestätigen Sie Ihre neue PIN."
+
   },
   "english": "Englisch",
   "german": "Deutsch",

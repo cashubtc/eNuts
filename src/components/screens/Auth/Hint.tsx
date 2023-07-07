@@ -1,25 +1,38 @@
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text } from 'react-native'
 
-export default function PinHint({ confirm, login }: { confirm?: boolean, login?: boolean }) {
+interface IPinHintProps {
+	confirm?: boolean
+	login?: boolean
+	shouldEdit?: boolean
+	shouldRemove?: boolean
+}
+
+export default function PinHint({ confirm, login, shouldEdit, shouldRemove }: IPinHintProps) {
 	const { t } = useTranslation()
+	const getRightHeaderTxt = () => {
+		if (login && !shouldEdit && !shouldRemove) { return t('auth.welcomeBack') }
+		if (shouldRemove) { return t('auth.removePin') }
+		if (shouldEdit) { return t('auth.editPin') }
+		return t('auth.welcome')
+	}
+	const getRightTxt = () => {
+		if (!login && !confirm && !shouldEdit) { return t('auth.pinSetup') }
+		if (confirm && !shouldEdit && !shouldRemove) { return t('auth.pleaseConfirm') }
+		if (login && (shouldRemove || shouldEdit)) { return t('auth.confirmAction') }
+		if (!login && shouldEdit && !confirm) { return t('auth.pleaseNewPin') }
+		if (!login && shouldEdit && confirm) { return t('auth.pleaseConfirmNewPin') }
+		return t('auth.pleaseEnter')
+	}
 	return (
 		<>
-			{(login || !confirm) &&
+			{!confirm &&
 				<Text style={styles.welcome}>
-					{login ?
-						t('auth.welcomeBack')
-						:
-						t('auth.welcome')
-					}
+					{getRightHeaderTxt()}
 				</Text>
 			}
 			<Text style={styles.txt}>
-				{!login && !confirm ?
-					t('auth.pinSetup')
-					:
-					confirm ? t('auth.pleaseConfirm') : t('auth.pleaseEnter')
-				}
+				{getRightTxt()}
 			</Text>
 		</>
 	)

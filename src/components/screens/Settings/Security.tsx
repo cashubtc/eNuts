@@ -20,7 +20,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	const { t } = useTranslation()
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
-	const [hasPin, setHasPin] = useState<boolean | null>(null)
+	const [pin, setPin] = useState<string | null>(null)
 	const handleBackup = async () => {
 		try {
 			const proofs = await getProofs()
@@ -34,27 +34,37 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 			openPromptAutoClose({ msg: t('common.backupErr') })
 		}
 	}
+	const handlePin = async () => {
+		const pinHash = await secureStore.get('pin')
+		setPin(isNull(pinHash) ? '' : pinHash)
+	}
+	useEffect(() => void handlePin(), [])
 	useEffect(() => {
-		void (async () => {
-			const pinHash = await secureStore.get('pin')
-			setHasPin(!isNull(pinHash) && pinHash.length > 0)
-		})()
-	}, [])
-	if (isNull(hasPin)) { return null }
+		// eslint-disable-next-line @typescript-eslint/no-misused-promises
+		const focusHandler = navigation.addListener('focus', async () => {
+			await handlePin()
+		})
+		return focusHandler
+	}, [navigation])
+	if (isNull(pin)) { return null }
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('topNav.security')} withBackBtn />
+			<TopNav
+				screenName={t('topNav.security')}
+				withBackBtn
+				backHandler={() => navigation.navigate('Settings')}
+			/>
 			<View style={globals(color).wrapContainer}>
-				{hasPin ?
+				{pin ?
 					<>
 						<SecurityOption
 							txt={t('auth.editPin')}
-							onPress={() => void handleBackup()}
+							onPress={() => navigation.navigate('auth', { shouldAuth: pin, shouldEdit: true })}
 						/>
 						<Separator />
 						<SecurityOption
 							txt={t('auth.removePin')}
-							onPress={() => void handleBackup()}
+							onPress={() => navigation.navigate('auth', { shouldAuth: pin, shouldRemove: true })}
 						/>
 						<Separator />
 					</>
@@ -62,7 +72,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 					<>
 						<SecurityOption
 							txt={t('auth.createPin')}
-							onPress={() => void handleBackup()}
+							onPress={() => navigation.navigate('auth', { shouldAuth: '' })}
 						/>
 						<Separator />
 					</>

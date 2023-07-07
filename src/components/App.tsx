@@ -259,6 +259,8 @@ function _App(_initialProps: IInitialProps) {
 			}
 		}
 		async function initAuth() {
+			// await secureStore.delete('pin')
+			// await AsyncStore.delete('pinSkipped')
 			const skipped = await AsyncStore.get('pinSkipped')
 			const pinHash = await secureStore.get('pin')
 			setAuth({
