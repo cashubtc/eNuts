@@ -264,7 +264,10 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 									</TouchableOpacity>
 								}
 								{(((shouldRemove || shouldEdit) && auth.length > 0) || (shouldEdit && !auth.length)) &&
-									<TouchableOpacity onPress={() => navigation.navigate('Security settings')}>
+									<TouchableOpacity onPress={() => {
+										resetStates()
+										navigation.navigate('Security settings')
+									}}>
 										<Text style={[globals(color).pressTxt, styles.skip]}>
 											{t('common.cancel')}
 										</Text>
