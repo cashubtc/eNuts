@@ -1,5 +1,6 @@
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
+import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { getProofs } from '@db'
@@ -8,8 +9,10 @@ import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { isNull } from '@src/util'
+import { secureStore } from '@store'
 import { globals } from '@styles'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -17,6 +20,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	const { t } = useTranslation()
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
+	const [hasPin, setHasPin] = useState<boolean | null>(null)
 	const handleBackup = async () => {
 		try {
 			const proofs = await getProofs()
@@ -30,21 +34,65 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 			openPromptAutoClose({ msg: t('common.backupErr') })
 		}
 	}
+	useEffect(() => {
+		void (async () => {
+			const pinHash = await secureStore.get('pin')
+			setHasPin(!isNull(pinHash) && pinHash.length > 0)
+		})()
+	}, [])
+	if (isNull(hasPin)) { return null }
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t('topNav.security')} withBackBtn />
 			<View style={globals(color).wrapContainer}>
-				<TouchableOpacity
-					style={styles.settingsRow}
-					onPress={() => { void handleBackup() }}
-				>
-					<Txt txt={t('common.createBackup')} />
-					<ChevronRightIcon color={color.TEXT} />
-				</TouchableOpacity>
+				{hasPin ?
+					<>
+						<SecurityOption
+							txt={t('auth.editPin')}
+							onPress={() => void handleBackup()}
+						/>
+						<Separator />
+						<SecurityOption
+							txt={t('auth.removePin')}
+							onPress={() => void handleBackup()}
+						/>
+						<Separator />
+					</>
+					:
+					<>
+						<SecurityOption
+							txt={t('auth.createPin')}
+							onPress={() => void handleBackup()}
+						/>
+						<Separator />
+					</>
+				}
+				<SecurityOption
+					txt={t('common.createBackup')}
+					onPress={() => void handleBackup()}
+				/>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
-			{prompt.open && <Toaster txt={prompt.msg} /> }
+			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View>
+	)
+}
+
+interface ISecurityOptsProps {
+	txt: string
+	onPress: () => void
+}
+
+function SecurityOption({ txt, onPress }: ISecurityOptsProps) {
+	const { color } = useContext(ThemeContext)
+	return (
+		<TouchableOpacity
+			style={styles.settingsRow}
+			onPress={onPress}
+		>
+			<Txt txt={txt} />
+			<ChevronRightIcon color={color.TEXT} />
+		</TouchableOpacity>
 	)
 }
 

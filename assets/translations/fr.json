@@ -212,7 +212,10 @@
     "pleaseEnter": "Veuillez entrer un PIN",
     "pleaseConfirm": "Veuillez confirmer votre PIN.",
     "pinSetup": "Vous pouvez configurer un PIN pour sécuriser votre app.",
-    "pinMismatch": "PIN incorrect!"
+    "pinMismatch": "PIN incorrect!",
+    "createPin": "Créer un PIN",
+    "editPin":"Modifier le PIN",
+    "removePin":"Supprimer le PIN"
   },
   "english": "Anglais",
   "german": "Allemand",
