@@ -206,6 +206,14 @@
     "addContactErr": "Le contact ne peut pas être ajouté. Duplication possible du nom ou du LNURL.",
     "addedContact": "Nouveau contact ajouter"
   },
+  "auth": {
+    "welcome": "Bienvenue",
+    "welcomeBack": "Bienvenue de retour!",
+    "pleaseEnter": "Veuillez entrer un PIN",
+    "pleaseConfirm": "Veuillez confirmer votre PIN.",
+    "pinSetup": "Vous pouvez configurer un PIN pour sécuriser votre app.",
+    "pinMismatch": "PIN incorrect!"
+  },
   "english": "Anglais",
   "german": "Allemand",
   "french": "Français",

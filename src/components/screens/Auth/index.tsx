@@ -9,6 +9,7 @@ import { globals, highlight as hi } from '@styles'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import PinHint from './Hint'
@@ -17,6 +18,7 @@ import PinPad from './PinPad'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { shouldAuth } = route.params
+	const { t } = useTranslation()
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context
@@ -194,7 +196,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				<View style={styles.bottomSection}>
 					{attempts.mismatch &&
 						<Text style={[styles.mismatch, { color: color.ERROR }]}>
-							PIN does not match!
+							{t('auth.pinMismatch')}
 						</Text>
 					}
 					{shouldShowPinSection() ?
@@ -217,7 +219,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 						{!shouldAuth.length &&
 							<TouchableOpacity onPress={() => void handleSkip()}>
 								<Text style={[globals(color).pressTxt, styles.skip]}>
-									{isConfirm ? 'Back' : 'Will do later'}
+									{isConfirm ? t('common.back') : t('willDoLater')}
 								</Text>
 							</TouchableOpacity>
 						}

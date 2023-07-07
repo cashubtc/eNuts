@@ -1,18 +1,24 @@
-import { StyleSheet,Text } from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { StyleSheet, Text } from 'react-native'
 
 export default function PinHint({ confirm, login }: { confirm?: boolean, login?: boolean }) {
+	const { t } = useTranslation()
 	return (
 		<>
 			{(login || !confirm) &&
 				<Text style={styles.welcome}>
-					Welcome{login ? ' back' : ''}
+					{login ?
+						'Welcome back!'
+						:
+						'Welcome'
+					}
 				</Text>
 			}
 			<Text style={styles.txt}>
 				{!login && !confirm ?
-					'You can setup a PIN to secure your app.'
+					t('pinSetup')
 					:
-					`Please ${confirm ? 'confirm' : 'enter'} your PIN now.`
+					confirm ? t('pleaseConfirm') : t('pleaseEnter')
 				}
 			</Text>
 		</>
