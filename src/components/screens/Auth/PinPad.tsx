@@ -24,7 +24,7 @@ interface IPinPadProps {
 export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, handleInput }: IPinPadProps) {
 	// should pad input be disabled
 	const shouldDisablePad = (val: number) => (
-		shouldDisableSubmit(val) ||
+		mismatch ||
 		// disable backspace button if pin input is empty
 		(!pinInput.length && val === 10 && !isConfirm) ||
 		// disable backspace button in confirm input is empty
@@ -34,12 +34,9 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, ha
 		(confirmInput.length >= 12 && val !== 10 && val !== 11 && isConfirm)
 	)
 	// should submit be disabled
-	const shouldDisableSubmit = (val: number) => (
-		val === 11 && (
-			mismatch ||
-			(!isConfirm && pinInput.length < 4) ||
-			(isConfirm && confirmInput.length < 4)
-		)
+	const shouldDisableSubmit = () => (
+		(!isConfirm && pinInput.length < 4) ||
+		(isConfirm && confirmInput.length < 4)
 	)
 	return (
 		<>
@@ -53,7 +50,7 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, ha
 							disabled={shouldDisablePad(pad.n)}
 						>
 							{pad.n === 10 ? <BackspaceIcon width={32} height={32} color={white} /> // backspace
-								: pad.n === 11 ? <CheckmarkIcon width={32} height={32} color={shouldDisableSubmit(pad.n) ? grey : white} /> // submit
+								: pad.n === 11 ? <CheckmarkIcon width={32} height={32} color={shouldDisableSubmit() ? grey : white} /> // submit
 									: // number pads
 									<>
 										<Text style={styles.num}>

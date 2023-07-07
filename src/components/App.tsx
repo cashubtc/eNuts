@@ -70,10 +70,12 @@ export default function App(initialProps: IInitialProps) {
 }
 
 function _App(_initialProps: IInitialProps) {
+	// initial auth state
 	const [auth, setAuth] = useState<INavigatorProps>({
 		shouldSetup: false,
 		shouldAuth: ''
 	})
+	// app was longer than 5 mins in the background
 	const [bgAuth, setBgAuth] = useState(false)
 	// PIN mismatch state
 	const [attempts, setAttempts] = useState({
@@ -84,6 +86,7 @@ function _App(_initialProps: IInitialProps) {
 		lockedTime: 0,
 	})
 	const handlePinForeground = async () => {
+		// check if app is locked
 		const now = Math.ceil(Date.now() / 1000)
 		const lockData = await AsyncStore.getObj<ILockData>('lock')
 		if (lockData) {
@@ -96,6 +99,7 @@ function _App(_initialProps: IInitialProps) {
 				lockedTime
 			})
 		}
+		// handle app was longer than 5 mins in the background
 		const bgTimestamp = await AsyncStore.get('authBg')
 		if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
 			if (now - +bgTimestamp > FiveMins) {

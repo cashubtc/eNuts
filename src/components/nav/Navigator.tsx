@@ -37,7 +37,7 @@ export default function Navigator({ shouldSetup, shouldAuth, bgAuth, setBgAuth }
 	useEffect(() => {
 		if (!bgAuth || !shouldAuth.length) { return }
 		setBgAuth?.(false)
-		nav.navigate('auth', { shouldSetup, shouldAuth })
+		nav.navigate('auth', { shouldAuth })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bgAuth])
 	return (
@@ -56,7 +56,7 @@ export default function Navigator({ shouldSetup, shouldAuth, bgAuth, setBgAuth }
 				}}
 			>
 				<Stack.Screen name='dashboard' component={Dashboard} />
-				<Stack.Screen name='auth' component={AuthPage} initialParams={{ shouldAuth, shouldSetup }} />
+				<Stack.Screen name='auth' component={AuthPage} initialParams={{ shouldAuth }} />
 				{/* create sendable token page */}
 				<Stack.Screen
 					name='send'

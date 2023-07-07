@@ -1,5 +1,5 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
-import { LockIcon, UnlockIcon } from '@comps/Icons'
+import { LockIcon } from '@comps/Icons'
 import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
@@ -16,6 +16,7 @@ import PinDots from './PinDots'
 import PinPad from './PinPad'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
+	const { shouldAuth } = route.params
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context
@@ -26,8 +27,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const [confirmInput, setConfirmInput] = useState<number[]>([])
 	// PIN confirm
 	const [isConfirm, setIsConfirm] = useState(false)
-	// pin confirm success
-	const [success, setSuccess] = useState(false)
 	// backspace handler
 	const handleDelete = () => {
 		// handle delete the confirmation pin input
@@ -67,7 +66,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				setIsConfirm(false)
 			}
 			// hash is available === login state. Reset pin input
-			if (route.params.shouldAuth?.length) { setPinInput([]) }
+			if (shouldAuth.length) { setPinInput([]) }
 			setAttempts(prev => ({
 				...prev,
 				mismatch: false,
@@ -79,9 +78,9 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	// pin submit handler
 	const handleSubmit = async () => {
 		// user has setup a pin previously
-		if (route.params.shouldAuth?.length) {
+		if (shouldAuth.length) {
 			// user is providing a wrong pin
-			if (hash256(pinInput.join('')) !== route.params.shouldAuth) {
+			if (hash256(pinInput.join('')) !== shouldAuth) {
 				await handlePinMismatch()
 				return
 			}
@@ -90,11 +89,11 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				AsyncStore.delete('lock'),
 				AsyncStore.delete('authBg')
 			])
+			// navigate to dashboard
+			navigation.navigate('dashboard')
 			// reset states
 			setPinInput([])
 			setConfirmInput([])
-			// navigate to dashboard
-			navigation.navigate('dashboard')
 			return
 		}
 		// user is submitting a pin confirmation
@@ -106,14 +105,13 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				return
 			}
 			// else: PIN confirm is matching
-			setSuccess(true)
-			setPinInput([])
-			setConfirmInput([])
 			const hash = hash256(pinStr)
 			await secureStore.set('pin', hash)
 			// remove the lock data in storage
 			await AsyncStore.delete('lock')
 			navigation.navigate('dashboard')
+			setPinInput([])
+			setConfirmInput([])
 			return
 		}
 		// else: bring user in the confirm state after entering his first pin in setup
@@ -181,13 +179,9 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>
 			{attempts.locked && !isConfirm && <View />}
 			<View style={attempts.locked && !isConfirm ? { alignItems: 'center' } : styles.lockWrap}>
-				{success ?
-					<UnlockIcon width={40} height={40} color={attempts.locked && !isConfirm ? color.ERROR : '#FAFAFA'} />
-					:
-					<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
-						<LockIcon width={40} height={40} color={attempts.locked ? color.ERROR : '#FAFAFA'} />
-					</Animated.View>
-				}
+				<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
+					<LockIcon width={40} height={40} color={attempts.locked ? color.ERROR : '#FAFAFA'} />
+				</Animated.View>
 				{attempts.locked && !isConfirm &&
 					<Text style={styles.lockedTime}>
 						{formatSeconds(attempts.lockedTime)}
@@ -208,7 +202,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 							<PinDots mismatch={attempts.mismatch} input={isConfirm ? confirmInput : pinInput} />
 						</Animated.View>
 						:
-						<PinHint confirm={isConfirm} login={route.params.shouldAuth.length > 0} />
+						<PinHint confirm={isConfirm} login={shouldAuth.length > 0} />
 					}
 					{/* number pad */}
 					<View>
@@ -220,7 +214,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 							handleInput={handleInput}
 						/>
 						{/* skip or go back from confirm */}
-						{!route.params.shouldAuth.length &&
+						{!shouldAuth.length &&
 							<TouchableOpacity onPress={() => void handleSkip()}>
 								<Text style={[globals(color).pressTxt, styles.skip]}>
 									{isConfirm ? 'Back' : 'Will do later'}

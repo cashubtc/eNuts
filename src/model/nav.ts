@@ -10,7 +10,6 @@ import type { IHistoryEntry, IMintUrl } from '.'
 export type RootStackParamList = {
 	dashboard: undefined
 	auth: {
-		shouldSetup: boolean
 		shouldAuth: string
 	}
 	send: undefined
@@ -119,8 +118,8 @@ export type TBottomNavProps =
 	TSettingsPageProps |
 	IContactPageProps
 export interface INavigatorProps {
-	shouldSetup: boolean
 	shouldAuth: string
+	shouldSetup?: boolean
 	bgAuth?: boolean
 	setBgAuth?: (val: boolean) => void
 }
