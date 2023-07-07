@@ -15,7 +15,6 @@ import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import PinHint from './Hint'
 import PinDots from './PinDots'
 import PinPad from './PinPad'
-import { l } from '@src/logger'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { shouldAuth, shouldEdit, shouldRemove } = route.params
@@ -208,8 +207,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		const focusHandler = navigation.addListener('focus', () => setSuccess(false))
 		return focusHandler
 	}, [navigation])
-	l({ shouldAuth })
-	l({ auth })
 	return (
 		/* this is the initial pin setup page */
 		<View style={[styles.container, { backgroundColor: hi[highlight], justifyContent: success ? 'center' : 'space-between' }]}>

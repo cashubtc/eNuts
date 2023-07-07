@@ -1,4 +1,3 @@
-import { l } from '@src/logger'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text } from 'react-native'
 
@@ -18,14 +17,9 @@ export default function PinHint({ confirm, login, shouldEdit, shouldRemove }: IP
 		return t('auth.welcome')
 	}
 	const getRightTxt = () => {
-		l({ login })
-		l({ confirm })
-		l({ shouldEdit })
-		l({ shouldRemove })
 		if (!login && !confirm && !shouldEdit && !shouldRemove) { return t('auth.pinSetup') }
 		if (confirm && !shouldEdit && !shouldRemove) { return t('auth.pleaseConfirm') }
 		if (login && (shouldRemove || shouldEdit)) { return t('auth.confirmAction') }
-
 		if (!login && shouldEdit && !confirm) { return t('auth.pleaseNewPin') }
 		if (!login && shouldEdit && confirm) { return t('auth.pleaseConfirmNewPin') }
 		return t('auth.pleaseEnter')
