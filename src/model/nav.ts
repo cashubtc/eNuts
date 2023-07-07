@@ -122,4 +122,5 @@ export interface INavigatorProps {
 	shouldSetup: boolean
 	shouldAuth: string
 	bgAuth?: boolean
+	setBgAuth?: (val: boolean) => void
 }

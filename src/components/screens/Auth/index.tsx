@@ -90,7 +90,10 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				AsyncStore.delete('lock'),
 				AsyncStore.delete('authBg')
 			])
-			// else: navigate to dashboard
+			// reset states
+			setPinInput([])
+			setConfirmInput([])
+			// navigate to dashboard
 			navigation.navigate('dashboard')
 			return
 		}

@@ -1,7 +1,8 @@
 import AuthPage from '@comps/screens/Auth'
 import AboutSettings from '@comps/screens/Settings/About'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { useNavigation } from '@react-navigation/core'
+import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AddressbookPage from '@screens/Addressbook'
 import ContactPage from '@screens/Addressbook/Contact'
 import Dashboard from '@screens/Dashboard'
@@ -25,13 +26,20 @@ import LanguageSettings from '@screens/Settings/Language'
 import SecuritySettings from '@screens/Settings/Security'
 import SuccessPage from '@screens/Success'
 import { ThemeContext } from '@src/context/Theme'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { View } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
-export default function Navigator({ shouldSetup, shouldAuth, bgAuth }: INavigatorProps) {
+export default function Navigator({ shouldSetup, shouldAuth, bgAuth, setBgAuth }: INavigatorProps) {
 	const { color } = useContext(ThemeContext)
+	const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
+	useEffect(() => {
+		if (!bgAuth || !shouldAuth.length) { return }
+		setBgAuth?.(false)
+		nav.navigate('auth', { shouldSetup, shouldAuth })
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [bgAuth])
 	return (
 		<View style={{
 			position: 'absolute',

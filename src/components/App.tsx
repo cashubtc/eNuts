@@ -3,6 +3,7 @@ import { getEncodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { env } from '@consts'
+import { FiveMins } from '@consts/time'
 import { addAllMintIds, getBalance, getContacts, getMintsBalances, getMintsUrls, getPreferences, initDb, setPreferences } from '@db'
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
@@ -73,6 +74,7 @@ function _App(_initialProps: IInitialProps) {
 		shouldSetup: false,
 		shouldAuth: ''
 	})
+	const [bgAuth, setBgAuth] = useState(false)
 	// PIN mismatch state
 	const [attempts, setAttempts] = useState({
 		mismatch: false,
@@ -94,13 +96,12 @@ function _App(_initialProps: IInitialProps) {
 				lockedTime
 			})
 		}
-		// TODO find a way to navigate to the auth page
-		// const bgTimestamp = await AsyncStore.get('authBg')
-		// if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
-		// 	if (now - +bgTimestamp > FiveMins) {
-		// 		setAuth(prev => ({ ...prev }))
-		// 	}
-		// }
+		const bgTimestamp = await AsyncStore.get('authBg')
+		if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
+			if (now - +bgTimestamp > FiveMins) {
+				setBgAuth(true)
+			}
+		}
 	}
 	const pinData = { attempts, setAttempts }
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -320,7 +321,12 @@ function _App(_initialProps: IInitialProps) {
 					<FocusClaimCtx.Provider value={claimData}>
 						<ContactsContext.Provider value={contactData}>
 							<KeyboardProvider>
-								<Navigator shouldSetup={auth.shouldSetup} shouldAuth={auth.shouldAuth} />
+								<Navigator
+									shouldSetup={auth.shouldSetup}
+									shouldAuth={auth.shouldAuth}
+									bgAuth={bgAuth}
+									setBgAuth={setBgAuth}
+								/>
 								<StatusBar style="auto" />
 								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
 								<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
