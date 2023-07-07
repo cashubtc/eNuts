@@ -51,7 +51,7 @@ const config: ExpoConfig = {
 	version: `${version}${!IS_PROD ? `-${_appVariant}` : ''}`,
 	scheme: 'cashu',
 	orientation: 'portrait',
-	icon: './assets/adaptive-icon.png',
+	icon: './assets/app-icon-all.png',
 	userInterfaceStyle: 'automatic',
 	splash: {
 		image: './assets/splash.png',
@@ -82,9 +82,10 @@ const config: ExpoConfig = {
 		}
 	},
 	android: {
+		icon: './assets/app-icon-android-legacy.png',
 		adaptiveIcon: {
-			foregroundImage: './assets/adaptive-icon.png',
-			backgroundColor: '#5DB075'
+			foregroundImage: './assets/app-icon-android-adaptive-foreground.png',
+			backgroundImage: './assets/app-icon-android-adaptive-background.png'
 		},
 		package: `com.agron.enuts${!IS_PROD ? `.${_appVariant}` : ''}`
 	},
@@ -100,5 +101,52 @@ const config: ExpoConfig = {
 		NODE_ENV_SHORT: _nodeEnvShort,
 	}
 }
+
+/*
+
+{
+  "name": "",
+  "displayName": "",
+  "expo": {
+    "name": "",
+    "slug": "",
+    "scheme": "",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/app-icon-all.png",
+    "splash": {
+      "image": "./assets/images/splash-logo-all.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#191015"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+   "android": {
+      "icon": "./assets/images/app-icon-android-legacy.png",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
+        "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
+      },
+      "splash": {
+        "image": "./assets/images/splash-logo-android-universal.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#191015"
+      }
+    },
+    "ios": {
+      "icon": "./assets/images/app-icon-ios.png",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.helloworld",
+      "splash": {
+        "image": "./assets/images/splash-logo-ios-mobile.png",
+        "tabletImage": "./assets/images/splash-logo-ios-tablet.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#191015"
+      }
+    },
+}
+
+*/
 
 export default config
