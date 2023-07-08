@@ -36,11 +36,11 @@ import Txt from './Txt'
 
 void SplashScreen.preventAutoHideAsync()
 
-export default Sentry.Native.wrap((initialProps: IInitialProps) => {
+export default function App(){
 	if (!env?.SENTRY_DSN) {
 		return (
 			<CustomErrorBoundary catchErrors='always'>
-				<_App _initialProps={initialProps} exp={initialProps.exp} />
+				<_App />
 			</CustomErrorBoundary>
 		)
 	}
@@ -49,12 +49,12 @@ export default Sentry.Native.wrap((initialProps: IInitialProps) => {
 	// Uses the Sentry error boundary component which posts the errors to our Sentry account
 	return (
 		<ErrorBoundary fallback={ErrorDetails}>
-			<_App _initialProps={initialProps} exp={initialProps.exp} />
+			<_App />
 		</ErrorBoundary>
 	)
-})
+}
 
-function _App(_initialProps: IInitialProps) {
+function _App() {
 	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { t, i18n } = useTranslation()
