@@ -26,6 +26,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AppState, Text, View } from 'react-native'
+import * as Sentry from 'sentry-expo'
 
 import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './ErrorScreen/ErrorDetails'
