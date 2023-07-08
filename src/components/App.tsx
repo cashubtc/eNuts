@@ -36,7 +36,7 @@ import Txt from './Txt'
 
 void SplashScreen.preventAutoHideAsync()
 
-export default () => {
+export default function App(){
 	if (!env?.SENTRY_DSN) {
 		return (
 			<CustomErrorBoundary catchErrors='always'>
