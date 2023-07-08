@@ -10,10 +10,10 @@ function nodeEnvShort(): 'test' | AppVariant {
 		process.env.NODE_ENV = 'development'
 		return
 	}
-	if (process.env.NODE_ENV === 'production') { return 'prod' }
-	if (process.env.NODE_ENV === 'development') { return 'dev' }
-	if (process.env.NODE_ENV === 'test') { return 'test' }
-	if (process.env.NODE_ENV === 'preview') { return 'preview' }
+	if (process?.env?.NODE_ENV === 'production') { return 'prod' }
+	if (process?.env?.NODE_ENV === 'development') { return 'dev' }
+	if (process?.env?.NODE_ENV === 'test') { return 'test' }
+	if (process?.env?.NODE_ENV === 'preview') { return 'preview' }
 }
 
 function appVariant(): AppVariant {
@@ -21,12 +21,12 @@ function appVariant(): AppVariant {
 		process.env.APP_VARIANT = 'dev'
 		return
 	}
-	if (process.env.APP_VARIANT === 'prod') { return 'prod' }
-	if (process.env.APP_VARIANT === 'dev') { return 'dev' }
-	if (process.env.APP_VARIANT === 'preview') { return 'preview' }
+	if (process?.env?.APP_VARIANT === 'prod') { return 'prod' }
+	if (process?.env?.APP_VARIANT === 'dev') { return 'dev' }
+	if (process?.env?.APP_VARIANT === 'preview') { return 'preview' }
 }
 
-const _appVariant = appVariant() || process.env.APP_VARIANT || 'dev'
+const _appVariant = appVariant() || process?.env?.APP_VARIANT || 'dev'
 
 const _nodeEnvShort = nodeEnvShort()
 
@@ -60,7 +60,6 @@ const config: ExpoConfig = {
 	},
 	assetBundlePatterns: ['**/*'],
 	plugins: [
-		'@bugsnag/plugin-expo-eas-sourcemaps',
 		'expo-localization',
 		[
 			'expo-barcode-scanner',
@@ -74,6 +73,7 @@ const config: ExpoConfig = {
 				cameraPermission: 'Allow eNuts to access camera.'
 			}
 		],
+		'sentry-expo'
 	],
 	ios: {
 		supportsTablet: true,
@@ -94,11 +94,24 @@ const config: ExpoConfig = {
 	},
 	extra: {
 		eas: { projectId: 'edb75ccd-71ac-4934-9147-baf1c7f2b068' },
-		DEBUG: process.env.DEBUG,
+		DEBUG: process?.env?.DEBUG,
 		APP_VARIANT: _appVariant,
-		bugsnag: { apiKey: process.env.BUGSNAG_API_KEY, },
-		NODE_ENV: process.env.NODE_ENV,
+		NODE_ENV: process?.env?.NODE_ENV,
 		NODE_ENV_SHORT: _nodeEnvShort,
+		SENTRY_DSN: process?.env?.SENTRY_DSN,
+		SENTRY_ORG: process?.env?.SENTRY_ORG,
+		SENTRY_PROJECT: process?.env?.SENTRY_PROJECT
+	},
+	hooks: {
+		postPublish: [
+			{
+				file: 'sentry-expo/upload-sourcemaps',
+				config: {
+					organization: process?.env?.SENTRY_ORG,
+					project: process?.env?.SENTRY_PROJECT
+				} 
+			}
+		]
 	}
 }
 

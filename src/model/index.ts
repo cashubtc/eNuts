@@ -8,9 +8,7 @@ export interface IExpoConfig extends ExpoConfig {
 		NODE_ENV?: string | 'development' | 'production' | 'test' | 'preview'
 		NODE_ENV_SHORT?: string | 'prod' | 'dev' | 'test' | 'preview'
 		APP_VARIANT?: string | 'prod' | 'dev' | 'test' | 'preview'
-		bugsnag?: {
-			apiKey?: string
-		}
+		SENTRY_DSN?: string
 	}
 }
 export interface IInitialProps {

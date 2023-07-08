@@ -3,15 +3,15 @@ import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { repoIssueUrl } from '@consts/urls'
 import { isErr, openUrl } from '@util'
-import type { ErrorInfo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 
 export interface ErrorDetailsProps {
-	error: Error
-	errorInfo: ErrorInfo | null
-	onReset(): void
+	error: Error;
+	componentStack: string | null;
+	eventId: string | null;
+	resetError(): void;
 }
 
 export function ErrorDetails(props: ErrorDetailsProps) {
@@ -28,7 +28,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 			/>
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 				<Txt txt={props.error.message} styles={[{ color: '#FF6666' }]} />
-				<Txt txt={props.errorInfo?.componentStack || t('error.stackNA')} />
+				<Txt txt={props?.componentStack || t('error.stackNA')} />
 			</ScrollView>
 			<TouchableOpacity
 				onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) =>

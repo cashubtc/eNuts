@@ -61,9 +61,10 @@ export class CustomErrorBoundary extends Component<IProps, IState> {
 	render() {
 		return this.isEnabled() && this.state.error ?
 			<ErrorDetails
-				onReset={this.resetError}
+				resetError={this.resetError}
 				error={this.state.error}
-				errorInfo={this.state.errorInfo}
+				componentStack={this.state.errorInfo}
+				eventId={null}
 			/>
 			:
 			this.props.children
