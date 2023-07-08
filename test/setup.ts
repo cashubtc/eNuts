@@ -9,6 +9,8 @@ import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
 import en from '@assets/translations/en.json'
+
+process.env.NODE_ENV = 'test'
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 i18n.use(initReactI18next).init({
 	lng: 'en',
@@ -26,7 +28,6 @@ jest.mock('expo-sqlite', () => ({
 
 jest.mock('expo-constants', () => ({}))
 jest.mock('expo-secure-store', () => ({}))
-jest.mock('@bugsnag/expo', () => ({}))
 jest.mock('expo-localization', () => ({
 	locale: 'en-US',
 	getLgetLocales: () => {
