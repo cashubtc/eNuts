@@ -9,6 +9,10 @@ import { l } from '@log'
 import { setupReactotron } from '@log/reactotron'
 import { registerRootComponent } from 'expo'
 
+import { initCrashReporting } from './util/crashReporting'
+
+initCrashReporting()
+
 // Set up Reactotron, which is a free desktop app for inspecting and debugging
 // React Native apps. Learn more here: https://github.com/infinitered/reactotron
 if (isReactNativeDevMode) {

@@ -1,4 +1,3 @@
-import Bugsnag from '@bugsnag/expo'
 import { getEncodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
@@ -9,7 +8,7 @@ import { l } from '@log'
 import MyModal from '@modal'
 import type { IInitialProps, IPreferences, ITokenInfo } from '@model'
 import Navigator from '@nav/Navigator'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
@@ -18,46 +17,45 @@ import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
-import { initCrashReporting } from '@util/crashReporting'
+import { routingInstrumentation } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AppState, Text, View } from 'react-native'
+import * as Sentry from 'sentry-expo'
 
 import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './ErrorScreen/ErrorDetails'
 import Toaster from './Toaster'
 import Txt from './Txt'
 
-initCrashReporting()
 
 void SplashScreen.preventAutoHideAsync()
 
-// Bugsnag Error boundary. docs: https://docs.bugsnag.com/platforms/javascript/react/
-export default function App(initialProps: IInitialProps) {
-	if (env.BUGSNAG_API_KEY) {
-		// Create the error boundary...
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-		const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
-		// Uses the bugsnack error boundary component which posts the errors to our bugsnag account
+export default Sentry.Native.wrap((initialProps: IInitialProps) => {
+	if (!env?.SENTRY_DSN) {
 		return (
-			<ErrorBoundary FallbackComponent={ErrorDetails}>
+			<CustomErrorBoundary catchErrors='always'>
 				<_App _initialProps={initialProps} exp={initialProps.exp} />
-			</ErrorBoundary>
+			</CustomErrorBoundary>
 		)
 	}
+	// Create the error boundary...
+	const ErrorBoundary = Sentry.Native.ErrorBoundary
+	// Uses the Sentry error boundary component which posts the errors to our Sentry account
 	return (
-		<CustomErrorBoundary catchErrors='always'>
+		<ErrorBoundary fallback={ErrorDetails}>
 			<_App _initialProps={initialProps} exp={initialProps.exp} />
-		</CustomErrorBoundary>
+		</ErrorBoundary>
 	)
-}
+})
 
 function _App(_initialProps: IInitialProps) {
+	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { t, i18n } = useTranslation()
 	const [isRdy, setIsRdy] = useState(false)
@@ -246,15 +244,25 @@ function _App(_initialProps: IInitialProps) {
 			}
 			appState.current = nextAppState
 		})
+
+		try {
+			throw new Error('Hello this is my first Sentry error!')
+		} catch (e) {
+			Sentry.Native.captureException(e) 
+			Sentry.Native.nativeCrash()
+		}
 		return () => subscription.remove()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	if (!isRdy) { return null }
 
 	return (
 		<ThemeContext.Provider value={themeData}>
-			<NavigationContainer theme={theme === 'Light' ? light : dark}>
+			<NavigationContainer
+				theme={theme === 'Light' ? light : dark}
+				ref={navigation}
+				onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}>
 				<FocusClaimCtx.Provider value={claimData}>
 					<ContactsContext.Provider value={contactData}>
 						<KeyboardProvider>
