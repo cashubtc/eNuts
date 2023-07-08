@@ -26,7 +26,6 @@ import { StatusBar } from 'expo-status-bar'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AppState, Text, View } from 'react-native'
-import * as Sentry from 'sentry-expo'
 
 import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './ErrorScreen/ErrorDetails'
@@ -36,11 +35,11 @@ import Txt from './Txt'
 
 void SplashScreen.preventAutoHideAsync()
 
-export default Sentry.Native.wrap((initialProps: IInitialProps) => {
+export default () => {
 	if (!env?.SENTRY_DSN) {
 		return (
 			<CustomErrorBoundary catchErrors='always'>
-				<_App _initialProps={initialProps} exp={initialProps.exp} />
+				<_App />
 			</CustomErrorBoundary>
 		)
 	}
@@ -49,12 +48,12 @@ export default Sentry.Native.wrap((initialProps: IInitialProps) => {
 	// Uses the Sentry error boundary component which posts the errors to our Sentry account
 	return (
 		<ErrorBoundary fallback={ErrorDetails}>
-			<_App _initialProps={initialProps} exp={initialProps.exp} />
+			<_App />
 		</ErrorBoundary>
 	)
-})
+}
 
-function _App(_initialProps: IInitialProps) {
+function _App() {
 	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { t, i18n } = useTranslation()
