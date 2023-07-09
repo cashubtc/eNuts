@@ -1,5 +1,5 @@
 import { l } from '@log'
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useState } from 'react'
 
 const usePin = () => {
 	const [attempts, setAttempts] = useState({
