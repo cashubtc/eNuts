@@ -69,7 +69,7 @@ function _App() {
 	// initial auth state
 	const [auth, setAuth] = useState<INavigatorProps>({
 		shouldSetup: false,
-		shouldAuth: ''
+		pinHash: ''
 	})
 	// app was longer than 5 mins in the background
 	const [bgAuth, setBgAuth] = useState(false)
@@ -259,7 +259,7 @@ function _App() {
 			const skipped = await store.get('auth:skipped')
 			const pinHash = await secureStore.get('auth:pin')
 			setAuth({
-				shouldAuth: isNull(pinHash) ? '' : pinHash,
+				pinHash: isNull(pinHash) ? '' : pinHash,
 				shouldSetup: !isStr(skipped) || !skipped.length
 			})
 			// check for pin attempts and app locked state
@@ -335,7 +335,7 @@ function _App() {
 							<KeyboardProvider>
 								<Navigator
 									shouldSetup={auth.shouldSetup}
-									shouldAuth={auth.shouldAuth}
+									pinHash={auth.pinHash}
 									bgAuth={bgAuth}
 									setBgAuth={setBgAuth}
 								/>

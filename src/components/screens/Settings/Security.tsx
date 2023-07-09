@@ -59,12 +59,12 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 					<>
 						<SecurityOption
 							txt={t('auth.editPin')}
-							onPress={() => navigation.navigate('auth', { shouldAuth: pin, shouldEdit: true })}
+							onPress={() => navigation.navigate('auth', { pinHash: pin, shouldEdit: true })}
 						/>
 						<Separator />
 						<SecurityOption
 							txt={t('auth.removePin')}
-							onPress={() => navigation.navigate('auth', { shouldAuth: pin, shouldRemove: true })}
+							onPress={() => navigation.navigate('auth', { pinHash: pin, shouldRemove: true })}
 						/>
 						<Separator />
 					</>
@@ -72,7 +72,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 					<>
 						<SecurityOption
 							txt={t('auth.createPin')}
-							onPress={() => navigation.navigate('auth', { shouldAuth: '' })}
+							onPress={() => navigation.navigate('auth', { pinHash: '' })}
 						/>
 						<Separator />
 					</>

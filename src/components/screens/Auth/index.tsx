@@ -17,14 +17,14 @@ import PinDots from './PinDots'
 import PinPad from './PinPad'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
-	const { shouldAuth, shouldEdit, shouldRemove } = route.params
+	const { pinHash, shouldEdit, shouldRemove } = route.params
 	const { t } = useTranslation()
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context
 	const { attempts, setAttempts } = useContext(PinCtx)
 	// auth state
-	const [auth, setAuth] = useState(shouldAuth)
+	const [auth, setAuth] = useState(pinHash)
 	// initial PIN input state
 	const [pinInput, setPinInput] = useState<number[]>([])
 	// confirm PIN input state
@@ -200,8 +200,8 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	}, [attempts.locked, attempts.lockedTime])
 	// handle pin state
 	useEffect(() => {
-		setAuth(shouldAuth)
-	}, [shouldAuth])
+		setAuth(pinHash)
+	}, [pinHash])
 	// reset success state after navigating to this screen
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', () => setSuccess(false))
