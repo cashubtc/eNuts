@@ -213,7 +213,7 @@
     "invalidName": "Invalider Name!",
     "personalLnurl": "Persönliche LNURL",
     "addContactErr": "Kontakt konnte nicht hinzugefügt werden. Möglicher Name oder LNURL Duplikat.",
-    "addedContact": "Neue Kontakt hinzugefügt"
+    "addedContact": "Neuer Kontakt hinzugefügt"
   },
   "auth": {
     "welcome": "Willkommen",
