@@ -9,9 +9,6 @@ const usePin = () => {
 		lockedCount: 0,
 		lockedTime: 0,
 	})
-	useEffect(() => {
-		l('testtttttttttttttt')
-	}, [])
 	return { attempts, setAttempts }
 }
 
