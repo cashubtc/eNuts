@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import MyModal from '.'
+import { getTranslationLangCode } from '@src/util/localization'
 
 interface IOptsModal {
 	visible: boolean
@@ -26,7 +27,7 @@ export default function OptsModal({
 	onPressCancel,
 	loading
 }: IOptsModal) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>

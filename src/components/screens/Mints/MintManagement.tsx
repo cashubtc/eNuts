@@ -15,6 +15,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
@@ -25,7 +26,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// invoice amount modal

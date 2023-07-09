@@ -16,6 +16,7 @@ import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isUrl } from '@util'
@@ -24,7 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// mint list

@@ -7,9 +7,10 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 import AddressBook from './Book'
+import { getTranslationLangCode } from '@src/util/localization'
 
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

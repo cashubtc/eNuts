@@ -35,6 +35,7 @@ import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './ErrorScreen/ErrorDetails'
 import Toaster from './Toaster'
 import Txt from './Txt'
+import { getLanguageCode, getTranslationLangCode } from '@src/util/localization'
 
 interface ILockData {
 	mismatch: boolean
@@ -105,8 +106,7 @@ function _App() {
 	}
 	const pinData = { attempts, setAttempts }
 	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
-	// eslint-disable-next-line @typescript-eslint/naming-convention
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation(getTranslationLangCode())
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
 	const claimData = useMemo(() => ({ claimed, setClaimed }), [claimed])
@@ -257,7 +257,7 @@ function _App() {
 		}
 		async function initAuth() {
 			const skipped = await store.get('auth:skipped')
-			const pinHash = await secureStore.get('auth:pin')
+			const pinHash = await secureStore.get('auth_pin')
 			setAuth({
 				pinHash: isNull(pinHash) ? '' : pinHash,
 				shouldSetup: !isStr(skipped) || !skipped.length

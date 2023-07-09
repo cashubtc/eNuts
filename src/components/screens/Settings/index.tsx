@@ -15,9 +15,10 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { version } from '../../../../package.json'
+import { getTranslationLangCode } from '@src/util/localization'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const [confirm, setConfirm] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()

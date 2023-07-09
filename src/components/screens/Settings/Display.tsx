@@ -4,6 +4,7 @@ import type { TDisplaySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { globals, highlight as hi, themeColors } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +12,7 @@ import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -50,7 +51,7 @@ interface IThemeSelectionProps {
 }
 
 function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight, setHighlight } = useContext(ThemeContext)
 	return (
 		<>

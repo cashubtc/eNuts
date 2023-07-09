@@ -12,9 +12,10 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 import LNPageContent from './pageContent'
+import { getTranslationLangCode } from '@src/util/localization'
 
 export default function Lightning({ navigation, route }: TLightningPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// user mints

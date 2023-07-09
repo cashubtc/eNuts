@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
 import MyModal from '.'
+import { getTranslationLangCode } from '@src/util/localization'
 
 interface ITrustModalProps {
 	loading: boolean
@@ -17,7 +18,7 @@ interface ITrustModalProps {
 }
 
 export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, closeModal }: ITrustModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='question' animation='fade' visible close={closeModal}>

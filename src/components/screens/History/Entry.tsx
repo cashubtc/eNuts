@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import EntryTime from './entryTime'
+import { getTranslationLangCode } from '@src/util/localization'
 
 interface IHistoryEntryProps {
 	nav: THistoryPageProps
@@ -17,7 +18,7 @@ interface IHistoryEntryProps {
 }
 
 export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<TouchableOpacity

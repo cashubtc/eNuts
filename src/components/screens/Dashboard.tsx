@@ -16,6 +16,7 @@ import TopNav from '@nav/TopNav'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { addToHistory } from '@store/HistoryStore'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
@@ -26,7 +27,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url } = useInitialURL()
 	// Theme

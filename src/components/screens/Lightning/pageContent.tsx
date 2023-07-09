@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
 import MintPanel from './mintPanel'
+import { getTranslationLangCode } from '@src/util/localization'
 
 interface ILNPageProps {
 	nav: TLightningPageProps | TSendTokenPageProps
@@ -39,7 +40,7 @@ export default function LNPageContent({
 	setSelectedMint,
 	isSendingToken
 }: ILNPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// invoice amount modal

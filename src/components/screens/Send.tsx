@@ -9,9 +9,10 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 import LNPageContent from './Lightning/pageContent'
+import { getTranslationLangCode } from '@src/util/localization'
 
 export default function SendTokenPage({ navigation, route }: TSendTokenPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	// user mints
 	const [mints, setMints] = useState<IMintUrl[]>([])

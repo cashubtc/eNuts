@@ -15,10 +15,11 @@ import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import PinHint from './Hint'
 import PinDots from './PinDots'
 import PinPad from './PinPad'
+import { getTranslationLangCode } from '@src/util/localization'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context
@@ -129,7 +130,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			// else: PIN confirm is matching
 			const hash = hash256(pinStr)
 			await Promise.all([
-				secureStore.set('auth:pin', hash),
+				secureStore.set('auth_pin', hash),
 				store.delete('auth:lock')
 			])
 			resetStates()

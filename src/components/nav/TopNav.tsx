@@ -2,6 +2,7 @@ import { QRIcon } from '@comps/Icons'
 import type { TBottomNavProps } from '@model/nav'
 import { useNavigation } from '@react-navigation/native'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { globals } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +16,7 @@ interface TTopNavProps {
 }
 
 export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TTopNavProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const navHook = useNavigation()
 	const handlePress = () => {

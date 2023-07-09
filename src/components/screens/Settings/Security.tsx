@@ -10,6 +10,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { isNull } from '@src/util'
+import { getTranslationLangCode } from '@src/util/localization'
 import { secureStore } from '@store'
 import { globals } from '@styles'
 import { useContext, useEffect, useState } from 'react'
@@ -17,7 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const [pin, setPin] = useState<string | null>(null)
@@ -35,7 +36,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		}
 	}
 	const handlePin = async () => {
-		const pinHash = await secureStore.get('auth:pin')
+		const pinHash = await secureStore.get('auth_pin')
 		setPin(isNull(pinHash) ? '' : pinHash)
 	}
 	useEffect(() => void handlePin(), [])

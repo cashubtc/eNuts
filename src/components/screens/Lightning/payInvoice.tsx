@@ -15,6 +15,7 @@ import { CoinSelectionModal, CoinSelectionResume } from '@screens/Lightning/moda
 import { isIOS } from '@src/consts'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
@@ -27,7 +28,7 @@ import { KeyboardAvoidingView, StyleSheet, Switch, Text, TextInput, TouchableOpa
 
 // TODO adapt style
 export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// LNURL amount state

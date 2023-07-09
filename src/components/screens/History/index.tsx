@@ -14,9 +14,10 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
 import HistoryEntry from './Entry'
+import { getTranslationLangCode } from '@src/util/localization'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const { claimed } = useContext(FocusClaimCtx)
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})

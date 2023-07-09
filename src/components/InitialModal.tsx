@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet,Text, TouchableOpacity } from 'react-native'
 
 import Button from './Button'
+import { getTranslationLangCode } from '@src/util/localization'
 
 interface IInitialModalProps {
 	visible: boolean
@@ -14,7 +15,7 @@ interface IInitialModalProps {
 }
 
 export default function InitialModal({ visible, onConfirm, onCancel }: IInitialModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onCancel}>

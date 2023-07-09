@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import Loading from './Loading'
+import { getTranslationLangCode } from '@src/util/localization'
 
 interface ISuccessProps {
 	amount: number
@@ -24,7 +25,7 @@ interface ISuccessProps {
 }
 
 export default function Success({ amount, fee, mints, mint, memo, nav, hash }: ISuccessProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 	const [testMintTokenRdy, setTestMintTokenRdy] = useState(false)
 	// Only for the hard-coded test mint. Otherwise this is done for other mints before landing in this page

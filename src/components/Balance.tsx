@@ -10,13 +10,14 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import usePrompt from './hooks/Prompt'
 import Toaster from './Toaster'
+import { getTranslationLangCode } from '@src/util/localization'
 
 interface IBalanceProps {
 	balance: number
 }
 
 export default function Balance({ balance }: IBalanceProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { pref, color, highlight } = useContext(ThemeContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const { prompt, openPromptAutoClose } = usePrompt()

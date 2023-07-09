@@ -13,6 +13,7 @@ import type { TQRScanPageProps } from '@model/nav'
 import { Picker } from '@react-native-picker/picker'
 import { CoinSelectionModal, CoinSelectionResume } from '@screens/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { getCustomMintNames, getDefaultMint, getMintName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
@@ -30,7 +31,7 @@ interface IScannedQRProps {
 
 // TODO adapt style
 export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScannedQRProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { loading, startLoading, stopLoading } = useLoading()
 	const { prompt, openPromptAutoClose } = usePrompt()

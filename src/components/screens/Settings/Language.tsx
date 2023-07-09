@@ -2,6 +2,7 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { store } from '@store'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
@@ -15,7 +16,7 @@ const langs = [
 ]
 
 export default function LanguageSettings() {
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -37,7 +38,7 @@ interface ILangSelectionProps {
 }
 
 function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionProps) {
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const handleLangChange = async () => {
 		await i18n.changeLanguage(code)

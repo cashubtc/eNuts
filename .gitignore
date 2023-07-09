@@ -25,5 +25,5 @@ web-build/
 .*.env.*
 .env
 report/
-
+.vscode
 scripts

@@ -23,9 +23,10 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import QRMarker from './Marker'
+import { getTranslationLangCode } from '@src/util/localization'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)

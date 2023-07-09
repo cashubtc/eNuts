@@ -1,3 +1,4 @@
+import { getTranslationLangCode } from '@src/util/localization'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text } from 'react-native'
 
@@ -9,7 +10,7 @@ interface IPinHintProps {
 }
 
 export default function PinHint({ confirm, login, shouldEdit, shouldRemove }: IPinHintProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const getRightHeaderTxt = () => {
 		if (login && !shouldEdit && !shouldRemove) { return t('auth.welcomeBack') }
 		if (shouldRemove) { return t('auth.removePin') }

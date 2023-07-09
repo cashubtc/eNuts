@@ -9,6 +9,7 @@ import MyModal from '@modal'
 import type { TAddressBookPageProps } from '@model/nav'
 import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { globals, highlight as hi } from '@styles'
 import { isLnurl } from '@util'
 import { useContext, useState } from 'react'
@@ -23,7 +24,7 @@ interface IAddressBookProps {
 }
 
 export default function AddressBook({ nav, isModal, closeModal, setInput }: IAddressBookProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	// contacts hook
 	const { contacts, setContacts, hasOwnAddress, getPersonalInfo } = useContext(ContactsContext)
@@ -217,7 +218,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 }
 
 function ContactsCount({ count }: { count: number }) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	return (
 		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>

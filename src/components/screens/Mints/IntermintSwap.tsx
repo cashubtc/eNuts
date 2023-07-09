@@ -9,6 +9,7 @@ import TopNav from '@nav/TopNav'
 import { Picker } from '@react-native-picker/picker'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { getMintName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, formatInt, formatMintUrl, isErr } from '@util'
@@ -19,7 +20,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 export default function IntermintSwap({ navigation, route }: TIntermintSwapPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	const [selectedMint, setSelectedMint] = useState(route.params.mints[0])

@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native'
 
 import { useShakeAnimation } from './animation/Shake'
+import { getTranslationLangCode } from '@src/util/localization'
 
 interface IInvoiceModalProps {
 	lnAmountModal: boolean
@@ -25,7 +26,7 @@ export default function LNInvoiceAmountModal({
 	mintUrl,
 	setLNAmountModal,
 }: IInvoiceModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// workaround: amount input ref for auto-focus (input property "autoFocus" does not work here)

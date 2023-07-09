@@ -2,6 +2,7 @@ import usePrompt from '@comps/hooks/Prompt'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { repoIssueUrl } from '@consts/urls'
+import { getTranslationLangCode } from '@src/util/localization'
 import { isErr, openUrl } from '@util'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -15,7 +16,7 @@ export interface ErrorDetailsProps {
 }
 
 export function ErrorDetails(props: ErrorDetailsProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { prompt, openPromptAutoClose } = usePrompt()
 	return (
 		<View style={styles.container}>

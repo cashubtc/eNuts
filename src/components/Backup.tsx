@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { Share, StyleSheet, Text } from 'react-native'
 
 import ActionButtons from './ActionButtons'
+import { getTranslationLangCode } from '@src/util/localization'
 
 interface IBackupSuccessProps {
 	token: string
@@ -15,7 +16,7 @@ interface IBackupSuccessProps {
 }
 
 export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const handleShare = async () => {

@@ -5,6 +5,7 @@ import { l } from '@log'
 import type { TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { dark, globals, highlight as hi } from '@styles'
 import { vib } from '@util'
 import * as Clipboard from 'expo-clipboard'
@@ -16,7 +17,7 @@ import { Share, StyleSheet, View } from 'react-native'
  * The page that shows the created Cashu token that can be scanned, copied or shared
  */
 export default function EncodedTokenPage({ route }: TEncodedTokenPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const [error, setError] = useState({ msg: '', open: false })

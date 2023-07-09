@@ -11,6 +11,7 @@ import type { THistoryEntryPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { getTranslationLangCode } from '@src/util/localization'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
@@ -28,7 +29,7 @@ const initialCopyState = {
 }
 
 export default function DetailsPage({ navigation, route }: THistoryEntryPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const entry = route.params.entry
 	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)
