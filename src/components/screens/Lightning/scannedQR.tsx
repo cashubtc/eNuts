@@ -16,7 +16,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { getCustomMintNames, getDefaultMint, getMintName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
-import { formatExpiry, formatInt, formatMintUrl, getSelectedAmount, isErr } from '@util'
+import { formatInt, formatMintUrl, formatSeconds, getSelectedAmount, isErr } from '@util'
 import { payLnInvoice } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -141,7 +141,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					Satoshi
 				</Text>
 				<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
-					{timeLeft > 0 ? formatExpiry(timeLeft) : t('common.invoiceExpired')}
+					{timeLeft > 0 ? formatSeconds(timeLeft) : t('common.invoiceExpired')}
 				</Text>
 				<View style={styles.pickerWrap}>
 					{!mints.length &&

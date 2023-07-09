@@ -2,21 +2,24 @@ import { getEncodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { env } from '@consts'
+import { FiveMins } from '@consts/time'
 import { addAllMintIds, getBalance, getContacts, getMintsBalances, getMintsUrls, getPreferences, initDb, setPreferences } from '@db'
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import MyModal from '@modal'
-import type { IInitialProps, IPreferences, ITokenInfo } from '@model'
+import type { IPreferences, ITokenInfo } from '@model'
+import type { INavigatorProps } from '@model/nav'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
+import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
-import { store } from '@store'
+import { secureStore,store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
-import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
+import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
 import { routingInstrumentation } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -33,6 +36,14 @@ import { ErrorDetails } from './ErrorScreen/ErrorDetails'
 import Toaster from './Toaster'
 import Txt from './Txt'
 
+interface ILockData {
+	mismatch: boolean
+	mismatchCount: number
+	locked: boolean
+	lockedCount: number
+	lockedTime: number,
+	timestamp: number
+}
 
 void SplashScreen.preventAutoHideAsync()
 
@@ -55,6 +66,44 @@ export default function App(){
 }
 
 function _App() {
+	// initial auth state
+	const [auth, setAuth] = useState<INavigatorProps>({
+		shouldSetup: false,
+		pinHash: ''
+	})
+	// app was longer than 5 mins in the background
+	const [bgAuth, setBgAuth] = useState(false)
+	// PIN mismatch state
+	const [attempts, setAttempts] = useState({
+		mismatch: false,
+		mismatchCount: 0,
+		locked: false,
+		lockedCount: 0,
+		lockedTime: 0,
+	})
+	const handlePinForeground = async () => {
+		// check if app is locked
+		const now = Math.ceil(Date.now() / 1000)
+		const lockData = await store.getObj<ILockData>('auth:lock')
+		if (lockData) {
+			// set state acccording to lockData timestamp
+			const secsPassed = now - lockData.timestamp
+			const lockedTime = lockData.lockedTime - secsPassed
+			setAttempts({
+				...lockData,
+				mismatch: false,
+				lockedTime
+			})
+		}
+		// handle app was longer than 5 mins in the background
+		const bgTimestamp = await store.get('auth:bg')
+		if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
+			if (now - +bgTimestamp > FiveMins) {
+				setBgAuth(true)
+			}
+		}
+	}
+	const pinData = { attempts, setAttempts }
 	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { t, i18n } = useTranslation()
@@ -110,7 +159,6 @@ function _App() {
 	}
 
 	const handleRedeem = async () => {
-		// startLoading()
 		if (!tokenInfo) { return }
 		setClaimOpen(false)
 		const encoded = getEncodedToken(tokenInfo.decoded)
@@ -207,6 +255,16 @@ function _App() {
 				l('Error while initializing contacts from DB')
 			}
 		}
+		async function initAuth() {
+			const skipped = await store.get('auth:skipped')
+			const pinHash = await secureStore.get('auth:pin')
+			setAuth({
+				pinHash: isNull(pinHash) ? '' : pinHash,
+				shouldSetup: !isStr(skipped) || !skipped.length
+			})
+			// check for pin attempts and app locked state
+			await handlePinForeground()
+		}
 		async function init() {
 			await initDB()
 			await initContacts()
@@ -215,6 +273,7 @@ function _App() {
 			if (storedLng?.length) {
 				await i18n.changeLanguage(storedLng)
 			}
+			await initAuth()
 			// await dropTable('proofs')
 			// await dropTable('proofsUsed')
 			// await dropTable('keysetIds')
@@ -224,7 +283,7 @@ function _App() {
 			// await dropTable('contacts')
 			const mintBalsTotal = (await getMintsBalances()).reduce((acc, cur) => acc + cur.amount, 0)
 			const bal = await getBalance()
-			l({ bal, mintBalsTotal })
+			// l({ bal, mintBalsTotal })
 			if (mintBalsTotal !== bal) {
 				await addAllMintIds()
 			}
@@ -239,8 +298,14 @@ function _App() {
 			) {
 				l('App has come to the foreground!')
 				setClaimed(false)
+				// check for pin attempts and app locked state
+				await handlePinForeground()
 				// check for clipboard valid cashu token when the app comes to the foregorund
 				await handleForeground()
+			} else {
+				l('App has gone to the background!')
+				// store timestamp to activate auth after > 5mins in background
+				await store.set('auth:bg', `${Math.ceil(Date.now() / 1000)}`)
 			}
 			appState.current = nextAppState
 		})
@@ -262,41 +327,49 @@ function _App() {
 			<NavigationContainer
 				theme={theme === 'Light' ? light : dark}
 				ref={navigation}
-				onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}>
-				<FocusClaimCtx.Provider value={claimData}>
-					<ContactsContext.Provider value={contactData}>
-						<KeyboardProvider>
-							<Navigator />
-							<StatusBar style="auto" />
-							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-							<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
-								<Text style={globals(color, highlight).modalHeader}>
-									{t('common.foundCashuClipboard')}
-								</Text>
-								<Text style={globals(color, highlight).modalTxt}>
-									{t('history.memo')}: {tokenInfo?.decoded.memo}{'\n'}
-									<Txt
-										txt={formatInt(tokenInfo?.value ?? 0)}
-										styles={[{ fontWeight: '500' }]}
+				onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
+			>
+				<PinCtx.Provider value={pinData}>
+					<FocusClaimCtx.Provider value={claimData}>
+						<ContactsContext.Provider value={contactData}>
+							<KeyboardProvider>
+								<Navigator
+									shouldSetup={auth.shouldSetup}
+									pinHash={auth.pinHash}
+									bgAuth={bgAuth}
+									setBgAuth={setBgAuth}
+								/>
+								<StatusBar style="auto" />
+								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
+								<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
+									<Text style={globals(color, highlight).modalHeader}>
+										{t('common.foundCashuClipboard')}
+									</Text>
+									<Text style={globals(color, highlight).modalTxt}>
+										{t('history.memo')}: {tokenInfo?.decoded.memo}{'\n'}
+										<Txt
+											txt={formatInt(tokenInfo?.value ?? 0)}
+											styles={[{ fontWeight: '500' }]}
+										/>
+										{' '}Satoshi {t('common.fromMint')}:{' '}
+										{tokenInfo?.mints.join(', ')}
+									</Text>
+									<Button
+										txt={t('common.accept')}
+										onPress={() => void handleRedeem()}
 									/>
-									{' '}Satoshi {t('common.fromMint')}:{' '}
-									{tokenInfo?.mints.join(', ')}
-								</Text>
-								<Button
-									txt={t('common.accept')}
-									onPress={() => void handleRedeem()}
-								/>
-								<View style={{ marginVertical: 10 }} />
-								<Button
-									txt={t('common.cancel')}
-									outlined
-									onPress={() => setClaimOpen(false)}
-								/>
-							</MyModal>
-							{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-						</KeyboardProvider>
-					</ContactsContext.Provider>
-				</FocusClaimCtx.Provider>
+									<View style={{ marginVertical: 10 }} />
+									<Button
+										txt={t('common.cancel')}
+										outlined
+										onPress={() => setClaimOpen(false)}
+									/>
+								</MyModal>
+								{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+							</KeyboardProvider>
+						</ContactsContext.Provider>
+					</FocusClaimCtx.Provider>
+				</PinCtx.Provider>
 			</NavigationContainer>
 		</ThemeContext.Provider>
 	)

@@ -1,6 +1,8 @@
+import AuthPage from '@comps/screens/Auth'
 import AboutSettings from '@comps/screens/Settings/About'
-import type { RootStackParamList } from '@model/nav'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import type { INavigatorProps, RootStackParamList } from '@model/nav'
+import { useNavigation } from '@react-navigation/core'
+import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AddressbookPage from '@screens/Addressbook'
 import ContactPage from '@screens/Addressbook/Contact'
 import Dashboard from '@screens/Dashboard'
@@ -24,13 +26,20 @@ import LanguageSettings from '@screens/Settings/Language'
 import SecuritySettings from '@screens/Settings/Security'
 import SuccessPage from '@screens/Success'
 import { ThemeContext } from '@src/context/Theme'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { View } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
-export default function Navigator() {
+export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: INavigatorProps) {
 	const { color } = useContext(ThemeContext)
+	const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
+	useEffect(() => {
+		if (!bgAuth || !pinHash.length) { return }
+		setBgAuth?.(false)
+		nav.navigate('auth', { pinHash })
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [bgAuth])
 	return (
 		<View style={{
 			position: 'absolute',
@@ -39,6 +48,7 @@ export default function Navigator() {
 			backgroundColor: color.BACKGROUND,
 		}}>
 			<Stack.Navigator
+				initialRouteName={shouldSetup || pinHash || bgAuth ? 'auth' : 'dashboard'}
 				screenOptions={{
 					headerShown: false,
 					animation: 'fade',
@@ -46,6 +56,7 @@ export default function Navigator() {
 				}}
 			>
 				<Stack.Screen name='dashboard' component={Dashboard} />
+				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />
 				{/* create sendable token page */}
 				<Stack.Screen
 					name='send'

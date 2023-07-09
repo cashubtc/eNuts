@@ -106,18 +106,18 @@ export abstract class StoreBase {
 		)
 		return result?.item?.(0)?.value
 	}
-	protected async updateByValue(oldValue: string, newValue: string) :Promise<boolean> {
+	protected async updateByValue(oldValue: string, newValue: string): Promise<boolean> {
 		if (!this._isReady) {
 			await this._createStore()
 			if (!this._isReady) { return false }
 		}
 		const result = await this._db.exec({
 			sql: `UPDATE ${this._name} SET value = ? WHERE KEY in (SELECT KEY FROM ${this._name} WHERE value = ? LIMIT 1)`,
-			args:[newValue,oldValue]
+			args: [newValue, oldValue]
 		})
-		return !!(result && 'rowsAffected' in result && result?.rowsAffected===1)
+		return !!(result && 'rowsAffected' in result && result?.rowsAffected === 1)
 	}
-	protected async updateObjByValue<T extends object>(oldValue: T, newValue: T): Promise<boolean>{
+	protected async updateObjByValue<T extends object>(oldValue: T, newValue: T): Promise<boolean> {
 		if (!this._isReady) {
 			await this._createStore()
 			if (!this._isReady) { return false }
@@ -235,4 +235,8 @@ export abstract class StoreBase {
 		return !!(result?.insertId || result?.rowsAffected)
 	}
 	protected close(): void { return this._db.close() }
+	protected async removeItem(key: string) {
+		const result = await this._db.execTx({ sql: `delete from ${this._name} where key = ?`, args: [key] })
+		return result?.rowsAffected === 1
+	}
 }

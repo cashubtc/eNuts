@@ -266,6 +266,15 @@ export function LockIcon({ width, height, color }: TIconProps) {
 		</Svg>
 	)
 }
+export function UnlockIcon({ width, height, color }: TIconProps) {
+	return (
+		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+			<Path d="M9.5 16C9.5 17.38 10.62 18.5 12 18.5C13.38 18.5 14.5 17.38 14.5 16C14.5 14.62 13.38 13.5 12 13.5" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+			<Path d="M22 17V15C22 11 21 10 17 10H7C3 10 2 11 2 15V17C2 21 3 22 7 22H17C18.76 22 19.94 21.81 20.71 21.25" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+			<Path d="M6 10V8C6 4.69 7 2 12 2C16.5 2 18 4 18 7" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+		</Svg>
+	)
+}
 export function BackupIcon({ width, height, color }: TIconProps) {
 	return (
 		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
@@ -369,6 +378,14 @@ export function AboutIcon({ width, height, color }: TIconProps) {
 	return (
 		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
 			<Path d="M13 16H14.5C14.7761 16 15 16.2239 15 16.5C15 16.7761 14.7761 17 14.5 17H10.5C10.2239 17 10 16.7761 10 16.5C10 16.2239 10.2239 16 10.5 16H12V11H10.5C10.2239 11 10 10.7761 10 10.5C10 10.2239 10.2239 10 10.5 10H12.5C12.7761 10 13 10.2239 13 10.5V16ZM12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM11.5 7H12.5C12.7761 7 13 7.22386 13 7.5V8.5C13 8.77614 12.7761 9 12.5 9H11.5C11.2239 9 11 8.77614 11 8.5V7.5C11 7.22386 11.2239 7 11.5 7Z" fill={color} />
+		</Svg>
+	)
+}
+export function BackspaceIcon({ width, height, color }: TIconProps) {
+	return (
+		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+			<Path d="M14.3855 12.0034L17.2139 14.8319L16.5068 15.539L13.6783 12.7105L10.8499 15.5389L10.1428 14.8318L12.9712 12.0034L10.1428 9.17505L10.85 8.46794L13.6783 11.2963L16.5068 8.4679L17.2139 9.175L14.3855 12.0034Z" fill={color} />
+			<Path fill-rule="evenodd" clip-rule="evenodd" d="M7.38559 4.5H21.4999V19.5H7.38559L1.87964 12L7.38559 4.5ZM7.89201 5.5L3.12018 12L7.892 18.5H20.4999V5.5H7.89201Z" fill={color} />
 		</Svg>
 	)
 }

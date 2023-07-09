@@ -206,6 +206,20 @@
     "addContactErr": "Contact can not be added. Possible name or LNURL duplication.",
     "addedContact": "New contact added"
   },
+  "auth": {
+    "welcome": "Welcome",
+    "welcomeBack": "Welcome back!",
+    "pleaseEnter": "Please enter your PIN now.",
+    "pleaseConfirm": "Please confirm your PIN.",
+    "pinSetup": "You can setup a PIN to secure your app.",
+    "pinMismatch": "Incorrect PIN!",
+    "createPin": "Create PIN",
+    "editPin":"Edit PIN",
+    "removePin":"Delete PIN",
+    "confirmAction": "Please confirm the action.",
+    "pleaseNewPin": "Please enter a new PIN now.",
+    "pleaseConfirmNewPin": "Please confirm your new PIN."
+  },
   "english": "English",
   "german": "German",
   "french": "French",

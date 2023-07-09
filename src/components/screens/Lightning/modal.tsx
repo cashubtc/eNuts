@@ -16,7 +16,7 @@ import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
-import { formatExpiry, getSelectedAmount, isErr, openUrl } from '@util'
+import { formatSeconds, getSelectedAmount, isErr, openUrl } from '@util'
 import { getMintCurrentKeySetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
@@ -116,7 +116,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 					<View>
 						<Text style={[styles.lnExpiry, { color: expiry < 1 ? color.ERROR : hi[highlight], fontSize: 28 }]}>
 							{expiry > 0 ?
-								formatExpiry(expiry)
+								formatSeconds(expiry)
 								:
 								t('common.invoiceExpired') + '!'
 							}

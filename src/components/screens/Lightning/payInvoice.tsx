@@ -18,7 +18,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
-import { cleanUpNumericStr, formatExpiry, formatInt, formatMintUrl, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
+import { cleanUpNumericStr, formatInt, formatMintUrl, formatSeconds, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
@@ -275,7 +275,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 							Invoice overview
 						</Text>
 						<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
-							{timeLeft > 0 ? formatExpiry(timeLeft) : t('common.expired') + '!'}
+							{timeLeft > 0 ? formatSeconds(timeLeft) : t('common.expired') + '!'}
 						</Text>
 					</View>
 					{/* Invoice amount */}

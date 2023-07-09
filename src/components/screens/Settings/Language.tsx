@@ -2,7 +2,6 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { l } from '@src/logger'
 import { store } from '@store'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
@@ -42,10 +41,7 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 	const { color, highlight } = useContext(ThemeContext)
 	const handleLangChange = async () => {
 		await i18n.changeLanguage(code)
-		const success = await store.set('settings:lang', code)
-		if (!success) {
-			l('new language could not be stored')
-		}
+		await store.set('settings:lang', code)
 	}
 	return (
 		<>

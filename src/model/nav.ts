@@ -9,6 +9,11 @@ import type { IHistoryEntry, IMintUrl } from '.'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RootStackParamList = {
 	dashboard: undefined
+	auth: {
+		pinHash: string
+		shouldEdit?: boolean
+		shouldRemove?: boolean
+	}
 	send: undefined
 	sendToken: {
 		token: string
@@ -75,6 +80,7 @@ export type RootStackParamList = {
 
 export type TRouteString = 'dashboard' | 'lightning' | 'mints' | 'history' | 'Address book' | 'Settings'
 export type TDashboardPageProps = NativeStackScreenProps<RootStackParamList, 'dashboard', 'MyStack'>
+export type TAuthPageProps = NativeStackScreenProps<RootStackParamList, 'auth', 'MyStack'>
 export type TSendTokenPageProps = NativeStackScreenProps<RootStackParamList, 'send', 'MyStack'>
 export type TEncodedTokenPageProps = NativeStackScreenProps<RootStackParamList, 'sendToken', 'MyStack'>
 export type TSuccessPageProps = NativeStackScreenProps<RootStackParamList, 'success', 'MyStack'>
@@ -113,3 +119,9 @@ export type TBottomNavProps =
 	TDisplaySettingsPageProps |
 	TSettingsPageProps |
 	IContactPageProps
+export interface INavigatorProps {
+	pinHash: string
+	shouldSetup?: boolean
+	bgAuth?: boolean
+	setBgAuth?: (val: boolean) => void
+}
