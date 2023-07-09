@@ -4,7 +4,7 @@ import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
-import { AsyncStore, secureStore } from '@store'
+import { secureStore,store } from '@store'
 import { globals, highlight as hi } from '@styles'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
@@ -64,7 +64,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		}
 		// store this info to avoid bypass state on app restart
 		if (!isConfirm) {
-			await AsyncStore.setObj('lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
+			await store.setObj('lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
 		}
 		setAttempts(attemptState)
 		// reset mismatch state
@@ -98,14 +98,14 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			if (shouldRemove) {
 				await Promise.all([
 					secureStore.delete('pin'),
-					AsyncStore.set('pinSkipped', '1')
+					store.set('pinSkipped', '1')
 				])
 				setAuth('')
 			}
 			// remove the lock data and authbg in storage
 			await Promise.all([
-				AsyncStore.delete('lock'),
-				AsyncStore.delete('authBg')
+				store.delete('lock'),
+				store.delete('authBg')
 			])
 			resetStates()
 			// User wants to edit his PIN, do not navigate away, just update the state as he had no PIN so he can enter a new PIN
@@ -130,7 +130,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			const hash = hash256(pinStr)
 			await Promise.all([
 				secureStore.set('pin', hash),
-				AsyncStore.delete('lock')
+				store.delete('lock')
 			])
 			resetStates()
 			setSuccess(true)
@@ -172,7 +172,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			return
 		}
 		// skip pin setup
-		await AsyncStore.set('pinSkipped', '1')
+		await store.set('pinSkipped', '1')
 		navigation.navigate('dashboard')
 	}
 	// conditional rendering dots of pin input

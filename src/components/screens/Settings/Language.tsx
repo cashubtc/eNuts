@@ -2,7 +2,7 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { AsyncStore } from '@store'
+import { store } from '@store'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -41,7 +41,7 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 	const { color, highlight } = useContext(ThemeContext)
 	const handleLangChange = async () => {
 		await i18n.changeLanguage(code)
-		await AsyncStore.set('settings:lang', code)
+		await store.set('settings:lang', code)
 	}
 	return (
 		<>
