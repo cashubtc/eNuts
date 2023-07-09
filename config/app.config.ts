@@ -44,6 +44,8 @@ const IS_DEV = _appVariant === 'dev'
 const IS_PREVIEW = _appVariant === 'preview'
 const IS_PROD = _appVariant === 'prod'
 
+const cameraPermission = 'Allow eNuts to access camera.'
+
 const config: ExpoConfig = {
 	name: `eNuts${!IS_PROD ? ` (${_appVariant})` : ''}`,
 	slug: 'enuts',
@@ -61,18 +63,8 @@ const config: ExpoConfig = {
 	assetBundlePatterns: ['**/*'],
 	plugins: [
 		'expo-localization',
-		[
-			'expo-barcode-scanner',
-			{
-				cameraPermission: 'Allow eNuts to access camera.'
-			}
-		],
-		[
-			'expo-camera',
-			{
-				cameraPermission: 'Allow eNuts to access camera.'
-			}
-		],
+		['expo-barcode-scanner', { cameraPermission }],
+		['expo-camera', { cameraPermission }],
 		'sentry-expo'
 	],
 	ios: {

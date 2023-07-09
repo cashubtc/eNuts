@@ -50,11 +50,11 @@ initCrashReporting()
 
 void SplashScreen.preventAutoHideAsync()
 
-export default Sentry.Native.wrap((initialProps: IInitialProps) => {
+export default function App(){
 	if (!env?.SENTRY_DSN) {
 		return (
 			<CustomErrorBoundary catchErrors='always'>
-				<_App _initialProps={initialProps} exp={initialProps.exp} />
+				<_App />
 			</CustomErrorBoundary>
 		)
 	}
@@ -63,12 +63,12 @@ export default Sentry.Native.wrap((initialProps: IInitialProps) => {
 	// Uses the Sentry error boundary component which posts the errors to our Sentry account
 	return (
 		<ErrorBoundary fallback={ErrorDetails}>
-			<_App _initialProps={initialProps} exp={initialProps.exp} />
+			<_App />
 		</ErrorBoundary>
 	)
-})
+}
 
-function _App(_initialProps: IInitialProps) {
+function _App() {
 	// initial auth state
 	const [auth, setAuth] = useState<INavigatorProps>({
 		shouldSetup: false,
