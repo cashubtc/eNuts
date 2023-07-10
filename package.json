@@ -5,8 +5,9 @@
 	"scripts": {
 		"s:debug:full": "npx -y cross-env@latest DEBUG=full expo start -c",
 		"s:c:dev": "expo start -c --dev-client",
-		"s:c": "expo start -c",
-		"start": "expo start",
+		"s:c:": "expo start -c --go",
+		"start": "expo start --go",
+		"start:d": "expo start",
 		"lint:eslint": "npx eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.json --fix",
 		"lint": "npm run lint:eslint && npx tsc && npm run fmtJson",
 		"ts:check": "npx tsc",
