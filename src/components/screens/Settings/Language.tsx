@@ -43,7 +43,7 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 	const { color, highlight } = useContext(ThemeContext)
 	const handleLangChange = async () => {
 		await i18n.changeLanguage(code)
-		await store.set('settings:lang', code)
+		await store.set('settings_lang', code)
 	}
 	return (
 		<>

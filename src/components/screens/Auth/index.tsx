@@ -65,7 +65,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		}
 		// store this info to avoid bypass state on app restart
 		if (!isConfirm) {
-			await store.setObj('auth:lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
+			await store.setObj('auth_lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
 		}
 		setAttempts(attemptState)
 		// reset mismatch state
@@ -98,15 +98,15 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			// user wants to delete his PIN
 			if (shouldRemove) {
 				await Promise.all([
-					secureStore.delete('auth:pin'),
-					store.set('auth:skipped', '1')
+					secureStore.delete('auth_pin'),
+					store.set('auth_skipped', '1')
 				])
 				setAuth('')
 			}
 			// remove the lock data and authbg in storage
 			await Promise.all([
-				store.delete('auth:lock'),
-				store.delete('auth:bg')
+				store.delete('auth_lock'),
+				store.delete('auth_bg')
 			])
 			resetStates()
 			// User wants to edit his PIN, do not navigate away, just update the state as he had no PIN so he can enter a new PIN
@@ -130,8 +130,8 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			// else: PIN confirm is matching
 			const hash = hash256(pinStr)
 			await Promise.all([
-				secureStore.set('auth:pin', hash),
-				store.delete('auth:lock')
+				secureStore.set('auth_pin', hash),
+				store.delete('auth_lock')
 			])
 			resetStates()
 			setSuccess(true)
@@ -173,7 +173,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			return
 		}
 		// skip pin setup
-		await store.set('auth:skipped', '1')
+		await store.set('auth_skipped', '1')
 		navigation.navigate('dashboard')
 	}
 	// conditional rendering dots of pin input
@@ -260,7 +260,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 								{!auth.length && !shouldEdit &&
 									<TouchableOpacity onPress={() => void handleSkip()}>
 										<Text style={[globals(color).pressTxt, styles.skip]}>
-											{isConfirm ? t('common.back') : t('willDoLater')}
+											{isConfirm ? t('common.back') : t('common.willDoLater')}
 										</Text>
 									</TouchableOpacity>
 								}

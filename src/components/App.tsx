@@ -85,7 +85,7 @@ function _App() {
 	const handlePinForeground = async () => {
 		// check if app is locked
 		const now = Math.ceil(Date.now() / 1000)
-		const lockData = await store.getObj<ILockData>('auth:lock')
+		const lockData = await store.getObj<ILockData>('auth_lock')
 		if (lockData) {
 			// set state acccording to lockData timestamp
 			const secsPassed = now - lockData.timestamp
@@ -97,7 +97,7 @@ function _App() {
 			})
 		}
 		// handle app was longer than 5 mins in the background
-		const bgTimestamp = await store.get('auth:bg')
+		const bgTimestamp = await store.get('auth_bg')
 		if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
 			if (now - +bgTimestamp > FiveMins) {
 				setBgAuth(true)
@@ -257,8 +257,9 @@ function _App() {
 			}
 		}
 		async function initAuth() {
-			const skipped = await store.get('auth:skipped')
-			const pinHash = await secureStore.get('auth:pin')
+			// await store.clear()
+			const skipped = await store.get('auth_skipped')
+			const pinHash = await secureStore.get('auth_pin')
 			setAuth({
 				pinHash: isNull(pinHash) ? '' : pinHash,
 				shouldSetup: !isStr(skipped) || !skipped.length
@@ -270,7 +271,7 @@ function _App() {
 			await initDB()
 			await initContacts()
 			await initPreferences()
-			const storedLng = await store.get('settings:lang')
+			const storedLng = await store.get('settings_lang')
 			if (storedLng?.length) {
 				await i18n.changeLanguage(storedLng)
 			}
@@ -306,7 +307,7 @@ function _App() {
 			} else {
 				l('App has gone to the background!')
 				// store timestamp to activate auth after > 5mins in background
-				await store.set('auth:bg', `${Math.ceil(Date.now() / 1000)}`)
+				await store.set('auth_bg', `${Math.ceil(Date.now() / 1000)}`)
 			}
 			appState.current = nextAppState
 		})

@@ -36,7 +36,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		}
 	}
 	const handlePin = async () => {
-		const pinHash = await secureStore.get('auth:pin')
+		const pinHash = await secureStore.get('auth_pin')
 		setPin(isNull(pinHash) ? '' : pinHash)
 	}
 	useEffect(() => void handlePin(), [])
