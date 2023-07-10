@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
-	const { t } = useTranslation(['common', 'mints'])
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// mint list

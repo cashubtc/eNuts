@@ -11,7 +11,7 @@ export default function MintBackup({ route }: TMintBackupPageProps) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('mintBackup', { ns: 'topNav' })} withBackBtn />
+			<TopNav screenName={t('mintBackup')} withBackBtn />
 			<BackupSuccess
 				token={route.params.token}
 				mint={route.params.mintUrl}

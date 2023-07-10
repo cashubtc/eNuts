@@ -24,7 +24,6 @@ i18n.use(initReactI18next)
 		},
 		defaultNS,
 		ns: ['common', 'auth', 'wallet', 'topNav', 'bottomNav', 'error', 'history', 'mints', 'backup', 'addrBook'],
-		// nsSeparator: '.',
 		lng: getTranslationLangCode(),
 		debug,
 		// Consider external storing of translations and fetch needed language on demand

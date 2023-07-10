@@ -68,7 +68,7 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 				screenName={route.params?.mint || route.params?.send ?
 					'Zap'
 					:
-					t('receive', { ns: 'wallet' })
+					t('receive')
 				}
 				withBackBtn
 			/>

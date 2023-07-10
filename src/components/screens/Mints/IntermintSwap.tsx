@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 
 export default function IntermintSwap({ navigation, route }: TIntermintSwapPageProps) {
-	const { t } = useTranslation(['common', 'mints', 'topNav'])
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	const [selectedMint, setSelectedMint] = useState(route.params.mints[0])

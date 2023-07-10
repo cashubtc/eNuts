@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
-	const { t } = useTranslation(['topNav', 'bottomNav'])
+	const { t } = useTranslation(['topNav'])
 	const { color, highlight } = useContext(ThemeContext)
 
 	const handleNav = (routeStr: TRouteString) => navigation.navigate(routeStr)
@@ -47,7 +47,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			>
 				<HistoryIcon color={isHistoryRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt={t('history', { ns: 'topNav' })}
+					txt={t('history')}
 					styles={[{ fontSize: 12, color: isHistoryRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
@@ -85,7 +85,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			>
 				<SettingsIcon color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt={t('settings', { ns: 'topNav' })}
+					txt={t('settings')}
 					styles={[{ fontSize: 12, marginTop: 1, color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>

@@ -17,7 +17,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { version } from '../../../../package.json'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
-	const { t } = useTranslation(['common', 'topNav'])
+	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const [confirm, setConfirm] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()

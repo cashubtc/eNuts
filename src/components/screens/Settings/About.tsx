@@ -16,7 +16,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { version } from '../../../../package.json'
 
 export default function AboutSettings() {
-	const { t } = useTranslation(['common', 'topNav'])
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const [visible, setVisible] = useState(false)

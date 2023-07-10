@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
-	const { t } = useTranslation(['common', 'topNav', 'auth'])
+	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const [pin, setPin] = useState<string | null>(null)

@@ -15,7 +15,7 @@ interface IBackupSuccessProps {
 }
 
 export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
-	const { t } = useTranslation(['common', 'backup', 'topNav'])
+	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const handleShare = async () => {

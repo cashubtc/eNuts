@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
-	const { t } = useTranslation(['common', 'topNav'])
+	const { t } = useTranslation(['common'])
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

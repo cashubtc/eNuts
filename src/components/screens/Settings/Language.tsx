@@ -16,7 +16,7 @@ const langs: ILangsOpt[] = [
 ]
 
 export default function LanguageSettings() {
-	const { t, i18n } = useTranslation(['common', 'topNav'])
+	const { t, i18n } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

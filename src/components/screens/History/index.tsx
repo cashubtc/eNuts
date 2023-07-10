@@ -16,7 +16,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import HistoryEntry from './Entry'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
-	const { t } = useTranslation(['common', 'topNav'])
+	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const { claimed } = useContext(FocusClaimCtx)
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})

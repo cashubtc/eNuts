@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function ContactPage({ navigation, route }: IContactPageProps) {
-	const { t } = useTranslation(['common', 'addrBook'])
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { setContacts } = useContext(ContactsContext)
 	const [editContact, setEditContact] = useState({

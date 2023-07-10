@@ -14,7 +14,7 @@ export interface ErrorDetailsProps {
 }
 
 export function ErrorDetails(props: ErrorDetailsProps) {
-	const { t } = useTranslation(['common', 'error'])
+	const { t } = useTranslation(['common'])
 	const { prompt, openPromptAutoClose } = usePrompt()
 	return (
 		<View style={styles.container}>

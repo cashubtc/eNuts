@@ -23,7 +23,7 @@ interface IAddressBookProps {
 }
 
 export default function AddressBook({ nav, isModal, closeModal, setInput }: IAddressBookProps) {
-	const { t } = useTranslation(['common', 'addrBook', 'topNav'])
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	// contacts hook
 	const { contacts, setContacts, hasOwnAddress, getPersonalInfo } = useContext(ContactsContext)

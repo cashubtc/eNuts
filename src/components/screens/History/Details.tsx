@@ -27,7 +27,7 @@ const initialCopyState = {
 }
 
 export default function DetailsPage({ navigation, route }: THistoryEntryPageProps) {
-	const { t } = useTranslation(['common', 'history'])
+	const { t } = useTranslation(['common'])
 	const entry = route.params.entry
 	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)

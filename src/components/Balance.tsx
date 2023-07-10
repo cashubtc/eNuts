@@ -16,7 +16,7 @@ interface IBalanceProps {
 }
 
 export default function Balance({ balance }: IBalanceProps) {
-	const { t } = useTranslation(['common', 'wallet'])
+	const { t } = useTranslation(['common'])
 	const { pref, color, highlight } = useContext(ThemeContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const { prompt, openPromptAutoClose } = usePrompt()

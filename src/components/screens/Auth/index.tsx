@@ -18,7 +18,7 @@ import PinPad from './PinPad'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
-	const { t } = useTranslation(['common', 'auth'])
+	const { t } = useTranslation(['common'])
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context

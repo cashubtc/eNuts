@@ -106,7 +106,7 @@ function _App() {
 	const pinData = { attempts, setAttempts }
 	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	const { t, i18n } = useTranslation(['common', 'history'])
+	const { t, i18n } = useTranslation(['common'])
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
 	const claimData = useMemo(() => ({ claimed, setClaimed }), [claimed])
