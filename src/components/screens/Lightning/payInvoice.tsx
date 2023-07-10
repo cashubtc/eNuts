@@ -340,6 +340,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						<CoinSelectionResume
 							lnAmount={(isLnurl(input) ? +LNURLAmount : invoiceAmount / 1000) + feeEstimate}
 							selectedAmount={getSelectedAmount(proofs)}
+							estFee={feeEstimate}
 						/>
 					}
 				</View>

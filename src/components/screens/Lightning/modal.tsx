@@ -274,26 +274,35 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 interface IResume {
 	lnAmount: number
 	selectedAmount: number
+	padding?: boolean
+	estFee?: number
 }
 
 /**
  * This component shows the amount and the change of selected proofs in a pressable row of a proofs-list.
  */
-export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
+export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee }: IResume) {
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
+	const getChangeStr = () => {
+		const change = selectedAmount - lnAmount
+		if (estFee && estFee > 0) {
+			return `${change} ${t('to')} ${change + estFee} Satoshi`
+		}
+		return `${change} Satoshi`
+	}
 	return (
 		<>
-			<View style={styles.overview}>
+			<View style={[styles.overview, {paddingHorizontal: padding ? 20 : 0}]}>
 				<Txt txt={t('selected')} />
 				<Text style={globals(color).txt}>
 					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? color.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
 				</Text>
 			</View>
 			{selectedAmount > lnAmount &&
-				<View style={styles.overview}>
+				<View style={[styles.overview, {paddingHorizontal: padding ? 20 : 0}]}>
 					<Txt txt={t('change')} />
-					<Txt txt={`${selectedAmount - lnAmount} Satoshi`} />
+					<Txt txt={getChangeStr()} />
 				</View>
 			}
 		</>
@@ -344,7 +353,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		marginBottom: 20,
-		paddingHorizontal: 20,
 	},
 	invoiceWrap: {
 		alignItems: 'center',

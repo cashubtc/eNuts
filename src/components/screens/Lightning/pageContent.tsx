@@ -159,7 +159,7 @@ export default function LNPageContent({
 								</View>
 								{getSelectedAmount(proofs) > 0 && isEnabled &&
 									<View style={{ marginHorizontal: -20, marginTop: 8 }}>
-										<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} />
+										<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} padding />
 									</View>
 								}
 							</>
