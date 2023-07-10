@@ -16,6 +16,7 @@ import TopNav from '@nav/TopNav'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
+import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
@@ -138,7 +139,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	useEffect(() => {
 		void (async () => {
 			const hasUserMints = await hasMints()
-			setModal({ ...modal, mint: !hasUserMints })
+			const skippedInitialMint = await store.get('init_mintSkipped')
+			setModal({ ...modal, mint: !hasUserMints && skippedInitialMint !== '1' })
 			setBalance(await getBalance())
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,7 +194,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<InitialModal
 				visible={modal.mint}
 				onConfirm={handleMintModal}
-				onCancel={() => setModal({ ...modal, mint: false })}
+				onCancel={async () => {
+					await store.set('init_mintSkipped', '1')
+					setModal({ ...modal, mint: false })
+				}}
 			/>
 			{/* Receive options */}
 			<OptsModal
