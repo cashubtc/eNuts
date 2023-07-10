@@ -39,7 +39,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	const [input, setInput] = useState('')
 	// visibility state for trusting a new mint that us not in the user mint list
 	const [trustModalOpen, setTrustModalOpen] = useState(false)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { prompt, closePrompt, openPromptAutoClose } = usePrompt()
 
 	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
 
@@ -213,7 +213,10 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			<View style={styles.newMint}>
 				<IconBtn
 					icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
-					onPress={() => setNewMintModal(true)}
+					onPress={() => {
+						closePrompt()
+						setNewMintModal(true)
+					}}
 				/>
 			</View>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}

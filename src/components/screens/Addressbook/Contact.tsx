@@ -88,7 +88,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					onPress={() => setOpenEdit(true)}
 				>
 					<EditIcon width={20} height={20} color={color.TEXT} />
-					<Text style={[styles.actionTxt, { color: color.TEXT }]}>
+					<Text style={[styles.actionTxt, { color: color.TEXT, marginTop: 2 }]}>
 						{t('edit')}
 					</Text>
 				</TouchableOpacity>
@@ -194,7 +194,8 @@ const styles = StyleSheet.create({
 		paddingVertical: 5,
 	},
 	actionTxt: {
-		marginTop: 5,
+		marginTop: 4,
+		marginBottom: 2,
 		fontSize: 12,
 	},
 	cancel: {

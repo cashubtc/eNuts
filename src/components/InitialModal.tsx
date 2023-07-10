@@ -37,5 +37,6 @@ export default function InitialModal({ visible, onConfirm, onCancel }: IInitialM
 const styles = StyleSheet.create({
 	cancel: {
 		marginTop: 25,
+		marginBottom: 10,
 	},
 })

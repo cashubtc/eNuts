@@ -37,7 +37,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 		name: '',
 		lnUrl: ''
 	})
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { prompt, closePrompt, openPromptAutoClose } = usePrompt()
 	const handleNewContact = async () => {
 		const contact = {
 			name: newContact.name.trim(),
@@ -159,7 +159,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 										<Txt txt={c.name} />
 									</TouchableOpacity>
 								</View>
-								{i < contacts.length - 1 && <Separator style={[{ marginLeft: 60 }]} />}
+								{i < contacts.filter(c => !c.isOwner).length - 1 && <Separator style={[{ marginLeft: 60 }]} />}
 							</View>
 						))}
 					</View>
@@ -170,7 +170,10 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				<View style={styles.newContactBtn}>
 					<IconBtn
 						icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
-						onPress={() => setOpenNew({ open: true, isOwner: false })}
+						onPress={() => {
+							closePrompt()
+							setOpenNew({ open: true, isOwner: false })
+						}}
 						testId='testNewContact'
 					/>
 				</View>
