@@ -155,6 +155,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	const handleInput = async () => {
 		if (input.length > 0) {
 			setInput('')
+			setLNURLAmount('')
 			return
 		}
 		const clipboard = await Clipboard.getStringAsync()
