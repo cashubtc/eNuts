@@ -7,7 +7,7 @@ import { addAllMintIds, getBalance, getContacts, getMintsBalances, getMintsUrls,
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import MyModal from '@modal'
-import type { IInitialProps, IPreferences, ITokenInfo } from '@model'
+import type { IPreferences, ITokenInfo } from '@model'
 import type { INavigatorProps } from '@model/nav'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
@@ -20,7 +20,6 @@ import { AsyncStore, secureStore } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
-import { initCrashReporting } from '@util/crashReporting'
 import { routingInstrumentation } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -46,8 +45,6 @@ interface ILockData {
 	timestamp: number
 }
 
-initCrashReporting()
-
 void SplashScreen.preventAutoHideAsync()
 
 export default function App(){
@@ -72,7 +69,7 @@ function _App() {
 	// initial auth state
 	const [auth, setAuth] = useState<INavigatorProps>({
 		shouldSetup: false,
-		shouldAuth: ''
+		pinHash: ''
 	})
 	// app was longer than 5 mins in the background
 	const [bgAuth, setBgAuth] = useState(false)
@@ -87,7 +84,7 @@ function _App() {
 	const handlePinForeground = async () => {
 		// check if app is locked
 		const now = Math.ceil(Date.now() / 1000)
-		const lockData = await AsyncStore.getObj<ILockData>('lock')
+		const lockData = await store.getObj<ILockData>('auth:lock')
 		if (lockData) {
 			// set state acccording to lockData timestamp
 			const secsPassed = now - lockData.timestamp
@@ -99,7 +96,7 @@ function _App() {
 			})
 		}
 		// handle app was longer than 5 mins in the background
-		const bgTimestamp = await AsyncStore.get('authBg')
+		const bgTimestamp = await store.get('auth:bg')
 		if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
 			if (now - +bgTimestamp > FiveMins) {
 				setBgAuth(true)
@@ -259,12 +256,10 @@ function _App() {
 			}
 		}
 		async function initAuth() {
-			// await secureStore.delete('pin')
-			// await AsyncStore.delete('pinSkipped')
-			const skipped = await AsyncStore.get('pinSkipped')
-			const pinHash = await secureStore.get('pin')
+			const skipped = await store.get('auth:skipped')
+			const pinHash = await secureStore.get('auth:pin')
 			setAuth({
-				shouldAuth: isNull(pinHash) ? '' : pinHash,
+				pinHash: isNull(pinHash) ? '' : pinHash,
 				shouldSetup: !isStr(skipped) || !skipped.length
 			})
 			// check for pin attempts and app locked state
@@ -310,7 +305,7 @@ function _App() {
 			} else {
 				l('App has gone to the background!')
 				// store timestamp to activate auth after > 5mins in background
-				await AsyncStore.set('authBg', `${Math.ceil(Date.now() / 1000)}`)
+				await store.set('auth:bg', `${Math.ceil(Date.now() / 1000)}`)
 			}
 			appState.current = nextAppState
 		})
@@ -340,7 +335,7 @@ function _App() {
 							<KeyboardProvider>
 								<Navigator
 									shouldSetup={auth.shouldSetup}
-									shouldAuth={auth.shouldAuth}
+									pinHash={auth.pinHash}
 									bgAuth={bgAuth}
 									setBgAuth={setBgAuth}
 								/>

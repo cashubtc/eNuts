@@ -4,7 +4,7 @@ import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
-import { AsyncStore, secureStore } from '@store'
+import { secureStore,store } from '@store'
 import { globals, highlight as hi } from '@styles'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
@@ -17,14 +17,14 @@ import PinDots from './PinDots'
 import PinPad from './PinPad'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
-	const { shouldAuth, shouldEdit, shouldRemove } = route.params
+	const { pinHash, shouldEdit, shouldRemove } = route.params
 	const { t } = useTranslation()
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context
 	const { attempts, setAttempts } = useContext(PinCtx)
 	// auth state
-	const [auth, setAuth] = useState(shouldAuth)
+	const [auth, setAuth] = useState(pinHash)
 	// initial PIN input state
 	const [pinInput, setPinInput] = useState<number[]>([])
 	// confirm PIN input state
@@ -64,7 +64,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		}
 		// store this info to avoid bypass state on app restart
 		if (!isConfirm) {
-			await AsyncStore.setObj('lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
+			await store.setObj('auth:lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
 		}
 		setAttempts(attemptState)
 		// reset mismatch state
@@ -97,15 +97,15 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			// user wants to delete his PIN
 			if (shouldRemove) {
 				await Promise.all([
-					secureStore.delete('pin'),
-					AsyncStore.set('pinSkipped', '1')
+					secureStore.delete('auth:pin'),
+					store.set('auth:skipped', '1')
 				])
 				setAuth('')
 			}
 			// remove the lock data and authbg in storage
 			await Promise.all([
-				AsyncStore.delete('lock'),
-				AsyncStore.delete('authBg')
+				store.delete('auth:lock'),
+				store.delete('auth:bg')
 			])
 			resetStates()
 			// User wants to edit his PIN, do not navigate away, just update the state as he had no PIN so he can enter a new PIN
@@ -129,8 +129,8 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			// else: PIN confirm is matching
 			const hash = hash256(pinStr)
 			await Promise.all([
-				secureStore.set('pin', hash),
-				AsyncStore.delete('lock')
+				secureStore.set('auth:pin', hash),
+				store.delete('auth:lock')
 			])
 			resetStates()
 			setSuccess(true)
@@ -172,7 +172,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			return
 		}
 		// skip pin setup
-		await AsyncStore.set('pinSkipped', '1')
+		await store.set('auth:skipped', '1')
 		navigation.navigate('dashboard')
 	}
 	// conditional rendering dots of pin input
@@ -200,8 +200,8 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	}, [attempts.locked, attempts.lockedTime])
 	// handle pin state
 	useEffect(() => {
-		setAuth(shouldAuth)
-	}, [shouldAuth])
+		setAuth(pinHash)
+	}, [pinHash])
 	// reset success state after navigating to this screen
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', () => setSuccess(false))

@@ -31,13 +31,13 @@ import { View } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
-export default function Navigator({ shouldSetup, shouldAuth, bgAuth, setBgAuth }: INavigatorProps) {
+export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: INavigatorProps) {
 	const { color } = useContext(ThemeContext)
 	const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 	useEffect(() => {
-		if (!bgAuth || !shouldAuth.length) { return }
+		if (!bgAuth || !pinHash.length) { return }
 		setBgAuth?.(false)
-		nav.navigate('auth', { shouldAuth })
+		nav.navigate('auth', { pinHash })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bgAuth])
 	return (
@@ -48,7 +48,7 @@ export default function Navigator({ shouldSetup, shouldAuth, bgAuth, setBgAuth }
 			backgroundColor: color.BACKGROUND,
 		}}>
 			<Stack.Navigator
-				initialRouteName={shouldSetup || shouldAuth || bgAuth ? 'auth' : 'dashboard'}
+				initialRouteName={shouldSetup || pinHash || bgAuth ? 'auth' : 'dashboard'}
 				screenOptions={{
 					headerShown: false,
 					animation: 'fade',
@@ -56,7 +56,7 @@ export default function Navigator({ shouldSetup, shouldAuth, bgAuth, setBgAuth }
 				}}
 			>
 				<Stack.Screen name='dashboard' component={Dashboard} />
-				<Stack.Screen name='auth' component={AuthPage} initialParams={{ shouldAuth }} />
+				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />
 				{/* create sendable token page */}
 				<Stack.Screen
 					name='send'
