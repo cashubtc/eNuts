@@ -72,7 +72,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 					{/* Contact, Supported NUTs, Public Key */}
 					<View style={[globals(color).wrapContainer, styles.infoEntry]}>
 						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('contact', { count: 1 })}
+							{t('common.contact', { count: 1 })}
 						</Text>
 						{info.contact.map((c, i) => (
 							<View key={i} style={styles.contactWrap}>

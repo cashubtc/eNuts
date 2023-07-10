@@ -67,7 +67,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt={t('delHistory')}
+					txt={t('common.delHistory')}
 					txtColor={color.ERROR}
 					icon={<TrashbinIcon2 color={color.ERROR} />}
 					onPress={() => setConfirm(true)}

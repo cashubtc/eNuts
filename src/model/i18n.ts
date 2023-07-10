@@ -1,7 +1,7 @@
 const _tlLangNames = [
-	'english',
-	'german',
-	'french'
+	'common.english',
+	'common.german',
+	'common.french'
 ] as const
 export type TTlLangNames = typeof _tlLangNames[number]
 
@@ -10,6 +10,6 @@ export type TranslationLangCodes = typeof _translationLangCodes[number]
 export const translationLangCodes:Readonly<string[]> = [..._translationLangCodes]
 
 export interface ILangsOpt {
-	name: 'english' | 'german' | 'french'
+	name: TTlLangNames
 	code: TranslationLangCodes
 }

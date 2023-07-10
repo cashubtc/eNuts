@@ -38,8 +38,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const [qr, setQr] = useState({ open: false, error: false })
 	const isPayment = entry.amount < 0
 	const isLn = entry.type === 2
-	const LNstr = t(isPayment ? 'lnPayment' : 'lnInvoice')
-	const Ecash = t('ecashPayment')
+	const LNstr = t(isPayment ? 'common.lnPayment' : 'common.lnInvoice')
+	const Ecash = t('common.ecashPayment')
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
 	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('history.noMemo')
 	const copyValue = async () => {

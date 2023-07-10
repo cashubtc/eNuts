@@ -23,7 +23,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 	return (
 		<MyModal type='question' animation='fade' visible close={closeModal}>
 			<Text style={globals(color, highlight).modalHeader}>
-				{t('trustMint')}?
+				{t('common.trustMint')}?
 			</Text>
 			{/* token amount */}
 			<Text style={[styles.mintPrompt, { color: color.TEXT_SECONDARY, }]}>
@@ -34,7 +34,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 				{tokenInfo?.mints.map(m => <Text style={[styles.mintPrompt, { color: color.TEXT_SECONDARY, }]} key={m}>{formatMintUrl(m)}</Text>)}
 			</View>
 			<Text style={globals(color, highlight).modalTxt}>
-				{t('notClaim')}.
+				{t('common.notClaim')}.
 			</Text>
 			<Button loading={loading} txt={loading ? t('wallet.claiming') + '...' : t('common.yes')} onPress={handleTrustModal} />
 			<View style={{ marginVertical: 10 }} />

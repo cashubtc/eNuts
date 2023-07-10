@@ -20,15 +20,15 @@ export default function InitialModal({ visible, onConfirm, onCancel }: IInitialM
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onCancel}>
 			<Text style={globals(color, highlight).modalHeader}>
-				{t('getStarted')}
+				{t('common.getStarted')}
 			</Text>
 			<Text style={globals(color, highlight).modalTxt}>
-				{t('startHint')}
+				{t('common.startHint')}
 			</Text>
-			<Button txt={t('addMintNow')} onPress={onConfirm} />
+			<Button txt={t('common.addMintNow')} onPress={onConfirm} />
 			<TouchableOpacity onPress={onCancel}>
 				<Text style={[globals(color, highlight).pressTxt, styles.cancel]}>
-					{t('willDoLater')}
+					{t('common.willDoLater')}
 				</Text>
 			</TouchableOpacity>
 		</MyModal>

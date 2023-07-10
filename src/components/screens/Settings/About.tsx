@@ -57,7 +57,7 @@ export default function AboutSettings() {
 			<Txt txt={`eNuts v${version}`} styles={[styles.version]} />
 			<MyModal type='bottom' animation='slide' visible={visible} close={() => setVisible(false)}>
 				<Text style={globals(color, highlight).modalHeader}>
-					{t('aboutToLeaveTo')}
+					{t('common.aboutToLeaveTo')}
 				</Text>
 				<Text style={globals(color, highlight).modalTxt}>
 					&quot;{url}&quot;

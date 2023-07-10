@@ -12,41 +12,10 @@ import { initReactI18next } from 'react-i18next'
 export const defaultNS = 'common'
 export const resources = {
 	en: {
-		common: en.common,
-		wallet: en.wallet,
-		topNav: en.topNav,
-		bottomNav: en.bottomNav,
-		error: en.error,
-		history: en.history,
-		mints: en.mints,
-		backup: en.backup,
-		addrBook: en.addrBook,
-		auth: en.auth,
+		common: en.common
 	},
-	de: {
-		common: de.common,
-		wallet: de.wallet,
-		topNav: de.topNav,
-		bottomNav: de.bottomNav,
-		error: de.error,
-		history: de.history,
-		mints: de.mints,
-		backup: de.backup,
-		addrBook: de.addrBook,
-		auth: de.auth,
-	},
-	fr: {
-		common: fr.common,
-		wallet: fr.wallet,
-		topNav: fr.topNav,
-		bottomNav: fr.bottomNav,
-		error: fr.error,
-		history: fr.history,
-		mints: fr.mints,
-		backup: fr.backup,
-		addrBook: fr.addrBook,
-		auth: fr.auth,
-	}
+	de,
+	fr
 } as const
 
 i18n.use(initReactI18next)

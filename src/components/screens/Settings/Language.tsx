@@ -11,9 +11,9 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 const langs: ILangsOpt[] = [
-	{ name: 'english', code: 'en' },
-	{ name: 'german', code: 'de' },
-	{ name: 'french', code: 'fr' },
+	{ name: 'common.english', code: 'en' },
+	{ name: 'common.german', code: 'de' },
+	{ name: 'common.french', code: 'fr' },
 ]
 
 export default function LanguageSettings() {
