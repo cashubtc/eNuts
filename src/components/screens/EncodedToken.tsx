@@ -7,7 +7,6 @@ import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { dark, globals, highlight as hi } from '@styles'
 import { vib } from '@util'
-import { getTranslationLangCode } from '@util/localization'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,7 +16,7 @@ import { Share, StyleSheet, View } from 'react-native'
  * The page that shows the created Cashu token that can be scanned, copied or shared
  */
 export default function EncodedTokenPage({ route }: TEncodedTokenPageProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const [error, setError] = useState({ msg: '', open: false })
@@ -69,16 +68,16 @@ export default function EncodedTokenPage({ route }: TEncodedTokenPageProps) {
 						<QR
 							size={320}
 							value={`cashu://${route.params.token}`}
-							onError={() => setError({ msg: t('common.bigQrMsg'), open: true })}
+							onError={() => setError({ msg: t('bigQrMsg'), open: true })}
 						/>
 					</View>
 				}
 			</View>
 			{/* Action buttons */}
 			<ActionButtons
-				topBtnTxt={t('common.share')}
+				topBtnTxt={t('share')}
 				topBtnAction={() => void handleShare()}
-				bottomBtnTxt={copied ? t('common.copied') + '!' : t('common.copyToken')}
+				bottomBtnTxt={copied ? t('copied') + '!' : t('copyToken')}
 				bottomBtnAction={() => void handleCopy()}
 			/>
 		</View>

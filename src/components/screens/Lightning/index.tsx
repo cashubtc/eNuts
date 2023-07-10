@@ -7,7 +7,6 @@ import TopNav from '@nav/TopNav'
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
-import { getTranslationLangCode } from '@util/localization'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -15,7 +14,7 @@ import { StyleSheet, View } from 'react-native'
 import LNPageContent from './pageContent'
 
 export default function Lightning({ navigation, route }: TLightningPageProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['wallet'])
 	const { color } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// user mints
@@ -69,7 +68,7 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 				screenName={route.params?.mint || route.params?.send ?
 					'Zap'
 					:
-					t('wallet.receive')
+					t('receive', { ns: 'wallet' })
 				}
 				withBackBtn
 			/>

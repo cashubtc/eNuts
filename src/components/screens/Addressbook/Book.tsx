@@ -11,7 +11,6 @@ import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { isLnurl } from '@util'
-import { getTranslationLangCode } from '@util/localization'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -24,7 +23,7 @@ interface IAddressBookProps {
 }
 
 export default function AddressBook({ nav, isModal, closeModal, setInput }: IAddressBookProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common', 'addrBook', 'topNav'])
 	const { color, highlight } = useContext(ThemeContext)
 	// contacts hook
 	const { contacts, setContacts, hasOwnAddress, getPersonalInfo } = useContext(ContactsContext)
@@ -45,24 +44,24 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			lnUrl: newContact.lnUrl.trim(),
 		}
 		if (!isLnurl(contact.lnUrl)) {
-			openPromptAutoClose({ msg: t('addrBook.invalidLnurl'), ms: 1500 })
+			openPromptAutoClose({ msg: t('invalidLnurl', { ns: 'addrBook' }), ms: 1500 })
 			return
 		}
 		if (!contact.name && !openNew.isOwner) {
-			openPromptAutoClose({ msg: t('addrBook.invalidName'), ms: 1500 })
+			openPromptAutoClose({ msg: t('invalidName', { ns: 'addrBook' }), ms: 1500 })
 			return
 		}
 		const success = await addContact({
-			name: openNew.isOwner ? t('addrBook.personalLnurl') : contact.name,
+			name: openNew.isOwner ? t('personalLnurl', { ns: 'addrBook' }) : contact.name,
 			ln: contact.lnUrl,
 			isOwner: openNew.isOwner
 		})
 		if (!success) {
-			openPromptAutoClose({ msg: t('addrBook.addContactErr') })
+			openPromptAutoClose({ msg: t('addContactErr', { ns: 'addrBook' }) })
 			return
 		}
 		setContacts(await getContacts())
-		openPromptAutoClose({ msg: t('addrBook.addedContact'), success: true })
+		openPromptAutoClose({ msg: t('addedContact', { ns: 'addrBook' }), success: true })
 		setOpenNew({ open: false, isOwner: false })
 	}
 	return (
@@ -71,7 +70,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			{isModal ?
 				<View style={styles.modalHeader}>
 					<View>
-						<Txt txt={t('topNav.addressBook')} styles={[globals(color).navTxt, styles.header]} />
+						<Txt txt={t('addressBook', { ns: 'topNav' })} styles={[globals(color).navTxt, styles.header]} />
 						<ContactsCount count={contacts.length} />
 					</View>
 					{/* cancel modal / go back to payment page */}
@@ -79,7 +78,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						onPress={() => closeModal?.()}
 					>
 						<Text style={globals(color, highlight).pressTxt}>
-							{t('common.cancel')}
+							{t('cancel')}
 						</Text>
 					</TouchableOpacity>
 				</View>
@@ -128,7 +127,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							<PlusIcon width={16} height={16} color={hi[highlight]} />
 						</Text>
 						<View style={styles.nameEntry}>
-							<Txt txt={t('addrBook.addOwnLnurl')} styles={[{ color: hi[highlight] }]} />
+							<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
 						</View>
 					</TouchableOpacity>
 				}
@@ -184,12 +183,12 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				close={() => setOpenNew({ open: false, isOwner: false })}
 			>
 				<Text style={globals(color).modalHeader}>
-					{openNew.isOwner ? t('addrBook.yourLnurl') : t('addrBook.newContact')}
+					{openNew.isOwner ? t('yourLnurl', { ns: 'addrBook' }) : t('newContact', { ns: 'addrBook' })}
 				</Text>
 				{!openNew.isOwner &&
 					<TextInput
 						style={[globals(color).input, { marginBottom: 20 }]}
-						placeholder={t('common.name')}
+						placeholder={t('name')}
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
 						onChangeText={name => setNewContact(prev => ({ ...prev, name }))}
@@ -197,18 +196,18 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				}
 				<TextInput
 					style={[globals(color).input, { marginBottom: 20 }]}
-					placeholder={t('addrBook.zapMeNow')}
+					placeholder={t('zapMeNow', { ns: 'addrBook' })}
 					placeholderTextColor={color.INPUT_PH}
 					selectionColor={hi[highlight]}
 					onChangeText={lnUrl => setNewContact(prev => ({ ...prev, lnUrl }))}
 				/>
-				<Button txt={t('common.save')} onPress={() => void handleNewContact()} />
+				<Button txt={t('save')} onPress={() => void handleNewContact()} />
 				<TouchableOpacity
 					style={styles.cancel}
 					onPress={() => setOpenNew({ open: false, isOwner: false })}
 				>
 					<Text style={globals(color, highlight).pressTxt}>
-						{t('common.cancel')}
+						{t('cancel')}
 					</Text>
 				</TouchableOpacity>
 			</MyModal>
@@ -218,14 +217,14 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 }
 
 function ContactsCount({ count }: { count: number }) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
 		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
 			{!count ?
 				''
 				:
-				t('common.contact', { count })
+				t('contact', { count })
 			}
 		</Text>
 	)

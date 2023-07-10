@@ -21,7 +21,6 @@ import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
 import { routingInstrumentation } from '@util/crashReporting'
-import { getTranslationLangCode } from '@util/localization'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
@@ -107,7 +106,7 @@ function _App() {
 	const pinData = { attempts, setAttempts }
 	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	const { t, i18n } = useTranslation(getTranslationLangCode())
+	const { t, i18n } = useTranslation(['common', 'history'])
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
 	const claimData = useMemo(() => ({ claimed, setClaimed }), [claimed])
@@ -165,12 +164,12 @@ function _App() {
 		const encoded = getEncodedToken(tokenInfo.decoded)
 		const success = await claimToken(encoded).catch(l)
 		if (!success) {
-			openPromptAutoClose({ msg: t('common.invalidOrSpent') })
+			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			return
 		}
 		const info = getTokenInfo(encoded)
 		if (!info) {
-			openPromptAutoClose({ msg: t('common.tokenInfoErr') })
+			openPromptAutoClose({ msg: t('tokenInfoErr') })
 			return
 		}
 		// add as history entry
@@ -183,7 +182,7 @@ function _App() {
 		openPromptAutoClose(
 			{
 				msg: t(
-					'common.claimSuccess',
+					'claimSuccess',
 					{
 						amount: formatInt(info.value),
 						mintUrl: formatMintUrl(info.mints[0]),
@@ -226,7 +225,7 @@ function _App() {
 				l(await getBalancesByKeysetId()) */
 			} catch (e) {
 				l(isErr(e) ? e.message : '')
-				alert(t('common.dbErr'))
+				alert(t('dbErr'))
 			}
 		}
 		async function initPreferences() {
@@ -345,24 +344,24 @@ function _App() {
 								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
 								<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
 									<Text style={globals(color, highlight).modalHeader}>
-										{t('common.foundCashuClipboard')}
+										{t('foundCashuClipboard')}
 									</Text>
 									<Text style={globals(color, highlight).modalTxt}>
-										{t('history.memo')}: {tokenInfo?.decoded.memo}{'\n'}
+										{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
 										<Txt
 											txt={formatInt(tokenInfo?.value ?? 0)}
 											styles={[{ fontWeight: '500' }]}
 										/>
-										{' '}Satoshi {t('common.fromMint')}:{' '}
+										{' '}Satoshi {t('fromMint')}:{' '}
 										{tokenInfo?.mints.join(', ')}
 									</Text>
 									<Button
-										txt={t('common.accept')}
+										txt={t('accept')}
 										onPress={() => void handleRedeem()}
 									/>
 									<View style={{ marginVertical: 10 }} />
 									<Button
-										txt={t('common.cancel')}
+										txt={t('cancel')}
 										outlined
 										onPress={() => setClaimOpen(false)}
 									/>

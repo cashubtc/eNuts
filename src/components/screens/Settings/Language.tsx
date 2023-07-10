@@ -1,27 +1,26 @@
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
-import type { ILangsOpt, TranslationLangCodes,TTlLangNames } from '@model/i18n'
+import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from '@model/i18n'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { globals, highlight as hi } from '@styles'
-import { getTranslationLangCode } from '@util/localization'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 const langs: ILangsOpt[] = [
-	{ name: 'common.english', code: 'en' },
-	{ name: 'common.german', code: 'de' },
-	{ name: 'common.french', code: 'fr' },
+	{ name: 'english', code: 'en' },
+	{ name: 'german', code: 'de' },
+	{ name: 'french', code: 'fr' },
 ]
 
 export default function LanguageSettings() {
-	const { t, i18n } = useTranslation(getTranslationLangCode())
+	const { t, i18n } = useTranslation(['common', 'topNav'])
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('topNav.language')} withBackBtn />
+			<TopNav screenName={t('language', { ns: 'topNav' })} withBackBtn />
 			<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
 				{langs.map((l, i) => (
 					<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />
@@ -39,7 +38,7 @@ interface ILangSelectionProps {
 }
 
 function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionProps) {
-	const { t, i18n } = useTranslation(getTranslationLangCode())
+	const { t, i18n } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const handleLangChange = async () => {
 		await i18n.changeLanguage(code)

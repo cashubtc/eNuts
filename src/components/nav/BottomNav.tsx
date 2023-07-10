@@ -3,13 +3,12 @@ import Txt from '@comps/Txt'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { getTranslationLangCode } from '@util/localization'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['topNav', 'bottomNav'])
 	const { color, highlight } = useContext(ThemeContext)
 
 	const handleNav = (routeStr: TRouteString) => navigation.navigate(routeStr)
@@ -48,7 +47,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			>
 				<HistoryIcon color={isHistoryRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt={t('topNav.history')}
+					txt={t('history', { ns: 'topNav' })}
 					styles={[{ fontSize: 12, color: isHistoryRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
@@ -72,7 +71,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			>
 				<ContactsIcon color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt={t('bottomNav.contacts')}
+					txt={t('contacts', { ns: 'bottomNav' })}
 					styles={[{
 						fontSize: 12,
 						marginTop: -2,
@@ -86,7 +85,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			>
 				<SettingsIcon color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt={t('topNav.settings')}
+					txt={t('settings', { ns: 'topNav' })}
 					styles={[{ fontSize: 12, marginTop: 1, color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>

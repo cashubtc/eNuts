@@ -14,7 +14,9 @@ process.env.NODE_ENV = 'test'
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 i18n.use(initReactI18next).init({
 	lng: 'en',
-	resources: { en: { translation: en } },
+	defaultNS: 'common',
+	ns: ['common', 'auth', 'wallet', 'topNav', 'bottomNav', 'error', 'history', 'mints', 'backup', 'addrBook'],
+	resources: { en },
 })
 
 // libraries to mock

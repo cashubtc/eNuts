@@ -4,7 +4,7 @@ import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
-import { secureStore,store } from '@store'
+import { secureStore, store } from '@store'
 import { globals, highlight as hi } from '@styles'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
@@ -18,7 +18,7 @@ import PinPad from './PinPad'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common', 'auth'])
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context
@@ -231,7 +231,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 						<View style={styles.bottomSection}>
 							{attempts.mismatch &&
 								<Text style={[styles.mismatch, { color: color.ERROR }]}>
-									{t('auth.pinMismatch')}
+									{t('pinMismatch', { ns: 'auth' })}
 								</Text>
 							}
 							{shouldShowPinSection() ?
@@ -259,7 +259,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 								{!auth.length && !shouldEdit &&
 									<TouchableOpacity onPress={() => void handleSkip()}>
 										<Text style={[globals(color).pressTxt, styles.skip]}>
-											{isConfirm ? t('common.back') : t('common.willDoLater')}
+											{isConfirm ? t('back') : t('willDoLater')}
 										</Text>
 									</TouchableOpacity>
 								}
@@ -269,7 +269,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 										navigation.navigate('Security settings')
 									}}>
 										<Text style={[globals(color).pressTxt, styles.skip]}>
-											{t('common.cancel')}
+											{t('cancel')}
 										</Text>
 									</TouchableOpacity>
 								}

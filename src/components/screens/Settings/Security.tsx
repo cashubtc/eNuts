@@ -12,13 +12,12 @@ import { ThemeContext } from '@src/context/Theme'
 import { isNull } from '@src/util'
 import { secureStore } from '@store'
 import { globals } from '@styles'
-import { getTranslationLangCode } from '@util/localization'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common', 'topNav', 'auth'])
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const [pin, setPin] = useState<string | null>(null)
@@ -26,13 +25,13 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		try {
 			const proofs = await getProofs()
 			if (!proofs.length) {
-				openPromptAutoClose({ msg: t('common.noProofsToBackup') })
+				openPromptAutoClose({ msg: t('noProofsToBackup') })
 				return
 			}
 			const token = await getBackUpToken()
 			navigation.navigate('BackupPage', { token })
 		} catch (e) {
-			openPromptAutoClose({ msg: t('common.backupErr') })
+			openPromptAutoClose({ msg: t('backupErr') })
 		}
 	}
 	const handlePin = async () => {
@@ -51,7 +50,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
-				screenName={t('topNav.security')}
+				screenName={t('security', { ns: 'topNav' })}
 				withBackBtn
 				backHandler={() => navigation.navigate('Settings')}
 			/>
@@ -59,12 +58,12 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 				{pin ?
 					<>
 						<SecurityOption
-							txt={t('auth.editPin')}
+							txt={t('editPin', { ns: 'auth' })}
 							onPress={() => navigation.navigate('auth', { pinHash: pin, shouldEdit: true })}
 						/>
 						<Separator />
 						<SecurityOption
-							txt={t('auth.removePin')}
+							txt={t('removePin', { ns: 'auth' })}
 							onPress={() => navigation.navigate('auth', { pinHash: pin, shouldRemove: true })}
 						/>
 						<Separator />
@@ -72,14 +71,14 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 					:
 					<>
 						<SecurityOption
-							txt={t('auth.createPin')}
+							txt={t('createPin', { ns: 'auth' })}
 							onPress={() => navigation.navigate('auth', { pinHash: '' })}
 						/>
 						<Separator />
 					</>
 				}
 				<SecurityOption
-					txt={t('common.createBackup')}
+					txt={t('createBackup')}
 					onPress={() => void handleBackup()}
 				/>
 			</View>

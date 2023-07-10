@@ -1,7 +1,6 @@
 import ActionButtons from '@comps/ActionButtons'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { getTranslationLangCode } from '@util/localization'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -27,7 +26,7 @@ export default function OptsModal({
 	onPressCancel,
 	loading
 }: IOptsModal) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
@@ -41,7 +40,7 @@ export default function OptsModal({
 			/>
 			<TouchableOpacity style={styles.no} onPress={onPressCancel}>
 				<Text style={globals(color, highlight).pressTxt}>
-					{t('common.cancel')}
+					{t('cancel')}
 				</Text>
 			</TouchableOpacity>
 		</MyModal>

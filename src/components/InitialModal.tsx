@@ -1,7 +1,6 @@
 import MyModal from '@modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { getTranslationLangCode } from '@util/localization'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet,Text, TouchableOpacity } from 'react-native'
@@ -15,20 +14,20 @@ interface IInitialModalProps {
 }
 
 export default function InitialModal({ visible, onConfirm, onCancel }: IInitialModalProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onCancel}>
 			<Text style={globals(color, highlight).modalHeader}>
-				{t('common.getStarted')}
+				{t('getStarted')}
 			</Text>
 			<Text style={globals(color, highlight).modalTxt}>
-				{t('common.startHint')}
+				{t('startHint')}
 			</Text>
-			<Button txt={t('common.addMintNow')} onPress={onConfirm} />
+			<Button txt={t('addMintNow')} onPress={onConfirm} />
 			<TouchableOpacity onPress={onCancel}>
 				<Text style={[globals(color, highlight).pressTxt, styles.cancel]}>
-					{t('common.willDoLater')}
+					{t('willDoLater')}
 				</Text>
 			</TouchableOpacity>
 		</MyModal>

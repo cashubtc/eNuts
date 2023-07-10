@@ -10,7 +10,6 @@ import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { globals } from '@styles'
-import { getTranslationLangCode } from '@util/localization'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -18,24 +17,24 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { version } from '../../../../package.json'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common', 'topNav'])
 	const { color } = useContext(ThemeContext)
 	const [confirm, setConfirm] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleDeleteHistory = async () => {
 		const success = await historyStore.clear()
 		openPromptAutoClose({
-			msg: success ? t('common.historyDeleted') : t('common.delHistoryErr'),
+			msg: success ? t('historyDeleted') : t('delHistoryErr'),
 			success
 		})
 		setConfirm(false)
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('topNav.settings')} nav={{ navigation, route }} />
+			<TopNav screenName={t('settings', { ns: 'topNav' })} nav={{ navigation, route }} />
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
-					txt={t('topNav.security')}
+					txt={t('security', { ns: 'topNav' })}
 					txtColor={color.TEXT}
 					icon={<LockIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Security settings')}
@@ -43,7 +42,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt={t('topNav.display')}
+					txt={t('display', { ns: 'topNav' })}
 					txtColor={color.TEXT}
 					icon={<PaletteIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Display settings')}
@@ -51,7 +50,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt={t('topNav.language')}
+					txt={t('language', { ns: 'topNav' })}
 					txtColor={color.TEXT}
 					icon={<LanguageIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Language settings')}
@@ -59,7 +58,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt={t('topNav.about')}
+					txt={t('about', { ns: 'topNav' })}
 					txtColor={color.TEXT}
 					icon={<AboutIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('About settings')}
@@ -67,7 +66,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt={t('common.delHistory')}
+					txt={t('delHistory')}
 					txtColor={color.ERROR}
 					icon={<TrashbinIcon2 color={color.ERROR} />}
 					onPress={() => setConfirm(true)}
@@ -76,15 +75,15 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 			<Txt txt={`eNuts v${version}`} styles={[styles.version]} />
 			<BottomNav navigation={navigation} route={route} />
 			<QuestionModal
-				header={t('common.delHistoryQ')}
-				txt={t('common.delHistoryTxt')}
+				header={t('delHistoryQ')}
+				txt={t('delHistoryTxt')}
 				visible={confirm}
-				confirmTxt={t('common.yes')}
+				confirmTxt={t('yes')}
 				confirmFn={() => void handleDeleteHistory()}
-				cancelTxt={t('common.no')}
+				cancelTxt={t('no')}
 				cancelFn={() => setConfirm(false)}
 			/>
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} /> }
+			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

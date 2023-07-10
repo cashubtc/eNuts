@@ -2,7 +2,6 @@ import { l } from '@log'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { formatMintUrl } from '@util'
-import { getTranslationLangCode } from '@util/localization'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,7 +15,7 @@ interface IBackupSuccessProps {
 }
 
 export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common', 'backup', 'topNav'])
 	const { color } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const handleShare = async () => {
@@ -52,10 +51,10 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 	return (
 		<>
 			<Text style={[globals(color).navTxt, styles.subTxt]}>
-				{t('backup.copyBackup')}
+				{t('copyBackup', { ns: 'backup' })}
 			</Text>
 			<Text style={[styles.token, { color: color.TEXT }]}>
-				{t('topNav.backup')}: {token.substring(0, 25)}...
+				{t('backup', { ns: 'topNav' })}: {token.substring(0, 25)}...
 			</Text>
 			{mint &&
 				<Text style={[styles.token, { color: color.TEXT }]}>
@@ -64,9 +63,9 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 			}
 			<ActionButtons
 				absolutePos
-				topBtnTxt={t('common.share')}
+				topBtnTxt={t('share')}
 				topBtnAction={() => void handleShare()}
-				bottomBtnTxt={copied ? t('common.copied') : t('common.copyToken')}
+				bottomBtnTxt={copied ? t('copied') : t('copyToken')}
 				bottomBtnAction={() => void handleCopy()}
 			/>
 		</>

@@ -1,7 +1,7 @@
 const _tlLangNames = [
-	'common.english',
-	'common.german',
-	'common.french'
+	'english',
+	'german',
+	'french'
 ] as const
 export type TTlLangNames = typeof _tlLangNames[number]
 

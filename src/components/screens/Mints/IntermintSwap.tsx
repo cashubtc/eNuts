@@ -12,7 +12,6 @@ import { ThemeContext } from '@src/context/Theme'
 import { getMintName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, formatInt, formatMintUrl, isErr } from '@util'
-import { getTranslationLangCode } from '@util/localization'
 import { autoMintSwap } from '@wallet'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,7 +19,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 export default function IntermintSwap({ navigation, route }: TIntermintSwapPageProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common', 'mints', 'topNav'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	const [selectedMint, setSelectedMint] = useState(route.params.mints[0])
@@ -35,12 +34,12 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 			const result = await autoMintSwap(route.params.swap_out_mint.mintUrl, selectedMint.mintUrl, +amount)
 			l({ swapResult: result })
 			openPromptAutoClose({
-				msg: t('mints.swapSuccess', { amount, srcMint: route.params.swap_out_mint.mintUrl, targetMint: selectedMint.mintUrl }),
+				msg: t('swapSuccess', { ns: 'mints', amount, srcMint: route.params.swap_out_mint.mintUrl, targetMint: selectedMint.mintUrl }),
 				success: true
 			})
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mints.swapFail') })
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('swapFail', { ns: 'mints' }) })
 			stopLoading()
 		}
 		stopLoading()
@@ -48,10 +47,10 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('topNav.swap')} withBackBtn />
+			<TopNav screenName={t('swap', { ns: 'topNav' })} withBackBtn />
 			{/* sub header */}
 			<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
-				{t('mints.swapRisk')}
+				{t('swapRisk', { ns: 'mints' })}
 			</Text>
 			<View style={styles.amountWrap}>
 				<TextInput
@@ -66,7 +65,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 					value={amount}
 				/>
 				<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
-					{t('common.mintBalance')}: {formatInt(route.params.balance)} Satoshi
+					{t('mintBalance')}: {formatInt(route.params.balance)} Satoshi
 				</Text>
 			</View>
 			{/* Swap-Out Mint: */}
@@ -105,7 +104,7 @@ export default function IntermintSwap({ navigation, route }: TIntermintSwapPageP
 			{!isKeyboardOpen && +amount > 0 && !prompt.open &&
 				<View style={styles.actions}>
 					<Button
-						txt={loading ? t('mints.performingSwap') + '...' : t('mints.swapNow')}
+						txt={loading ? t('performingSwap', { ns: 'mints' }) + '...' : t('swapNow', { ns: 'mints' })}
 						loading={loading}
 						onPress={() => {
 							if (loading) { return }

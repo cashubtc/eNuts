@@ -1,4 +1,3 @@
-import { getTranslationLangCode } from '@util/localization'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text } from 'react-native'
 
@@ -10,20 +9,20 @@ interface IPinHintProps {
 }
 
 export default function PinHint({ confirm, login, shouldEdit, shouldRemove }: IPinHintProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['auth'])
 	const getRightHeaderTxt = () => {
-		if (login && !shouldEdit && !shouldRemove) { return t('auth.welcomeBack') }
-		if (shouldRemove) { return t('auth.removePin') }
-		if (shouldEdit) { return t('auth.editPin') }
-		return t('auth.welcome')
+		if (login && !shouldEdit && !shouldRemove) { return t('welcomeBack', { ns: 'auth' }) }
+		if (shouldRemove) { return t('removePin', { ns: 'auth' }) }
+		if (shouldEdit) { return t('editPin', { ns: 'auth' }) }
+		return t('welcome', { ns: 'auth' })
 	}
 	const getRightTxt = () => {
-		if (!login && !confirm && !shouldEdit && !shouldRemove) { return t('auth.pinSetup') }
-		if (confirm && !shouldEdit && !shouldRemove) { return t('auth.pleaseConfirm') }
-		if (login && (shouldRemove || shouldEdit)) { return t('auth.confirmAction') }
-		if (!login && shouldEdit && !confirm) { return t('auth.pleaseNewPin') }
-		if (!login && shouldEdit && confirm) { return t('auth.pleaseConfirmNewPin') }
-		return t('auth.pleaseEnter')
+		if (!login && !confirm && !shouldEdit && !shouldRemove) { return t('pinSetup', { ns: 'auth' }) }
+		if (confirm && !shouldEdit && !shouldRemove) { return t('pleaseConfirm', { ns: 'auth' }) }
+		if (login && (shouldRemove || shouldEdit)) { return t('confirmAction', { ns: 'auth' }) }
+		if (!login && shouldEdit && !confirm) { return t('pleaseNewPin', { ns: 'auth' }) }
+		if (!login && shouldEdit && confirm) { return t('pleaseConfirmNewPin', { ns: 'auth' }) }
+		return t('pleaseEnter', { ns: 'auth' })
 	}
 	return (
 		<>

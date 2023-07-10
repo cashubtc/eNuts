@@ -18,7 +18,6 @@ import { ThemeContext } from '@src/context/Theme'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
-import { getTranslationLangCode } from '@util/localization'
 import { checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
@@ -26,7 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common', 'mints', 'topNav'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// invoice amount modal
@@ -155,10 +154,10 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('topNav.mintSettings')} withBackBtn />
+			<TopNav screenName={t('mintSettings', { ns: 'topNav' })} withBackBtn />
 			<ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 				{/* General */}
-				<Txt txt={t('mints.general')} styles={[styles.sectionHeader]} />
+				<Txt txt={t('general', { ns: 'mints' })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
 					{/* Mint url */}
 					<MintOption
@@ -181,7 +180,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Balance */}
 					<View style={styles.mintOpts}>
-						<Txt txt={t('common.balance')} />
+						<Txt txt={t('balance')} />
 						<Text style={{ color: color.TEXT }}>
 							{formatInt(route.params?.amount)}{' Satoshi'}
 						</Text>
@@ -189,14 +188,14 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
 					{/* Mint info */}
 					<MintOption
-						txt={t('mints.mintInfo')}
+						txt={t('mintInfo', { ns: 'mints' })}
 						hasSeparator
 						onPress={() => navigation.navigate('mint info', { mintUrl: route.params.mint?.mintUrl })}
 						icon={<InfoIcon width={18} height={18} color={color.TEXT} />}
 					/>
 					{/* Add custom name */}
 					<MintOption
-						txt={t('mints.customName')}
+						txt={t('customName', { ns: 'mints' })}
 						hasSeparator
 						onPress={() => {
 							void (async () => {
@@ -208,28 +207,28 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Default */}
 					<MintOption
-						txt={isDefault ? t('mints.removeDefault') : t('mints.setDefault')}
+						txt={isDefault ? t('removeDefault', { ns: 'mints' }) : t('setDefault', { ns: 'mints' })}
 						onPress={() => void handleDefaultMint()}
 						icon={<MintBoardIcon width={19} height={19} color={color.TEXT} />}
 					/>
 				</View>
 				{/* Fund management */}
-				<Txt txt={t('mints.funds')} styles={[styles.sectionHeader]} />
+				<Txt txt={t('funds', { ns: 'mints' })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
 					{/* Mint new tokens */}
 					<MintOption
-						txt={t('mints.mintNewTokens')}
+						txt={t('mintNewTokens', { ns: 'mints' })}
 						hasSeparator
 						onPress={() => setLNAmountModal(true)}
 						icon={<PlusIcon color={color.TEXT} />}
 					/>
 					{/* Redeem to lightning */}
 					<MintOption
-						txt={t('mints.meltToken')}
+						txt={t('meltToken', { ns: 'mints' })}
 						hasSeparator
 						onPress={() => {
 							if (route.params.amount < 1) {
-								openPromptAutoClose({ msg: t('common.noFunds') })
+								openPromptAutoClose({ msg: t('noFunds') })
 								return
 							}
 							navigation.navigate('lightning', {
@@ -242,14 +241,14 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Inter-mint swap */}
 					<MintOption
-						txt={t('topNav.swap')}
+						txt={t('swap', { ns: 'topNav' })}
 						hasSeparator
 						onPress={() => void handleMintSwap()}
 						icon={<SwapIcon width={20} height={20} color={color.TEXT} />}
 					/>
 					{/* Backup mint */}
 					<MintOption
-						txt={t('topNav.mintBackup')}
+						txt={t('mintBackup', { ns: 'topNav' })}
 						hasSeparator
 						onPress={() => void handleMintBackup()}
 						icon={<BackupIcon width={20} height={20} color={color.TEXT} />}
@@ -259,7 +258,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt='Proofs'
 						onPress={() => {
 							if (route.params.amount < 1) {
-								openPromptAutoClose({ msg: t('mints.noProofs') })
+								openPromptAutoClose({ msg: t('noProofs', { ns: 'mints' }) })
 								return
 							}
 							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
@@ -268,11 +267,11 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 				</View>
 				{/* Danger zone */}
-				<Txt txt={t('mints.dangerZone')} styles={[styles.sectionHeader]} />
+				<Txt txt={t('dangerZone', { ns: 'mints' })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
 					{/* Check proofs */}
 					<MintOption
-						txt={t('mints.checkProofs')}
+						txt={t('checkProofs', { ns: 'mints' })}
 						hasSeparator
 						onPress={() => setCheckProofsOpen(true)}
 						icon={<ValidateIcon width={22} height={22} color='#FF9900' />}
@@ -280,7 +279,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Delete mint */}
 					<MintOption
-						txt={t('mints.delMint')}
+						txt={t('delMint', { ns: 'mints' })}
 						onPress={() => setDelMintModalOpen(true)}
 						icon={<TrashbinIcon width={16} height={16} color={color.ERROR} />}
 						rowColor={color.ERROR}
@@ -296,8 +295,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			{/* modal for deleting a mint */}
 			{delMintModalOpen &&
 				<QuestionModal
-					header={t('mints.delMintSure')}
-					txt={route.params.amount > 0 ? t('mints.delMintHint') : undefined}
+					header={t('delMintSure', { ns: 'mints' })}
+					txt={route.params.amount > 0 ? t('delMintHint', { ns: 'mints' }) : undefined}
 					visible={delMintModalOpen}
 					confirmFn={() => handleMintDelete()}
 					cancelFn={() => setDelMintModalOpen(false)}
@@ -306,8 +305,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			{/* Check proofs modal */}
 			{checkProofsOpen &&
 				<QuestionModal
-					header={t('mints.checkProofsQ')}
-					txt={t('mints.checkProofsTxt')}
+					header={t('checkProofsQ', { ns: 'mints' })}
+					txt={t('checkProofsTxt', { ns: 'mints' })}
 					visible={checkProofsOpen}
 					confirmFn={() => void handleProofCheck()}
 					cancelFn={() => setCheckProofsOpen(false)}
@@ -317,24 +316,24 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			{customNameOpen &&
 				<MyModal type='bottom' animation='slide' visible close={() => setCustomNameOpen(false)}>
 					<Text style={globals(color).modalHeader}>
-						{edit ? t('mints.editMintName') : t('mints.addCustomName')}
+						{edit ? t('editMintName', { ns: 'mints' }) : t('addCustomName', { ns: 'mints' })}
 					</Text>
 					<TextInput
 						style={[globals(color).input, { marginBottom: 20 }]}
-						placeholder={t('mints.customName')}
+						placeholder={t('customName', { ns: 'mints' })}
 						placeholderTextColor={color.INPUT_PH}
 						selectionColor={hi[highlight]}
 						onChangeText={setMintName}
 					/>
 					{(mintName.length > 0 || savedName.length > 0) &&
 						<Button
-							txt={t('common.save')}
+							txt={t('save')}
 							onPress={() => void handleMintName()}
 						/>
 					}
 					<TouchableOpacity onPress={() => setCustomNameOpen(false)}>
 						<Text style={[styles.cancel, { color: hi[highlight] }]}>
-							{t('common.cancel')}
+							{t('cancel')}
 						</Text>
 					</TouchableOpacity>
 				</MyModal>}

@@ -7,7 +7,6 @@ import { InvoiceAmountModal, InvoiceModal } from '@screens/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, vib } from '@util'
-import { getTranslationLangCode } from '@util/localization'
 import { requestMint } from '@wallet'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,7 +25,7 @@ export default function LNInvoiceAmountModal({
 	mintUrl,
 	setLNAmountModal,
 }: IInvoiceModalProps) {
-	const { t } = useTranslation(getTranslationLangCode())
+	const { t } = useTranslation(['common'])
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// workaround: amount input ref for auto-focus (input property "autoFocus" does not work here)
@@ -99,13 +98,13 @@ export default function LNInvoiceAmountModal({
 					behavior={isIOS ? 'padding' : undefined}
 				>
 					<Button
-						txt={loading ? t('common.invoiceIncoming') + '...' : t('common.createInvoice')}
+						txt={loading ? t('invoiceIncoming') + '...' : t('createInvoice')}
 						onPress={handleAmountSubmit}
 						loading={loading}
 					/>
 					<TouchableOpacity onPress={() => setLNAmountModal(false)}>
 						<Text style={[styles.cancel, { color: hi[highlight] }]}>
-							{t('common.cancel')}
+							{t('cancel')}
 						</Text>
 					</TouchableOpacity>
 				</KeyboardAvoidingView>
