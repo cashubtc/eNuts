@@ -14,6 +14,7 @@ import ScannedQRDetails from '@screens/Lightning/scannedQR'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { hasTrustedMint, isCashuToken, vib } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner } from 'expo-barcode-scanner'
@@ -25,7 +26,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import QRMarker from './Marker'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)
@@ -137,7 +138,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			setDetailsOpen(true)
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: t('common.unknownType' + `:${data}`) })
+			openPromptAutoClose({ msg: t('common.unknownType') + data })
 		}
 	}
 

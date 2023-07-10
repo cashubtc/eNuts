@@ -19,6 +19,7 @@ import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, formatInt, formatMintUrl, formatSeconds, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
@@ -27,7 +28,7 @@ import { KeyboardAvoidingView, StyleSheet, Switch, Text, TextInput, TouchableOpa
 
 // TODO adapt style
 export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// LNURL amount state

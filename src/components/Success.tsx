@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { addToHistory } from '@store/HistoryStore'
 import { formatInt, formatMintUrl, isNum, vib } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,7 +25,7 @@ interface ISuccessProps {
 }
 
 export default function Success({ amount, fee, mints, mint, memo, nav, hash }: ISuccessProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 	const [testMintTokenRdy, setTestMintTokenRdy] = useState(false)
 	// Only for the hard-coded test mint. Otherwise this is done for other mints before landing in this page

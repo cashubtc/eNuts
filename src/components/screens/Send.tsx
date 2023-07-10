@@ -4,6 +4,7 @@ import type { TSendTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
+import { getTranslationLangCode } from '@util/localization'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -11,7 +12,7 @@ import { StyleSheet, View } from 'react-native'
 import LNPageContent from './Lightning/pageContent'
 
 export default function SendTokenPage({ navigation, route }: TSendTokenPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	// user mints
 	const [mints, setMints] = useState<IMintUrl[]>([])

@@ -2,6 +2,7 @@ import { l } from '@log'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { formatMintUrl } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +16,7 @@ interface IBackupSuccessProps {
 }
 
 export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const [copied, setCopied] = useState(false)
 	const handleShare = async () => {
@@ -54,7 +55,7 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 				{t('backup.copyBackup')}
 			</Text>
 			<Text style={[styles.token, { color: color.TEXT }]}>
-				{t('common.backup')}: {token.substring(0, 25)}...
+				{t('topNav.backup')}: {token.substring(0, 25)}...
 			</Text>
 			{mint &&
 				<Text style={[styles.token, { color: color.TEXT }]}>

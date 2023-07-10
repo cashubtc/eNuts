@@ -5,6 +5,7 @@ import type { THistoryPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { formatInt } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -17,7 +18,7 @@ interface IHistoryEntryProps {
 }
 
 export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<TouchableOpacity

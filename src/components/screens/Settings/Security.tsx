@@ -12,12 +12,13 @@ import { ThemeContext } from '@src/context/Theme'
 import { isNull } from '@src/util'
 import { secureStore } from '@store'
 import { globals } from '@styles'
+import { getTranslationLangCode } from '@util/localization'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const [pin, setPin] = useState<string | null>(null)

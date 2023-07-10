@@ -8,13 +8,14 @@ import type { TMintInfoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
+import { getTranslationLangCode } from '@util/localization'
 import { getMintInfo } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function MintInfoPage({ route }: TMintInfoPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const [info, setInfo] = useState<GetInfoResponse>()
 

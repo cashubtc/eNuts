@@ -4,6 +4,7 @@ import { setPreferences } from '@db'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
 import { formatBalance, formatInt, isBool, isErr, openUrl } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -16,7 +17,7 @@ interface IBalanceProps {
 }
 
 export default function Balance({ balance }: IBalanceProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { pref, color, highlight } = useContext(ThemeContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const { prompt, openPromptAutoClose } = usePrompt()

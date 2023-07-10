@@ -9,6 +9,13 @@ import { getLanguageCode } from '@util/localization'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
+export const defaultNS = 'common'
+export const resources = {
+	en,
+	de,
+	fr
+} as const
+
 i18n.use(initReactI18next)
 	.init({
 		compatibilityJSON: 'v3',
@@ -17,15 +24,13 @@ i18n.use(initReactI18next)
 		interpolation: {
 			escapeValue: false
 		},
+		defaultNS: 'common',
+		ns: ['common', 'wallet', 'topNav', 'bottomNav', 'error', 'history', 'mints', 'backup', 'addrBook', 'auth'],
 		lng: getLanguageCode(),
 		debug,
 		// Consider external storing of translations and fetch needed language on demand
 		// https://www.i18next.com/how-to/backend-fallback
-		resources: {
-			en: { translation: en },
-			de: { translation: de },
-			fr: { translation: fr },
-		},
+		resources,
 	}).catch(e => {
 		l({ i18nextError: isErr(e) ? e.message : 'Error while initializing i18next' })
 	})

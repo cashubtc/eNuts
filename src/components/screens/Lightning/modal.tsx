@@ -17,6 +17,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi } from '@styles'
 import { formatSeconds, getSelectedAmount, isErr, openUrl } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { getMintCurrentKeySetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
@@ -44,7 +45,7 @@ interface IInvoiceModalProps {
 }
 
 export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const [expiry, setExpiry] = useState(invoice.decoded?.expiry ?? 600)
 	const [expiryTime,] = useState(expiry * 1000 + Date.now())
@@ -130,7 +131,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 						}
 						{paid === 'unpaid' &&
 							<Text style={styles.pendingTxt}>
-								{t('paymentPending')}...
+								{t('common.paymentPending')}...
 							</Text>
 						}
 					</View>
@@ -185,7 +186,7 @@ interface ICoinSelectionProps {
  * This component is the main container of the pressable proofs-list aka coin selection list.
  */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
@@ -279,7 +280,7 @@ interface IResume {
  * This component shows the amount and the change of selected proofs in a pressable row of a proofs-list.
  */
 export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
@@ -305,7 +306,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
  * If the row of the proofs-list is non-pressable, margin is not required.
  */
 export function ProofListHeader() {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	return (
 		<>

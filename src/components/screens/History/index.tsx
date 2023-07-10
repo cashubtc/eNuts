@@ -9,6 +9,7 @@ import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { ThemeContext } from '@src/context/Theme'
 import { getHistory } from '@store/HistoryStore'
 import { globals } from '@styles'
+import { getTranslationLangCode } from '@util/localization'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
@@ -16,7 +17,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import HistoryEntry from './Entry'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color } = useContext(ThemeContext)
 	const { claimed } = useContext(FocusClaimCtx)
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})

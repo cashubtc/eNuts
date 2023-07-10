@@ -12,6 +12,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { getMintName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, formatInt, formatMintUrl, isErr } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { autoMintSwap } from '@wallet'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -19,7 +20,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 export default function IntermintSwap({ navigation, route }: TIntermintSwapPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	const [selectedMint, setSelectedMint] = useState(route.params.mints[0])

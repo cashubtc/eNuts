@@ -7,6 +7,7 @@ import { InvoiceAmountModal, InvoiceModal } from '@screens/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, vib } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { requestMint } from '@wallet'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,7 +26,7 @@ export default function LNInvoiceAmountModal({
 	mintUrl,
 	setLNAmountModal,
 }: IInvoiceModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// workaround: amount input ref for auto-focus (input property "autoFocus" does not work here)

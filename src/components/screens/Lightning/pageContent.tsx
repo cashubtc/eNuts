@@ -15,6 +15,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi } from '@styles'
 import { cleanUpNumericStr, formatInt, getSelectedAmount, isErr, isNum } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { sendToken } from '@wallet'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -39,7 +40,7 @@ export default function LNPageContent({
 	setSelectedMint,
 	isSendingToken
 }: ILNPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// invoice amount modal

@@ -1,6 +1,7 @@
 import Button from '@comps/Button'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
+import { getTranslationLangCode } from '@util/localization'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
@@ -18,7 +19,7 @@ interface IQuestionModalProps {
 }
 
 export function QuestionModal({ header, txt, visible, confirmTxt, confirmFn, cancelTxt, cancelFn }: IQuestionModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='question' animation='fade' visible={visible} close={cancelFn} >

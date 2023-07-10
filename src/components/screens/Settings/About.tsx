@@ -9,6 +9,7 @@ import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { isErr, openUrl } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -16,7 +17,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { version } from '../../../../package.json'
 
 export default function AboutSettings() {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const [visible, setVisible] = useState(false)

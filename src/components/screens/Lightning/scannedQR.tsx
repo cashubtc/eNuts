@@ -17,6 +17,7 @@ import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { getCustomMintNames, getDefaultMint, getMintName } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, formatSeconds, getSelectedAmount, isErr } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { payLnInvoice } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,7 +31,7 @@ interface IScannedQRProps {
 
 // TODO adapt style
 export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScannedQRProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	const { loading, startLoading, stopLoading } = useLoading()
 	const { prompt, openPromptAutoClose } = usePrompt()

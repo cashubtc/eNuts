@@ -16,11 +16,12 @@ import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
-import { AsyncStore, secureStore } from '@store'
+import { secureStore, store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
 import { routingInstrumentation } from '@util/crashReporting'
+import { getTranslationLangCode } from '@util/localization'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
@@ -47,7 +48,7 @@ interface ILockData {
 
 void SplashScreen.preventAutoHideAsync()
 
-export default function App(){
+export default function App() {
 	if (!env?.SENTRY_DSN) {
 		return (
 			<CustomErrorBoundary catchErrors='always'>
@@ -106,7 +107,7 @@ function _App() {
 	const pinData = { attempts, setAttempts }
 	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation(getTranslationLangCode())
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
 	const claimData = useMemo(() => ({ claimed, setClaimed }), [claimed])
@@ -269,7 +270,7 @@ function _App() {
 			await initDB()
 			await initContacts()
 			await initPreferences()
-			const storedLng = await AsyncStore.get('settings:lang')
+			const storedLng = await store.get('settings:lang')
 			if (storedLng?.length) {
 				await i18n.changeLanguage(storedLng)
 			}
@@ -313,7 +314,7 @@ function _App() {
 		try {
 			throw new Error('Hello this is my first Sentry error!')
 		} catch (e) {
-			Sentry.Native.captureException(e) 
+			Sentry.Native.captureException(e)
 			Sentry.Native.nativeCrash()
 		}
 		return () => subscription.remove()

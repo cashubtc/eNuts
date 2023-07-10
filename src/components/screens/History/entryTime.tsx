@@ -1,5 +1,6 @@
 import { DayInMs, HourInMs, MinuteInMs } from '@consts'
 import { getShortDateStr } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -9,7 +10,7 @@ interface IEntryTimeProps {
 }
 
 export default function EntryTime({ from, fallback }: IEntryTimeProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const [time, setTime] = useState<string>()
 	function calcTime() {
 		const fromDate = new Date(from)

@@ -3,6 +3,7 @@ import type { ITokenInfo } from '@model'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
+import { getTranslationLangCode } from '@util/localization'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
@@ -17,7 +18,7 @@ interface ITrustModalProps {
 }
 
 export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, closeModal }: ITrustModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(getTranslationLangCode())
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='question' animation='fade' visible close={closeModal}>
