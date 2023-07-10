@@ -57,7 +57,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const handleMintName = async () => {
 		await _setMintName(route.params.mint?.mintUrl, mintName)
 		setCustomNameOpen(false)
-		openPromptAutoClose({ msg: 'Added a custom name', success: true })
+		openPromptAutoClose({ msg: t('mints.cutomNameAdded'), success: true })
 	}
 
 	const hasMintName = async () => {
@@ -72,18 +72,18 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		// needs at least 1 mint after filtering out the current swap-out mint and test mint
 		if (!mints.length) {
 			// promt
-			openPromptAutoClose({ msg: 'You need at least 2 mints to perform an inter-mint swap.' })
+			openPromptAutoClose({ msg: t('mints.atLeast2Mints') })
 			return
 		}
 		// cant swap out from a test mint
 		if (route.params.mint?.mintUrl === _mintUrl) {
-			openPromptAutoClose({ msg: 'Swap out from a test mint is not possible.' })
+			openPromptAutoClose({ msg: t('mints.swapNotAllowed') })
 			return
 		}
 		// balance must be higher than 0
 		if (route.params.amount < 1) {
 			// promt
-			openPromptAutoClose({ msg: 'Mint balance too low!' })
+			openPromptAutoClose({ msg: t('mints.lowBal') })
 			return
 		}
 		const swapOutMintName = await getMintName(route.params.mint?.mintUrl)
@@ -99,7 +99,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	const handleMintBackup = async () => {
 		if (route.params.amount < 1) {
-			openPromptAutoClose({ msg: 'The mint has no balance for a backup!' })
+			openPromptAutoClose({ msg: t('mints.lowBackupBal') })
 			return
 		}
 		try {
@@ -107,7 +107,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			navigation.navigate('mint backup', { token, mintUrl: route.params.mint?.mintUrl })
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: 'Backup token could not be created.' })
+			openPromptAutoClose({ msg: t('mints.backupNotCreated') })
 		}
 	}
 
@@ -117,7 +117,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		// set or remove default
 		await setDefaultMint(defaultM === mUrl ? '' : mUrl)
 		setIsDefault(defaultM !== mUrl)
-		openPromptAutoClose({ msg: 'Updated the default mint', success: true })
+		openPromptAutoClose({ msg: t('mints.updatedDefault'), success: true })
 	}
 
 	const handleProofCheck = async () => {
@@ -130,10 +130,10 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		l({ proofsToDel })
 		try {
 			await deleteProofs(proofsToDel)
-			openPromptAutoClose({ msg: `Deleted ${proofsToDel.length} proofs.`, success: true })
+			openPromptAutoClose({ msg: t('mints.deletedProofs', { proofsToDel: proofsToDel.length }), success: true })
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: 'Something went wrong while deleting proofs.' })
+			openPromptAutoClose({ msg: t('mints.errDelProofs') })
 		}
 	}
 

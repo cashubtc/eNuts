@@ -205,7 +205,16 @@
     "checkProofsTxt": "Cela vérifiera si vos jeton peuvent être dépensés et les supprimera sinon.",
     "editMintName": "Modifier le nom de la mint",
     "addCustomName": "Ajouter un nom personnalisé",
-    "funds": "Argent"
+    "funds": "Argent",
+    "cutomNameAdded": "Ajouté un nom personnalisé",
+    "atLeast2Mints": "Vous avez besoin d'au moins 2 mint pour effectuer une échange.",
+    "swapNotAllowed": "L'échange de mint à partir d'une mint de test n'est pas possible.",
+    "lowBal": "Solde trop bas!",
+    "lowBackupBal": "La mint n'a pas de solde pour une sauvegarde!",
+    "backupNotCreated": "La sauvegarde n'a pas pu être créé.",
+    "updatedDefault": "Modifications enregistrées",
+    "deletedProofs": "Supprimé {{proofsToDel}] proofs.",
+    "errDelProofs": "Une erreur s'est produite lors de la suppression des proofs."
   },
   "backup": {
     "copyBackup": "Copiez le jeton et gardez-le dans un endroit sûr."

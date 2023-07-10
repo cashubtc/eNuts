@@ -55,7 +55,7 @@
     "mintBalance": "Mint Guthaben",
     "calculateFeeEst": "Gebühr wird geschätzt",
     "estimatedFees": "Geschätzte Gebühr",
-    "to": "zu",
+    "to": "bis",
     "expired": "Abgelaufen",
     "total": "Gesamt",
     "invoiceOrLnurl": "LN Rechnung oder LNURL",
@@ -205,7 +205,16 @@
     "checkProofsTxt": "Dadurch wird überprüft, ob Ihre Token ausgegeben werden können und werden andernfalls gelöscht.",
     "editMintName": "Mint Name bearbeiten",
     "addCustomName": "Benutzerdefinierten Namen hinzufügen",
-    "funds": "Guthaben"
+    "funds": "Guthaben",
+    "cutomNameAdded": "Benutzerdefinierter Name hinzugefügt",
+    "atLeast2Mints": "Sie brauchen mindestens 2 Mints um einen Tausch auszuführen.",
+    "swapNotAllowed": "Tausch von einer Test-Mint ist nicht möglich.",
+    "lowBal": "Kein Guthaben verfügbar",
+    "lowBackupBal": "Kein Guthaben für eine Mint-Sicherung",
+    "backupNotCreated": "Mint-Sicherung konnte nicht erstellt werden.",
+    "updatedDefault": "Änderungen gespeichert",
+    "deletedProofs": "{{proofsToDel}] Proofs gelöscht.",
+    "errDelProofs": "Etwas ist schief gelaufen während dem Löschen der Proofs."
   },
   "backup": {
     "copyBackup": "Kopieren Sie den Token und bewahren Sie ihn an einem sicheren Ort."
@@ -220,7 +229,7 @@
     "invalidName": "Invalider Name!",
     "personalLnurl": "Persönliche LNURL",
     "addContactErr": "Kontakt konnte nicht hinzugefügt werden. Möglicher Name oder LNURL Duplikat.",
-    "addedContact": "Neue Kontakt hinzugefügt"
+    "addedContact": "Neuer Kontakt hinzugefügt"
   },
   "auth": {
     "welcome": "Willkommen",
