@@ -101,7 +101,7 @@ const config: ExpoConfig = {
 				config: {
 					organization: process?.env?.SENTRY_ORG,
 					project: process?.env?.SENTRY_PROJECT
-				} 
+				}
 			}
 		]
 	}

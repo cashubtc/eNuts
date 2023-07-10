@@ -7,8 +7,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, themeColors } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
 	const { t } = useTranslation(['common', 'topNav'])

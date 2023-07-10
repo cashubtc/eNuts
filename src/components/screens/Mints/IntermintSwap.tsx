@@ -15,8 +15,7 @@ import { cleanUpNumericStr, formatInt, formatMintUrl, isErr } from '@util'
 import { autoMintSwap } from '@wallet'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
-import { TextInput } from 'react-native-gesture-handler'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 
 export default function IntermintSwap({ navigation, route }: TIntermintSwapPageProps) {
 	const { t } = useTranslation(['common', 'mints', 'topNav'])
