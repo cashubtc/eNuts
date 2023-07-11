@@ -1,9 +1,11 @@
 import { BackspaceIcon, CheckmarkIcon } from '@comps/Icons'
+import { ThemeContext } from '@src/context/Theme'
+import { getPinpadBg, highlight as hi } from '@styles/colors'
+import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 const white = '#FAFAFA'
 const grey = '#999'
-const padBgColor = '#73BD88'
 
 // the number pad data where 10 is "backspace" and 11 is "submit"
 const pad = [
@@ -22,6 +24,7 @@ interface IPinPadProps {
 }
 
 export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, handleInput }: IPinPadProps) {
+	const { highlight } = useContext(ThemeContext)
 	// should pad input be disabled
 	const shouldDisablePad = (val: number) => (
 		mismatch ||
@@ -46,7 +49,7 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, ha
 						<TouchableOpacity
 							key={`${i}${pad.n}`}
 							onPress={() => void handleInput(pad.n)}
-							style={[styles.numWrap, pad.n < 10 ? { backgroundColor: padBgColor } : {}]}
+							style={[styles.numWrap, pad.n < 10 ? { backgroundColor: getPinpadBg(hi[highlight]) } : {}]}
 							disabled={shouldDisablePad(pad.n)}
 						>
 							{pad.n === 10 ? <BackspaceIcon width={32} height={32} color={white} /> // backspace
