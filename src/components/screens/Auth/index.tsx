@@ -209,7 +209,15 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	}, [navigation])
 	return (
 		/* this is the initial pin setup page */
-		<View style={[styles.container, { backgroundColor: hi[highlight], justifyContent: success ? 'center' : 'space-between' }]}>
+		<View
+			style={[
+				styles.container,
+				{
+					backgroundColor: attempts.locked ? color.ERROR : hi[highlight],
+					justifyContent: success ? 'center' : 'space-between'
+				}
+			]}
+		>
 			{success ?
 				<UnlockIcon width={40} height={40} color='#FAFAFA' />
 				:
@@ -217,7 +225,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 					{attempts.locked && !isConfirm && <View />}
 					<View style={attempts.locked && !isConfirm ? { alignItems: 'center' } : styles.lockWrap}>
 						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
-							<LockIcon width={40} height={40} color={attempts.locked ? color.ERROR : '#FAFAFA'} />
+							<LockIcon width={40} height={40} color='#FAFAFA' />
 						</Animated.View>
 						{attempts.locked && !isConfirm &&
 							<Text style={styles.lockedTime}>
