@@ -2,7 +2,6 @@ import Empty from '@comps/Empty'
 import Separator from '@comps/Separator'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
-import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
@@ -36,7 +35,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('history', { ns: 'topNav' })} nav={{ navigation, route }} />
+			<TopNav screenName={t('history', { ns: 'topNav' })} withBackBtn />
 			{/* TODO apply filter for ecash or LN TXs */}
 			<View style={styles.listWrap}>
 				{/* History list grouped by settled date */}
@@ -73,7 +72,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 					ListEmptyComponent={<Empty txt={t('noTX') + '...'} />}
 				/>
 			</View>
-			<BottomNav navigation={navigation} route={route} />
+			{/* <BottomNav navigation={navigation} route={route} /> */}
 		</View>
 	)
 }

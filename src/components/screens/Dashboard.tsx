@@ -167,7 +167,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav nav={{ navigation, route }} />
-			{/* Balance overview */}
+			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
 			{/* Flex space-between empty placeholder */}
 			<View />
@@ -178,6 +178,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
 				bottomBtnTxt={t('send', { ns: 'wallet' })}
 				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
+				withHistory
+				nav={navigation}
 			/>
 			{/* Bottom nav icons */}
 			<BottomNav navigation={navigation} route={route} />

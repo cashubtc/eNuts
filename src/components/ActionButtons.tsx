@@ -1,4 +1,10 @@
-import { StyleSheet, View } from 'react-native'
+import type { RootStackParamList } from '@model/nav'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { ThemeContext } from '@src/context/Theme'
+import { globals } from '@styles'
+import { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import Button from './Button'
 
@@ -10,6 +16,8 @@ interface IActionBtnsProps {
 	ontopOfNav?: boolean
 	absolutePos?: boolean
 	loading?: boolean
+	withHistory?: boolean
+	nav?: NativeStackNavigationProp<RootStackParamList, 'dashboard', 'MyStack'>
 }
 
 export default function ActionButtons({
@@ -19,8 +27,12 @@ export default function ActionButtons({
 	bottomBtnAction,
 	ontopOfNav,
 	absolutePos,
-	loading
+	loading,
+	withHistory,
+	nav
 }: IActionBtnsProps) {
+	const { color, highlight } = useContext(ThemeContext)
+	const { t } = useTranslation()
 	return (
 		<View
 			style={[
@@ -29,6 +41,16 @@ export default function ActionButtons({
 				absolutePos ? styles.absolute : {},
 			]}
 		>
+			{withHistory &&
+				<TouchableOpacity
+					style={styles.historyBtn}
+					onPress={() => nav?.navigate('history')}
+				>
+					<Text style={globals(color, highlight).pressTxt}>
+						{t('topNav.history')}
+					</Text>
+				</TouchableOpacity>
+			}
 			<Button
 				loading={loading}
 				txt={topBtnTxt}
@@ -59,5 +81,8 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		padding: 20,
+	},
+	historyBtn: {
+		padding: 30,
 	}
 })
