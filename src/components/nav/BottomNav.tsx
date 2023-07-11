@@ -27,8 +27,6 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		route.name === 'Security settings' ||
 		route.name === 'BackupPage'
 
-	// const isHistoryRelatedScreen = route.name === 'history' || route.name === 'history entry details'
-
 	return (
 		<View style={styles.bottomNav}>
 			<TouchableOpacity
@@ -41,16 +39,6 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 					styles={[{ fontSize: 12, marginTop: 2, color: isWalletRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
-			{/* <TouchableOpacity
-				style={styles.navIcon}
-				onPress={() => handleNav('history')}
-			>
-				<HistoryIcon color={isHistoryRelatedScreen ? hi[highlight] : color.TEXT} />
-				<Txt
-					txt={t('history')}
-					styles={[{ fontSize: 12, color: isHistoryRelatedScreen ? hi[highlight] : color.TEXT }]}
-				/>
-			</TouchableOpacity> */}
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => handleNav('mints')}
