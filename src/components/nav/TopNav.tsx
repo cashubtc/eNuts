@@ -1,4 +1,7 @@
+import usePrompt from '@comps/hooks/Prompt'
 import { QRIcon } from '@comps/Icons'
+import Toaster from '@comps/Toaster'
+import { isIOS } from '@consts'
 import type { TBottomNavProps } from '@model/nav'
 import { useNavigation } from '@react-navigation/native'
 import { ThemeContext } from '@src/context/Theme'
@@ -17,6 +20,7 @@ interface TTopNavProps {
 export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TTopNavProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const navHook = useNavigation()
 	const handlePress = () => {
 		if (withBackBtn) {
@@ -25,6 +29,13 @@ export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TT
 				return
 			}
 			navHook.goBack()
+			return
+		}
+		if (isIOS) {
+			openPromptAutoClose({
+				msg: t('iosQrErr', { ns: 'error' }),
+				ms: 4000
+			})
 			return
 		}
 		// open QR Scan
@@ -48,6 +59,7 @@ export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TT
 					<QRIcon color={color.TEXT} />
 				}
 			</TouchableOpacity>
+			{prompt.open && <Toaster txt={prompt.msg} top />}
 		</View>
 	)
 }

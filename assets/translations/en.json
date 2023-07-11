@@ -157,7 +157,8 @@
 		"header": "An error occured",
 		"msg": "We are sorry that you encountered this problem. You can help us improve the software by taking a screenshot and creating a short bug report.",
 		"reportBug": "Report the bug",
-		"stackNA": "Error stack not available"
+		"stackNA": "Error stack not available",
+		"iosQrErr": "Scan QR code is not allowed on iOS... Please use your device camera app."
 	},
 	"history": {
 		"checkSpent": "Check if token has been spent",

@@ -157,7 +157,8 @@
 		"header": "Ein Fehler ist aufgetreten",
 		"msg": "Es tut uns leid, dass dieses Problem bei Ihnen aufgetreten ist. Sie können uns helfen, die Software zu verbessern, indem Sie einen Screenshot machen und einen kurzen Fehlerbericht erstellen.",
 		"reportBug": "Fehler melden",
-		"stackNA": "Ursprung des Fehlers nicht verfügbar"
+		"stackNA": "Ursprung des Fehlers nicht verfügbar",
+		"iosQrErr": "QR-Code scannen ist auf iOS nicht erlaubt... Bitte verwenden Sie Ihre Gerätekamera-App."
 	},
 	"history": {
 		"checkSpent": "Überprüfen ob Token ausgegeben wurde",
