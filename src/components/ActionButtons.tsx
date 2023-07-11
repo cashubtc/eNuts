@@ -69,6 +69,7 @@ export default function ActionButtons({
 const styles = StyleSheet.create({
 	actionWrap: {
 		width: '100%',
+		alignItems: 'center'
 	},
 	ontopOfNav: {
 		paddingLeft: 20,
@@ -83,6 +84,8 @@ const styles = StyleSheet.create({
 		padding: 20,
 	},
 	historyBtn: {
-		padding: 30,
+		padding: 20,
+		width: 130,
+		marginBottom: 10
 	}
 })
