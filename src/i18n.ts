@@ -9,6 +9,8 @@ import { getTranslationLangCode } from '@util/localization'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
+// TODO improve maintainability of namespaces that are used with the t() method across all files
+
 export const defaultNS = 'common'
 export const resources = {
 	en, de, fr

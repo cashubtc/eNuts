@@ -1,6 +1,8 @@
 import { DefaultTheme } from '@react-navigation/native'
 import type { ExtendedTheme } from '@react-navigation/native-stack'
 
+// TODO create type-safe color objects
+
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type TPref = {
 	BACKGROUND: string
@@ -25,7 +27,7 @@ export const highlight: { [key: string]: string } = {
 	Zap: '#FFCC00'
 }
 
-// pin pad background based on selected highlight theme
+// pin-pad background based on selected highlight theme
 const pinpadBg: { [key: string]: string } = {
 	'#5DB075': '#73BD88',
 	'#FF9900': '#FFB340',
