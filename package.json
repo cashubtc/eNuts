@@ -13,7 +13,7 @@
 		"ts:check": "npx tsc",
 		"dep:update": "npx -y npm-check-updates --pre -u -u && npm i && npm audit fix || true && npx expo install --fix && npm run lint",
 		"dep:check": "npx -y depcheck@latest",
-		"fmtJson": "npx prettier *.json .github/workflows/*.yml --write --use-tabs --tab-width 4",
+		"fmtJson": "npx prettier *.json assets/translations/*.json .github/workflows/*.yml --write --use-tabs --tab-width 4",
 		"expo:i:check": "npx expo install --check",
 		"expo:i:fix": "npx expo install --fix",
 		"expo:doc": "npx -y expo-doctor@latest",
