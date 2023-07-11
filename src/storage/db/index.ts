@@ -3,7 +3,7 @@ import { CashuMint, deriveKeysetId, getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
 import type { IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
 import type { IContact } from '@src/context/Contacts'
-import { arrToChunks } from '@util'
+import { arrToChunks, isObj } from '@util'
 import * as SQLite from 'expo-sqlite'
 
 import { Db } from './Db'
@@ -305,8 +305,9 @@ export async function getPreferences() {
 	return {
 		id: x?.id || 1,
 		darkmode: x?.darkmode === 'true',
-		theme: x?.theme || '',
+		theme: x?.theme || 'Default',
 		formatBalance: x?.formatBalance === 'true',
+		hasPref: isObj(x)
 	}
 }
 export async function setPreferences(p: IPreferences) {

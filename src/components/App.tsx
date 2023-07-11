@@ -28,7 +28,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AppState, Text, View } from 'react-native'
+import { Appearance, AppState, Text, View } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
 import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
@@ -232,9 +232,11 @@ function _App() {
 			try {
 				// Initialize theme preferences
 				const prefsDB = await getPreferences()
-				setPref(prefsDB)
-				setTheme(prefsDB?.darkmode ? 'Dark' : 'Light')
-				setHighlight(prefsDB?.theme || 'Default')
+				const deviceTheme = Appearance.getColorScheme()
+				const darkmode = prefsDB.hasPref ? prefsDB.darkmode : deviceTheme === 'dark'
+				setPref({...prefsDB, darkmode })
+				setTheme(darkmode ? 'Dark' : 'Light')
+				setHighlight(prefsDB.theme)
 			} catch (e) {
 				l(e)
 				setPref({

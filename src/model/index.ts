@@ -59,6 +59,7 @@ export interface IPreferencesResp {
 	formatBalance: string
 	darkmode: string
 	theme: string
+	hasPref: string
 }
 
 export interface IPreferences {
