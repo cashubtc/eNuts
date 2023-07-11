@@ -16,7 +16,7 @@ interface IBalanceProps {
 }
 
 export default function Balance({ balance }: IBalanceProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { pref, color, highlight } = useContext(ThemeContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const { prompt, openPromptAutoClose } = usePrompt()
@@ -47,15 +47,15 @@ export default function Balance({ balance }: IBalanceProps) {
 			<View style={styles.disclaimerWrap}>
 				<ExclamationIcon width={22} height={22} color={mainColors.WARN} />
 				<Text style={[styles.disclaimerTxt, { color: color.TEXT }]}>
-					{t('wallet.disclaimer')}
+					{t('disclaimer', { ns: 'wallet' })}
 				</Text>
 				<TouchableOpacity
 					style={styles.submitIssue}
-					onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) => 
-						openPromptAutoClose({ msg: isErr(err) ? err.message : t('common.deepLinkErr') }) )}
+					onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) =>
+						openPromptAutoClose({ msg: isErr(err) ? err.message : t('deepLinkErr') }))}
 				>
 					<Text style={styles.issue}>
-						{t('wallet.submitIssue')}
+						{t('submitIssue', { ns: 'wallet' })}
 					</Text>
 				</TouchableOpacity>
 				{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}

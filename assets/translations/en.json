@@ -101,7 +101,23 @@
     "readme": "Read me",
     "githubIssues": "GitHub issues and questions",
     "cashuRandD": "Cashu Telegram",
-    "enutsRandD": "eNuts Telegram"
+    "enutsRandD": "eNuts Telegram",
+    "english": "English",
+    "german": "German",
+    "french": "French",
+    "delHistory": "Delete transaction history",
+    "lnPayment": "Lightning payment",
+    "lnInvoice": "Lightning invoice",
+    "ecashPayment": "Ecash payment",
+    "trustMint": "Do you want to trust this mint",
+    "notClaim": "If you choose \"No\", the token will not be claimed",
+    "contact_one": "Contact",
+    "contact_other": "Contacts",
+    "getStarted": "Get started",
+    "startHint": "You should add a mint that you trust before sending or receiving token.",
+    "addMintNow": "Add a mint now",
+    "willDoLater": "Will do later",
+    "aboutToLeaveTo": "You are about to leave"
   },
   "wallet": {
     "disclaimer": "Please note that this is an alpha version in its early stage and is still undergoing testing before its official release. The software and all content found on it are provided on an “as is” and “as available” basis. We do not give any warranties, whether express or implied, as to the suitability or usability of the software or any of its content.",
@@ -189,7 +205,16 @@
     "checkProofsTxt": "This will check if your token are spendable and will otherwise delete them.",
     "editMintName": "Edit mint name",
     "addCustomName": "Add a custom name",
-    "funds": "Funds"
+    "funds": "Funds",
+    "cutomNameAdded": "Added a custom name",
+    "atLeast2Mints": "You need at least 2 mints to perform an inter-mint swap.",
+    "swapNotAllowed": "Swap out from a test mint is not possible.",
+    "lowBal": "Mint balance too low!",
+    "lowBackupBal": "The mint has no balance for a backup!",
+    "backupNotCreated": "Backup token could not be created.",
+    "updatedDefault": "Updated the default mint",
+    "deletedProofs": "Deleted {{proofsToDel}] proofs.",
+    "errDelProofs": "Something went wrong while deleting proofs."
   },
   "backup": {
     "copyBackup": "Copy the token and keep it in a safe place."
@@ -214,26 +239,10 @@
     "pinSetup": "You can setup a PIN to secure your app.",
     "pinMismatch": "Incorrect PIN!",
     "createPin": "Create PIN",
-    "editPin":"Edit PIN",
-    "removePin":"Delete PIN",
+    "editPin": "Edit PIN",
+    "removePin": "Delete PIN",
     "confirmAction": "Please confirm the action.",
     "pleaseNewPin": "Please enter a new PIN now.",
     "pleaseConfirmNewPin": "Please confirm your new PIN."
-  },
-  "english": "English",
-  "german": "German",
-  "french": "French",
-  "delHistory": "Delete transaction history",
-  "lnPayment": "Lightning payment",
-  "lnInvoice": "Lightning invoice",
-  "ecashPayment": "Ecash payment",
-  "trustMint": "Do you want to trust this mint",
-  "notClaim": "If you choose \"No\", the token will not be claimed",
-  "contact_one": "Contact",
-  "contact_other": "Contacts",
-  "getStarted": "Get started",
-  "startHint": "You should add a mint that you trust before sending or receiving token.",
-  "addMintNow": "Add a mint now",
-  "willDoLater": "Will do later",
-  "aboutToLeaveTo": "You are about to leave"
+  }
 }

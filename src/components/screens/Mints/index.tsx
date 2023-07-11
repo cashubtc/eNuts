@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// mint list
@@ -39,31 +39,31 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	const [input, setInput] = useState('')
 	// visibility state for trusting a new mint that us not in the user mint list
 	const [trustModalOpen, setTrustModalOpen] = useState(false)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { prompt, closePrompt, openPromptAutoClose } = usePrompt()
 
 	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
 
 	// adds a mint via input
 	const handleMintInput = async () => {
 		if (!isUrl(input)) {
-			openPromptAutoClose({ msg: t('mints.invalidUrl'), ms: 1500 })
+			openPromptAutoClose({ msg: t('invalidUrl', { ns: 'mints' }), ms: 1500 })
 			return
 		}
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === input)) {
-				openPromptAutoClose({ msg: t('mints.mntAlreadyAdded'), ms: 1500 })
+				openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: 'mints' }), ms: 1500 })
 				return
 			}
 			// add mint url to db
 			await addMint(input)
 		} catch (e) {
-			openPromptAutoClose({ msg: t('mints.mintConnectionFail'), ms: 2000 })
+			openPromptAutoClose({ msg: t('mintConnectionFail', { ns: 'mints' }), ms: 2000 })
 			l(e)
 			return
 		}
-		openPromptAutoClose({ msg: t('mints.newMintSuccess', { mintUrl: formatMintUrl(input) }), success: true })
+		openPromptAutoClose({ msg: t('newMintSuccess', { mintUrl: formatMintUrl(input), ns: 'mints' }), success: true })
 		setNewMintModal(false)
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
@@ -91,13 +91,13 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			await addMint(selectedMint.mintUrl)
 		} catch (e) {
 			// prompt error
-			openPromptAutoClose({ msg: t('mints.mintConnectionFail'), ms: 2000 })
+			openPromptAutoClose({ msg: t('mintConnectionFail', { ns: 'mints' }), ms: 2000 })
 			setTrustModalOpen(false)
 			l(e)
 			return
 		}
 		setTrustModalOpen(false)
-		openPromptAutoClose({ msg: t('mints.newMintSuccess', { mintUrl: formatMintUrl(selectedMint.mintUrl) }), success: true })
+		openPromptAutoClose({ msg: t('newMintSuccess', { mintUrl: formatMintUrl(selectedMint.mintUrl), ns: 'mints' }), success: true })
 		// update mints list state
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
@@ -185,7 +185,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				close={() => setNewMintModal(false)}
 			>
 				<Text style={globals(color).modalHeader}>
-					{t('mints.addNewMint')}
+					{t('addNewMint', { ns: 'mints' })}
 				</Text>
 				<TextInput
 					style={[globals(color).input, { marginBottom: 20 }]}
@@ -194,16 +194,16 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					selectionColor={hi[highlight]}
 					onChangeText={setInput}
 				/>
-				<Button txt={t('mints.addMintBtn')} onPress={() => { void handleMintInput() }} />
+				<Button txt={t('addMintBtn', { ns: 'mints' })} onPress={() => { void handleMintInput() }} />
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
-					<Txt txt={t('common.cancel')} styles={[globals(color, highlight).pressTxt]} />
+					<Txt txt={t('cancel')} styles={[globals(color, highlight).pressTxt]} />
 				</TouchableOpacity>
 			</MyModal>
 			<QuestionModal
 				header={selectedMint?.mintUrl === _mintUrl ?
-					t('mints.testMintHint')
+					t('testMintHint', { ns: 'mints' })
 					:
-					t('mints.trustMintSure')
+					t('trustMintSure', { ns: 'mints' })
 				}
 				visible={trustModalOpen}
 				confirmFn={() => void handleTrustModal()}
@@ -213,7 +213,10 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			<View style={styles.newMint}>
 				<IconBtn
 					icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
-					onPress={() => setNewMintModal(true)}
+					onPress={() => {
+						closePrompt()
+						setNewMintModal(true)
+					}}
 				/>
 			</View>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}

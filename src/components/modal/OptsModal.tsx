@@ -26,7 +26,7 @@ export default function OptsModal({
 	onPressCancel,
 	loading
 }: IOptsModal) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
@@ -40,7 +40,7 @@ export default function OptsModal({
 			/>
 			<TouchableOpacity style={styles.no} onPress={onPressCancel}>
 				<Text style={globals(color, highlight).pressTxt}>
-					{t('common.cancel')}
+					{t('cancel')}
 				</Text>
 			</TouchableOpacity>
 		</MyModal>

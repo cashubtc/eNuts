@@ -30,7 +30,7 @@ interface IScannedQRProps {
 
 // TODO adapt style
 export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScannedQRProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { loading, startLoading, stopLoading } = useLoading()
 	const { prompt, openPromptAutoClose } = usePrompt()
@@ -54,7 +54,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			const res = await payLnInvoice(selectedMint.mintUrl, lnDecoded.paymentRequest, selectedProofs)
 			stopLoading()
 			if (!res.result?.isPaid) {
-				openPromptAutoClose({ msg: t('common.invoiceErr') })
+				openPromptAutoClose({ msg: t('invoiceErr') })
 				return
 			}
 			// payment success, add as history entry
@@ -71,7 +71,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			})
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('common.invoicePayErr') })
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('invoicePayErr') })
 			stopLoading()
 		}
 	}
@@ -132,7 +132,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 		<MyModal type='invoiceAmount' animation='slide' visible close={closeDetails}>
 			<View style={styles.topContainer}>
 				<Text style={globals(color, highlight).modalHeader}>
-					{t('common.lnPaymentReq')}
+					{t('lnPaymentReq')}
 				</Text>
 				<Text style={[styles.amount, { color: hi[highlight] }]}>
 					{formatInt(invoiceAmount)}
@@ -141,15 +141,15 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					Satoshi
 				</Text>
 				<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
-					{timeLeft > 0 ? formatSeconds(timeLeft) : t('common.invoiceExpired')}
+					{timeLeft > 0 ? formatSeconds(timeLeft) : t('invoiceExpired')}
 				</Text>
 				<View style={styles.pickerWrap}>
 					{!mints.length &&
-						<Txt txt={t('common.noMint')} styles={[styles.txt, globals(color).navTxt]} />
+						<Txt txt={t('noMint')} styles={[styles.txt, globals(color).navTxt]} />
 					}
 					{mints.length > 0 && timeLeft > 0 &&
 						<>
-							<Txt txt={t('common.selectMint') + ':'} styles={[styles.txt, globals(color).navTxt]} />
+							<Txt txt={t('selectMint') + ':'} styles={[styles.txt, globals(color).navTxt]} />
 							<Picker
 								selectedValue={selectedMint?.mintUrl}
 								onValueChange={(value, _idx) => {
@@ -171,7 +171,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 								))}
 							</Picker>
 							<View style={[styles.mintOpts, { borderBottomColor: color.BORDER }]}>
-								<Txt txt={t('common.balance')} />
+								<Txt txt={t('balance')} />
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										{formatInt(mintBal)}
@@ -182,7 +182,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 							{invoiceAmount > 0 && mintBal >= invoiceAmount / 1000 &&
 								<>
 									<View style={styles.overview}>
-										<Txt txt={t('common.coinSelection')} />
+										<Txt txt={t('coinSelection')} />
 										<Switch
 											trackColor={{ false: color.INPUT_BG, true: hi[highlight] }}
 											thumbColor={color.TEXT}
@@ -202,7 +202,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 			<View style={styles.actions}>
 				{mintBal >= invoiceAmount && mints.length > 0 && timeLeft > 0 &&
 					<Button
-						txt={loading ? t('common.processingPayment') + '...' : t('common.pay')}
+						txt={loading ? t('processingPayment') + '...' : t('pay')}
 						loading={loading}
 						onPress={() => {
 							if (loading) { return }
@@ -211,11 +211,11 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 					/>
 				}
 				{mints.length > 0 && mintBal < invoiceAmount && timeLeft > 0 &&
-					<Txt txt={t('common.noFunds') + '!'} styles={[globals(color).navTxt, styles.txt]} />
+					<Txt txt={t('noFunds') + '!'} styles={[globals(color).navTxt, styles.txt]} />
 				}
 				<View style={{ marginVertical: 10 }} />
 				<Button
-					txt={t('common.cancel')}
+					txt={t('cancel')}
 					outlined
 					onPress={closeDetails}
 				/>

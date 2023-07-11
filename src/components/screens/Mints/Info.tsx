@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function MintInfoPage({ route }: TMintInfoPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [info, setInfo] = useState<GetInfoResponse>()
 
@@ -46,7 +46,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 							{info.name}
 						</Text>
 						<Text style={[styles.mintVersion, { color: color.TEXT, }]}>
-							{t('common.version')}: {info.version}
+							{t('version')}: {info.version}
 						</Text>
 						{info.description?.length > 0 &&
 							<Text style={[styles.mintVersion, { color: color.TEXT, }]}>
@@ -60,7 +60,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 							<View style={styles.motd}>
 								<View>
 									<Text style={[styles.description, { color: color.TEXT }]}>
-										{t('mints.importantNotice')}
+										{t('importantNotice', { ns: 'mints' })}
 									</Text>
 									<Txt txt={info.motd} />
 								</View>
@@ -81,31 +81,31 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 										<Txt txt={c[1]} />
 									</>
 									:
-									<Txt txt={t('mints.mintNoContact')} />
+									<Txt txt={t('mintNoContact', { ns: 'mints' })} />
 								}
 							</View>
 						))}
 						<Separator style={[{ marginVertical: 20 }]} />
 						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('mints.supportedNuts')}
+							{t('supportedNuts', { ns: 'mints' })}
 						</Text>
 						{info.nuts.map((n, i) => <Txt key={i} txt={n} />)}
 						<Separator style={[{ marginVertical: 20 }]} />
 						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('mints.pubKey')}
+							{t('pubKey', { ns: 'mints' })}
 						</Text>
 						<Txt txt={info.pubkey} />
 					</View>
 					{/* Long description */}
 					<View style={[globals(color).wrapContainer, styles.infoEntry]}>
 						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('mints.additionalInfo')}
+							{t('additionalInfo', { ns: 'mints' })}
 						</Text>
-						<Txt txt={info.description_long || t('mints.noAdditional')} />
+						<Txt txt={info.description_long || t('noAdditional', { ns: 'mints' })} />
 					</View>
 				</ScrollView>
 				:
-				<Empty txt={t('mints.noInfo') + '...'} />
+				<Empty txt={t('noInfo', { ns: 'mints' }) + '...'} />
 			}
 		</View>
 	)

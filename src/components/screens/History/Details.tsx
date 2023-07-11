@@ -18,8 +18,7 @@ import { isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 const initialCopyState = {
 	value: false,
@@ -28,7 +27,7 @@ const initialCopyState = {
 }
 
 export default function DetailsPage({ navigation, route }: THistoryEntryPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const entry = route.params.entry
 	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)
@@ -40,7 +39,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const LNstr = t(isPayment ? 'lnPayment' : 'lnInvoice')
 	const Ecash = t('ecashPayment')
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
-	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('history.noMemo')
+	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('noMemo', { ns: 'history' })
 	const copyValue = async () => {
 		await Clipboard.setStringAsync(entry.value)
 		setCopy({ ...copy, value: true })
@@ -91,15 +90,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				<View style={globals(color).wrapContainer}>
 					{/* Settle Time */}
 					<View style={styles.entryInfo}>
-						<Txt txt={t('history.settleTime')} />
+						<Txt txt={t('settleTime', { ns: 'history' })} />
 						<Txt txt={new Date(entry.timestamp * 1000).toLocaleString()} />
 					</View>
 					<Separator />
 					{/* Memo */}
 					<View style={styles.entryInfo}>
-						<Txt txt={t('history.memo')} />
+						<Txt txt={t('memo', { ns: 'history' })} />
 						<Txt
-							txt={isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : t('history.noMemo')}
+							txt={isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : t('noMemo', { ns: 'history' })}
 							styles={[styles.infoValue]}
 						/>
 					</View>
@@ -119,10 +118,10 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							void copyValue()
 						}}
 					>
-						<Txt txt={isLn ? t('common.invoice') : 'Token'} />
+						<Txt txt={isLn ? t('invoice') : 'Token'} />
 						<View style={styles.copyWrap}>
 							<Txt
-								txt={entry.value.length ? `${entry.value.slice(0, 16)}...` : t('common.n/a')}
+								txt={entry.value.length ? `${entry.value.slice(0, 16)}...` : t('n/a')}
 								styles={[styles.infoValue, entry.value.length > 0 ? styles.mr10 : {}]}
 							/>
 							{entry.value.length > 0 &&
@@ -145,7 +144,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 								handleCheckSpendable={() => void handleCheckSpendable()}
 							>
 								<Txt
-									txt={isUndef(isSpent) ? t('history.checkSpent') : t(isSpent ? 'history.isSpent' : 'history.isPending') + '...'}
+									txt={isUndef(isSpent) ? t('checkSpent', { ns: 'history' }) : t(isSpent ? 'isSpent' : 'isPending', { ns: 'history' }) + '...'}
 								/>
 								{isSpent ?
 									<CheckCircleIcon width={18} height={18} color={mainColors.VALID} />
@@ -170,10 +169,10 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 									void copyHash()
 								}}
 							>
-								<Txt txt={t('history.paymentHash')} />
+								<Txt txt={t('paymentHash', { ns: 'history' })} />
 								<View style={styles.copyWrap}>
 									<Txt
-										txt={hash.length > 0 ? `${hash.slice(0, 16)}...` : t('common.n/a')}
+										txt={hash.length > 0 ? `${hash.slice(0, 16)}...` : t('n/a')}
 										styles={[styles.infoValue, hash.length > 0 ? styles.mr10 : {}]}
 									/>
 									{hash.length > 0 &&
@@ -199,7 +198,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 								<Txt txt='Pre-Image' />
 								<View style={styles.copyWrap}>
 									<Txt
-										txt={entry.preImage || t('common.n/a')}
+										txt={entry.preImage || t('n/a')}
 										styles={[styles.infoValue, entry.preImage && entry.preImage.length > 0 ? styles.mr10 : {}]}
 									/>
 									{entry.preImage && entry.preImage.length > 0 &&
@@ -216,8 +215,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							<Separator />
 							{/* LN payment fees */}
 							<View style={styles.entryInfo}>
-								<Txt txt={t('common.fee')} />
-								<Txt txt={entry.fee ? `${entry.fee} Satoshi` : t('common.n/a')} />
+								<Txt txt={t('fee')} />
+								<Txt txt={entry.fee ? `${entry.fee} Satoshi` : t('n/a')} />
 							</View>
 							<Separator />
 						</>
@@ -227,7 +226,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						style={styles.entryInfo}
 						onPress={handleQR}
 					>
-						<Txt txt={t('history.showQr')} />
+						<Txt txt={t('showQr', { ns: 'history' })} />
 						<QRIcon width={17} height={17} color={color.TEXT} />
 					</TouchableOpacity>
 				</View>
@@ -235,7 +234,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			<BottomNav navigation={navigation} route={route} />
 			<MyModal type='question' visible={qr.open} close={() => setQr({ open: false, error: false })}>
 				{qr.error ?
-					<Txt txt={t('common.bigQrMsg')} styles={[{ textAlign: 'center' }]} />
+					<Txt txt={t('bigQrMsg')} styles={[{ textAlign: 'center' }]} />
 					:
 					<QR
 						value={entry.value}

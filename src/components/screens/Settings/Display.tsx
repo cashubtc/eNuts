@@ -7,21 +7,20 @@ import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, themeColors } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('topNav.display')} withBackBtn />
+			<TopNav screenName={t('display', { ns: 'topNav' })} withBackBtn />
 			<ScrollView style={{ width: '100%', marginBottom: 60 }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Theme
 				</Text>
 				<View style={[globals(color).wrapContainer, styles.wrap]}>
-					<Txt txt={t('common.darkMode')} />
+					<Txt txt={t('darkMode')} />
 					<Switch
 						trackColor={{ false: color.BORDER, true: hi[highlight] }}
 						thumbColor={color.TEXT}
@@ -50,14 +49,14 @@ interface IThemeSelectionProps {
 }
 
 function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight, setHighlight } = useContext(ThemeContext)
 	return (
 		<>
 			<TouchableOpacity style={styles.settingsRow}
 				onPress={() => setHighlight(name)}
 			>
-				<Txt txt={name === 'Default' ? t('common.default') : name} />
+				<Txt txt={name === 'Default' ? t('default') : name} />
 				<View
 					style={[
 						globals(color, highlight).radioBtn,

@@ -44,7 +44,7 @@ interface IInvoiceModalProps {
 }
 
 export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [expiry, setExpiry] = useState(invoice.decoded?.expiry ?? 600)
 	const [expiryTime,] = useState(expiry * 1000 + Date.now())
@@ -70,6 +70,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 			} catch (e) {
 				l(e)
 				if (isErr(e)) {
+					// TODO update this check
 					if (e.message === 'Tokens already issued for this invoice.') {
 						setPaid('paid')
 						return
@@ -110,7 +111,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							/>
 						</View>
 						<Text style={[styles.lnAddress, { color: color.TEXT }]}>
-							{invoice.decoded.paymentRequest.substring(0, 40) + '...' || t('common.smthWrong')}
+							{invoice.decoded.paymentRequest.substring(0, 40) + '...' || t('smthWrong')}
 						</Text>
 					</View>
 					<View>
@@ -118,13 +119,13 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 							{expiry > 0 ?
 								formatSeconds(expiry)
 								:
-								t('common.invoiceExpired') + '!'
+								t('invoiceExpired') + '!'
 							}
 						</Text>
 						{expiry > 0 && !paid &&
 							<TouchableOpacity onPress={handlePayment}>
 								<Text style={[styles.checkPaymentTxt, { color: hi[highlight] }]}>
-									{t('common.checkPayment')}
+									{t('checkPayment')}
 								</Text>
 							</TouchableOpacity>
 						}
@@ -136,7 +137,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 					</View>
 					<View style={styles.lnBtnWrap}>
 						<Button
-							txt={copied ? t('common.copied') + '!' : t('common.copyInvoice')}
+							txt={copied ? t('copied') + '!' : t('copyInvoice')}
 							outlined
 							onPress={() => {
 								void Clipboard.setStringAsync(invoice.decoded?.paymentRequest ?? '').then(() => {
@@ -150,17 +151,17 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 						/>
 						<View style={{ marginBottom: 20 }} />
 						<Button
-							txt={t('common.payWithLn')}
+							txt={t('payWithLn')}
 							onPress={() => {
 								void (async () => {
-									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch((err: unknown) => 
-										openPromptAutoClose({ msg: isErr(err) ? err.message : t('common.deepLinkErr') }) )
+									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch((err: unknown) =>
+										openPromptAutoClose({ msg: isErr(err) ? err.message : t('deepLinkErr') }))
 								})()
 							}}
 						/>
 						<TouchableOpacity style={styles.closeBtn} onPress={close}>
 							<Text style={globals(color, highlight).pressTxt}>
-								{t('common.close')}
+								{t('close')}
 							</Text>
 						</TouchableOpacity>
 						{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
@@ -185,7 +186,7 @@ interface ICoinSelectionProps {
  * This component is the main container of the pressable proofs-list aka coin selection list.
  */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
@@ -202,20 +203,20 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 			setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
 			stopLoading()
 		})()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [mint?.mintUrl])
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible} close={cancelCoinSelection} hasNoPadding>
 			<View style={styles.proofContainer}>
 				<View style={styles.header}>
 					<Text style={globals(color).navTxt}>
-						{t('common.coinSelection')}
+						{t('coinSelection')}
 					</Text>
 					<TouchableOpacity
 						onPress={cancelCoinSelection}
 					>
 						<Text style={globals(color, highlight).pressTxt}>
-							{t('common.cancel')}
+							{t('cancel')}
 						</Text>
 					</TouchableOpacity>
 				</View>
@@ -261,7 +262,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 			{getSelectedAmount(proofs) >= lnAmount &&
 				<View style={[styles.confirmWrap, { backgroundColor: color.BACKGROUND }]}>
 					<Button
-						txt={t('common.confirm')}
+						txt={t('confirm')}
 						onPress={() => setVisible(false)}
 					/>
 				</View>
@@ -273,26 +274,35 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 interface IResume {
 	lnAmount: number
 	selectedAmount: number
+	padding?: boolean
+	estFee?: number
 }
 
 /**
  * This component shows the amount and the change of selected proofs in a pressable row of a proofs-list.
  */
-export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
-	const { t } = useTranslation()
+export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee }: IResume) {
+	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
+	const getChangeStr = () => {
+		const change = selectedAmount - lnAmount
+		if (estFee && estFee > 0) {
+			return `${change} ${t('to')} ${change + estFee} Satoshi`
+		}
+		return `${change} Satoshi`
+	}
 	return (
 		<>
-			<View style={styles.overview}>
-				<Txt txt={t('common.selected')} />
+			<View style={[styles.overview, {paddingHorizontal: padding ? 20 : 0}]}>
+				<Txt txt={t('selected')} />
 				<Text style={globals(color).txt}>
 					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? color.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
 				</Text>
 			</View>
 			{selectedAmount > lnAmount &&
-				<View style={styles.overview}>
-					<Txt txt={t('common.change')} />
-					<Txt txt={`${selectedAmount - lnAmount} Satoshi`} />
+				<View style={[styles.overview, {paddingHorizontal: padding ? 20 : 0}]}>
+					<Txt txt={t('change')} />
+					<Txt txt={getChangeStr()} />
 				</View>
 			}
 		</>
@@ -305,16 +315,16 @@ export function CoinSelectionResume({ lnAmount, selectedAmount }: IResume) {
  * If the row of the proofs-list is non-pressable, margin is not required.
  */
 export function ProofListHeader() {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
 			<View style={styles.tableHeader}>
 				<Text style={[styles.tableHead, { color: color.TEXT }]}>
-					{t('common.amount')}
+					{t('amount')}
 				</Text>
 				<Text style={[styles.tableHead, { color: color.TEXT }]}>
-					{t('common.keysetID')}
+					{t('keysetID')}
 				</Text>
 			</View>
 		</>
@@ -343,7 +353,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		marginBottom: 20,
-		paddingHorizontal: 20,
 	},
 	invoiceWrap: {
 		alignItems: 'center',

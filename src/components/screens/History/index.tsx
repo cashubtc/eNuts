@@ -16,7 +16,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import HistoryEntry from './Entry'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const { claimed } = useContext(FocusClaimCtx)
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})
@@ -36,7 +36,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	}, [navigation])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('topNav.history')} nav={{ navigation, route }} />
+			<TopNav screenName={t('history', { ns: 'topNav' })} nav={{ navigation, route }} />
 			{/* TODO apply filter for ecash or LN TXs */}
 			<View style={styles.listWrap}>
 				{/* History list grouped by settled date */}
@@ -48,7 +48,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 						<>
 							{/* Group date */}
 							<Text style={[styles.date, { color: color.TEXT }]}>
-								{data.item[0] === 'Today' ? t('common.today') : data.item[0]}
+								{data.item[0] === 'Today' ? t('today') : data.item[0]}
 							</Text>
 							{/* Group entries */}
 							<View style={[
@@ -70,7 +70,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							</View>
 						</>
 					)}
-					ListEmptyComponent={<Empty txt={t('common.noTX') + '...'} />}
+					ListEmptyComponent={<Empty txt={t('noTX') + '...'} />}
 				/>
 			</View>
 			<BottomNav navigation={navigation} route={route} />

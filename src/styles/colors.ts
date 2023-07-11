@@ -25,6 +25,22 @@ export const highlight: { [key: string]: string } = {
 	Zap: '#FFCC00'
 }
 
+// pin pad background based on selected highlight theme
+const pinpadBg: { [key: string]: string } = {
+	'#5DB075': '#73BD88',
+	'#FF9900': '#FFB340',
+	'#B37436': '#AB8763',
+	'#B780FF': '#CDA9FC',
+	'#027DFF': '#58A8FC',
+	'#03DDFF': '#79EBFC',
+	'#FC7ED0': '#FCB3E3',
+	'#FFCC00': '#FFE16E'
+}
+
+export function getPinpadBg(highlight: string) {
+	return pinpadBg[highlight]
+}
+
 export const themeColors = [
 	'Default',
 	'Bitcoin',

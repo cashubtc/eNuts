@@ -4,7 +4,7 @@ import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
-import { secureStore,store } from '@store'
+import { secureStore, store } from '@store'
 import { globals, highlight as hi } from '@styles'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
@@ -18,7 +18,7 @@ import PinPad from './PinPad'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useContext(ThemeContext)
 	// PIN mismatch context
@@ -64,7 +64,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		}
 		// store this info to avoid bypass state on app restart
 		if (!isConfirm) {
-			await store.setObj('auth:lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
+			await store.setObj('auth_lock', { ...attemptState, timestamp: Math.ceil(Date.now() / 1000) })
 		}
 		setAttempts(attemptState)
 		// reset mismatch state
@@ -97,15 +97,15 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			// user wants to delete his PIN
 			if (shouldRemove) {
 				await Promise.all([
-					secureStore.delete('auth:pin'),
-					store.set('auth:skipped', '1')
+					secureStore.delete('auth_pin'),
+					store.set('auth_skipped', '1')
 				])
 				setAuth('')
 			}
 			// remove the lock data and authbg in storage
 			await Promise.all([
-				store.delete('auth:lock'),
-				store.delete('auth:bg')
+				store.delete('auth_lock'),
+				store.delete('auth_bg')
 			])
 			resetStates()
 			// User wants to edit his PIN, do not navigate away, just update the state as he had no PIN so he can enter a new PIN
@@ -129,8 +129,8 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			// else: PIN confirm is matching
 			const hash = hash256(pinStr)
 			await Promise.all([
-				secureStore.set('auth:pin', hash),
-				store.delete('auth:lock')
+				secureStore.set('auth_pin', hash),
+				store.delete('auth_lock')
 			])
 			resetStates()
 			setSuccess(true)
@@ -172,7 +172,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			return
 		}
 		// skip pin setup
-		await store.set('auth:skipped', '1')
+		await store.set('auth_skipped', '1')
 		navigation.navigate('dashboard')
 	}
 	// conditional rendering dots of pin input
@@ -209,7 +209,15 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	}, [navigation])
 	return (
 		/* this is the initial pin setup page */
-		<View style={[styles.container, { backgroundColor: hi[highlight], justifyContent: success ? 'center' : 'space-between' }]}>
+		<View
+			style={[
+				styles.container,
+				{
+					backgroundColor: attempts.locked ? color.ERROR : hi[highlight],
+					justifyContent: success ? 'center' : 'space-between'
+				}
+			]}
+		>
 			{success ?
 				<UnlockIcon width={40} height={40} color='#FAFAFA' />
 				:
@@ -217,7 +225,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 					{attempts.locked && !isConfirm && <View />}
 					<View style={attempts.locked && !isConfirm ? { alignItems: 'center' } : styles.lockWrap}>
 						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
-							<LockIcon width={40} height={40} color={attempts.locked ? color.ERROR : '#FAFAFA'} />
+							<LockIcon width={40} height={40} color='#FAFAFA' />
 						</Animated.View>
 						{attempts.locked && !isConfirm &&
 							<Text style={styles.lockedTime}>
@@ -231,7 +239,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 						<View style={styles.bottomSection}>
 							{attempts.mismatch &&
 								<Text style={[styles.mismatch, { color: color.ERROR }]}>
-									{t('auth.pinMismatch')}
+									{t('pinMismatch', { ns: 'auth' })}
 								</Text>
 							}
 							{shouldShowPinSection() ?
@@ -259,7 +267,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 								{!auth.length && !shouldEdit &&
 									<TouchableOpacity onPress={() => void handleSkip()}>
 										<Text style={[globals(color).pressTxt, styles.skip]}>
-											{isConfirm ? t('common.back') : t('willDoLater')}
+											{isConfirm ? t('back') : t('willDoLater')}
 										</Text>
 									</TouchableOpacity>
 								}
@@ -269,7 +277,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 										navigation.navigate('Security settings')
 									}}>
 										<Text style={[globals(color).pressTxt, styles.skip]}>
-											{t('common.cancel')}
+											{t('cancel')}
 										</Text>
 									</TouchableOpacity>
 								}

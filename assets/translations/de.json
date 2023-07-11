@@ -55,7 +55,7 @@
     "mintBalance": "Mint Guthaben",
     "calculateFeeEst": "Gebühr wird geschätzt",
     "estimatedFees": "Geschätzte Gebühr",
-    "to": "zu",
+    "to": "bis",
     "expired": "Abgelaufen",
     "total": "Gesamt",
     "invoiceOrLnurl": "LN Rechnung oder LNURL",
@@ -101,7 +101,23 @@
     "readme": "Lies mich",
     "githubIssues": "GitHub Probleme und Fragen",
     "cashuRandD": "Cashu Telegram",
-    "enutsRandD": "eNuts Telegram"
+    "enutsRandD": "eNuts Telegram",
+    "english": "Englisch",
+    "german": "Deutsch",
+    "french": "Französisch",
+    "delHistory": "Transaktionsverlauf löschen",
+    "lnPayment": "Lightning Zahlung",
+    "lnInvoice": "Lightning Rechnung",
+    "ecashPayment": "Ecash Zahlung",
+    "trustMint": "Möchten Sie dieser Mint vertrauen",
+    "notClaim": "Wenn Sie \"Nein\" wählen, wird der Token nicht beansprucht",
+    "contact_one": "Kontakt",
+    "contact_other": "Kontakte",
+    "getStarted": "Loslegen",
+    "startHint": "Sie sollten eine Mint hinzufügen, der Sie vertrauen, bevor Sie Token senden oder empfangen.",
+    "addMintNow": "Füge eine mint hinzu",
+    "willDoLater": "Mache ich später",
+    "aboutToLeaveTo": "Sie sind im Begriff die App zu verlassen"
   },
   "wallet": {
     "disclaimer": "Bitte beachten Sie, dass es sich hierbei um eine Alpha-Version in einem frühen Stadium handelt und diese noch vor der offiziellen Veröffentlichung getestet wird. Die Software und alle darauf enthaltenen Inhalte werden als „wie besehen“ und „wie verfügbar“ bereitgestellt. Wir geben keine Garantien, ob ausdrücklich oder stillschweigend, hinsichtlich der Eignung oder Verwendbarkeit der Software oder deren Inhalte.",
@@ -189,7 +205,16 @@
     "checkProofsTxt": "Dadurch wird überprüft, ob Ihre Token ausgegeben werden können und werden andernfalls gelöscht.",
     "editMintName": "Mint Name bearbeiten",
     "addCustomName": "Benutzerdefinierten Namen hinzufügen",
-    "funds": "Guthaben"
+    "funds": "Guthaben",
+    "cutomNameAdded": "Benutzerdefinierter Name hinzugefügt",
+    "atLeast2Mints": "Sie brauchen mindestens 2 Mints um einen Tausch auszuführen.",
+    "swapNotAllowed": "Tausch von einer Test-Mint ist nicht möglich.",
+    "lowBal": "Kein Guthaben verfügbar",
+    "lowBackupBal": "Kein Guthaben für eine Mint-Sicherung",
+    "backupNotCreated": "Mint-Sicherung konnte nicht erstellt werden.",
+    "updatedDefault": "Änderungen gespeichert",
+    "deletedProofs": "{{proofsToDel}] Proofs gelöscht.",
+    "errDelProofs": "Etwas ist schief gelaufen während dem Löschen der Proofs."
   },
   "backup": {
     "copyBackup": "Kopieren Sie den Token und bewahren Sie ihn an einem sicheren Ort."
@@ -204,7 +229,7 @@
     "invalidName": "Invalider Name!",
     "personalLnurl": "Persönliche LNURL",
     "addContactErr": "Kontakt konnte nicht hinzugefügt werden. Möglicher Name oder LNURL Duplikat.",
-    "addedContact": "Neue Kontakt hinzugefügt"
+    "addedContact": "Neuer Kontakt hinzugefügt"
   },
   "auth": {
     "welcome": "Willkommen",
@@ -214,27 +239,10 @@
     "pinSetup": "Sie können ein PIN erstellen um Ihre App zu schützen.",
     "pinMismatch": "PIN inkorrekt!",
     "createPin": "PIN erstellen",
-    "editPin":"PIN ändern",
-    "removePin":"PIN löschen",
+    "editPin": "PIN ändern",
+    "removePin": "PIN löschen",
     "confirmAction": "Bitte bestätigen Sie die Aktion.",
     "pleaseNewPin": "Bitte geben Sie eine neue PIN ein.",
     "pleaseConfirmNewPin": "Bitte bestätigen Sie Ihre neue PIN."
-
-  },
-  "english": "Englisch",
-  "german": "Deutsch",
-  "french": "Französisch",
-  "delHistory": "Transaktionsverlauf löschen",
-  "lnPayment": "Lightning Zahlung",
-  "lnInvoice": "Lightning Rechnung",
-  "ecashPayment": "Ecash Zahlung",
-  "trustMint": "Möchten Sie dieser Mint vertrauen",
-  "notClaim": "Wenn Sie \"Nein\" wählen, wird der Token nicht beansprucht",
-  "contact_one": "Kontakt",
-  "contact_other": "Kontakte",
-  "getStarted": "Loslegen",
-  "startHint": "Sie sollten eine Mint hinzufügen, der Sie vertrauen, bevor Sie Token senden oder empfangen.",
-  "addMintNow": "Füge eine mint hinzu",
-  "willDoLater": "Mache ich später",
-  "aboutToLeaveTo": "Sie sind im Begriff die App zu verlassen"
+  }
 }
