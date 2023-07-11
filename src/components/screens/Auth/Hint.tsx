@@ -9,20 +9,20 @@ interface IPinHintProps {
 }
 
 export default function PinHint({ confirm, login, shouldEdit, shouldRemove }: IPinHintProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['auth'])
 	const getRightHeaderTxt = () => {
-		if (login && !shouldEdit && !shouldRemove) { return t('auth.welcomeBack') }
-		if (shouldRemove) { return t('auth.removePin') }
-		if (shouldEdit) { return t('auth.editPin') }
-		return t('auth.welcome')
+		if (login && !shouldEdit && !shouldRemove) { return t('welcomeBack') }
+		if (shouldRemove) { return t('removePin') }
+		if (shouldEdit) { return t('editPin') }
+		return t('welcome')
 	}
 	const getRightTxt = () => {
-		if (!login && !confirm && !shouldEdit && !shouldRemove) { return t('auth.pinSetup') }
-		if (confirm && !shouldEdit && !shouldRemove) { return t('auth.pleaseConfirm') }
-		if (login && (shouldRemove || shouldEdit)) { return t('auth.confirmAction') }
-		if (!login && shouldEdit && !confirm) { return t('auth.pleaseNewPin') }
-		if (!login && shouldEdit && confirm) { return t('auth.pleaseConfirmNewPin') }
-		return t('auth.pleaseEnter')
+		if (!login && !confirm && !shouldEdit && !shouldRemove) { return t('pinSetup') }
+		if (confirm && !shouldEdit && !shouldRemove) { return t('pleaseConfirm') }
+		if (login && (shouldRemove || shouldEdit)) { return t('confirmAction') }
+		if (!login && shouldEdit && !confirm) { return t('pleaseNewPin') }
+		if (!login && shouldEdit && confirm) { return t('pleaseConfirmNewPin') }
+		return t('pleaseEnter')
 	}
 	return (
 		<>

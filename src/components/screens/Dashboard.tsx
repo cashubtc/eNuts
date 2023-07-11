@@ -16,6 +16,7 @@ import TopNav from '@nav/TopNav'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
+import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
@@ -26,7 +27,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url } = useInitialURL()
 	// Theme
@@ -61,7 +62,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPromptAutoClose({ msg: t('common.clipboardInvalid') })
+			openPromptAutoClose({ msg: t('clipboardInvalid') })
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -85,7 +86,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const handleTokenSubmit = async (url: string) => {
 		const tokenInfo = getTokenInfo(url)
 		if (!tokenInfo) {
-			openPromptAutoClose({ msg: t('common.clipboardInvalid') })
+			openPromptAutoClose({ msg: t('clipboardInvalid') })
 			setModal({ ...modal, receiveOpts: false })
 			stopLoading()
 			return
@@ -112,12 +113,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setToken('')
 		stopLoading()
 		if (!success) {
-			openPromptAutoClose({ msg: t('common.invalidOrSpent') })
+			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			return
 		}
 		const info = getTokenInfo(encodedToken)
 		if (!info) {
-			openPromptAutoClose({ msg: t('common.tokenInfoErr') })
+			openPromptAutoClose({ msg: t('tokenInfoErr') })
 			return
 		}
 		// add as history entry
@@ -138,7 +139,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	useEffect(() => {
 		void (async () => {
 			const hasUserMints = await hasMints()
-			setModal({ ...modal, mint: !hasUserMints })
+			const skippedInitialMint = await store.get('init_mintSkipped')
+			setModal({ ...modal, mint: !hasUserMints && skippedInitialMint !== '1' })
 			setBalance(await getBalance())
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -172,9 +174,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive and send buttons */}
 			<ActionButtons
 				ontopOfNav
-				topBtnTxt={t('wallet.receive')}
+				topBtnTxt={t('receive', { ns: 'wallet' })}
 				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
-				bottomBtnTxt={t('wallet.send')}
+				bottomBtnTxt={t('send', { ns: 'wallet' })}
 				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
 			/>
 			{/* Bottom nav icons */}
@@ -192,19 +194,22 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<InitialModal
 				visible={modal.mint}
 				onConfirm={handleMintModal}
-				onCancel={() => setModal({ ...modal, mint: false })}
+				onCancel={async () => {
+					await store.set('init_mintSkipped', '1')
+					setModal({ ...modal, mint: false })
+				}}
 			/>
 			{/* Receive options */}
 			<OptsModal
 				visible={modal.receiveOpts}
-				button1Txt={loading ? t('wallet.claiming') : t('wallet.pasteToken')}
+				button1Txt={loading ? t('claiming', { ns: 'wallet' }) : t('pasteToken', { ns: 'wallet' })}
 				onPressFirstBtn={() => {
 					if (token.length) { return }
 					void (async () => {
 						startLoading()
 						const clipboard = await Clipboard.getStringAsync()
 						if (!isCashuToken(clipboard)) {
-							openPromptAutoClose({ msg: t('common.invalidOrSpent') })
+							openPromptAutoClose({ msg: t('invalidOrSpent') })
 							setModal({ ...modal, receiveOpts: false })
 							stopLoading()
 							return
@@ -213,7 +218,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						await handleTokenSubmit(clipboard)
 					})()
 				}}
-				button2Txt={t('wallet.createInvoice')}
+				button2Txt={t('createInvoice', { ns: 'wallet' })}
 				onPressSecondBtn={() => {
 					navigation.navigate('lightning', { receive: true })
 					setModal({ ...modal, receiveOpts: false })
@@ -223,12 +228,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}
-				button1Txt={t('wallet.sendEcash')}
+				button1Txt={t('sendEcash', { ns: 'wallet' })}
 				onPressFirstBtn={() => {
 					navigation.navigate('send')
 					setModal({ ...modal, sendOpts: false })
 				}}
-				button2Txt={t('wallet.payInvoice')}
+				button2Txt={t('payInvoice', { ns: 'wallet' })}
 				onPressSecondBtn={() => {
 					navigation.navigate('lightning', { send: true })
 					setModal({ ...modal, sendOpts: false })

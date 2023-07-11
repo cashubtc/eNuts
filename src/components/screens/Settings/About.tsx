@@ -16,7 +16,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { version } from '../../../../package.json'
 
 export default function AboutSettings() {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const [visible, setVisible] = useState(false)
@@ -27,29 +27,29 @@ export default function AboutSettings() {
 	}
 	const handleContinue = async () => {
 		setVisible(false)
-		await openUrl(url)?.catch(e => openPromptAutoClose({ msg: isErr(e) ? e.message : t('common.deepLinkErr') }))
+		await openUrl(url)?.catch(e => openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 	}
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('topNav.about')} withBackBtn />
+			<TopNav screenName={t('about', { ns: 'topNav' })} withBackBtn />
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<AboutRow
-					txt={t('common.readme')}
+					txt={t('readme')}
 					handlePress={() => handlePress('https://github.com/cashubtc/eNuts#readme')}
 					hasSeparator
 				/>
 				<AboutRow
-					txt={t('common.githubIssues')}
+					txt={t('githubIssues')}
 					handlePress={() => handlePress('https://github.com/cashubtc/eNuts/issues')}
 					hasSeparator
 				/>
 				<AboutRow
-					txt={t('common.cashuRandD')}
+					txt={t('cashuRandD')}
 					handlePress={() => handlePress('https://t.me/CashuBTC')}
 					hasSeparator
 				/>
 				<AboutRow
-					txt={t('common.enutsRandD')}
+					txt={t('enutsRandD')}
 					handlePress={() => handlePress('https://t.me/eNutsWallet')}
 				/>
 			</View>
@@ -61,10 +61,10 @@ export default function AboutSettings() {
 				<Text style={globals(color, highlight).modalTxt}>
 					&quot;{url}&quot;
 				</Text>
-				<Button txt={t('common.continue')} onPress={() => void handleContinue()} />
+				<Button txt={t('continue')} onPress={() => void handleContinue()} />
 				<TouchableOpacity onPress={() => setVisible(false)}>
 					<Text style={[globals(color, highlight).pressTxt, styles.cancel]}>
-						{t('common.cancel')}
+						{t('cancel')}
 					</Text>
 				</TouchableOpacity>
 			</MyModal>

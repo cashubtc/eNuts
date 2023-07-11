@@ -18,7 +18,7 @@ interface IQuestionModalProps {
 }
 
 export function QuestionModal({ header, txt, visible, confirmTxt, confirmFn, cancelTxt, cancelFn }: IQuestionModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='question' animation='fade' visible={visible} close={cancelFn} >
@@ -28,10 +28,10 @@ export function QuestionModal({ header, txt, visible, confirmTxt, confirmFn, can
 			<Text style={globals(color).modalTxt}>
 				{txt}
 			</Text>
-			<Button txt={confirmTxt || t('common.yes')} onPress={confirmFn} />
+			<Button txt={confirmTxt || t('yes')} onPress={confirmFn} />
 			<TouchableOpacity style={styles.cancelWrap} onPress={cancelFn}>
 				<Text style={globals(color, highlight).pressTxt}>
-					{cancelTxt || t('common.no')}
+					{cancelTxt || t('no')}
 				</Text>
 			</TouchableOpacity>
 		</MyModal>

@@ -17,7 +17,7 @@ interface ITrustModalProps {
 }
 
 export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, closeModal }: ITrustModalProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='question' animation='fade' visible close={closeModal}>
@@ -26,7 +26,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			</Text>
 			{/* token amount */}
 			<Text style={[styles.mintPrompt, { color: color.TEXT_SECONDARY, }]}>
-				{formatInt(tokenInfo?.value || 0)} Satoshi {t('common.from')}:
+				{formatInt(tokenInfo?.value || 0)} Satoshi {t('from')}:
 			</Text>
 			{/* Show in which mint(s) the tokens are */}
 			<View style={styles.tokenMintsView}>
@@ -35,11 +35,11 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			<Text style={globals(color, highlight).modalTxt}>
 				{t('notClaim')}.
 			</Text>
-			<Button loading={loading} txt={loading ? t('wallet.claiming') + '...' : t('common.yes')} onPress={handleTrustModal} />
+			<Button loading={loading} txt={loading ? t('claiming', { ns: 'wallet' }) + '...' : t('yes')} onPress={handleTrustModal} />
 			<View style={{ marginVertical: 10 }} />
 			<Button
 				outlined
-				txt={t('common.no')}
+				txt={t('no')}
 				onPress={closeModal}
 			/>
 		</MyModal>

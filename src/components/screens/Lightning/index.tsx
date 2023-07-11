@@ -14,7 +14,7 @@ import { StyleSheet, View } from 'react-native'
 import LNPageContent from './pageContent'
 
 export default function Lightning({ navigation, route }: TLightningPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['wallet'])
 	const { color } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// user mints
@@ -68,7 +68,7 @@ export default function Lightning({ navigation, route }: TLightningPageProps) {
 				screenName={route.params?.mint || route.params?.send ?
 					'Zap'
 					:
-					t('wallet.receive')
+					t('receive')
 				}
 				withBackBtn
 			/>

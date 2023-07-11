@@ -25,7 +25,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import QRMarker from './Marker'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)
@@ -50,7 +50,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const handleCashuToken = async (data: string) => {
 		const info = getTokenInfo(data)
 		if (!info) {
-			openPromptAutoClose({ msg: t('common.invalidOrSpent') })
+			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			return
 		}
 		// save token info in state
@@ -72,7 +72,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// TODO Maybe we should provide the user the possibility to choose mints
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
-			openPromptAutoClose({ msg: t('common.invalidToken') })
+			openPromptAutoClose({ msg: t('invalidToken') })
 			stopLoading()
 			// close modal
 			setTrustModal(false)
@@ -93,18 +93,18 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// close modal
 		setTrustModal(false)
 		if (!success) {
-			openPromptAutoClose({ msg: t('common.invalidOrSpent') })
+			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			return
 		}
 		const info = getTokenInfo(data)
 		// TODO show all mints of token
 		if (!info) {
-			openPromptAutoClose({ msg: t('common.tokenInfoErr') })
+			openPromptAutoClose({ msg: t('tokenInfoErr') })
 			return
 		}
 		// success prompt
 		openPromptAutoClose({
-			msg: t('common.claimSuccess', { amount: info?.value, mintUrl: info?.mints[0], memo: info?.decoded.memo }),
+			msg: t('claimSuccess', { amount: info?.value, mintUrl: info?.mints[0], memo: info?.decoded.memo }),
 			success: true
 		})
 		// add as history entry
@@ -120,7 +120,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		setScanned(true)
 		// early return if barcode is not a QR
 		if (+type !== QRType) {
-			openPromptAutoClose({ msg: t('common.notQrCode') })
+			openPromptAutoClose({ msg: t('notQrCode') })
 			return
 		}
 		// handle cashu token claim
@@ -137,7 +137,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			setDetailsOpen(true)
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: t('common.unknownType' + `:${data}`) })
+			openPromptAutoClose({ msg: t('unknownType') + data })
 		}
 	}
 
@@ -166,7 +166,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					<QRMarker size={300} />
 					<View style={styles.hint}>
 						<Text style={styles.hintTxt}>
-							{t('common.scanTokenOrLn')}
+							{t('scanTokenOrLn')}
 						</Text>
 					</View>
 					{scanned &&
@@ -175,7 +175,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 							onPress={() => setScanned(false)}
 						>
 							<Text style={styles.scanAgainTxt}>
-								{t('common.scanAgain')}
+								{t('scanAgain')}
 							</Text>
 						</TouchableOpacity>
 					}
@@ -202,7 +202,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				</>
 				:
 				<Text style={styles.noAccess}>
-					{t('common.noCamAccess')}
+					{t('noCamAccess')}
 				</Text>
 			}
 			{/* Question modal for mint trusting */}

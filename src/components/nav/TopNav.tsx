@@ -15,7 +15,7 @@ interface TTopNavProps {
 }
 
 export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TTopNavProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const navHook = useNavigation()
 	const handlePress = () => {
@@ -42,7 +42,7 @@ export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TT
 			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
 				{withBackBtn ?
 					<Text style={globals(color, highlight).pressTxt}>
-						{t('common.back')}
+						{t('back')}
 					</Text>
 					:
 					<QRIcon color={color.TEXT} />

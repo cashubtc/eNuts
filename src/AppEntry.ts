@@ -1,5 +1,5 @@
 // dont touch this
-import 'expo-dev-client'
+// import 'expo-dev-client'
 import './shim'
 import './i18n'
 

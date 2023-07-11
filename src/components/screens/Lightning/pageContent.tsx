@@ -39,7 +39,7 @@ export default function LNPageContent({
 	setSelectedMint,
 	isSendingToken
 }: ILNPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	// invoice amount modal
@@ -91,7 +91,7 @@ export default function LNPageContent({
 				stopLoading()
 				return
 			}
-			setPayError({ open: true, msg: t('common.createTokenErr') })
+			setPayError({ open: true, msg: t('createTokenErr') })
 		}
 		stopLoading()
 	}
@@ -136,7 +136,7 @@ export default function LNPageContent({
 						/>
 						{mints.length > 0 && !nav.route.params?.mint &&
 							<View style={styles.mintOpts}>
-								<Txt txt={t('common.balance')} />
+								<Txt txt={t('balance')} />
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										{formatInt(mintBal)}
@@ -149,7 +149,7 @@ export default function LNPageContent({
 						{+amount > 0 && mintBal >= +amount / 1000 && !isKeyboardOpen &&
 							<>
 								<View style={styles.overview}>
-									<Txt txt={t('common.coinSelection')} />
+									<Txt txt={t('coinSelection')} />
 									<Switch
 										trackColor={{ false: color.BORDER, true: hi[highlight] }}
 										thumbColor={color.TEXT}
@@ -159,20 +159,20 @@ export default function LNPageContent({
 								</View>
 								{getSelectedAmount(proofs) > 0 && isEnabled &&
 									<View style={{ marginHorizontal: -20, marginTop: 8 }}>
-										<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} />
+										<CoinSelectionResume lnAmount={+amount} selectedAmount={getSelectedAmount(proofs)} padding />
 									</View>
 								}
 							</>
 						}
 					</View>
 					:
-					<Empty txt={t('common.noMint') + '...'} />
+					<Empty txt={t('noMint') + '...'} />
 				}
 				{/* Token memo only if isSendingToken (sending a cashu token) */}
 				{+amount > 0 && isSendingToken &&
 					<TextInput
 						style={globals(color, highlight).input}
-						placeholder={t('common.addMemo')}
+						placeholder={t('addMemo')}
 						placeholderTextColor={color.INPUT_PH}
 						maxLength={21}
 						onChangeText={setMemo}
@@ -187,7 +187,7 @@ export default function LNPageContent({
 				{!mints.length ?
 					<>
 						<Button
-							txt={t('common.addMint')}
+							txt={t('addMint')}
 							onPress={() => nav.navigation.navigate('mints')}
 						/>
 						<View style={{ marginVertical: 5 }} />
@@ -198,11 +198,11 @@ export default function LNPageContent({
 							{/* Show a message if mint has not enough funds and the payment is an outgoing TX */}
 							{!hasEnoughFunds() ?
 								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
-									{t('common.noEnoughFunds')}!
+									{t('noEnoughFunds')}!
 								</Text>
 								:
 								<Button
-									txt={nav.route.params?.send ? t('common.createInvoice') : t('common.selectAmount')}
+									txt={nav.route.params?.send ? t('createInvoice') : t('selectAmount')}
 									onPress={() => {
 										// send
 										if (nav.route.params?.send) {
@@ -223,12 +223,12 @@ export default function LNPageContent({
 						<>
 							{+amount < 1 &&
 								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
-									{mintBal > 0 ? '' : t('common.noEnoughFunds')}
+									{mintBal > 0 ? '' : t('noEnoughFunds')}
 								</Text>
 							}
 							{+amount > 0 && mintBal > 0 && mintBal >= +amount && !isKeyboardOpen &&
 								<Button
-									txt={loading ? t('common.creating') + '...' : t('common.createToken')}
+									txt={loading ? t('creating') + '...' : t('createToken')}
 									loading={loading}
 									onPress={() => {
 										if (loading) { return }

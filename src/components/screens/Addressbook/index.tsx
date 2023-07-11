@@ -9,11 +9,11 @@ import { StyleSheet, View } from 'react-native'
 import AddressBook from './Book'
 
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['topNav'])
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('topNav.addressBook')} nav={{ navigation, route }} />
+			<TopNav screenName={t('addressBook')} nav={{ navigation, route }} />
 			<AddressBook nav={{ navigation, route }} />
 			<BottomNav navigation={navigation} route={route} />
 		</View>
