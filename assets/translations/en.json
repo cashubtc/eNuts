@@ -117,7 +117,9 @@
     "startHint": "You should add a mint that you trust before sending or receiving token.",
     "addMintNow": "Add a mint now",
     "willDoLater": "Will do later",
-    "aboutToLeaveTo": "You are about to leave"
+    "aboutToLeaveTo": "You are about to leave",
+    "disclaimer": "Disclaimer",
+    "risks": "Understand the current risks"
   },
   "wallet": {
     "disclaimer": "Please note that this is an alpha version in its early stage and is still undergoing testing before its official release. The software and all content found on it are provided on an “as is” and “as available” basis. We do not give any warranties, whether express or implied, as to the suitability or usability of the software or any of its content.",

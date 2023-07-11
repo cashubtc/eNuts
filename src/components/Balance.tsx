@@ -1,25 +1,24 @@
-import { ExclamationIcon, SwapCurrencyIcon } from '@comps/Icons'
-import { repoIssueUrl } from '@consts/urls'
+import { ChevronRightIcon, ExclamationIcon, SwapCurrencyIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
+import type { RootStackParamList } from '@model/nav'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
-import { formatBalance, formatInt, isBool, isErr, openUrl } from '@util'
+import { formatBalance, formatInt, isBool } from '@util'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-import usePrompt from './hooks/Prompt'
-import Toaster from './Toaster'
-
 interface IBalanceProps {
 	balance: number
+	nav: NativeStackNavigationProp<RootStackParamList, 'dashboard', 'MyStack'>
 }
 
-export default function Balance({ balance }: IBalanceProps) {
+export default function Balance({ balance, nav }: IBalanceProps) {
 	const { t } = useTranslation(['common'])
 	const { pref, color, highlight } = useContext(ThemeContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	// const { prompt, openPromptAutoClose } = usePrompt()
 	const toggleBalanceFormat = () => {
 		setFormatSats(prev => !prev)
 		if (!pref || !isBool(formatSats)) { return }
@@ -44,22 +43,18 @@ export default function Balance({ balance }: IBalanceProps) {
 				</View>
 			</TouchableOpacity>
 			{/* Disclaimer */}
-			<View style={styles.disclaimerWrap}>
-				<ExclamationIcon width={22} height={22} color={mainColors.WARN} />
-				<Text style={[styles.disclaimerTxt, { color: color.TEXT }]}>
-					{t('disclaimer', { ns: 'wallet' })}
-				</Text>
-				<TouchableOpacity
-					style={styles.submitIssue}
-					onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) =>
-						openPromptAutoClose({ msg: isErr(err) ? err.message : t('deepLinkErr') }))}
-				>
+			<TouchableOpacity
+				style={styles.disclaimerWrap}
+				onPress={() => nav.navigate('disclaimer')}
+			>
+				<View style={styles.disclaimerTxt}>
+					<ExclamationIcon width={22} height={22} color={mainColors.WARN} />
 					<Text style={styles.issue}>
-						{t('submitIssue', { ns: 'wallet' })}
+						{t('risks')}
 					</Text>
-				</TouchableOpacity>
-				{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-			</View>
+				</View>
+				<ChevronRightIcon color={mainColors.WARN} />
+			</TouchableOpacity>
 		</View>
 	)
 }
@@ -94,7 +89,9 @@ const styles = StyleSheet.create({
 		marginRight: 5,
 	},
 	disclaimerWrap: {
+		flexDirection: 'row',
 		alignItems: 'center',
+		justifyContent: 'space-between',
 		padding: 15,
 		borderWidth: 1,
 		borderRadius: 15,
@@ -102,14 +99,12 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 	},
 	disclaimerTxt: {
-		marginVertical: 10,
-		textAlign: 'center',
-	},
-	submitIssue: {
-		padding: 10,
+		flexDirection: 'row',
+		alignItems: 'center',
 	},
 	issue: {
 		fontWeight: '500',
 		color: mainColors.WARN,
+		marginLeft: 10,
 	},
 })

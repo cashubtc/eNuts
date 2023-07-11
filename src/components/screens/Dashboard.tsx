@@ -168,7 +168,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav nav={{ navigation, route }} />
 			{/* Balance overview */}
-			<Balance balance={balance} />
+			<Balance balance={balance} nav={navigation} />
 			{/* Flex space-between empty placeholder */}
 			<View />
 			{/* Receive and send buttons */}

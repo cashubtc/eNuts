@@ -1,11 +1,11 @@
-import AuthPage from '@comps/screens/Auth'
-import AboutSettings from '@comps/screens/Settings/About'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
 import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AddressbookPage from '@screens/Addressbook'
 import ContactPage from '@screens/Addressbook/Contact'
+import AuthPage from '@screens/Auth'
 import Dashboard from '@screens/Dashboard'
+import { Disclaimer } from '@screens/Disclaimer'
 import EncodedTokenPage from '@screens/EncodedToken'
 import HistoryPage from '@screens/History'
 import DetailsPage from '@screens/History/Details'
@@ -20,6 +20,7 @@ import MintProofsPage from '@screens/Mints/Proofs'
 import QRScanPage from '@screens/QRScan'
 import SendTokenPage from '@screens/Send'
 import Settings from '@screens/Settings'
+import AboutSettings from '@screens/Settings/About'
 import BackupPage from '@screens/Settings/Backup'
 import DisplaySettings from '@screens/Settings/Display'
 import LanguageSettings from '@screens/Settings/Language'
@@ -56,6 +57,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				}}
 			>
 				<Stack.Screen name='dashboard' component={Dashboard} />
+				<Stack.Screen name='disclaimer' component={Disclaimer} />
 				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />
 				{/* create sendable token page */}
 				<Stack.Screen

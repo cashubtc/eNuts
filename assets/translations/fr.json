@@ -117,11 +117,12 @@
     "startHint": "Vous devriez ajouter une mint à laquelle vous faites confiance avant d'envoyer ou de recevoir des jetons.",
     "addMintNow": "Ajoutez une mint",
     "willDoLater": "Je ferai plus tard",
-    "aboutToLeaveTo": "Vous êtes sur le point de quitter"
+    "aboutToLeaveTo": "Vous êtes sur le point de quitter",
+    "disclaimer": "Clause de non-responsabilité",
+    "risks": "Comprendre les risques actuels"
   },
   "wallet": {
     "disclaimer": "Veuillez noter qu'il s'agit d'une version alpha à un stade précoce et qu'elle est encore en cours de test avant sa sortie officielle. Le logiciel et tous les contenus qui s'y trouvent sont fournis « tels quels » et « tels que disponibles ». Nous n'offrons aucune garantie, expresse ou implicite, quant à l'adéquation ou à l'utilisabilité du logiciel ou de l'un de ses contenus.",
-    "submitIssue": "Soumettre un problème sur GitHub",
     "send": "Envoyer",
     "sendEcash": "Envoyer Ecash",
     "receive": "Recevoir",

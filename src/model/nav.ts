@@ -9,6 +9,7 @@ import type { IHistoryEntry, IMintUrl } from '.'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RootStackParamList = {
 	dashboard: undefined
+	disclaimer: undefined
 	auth: {
 		pinHash: string
 		shouldEdit?: boolean
@@ -80,6 +81,7 @@ export type RootStackParamList = {
 
 export type TRouteString = 'dashboard' | 'lightning' | 'mints' | 'history' | 'Address book' | 'Settings'
 export type TDashboardPageProps = NativeStackScreenProps<RootStackParamList, 'dashboard', 'MyStack'>
+export type TDisclaimerPageProps = NativeStackScreenProps<RootStackParamList, 'disclaimer', 'MyStack'>
 export type TAuthPageProps = NativeStackScreenProps<RootStackParamList, 'auth', 'MyStack'>
 export type TSendTokenPageProps = NativeStackScreenProps<RootStackParamList, 'send', 'MyStack'>
 export type TEncodedTokenPageProps = NativeStackScreenProps<RootStackParamList, 'sendToken', 'MyStack'>

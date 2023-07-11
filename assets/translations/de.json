@@ -117,7 +117,9 @@
     "startHint": "Sie sollten eine Mint hinzufügen, der Sie vertrauen, bevor Sie Token senden oder empfangen.",
     "addMintNow": "Füge eine mint hinzu",
     "willDoLater": "Mache ich später",
-    "aboutToLeaveTo": "Sie sind im Begriff die App zu verlassen"
+    "aboutToLeaveTo": "Sie sind im Begriff die App zu verlassen",
+    "disclaimer": "Haftungsausschluss",
+    "risks": "Verstehen Sie die derzeitige Risiken"
   },
   "wallet": {
     "disclaimer": "Bitte beachten Sie, dass es sich hierbei um eine Alpha-Version in einem frühen Stadium handelt und diese noch vor der offiziellen Veröffentlichung getestet wird. Die Software und alle darauf enthaltenen Inhalte werden als „wie besehen“ und „wie verfügbar“ bereitgestellt. Wir geben keine Garantien, ob ausdrücklich oder stillschweigend, hinsichtlich der Eignung oder Verwendbarkeit der Software oder deren Inhalte.",
