@@ -11,7 +11,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface IBalanceProps {
 	balance: number
-	nav: NativeStackNavigationProp<RootStackParamList, 'dashboard', 'MyStack'>
+	nav?: NativeStackNavigationProp<RootStackParamList, 'dashboard', 'MyStack'>
 }
 
 export default function Balance({ balance, nav }: IBalanceProps) {
@@ -45,7 +45,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			{/* Disclaimer */}
 			<TouchableOpacity
 				style={styles.disclaimerWrap}
-				onPress={() => nav.navigate('disclaimer')}
+				onPress={() => nav?.navigate('disclaimer')}
 			>
 				<View style={styles.disclaimerTxt}>
 					<ExclamationIcon width={22} height={22} color={mainColors.WARN} />

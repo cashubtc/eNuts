@@ -32,7 +32,7 @@ export default function ActionButtons({
 	nav
 }: IActionBtnsProps) {
 	const { color, highlight } = useContext(ThemeContext)
-	const { t } = useTranslation()
+	const { t } = useTranslation(['topNav'])
 	return (
 		<View
 			style={[
@@ -47,7 +47,7 @@ export default function ActionButtons({
 					onPress={() => nav?.navigate('history')}
 				>
 					<Text style={globals(color, highlight).pressTxt}>
-						{t('topNav.history')}
+						{t('history')}
 					</Text>
 				</TouchableOpacity>
 			}

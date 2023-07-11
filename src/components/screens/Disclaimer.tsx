@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export function Disclaimer({ navigation }: TDisclaimerPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation(['common'])
 	return (
 		<View style={{ flex: 1 }}>
-			<TopNav screenName={t('common.disclaimer')} withBackBtn />
+			<TopNav screenName={t('disclaimer')} withBackBtn />
 			<View style={styles.container}>
-				<Txt txt={t('wallet.disclaimer')} />
+				<Txt txt={t('disclaimer', { ns: 'wallet' })} />
 			</View>
 			<View style={styles.ok}>
 				<Button
