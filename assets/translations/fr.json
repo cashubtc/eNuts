@@ -240,7 +240,7 @@
 	"wallet": {
 		"claiming": "En cours...",
 		"createInvoice": "Créer une facture Lightning",
-		"disclaimer": "Veuillez noter qu'il s'agit d'une version alpha à un stade précoce et qu'elle est encore en cours de test avant sa sortie officielle. Le logiciel et tous les contenus qui s'y trouvent sont fournis « tels quels » et « tels que disponibles ». Nous n'offrons aucune garantie, expresse ou implicite, quant à l'adéquation ou à l'utilisabilité du logiciel ou de l'un de ses contenus.",
+		"disclaimer": "Veuillez noter qu'il s'agit d'une version alpha à un stade précoce et qu'elle est encore en cours de test avant sa sortie officielle. Le logiciel et tous les contenus qui s'y trouvent sont fournis « tels quels » et « tels que disponibles ». Nous n'offrons aucune garantie, expresse ou implicite, quant à l'adéquation ou à l'utilisabilité du logiciel ou de l'un de ses contenus. Cashu est encore expérimental et n'est pas prêt pour une utilisation en production.",
 		"pasteToken": "Coller et échanger Ecash",
 		"payInvoice": "Payer une facture Lightning",
 		"receive": "Recevoir",

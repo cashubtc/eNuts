@@ -1,14 +1,17 @@
 import Button from '@comps/Button'
 import Txt from '@comps/Txt'
+import type { TDisclaimerPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import type { TDisclaimerPageProps } from '@src/model/nav'
+import { ThemeContext } from '@src/context/Theme'
+import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export function Disclaimer({ navigation }: TDisclaimerPageProps) {
+	const { color } = useContext(ThemeContext)
 	const { t } = useTranslation(['common'])
 	return (
-		<View style={{ flex: 1 }}>
+		<View style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
 			<TopNav screenName={t('disclaimer')} withBackBtn />
 			<View style={styles.container}>
 				<Txt txt={t('disclaimer', { ns: 'wallet' })} />
