@@ -95,12 +95,9 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				{/* user own LNURL */}
 				{hasOwnAddress() ?
 					<View style={[globals(color).wrapContainer, styles.bookEntry, styles.container]}>
-						<View style={[
-							styles.circleUser,
-							{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG }
-						]}>
-							<UserIcon width={20} height={20} color={hi[highlight]} />
-						</View>
+						<IconCircle
+							icon={<UserIcon width={20} height={20} color={hi[highlight]} />}
+						/>
 						<TouchableOpacity
 							style={styles.nameEntry}
 							onPress={() => {
@@ -123,9 +120,9 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 						testID='addPersonal'
 						onPress={() => setOpenNew({ open: true, isOwner: true })}
 					>
-						<Text style={styles.addOwnAddress}>
-							<PlusIcon width={16} height={16} color={hi[highlight]} />
-						</Text>
+						<IconCircle
+							icon={<PlusIcon width={16} height={16} color={hi[highlight]} />}
+						/>
 						<View style={styles.nameEntry}>
 							<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
 						</View>
@@ -237,6 +234,18 @@ function ContactsCount({ count }: { count: number }) {
 	)
 }
 
+function IconCircle({ icon }: { icon: React.ReactNode }) {
+	const { color } = useContext(ThemeContext)
+	return (
+		<View style={[
+			styles.circle,
+			{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG }
+		]}>
+			{icon}
+		</View>
+	)
+}
+
 const styles = StyleSheet.create({
 	modalHeader: {
 		width: '100%',
@@ -258,7 +267,7 @@ const styles = StyleSheet.create({
 		width: '100%'
 	},
 	container: {
-		paddingVertical: 15,
+		paddingVertical: 9,
 		marginBottom: 25,
 	},
 	subHeader: {
@@ -274,7 +283,6 @@ const styles = StyleSheet.create({
 		marginVertical: 8,
 	},
 	circle: {
-		textAlign: 'center',
 		borderWidth: 1,
 		width: 40,
 		height: 40,
@@ -282,18 +290,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		borderRadius: 20,
 		marginVertical: 5,
-		marginRight: 20,
-	},
-	circleUser: {
-		borderWidth: 1,
-		width: 40,
-		height: 40,
-		alignItems: 'center',
-		justifyContent: 'center',
-		borderRadius: 20,
-		marginRight: 20,
-	},
-	addOwnAddress: {
 		marginRight: 20,
 	},
 	nameEntry: {
