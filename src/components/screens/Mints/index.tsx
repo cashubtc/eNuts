@@ -22,11 +22,13 @@ import { formatInt, formatMintUrl, isUrl } from '@util'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
+	const insets = useSafeAreaInsets()
 	// mint list
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// this state is used to determine which mint has been pressed
@@ -130,7 +132,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName='Mints' nav={{ navigation, route }} />
-			<View style={styles.topSection}>
+			<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
 				{/* Mints list where test mint is always visible */}
 				<View style={[
 					globals(color).wrapContainer,
@@ -210,7 +212,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				cancelFn={() => setTrustModalOpen(false)}
 			/>
 			{/* add new mint button */}
-			<View style={styles.newMint}>
+			<View style={[styles.newMint, { marginBottom: insets.bottom }]}>
 				<IconBtn
 					icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
 					onPress={() => {
@@ -236,7 +238,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: '100%',
 		marginTop: 110,
-		marginBottom: 75,
 	},
 	newMint: {
 		position: 'absolute',

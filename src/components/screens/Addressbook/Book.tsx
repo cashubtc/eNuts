@@ -14,6 +14,7 @@ import { isLnurl } from '@util'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface IAddressBookProps {
 	nav?: TAddressBookPageProps
@@ -25,6 +26,7 @@ interface IAddressBookProps {
 export default function AddressBook({ nav, isModal, closeModal, setInput }: IAddressBookProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
+	const insets = useSafeAreaInsets()
 	// contacts hook
 	const { contacts, setContacts, hasOwnAddress, getPersonalInfo } = useContext(ContactsContext)
 	// new contact modal
@@ -168,7 +170,7 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 			</ScrollView>
 			{/* Add new contact button */}
 			{!isModal &&
-				<View style={styles.newContactBtn}>
+				<View style={[styles.newContactBtn, { marginBottom: insets.bottom }]}>
 					<IconBtn
 						icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
 						onPress={() => {

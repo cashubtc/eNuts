@@ -8,14 +8,16 @@ import { globals, highlight as hi, themeColors } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
 	const { t } = useTranslation(['common'])
+	const insets = useSafeAreaInsets()
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t('display', { ns: 'topNav' })} withBackBtn />
-			<ScrollView style={{ width: '100%', marginBottom: 60 }} showsVerticalScrollIndicator={false}>
+			<ScrollView style={{ width: '100%', marginBottom: 60 + insets.bottom }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Theme
 				</Text>

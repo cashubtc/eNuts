@@ -6,10 +6,12 @@ import { highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { t } = useTranslation(['topNav'])
 	const { color, highlight } = useContext(ThemeContext)
+	const insets = useSafeAreaInsets()
 
 	const handleNav = (routeStr: TRouteString) => navigation.navigate(routeStr)
 
@@ -28,7 +30,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		route.name === 'BackupPage'
 
 	return (
-		<View style={styles.bottomNav}>
+		<View style={[styles.bottomNav, { backgroundColor: color.BACKGROUND, paddingBottom: insets.bottom }]}>
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => handleNav('dashboard')}
@@ -87,7 +89,6 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		right: 0,
-		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'flex-start',
 		justifyContent: 'space-around',
@@ -96,5 +97,6 @@ const styles = StyleSheet.create({
 		minWidth: 70,
 		minHeight: 50,
 		alignItems: 'center',
+		marginTop: 10,
 	}
 })

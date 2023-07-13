@@ -23,11 +23,13 @@ import * as Clipboard from 'expo-clipboard'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
+	const insets = useSafeAreaInsets()
 	// invoice amount modal
 	const [lnAmountModal, setLNAmountModal] = useState(false)
 	const setLnAmountModalCB = useCallback((val: boolean) => setLNAmountModal(val), [])
@@ -155,7 +157,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t('mintSettings', { ns: 'topNav' })} withBackBtn />
-			<ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+			<ScrollView style={[styles.scrollContainer, { marginBottom: insets.bottom + 60 }]} showsVerticalScrollIndicator={false}>
 				{/* General */}
 				<Txt txt={t('general', { ns: 'mints' })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
@@ -377,7 +379,6 @@ const styles = StyleSheet.create({
 	scrollContainer: {
 		flex: 1,
 		marginTop: 100,
-		marginBottom: 60,
 	},
 	mintUrl: {
 		fontSize: 16,

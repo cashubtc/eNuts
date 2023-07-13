@@ -24,7 +24,7 @@ import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { SafeAreaView, StyleSheet, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation(['common'])
@@ -165,7 +165,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}, [navigation])
 
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<SafeAreaView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav nav={{ navigation, route }} />
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
@@ -244,7 +244,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			/>
 			{/* Prompt toaster */}
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-		</View>
+		</SafeAreaView>
 	)
 }
 
