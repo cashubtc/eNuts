@@ -12,10 +12,12 @@ import { getMintInfo } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function MintInfoPage({ route }: TMintInfoPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
+	const insets = useSafeAreaInsets()
 	const [info, setInfo] = useState<GetInfoResponse>()
 
 	useEffect(() => {
@@ -36,7 +38,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav withBackBtn />
 			{info ?
-				<ScrollView>
+				<ScrollView style={{ marginBottom: insets.bottom }}>
 					{/* Name, Version & short description */}
 					<View style={[globals(color).wrapContainer, styles.mainInfo]}>
 						<View style={[styles.circleContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
