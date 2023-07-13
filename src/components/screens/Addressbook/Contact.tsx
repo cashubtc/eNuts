@@ -71,9 +71,12 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			<TopNav withBackBtn />
 			{/* Contact info */}
 			<View style={[styles.contactContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
-				<Text style={[styles.contactPic, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER, color: color.TEXT }]}>
-					{route.params?.contact?.name.charAt(0).toUpperCase()}
-				</Text>
+				<View style={[styles.circleContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+					<Text style={[styles.contactPic, { color: color.TEXT }]}>
+						{route.params?.contact?.name.charAt(0).toUpperCase()}
+					</Text>
+				</View>
+
 				<Text style={[styles.contactName, { color: color.TEXT }]}>
 					{route.params?.contact?.name}
 				</Text>
@@ -160,15 +163,19 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginTop: 50,
 	},
-	contactPic: {
-		borderRadius: 50,
+	circleContainer: {
+		width: 90,
+		height: 90,
 		borderWidth: 1,
-		paddingVertical: 20,
-		paddingHorizontal: 35,
-		fontSize: 36,
-		fontWeight: '300',
+		borderRadius: 45,
 		marginTop: -70,
 		marginBottom: 15,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	contactPic: {
+		fontSize: 36,
+		fontWeight: '300',
 	},
 	contactName: {
 		fontSize: 26,

@@ -39,9 +39,11 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 				<ScrollView>
 					{/* Name, Version & short description */}
 					<View style={[globals(color).wrapContainer, styles.mainInfo]}>
-						<Text style={[styles.mintIcon, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER, color: color.TEXT }]}>
-							<MintBoardIcon width={30} height={28} color={hi[highlight]} />
-						</Text>
+						<View style={[styles.circleContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
+							<Text style={[styles.mintIcon, { color: color.TEXT }]}>
+								<MintBoardIcon width={30} height={28} color={hi[highlight]} />
+							</Text>
+						</View>
 						<Text style={[styles.mintName, { color: color.TEXT }]}>
 							{info.name}
 						</Text>
@@ -122,15 +124,19 @@ const styles = StyleSheet.create({
 		marginTop: 50,
 		marginBottom: 20,
 	},
-	mintIcon: {
-		borderRadius: 50,
+	circleContainer: {
+		width: 90,
+		height: 90,
 		borderWidth: 1,
-		paddingVertical: 35,
-		paddingHorizontal: 35,
-		fontSize: 36,
-		fontWeight: '300',
+		borderRadius: 45,
 		marginTop: -70,
 		marginBottom: 15,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	mintIcon: {
+		fontSize: 36,
+		fontWeight: '300',
 	},
 	mintName: {
 		fontSize: 26,
