@@ -227,7 +227,7 @@ function ContactsCount({ count }: { count: number }) {
 			{!count ?
 				''
 				:
-				t('contact', { count })
+				count > 1 ? t('contact_other', { count }) : t('contact_one', { count })
 			}
 		</Text>
 	)
