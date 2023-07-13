@@ -29,6 +29,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Appearance, AppState, Text, View } from 'react-native'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
@@ -50,18 +51,22 @@ void SplashScreen.preventAutoHideAsync()
 export default function App() {
 	if (!env?.SENTRY_DSN) {
 		return (
-			<CustomErrorBoundary catchErrors='always'>
-				<_App />
-			</CustomErrorBoundary>
+			<SafeAreaProvider>
+				<CustomErrorBoundary catchErrors='always'>
+					<_App />
+				</CustomErrorBoundary>
+			</SafeAreaProvider>
 		)
 	}
 	// Create the error boundary...
 	const ErrorBoundary = Sentry.Native.ErrorBoundary
 	// Uses the Sentry error boundary component which posts the errors to our Sentry account
 	return (
-		<ErrorBoundary fallback={ErrorDetails}>
-			<_App />
-		</ErrorBoundary>
+		<SafeAreaProvider>
+			<ErrorBoundary fallback={ErrorDetails}>
+				<_App />
+			</ErrorBoundary>
+		</SafeAreaProvider>
 	)
 }
 
@@ -234,7 +239,7 @@ function _App() {
 				const prefsDB = await getPreferences()
 				const deviceTheme = Appearance.getColorScheme()
 				const darkmode = prefsDB.hasPref ? prefsDB.darkmode : deviceTheme === 'dark'
-				setPref({...prefsDB, darkmode })
+				setPref({ ...prefsDB, darkmode })
 				setTheme(darkmode ? 'Dark' : 'Light')
 				setHighlight(prefsDB.theme)
 			} catch (e) {
