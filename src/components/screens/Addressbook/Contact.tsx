@@ -12,7 +12,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const { t } = useTranslation(['common'])
@@ -85,7 +85,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				</Text>
 			</View>
 			{/* Edit/Delete contact */}
-			<View style={styles.bottomAction}>
+			<SafeAreaView style={styles.bottomAction}>
 				<TouchableOpacity
 					style={styles.action}
 					onPress={() => setOpenEdit(true)}
@@ -106,7 +106,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						{t('delete')}
 					</Text>
 				</TouchableOpacity>
-			</View>
+			</SafeAreaView>
 			{/* Edit contact modal */}
 			<MyModal
 				type='bottom'
@@ -186,14 +186,14 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 	},
 	bottomAction: {
+		flex: 1,
 		position: 'absolute',
 		bottom: 0,
-		left: 0,
-		right: 0,
-		flex: 1,
+		left: 50,
+		right: 50,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		paddingHorizontal: 80,
+		// paddingHorizontal: 80,
 	},
 	action: {
 		alignItems: 'center',
