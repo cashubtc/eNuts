@@ -63,7 +63,7 @@ export default function MyModal({
 				>
 					<KeyboardAvoidingView
 						style={getCorrectStyle()}
-						behavior={isIOS ? 'padding' : undefined}
+						behavior={isIOS ? 'height' : undefined}
 					>
 						<View style={[getViewStyle(), success ? { backgroundColor: hi[highlight] } : {}]}>
 							{children}

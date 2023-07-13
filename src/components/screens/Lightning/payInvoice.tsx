@@ -347,7 +347,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 				</View>
 			}
 			{/* Bottom section */}
-			<KeyboardAvoidingView style={styles.action} behavior={isIOS ? 'padding' : undefined}>
+			<KeyboardAvoidingView style={styles.action} behavior={isIOS ? 'height' : undefined}>
 				{/* Open LNURL address book */}
 				{invoiceAmount === 0 &&
 					<TouchableOpacity

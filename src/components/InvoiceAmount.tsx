@@ -95,7 +95,7 @@ export default function LNInvoiceAmountModal({
 				</Animated.View>
 				<KeyboardAvoidingView
 					style={styles.invoiceBtns}
-					behavior={isIOS ? 'padding' : undefined}
+					behavior={isIOS ? 'height' : undefined}
 				>
 					<Button
 						txt={loading ? t('invoiceIncoming') + '...' : t('createInvoice')}
