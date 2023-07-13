@@ -220,7 +220,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 						</Text>
 					</TouchableOpacity>
 				</View>
-				<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} />
+				<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} padding />
 				<View style={{ paddingHorizontal: 20 }}>
 					<ProofListHeader />
 				</View>
