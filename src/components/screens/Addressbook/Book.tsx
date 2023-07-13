@@ -95,12 +95,12 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				{/* user own LNURL */}
 				{hasOwnAddress() ?
 					<View style={[globals(color).wrapContainer, styles.bookEntry, styles.container]}>
-						<Text style={[
+						<View style={[
 							styles.circleUser,
-							{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
+							{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG }
 						]}>
 							<UserIcon width={20} height={20} color={hi[highlight]} />
-						</Text>
+						</View>
 						<TouchableOpacity
 							style={styles.nameEntry}
 							onPress={() => {
@@ -137,12 +137,16 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							!c.isOwner &&
 							<View key={c.ln}>
 								<View style={styles.bookEntry}>
-									<Text style={[
-										styles.circle,
-										{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, color: color.TEXT }
-									]}>
-										{c.name.charAt(0).toUpperCase()}
-									</Text>
+									<View
+										style={[
+											styles.circle,
+											{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG }
+										]}
+									>
+										<Text style={{ color: color.TEXT, fontSize: 18 }}>
+											{c.name.charAt(0).toUpperCase()}
+										</Text>
+									</View>
 									<TouchableOpacity
 										style={styles.nameEntry}
 										onPress={() => {
@@ -272,17 +276,21 @@ const styles = StyleSheet.create({
 	circle: {
 		textAlign: 'center',
 		borderWidth: 1,
-		borderRadius: 50,
-		paddingHorizontal: 15,
-		paddingVertical: 10,
+		width: 40,
+		height: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 20,
 		marginVertical: 5,
 		marginRight: 20,
 	},
 	circleUser: {
 		borderWidth: 1,
-		borderRadius: 50,
-		paddingHorizontal: 10,
-		paddingVertical: 10,
+		width: 40,
+		height: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 20,
 		marginRight: 20,
 	},
 	addOwnAddress: {
