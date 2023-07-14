@@ -15,7 +15,7 @@ import type { IInvoiceState } from '@model/ln'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { dark, globals, highlight as hi } from '@styles'
+import { dark, globals, highlight as hi, mainColors } from '@styles'
 import { formatSeconds, getSelectedAmount, isErr, openUrl } from '@util'
 import { getMintCurrentKeySetId, requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
@@ -115,7 +115,7 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 						</Text>
 					</View>
 					<View>
-						<Text style={[styles.lnExpiry, { color: expiry < 1 ? color.ERROR : hi[highlight], fontSize: 28 }]}>
+						<Text style={[styles.lnExpiry, { color: expiry < 1 ? mainColors.ERROR : hi[highlight], fontSize: 28 }]}>
 							{expiry > 0 ?
 								formatSeconds(expiry)
 								:
@@ -296,7 +296,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee 
 			<View style={[styles.overview, {paddingHorizontal: padding ? 20 : 0}]}>
 				<Txt txt={t('selected')} />
 				<Text style={globals(color).txt}>
-					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? color.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
+					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? mainColors.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
 				</Text>
 			</View>
 			{selectedAmount > lnAmount &&

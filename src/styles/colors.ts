@@ -12,7 +12,6 @@ export type TPref = {
 	INPUT_BG: string
 	INPUT_PH: string
 	BORDER: string
-	ERROR: string
 }
 
 // highlight theme
@@ -66,19 +65,18 @@ const CLOUD = '#BDC1C6'
 const DARK_CLOUD = '#999DA2'
 const GREY1 = '#303134'
 const GREY2 = '#5F6368'
-//
+// common
+const VALID = '#5DB075'
+const WARN = '#FF9900'
+const ERROR = '#FF6666'
 export const mainColors = {
-	VALID: '#5DB075',
-	WARN: '#FF9900',
-}
-
-const common = {
-	ERROR: '#FF6666',
+	VALID,
+	WARN,
+	ERROR
 }
 
 // light theme
 const lightTheme: TPref = {
-	...common,
 	BACKGROUND: WHITE,
 	DRAWER: WHITE,
 	TEXT: DARK_GREY,
@@ -90,7 +88,6 @@ const lightTheme: TPref = {
 
 // dark theme
 const darkTheme: TPref = {
-	...common,
 	BACKGROUND: DARK,
 	DRAWER: GREY1,
 	TEXT: CLOUD,

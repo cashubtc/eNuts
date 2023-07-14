@@ -13,7 +13,7 @@ import { CoinSelectionModal, CoinSelectionResume } from '@screens/Lightning/moda
 import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, formatInt, getSelectedAmount, isErr, isNum } from '@util'
 import { sendToken } from '@wallet'
 import { useCallback, useContext, useEffect, useState } from 'react'
@@ -197,7 +197,7 @@ export default function LNPageContent({
 						<>
 							{/* Show a message if mint has not enough funds and the payment is an outgoing TX */}
 							{!hasEnoughFunds() ?
-								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
+								<Text style={[styles.tokenHint, { color: mainColors.ERROR }]}>
 									{t('noEnoughFunds')}!
 								</Text>
 								:
@@ -222,7 +222,7 @@ export default function LNPageContent({
 						: // user wants to create a cashu token
 						<>
 							{+amount < 1 &&
-								<Text style={[styles.tokenHint, { color: color.ERROR }]}>
+								<Text style={[styles.tokenHint, { color: mainColors.ERROR }]}>
 									{mintBal > 0 ? '' : t('noEnoughFunds')}
 								</Text>
 							}

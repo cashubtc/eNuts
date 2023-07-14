@@ -159,7 +159,7 @@
 		"msg": "Nous sommes désolés que vous ayez rencontré ce problème. Vous pouvez nous aider à améliorer le logiciel en prenant une capture d'écran et en créant un court rapport de bug.",
 		"reportBug": "Signaler le bug",
 		"stackNA": "Pile d'erreur non disponible",
-		"iosQrErr": "La numérisation du code QR n'est pas autorisée sur iOS... Veuillez utiliser l'application de l'appareil photo."
+		"requestMintErr": "Erreur lors de la demande de la facture à partir de mint."
 	},
 	"history": {
 		"checkSpent": "Vérifier si le jeton a été dépensé",

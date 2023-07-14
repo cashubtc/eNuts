@@ -17,7 +17,7 @@ import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { sumProofsValue } from '@src/wallet/proofs'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, formatInt, formatMintUrl, formatSeconds, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
@@ -275,7 +275,7 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 						<Text style={[globals(color).navTxt]}>
 							Invoice overview
 						</Text>
-						<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
+						<Text style={[styles.expiry, { color: !timeLeft ? mainColors.ERROR : color.TEXT }]}>
 							{timeLeft > 0 ? formatSeconds(timeLeft) : t('expired') + '!'}
 						</Text>
 					</View>

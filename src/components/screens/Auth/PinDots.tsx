@@ -1,12 +1,10 @@
-import { ThemeContext } from '@src/context/Theme'
-import { useContext } from 'react'
+import { mainColors } from '@src/styles'
 import { StyleSheet, View } from 'react-native'
 
 export default function PinDots({ input, mismatch }: { input: number[], mismatch?: boolean }) {
-	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.pinWrap, { width: 25 * input.length }]}>
-			{input.map((_n, i) => <View key={i} style={[styles.pinCircle, { backgroundColor: mismatch ? color.ERROR : '#FAFAFA' }]} />)}
+			{input.map((_n, i) => <View key={i} style={[styles.pinCircle, { backgroundColor: mismatch ? mainColors.ERROR : '#FAFAFA' }]} />)}
 		</View>
 	)
 }

@@ -5,7 +5,6 @@ declare module '@react-navigation/native-stack' {
 	export interface ExtendedTheme extends Theme {
 		dark: boolean
 		custom: {
-			ERROR: string,
 			BACKGROUND: string,
 			DRAWER: string,
 			TEXT: string,

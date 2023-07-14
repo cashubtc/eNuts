@@ -79,7 +79,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			<TopNav screenName={isLn ? LNstr : Ecash} withBackBtn />
 			<ScrollView style={{ marginTop: 110, marginBottom: 60 }} showsVerticalScrollIndicator={false} >
 				<View style={styles.topSection}>
-					<Text style={[styles.amount, { color: entry.amount < 0 ? color.ERROR : mainColors.VALID }]}>
+					<Text style={[styles.amount, { color: entry.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}>
 						{formatInt(entry.amount < 0 ? Math.abs(entry.amount) : entry.amount)}
 					</Text>
 					<Txt

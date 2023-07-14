@@ -5,14 +5,16 @@ import { isIOS } from '@consts'
 import type { IInvoiceState } from '@model/ln'
 import { InvoiceAmountModal, InvoiceModal } from '@screens/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
-import { globals, highlight as hi } from '@styles'
-import { cleanUpNumericStr, vib } from '@util'
+import { globals, highlight as hi, mainColors } from '@styles'
+import { cleanUpNumericStr, isErr, vib } from '@util'
 import { requestMint } from '@wallet'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native'
 
 import { useShakeAnimation } from './animation/Shake'
+import usePrompt from './hooks/Prompt'
+import Toaster from './Toaster'
 
 interface IInvoiceModalProps {
 	lnAmountModal: boolean
@@ -38,6 +40,7 @@ export default function LNInvoiceAmountModal({
 		hash: ''
 	})
 	const { loading, startLoading, stopLoading } = useLoading()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	// invoice amount error
 	const [err, setErr] = useState(false)
 	// add tokens to the mint
@@ -56,9 +59,14 @@ export default function LNInvoiceAmountModal({
 		}
 		void (async () => {
 			startLoading()
-			const resp = await requestMint(mintUrl, +invoice.amount)
-			const decoded = getDecodedLnInvoice(resp.pr)
-			setInvoice({ ...invoice, decoded, hash: resp.hash })
+			try {
+				const resp = await requestMint(mintUrl, +invoice.amount)
+				const decoded = getDecodedLnInvoice(resp.pr)
+				setInvoice({ ...invoice, decoded, hash: resp.hash })
+			} catch (e) {
+				openPromptAutoClose({ msg: isErr(e) ? e.message : t('requestMintErr', { ns: 'error' }) })
+				return
+			}
 			setShowInvoice(true)
 			setLNAmountModal(false)
 			stopLoading()
@@ -80,7 +88,7 @@ export default function LNInvoiceAmountModal({
 					<TextInput
 						keyboardType='numeric' // Platform.OS === 'android' ? 'number-pad' : 'numeric'
 						placeholder='0'
-						placeholderTextColor={err ? color.ERROR : hi[highlight]}
+						placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
 						style={[styles.invoiceAmount, { color: hi[highlight] }]}
 						caretHidden
 						ref={inputRef}
@@ -115,6 +123,7 @@ export default function LNInvoiceAmountModal({
 				mintUrl={mintUrl}
 				close={() => setShowInvoice(false)}
 			/>
+			{prompt.open && <Toaster txt={prompt.msg} />}
 		</>
 
 	)

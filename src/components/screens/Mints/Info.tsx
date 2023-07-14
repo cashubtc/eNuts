@@ -7,7 +7,7 @@ import { l } from '@log'
 import type { TMintInfoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { getMintInfo } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -68,7 +68,7 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 									</Text>
 									<Txt txt={info.motd} />
 								</View>
-								<ExclamationIcon color={color.ERROR} />
+								<ExclamationIcon color={mainColors.ERROR} />
 							</View>
 						</View>
 					}

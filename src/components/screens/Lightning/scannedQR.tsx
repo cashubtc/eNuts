@@ -15,7 +15,7 @@ import { CoinSelectionModal, CoinSelectionResume } from '@screens/Lightning/moda
 import { ThemeContext } from '@src/context/Theme'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { getCustomMintNames, getDefaultMint, getMintName } from '@store/mintStore'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl, formatSeconds, getSelectedAmount, isErr } from '@util'
 import { payLnInvoice } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
@@ -140,7 +140,7 @@ export default function ScannedQRDetails({ lnDecoded, closeDetails, nav }: IScan
 				<Text style={[styles.sat, { color: color.TEXT_SECONDARY }]}>
 					Satoshi
 				</Text>
-				<Text style={[styles.expiry, { color: !timeLeft ? color.ERROR : color.TEXT }]}>
+				<Text style={[styles.expiry, { color: !timeLeft ? mainColors.ERROR : color.TEXT }]}>
 					{timeLeft > 0 ? formatSeconds(timeLeft) : t('invoiceExpired')}
 				</Text>
 				<View style={styles.pickerWrap}>

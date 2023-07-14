@@ -3,6 +3,7 @@ import type { IMintUrl } from '@model'
 import type { TLightningPageProps, TSendTokenPageProps } from '@model/nav'
 import { Picker } from '@react-native-picker/picker'
 import { ThemeContext } from '@src/context/Theme'
+import { mainColors } from '@src/styles'
 import { getMintName } from '@store/mintStore'
 import { formatInt, formatMintUrl } from '@util'
 import { useContext } from 'react'
@@ -26,7 +27,7 @@ export default function MintPanel({ nav, mints, selectedMint, lnAmount, setSelec
 			<View style={styles.mintBal}>
 				<Text style={[
 					styles.mintAmount,
-					{ color: lnAmount && nav.route.params.balance && nav.route.params.balance < lnAmount ? color.ERROR : color.TEXT }
+					{ color: lnAmount && nav.route.params.balance && nav.route.params.balance < lnAmount ? mainColors.ERROR : color.TEXT }
 				]}>
 					{formatInt(nav.route.params.balance || 0)}
 				</Text>

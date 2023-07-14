@@ -283,8 +283,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<MintOption
 						txt={t('delMint', { ns: 'mints' })}
 						onPress={() => setDelMintModalOpen(true)}
-						icon={<TrashbinIcon width={16} height={16} color={color.ERROR} />}
-						rowColor={color.ERROR}
+						icon={<TrashbinIcon width={16} height={16} color={mainColors.ERROR} />}
+						rowColor={mainColors.ERROR}
 					/>
 				</View>
 			</ScrollView>

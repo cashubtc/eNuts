@@ -5,7 +5,7 @@ import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
@@ -213,7 +213,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			style={[
 				styles.container,
 				{
-					backgroundColor: attempts.locked ? color.ERROR : hi[highlight],
+					backgroundColor: attempts.locked ? mainColors.ERROR : hi[highlight],
 					justifyContent: success ? 'center' : 'space-between'
 				}
 			]}
@@ -238,7 +238,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 						:
 						<View style={styles.bottomSection}>
 							{attempts.mismatch &&
-								<Text style={[styles.mismatch, { color: color.ERROR }]}>
+								<Text style={[styles.mismatch, { color: mainColors.ERROR }]}>
 									{t('pinMismatch', { ns: 'auth' })}
 								</Text>
 							}

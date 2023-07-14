@@ -9,7 +9,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
-import { globals } from '@styles'
+import { globals, mainColors } from '@styles'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -67,8 +67,8 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 				/>
 				<SettingsMenuItem
 					txt={t('delHistory')}
-					txtColor={color.ERROR}
-					icon={<TrashbinIcon2 color={color.ERROR} />}
+					txtColor={mainColors.ERROR}
+					icon={<TrashbinIcon2 color={mainColors.ERROR} />}
 					onPress={() => setConfirm(true)}
 				/>
 			</View>
