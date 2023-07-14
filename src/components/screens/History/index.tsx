@@ -11,6 +11,7 @@ import { globals } from '@styles'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import HistoryEntry from './Entry'
 
@@ -18,6 +19,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const { claimed } = useContext(FocusClaimCtx)
+	const insets = useSafeAreaInsets()
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})
 	// update history after claiming from clipboard when the app comes to the foreground
 	useEffect(() => {
@@ -37,12 +39,11 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t('history', { ns: 'topNav' })} withBackBtn />
 			{/* TODO apply filter for ecash or LN TXs */}
-			<View style={styles.listWrap}>
+			<View style={[styles.listWrap, { marginBottom: insets.bottom }]}>
 				{/* History list grouped by settled date */}
 				<FlashList
 					data={Object.entries(data)}
 					estimatedItemSize={300}
-					// contentContainerStyle={{ paddingHorizontal: 20 }}
 					renderItem={data => (
 						<>
 							{/* Group date */}
@@ -86,7 +87,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: '100%',
 		marginTop: 100,
-		marginBottom: 60,
 	},
 	date: {
 		fontSize: 15,

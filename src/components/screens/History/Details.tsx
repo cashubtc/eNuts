@@ -8,7 +8,6 @@ import QR from '@comps/QR'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
-import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
@@ -19,6 +18,7 @@ import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const initialCopyState = {
 	value: false,
@@ -26,8 +26,9 @@ const initialCopyState = {
 	preimage: false
 }
 
-export default function DetailsPage({ navigation, route }: THistoryEntryPageProps) {
+export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	const { t } = useTranslation(['common'])
+	const insets = useSafeAreaInsets()
 	const entry = route.params.entry
 	const { color } = useContext(ThemeContext)
 	const [copy, setCopy] = useState(initialCopyState)
@@ -77,7 +78,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={isLn ? LNstr : Ecash} withBackBtn />
-			<ScrollView style={{ marginTop: 110, marginBottom: 60 }} showsVerticalScrollIndicator={false} >
+			<ScrollView style={{ marginTop: 110, marginBottom: insets.bottom }} showsVerticalScrollIndicator={false} >
 				<View style={styles.topSection}>
 					<Text style={[styles.amount, { color: entry.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}>
 						{formatInt(entry.amount < 0 ? Math.abs(entry.amount) : entry.amount)}
@@ -231,7 +232,6 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					</TouchableOpacity>
 				</View>
 			</ScrollView>
-			<BottomNav navigation={navigation} route={route} />
 			<MyModal type='question' visible={qr.open} close={() => setQr({ open: false, error: false })}>
 				{qr.error ?
 					<Txt txt={t('bigQrMsg')} styles={[{ textAlign: 'center' }]} />

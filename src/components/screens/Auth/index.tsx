@@ -6,7 +6,7 @@ import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { formatSeconds, vib } from '@util'
+import { formatSeconds } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -54,7 +54,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		const maxMismatchCount = attempts.mismatchCount + 1 === 3
 		const increasedLockedCount = attempts.lockedCount + 1
 		// vibrate longer if locked activated
-		vib(maxMismatchCount ? 1000 : 400)
 		const attemptState = {
 			mismatch: true,
 			mismatchCount: maxMismatchCount ? 0 : attempts.mismatchCount + 1,
@@ -143,8 +142,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	}
 	// handle pad press
 	const handleInput = async (val: number) => {
-		// vibrate 25ms per pad touch
-		vib(25)
 		// backspace
 		if (val === 10) {
 			handleDelete()
