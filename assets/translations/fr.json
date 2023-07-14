@@ -159,7 +159,10 @@
 		"msg": "Nous sommes désolés que vous ayez rencontré ce problème. Vous pouvez nous aider à améliorer le logiciel en prenant une capture d'écran et en créant un court rapport de bug.",
 		"reportBug": "Signaler le bug",
 		"stackNA": "Pile d'erreur non disponible",
-		"requestMintErr": "Erreur lors de la demande de la facture à partir de mint."
+		"requestMintErr": "Erreur lors de la demande de la facture à partir de mint.",
+		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",
+		"claimTokenErr": "Erreur lors de la réclamation du token",
+		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint"
 	},
 	"history": {
 		"checkSpent": "Vérifier si le jeton a été dépensé",

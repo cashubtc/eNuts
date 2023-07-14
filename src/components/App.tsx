@@ -148,9 +148,14 @@ function _App() {
 			// do not claim from clipboard when app comes to the foreground if mint from token is not trusted
 			if (!hasTrustedMint(userMints, info.mints)) { return false }
 			// check if token is spendable
-			const isSpendable = await isTokenSpendable(clipboard)
-			isSpent = !isSpendable
-			if (!isSpendable) { return false }
+			try {
+				const isSpendable = await isTokenSpendable(clipboard)
+				isSpent = !isSpendable
+				if (!isSpendable) { return false }
+			} catch (e) {
+				openPromptAutoClose({ msg: isErr(e) ? e.message : t('checkSpendableErr', { ns: 'error' }) })
+				return
+			}
 			setTokenInfo(info)
 			setClaimOpen(true)
 			return true
@@ -167,9 +172,14 @@ function _App() {
 		if (!tokenInfo) { return }
 		setClaimOpen(false)
 		const encoded = getEncodedToken(tokenInfo.decoded)
-		const success = await claimToken(encoded).catch(l)
-		if (!success) {
-			openPromptAutoClose({ msg: t('invalidOrSpent') })
+		try {
+			const success = await claimToken(encoded).catch(l)
+			if (!success) {
+				openPromptAutoClose({ msg: t('invalidOrSpent') })
+				return
+			}
+		} catch (e) {
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('claimTokenErr', { ns: 'error' }) })
 			return
 		}
 		const info = getTokenInfo(encoded)
@@ -263,7 +273,6 @@ function _App() {
 			}
 		}
 		async function initAuth() {
-			// await store.clear()
 			const skipped = await store.get('auth_skipped')
 			const pinHash = await secureStore.get('auth_pin')
 			setAuth({
@@ -291,9 +300,12 @@ function _App() {
 			// await dropTable('contacts')
 			const mintBalsTotal = (await getMintsBalances()).reduce((acc, cur) => acc + cur.amount, 0)
 			const bal = await getBalance()
-			// l({ bal, mintBalsTotal })
 			if (mintBalsTotal !== bal) {
-				await addAllMintIds()
+				try {
+					await addAllMintIds()
+				} catch (e) {
+					openPromptAutoClose({ msg: isErr(e) ? e.message : t('addAllMintIdsErr', { ns: 'error' }) })
+				}
 			}
 			setIsRdy(true)
 		}

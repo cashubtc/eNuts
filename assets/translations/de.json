@@ -159,7 +159,10 @@
 		"msg": "Es tut uns leid, dass dieses Problem bei Ihnen aufgetreten ist. Sie können uns helfen, die Software zu verbessern, indem Sie einen Screenshot machen und einen kurzen Fehlerbericht erstellen.",
 		"reportBug": "Fehler melden",
 		"stackNA": "Ursprung des Fehlers nicht verfügbar",
-		"requestMintErr": "Fehler beim Abrufen der Rechnung von der Mint."
+		"requestMintErr": "Fehler beim Abrufen der Rechnung von der Mint.",
+		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
+		"claimTokenErr": "Fehler beim Beanspruchen des Tokens",
+		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint"
 	},
 	"history": {
 		"checkSpent": "Überprüfen ob Token ausgegeben wurde",

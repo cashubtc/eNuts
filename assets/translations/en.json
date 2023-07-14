@@ -159,7 +159,10 @@
 		"msg": "We are sorry that you encountered this problem. You can help us improve the software by taking a screenshot and creating a short bug report.",
 		"reportBug": "Report the bug",
 		"stackNA": "Error stack not available",
-		"requestMintErr": "Error while requesting invoice from mint."
+		"requestMintErr": "Error while requesting invoice from mint.",
+		"checkSpendableErr": "Error while checking if token is spendable",
+		"claimTokenErr": "Error while claiming token",
+		"addAllMintIdsErr": "Error while getting keyset ids from mint"
 	},
 	"history": {
 		"checkSpent": "Check if token has been spent",
