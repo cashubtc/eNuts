@@ -4,6 +4,7 @@ import type { TPref } from '@styles'
 import { highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface IMyModalProps {
 	type: 'bottom' | 'question' | 'success' | 'error' | 'invoiceAmount'
@@ -26,6 +27,7 @@ export default function MyModal({
 }: IMyModalProps) {
 
 	const { color, highlight } = useContext(ThemeContext)
+	const insets = useSafeAreaInsets()
 
 	const getCorrectStyle = () => {
 		if (type === 'bottom') { return styles(color, highlight).bottomView }
@@ -35,7 +37,13 @@ export default function MyModal({
 	}
 
 	const getViewStyle = () => {
-		if (type === 'bottom') { return { ...styles(color, highlight).common, ...styles(color, highlight).modalView } }
+		if (type === 'bottom') {
+			return {
+				...styles(color, highlight).common,
+				...styles(color, highlight).modalView,
+				paddingBottom: 20 + insets.bottom
+			}
+		}
 		if (type === 'question') { return { ...styles(color, highlight).common, ...styles(color, highlight).centeredModalView } }
 		if (type === 'success') { return { ...styles(color, highlight).common, ...styles(color, highlight).successModalView } }
 		if (type === 'error') { return { ...styles(color, highlight).common, ...styles(color, highlight).promptModalView } }

@@ -10,7 +10,7 @@ import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Animated, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import PinHint from './Hint'
 import PinDots from './PinDots'
@@ -209,7 +209,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	}, [navigation])
 	return (
 		/* this is the initial pin setup page */
-		<View
+		<SafeAreaView
 			style={[
 				styles.container,
 				{
@@ -286,7 +286,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 					}
 				</>
 			}
-		</View>
+		</SafeAreaView>
 	)
 }
 
