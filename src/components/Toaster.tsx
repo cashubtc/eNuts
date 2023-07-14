@@ -2,14 +2,14 @@ import { mainColors } from '@src/styles'
 import { StyleSheet, Text } from 'react-native'
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated'
 
-export default function Toaster({ success, txt, top }: { success?: boolean, txt: string, top?: boolean }) {
+export default function Toaster({ success, txt }: { success?: boolean, txt: string }) {
 	return (
 		<Animated.View
 			entering={FadeInUp}
 			exiting={FadeOutUp}
 			style={[
 				styles.container,
-				{ backgroundColor: success ? mainColors.VALID : '#FF6666', top: top ? 20 : 50 }
+				{ backgroundColor: success ? mainColors.VALID : mainColors.WARN }
 			]}
 		>
 			<Text style={styles.txt}>

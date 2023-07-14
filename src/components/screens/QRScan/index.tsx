@@ -4,7 +4,7 @@ import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
 import { CloseIcon, FlashlightOffIcon, ZapIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
-import { QRType } from '@consts'
+import { isIOS, QRType } from '@consts'
 import { addMint, getMintsUrls } from '@db'
 import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
@@ -118,8 +118,9 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 
 	const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {
 		setScanned(true)
+		const bcType = isIOS ? 'org.iso.QRCode' : QRType
 		// early return if barcode is not a QR
-		if (+type !== QRType) {
+		if (type !== bcType) {
 			openPromptAutoClose({ msg: t('notQrCode') })
 			return
 		}
@@ -158,9 +159,6 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 						flashMode={flash ? FlashMode.torch : FlashMode.off}
 						style={StyleSheet.absoluteFill}
 						ratio={'16:9'}
-						barCodeScannerSettings={{
-							barCodeTypes: [`${QRType}`],
-						}}
 						onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
 					/>
 					<QRMarker size={300} />
