@@ -229,6 +229,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 						style={[
 							globals(color).wrapContainer,
 							{
+								flex: 1,
 								paddingHorizontal: 0,
 								height: Math.floor(proofs.length * 56),
 								// adds a margin bottom if the "confirm" button is visible

@@ -45,6 +45,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 						style={[
 							globals(color).wrapContainer,
 							{
+								flex: 1,
 								paddingHorizontal: 0,
 								height: Math.floor(proofs.length * 56),
 							}
