@@ -9,8 +9,10 @@ import type { IHistoryEntry, IMintUrl } from '.'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RootStackParamList = {
 	// new UX
+	selectMint: undefined,
 	selectAmount: {
 		mint: IMintUrl
+		balance?: number
 	}
 	//
 	dashboard: undefined
@@ -86,6 +88,7 @@ export type RootStackParamList = {
 
 export type TRouteString = 'dashboard' | 'lightning' | 'mints' | 'history' | 'Address book' | 'Settings'
 // new UX
+export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
 
 //

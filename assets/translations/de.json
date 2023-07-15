@@ -227,7 +227,8 @@
 		"testMintHint": "Dies ist eine Test-Mint für Simulationszwecke. Trotzdem hinzufügen?",
 		"trustMintSure": "Sind Sie sicher, dass Sie dieser Mint vertrauen möchten?",
 		"updatedDefault": "Änderungen gespeichert",
-		"invoiceAmountHint": "Bitte wählen Sie den Betrag an Ecash aus, den Sie erhalten möchten. Die Mint wird dann eine Rechnung erstellen, die Sie mit einer Lightning-Wallet bezahlen müssen."
+		"invoiceAmountHint": "Bitte wählen Sie den Betrag an Ecash aus, den Sie erhalten möchten. Die Mint wird dann eine Rechnung erstellen, die Sie mit einer Lightning-Wallet bezahlen müssen.",
+		"chooseMintHint": "Bitte wählen Sie eine Mint aus, von der Sie Ecash erhalten möchten. Die Mint wird zum Verwalter Ihrer Gelder."
 	},
 	"topNav": {
 		"about": "Über uns",

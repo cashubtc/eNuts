@@ -1,3 +1,4 @@
+import SelectMintScreen from '@comps/screens/Receive/SelectMint'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
 import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -58,6 +59,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				}}
 			>
 				{/* new UX */}
+				<Stack.Screen name='selectMint' component={SelectMintScreen} />
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
 				{/*  */}
 				<Stack.Screen name='dashboard' component={Dashboard} />

@@ -226,17 +226,16 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					// new UX
 					const mints = await getMintsUrls(true)
 					if (!mints.length) {
-						// prompt user
+						// TODO prompt user
 						return
 					}
 					const mintsWithName = await getCustomMintNames(mints)
 					setModal({ ...modal, receiveOpts: false })
 					if (mintsWithName.length === 1) {
 						navigation.navigate('selectAmount', { mint: mintsWithName[0] })
-						// return
+						return
 					}
-					// navigation.navigate('')
-
+					navigation.navigate('selectMint')
 					// navigation.navigate('lightning', { receive: true })
 					// setModal({ ...modal, receiveOpts: false })
 				}}
