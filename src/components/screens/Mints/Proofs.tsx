@@ -12,9 +12,11 @@ import { globals } from '@styles'
 import { getMintCurrentKeySetId } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function MintProofsPage({ navigation, route }: TMintProofsPageProps) {
 	const { color } = useContext(ThemeContext)
+	const insets = useSafeAreaInsets()
 	const [proofs, setProofs] = useState<Proof[]>([])
 	const [mintKeysetId, setMintKeysetId] = useState('')
 	// initiate proofs & get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
@@ -32,7 +34,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName='Proofs' withBackBtn />
-			<View style={styles.content}>
+			<View style={[styles.content, { marginBottom: insets.bottom + 60 }]}>
 				{/* List header */}
 				<View style={{ paddingHorizontal: 20, marginTop: 20 }}>
 					<ProofListHeader />
@@ -71,8 +73,7 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		flex: 1,
-		marginTop: 80,
-		marginBottom: 60,
+		marginTop: 80
 	},
 	mintUrl: {
 		fontSize: 16,
