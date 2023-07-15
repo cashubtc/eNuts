@@ -5,6 +5,7 @@ import { globals } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Button from './Button'
 
@@ -32,13 +33,14 @@ export default function ActionButtons({
 	nav
 }: IActionBtnsProps) {
 	const { color, highlight } = useContext(ThemeContext)
+	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['topNav'])
 	return (
 		<View
 			style={[
 				styles.actionWrap,
 				ontopOfNav ? styles.ontopOfNav : {},
-				absolutePos ? styles.absolute : {},
+				absolutePos ? { ...styles.absolute, bottom: insets.bottom } : {},
 			]}
 		>
 			{withHistory &&
@@ -79,7 +81,6 @@ const styles = StyleSheet.create({
 	absolute: {
 		position: 'absolute',
 		right: 0,
-		bottom: 0,
 		left: 0,
 		padding: 20,
 	},
