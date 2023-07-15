@@ -226,7 +226,8 @@
 		"swapSuccess": "{{amount}} Satoshi erfolgreich von {{srcMint}} zu {{targetMint}} getauscht",
 		"testMintHint": "Dies ist eine Test-Mint für Simulationszwecke. Trotzdem hinzufügen?",
 		"trustMintSure": "Sind Sie sicher, dass Sie dieser Mint vertrauen möchten?",
-		"updatedDefault": "Änderungen gespeichert"
+		"updatedDefault": "Änderungen gespeichert",
+		"invoiceAmountHint": "Bitte wählen Sie den Betrag an Ecash aus, den Sie erhalten möchten. Die Mint wird dann eine Rechnung erstellen, die Sie mit einer Lightning-Wallet bezahlen müssen."
 	},
 	"topNav": {
 		"about": "Über uns",

@@ -28,7 +28,8 @@ export default function Button({ txt, border, outlined, filled, disabled, loadin
 					{ backgroundColor: hi[highlight], padding: 20 },
 					border ? { borderWidth: 1, borderColor: '#FAFAFA' } : {},
 					filled ? { backgroundColor: '#FAFAFA' } : {},
-					outlined ? { backgroundColor: 'transparent', padding: 18, borderWidth: 1, borderColor: hi[highlight] } : {}
+					outlined ? { backgroundColor: 'transparent', padding: 18, borderWidth: 1, borderColor: hi[highlight] } : {},
+					disabled ? { opacity: .3 } : {}
 				]}
 				onPress={onPress}
 			>

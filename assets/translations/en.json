@@ -226,7 +226,8 @@
 		"swapSuccess": "Successfully swaped {{amount}} Satoshi from {{srcMint}} to {{targetMint}}",
 		"testMintHint": "This is a test mint to play around with. Add it anyway?",
 		"trustMintSure": "Are you sure that you want to trust this mint?",
-		"updatedDefault": "Updated the default mint"
+		"updatedDefault": "Updated the default mint",
+		"invoiceAmountHint": "Please select the amount of Ecash you would like to receive. The mint will then create an invoice which you will have to pay using a Lightning wallet."
 	},
 	"topNav": {
 		"about": "About us",

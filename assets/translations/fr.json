@@ -226,7 +226,8 @@
 		"swapSuccess": "{{amount}} Satoshi échangés avec succès de {{srcMint}} à {{targetMint}}",
 		"testMintHint": "Il s'agit d'une mint de test pour jouer. Voulez-vous quand même l'ajouter?",
 		"trustMintSure": "Êtes-vous sûr de vouloir faire confiance à cette mint?",
-		"updatedDefault": "Modifications enregistrées"
+		"updatedDefault": "Modifications enregistrées",
+		"invoiceAmountHint": "Veuillez sélectionner le montant d'Ecash que vous souhaitez recevoir. La mint produira ensuite une facture que vous devrez régler à l'aide d'un portefeuille Lightning."
 	},
 	"topNav": {
 		"about": "À propos de nous",

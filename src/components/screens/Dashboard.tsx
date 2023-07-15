@@ -16,6 +16,7 @@ import TopNav from '@nav/TopNav'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
+import { getCustomMintNames } from '@src/storage/store/mintStore'
 import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { hasTrustedMint, isCashuToken } from '@util'
@@ -221,9 +222,23 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					})()
 				}}
 				button2Txt={t('createInvoice', { ns: 'wallet' })}
-				onPressSecondBtn={() => {
-					navigation.navigate('lightning', { receive: true })
+				onPressSecondBtn={async () => {
+					// new UX
+					const mints = await getMintsUrls(true)
+					if (!mints.length) {
+						// prompt user
+						return
+					}
+					const mintsWithName = await getCustomMintNames(mints)
 					setModal({ ...modal, receiveOpts: false })
+					if (mintsWithName.length === 1) {
+						navigation.navigate('selectAmount', { mint: mintsWithName[0] })
+						// return
+					}
+					// navigation.navigate('')
+
+					// navigation.navigate('lightning', { receive: true })
+					// setModal({ ...modal, receiveOpts: false })
 				}}
 				onPressCancel={() => setModal({ ...modal, receiveOpts: false })}
 			/>

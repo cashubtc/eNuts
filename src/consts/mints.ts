@@ -1,7 +1,7 @@
 import type { IMintBalWithName } from '@model'
 
 
-export const _mintUrl = 'https://testnut.cashu.space'
+export const _testmintUrl = 'https://testnut.cashu.space'
 
 export const defaultMints: Readonly<IMintBalWithName[]> = [
 	/* {
@@ -15,7 +15,7 @@ export const defaultMints: Readonly<IMintBalWithName[]> = [
 		customName: ''
 	}, */
 	{
-		mintUrl: _mintUrl,
+		mintUrl: _testmintUrl,
 		amount: 0,
 		customName: ''
 	}

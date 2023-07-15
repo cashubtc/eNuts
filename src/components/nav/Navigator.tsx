@@ -18,6 +18,7 @@ import MintBackup from '@screens/Mints/MintBackup'
 import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
 import QRScanPage from '@screens/QRScan'
+import SelectAmountScreen from '@screens/Receive/SelectAmount'
 import SendTokenPage from '@screens/Send'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
@@ -56,6 +57,9 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 					animationDuration: 100,
 				}}
 			>
+				{/* new UX */}
+				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
+				{/*  */}
 				<Stack.Screen name='dashboard' component={Dashboard} />
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
 				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />
