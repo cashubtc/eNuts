@@ -1,7 +1,7 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { BackupIcon, CheckmarkIcon, CopyIcon, EyeIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
-import LNInvoiceAmountModal from '@comps/InvoiceAmount'
+// import LNInvoiceAmountModal from '@comps/InvoiceAmount'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
@@ -20,7 +20,7 @@ import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -31,8 +31,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const { isKeyboardOpen } = useKeyboard()
 	const insets = useSafeAreaInsets()
 	// invoice amount modal
-	const [lnAmountModal, setLNAmountModal] = useState(false)
-	const setLnAmountModalCB = useCallback((val: boolean) => setLNAmountModal(val), [])
+	// const [lnAmountModal, setLNAmountModal] = useState(false)
+	// const setLnAmountModalCB = useCallback((val: boolean) => setLNAmountModal(val), [])
 	// custom name modal
 	const [customNameOpen, setCustomNameOpen] = useState(false)
 	const [mintName, setMintName] = useState('')
@@ -221,7 +221,9 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<MintOption
 						txt={t('mintNewTokens', { ns: 'mints' })}
 						hasSeparator
-						onPress={() => setLNAmountModal(true)}
+						onPress={() => {
+							// TODO
+						}}
 						icon={<PlusIcon color={color.TEXT} />}
 					/>
 					{/* Redeem to lightning */}
@@ -289,11 +291,11 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 				</View>
 			</ScrollView>
 			{/* Choose amount for LN invoice (minting) */}
-			<LNInvoiceAmountModal
+			{/* <LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
 				mintUrl={route.params.mint?.mintUrl}
 				setLNAmountModal={setLnAmountModalCB}
-			/>
+			/> */}
 			{/* modal for deleting a mint */}
 			{delMintModalOpen &&
 				<QuestionModal

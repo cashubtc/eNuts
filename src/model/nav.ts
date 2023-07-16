@@ -2,6 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import type { IContact } from '@src/context/Contacts'
 
 import type { IHistoryEntry, IMintUrl } from '.'
+import type { IDecodedLNInvoice } from './ln'
 
 /**
  * Stack Navigator
@@ -22,6 +23,12 @@ export type RootStackParamList = {
 		mint: IMintUrl
 		amount: number
 		errorMsg: string
+	},
+	mintInvoice: {
+		mintUrl: string
+		amount: number
+		hash: string
+		decoded: IDecodedLNInvoice
 	}
 	//
 	dashboard: undefined
@@ -102,6 +109,7 @@ export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 's
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
 export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>
 export type TProcessingErrorPageProps = NativeStackScreenProps<RootStackParamList, 'processingError', 'MyStack'>
+export type TMintInvoicePageProps = NativeStackScreenProps<RootStackParamList, 'mintInvoice', 'MyStack'>
 
 //
 export type TDashboardPageProps = NativeStackScreenProps<RootStackParamList, 'dashboard', 'MyStack'>

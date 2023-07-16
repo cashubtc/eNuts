@@ -12,14 +12,15 @@ interface TTopNavProps {
 	withBackBtn?: boolean
 	nav?: TBottomNavProps
 	backHandler?: () => void
+	cancel?: boolean
 }
 
-export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TTopNavProps) {
+export default function TopNav({ screenName, withBackBtn, nav, backHandler, cancel }: TTopNavProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const navHook = useNavigation()
 	const handlePress = () => {
-		if (withBackBtn) {
+		if (withBackBtn || cancel) {
 			if (backHandler) {
 				backHandler()
 				return
@@ -45,7 +46,12 @@ export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TT
 						{t('back')}
 					</Text>
 					:
-					<QRIcon color={color.TEXT} />
+					cancel ?
+						<Text style={globals(color, highlight).pressTxt}>
+							{t('cancel')}
+						</Text>
+						:
+						<QRIcon color={color.TEXT} />
 				}
 			</TouchableOpacity>
 		</View>

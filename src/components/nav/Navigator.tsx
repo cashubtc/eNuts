@@ -19,6 +19,7 @@ import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
 import ProcessingErrorScreen from '@screens/ProcessingError'
 import QRScanPage from '@screens/QRScan'
+import InvoiceScreen from '@screens/Receive/Invoice'
 import ProcessingScreen from '@screens/Receive/Processing'
 import SelectAmountScreen from '@screens/Receive/SelectAmount'
 import SelectMintScreen from '@screens/Receive/SelectMint'
@@ -65,6 +66,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
 				<Stack.Screen name='processing' component={ProcessingScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
+				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />
 				{/*  */}
 				<Stack.Screen name='dashboard' component={Dashboard} />
 				<Stack.Screen name='disclaimer' component={Disclaimer} />

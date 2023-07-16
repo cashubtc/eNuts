@@ -249,7 +249,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					navigation.navigate('send')
 					setModal({ ...modal, sendOpts: false })
 				}}
-				button2Txt={t('payInvoice', { ns: 'wallet' })}
+				button2Txt={t('payLNInvoice', { ns: 'wallet' })}
 				onPressSecondBtn={() => {
 					navigation.navigate('lightning', { send: true })
 					setModal({ ...modal, sendOpts: false })

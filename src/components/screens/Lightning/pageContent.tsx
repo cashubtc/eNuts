@@ -2,7 +2,7 @@ import Button from '@comps/Button'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import { ZapIcon } from '@comps/Icons'
-import LNInvoiceAmountModal from '@comps/InvoiceAmount'
+// import LNInvoiceAmountModal from '@comps/InvoiceAmount'
 import Txt from '@comps/Txt'
 import { getProofsByMintUrl } from '@db'
 import { l } from '@log'
@@ -240,11 +240,11 @@ export default function LNPageContent({
 				}
 			</View>
 			{/* Choose amount for LN invoice (minting) */}
-			<LNInvoiceAmountModal
+			{/* <LNInvoiceAmountModal
 				lnAmountModal={lnAmountModal}
 				setLNAmountModal={setLnAmountModalCB}
 				mintUrl={selectedMint?.mintUrl ?? ''}
-			/>
+			/> */}
 			{/* coin selection page */}
 			{isEnabled &&
 				<CoinSelectionModal

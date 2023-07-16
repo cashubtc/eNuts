@@ -1,178 +1,18 @@
 import Button from '@comps/Button'
 import CoinSelectionRow from '@comps/coinSelectionRow'
 import useLoading from '@comps/hooks/Loading'
-import usePrompt from '@comps/hooks/Prompt'
-import QR from '@comps/QR'
 import Separator from '@comps/Separator'
-import Success from '@comps/Success'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
-import { _testmintUrl } from '@consts'
-import { l } from '@log'
 import MyModal from '@modal'
 import type { IMintUrl, IProofSelection } from '@model'
-import type { IInvoiceState } from '@model/ln'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
-import { addToHistory } from '@store/HistoryStore'
-import { dark, globals, highlight as hi, mainColors } from '@styles'
-import { formatSeconds, getSelectedAmount, isErr, openUrl } from '@util'
-import { getMintCurrentKeySetId, requestToken } from '@wallet'
-import * as Clipboard from 'expo-clipboard'
+import { globals, mainColors } from '@styles'
+import { getSelectedAmount } from '@util'
+import { getMintCurrentKeySetId,  } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-
-interface IInvoiceAmountModalProps {
-	visible: boolean
-	children: React.ReactNode
-}
-
-export function InvoiceAmountModal({ visible, children }: IInvoiceAmountModalProps) {
-	return (
-		<MyModal type='invoiceAmount' animation='slide' visible={visible}>
-			{children}
-		</MyModal>
-	)
-}
-
-interface IInvoiceModalProps {
-	visible: boolean
-	invoice: IInvoiceState
-	mintUrl: string
-	close: () => void
-}
-
-export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModalProps) {
-	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
-	const [expiry, setExpiry] = useState(invoice.decoded?.expiry ?? 600)
-	const [expiryTime,] = useState(expiry * 1000 + Date.now())
-	const [paid, setPaid] = useState('')
-	const [copied, setCopied] = useState(false)
-	const { prompt, openPromptAutoClose } = usePrompt()
-	const handlePayment = () => {
-		// state "unpaid" is temporary to prevent btn press spam
-		if (paid === 'unpaid') { return }
-		void (async () => {
-			try {
-				const { success } = await requestToken(mintUrl, +invoice.amount, invoice.hash)
-				if (success) {
-					// add as history entry
-					await addToHistory({
-						amount: +invoice.amount,
-						type: 2,
-						value: invoice.decoded?.paymentRequest ?? '',
-						mints: [mintUrl],
-					})
-				}
-				setPaid(success ? 'paid' : 'unpaid')
-			} catch (e) {
-				l(e)
-				if (isErr(e)) {
-					// TODO update this check
-					if (e.message === 'Tokens already issued for this invoice.') {
-						setPaid('paid')
-						return
-					}
-				}
-				setPaid('unpaid')
-				// reset state
-				setTimeout(() => setPaid(''), 3000)
-			}
-		})()
-	}
-	useEffect(() => {
-		const timeLeft = Math.ceil((expiryTime - Date.now()) / 1000)
-		if (timeLeft < 0) {
-			setExpiry(0)
-			return
-		}
-		if (expiry && expiry > 0) {
-			setTimeout(() => setExpiry(timeLeft - 1), 1000)
-		}
-	}, [expiry, expiryTime])
-	return (
-		<MyModal
-			type='invoiceAmount'
-			animation='fade'
-			visible={visible}
-			success={paid === 'paid' || mintUrl === _testmintUrl}
-			close={close}
-		>
-			{invoice.decoded && mintUrl !== _testmintUrl && (!paid || paid === 'unpaid') ?
-				<View style={styles.container}>
-					<View style={styles.invoiceWrap}>
-						<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>
-							<QR
-								size={275}
-								value={invoice.decoded.paymentRequest}
-								onError={() => l('Error while generating the LN QR code')}
-							/>
-						</View>
-						<Text style={[styles.lnAddress, { color: color.TEXT }]}>
-							{invoice.decoded.paymentRequest.substring(0, 40) + '...' || t('smthWrong')}
-						</Text>
-					</View>
-					<View>
-						<Text style={[styles.lnExpiry, { color: expiry < 1 ? mainColors.ERROR : hi[highlight], fontSize: 28 }]}>
-							{expiry > 0 ?
-								formatSeconds(expiry)
-								:
-								t('invoiceExpired') + '!'
-							}
-						</Text>
-						{expiry > 0 && !paid &&
-							<TouchableOpacity onPress={handlePayment}>
-								<Text style={[styles.checkPaymentTxt, { color: hi[highlight] }]}>
-									{t('checkPayment')}
-								</Text>
-							</TouchableOpacity>
-						}
-						{paid === 'unpaid' &&
-							<Text style={styles.pendingTxt}>
-								{t('paymentPending')}...
-							</Text>
-						}
-					</View>
-					<View style={styles.lnBtnWrap}>
-						<Button
-							txt={copied ? t('copied') + '!' : t('copyInvoice')}
-							outlined
-							onPress={() => {
-								void Clipboard.setStringAsync(invoice.decoded?.paymentRequest ?? '').then(() => {
-									setCopied(true)
-									const t = setTimeout(() => {
-										setCopied(false)
-										clearTimeout(t)
-									}, 3000)
-								})
-							}}
-						/>
-						<View style={{ marginBottom: 20 }} />
-						<Button
-							txt={t('payWithLn')}
-							onPress={() => {
-								void (async () => {
-									await openUrl(`lightning:${invoice.decoded?.paymentRequest ?? ''}`)?.catch((err: unknown) =>
-										openPromptAutoClose({ msg: isErr(err) ? err.message : t('deepLinkErr') }))
-								})()
-							}}
-						/>
-						<TouchableOpacity style={styles.closeBtn} onPress={close}>
-							<Text style={globals(color, highlight).pressTxt}>
-								{t('close')}
-							</Text>
-						</TouchableOpacity>
-						{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-					</View>
-				</View>
-				:
-				<Success amount={+invoice.amount} mint={mintUrl} hash={invoice.hash} />
-			}
-		</MyModal>
-	)
-}
 
 interface ICoinSelectionProps {
 	mint?: IMintUrl
@@ -333,12 +173,6 @@ export function ProofListHeader() {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		width: '100%',
-	},
 	proofContainer: {
 		flex: 1,
 		width: '100%',
@@ -355,39 +189,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		marginBottom: 20,
 	},
-	invoiceWrap: {
-		alignItems: 'center',
-	},
-	lnAddress: {
-		fontSize: 14,
-		marginTop: 20,
-	},
-	lnExpiry: {
-		fontSize: 36,
-		fontWeight: '600',
-		textAlign: 'center',
-	},
-	lnBtnWrap: {
-		width: '100%'
-	},
-	checkPaymentTxt: {
-		fontSize: 16,
-		fontWeight: '500',
-		marginTop: 10,
-		textAlign: 'center',
-	},
-	pendingTxt: {
-		fontSize: 16,
-		fontWeight: '500',
-		color: '#F1C232',
-		marginTop: 10,
-		textAlign: 'center',
-	},
-	closeBtn: {
-		width: '100%',
-		marginBottom: 10,
-		marginVertical: 25,
-	},
 	tableHeader: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -400,10 +201,6 @@ const styles = StyleSheet.create({
 	tableHead: {
 		fontSize: 16,
 		fontWeight: '500',
-	},
-	qrCodeWrap: {
-		borderWidth: 5,
-		borderColor: '#FFF'
 	},
 	confirmWrap: {
 		position: 'absolute',

@@ -36,10 +36,10 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					mints: [mint.mintUrl],
 				})
 				navigation.navigate('success', { amount, mint: mint.mintUrl })
-
+				return
 			}
 			// navigate to invoice overview screen
-
+			navigation.navigate('mintInvoice', { mintUrl: mint.mintUrl, amount, hash: resp.hash, decoded })
 		} catch (e) {
 			handleError(amount, mint)
 		}
