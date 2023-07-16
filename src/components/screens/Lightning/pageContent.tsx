@@ -16,7 +16,7 @@ import { addToHistory } from '@store/HistoryStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, formatInt, getSelectedAmount, isErr, isNum } from '@util'
 import { sendToken } from '@wallet'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Switch, Text, TextInput, View } from 'react-native'
 
@@ -42,9 +42,6 @@ export default function LNPageContent({
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
-	// invoice amount modal
-	const [lnAmountModal, setLNAmountModal] = useState(false)
-	const setLnAmountModalCB = useCallback((val: boolean) => setLNAmountModal(val), [])
 	// spendable token amount state
 	const [amount, setAmount] = useState('')
 	// spendable token memo state
@@ -210,10 +207,10 @@ export default function LNPageContent({
 												mint: selectedMint,
 												mintBal,
 											})
-											return
+											// return
 										}
 										// receive
-										setLNAmountModal(true)
+										// setLNAmountModal(true)
 									}}
 								/>
 							}

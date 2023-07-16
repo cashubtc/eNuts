@@ -236,8 +236,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						return
 					}
 					navigation.navigate('selectMint')
-					// navigation.navigate('lightning', { receive: true })
-					// setModal({ ...modal, receiveOpts: false })
 				}}
 				onPressCancel={() => setModal({ ...modal, receiveOpts: false })}
 			/>
@@ -250,9 +248,20 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					setModal({ ...modal, sendOpts: false })
 				}}
 				button2Txt={t('payLNInvoice', { ns: 'wallet' })}
-				onPressSecondBtn={() => {
-					navigation.navigate('lightning', { send: true })
+				onPressSecondBtn={async () => {
+					// new UX
+					const mints = await getMintsUrls(true)
+					if (!mints.length) {
+						// TODO prompt user
+						return
+					}
+					const mintsWithName = await getCustomMintNames(mints)
 					setModal({ ...modal, sendOpts: false })
+					if (mintsWithName.length === 1) {
+						navigation.navigate('selectTarget', { mint: mintsWithName[0] })
+						return
+					}
+					navigation.navigate('selectMint', { isMelt: true })
 				}}
 				onPressCancel={() => setModal({ ...modal, sendOpts: false })}
 			/>

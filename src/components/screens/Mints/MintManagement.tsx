@@ -1,7 +1,6 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { BackupIcon, CheckmarkIcon, CopyIcon, EyeIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
-// import LNInvoiceAmountModal from '@comps/InvoiceAmount'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
@@ -30,9 +29,6 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const { color, highlight } = useContext(ThemeContext)
 	const { isKeyboardOpen } = useKeyboard()
 	const insets = useSafeAreaInsets()
-	// invoice amount modal
-	// const [lnAmountModal, setLNAmountModal] = useState(false)
-	// const setLnAmountModalCB = useCallback((val: boolean) => setLNAmountModal(val), [])
 	// custom name modal
 	const [customNameOpen, setCustomNameOpen] = useState(false)
 	const [mintName, setMintName] = useState('')
@@ -221,9 +217,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<MintOption
 						txt={t('mintNewTokens', { ns: 'mints' })}
 						hasSeparator
-						onPress={() => {
-							// TODO
-						}}
+						onPress={() => navigation.navigate('selectAmount', { mint: route.params.mint })}
 						icon={<PlusIcon color={color.TEXT} />}
 					/>
 					{/* Redeem to lightning */}
@@ -290,12 +284,6 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 				</View>
 			</ScrollView>
-			{/* Choose amount for LN invoice (minting) */}
-			{/* <LNInvoiceAmountModal
-				lnAmountModal={lnAmountModal}
-				mintUrl={route.params.mint?.mintUrl}
-				setLNAmountModal={setLnAmountModalCB}
-			/> */}
 			{/* modal for deleting a mint */}
 			{delMintModalOpen &&
 				<QuestionModal

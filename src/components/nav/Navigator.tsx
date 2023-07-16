@@ -24,6 +24,7 @@ import ProcessingScreen from '@screens/Receive/Processing'
 import SelectAmountScreen from '@screens/Receive/SelectAmount'
 import SelectMintScreen from '@screens/Receive/SelectMint'
 import SendTokenPage from '@screens/Send'
+import SelectTargetScreen from '@screens/Send/PayInvoice/selectTarget'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
 import BackupPage from '@screens/Settings/Backup'
@@ -63,6 +64,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 			>
 				{/* new UX */}
 				<Stack.Screen name='selectMint' component={SelectMintScreen} />
+				<Stack.Screen name='selectTarget' component={SelectTargetScreen} />
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
 				<Stack.Screen name='processing' component={ProcessingScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />

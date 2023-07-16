@@ -14,7 +14,7 @@ import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-export default function SelectMintScreen({ navigation }: TSelectMintPageProps) {
+export default function SelectMintScreen({ navigation, route }: TSelectMintPageProps) {
 	const { t } = useTranslation(['wallet'])
 	const { color, highlight } = useContext(ThemeContext)
 	// mint list
@@ -34,8 +34,8 @@ export default function SelectMintScreen({ navigation }: TSelectMintPageProps) {
 	}, [])
 	return (
 		<SafeAreaView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('createInvoice')} withBackBtn />
-			<Txt styles={[styles.hint]} txt={t('chooseMintHint', {ns: 'mints'})} />
+			<TopNav screenName={t(route.params?.isMelt ? 'cashOut' : 'createInvoice', { ns: 'common' })} withBackBtn />
+			<Txt styles={[styles.hint]} txt={t(route.params?.isMelt ? 'chooseMeltMintHint' : 'chooseMintHint', { ns: 'mints' })} />
 			<View style={[
 				globals(color).wrapContainer,
 				{
@@ -49,7 +49,13 @@ export default function SelectMintScreen({ navigation }: TSelectMintPageProps) {
 						<TouchableOpacity
 							key={data.item.mintUrl}
 							style={styles.mintUrlWrap}
-							onPress={() => navigation.navigate('selectAmount', { mint: data.item })}
+							onPress={() => {
+								if (route.params?.isMelt && data.item.amount < 1) {
+									// not enough funds
+									return
+								}
+								navigation.navigate(route.params?.isMelt ? 'selectTarget' : 'selectAmount', { mint: data.item, balance: data.item.amount })
+							}}
 						>
 							<View style={styles.mintNameWrap}>
 								{defaultMint === data.item.mintUrl &&

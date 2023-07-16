@@ -66,6 +66,7 @@
 		"copyToken": "Token kopieren",
 		"createBackup": "Sicherung erstellen",
 		"createInvoice": "Rechnung erstellen",
+		"cashOut": "Auszahlen",
 		"createToken": "Token erstellen",
 		"createTokenErr": "Es konnte kein Cashu-Token erstellt werden. Bitte versuchen Sie es später noch einmal.",
 		"createViaLn": "Rechnung über LN wallet erstellen",
@@ -230,8 +231,17 @@
 		"updatedDefault": "Änderungen gespeichert",
 		"invoiceAmountHint": "Bitte wählen Sie den Betrag an Ecash aus, den Sie erhalten möchten. Die Mint wird dann eine Rechnung erstellen, die Sie mit einer Lightning-Wallet bezahlen müssen.",
 		"chooseMintHint": "Bitte wählen Sie eine Mint aus, von der Sie Ecash erhalten möchten. Die Mint wird zum Verwalter Ihrer Gelder.",
+		"chooseMeltMintHint": "Bitte wählen Sie eine Mint aus, von der aus Sie Ihre Gelder abheben möchten. Die Mint wird Ihre Lightning-Rechnung begleichen, sofern Sie den entsprechenden Betrag an Ecash besitzen.",
+		"chooseTarget": "Bitte wählen Sie den Empfänger der Zahlung aus.",
 		"awaitingInvoice": "Rechnung ausstehend.",
-		"invoiceHint": "Das kann einige Sekunden dauern..."
+		"invoiceHint": "Das kann einige Sekunden dauern...",
+		"meltAddressbookHint": "Wählen Sie Ihre eigene LNURL oder einen anderen Kontakt als Zahlungsempfänger aus.",
+		"inputField": "Eingabefeld",
+		"meltInputHint": "Fügen Sie eine Lightning-Rechnung in ein Eingabefeld ein oder geben Sie eine gültige LNURL ein.",
+		"scanQR": "QR-Code scannen",
+		"meltScanQRHint": "Erstellen Sie eine Lightning-Rechnung mit einem anderen Gerät und scannen Sie sie einfach.",
+		"intermintSwap": "Inter-mint Tausch",
+		"meltSwapHint": "Wählen Sie eine andere Mint aus Ihrer vertrauenswürdigen Liste als Zahlungsempfänger aus."
 	},
 	"topNav": {
 		"about": "Über uns",

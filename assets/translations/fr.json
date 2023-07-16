@@ -66,6 +66,7 @@
 		"copyToken": "Copier le jeton",
 		"createBackup": "Créer un jeton de sauvegarde",
 		"createInvoice": "Créer une facture",
+		"cashOut": "retirer votre argent",
 		"createToken": "Créer un jeton",
 		"createTokenErr": "Impossible de créer un Cashu jeton. Veuillez réessayer ultérieurement.",
 		"createViaLn": "Facture via votre portefeuille LN",
@@ -230,8 +231,17 @@
 		"updatedDefault": "Modifications enregistrées",
 		"invoiceAmountHint": "Veuillez sélectionner le montant d'Ecash que vous souhaitez recevoir. La mint produira ensuite une facture que vous devrez régler à l'aide d'un portefeuille Lightning.",
 		"chooseMintHint": "Veuillez choisir une mint auprès de laquelle vous souhaitez recevoir de l'Ecash. La mint devient dépositaire de vos fonds.",
+		"chooseMeltMintHint": "Veuillez choisir une mint à partir de laquelle vous souhaitez retirer vos fonds. La mint paiera votre facture Lightning si vous disposez du montant correspondant en Ecash.",
+		"chooseTarget": "Veuillez choisir le destinataire du paiement.",
 		"awaitingInvoice": "En attente de facture",
-		"invoiceHint": "Cela peut prendre quelques secondes..."
+		"invoiceHint": "Cela peut prendre quelques secondes...",
+		"meltAddressbookHint": "Sélectionnez votre propre LNURL ou tout autre contact comme destinataire du paiement.",
+		"inputField": "Zone de saisie",
+		"meltInputHint": "Collez une facture Lightning dans une zone de saisie ou saisissez un LNURL valide.",
+		"scanQR": "Scanner un code QR",
+		"meltScanQRHint": "Créez une facture Lightning avec un autre appareil et scannez-la simplement.",
+		"intermintSwap": "Inter-mint échange.",
+		"meltSwapHint": "Sélectionnez une autre mint de votre liste de confiance comme destinataire du paiement."
 	},
 	"topNav": {
 		"about": "À propos de nous",

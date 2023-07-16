@@ -66,6 +66,7 @@
 		"copyToken": "Copy token",
 		"createBackup": "Create a backup token",
 		"createInvoice": "Create invoice",
+		"cashOut": "Cash out",
 		"createToken": "Create token",
 		"createTokenErr": "Could not create a cashu token. Please try again later.",
 		"createViaLn": "Create invoice via your LN wallet",
@@ -230,8 +231,17 @@
 		"updatedDefault": "Updated the default mint",
 		"invoiceAmountHint": "Please select the amount of Ecash you would like to receive. The mint will then create an invoice which you will have to pay using a Lightning wallet.",
 		"chooseMintHint": "Please choose a mint from which you would like to receive Ecash. The mint becomes custodian of your funds.",
+		"chooseMeltMintHint": "Please choose a mint from which you would like to cash out your funds. The mint will pay your Lightning invoice if you have the corresponding amount of Ecash.",
+		"chooseTarget": "Please choose the receiver of the payment.",
 		"awaitingInvoice": "Awaiting invoice",
-		"invoiceHint": "This can take a few seconds..."
+		"invoiceHint": "This can take a few seconds...",
+		"meltAddressbookHint": "Choose your own LNURL or any other contact as a payment receiver.",
+		"inputField": "Input field",
+		"meltInputHint": "Paste a Lightning invoice into an input field or type in a valid LNURL.",
+		"scanQR": "Scan a QR code",
+		"meltScanQRHint": "Create a Lightning invoice with another device and simply scan it.",
+		"intermintSwap": "Inter-mint swap",
+		"meltSwapHint": "Pick another mint from your trusted list as the payment receiver."
 	},
 	"topNav": {
 		"about": "About us",
