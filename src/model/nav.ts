@@ -2,7 +2,6 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import type { IContact } from '@src/context/Contacts'
 
 import type { IHistoryEntry, IMintUrl } from '.'
-import type { IDecodedLNInvoice } from './ln'
 
 /**
  * Stack Navigator
@@ -28,7 +27,8 @@ export type RootStackParamList = {
 		mintUrl: string
 		amount: number
 		hash: string
-		decoded: IDecodedLNInvoice
+		expiry: number
+		paymentRequest: string
 	}
 	//
 	dashboard: undefined
