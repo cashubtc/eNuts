@@ -18,6 +18,11 @@ export type RootStackParamList = {
 		mint: IMintUrl
 		amount: number
 	}
+	processingError: {
+		mint: IMintUrl
+		amount: number
+		errorMsg: string
+	}
 	//
 	dashboard: undefined
 	disclaimer: undefined
@@ -96,6 +101,7 @@ export type TRouteString = 'dashboard' | 'lightning' | 'mints' | 'history' | 'Ad
 export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
 export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>
+export type TProcessingErrorPageProps = NativeStackScreenProps<RootStackParamList, 'processingError', 'MyStack'>
 
 //
 export type TDashboardPageProps = NativeStackScreenProps<RootStackParamList, 'dashboard', 'MyStack'>

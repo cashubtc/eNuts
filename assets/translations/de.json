@@ -152,7 +152,8 @@
 		"unknownType": "Unbekannter Code-Typ",
 		"version": "Version",
 		"willDoLater": "Mache ich später",
-		"yes": "Ja"
+		"yes": "Ja",
+		"tryLater": "Bitte versuchen Sie es später noch einmal."
 	},
 	"error": {
 		"header": "Ein Fehler ist aufgetreten",

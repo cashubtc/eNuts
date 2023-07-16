@@ -152,7 +152,8 @@
 		"unknownType": "Données inconnues",
 		"version": "Version",
 		"willDoLater": "Je ferai plus tard",
-		"yes": "Oui"
+		"yes": "Oui",
+		"tryLater": "Veuillez réessayer ultérieurement."
 	},
 	"error": {
 		"header": "Une erreur est survenue",

@@ -2,6 +2,7 @@ import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
+import type { IMintUrl } from '@model'
 import type { TProcessingPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
@@ -13,35 +14,39 @@ import { StyleSheet, View } from 'react-native'
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
-	useEffect(() => {
+	const handleError = (amount: number, mint: IMintUrl) =>
+		navigation.navigate('processingError', { amount, mint, errorMsg: t('requestMintErr', { ns: 'error' }) })
+	const handleProcessing = async () => {
 		const { mint, amount } = route.params
-		void (async () => {
-			try {
-				const resp = await requestMint(mint.mintUrl, amount)
-				const decoded = getDecodedLnInvoice(resp.pr)
-				// immediatly claim and navigate to success page for test-mint
-				if (mint.mintUrl === _testmintUrl) {
-					const { success, invoice } = await requestToken(mint.mintUrl, amount, resp.hash)
-					if (!success) {
-						// l('requestToken failed', success, invoice)
-						return
-					}
-					// add as history entry
-					await addToHistory({
-						amount,
-						type: 2,
-						value: invoice?.pr || '',
-						mints: [mint.mintUrl],
-					})
-					navigation.navigate('success', { amount, mint: mint.mintUrl })
+		try {
+			const resp = await requestMint(mint.mintUrl, amount)
+			const decoded = getDecodedLnInvoice(resp.pr)
+			// immediatly claim and navigate to success page for test-mint
+			if (mint.mintUrl === _testmintUrl) {
+				const { success, invoice } = await requestToken(mint.mintUrl, amount, resp.hash)
+				if (!success) {
+					handleError(amount, mint)
 					return
 				}
-				// navigate to invoice overview screen
+				// add as history entry
+				await addToHistory({
+					amount,
+					type: 2,
+					value: invoice?.pr || '',
+					mints: [mint.mintUrl],
+				})
+				navigation.navigate('success', { amount, mint: mint.mintUrl })
 
-			} catch (e) {
-				// openPromptAutoClose({ msg: isErr(e) ? e.message : t('requestMintErr', { ns: 'error' }) })
 			}
-		})()
+			// navigate to invoice overview screen
+
+		} catch (e) {
+			handleError(amount, mint)
+		}
+	}
+	useEffect(() => {
+		void handleProcessing()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [navigation, route.params])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

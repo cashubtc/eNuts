@@ -152,7 +152,8 @@
 		"unknownType": "Unknown data",
 		"version": "Version",
 		"willDoLater": "Will do later",
-		"yes": "Yes"
+		"yes": "Yes",
+		"tryLater": "Please try again later."
 	},
 	"error": {
 		"header": "An error occured",

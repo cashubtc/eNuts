@@ -1,3 +1,4 @@
+import ProcessingErrorScreen from '@comps/screens/ProcessingError'
 import ProcessingScreen from '@comps/screens/Receive/Processing'
 import SelectMintScreen from '@comps/screens/Receive/SelectMint'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
@@ -63,6 +64,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='selectMint' component={SelectMintScreen} />
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
 				<Stack.Screen name='processing' component={ProcessingScreen} />
+				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				{/*  */}
 				<Stack.Screen name='dashboard' component={Dashboard} />
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
