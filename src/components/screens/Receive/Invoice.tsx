@@ -16,11 +16,11 @@ import { useTranslation } from 'react-i18next'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
-	const { mintUrl, amount, hash, decoded } = route.params
+	const { mintUrl, amount, hash, expiry, paymentRequest } = route.params
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-	const [expiry, setExpiry] = useState(decoded?.expiry ?? 600)
-	const [expiryTime,] = useState(expiry * 1000 + Date.now())
+	const [expire, setExpire] = useState(expiry)
+	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const [copied, setCopied] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()
@@ -35,7 +35,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					await addToHistory({
 						amount: amount,
 						type: 2,
-						value: decoded.paymentRequest,
+						value: paymentRequest,
 						mints: [mintUrl],
 					})
 				}
@@ -58,13 +58,13 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	useEffect(() => {
 		const timeLeft = Math.ceil((expiryTime - Date.now()) / 1000)
 		if (timeLeft < 0) {
-			setExpiry(0)
+			setExpire(0)
 			return
 		}
-		if (expiry && expiry > 0) {
-			setTimeout(() => setExpiry(timeLeft - 1), 1000)
+		if (expire && expire > 0) {
+			setTimeout(() => setExpire(timeLeft - 1), 1000)
 		}
-	}, [expiry, expiryTime])
+	}, [expire, expiryTime])
 	return (
 		<SafeAreaView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
@@ -76,23 +76,23 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>
 					<QR
 						size={275}
-						value={decoded.paymentRequest}
+						value={paymentRequest}
 						onError={() => l('Error while generating the LN QR code')}
 					/>
 				</View>
 				<Text style={[styles.lnAddress, { color: color.TEXT }]}>
-					{decoded.paymentRequest.substring(0, 40) + '...' || t('smthWrong')}
+					{paymentRequest.substring(0, 40) + '...' || t('smthWrong')}
 				</Text>
 			</View>
 			<View>
-				<Text style={[styles.lnExpiry, { color: expiry < 1 ? mainColors.ERROR : hi[highlight], fontSize: 28 }]}>
-					{expiry > 0 ?
-						formatSeconds(expiry)
+				<Text style={[styles.lnExpiry, { color: expire < 1 ? mainColors.ERROR : hi[highlight], fontSize: 28 }]}>
+					{expire > 0 ?
+						formatSeconds(expire)
 						:
 						t('invoiceExpired') + '!'
 					}
 				</Text>
-				{expiry > 0 && !paid &&
+				{expire > 0 && !paid &&
 					<TouchableOpacity onPress={handlePayment}>
 						<Text style={[styles.checkPaymentTxt, { color: hi[highlight] }]}>
 							{t('checkPayment')}
@@ -110,7 +110,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					txt={copied ? t('copied') + '!' : t('copyInvoice')}
 					outlined
 					onPress={() => {
-						void Clipboard.setStringAsync(decoded.paymentRequest).then(() => {
+						void Clipboard.setStringAsync(paymentRequest).then(() => {
 							setCopied(true)
 							const t = setTimeout(() => {
 								setCopied(false)
@@ -124,7 +124,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					txt={t('payWithLn')}
 					onPress={() => {
 						void (async () => {
-							await openUrl(`lightning:${decoded.paymentRequest}`)?.catch(e =>
+							await openUrl(`lightning:${paymentRequest}`)?.catch(e =>
 								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 						})()
 					}}
