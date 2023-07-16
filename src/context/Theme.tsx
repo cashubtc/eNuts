@@ -34,8 +34,7 @@ export const ThemeContext = createContext<useThemeType>({
 		TEXT_SECONDARY: '#BDBDBD',
 		INPUT_BG: '#F6F6F6',
 		INPUT_PH: '#656565',
-		BORDER: '#E8E8E8',
-		ERROR: '#FF6666'
+		BORDER: '#E8E8E8'
 	},
 	highlight: '#5DB075',
 	setHighlight: () => l('')

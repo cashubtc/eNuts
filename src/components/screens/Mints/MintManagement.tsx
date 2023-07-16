@@ -4,7 +4,7 @@ import { BackupIcon, CheckmarkIcon, CopyIcon, EyeIcon, InfoIcon, MintBoardIcon, 
 import LNInvoiceAmountModal from '@comps/InvoiceAmount'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
-import { _mintUrl } from '@consts'
+import { _testmintUrl } from '@consts'
 import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
 import { getBackUpTokenForMint } from '@db/backup'
 import { l } from '@log'
@@ -69,7 +69,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	}
 
 	const handleMintSwap = async () => {
-		const mints = (await getMintsUrls(true)).filter(m => m.mintUrl !== route.params.mint?.mintUrl && m.mintUrl !== _mintUrl)
+		const mints = (await getMintsUrls(true)).filter(m => m.mintUrl !== route.params.mint?.mintUrl && m.mintUrl !== _testmintUrl)
 		const mintsWithCustomNames = await getCustomMintNames(mints)
 		// needs at least 1 mint after filtering out the current swap-out mint and test mint
 		if (!mints.length) {
@@ -78,7 +78,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			return
 		}
 		// cant swap out from a test mint
-		if (route.params.mint?.mintUrl === _mintUrl) {
+		if (route.params.mint?.mintUrl === _testmintUrl) {
 			openPromptAutoClose({ msg: t('swapNotAllowed', { ns: 'mints' }) })
 			return
 		}

@@ -4,7 +4,7 @@ import { MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
-import { _mintUrl, defaultMints } from '@consts'
+import { _testmintUrl, defaultMints } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -202,7 +202,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				</TouchableOpacity>
 			</MyModal>
 			<QuestionModal
-				header={selectedMint?.mintUrl === _mintUrl ?
+				header={selectedMint?.mintUrl === _testmintUrl ?
 					t('testMintHint', { ns: 'mints' })
 					:
 					t('trustMintSure', { ns: 'mints' })

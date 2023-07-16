@@ -2,5 +2,3 @@ export { env, isExpo, isExpoDev, isExpoProd, isIOS, isReactNativeDevMode, isTest
 export { _testmintUrl, defaultMints } from './mints'
 export { qrCodeLimits,QRType } from './qr'
 export { DayInMs, HourInMs, MinuteInMs, MonthInMs, SecondInMs, WeekInMs, YearInMs } from './time'
-
-
