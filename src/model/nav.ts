@@ -14,6 +14,10 @@ export type RootStackParamList = {
 		mint: IMintUrl
 		balance?: number
 	}
+	processing: {
+		mint: IMintUrl
+		amount: number
+	}
 	//
 	dashboard: undefined
 	disclaimer: undefined
@@ -30,6 +34,7 @@ export type RootStackParamList = {
 	success: {
 		amount?: number
 		fee?: number
+		mint?: string
 		mints?: string[]
 		memo?: string
 	}
@@ -90,6 +95,7 @@ export type TRouteString = 'dashboard' | 'lightning' | 'mints' | 'history' | 'Ad
 // new UX
 export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
+export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>
 
 //
 export type TDashboardPageProps = NativeStackScreenProps<RootStackParamList, 'dashboard', 'MyStack'>

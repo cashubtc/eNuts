@@ -13,6 +13,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				amount={route.params.amount || 0}
 				memo={route.params.memo}
 				fee={route.params.fee}
+				mint={route.params.mint}
 				mints={route.params.mints}
 				nav={navigation}
 			/>

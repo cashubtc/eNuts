@@ -1,17 +1,11 @@
 import Button from '@comps/Button'
-import { _mintUrl } from '@consts'
-import { l } from '@log'
 import type { RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { addToHistory } from '@store/HistoryStore'
 import { formatInt, formatMintUrl, isNum, vib } from '@util'
-import { requestToken } from '@wallet'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Image, StyleSheet, Text, View } from 'react-native'
-
-import Loading from './Loading'
 
 interface ISuccessProps {
 	amount: number
@@ -26,29 +20,7 @@ interface ISuccessProps {
 export default function Success({ amount, fee, mints, mint, memo, nav, hash }: ISuccessProps) {
 	const { t } = useTranslation(['common'])
 	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
-	const [testMintTokenRdy, setTestMintTokenRdy] = useState(false)
-	// Only for the hard-coded test mint. Otherwise this is done for other mints before landing in this page
-	useEffect(() => {
-		vib(400)
-		if (hash && mint === _mintUrl) {
-			// only for test mint
-			void (async () => {
-				const { success, invoice } = await requestToken(mint, amount, hash)
-				if (!success) {
-					l('requestToken failed', success, invoice)
-					return
-				}
-				// add as history entry
-				await addToHistory({
-					amount,
-					type: 2,
-					value: invoice?.pr || '',
-					mints: [mint],
-				})
-				setTestMintTokenRdy(true)
-			})()
-		}
-	}, [amount, hash, mint])
+	useEffect(() => vib(400), [hash])
 	return (
 		<>
 			<View style={styles.imgWrap}>
@@ -81,16 +53,11 @@ export default function Success({ amount, fee, mints, mint, memo, nav, hash }: I
 					</Text>
 				}
 			</View>
+			{/* TODO replace with action btns component */}
 			<View style={styles.btnWrap}>
-				{(testMintTokenRdy || mint !== _mintUrl) ?
-					<>
-						<Button border txt={t('manageMints')} onPress={() => nav ? nav.navigate('mints') : navigation.navigate('mints')} />
-						<View style={{ marginBottom: 20 }} />
-						<Button filled txt={t('backToDashboard')} onPress={() => nav ? nav.navigate('dashboard') : navigation.navigate('dashboard')} />
-					</>
-					:
-					<Loading size='large' white />
-				}
+				<Button border txt={t('manageMints')} onPress={() => nav ? nav.navigate('mints') : navigation.navigate('mints')} />
+				<View style={{ marginBottom: 20 }} />
+				<Button filled txt={t('backToDashboard')} onPress={() => nav ? nav.navigate('dashboard') : navigation.navigate('dashboard')} />
 			</View>
 		</>
 	)

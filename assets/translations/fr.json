@@ -228,7 +228,9 @@
 		"trustMintSure": "Êtes-vous sûr de vouloir faire confiance à cette mint?",
 		"updatedDefault": "Modifications enregistrées",
 		"invoiceAmountHint": "Veuillez sélectionner le montant d'Ecash que vous souhaitez recevoir. La mint produira ensuite une facture que vous devrez régler à l'aide d'un portefeuille Lightning.",
-		"chooseMintHint": "Veuillez choisir une mint auprès de laquelle vous souhaitez recevoir de l'Ecash. La mint devient dépositaire de vos fonds."
+		"chooseMintHint": "Veuillez choisir une mint auprès de laquelle vous souhaitez recevoir de l'Ecash. La mint devient dépositaire de vos fonds.",
+		"awaitingInvoice": "En attente de facture",
+		"invoiceHint": "Cela peut prendre quelques secondes..."
 	},
 	"topNav": {
 		"about": "À propos de nous",

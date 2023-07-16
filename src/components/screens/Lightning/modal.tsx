@@ -7,7 +7,7 @@ import Separator from '@comps/Separator'
 import Success from '@comps/Success'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
-import { _mintUrl } from '@consts'
+import { _testmintUrl } from '@consts'
 import { l } from '@log'
 import MyModal from '@modal'
 import type { IMintUrl, IProofSelection } from '@model'
@@ -97,10 +97,10 @@ export function InvoiceModal({ visible, invoice, mintUrl, close }: IInvoiceModal
 			type='invoiceAmount'
 			animation='fade'
 			visible={visible}
-			success={paid === 'paid' || mintUrl === _mintUrl}
+			success={paid === 'paid' || mintUrl === _testmintUrl}
 			close={close}
 		>
-			{invoice.decoded && mintUrl !== _mintUrl && (!paid || paid === 'unpaid') ?
+			{invoice.decoded && mintUrl !== _testmintUrl && (!paid || paid === 'unpaid') ?
 				<View style={styles.container}>
 					<View style={styles.invoiceWrap}>
 						<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>

@@ -1,16 +1,12 @@
-import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import { useShakeAnimation } from '@comps/animation/Shake'
 import Button from '@comps/Button'
-import usePrompt from '@comps/hooks/Prompt'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSelectAmountPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
-import { cleanUpNumericStr, isErr, vib } from '@util'
-import { requestMint } from '@wallet'
+import { cleanUpNumericStr, vib } from '@util'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, View } from 'react-native'
@@ -23,7 +19,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	const { color, highlight } = useContext(ThemeContext)
 	const { anim, shake } = useShakeAnimation()
 	const inputRef = createRef<TextInput>()
-	const { prompt, openPromptAutoClose } = usePrompt()
 	const [amount, setAmount] = useState('')
 	// invoice amount too low
 	const [err, setErr] = useState(false)
@@ -40,16 +35,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			}, 500)
 			return
 		}
-		// TODO navigate to loading page where requestMint API is called and handled
-		void (async () => {
-			try {
-				const resp = await requestMint(mint.mintUrl, +amount)
-				// resp: {pr, hash}
-				const decoded = getDecodedLnInvoice(resp.pr)
-			} catch (e) {
-				openPromptAutoClose({ msg: isErr(e) ? e.message : t('requestMintErr', { ns: 'error' }) })
-			}
-		})()
+		navigation.navigate('processing', { mint, amount: +amount })
 	}
 	// auto-focus numeric keyboard
 	useEffect(() => {
@@ -86,7 +72,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					onPress={handleAmountSubmit}
 				/>
 			</KeyboardAvoidingView>
-			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View>
 	)
 }
