@@ -10,7 +10,6 @@ import { l } from '@log'
 import type { IProofSelection } from '@model'
 import type { TPayLNInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import AddressbookModal from '@screens/Addressbook/modal'
 import { CoinSelectionModal, CoinSelectionResume } from '@screens/Lightning/modal'
 import { isIOS } from '@src/consts'
 import { useKeyboard } from '@src/context/Keyboard'
@@ -21,7 +20,7 @@ import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, formatInt, formatMintUrl, formatSeconds, getInvoiceFromLnurl, getSelectedAmount, isErr, isLnurl, openUrl } from '@util'
 import { checkFees, payLnInvoice } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -43,11 +42,8 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
 	const [isEnabled, setIsEnabled] = useState(false)
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
-	// address book page
-	const [showAddressBook, setShowAddressBook] = useState(false)
 	// LN input
 	const [input, setInput] = useState('')
-	const setInputCB = useCallback((val: string) => setInput(val), [])
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// LN payment
@@ -348,17 +344,6 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 			}
 			{/* Bottom section */}
 			<KeyboardAvoidingView style={styles.action} behavior={isIOS ? 'height' : undefined}>
-				{/* Open LNURL address book */}
-				{invoiceAmount === 0 &&
-					<TouchableOpacity
-						style={styles.addrBookBtnWrap}
-						onPress={() => setShowAddressBook(true)}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							Address book
-						</Text>
-					</TouchableOpacity>
-				}
 				{/* LN invoice / LNURL Input field */}
 				<View style={{ position: 'relative' }}>
 					<TextInput
@@ -407,13 +392,6 @@ export default function PayInvoicePage({ navigation, route }: TPayLNInvoicePageP
 					/>
 				}
 			</KeyboardAvoidingView>
-			{/* address book */}
-			{showAddressBook &&
-				<AddressbookModal
-					closeModal={() => setShowAddressBook(false)}
-					setInput={setInputCB}
-				/>
-			}
 			{/* coin selection page */}
 			{isEnabled &&
 				<CoinSelectionModal

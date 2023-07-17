@@ -154,7 +154,10 @@
 		"version": "Version",
 		"willDoLater": "Will do later",
 		"yes": "Yes",
-		"tryLater": "Please try again later."
+		"tryLater": "Please try again later.",
+		"estimateFee": "Estimate fee",
+		"balTooLow": "Balance too low",
+		"totalInclFee": "Total incl. fee:"
 	},
 	"error": {
 		"header": "An error occured",
@@ -229,10 +232,11 @@
 		"testMintHint": "This is a test mint to play around with. Add it anyway?",
 		"trustMintSure": "Are you sure that you want to trust this mint?",
 		"updatedDefault": "Updated the default mint",
-		"invoiceAmountHint": "Please select the amount of Ecash you would like to receive. The mint will then create an invoice which you will have to pay using a Lightning wallet.",
-		"chooseMintHint": "Please choose a mint from which you would like to receive Ecash. The mint becomes custodian of your funds.",
-		"chooseMeltMintHint": "Please choose a mint from which you would like to cash out your funds. The mint will pay your Lightning invoice if you have the corresponding amount of Ecash.",
-		"chooseTarget": "Please choose the receiver of the payment.",
+		"invoiceAmountHint": "Select the amount of Ecash you would like to receive. The mint will then create an invoice which you will have to pay using a Lightning wallet.",
+		"cashOutAmountHint": "Select the amount. Note that we need to estimate Lightning fees and add them to your amount. The overpaid fees will be refunded to you.",
+		"chooseMintHint": "Choose a mint from which you would like to receive Ecash. The mint becomes custodian of your funds.",
+		"chooseMeltMintHint": "Choose a mint from which you would like to cash out your funds.",
+		"chooseTarget": "Choose the receiver of the payment.",
 		"awaitingInvoice": "Awaiting invoice",
 		"invoiceHint": "This can take a few seconds...",
 		"meltAddressbookHint": "Choose your own LNURL or any other contact as a payment receiver.",

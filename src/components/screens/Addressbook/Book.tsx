@@ -18,12 +18,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface IAddressBookProps {
 	nav?: TAddressBookPageProps
-	isModal?: boolean,
-	closeModal?: () => void
-	setInput?: (val: string) => void
 }
 
-export default function AddressBook({ nav, isModal, closeModal, setInput }: IAddressBookProps) {
+export default function AddressBook({ nav }: IAddressBookProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const insets = useSafeAreaInsets()
@@ -66,29 +63,17 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 		openPromptAutoClose({ msg: t('addedContact', { ns: 'addrBook' }), success: true })
 		setOpenNew({ open: false, isOwner: false })
 	}
+	const handleMelt = (lnurl: string) => {
+		if (!nav?.route.params) { return }
+		const { isMelt, mint, balance } = nav.route.params
+		nav.navigation.navigate('selectAmount', { isMelt, lnurl, mint, balance })
+	}
 	return (
 		<>
 			{/* Header */}
-			{isModal ?
-				<View style={styles.modalHeader}>
-					<View>
-						<Txt txt={t('addressBook', { ns: 'topNav' })} styles={[globals(color).navTxt, styles.header]} />
-						<ContactsCount count={contacts.length} />
-					</View>
-					{/* cancel modal / go back to payment page */}
-					<TouchableOpacity
-						onPress={() => closeModal?.()}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							{t('cancel')}
-						</Text>
-					</TouchableOpacity>
-				</View>
-				:
-				<View style={styles.bookHeader}>
-					<ContactsCount count={contacts.length} />
-				</View>
-			}
+			<View style={styles.bookHeader}>
+				<ContactsCount count={contacts.length} />
+			</View>
 			{/* Address list */}
 			<ScrollView
 				style={[styles.scroll, { marginTop: contacts.length > 0 ? 0 : -40 }]}
@@ -105,9 +90,8 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 							onPress={() => {
 								const personalInfo = getPersonalInfo()
 								if (!personalInfo) { return }
-								if (isModal) {
-									setInput?.(personalInfo.ln)
-									closeModal?.()
+								if (nav?.route.params?.isMelt) {
+									handleMelt(personalInfo.ln)
 									return
 								}
 								nav?.navigation.navigate('Contact', { contact: personalInfo })
@@ -149,9 +133,8 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 									<TouchableOpacity
 										style={styles.nameEntry}
 										onPress={() => {
-											if (isModal) {
-												setInput?.(c.ln)
-												closeModal?.()
+											if (nav?.route.params?.isMelt) {
+												handleMelt(c.ln)
 												return
 											}
 											nav?.navigation.navigate('Contact', {
@@ -169,18 +152,16 @@ export default function AddressBook({ nav, isModal, closeModal, setInput }: IAdd
 				}
 			</ScrollView>
 			{/* Add new contact button */}
-			{!isModal &&
-				<View style={[styles.newContactBtn, { marginBottom: insets.bottom }]}>
-					<IconBtn
-						icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
-						onPress={() => {
-							closePrompt()
-							setOpenNew({ open: true, isOwner: false })
-						}}
-						testId='testNewContact'
-					/>
-				</View>
-			}
+			<View style={[styles.newContactBtn, { marginBottom: insets.bottom }]}>
+				<IconBtn
+					icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
+					onPress={() => {
+						closePrompt()
+						setOpenNew({ open: true, isOwner: false })
+					}}
+					testId='testNewContact'
+				/>
+			</View>
 			{/* Add new contact modal */}
 			<MyModal
 				type='bottom'

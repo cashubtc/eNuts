@@ -13,9 +13,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t('addressBook')} nav={{ navigation, route }} />
+			<TopNav
+				screenName={route.params?.isMelt ? t('cashOut', { ns: 'common' }) : t('addressBook')}
+				nav={{ navigation, route }}
+				withBackBtn={route.params?.isMelt}
+			/>
 			<AddressBook nav={{ navigation, route }} />
-			<BottomNav navigation={navigation} route={route} />
+			{!route.params?.isMelt && <BottomNav navigation={navigation} route={route} />}
 		</View>
 	)
 }

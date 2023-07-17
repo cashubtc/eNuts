@@ -4,12 +4,13 @@ import Txt from '@comps/Txt'
 import type { TSelectTargetPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { isNum } from '@src/util'
 import { globals } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
-export default function SelectTargetScreen({ route }: TSelectTargetPageProps) {
+export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
 	return (
@@ -21,7 +22,12 @@ export default function SelectTargetScreen({ route }: TSelectTargetPageProps) {
 					txt={t('addressBook', { ns: 'topNav' })}
 					hint={t('meltAddressbookHint')}
 					onPress={() => {
-						//
+						const { mint, balance } = route.params
+						navigation.navigate('Address book', {
+							isMelt: true,
+							mint,
+							balance: isNum(balance) ? balance : 0
+						})
 					}}
 					hasSeparator
 				/>

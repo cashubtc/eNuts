@@ -154,7 +154,10 @@
 		"version": "Version",
 		"willDoLater": "Mache ich später",
 		"yes": "Ja",
-		"tryLater": "Bitte versuchen Sie es später noch einmal."
+		"tryLater": "Bitte versuchen Sie es später noch einmal.",
+		"estimateFee": "Gebühren schätzen",
+		"balTooLow": "Nicht genug Guthaben",
+		"totalInclFee": "Gesamt inkl. Gebühr:"
 	},
 	"error": {
 		"header": "Ein Fehler ist aufgetreten",
@@ -229,10 +232,11 @@
 		"testMintHint": "Dies ist eine Test-Mint für Simulationszwecke. Trotzdem hinzufügen?",
 		"trustMintSure": "Sind Sie sicher, dass Sie dieser Mint vertrauen möchten?",
 		"updatedDefault": "Änderungen gespeichert",
-		"invoiceAmountHint": "Bitte wählen Sie den Betrag an Ecash aus, den Sie erhalten möchten. Die Mint wird dann eine Rechnung erstellen, die Sie mit einer Lightning-Wallet bezahlen müssen.",
-		"chooseMintHint": "Bitte wählen Sie eine Mint aus, von der Sie Ecash erhalten möchten. Die Mint wird zum Verwalter Ihrer Gelder.",
-		"chooseMeltMintHint": "Bitte wählen Sie eine Mint aus, von der aus Sie Ihre Gelder abheben möchten. Die Mint wird Ihre Lightning-Rechnung begleichen, sofern Sie den entsprechenden Betrag an Ecash besitzen.",
-		"chooseTarget": "Bitte wählen Sie den Empfänger der Zahlung aus.",
+		"invoiceAmountHint": "Wählen Sie den Betrag an Ecash aus, den Sie erhalten möchten. Die Mint wird dann eine Rechnung erstellen, die Sie mit einer Lightning-Wallet bezahlen müssen.",
+		"cashOutAmountHint": "Wählen Sie den Betrag aus. Beachten Sie, dass wir Lightning Gebühren schätzen müssen und auf Ihren Betrag drauf rechnen. Die zu viel bezahlten Gebühren werden Ihnen zurückerstattet.",
+		"chooseMintHint": "Wählen Sie eine Mint aus, von der Sie Ecash erhalten möchten. Die Mint wird zum Verwalter Ihrer Gelder.",
+		"chooseMeltMintHint": "Wählen Sie eine Mint aus, von der aus Sie Ihre Gelder abheben möchten.",
+		"chooseTarget": "Wählen Sie den Empfänger der Zahlung aus.",
 		"awaitingInvoice": "Rechnung ausstehend.",
 		"invoiceHint": "Das kann einige Sekunden dauern...",
 		"meltAddressbookHint": "Wählen Sie Ihre eigene LNURL oder einen anderen Kontakt als Zahlungsempfänger aus.",

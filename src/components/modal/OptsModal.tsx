@@ -49,8 +49,6 @@ export default function OptsModal({
 
 const styles = StyleSheet.create({
 	no: {
-		fontSize: 16,
-		fontWeight: '500',
 		marginTop: 15,
 		padding: 10,
 	},

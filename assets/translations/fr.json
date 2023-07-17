@@ -154,7 +154,10 @@
 		"version": "Version",
 		"willDoLater": "Je ferai plus tard",
 		"yes": "Oui",
-		"tryLater": "Veuillez réessayer ultérieurement."
+		"tryLater": "Veuillez réessayer ultérieurement.",
+		"estimateFee": "Estimer les frais.",
+		"balTooLow": "Solde insuffisant",
+		"totalInclFee": "Total incl. frais:"
 	},
 	"error": {
 		"header": "Une erreur est survenue",
@@ -230,8 +233,9 @@
 		"trustMintSure": "Êtes-vous sûr de vouloir faire confiance à cette mint?",
 		"updatedDefault": "Modifications enregistrées",
 		"invoiceAmountHint": "Veuillez sélectionner le montant d'Ecash que vous souhaitez recevoir. La mint produira ensuite une facture que vous devrez régler à l'aide d'un portefeuille Lightning.",
+		"cashOutAmountHint": "Veuillez sélectionner le montant. Veuillez noter que nous devons estimer les frais Lightning et les ajouter à votre montant. Les frais surpayés vous seront remboursés.",
 		"chooseMintHint": "Veuillez choisir une mint auprès de laquelle vous souhaitez recevoir de l'Ecash. La mint devient dépositaire de vos fonds.",
-		"chooseMeltMintHint": "Veuillez choisir une mint à partir de laquelle vous souhaitez retirer vos fonds. La mint paiera votre facture Lightning si vous disposez du montant correspondant en Ecash.",
+		"chooseMeltMintHint": "Veuillez choisir une mint à partir de laquelle vous souhaitez retirer vos fonds.",
 		"chooseTarget": "Veuillez choisir le destinataire du paiement.",
 		"awaitingInvoice": "En attente de facture",
 		"invoiceHint": "Cela peut prendre quelques secondes...",

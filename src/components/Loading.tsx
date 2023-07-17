@@ -4,11 +4,11 @@ import { useContext } from 'react'
 import { ActivityIndicator } from 'react-native'
 
 interface ILoadingProps {
-	white?: boolean
+	color?: string
 	size?: number | 'small' | 'large'
 }
 
-export default function Loading({ white, size }: ILoadingProps) {
+export default function Loading({ color, size }: ILoadingProps) {
 	const { highlight } = useContext(ThemeContext)
-	return <ActivityIndicator size={size} color={white ? '#FAFAFA' : hi[highlight]} />
+	return <ActivityIndicator size={size} color={color || hi[highlight]} />
 }

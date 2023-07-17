@@ -40,7 +40,7 @@ export default function Button({ txt, border, outlined, filled, disabled, loadin
 				]}>
 					{txt}
 				</Text>
-				{loading && <Loading white />}
+				{loading && <Loading color='#FAFAFA' />}
 			</TouchableOpacity>
 		</SafeAreaView>
 	)

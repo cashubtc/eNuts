@@ -19,7 +19,9 @@ export type RootStackParamList = {
 	}
 	selectAmount: {
 		mint: IMintUrl
+		isMelt?: boolean
 		balance?: number
+		lnurl?: string
 	}
 	processing: {
 		mint: IMintUrl
@@ -104,7 +106,11 @@ export type RootStackParamList = {
 	BackupPage: {
 		token: string
 	}
-	'Address book': undefined
+	'Address book': {
+		isMelt: boolean
+		mint: IMintUrl
+		balance: number
+	} | undefined
 	Contact: {
 		contact?: IContact
 	}
