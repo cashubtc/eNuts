@@ -17,6 +17,9 @@ export type RootStackParamList = {
 		mint: IMintUrl
 		balance?: number
 	}
+	meltInputfield: {
+		mint: IMintUrl
+	}
 	selectAmount: {
 		mint: IMintUrl
 		isMelt?: boolean
@@ -130,6 +133,7 @@ export type TRouteString = 'dashboard' | 'lightning' | 'mints' | 'history' | 'Ad
 // new UX
 export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectTargetPageProps = NativeStackScreenProps<RootStackParamList, 'selectTarget', 'MyStack'>
+export type TMeltInputfieldPageProps = NativeStackScreenProps<RootStackParamList, 'meltInputfield', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
 export type TCoinSelectionPageProps = NativeStackScreenProps<RootStackParamList, 'coinSelection', 'MyStack'>
 export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>

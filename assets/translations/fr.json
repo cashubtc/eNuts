@@ -243,7 +243,7 @@
 		"invoiceHint": "Cela peut prendre quelques secondes...",
 		"meltAddressbookHint": "Sélectionnez votre propre LNURL ou tout autre contact comme destinataire du paiement.",
 		"inputField": "Zone de saisie",
-		"meltInputHint": "Collez une facture Lightning dans une zone de saisie ou saisissez un LNURL valide.",
+		"meltInputHint": "Créez & insérez une facture Lightning dans une zone de saisie ou saisissez une LNURL valide.",
 		"scanQR": "Scanner un code QR",
 		"meltScanQRHint": "Créez une facture Lightning avec un autre appareil et scannez-la simplement.",
 		"intermintSwap": "Inter-mint échange.",

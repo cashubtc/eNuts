@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
+	const { mint, balance } = route.params
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
 	return (
@@ -22,7 +23,6 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					txt={t('addressBook', { ns: 'topNav' })}
 					hint={t('meltAddressbookHint')}
 					onPress={() => {
-						const { mint, balance } = route.params
 						navigation.navigate('Address book', {
 							isMelt: true,
 							mint,
@@ -34,9 +34,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 				<Target
 					txt={t('inputField')}
 					hint={t('meltInputHint')}
-					onPress={() => {
-						//
-					}}
+					onPress={() => navigation.navigate('meltInputfield', { mint })}
 					hasSeparator
 				/>
 				<Target

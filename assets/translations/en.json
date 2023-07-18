@@ -243,7 +243,7 @@
 		"invoiceHint": "This can take a few seconds...",
 		"meltAddressbookHint": "Choose your own LNURL or any other contact as a payment receiver.",
 		"inputField": "Input field",
-		"meltInputHint": "Paste a Lightning invoice into an input field or type in a valid LNURL.",
+		"meltInputHint": "Create & paste a Lightning invoice into an input field or type in a valid LNURL.",
 		"scanQR": "Scan a QR code",
 		"meltScanQRHint": "Create a Lightning invoice with another device and simply scan it.",
 		"intermintSwap": "Inter-mint swap",

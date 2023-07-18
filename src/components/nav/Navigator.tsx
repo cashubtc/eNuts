@@ -23,7 +23,8 @@ import InvoiceScreen from '@screens/Payment/Receive/Invoice'
 import SelectAmountScreen from '@screens/Payment/SelectAmount'
 import SelectMintScreen from '@screens/Payment/SelectMint'
 import CoinSelectionScreen from '@screens/Payment/Send/CoinSelection'
-import SelectTargetScreen from '@screens/Payment/Send/selectTarget'
+import InputfieldScreen from '@screens/Payment/Send/Inputfield'
+import SelectTargetScreen from '@screens/Payment/Send/SelectTarget'
 import SuccessPage from '@screens/Payment/Success'
 import QRScanPage from '@screens/QRScan'
 import SendTokenPage from '@screens/Send'
@@ -66,6 +67,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				{/* new UX */}
 				<Stack.Screen name='selectMint' component={SelectMintScreen} />
 				<Stack.Screen name='selectTarget' component={SelectTargetScreen} />
+				<Stack.Screen name='meltInputfield' component={InputfieldScreen} />
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
 				<Stack.Screen name='coinSelection' component={CoinSelectionScreen} />
 				<Stack.Screen name='processing' component={ProcessingScreen} />

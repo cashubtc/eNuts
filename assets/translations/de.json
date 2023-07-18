@@ -243,7 +243,7 @@
 		"invoiceHint": "Das kann einige Sekunden dauern...",
 		"meltAddressbookHint": "Wählen Sie Ihre eigene LNURL oder einen anderen Kontakt als Zahlungsempfänger aus.",
 		"inputField": "Eingabefeld",
-		"meltInputHint": "Fügen Sie eine Lightning-Rechnung in ein Eingabefeld ein oder geben Sie eine gültige LNURL ein.",
+		"meltInputHint": "Erstellen & fügen Sie eine Lightning-Rechnung in ein Eingabefeld ein oder geben Sie eine gültige LNURL ein.",
 		"scanQR": "QR-Code scannen",
 		"meltScanQRHint": "Erstellen Sie eine Lightning-Rechnung mit einem anderen Gerät und scannen Sie sie einfach.",
 		"intermintSwap": "Inter-mint Tausch",
