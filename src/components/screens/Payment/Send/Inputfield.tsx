@@ -1,5 +1,6 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import type { TMeltInputfieldPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -25,7 +26,7 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 			return
 		}
 		const clipboard = await Clipboard.getStringAsync()
-		if (!clipboard || clipboard === 'null') {  }
+		if (!clipboard || clipboard === 'null') {}
 		// TODO check if is lnurl and navigate accordingly
 	}
 	const openLNWallet = async () => {
@@ -73,6 +74,7 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 					onPress={() => void openLNWallet()}
 				/>
 			</View>
+			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View>
 	)
 }
