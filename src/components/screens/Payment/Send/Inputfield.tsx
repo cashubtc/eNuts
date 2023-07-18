@@ -1,10 +1,12 @@
 import Button from '@comps/Button'
+import usePrompt from '@comps/hooks/Prompt'
 import Txt from '@comps/Txt'
-import { TMeltInputfieldPageProps } from '@model/nav'
+import type { TMeltInputfieldPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
+import { isErr, openUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,14 +18,19 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	const [input, setInput] = useState('')
 	const inputRef = createRef<TextInput>()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const handleInput = async () => {
 		if (input.length > 0) {
 			setInput('')
 			return
 		}
 		const clipboard = await Clipboard.getStringAsync()
-		if (!clipboard || clipboard === 'null') { return }
+		if (!clipboard || clipboard === 'null') {  }
 		// TODO check if is lnurl and navigate accordingly
+	}
+	const openLNWallet = async () => {
+		await openUrl('lightning://')?.catch(e =>
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 	}
 	// auto-focus keyboard
 	useEffect(() => {
@@ -63,9 +70,7 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 				<Button
 					outlined
 					txt='create via wallet'
-					onPress={() => {
-						//
-					}}
+					onPress={() => void openLNWallet()}
 				/>
 			</View>
 		</View>
