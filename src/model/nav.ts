@@ -12,7 +12,7 @@ export type RootStackParamList = {
 	selectMint: {
 		isMelt?: boolean
 		balance?: number
-	} | undefined ,
+	} | undefined,
 	selectTarget: {
 		mint: IMintUrl
 		balance?: number
