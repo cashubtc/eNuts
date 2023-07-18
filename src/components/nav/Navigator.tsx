@@ -17,21 +17,22 @@ import IntermintSwap from '@screens/Mints/IntermintSwap'
 import MintBackup from '@screens/Mints/MintBackup'
 import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
-import ProcessingErrorScreen from '@screens/ProcessingError'
+import ProcessingScreen from '@screens/Payment/Processing'
+import ProcessingErrorScreen from '@screens/Payment/ProcessingError'
+import InvoiceScreen from '@screens/Payment/Receive/Invoice'
+import SelectAmountScreen from '@screens/Payment/SelectAmount'
+import SelectMintScreen from '@screens/Payment/SelectMint'
+import CoinSelectionScreen from '@screens/Payment/Send/CoinSelection'
+import SelectTargetScreen from '@screens/Payment/Send/selectTarget'
+import SuccessPage from '@screens/Payment/Success'
 import QRScanPage from '@screens/QRScan'
-import InvoiceScreen from '@screens/Receive/Invoice'
-import ProcessingScreen from '@screens/Receive/Processing'
-import SelectAmountScreen from '@screens/Receive/SelectAmount'
-import SelectMintScreen from '@screens/Receive/SelectMint'
 import SendTokenPage from '@screens/Send'
-import SelectTargetScreen from '@screens/Send/PayInvoice/selectTarget'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
 import BackupPage from '@screens/Settings/Backup'
 import DisplaySettings from '@screens/Settings/Display'
 import LanguageSettings from '@screens/Settings/Language'
 import SecuritySettings from '@screens/Settings/Security'
-import SuccessPage from '@screens/Success'
 import { ThemeContext } from '@src/context/Theme'
 import { useContext, useEffect } from 'react'
 import { View } from 'react-native'
@@ -66,6 +67,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='selectMint' component={SelectMintScreen} />
 				<Stack.Screen name='selectTarget' component={SelectTargetScreen} />
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
+				<Stack.Screen name='coinSelection' component={CoinSelectionScreen} />
 				<Stack.Screen name='processing' component={ProcessingScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />

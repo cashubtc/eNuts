@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import type { IContact } from '@src/context/Contacts'
 
-import type { IHistoryEntry, IMintUrl } from '.'
+import type { IHistoryEntry, IMintUrl, IProofSelection } from '.'
 
 /**
  * Stack Navigator
@@ -23,9 +23,19 @@ export type RootStackParamList = {
 		balance?: number
 		lnurl?: string
 	}
+	coinSelection: {
+		mint: IMintUrl
+		amount: number
+		estFee: number
+		isMelt?: boolean
+		recipient: string
+	}
 	processing: {
 		mint: IMintUrl
 		amount: number
+		isMelt?: boolean
+		proofs?: IProofSelection[]
+		recipient?: string
 	}
 	processingError: {
 		mint: IMintUrl
@@ -121,6 +131,7 @@ export type TRouteString = 'dashboard' | 'lightning' | 'mints' | 'history' | 'Ad
 export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectTargetPageProps = NativeStackScreenProps<RootStackParamList, 'selectTarget', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
+export type TCoinSelectionPageProps = NativeStackScreenProps<RootStackParamList, 'coinSelection', 'MyStack'>
 export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>
 export type TProcessingErrorPageProps = NativeStackScreenProps<RootStackParamList, 'processingError', 'MyStack'>
 export type TMintInvoicePageProps = NativeStackScreenProps<RootStackParamList, 'mintInvoice', 'MyStack'>

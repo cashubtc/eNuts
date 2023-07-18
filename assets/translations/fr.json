@@ -157,7 +157,8 @@
 		"tryLater": "Veuillez réessayer ultérieurement.",
 		"estimateFee": "Estimer les frais.",
 		"balTooLow": "Solde insuffisant",
-		"totalInclFee": "Total incl. frais:"
+		"totalInclFee": "Total incl. frais:",
+		"submitPaymentReq": "Envoyer demande de paiement"
 	},
 	"error": {
 		"header": "Une erreur est survenue",
@@ -167,7 +168,8 @@
 		"requestMintErr": "Erreur lors de la demande de la facture à partir de mint.",
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",
 		"claimTokenErr": "Erreur lors de la réclamation du token",
-		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint"
+		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",
+		"meltingErr": "Une erreur s'est produite lors du paiement."
 	},
 	"history": {
 		"checkSpent": "Vérifier si le jeton a été dépensé",
@@ -245,7 +247,9 @@
 		"scanQR": "Scanner un code QR",
 		"meltScanQRHint": "Créez une facture Lightning avec un autre appareil et scannez-la simplement.",
 		"intermintSwap": "Inter-mint échange.",
-		"meltSwapHint": "Sélectionnez une autre mint de votre liste de confiance comme destinataire du paiement."
+		"meltSwapHint": "Sélectionnez une autre mint de votre liste de confiance comme destinataire du paiement.",
+		"coinSelectionHint": "Votre solde Ecash est essentiellement une collection d'ensembles de Coins. La sélection de Coins vous permet de choisir l'ensemble de Coins que vous souhaitez dépenser. Les ensembles de Coins se voient attribuer des clés identifiant par la mint, qui peut changer avec le temps. Les nouveaux ensembles sont mis en évidence en vert. Il est conseillé de dépenser les anciens ensembles en premier.",
+		"processingPaymentByMint": "La mint traite le paiement selon votre demande"
 	},
 	"topNav": {
 		"about": "À propos de nous",

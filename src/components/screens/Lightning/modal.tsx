@@ -9,7 +9,7 @@ import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { getSelectedAmount } from '@util'
-import { getMintCurrentKeySetId,  } from '@wallet'
+import { getMintCurrentKeySetId, } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -134,17 +134,49 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee 
 	}
 	return (
 		<>
-			<View style={[styles.overview, {paddingHorizontal: padding ? 20 : 0}]}>
+			<View style={[styles.overview, { paddingHorizontal: padding ? 20 : 0 }]}>
 				<Txt txt={t('selected')} />
 				<Text style={globals(color).txt}>
 					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? mainColors.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
 				</Text>
 			</View>
 			{selectedAmount > lnAmount &&
-				<View style={[styles.overview, {paddingHorizontal: padding ? 20 : 0}]}>
+				<View style={[styles.overview, { paddingHorizontal: padding ? 20 : 0 }]}>
 					<Txt txt={t('change')} />
 					<Txt txt={getChangeStr()} />
 				</View>
+			}
+		</>
+	)
+}
+
+export function CoinSelectionResume2({ lnAmount, selectedAmount, estFee }: IResume) {
+	const { t } = useTranslation(['common'])
+	const { color } = useContext(ThemeContext)
+	const getChangeStr = () => {
+		const change = selectedAmount - lnAmount
+		if (estFee && estFee > 0) {
+			return `${change} ${t('to')} ${change + estFee} Satoshi`
+		}
+		return `${change} Satoshi`
+	}
+	return (
+		<>
+			<View style={styles.resumeRow}>
+				<Txt txt={t('selected')} styles={[{fontWeight: '500'}]} />
+				<Text style={globals(color).txt}>
+					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? mainColors.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
+				</Text>
+			</View>
+			{selectedAmount > lnAmount &&
+				<>
+					<Separator style={[styles.separator]} />
+					<View style={styles.resumeRow}>
+						<Txt txt={t('change')} styles={[{fontWeight: '500'}]} />
+						<Txt txt={getChangeStr()} />
+					</View>
+
+				</>
 			}
 		</>
 	)
@@ -188,6 +220,13 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		marginBottom: 20,
+	},
+	resumeRow: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	separator: {
+		marginVertical: 20,
 	},
 	tableHeader: {
 		flexDirection: 'row',

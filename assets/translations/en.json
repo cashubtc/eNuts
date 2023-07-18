@@ -157,7 +157,8 @@
 		"tryLater": "Please try again later.",
 		"estimateFee": "Estimate fee",
 		"balTooLow": "Balance too low",
-		"totalInclFee": "Total incl. fee:"
+		"totalInclFee": "Total incl. fee:",
+		"submitPaymentReq": "Submit Payment Request"
 	},
 	"error": {
 		"header": "An error occured",
@@ -167,7 +168,8 @@
 		"requestMintErr": "Error while requesting invoice from mint.",
 		"checkSpendableErr": "Error while checking if token is spendable",
 		"claimTokenErr": "Error while claiming token",
-		"addAllMintIdsErr": "Error while getting keyset ids from mint"
+		"addAllMintIdsErr": "Error while getting keyset ids from mint",
+		"meltingErr": "An Error occured during the melting process"
 	},
 	"history": {
 		"checkSpent": "Check if token has been spent",
@@ -245,7 +247,9 @@
 		"scanQR": "Scan a QR code",
 		"meltScanQRHint": "Create a Lightning invoice with another device and simply scan it.",
 		"intermintSwap": "Inter-mint swap",
-		"meltSwapHint": "Pick another mint from your trusted list as the payment receiver."
+		"meltSwapHint": "Pick another mint from your trusted list as the payment receiver.",
+		"coinSelectionHint": "Your Ecash balance is essentially a collection of coin-sets. Coin selection allows you to choose the set of coins you want to spend. Coin-sets are assigned a keyset-ID by the mint, which may change over time. Newly added keysets are highlighted in green. It is advisable to spend older sets first.",
+		"processingPaymentByMint": "The mint is processing the payment according to your request"
 	},
 	"topNav": {
 		"about": "About us",

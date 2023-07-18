@@ -157,7 +157,8 @@
 		"tryLater": "Bitte versuchen Sie es später noch einmal.",
 		"estimateFee": "Gebühren schätzen",
 		"balTooLow": "Nicht genug Guthaben",
-		"totalInclFee": "Gesamt inkl. Gebühr:"
+		"totalInclFee": "Gesamt inkl. Gebühr:",
+		"submitPaymentReq": "Zahlungsanfrage absenden"
 	},
 	"error": {
 		"header": "Ein Fehler ist aufgetreten",
@@ -167,7 +168,8 @@
 		"requestMintErr": "Fehler beim Abrufen der Rechnung von der Mint.",
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
 		"claimTokenErr": "Fehler beim Beanspruchen des Tokens",
-		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint"
+		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",
+		"meltingErr": "Ein Fehler ist während der Zahlung aufgetreten"
 	},
 	"history": {
 		"checkSpent": "Überprüfen ob Token ausgegeben wurde",
@@ -245,7 +247,9 @@
 		"scanQR": "QR-Code scannen",
 		"meltScanQRHint": "Erstellen Sie eine Lightning-Rechnung mit einem anderen Gerät und scannen Sie sie einfach.",
 		"intermintSwap": "Inter-mint Tausch",
-		"meltSwapHint": "Wählen Sie eine andere Mint aus Ihrer vertrauenswürdigen Liste als Zahlungsempfänger aus."
+		"meltSwapHint": "Wählen Sie eine andere Mint aus Ihrer vertrauenswürdigen Liste als Zahlungsempfänger aus.",
+		"coinSelectionHint": "Ihr Ecash-Guthaben ist im Wesentlichen eine Sammlung von Coin-sets. Die Coin Auswahl ermöglicht es Ihnen, das Coin-set auszuwählen, das Sie ausgeben möchten. Coin-sets erhalten von der Mint eine Schlüsselsatz-ID, die sich im Laufe der Zeit ändern kann. Neu hinzugefügte Sets werden grün hervorgehoben. Es wird empfohlen, zuerst ältere Sets auszugeben.",
+		"processingPaymentByMint": "Die Mint bearbeitet die Zahlung gemäß Ihrem Antrag"
 	},
 	"topNav": {
 		"about": "Über uns",

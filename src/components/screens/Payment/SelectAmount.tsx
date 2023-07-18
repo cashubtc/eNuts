@@ -33,7 +33,23 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	})
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const balTooLow = route.params.isMelt && isNum(route.params.balance) && +amount + fee.estimation > route.params.balance
-	// request token
+	const handleFeeEstimation = async (lnurl: string) => {
+		setFee(prev => ({ ...prev, isCalculating: true }))
+		const invoice = await getInvoiceFromLnurl(lnurl, +amount)
+		if (!invoice?.length) {
+			openPromptAutoClose({ msg: t('feeErr', { ns: 'common', input: lnurl }) })
+			setFee(prev => ({ ...prev, isCalculating: false }))
+			return
+		}
+		const estFee = await checkFees(route.params.mint.mintUrl, invoice)
+		setFee({ estimation: estFee, isCalculating: false })
+		setShouldEstimate(false)
+	}
+	const getActionBtnTxt = () => {
+		if (fee.isCalculating) { return t('calculateFeeEst', { ns: 'common' }) }
+		if (balTooLow) { return t('balTooLow', { ns: 'common' }) }
+		return t(shouldEstimate ? 'estimateFee' : 'continue', { ns: 'common' })
+	}
 	const handleAmountSubmit = async () => {
 		if (fee.isCalculating || balTooLow) { return }
 		const { isMelt, balance, lnurl } = route.params
@@ -55,28 +71,22 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		}
 		// melt token
 		if (isMelt) {
-			// TODO nav to processing page and request mint payment - navigation.navigate('processing', { mint, amount: +amount, isMelt: true, recipient })
+			// Check if user sends his whole mint balance, so there is no need for coin selection and that can be skipped here
+			if (+amount + fee.estimation === route.params.balance) {
+				// TODO nav to processing page and request mint payment - navigation.navigate('processing', { mint, amount: +amount, isMelt: true, recipient })
+				return
+			}
+			navigation.navigate('coinSelection', {
+				mint,
+				amount: +amount,
+				estFee: fee.estimation,
+				isMelt: true,
+				recipient: lnurl || ''
+			})
 			return
 		}
 		// request new token from mint
 		navigation.navigate('processing', { mint, amount: +amount })
-	}
-	const handleFeeEstimation = async (lnurl: string) => {
-		setFee(prev => ({ ...prev, isCalculating: true }))
-		const invoice = await getInvoiceFromLnurl(lnurl, +amount)
-		if (!invoice?.length) {
-			openPromptAutoClose({ msg: t('feeErr', { ns: 'common', input: lnurl }) })
-			setFee(prev => ({ ...prev, isCalculating: false }))
-			return
-		}
-		const estFee = await checkFees(route.params.mint.mintUrl, invoice)
-		setFee({ estimation: estFee, isCalculating: false })
-		setShouldEstimate(false)
-	}
-	const getActionBtnTxt = () => {
-		if (fee.isCalculating) { return t('calculateFeeEst', { ns: 'common' }) }
-		if (balTooLow) { return t('balTooLow', { ns: 'common' }) }
-		return t(shouldEstimate ? 'estimateFee' : 'continue', { ns: 'common' })
 	}
 	// auto-focus numeric keyboard
 	useEffect(() => {
