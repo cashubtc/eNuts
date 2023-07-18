@@ -6,7 +6,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useState } from 'react'
+import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -15,6 +15,7 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [input, setInput] = useState('')
+	const inputRef = createRef<TextInput>()
 	const handleInput = async () => {
 		if (input.length > 0) {
 			setInput('')
@@ -24,6 +25,13 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 		if (!clipboard || clipboard === 'null') { return }
 		// TODO check if is lnurl and navigate accordingly
 	}
+	// auto-focus keyboard
+	useEffect(() => {
+		const t = setTimeout(() => {
+			inputRef.current?.focus()
+			clearTimeout(t)
+		}, 200)
+	}, [inputRef])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t('cashOut')} withBackBtn />
@@ -33,6 +41,7 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 				<View style={{ position: 'relative' }}>
 					<TextInput
 						keyboardType='email-address'
+						ref={inputRef}
 						style={[globals(color).input, { marginBottom: 20 }]}
 						placeholder={t('invoiceOrLnurl')}
 						placeholderTextColor={color.INPUT_PH}
