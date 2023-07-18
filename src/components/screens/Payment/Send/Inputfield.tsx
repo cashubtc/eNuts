@@ -20,14 +20,14 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 	const [input, setInput] = useState('')
 	const inputRef = createRef<TextInput>()
 	const { prompt, openPromptAutoClose } = usePrompt()
-	const handleInput = async () => {
+	// Paste/Clear input for LNURL/LN invoice
+	const handleInputLabelPress = async () => {
 		if (input.length > 0) {
 			setInput('')
 			return
 		}
 		const clipboard = await Clipboard.getStringAsync()
-		if (!clipboard || clipboard === 'null') {}
-		// TODO check if is lnurl and navigate accordingly
+		if (!clipboard || clipboard === 'null') { return }
 	}
 	const openLNWallet = async () => {
 		await openUrl('lightning://')?.catch(e =>
@@ -60,7 +60,7 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 					{/* Paste / Clear Input */}
 					<TouchableOpacity
 						style={[styles.pasteInputTxtWrap, { backgroundColor: color.INPUT_BG }]}
-						onPress={() => void handleInput()}
+						onPress={() => void handleInputLabelPress()}
 					>
 						<Text style={globals(color, highlight).pressTxt}>
 							{!input.length ? t('paste') : t('clear')}
@@ -68,6 +68,7 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 					</TouchableOpacity>
 				</View>
 				{/* TODO check input.length to show continue btn */}
+				{/* TODO check if is lnurl and navigate accordingly */}
 				<Button
 					outlined
 					txt='create via wallet'
