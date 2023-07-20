@@ -112,6 +112,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				screenName={route.params.isMelt ? t('cashOut', { ns: 'common' }) : t('createInvoice')}
 				withBackBtn
 			/>
+			<Txt
+				txt={t(route.params.isMelt ? 'cashOutAmountHint' : 'invoiceAmountHint', { ns: 'mints' })}
+				styles={[styles.hint]}
+			/>
 			<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 				<TextInput
 					keyboardType='numeric'
@@ -126,10 +130,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					maxLength={8}
 				/>
 			</Animated.View>
-			<Txt
-				txt={t(route.params.isMelt ? 'cashOutAmountHint' : 'invoiceAmountHint', { ns: 'mints' })}
-				styles={[styles.hint]}
-			/>
 			{route.params.isMelt && route.params.balance &&
 				<MeltOverview
 					amount={+amount}
@@ -207,11 +207,10 @@ export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, fee }
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 100,
+		paddingTop: 110,
 	},
 	hint: {
 		paddingHorizontal: 20,
-		marginBottom: 10,
 	},
 	amountWrap: {
 		width: '100%',
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
 		fontSize: 40,
 		width: '100%',
 		textAlign: 'center',
-		marginBottom: 20,
+		marginBottom: 5,
 	},
 	continue: {
 		position: 'absolute',
