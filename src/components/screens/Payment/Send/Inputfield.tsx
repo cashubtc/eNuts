@@ -1,3 +1,4 @@
+import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
@@ -74,13 +75,20 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		}
 		// user pasted a LN invoice before submitting
 		try {
-			// we need to decode again to see if the input has been changed after pasting
-			const decoded = decodeLnInvoice(input)
-			// TODO check for invoice expiry
+			const ln = getDecodedLnInvoice(input)
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const timePassed = Math.ceil(Date.now() / 1000) - (ln.sections[4]!.value as number)
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const timeLeft = ln.sections[8]!.value as number - timePassed
+			// Invoice expired
+			if (timeLeft <= 0) {
+				openPromptAutoClose({ msg: t('expired') + '!' })
+				return
+			}
 			// navigate to coin selection screen
 			navigation.navigate('coinSelection', {
 				mint,
-				amount: decoded.amount,
+				amount: decodedAmount,
 				estFee,
 				isMelt: true,
 				recipient: input
