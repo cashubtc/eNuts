@@ -112,10 +112,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				screenName={route.params.isMelt ? t('cashOut', { ns: 'common' }) : t('createInvoice')}
 				withBackBtn
 			/>
-			<Txt
-				txt={t(route.params.isMelt ? 'cashOutAmountHint' : 'invoiceAmountHint', { ns: 'mints' })}
-				styles={[styles.hint]}
-			/>
 			<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 				<TextInput
 					keyboardType='numeric'
@@ -130,6 +126,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					maxLength={8}
 				/>
 			</Animated.View>
+			<Txt
+				txt={t(route.params.isMelt ? 'cashOutAmountHint' : 'invoiceAmountHint', { ns: 'mints' })}
+				styles={[styles.hint]}
+			/>
 			{route.params.isMelt && route.params.balance &&
 				<MeltOverview
 					amount={+amount}
@@ -168,12 +168,12 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 interface IMeltOverviewProps {
 	amount: number
 	balance: number
-	shouldEstimate: boolean
+	shouldEstimate?: boolean
 	balTooLow?: boolean
 	fee: number
 }
 
-function MeltOverview({ amount, balance, shouldEstimate, balTooLow, fee }: IMeltOverviewProps) {
+export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, fee }: IMeltOverviewProps) {
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
@@ -207,10 +207,11 @@ function MeltOverview({ amount, balance, shouldEstimate, balTooLow, fee }: IMelt
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 110,
+		paddingTop: 100,
 	},
 	hint: {
 		paddingHorizontal: 20,
+		marginBottom: 10,
 	},
 	amountWrap: {
 		width: '100%',
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
 		fontSize: 40,
 		width: '100%',
 		textAlign: 'center',
-		marginBottom: 5,
+		marginBottom: 20,
 	},
 	continue: {
 		position: 'absolute',
