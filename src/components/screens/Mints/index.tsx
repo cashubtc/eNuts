@@ -18,7 +18,7 @@ import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
-import { formatInt, formatMintUrl, isUrl } from '@util'
+import { formatInt, formatMintUrl, isErr, isUrl } from '@util'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -61,8 +61,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			// add mint url to db
 			await addMint(input)
 		} catch (e) {
-			openPromptAutoClose({ msg: t('mintConnectionFail', { ns: 'mints' }), ms: 2000 })
-			l(e)
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: 'mints' }), ms: 2000 })
 			return
 		}
 		openPromptAutoClose({ msg: t('newMintSuccess', { mintUrl: formatMintUrl(input), ns: 'mints' }), success: true })

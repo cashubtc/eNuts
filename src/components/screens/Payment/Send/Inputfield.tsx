@@ -7,14 +7,14 @@ import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
-import { isErr, openUrl } from '@util'
+import { decodeLnInvoice, isErr, isLnurl, openUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
-export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
-	const { mint } = route.params
+export default function InputfieldScreen({ navigation, route }: TMeltInputfieldPageProps) {
+	const { mint, balance } = route.params
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [input, setInput] = useState('')
@@ -28,10 +28,35 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 		}
 		const clipboard = await Clipboard.getStringAsync()
 		if (!clipboard || clipboard === 'null') { return }
+		// TODO setInput with clipboard value
 	}
-	const openLNWallet = async () => {
-		await openUrl('lightning://')?.catch(e =>
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+	const handleBtnPress = async () => {
+		if (!input.length) {
+			await openUrl('lightning://')?.catch(e =>
+				openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+			return
+		}
+		// user pastes a LNURL, we need to get the amount by the user
+		if (isLnurl(input)) {
+			navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: input })
+			return
+		}
+		// user pastes a LN invoice where we can get the amount from
+		try {
+			const decoded = decodeLnInvoice(input)
+			// we should get estimated fee
+			// we can check if user has enough balance after adding estimated fee to ln invoice
+			// only navigate to coin selection screen if enough balance
+			navigation.navigate('coinSelection', {
+				mint,
+				amount: decoded.amount,
+				estFee: 0,
+				isMelt: true,
+				recipient: input
+			})
+		} catch (e) {
+			//
+		}
 	}
 	// auto-focus keyboard
 	useEffect(() => {
@@ -70,9 +95,9 @@ export default function InputfieldScreen({ route }: TMeltInputfieldPageProps) {
 				{/* TODO check input.length to show continue btn */}
 				{/* TODO check if is lnurl and navigate accordingly */}
 				<Button
-					outlined
-					txt='create via wallet'
-					onPress={() => void openLNWallet()}
+					outlined={!input.length}
+					txt={input.length > 0 ? 'Continue' : 'create via wallet'}
+					onPress={() => void handleBtnPress()}
 				/>
 			</View>
 			{prompt.open && <Toaster txt={prompt.msg} />}

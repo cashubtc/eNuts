@@ -19,6 +19,7 @@ export type RootStackParamList = {
 	}
 	meltInputfield: {
 		mint: IMintUrl
+		balance: number
 	}
 	selectAmount: {
 		mint: IMintUrl

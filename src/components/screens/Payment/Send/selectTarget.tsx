@@ -34,7 +34,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 				<Target
 					txt={t('inputField')}
 					hint={t('meltInputHint')}
-					onPress={() => navigation.navigate('meltInputfield', { mint })}
+					onPress={() => navigation.navigate('meltInputfield', { mint, balance: balance || 20 })}
 					hasSeparator
 				/>
 				<Target
