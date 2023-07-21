@@ -31,16 +31,22 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 	const { prompt, openPromptAutoClose } = usePrompt()
 	// Paste/Clear input for LNURL/LN invoice
 	const handleInputLabelPress = async () => {
+		// clear input
 		if (input.length > 0) {
 			setInput('')
 			setDecodedAmount(0)
 			return
 		}
+		// paste from clipboard
 		const clipboard = await Clipboard.getStringAsync()
 		if (!clipboard || clipboard === 'null') { return }
 		setInput(clipboard)
+		// pasted LNURL which does not need decoding
 		if (isLnurl(clipboard)) { return }
 		// pasted LN invoice
+		await handleInvoicePaste(clipboard)
+	}
+	const handleInvoicePaste = async (clipboard: string) => {
 		try {
 			const decoded = decodeLnInvoice(clipboard)
 			setDecodedAmount(decoded.amount / 1000)
@@ -75,6 +81,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		}
 		// user pasted a LN invoice before submitting
 		try {
+			// decode again in case the user changes the input after pasting it
 			const ln = getDecodedLnInvoice(input)
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const timePassed = Math.ceil(Date.now() / 1000) - (ln.sections[4]!.value as number)
@@ -105,7 +112,14 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			clearTimeout(t)
 		}, 200)
 	}, [inputRef])
-	// TODO handle case if user pastes value using the device keyboard
+	// handle case if user pastes value using the device keyboard
+	useEffect(() => {
+		if (isLnurl(input)) { return }
+		// https://bitcoin.stackexchange.com/questions/107930/what-are-the-minimum-and-maximum-lengths-of-a-lightning-invoice-address
+		if (input.length < 100) { return }
+		void handleInvoicePaste(input)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [input])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t('cashOut')} withBackBtn />
@@ -139,6 +153,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 						selectionColor={hi[highlight]}
 						value={input}
 						onChangeText={setInput}
+						onSubmitEditing={() => void handleBtnPress()}
 					/>
 					{/* Paste / Clear Input */}
 					<TouchableOpacity
