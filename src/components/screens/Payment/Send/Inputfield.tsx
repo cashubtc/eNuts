@@ -118,7 +118,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		// https://bitcoin.stackexchange.com/questions/107930/what-are-the-minimum-and-maximum-lengths-of-a-lightning-invoice-address
 		if (input.length < 100) { return }
 		void handleInvoicePaste(input)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [input])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -128,7 +128,9 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 				{decodedAmount > 0 ?
 					<>
 						{loading ?
-							<Loading />
+							<View style={styles.loadingWrap}>
+								<Loading size={25} />
+							</View>
 							:
 							<MeltOverview
 								amount={decodedAmount}
@@ -198,5 +200,8 @@ const styles = StyleSheet.create({
 	},
 	paddingHorizontal: {
 		paddingHorizontal: 20
+	},
+	loadingWrap: {
+		marginTop: 40,
 	}
 })
