@@ -135,9 +135,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const getMintsForPayment = async () => {
 		const mintsWithBal = await getMintsBalances()
 		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
-		// user has only 1 mint with balance, he can skip the mint selection only for melting (he can mint new token with a mint that has no balance)
-		const mintsWithBalCount = mintsWithBal.filter(m => m.amount > 0).length
-		return { mintsWithBal, mints, mintsWithBalCount }
+		return { mintsWithBal, mints }
 	}
 	// receive ecash button
 	const handleClaimBtnPress = async () => {
@@ -155,16 +153,23 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}
 	// mint/melt/send ecash buttons
 	const handleOptsBtnPress = async ({ isMelt, isSendEcash }: { isMelt?: boolean, isSendEcash?: boolean }) => {
-		const { mintsWithBal, mints, mintsWithBalCount } = await getMintsForPayment()
+		const { mintsWithBal, mints } = await getMintsForPayment()
 		closeOptsModal()
-		if ((isMelt || isSendEcash) && mintsWithBalCount === 1) {
-			navigation.navigate('selectAmount', { mint: mints[0], isMelt, isSendEcash })
+		// user has only 1 mint with balance, he can skip the mint selection only for melting (he can mint new token with a mint that has no balance)
+		const nonEmptyMint = mintsWithBal.filter(m => m.amount > 0)
+		if ((isMelt || isSendEcash) && nonEmptyMint.length === 1) {
+			navigation.navigate('selectAmount', {
+				mint: mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
+				isMelt,
+				isSendEcash,
+				balance: nonEmptyMint[0].amount
+			})
 			return
 		}
 		navigation.navigate('selectMint', {
 			mints,
 			mintsWithBal,
-			allMintsEmpty: (isMelt || isSendEcash) && mintsWithBalCount === 0,
+			allMintsEmpty: (isMelt || isSendEcash) && !nonEmptyMint.length,
 			isMelt,
 			isSendEcash
 		})
@@ -240,7 +245,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				visible={modal.receiveOpts}
 				button1Txt={loading ? t('claiming', { ns: 'wallet' }) : t('pasteToken', { ns: 'wallet' })}
 				onPressFirstBtn={() => void handleClaimBtnPress()}
-				button2Txt={t('createInvoice', { ns: 'wallet' })}
+				button2Txt={t('createLnInvoice', { ns: 'wallet' })}
 				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: false })}
 				onPressCancel={closeOptsModal}
 			/>

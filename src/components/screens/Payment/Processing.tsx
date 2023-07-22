@@ -6,7 +6,7 @@ import type { TProcessingPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { addLnPaymentToHistory, addToHistory } from '@store/HistoryStore'
 import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
-import { payLnInvoice, requestMint, requestToken } from '@wallet'
+import { payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
 import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -14,7 +14,7 @@ import { StyleSheet, View } from 'react-native'
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
-	const { mint, amount, isMelt, proofs, recipient } = route.params
+	const { mint, amount, isMelt, isSendEcash, proofs, recipient } = route.params
 	const handleError = (e?: unknown) => {
 		const translatedErrMsg = t(isMelt ? 'requestMintErr' : 'requestMintErr', { ns: 'error' })
 		navigation.navigate('processingError', {
@@ -22,6 +22,11 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			mint,
 			errorMsg: isErr(e) ? e.message : translatedErrMsg
 		})
+	}
+	const getProcessingtxt = () => {
+		if (isMelt) { return 'processingPaymentByMint' }
+		if (isSendEcash) { return 'creatingEcashToken' }
+		return 'awaitingInvoice'
 	}
 	const handleMintingProcess = async () => {
 		try {
@@ -94,10 +99,33 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			handleError(e)
 		}
 	}
+	const handleSendingEcashProcess = async () => {
+		try {
+			const token = await sendToken(mint.mintUrl, amount, 'memo', proofs)
+			// add as history entry
+			await addToHistory({
+				amount: -amount,
+				type: 1,
+				value: token,
+				mints: [mint.mintUrl],
+			})
+			navigation.navigate('encodedToken', { token, amount })
+		} catch (e) {
+			navigation.navigate('processingError', {
+				mint,
+				amount,
+				errorMsg: isErr(e) ? e.message : 'Something went wrong while create the Cashu token.'
+			})
+		}
+	}
 	// start payment process
 	useEffect(() => {
 		if (isMelt) {
 			void handleMeltingProcess()
+			return
+		}
+		if (isSendEcash) {
+			void handleSendingEcashProcess()
 			return
 		}
 		void handleMintingProcess()
@@ -106,11 +134,10 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<Loading size={40} />
-			{isMelt ?
-				<Txt styles={[styles.descText]} txt={t('processingPaymentByMint')} />
-				:
-				<Txt styles={[styles.descText]} txt={t('awaitingInvoice')} />
-			}
+			<Txt
+				styles={[styles.descText]}
+				txt={t(getProcessingtxt())}
+			/>
 			<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
 		</View>
 	)

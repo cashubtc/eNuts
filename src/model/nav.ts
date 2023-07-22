@@ -29,7 +29,7 @@ export type RootStackParamList = {
 		mint: IMintUrl
 		isMelt?: boolean
 		isSendEcash?: boolean
-		balance?: number
+		balance: number
 		lnurl?: string
 	}
 	coinSelection: {
@@ -38,12 +38,13 @@ export type RootStackParamList = {
 		estFee: number
 		isMelt?: boolean
 		isSendEcash?: boolean
-		recipient: string
+		recipient?: string
 	}
 	processing: {
 		mint: IMintUrl
 		amount: number
 		isMelt?: boolean
+		isSendEcash?: boolean
 		proofs?: IProofSelection[]
 		recipient?: string
 	}
@@ -68,9 +69,9 @@ export type RootStackParamList = {
 		shouldRemove?: boolean
 	}
 	send: undefined
-	sendToken: {
+	encodedToken: {
 		token: string
-		amount: string
+		amount: number
 	}
 	success: {
 		amount?: number
@@ -152,7 +153,7 @@ export type TDashboardPageProps = NativeStackScreenProps<RootStackParamList, 'da
 export type TDisclaimerPageProps = NativeStackScreenProps<RootStackParamList, 'disclaimer', 'MyStack'>
 export type TAuthPageProps = NativeStackScreenProps<RootStackParamList, 'auth', 'MyStack'>
 export type TSendTokenPageProps = NativeStackScreenProps<RootStackParamList, 'send', 'MyStack'>
-export type TEncodedTokenPageProps = NativeStackScreenProps<RootStackParamList, 'sendToken', 'MyStack'>
+export type TEncodedTokenPageProps = NativeStackScreenProps<RootStackParamList, 'encodedToken', 'MyStack'>
 export type TSuccessPageProps = NativeStackScreenProps<RootStackParamList, 'success', 'MyStack'>
 export type TLightningPageProps = NativeStackScreenProps<RootStackParamList, 'lightning', 'MyStack'>
 export type TPayLNInvoicePageProps = NativeStackScreenProps<RootStackParamList, 'pay invoice', 'MyStack'>

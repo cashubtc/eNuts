@@ -22,10 +22,33 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	const [userMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// the default mint url if user has set one
 	const [defaultMint, setDefaultM] = useState('')
+	// navigation screen name
 	const getScreenName = () => {
 		if (route.params.isMelt) { return 'cashOut' }
 		if (route.params.isSendEcash) { return 'sendEcash' }
 		return 'createInvoice'
+	}
+	// screen text hint (short explaination about feature)
+	const getScreenHint = () => {
+		if (route.params.isMelt) { return 'chooseMeltMintHint' }
+		if (route.params.isSendEcash) { return 'sendEcashHint' }
+		return 'chooseMintHint'
+	}
+	// press mint
+	const handlePressMint = (mint: IMintBalWithName) => {
+		if (route.params.isMelt) {
+			navigation.navigate('selectTarget', {
+				mint,
+				balance: mint.amount,
+			})
+			return
+		}
+		navigation.navigate('selectAmount', {
+			mint,
+			balance: mint.amount,
+			isMelt: route.params.isMelt,
+			isSendEcash: route.params.isSendEcash
+		})
 	}
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
@@ -47,7 +70,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			{userMints.length > 0 && !route.params.allMintsEmpty &&
 				<Txt
 					styles={[styles.hint]}
-					txt={t(route.params?.isMelt ? 'chooseMeltMintHint' : 'chooseMintHint', { ns: 'mints' })}
+					txt={t(getScreenHint(), { ns: 'mints' })}
 				/>
 			}
 			{userMints.length && !route.params.allMintsEmpty ?
@@ -62,12 +85,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 							<TouchableOpacity
 								key={data.item.mintUrl}
 								style={styles.mintUrlWrap}
-								onPress={() => {
-									navigation.navigate(route.params?.isMelt ? 'selectTarget' : 'selectAmount', {
-										mint: data.item,
-										balance: data.item.amount
-									})
-								}}
+								onPress={() => handlePressMint(data.item)}
 							>
 								<View style={styles.mintNameWrap}>
 									{defaultMint === data.item.mintUrl &&
@@ -78,7 +96,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 										styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0 }]}
 									/>
 								</View>
-								{/* Add mint icon or show balance */}
+								{/* mint balance */}
 								<View style={styles.mintBal}>
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										{formatInt(data.item.amount, 'compact', 'en')}

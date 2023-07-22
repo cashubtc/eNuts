@@ -88,7 +88,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				/>
 				{/* sendable token created page */}
 				<Stack.Screen
-					name='sendToken'
+					name='encodedToken'
 					component={EncodedTokenPage}
 					options={{
 						animation: 'slide_from_bottom',

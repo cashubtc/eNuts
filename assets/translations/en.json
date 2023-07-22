@@ -237,8 +237,10 @@
 		"updatedDefault": "Updated the default mint",
 		"invoiceAmountHint": "Select the amount of Ecash you would like to receive. The mint will then create an invoice which you will have to pay using a Lightning wallet.",
 		"cashOutAmountHint": "Select the amount. Note that Lightning fees can occur. The overpaid fees will be refunded to you.",
+		"ecashAmountHint": "Select the amount of Ecash you would like to send.",
 		"chooseMintHint": "Choose a mint from which you would like to receive Ecash. The mint becomes custodian of your funds.",
 		"chooseMeltMintHint": "Choose a mint from which you would like to cash out your funds.",
+		"sendEcashHint": "Choose a mint from which you would like to create a Cashu token.",
 		"chooseTarget": "Choose the receiver of the payment.",
 		"awaitingInvoice": "Awaiting invoice",
 		"invoiceHint": "This can take a few seconds...",
@@ -251,7 +253,8 @@
 		"intermintSwap": "Inter-mint swap",
 		"meltSwapHint": "Pick another mint from your trusted list as the payment receiver.",
 		"coinSelectionHint": "Your Ecash balance is essentially a collection of coin-sets. Coin selection allows you to choose the set of coins you want to spend. Coin-sets are assigned a keyset-ID by the mint, which may change over time. Newly added keysets are highlighted in green. It is advisable to spend older sets first.",
-		"processingPaymentByMint": "The mint is processing the payment according to your request"
+		"processingPaymentByMint": "The mint is processing the payment according to your request",
+		"creatingEcashToken": ""
 	},
 	"topNav": {
 		"about": "About us",
@@ -268,7 +271,7 @@
 	},
 	"wallet": {
 		"claiming": "Claiming...",
-		"createInvoice": "Create Lightning invoice",
+		"createLnInvoice": "Create Lightning invoice",
 		"disclaimer": "Please note that this is an alpha version in its early stage and is still undergoing testing before its official release. The software and all content found on it are provided on an “as is” and “as available” basis. We do not give any warranties, whether express or implied, as to the suitability or usability of the software or any of its content. Cashu is still experimental and not production-ready.",
 		"pasteToken": "Paste & redeem Ecash",
 		"payLNInvoice": "Pay Lightning invoice",

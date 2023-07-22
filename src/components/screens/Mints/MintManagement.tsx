@@ -217,7 +217,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<MintOption
 						txt={t('mintNewTokens', { ns: 'mints' })}
 						hasSeparator
-						onPress={() => navigation.navigate('selectAmount', { mint: route.params.mint })}
+						onPress={() => navigation.navigate('selectAmount', { mint: route.params.mint, balance: route.params.amount })}
 						icon={<PlusIcon color={color.TEXT} />}
 					/>
 					{/* Redeem to lightning */}
@@ -229,10 +229,9 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 								openPromptAutoClose({ msg: t('noFunds') })
 								return
 							}
-							navigation.navigate('lightning', {
+							navigation.navigate('selectTarget', {
 								mint: route.params.mint,
-								balance: route.params.amount,
-								send: true
+								balance: route.params.amount
 							})
 						}}
 						icon={<ZapIcon width={18} height={18} color={color.TEXT} />}

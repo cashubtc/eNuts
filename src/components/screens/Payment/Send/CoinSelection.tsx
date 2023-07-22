@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Switch, View } from 'react-native'
 
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
-	const { mint, amount, recipient, estFee } = route.params
+	const { mint, amount, recipient, estFee, isMelt, isSendEcash } = route.params
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [isEnabled, setIsEnabled] = useState(false)
@@ -25,7 +25,8 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		navigation.navigate('processing', {
 			mint,
 			amount,
-			isMelt: true,
+			isMelt,
+			isSendEcash,
 			proofs: proofs.filter(p => p.selected),
 			recipient
 		})

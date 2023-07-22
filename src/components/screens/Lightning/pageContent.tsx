@@ -80,7 +80,7 @@ export default function LNPageContent({
 				value: token,
 				mints: [selectedMint.mintUrl],
 			})
-			nav.navigation.navigate('sendToken', { token, amount })
+			nav.navigation.navigate('encodedToken', { token, amount: +amount })
 		} catch (e) {
 			l(e)
 			if (isErr(e)) {

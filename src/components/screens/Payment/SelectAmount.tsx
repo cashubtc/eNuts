@@ -9,7 +9,7 @@ import type { TSelectAmountPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { cleanUpNumericStr, getInvoiceFromLnurl, isNum, vib } from '@util'
+import { cleanUpNumericStr, getInvoiceFromLnurl, vib } from '@util'
 import { checkFees } from '@wallet'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,7 +17,7 @@ import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
-	const mint = route.params.mint
+	const { mint, balance, lnurl, isMelt, isSendEcash } = route.params
 	const { t } = useTranslation(['wallet'])
 	const insets = useSafeAreaInsets()
 	const { color, highlight } = useContext(ThemeContext)
@@ -32,7 +32,26 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		isCalculating: false
 	})
 	const { prompt, openPromptAutoClose } = usePrompt()
-	const balTooLow = route.params.isMelt && isNum(route.params.balance) && +amount + fee.estimation > route.params.balance
+	const balTooLow = isMelt && +amount + fee.estimation > balance
+	const isSendingWholeMintBal = () => {
+		// includes fee
+		if (isMelt && +amount + fee.estimation === balance) { return true }
+		// without fee
+		if (isSendEcash && +amount === balance) { return true }
+		return false
+	}
+	// navigation screen name
+	const getScreenName = () => {
+		if (isMelt) { return 'cashOut' }
+		if (isSendEcash) { return 'sendEcash' }
+		return 'createInvoice'
+	}
+	// screen text hint (short explaination about feature)
+	const getScreenHint = () => {
+		if (isMelt) { return 'cashOutAmountHint' }
+		if (isSendEcash) { return 'ecashAmountHint' }
+		return 'invoiceAmountHint'
+	}
 	const handleFeeEstimation = async (lnurl: string) => {
 		setFee(prev => ({ ...prev, isCalculating: true }))
 		const invoice = await getInvoiceFromLnurl(lnurl, +amount)
@@ -41,7 +60,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			setFee(prev => ({ ...prev, isCalculating: false }))
 			return
 		}
-		const estFee = await checkFees(route.params.mint.mintUrl, invoice)
+		const estFee = await checkFees(mint.mintUrl, invoice)
 		setFee({ estimation: estFee, isCalculating: false })
 		setShouldEstimate(false)
 	}
@@ -52,9 +71,8 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	}
 	const handleAmountSubmit = async () => {
 		if (fee.isCalculating || balTooLow) { return }
-		const { isMelt, balance, lnurl } = route.params
 		// error & shake animation if amount === 0 or greater than mint balance
-		if (!amount || +amount < 1 || (isMelt && balance && +amount > balance)) {
+		if (!amount || +amount < 1 || +amount > balance) {
 			vib(400)
 			setErr(true)
 			shake()
@@ -65,23 +83,30 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			return
 		}
 		// estimate melting fee
-		if (shouldEstimate && lnurl?.length) {
+		if (!isSendEcash && shouldEstimate && lnurl?.length) {
 			await handleFeeEstimation(lnurl)
 			return
 		}
-		// melt token
-		if (isMelt) {
+		// send ecash or melt token
+		if (isSendEcash || isMelt) {
 			// Check if user sends his whole mint balance, so there is no need for coin selection and that can be skipped here
-			if (+amount + fee.estimation === route.params.balance) {
-				// TODO nav to processing page and request mint payment - navigation.navigate('processing', { mint, amount: +amount, isMelt: true, recipient })
+			if (isSendingWholeMintBal()) {
+				navigation.navigate('processing', {
+					mint,
+					amount: +amount,
+					isMelt,
+					isSendEcash,
+					recipient: lnurl
+				})
 				return
 			}
 			navigation.navigate('coinSelection', {
 				mint,
 				amount: +amount,
 				estFee: fee.estimation,
-				isMelt: true,
-				recipient: lnurl || ''
+				isMelt,
+				isSendEcash,
+				recipient: lnurl
 			})
 			return
 		}
@@ -96,12 +121,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		}, 200)
 	}, [inputRef])
 	// check if is melting process
-	useEffect(() => {
-		setShouldEstimate(!!route.params.isMelt)
-	}, [route.params.isMelt])
+	useEffect(() => setShouldEstimate(!!isMelt), [isMelt])
 	// estimate fee each time the melt amount changes
 	useEffect(() => {
-		if (!route.params.isMelt) { return }
+		if (!isMelt) { return }
 		setFee({ estimation: 0, isCalculating: false })
 		setShouldEstimate(true)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,11 +132,11 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
-				screenName={route.params.isMelt ? t('cashOut', { ns: 'common' }) : t('createInvoice')}
+				screenName={t(getScreenName(), { ns: 'common' })}
 				withBackBtn
 			/>
 			<Txt
-				txt={t(route.params.isMelt ? 'cashOutAmountHint' : 'invoiceAmountHint', { ns: 'mints' })}
+				txt={t(getScreenHint(), { ns: 'mints' })}
 				styles={[styles.hint]}
 			/>
 			<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
@@ -130,13 +153,18 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					maxLength={8}
 				/>
 			</Animated.View>
-			{route.params.isMelt && route.params.balance &&
+			{isMelt ?
 				<MeltOverview
 					amount={+amount}
-					balance={route.params.balance}
+					balance={balance}
 					shouldEstimate={shouldEstimate}
 					balTooLow={balTooLow}
 					fee={fee.estimation}
+				/>
+				:
+				<Txt
+					txt={`Balance: ${balance} Satoshi`}
+					styles={[{ fontSize: 14, color: color.TEXT_SECONDARY, textAlign: 'center' }]}
 				/>
 			}
 			<KeyboardAvoidingView

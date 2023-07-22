@@ -134,7 +134,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 							:
 							<MeltOverview
 								amount={decodedAmount}
-								balance={route.params.balance}
+								balance={balance}
 								balTooLow={decodedAmount + estFee > balance}
 								fee={estFee}
 							/>

@@ -237,8 +237,10 @@
 		"updatedDefault": "Änderungen gespeichert",
 		"invoiceAmountHint": "Wählen Sie den Betrag an Ecash aus, den Sie erhalten möchten. Die Mint wird dann eine Rechnung erstellen, die Sie mit einer Lightning-Wallet bezahlen müssen.",
 		"cashOutAmountHint": "Wählen Sie den Betrag aus. Beachten Sie, dass Lightning Gebühren fallen können. Die zu viel bezahlten Gebühren werden Ihnen zurückerstattet.",
+		"ecashAmountHint": "Wählen Sie den Betrag an Ecash aus, den Sie senden möchten.",
 		"chooseMintHint": "Wählen Sie eine Mint aus, von der Sie Ecash erhalten möchten. Die Mint wird zum Verwalter Ihrer Gelder.",
 		"chooseMeltMintHint": "Wählen Sie eine Mint aus, von der aus Sie Ihre Gelder abheben möchten.",
+		"sendEcashHint": "Wählen Sie eine Mint aus, aus der Sie gerne einen Cashu-Token erstellen möchten.",
 		"chooseTarget": "Wählen Sie den Empfänger der Zahlung aus.",
 		"awaitingInvoice": "Rechnung ausstehend.",
 		"invoiceHint": "Das kann einige Sekunden dauern...",
@@ -251,7 +253,8 @@
 		"intermintSwap": "Inter-mint Tausch",
 		"meltSwapHint": "Wählen Sie eine andere Mint aus Ihrer vertrauenswürdigen Liste als Zahlungsempfänger aus.",
 		"coinSelectionHint": "Ihr Ecash-Guthaben ist im Wesentlichen eine Sammlung von Coin-sets. Die Coin Auswahl ermöglicht es Ihnen, das Coin-set auszuwählen, das Sie ausgeben möchten. Coin-sets erhalten von der Mint eine Schlüsselsatz-ID, die sich im Laufe der Zeit ändern kann. Neu hinzugefügte Sets werden grün hervorgehoben. Es wird empfohlen, zuerst ältere Sets auszugeben.",
-		"processingPaymentByMint": "Die Mint bearbeitet die Zahlung gemäß Ihrem Antrag"
+		"processingPaymentByMint": "Die Mint bearbeitet die Zahlung gemäß Ihrem Antrag",
+		"creatingEcashToken": ""
 	},
 	"topNav": {
 		"about": "Über uns",
@@ -268,7 +271,7 @@
 	},
 	"wallet": {
 		"claiming": "Überprüft...",
-		"createInvoice": "Lightning Rechnung erstellen",
+		"createLnInvoice": "Lightning Rechnung erstellen",
 		"disclaimer": "Bitte beachten Sie, dass es sich hierbei um eine Alpha-Version in einem frühen Stadium handelt und diese noch vor der offiziellen Veröffentlichung getestet wird. Die Software und alle darauf enthaltenen Inhalte werden als „wie besehen“ und „wie verfügbar“ bereitgestellt. Wir geben keine Garantien, ob ausdrücklich oder stillschweigend, hinsichtlich der Eignung oder Verwendbarkeit der Software oder deren Inhalte. Cashu ist noch experimentell und nicht für den produktiven Einsatz bereit.",
 		"pasteToken": "Ecash aus Zwischenablage",
 		"payLNInvoice": "Lightning Rechnung bezahlen",

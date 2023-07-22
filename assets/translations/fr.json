@@ -237,8 +237,10 @@
 		"updatedDefault": "Modifications enregistrées",
 		"invoiceAmountHint": "Veuillez sélectionner le montant d'Ecash que vous souhaitez recevoir. La mint produira ensuite une facture que vous devrez régler à l'aide d'un portefeuille Lightning.",
 		"cashOutAmountHint": "Veuillez sélectionner le montant. Notez que des frais Lightning peuvent survenir. Les frais surpayés vous seront remboursés.",
+		"ecashAmountHint": "Sélectionnez le montant d'Ecash que vous souhaitez envoyer.",
 		"chooseMintHint": "Veuillez choisir une mint auprès de laquelle vous souhaitez recevoir de l'Ecash. La mint devient dépositaire de vos fonds.",
 		"chooseMeltMintHint": "Veuillez choisir une mint à partir de laquelle vous souhaitez retirer vos fonds.",
+		"sendEcashHint": "Choisissez une mint à partir de laquelle vous souhaitez créer un token Cashu",
 		"chooseTarget": "Veuillez choisir le destinataire du paiement.",
 		"awaitingInvoice": "En attente de facture",
 		"invoiceHint": "Cela peut prendre quelques secondes...",
@@ -251,7 +253,8 @@
 		"intermintSwap": "Inter-mint échange.",
 		"meltSwapHint": "Sélectionnez une autre mint de votre liste de confiance comme destinataire du paiement.",
 		"coinSelectionHint": "Votre solde Ecash est essentiellement une collection d'ensembles de Coins. La sélection de Coins vous permet de choisir l'ensemble de Coins que vous souhaitez dépenser. Les ensembles de Coins se voient attribuer des clés identifiant par la mint, qui peut changer avec le temps. Les nouveaux ensembles sont mis en évidence en vert. Il est conseillé de dépenser les anciens ensembles en premier.",
-		"processingPaymentByMint": "La mint traite le paiement selon votre demande"
+		"processingPaymentByMint": "La mint traite le paiement selon votre demande",
+		"creatingEcashToken": ""
 	},
 	"topNav": {
 		"about": "À propos de nous",
@@ -268,7 +271,7 @@
 	},
 	"wallet": {
 		"claiming": "En cours...",
-		"createInvoice": "Créer une facture Lightning",
+		"createLnInvoice": "Créer une facture Lightning",
 		"disclaimer": "Veuillez noter qu'il s'agit d'une version alpha à un stade précoce et qu'elle est encore en cours de test avant sa sortie officielle. Le logiciel et tous les contenus qui s'y trouvent sont fournis « tels quels » et « tels que disponibles ». Nous n'offrons aucune garantie, expresse ou implicite, quant à l'adéquation ou à l'utilisabilité du logiciel ou de l'un de ses contenus. Cashu est encore expérimental et n'est pas prêt pour une utilisation en production.",
 		"pasteToken": "Coller et échanger Ecash",
 		"payLNInvoice": "Payer une facture Lightning",
