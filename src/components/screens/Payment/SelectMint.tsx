@@ -1,13 +1,12 @@
 import { MintBoardIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
-import { getMintsBalances } from '@db'
 import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
-import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
+import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { useContext, useEffect, useState } from 'react'
@@ -21,17 +20,19 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	const [userMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// the default mint url if user has set one
 	const [defaultMint, setDefaultM] = useState('')
-	const handleMintsState = async () => {
-		const mintsBal = await getMintsBalances()
-		setUserMints(await getCustomMintNames(mintsBal))
-	}
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
 		void (async () => {
-			await handleMintsState()
+			const { mints, mintsWithBal } = route.params
+			const mintsBalWithName = mints.map((m, i) => ({
+				mintUrl: m.mintUrl,
+				customName: m.customName || '',
+				amount: mintsWithBal[i].amount,
+			}))
+			setUserMints(mintsBalWithName)
 			setDefaultM(await getDefaultMint() ?? '')
 		})()
-	}, [])
+	}, [route.params])
 	return (
 		<SafeAreaView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t(route.params?.isMelt ? 'cashOut' : 'createInvoice', { ns: 'common' })} withBackBtn />

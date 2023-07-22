@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import type { IContact } from '@src/context/Contacts'
 
-import type { IHistoryEntry, IMintUrl, IProofSelection } from '.'
+import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection } from '.'
 
 /**
  * Stack Navigator
@@ -10,9 +10,11 @@ import type { IHistoryEntry, IMintUrl, IProofSelection } from '.'
 export type RootStackParamList = {
 	// new UX
 	selectMint: {
+		mints: IMintUrl[]
+		mintsWithBal: IMintWithBalance[]
 		isMelt?: boolean
 		balance?: number
-	} | undefined,
+	},
 	selectTarget: {
 		mint: IMintUrl
 		balance?: number

@@ -151,23 +151,23 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		closeOptsModal()
 	}
 	// mint/melt button
-	const handleLnBtnPress = async (isMelt: boolean) => {
+	const handleLnBtnPress = async (isMelt?: boolean) => {
 		const mintsWithBal = await getMintsBalances()
 		if (!mintsWithBal.length) {
 			// TODO prompt user
 			return
 		}
-		const mintsWithName = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
+		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
 		closeOptsModal()
 		// user has only 1 mint with balance, he can skip the mint selection
 		if (mintsWithBal.filter(m => m.amount > 0).length === 1) {
-			navigation.navigate('selectAmount', { mint: mintsWithName[0] })
+			navigation.navigate('selectAmount', { mint: mints[0] })
 			return
 		}
-		navigation.navigate('selectMint', { isMelt })
+		navigation.navigate('selectMint', { mints, mintsWithBal, isMelt })
 	}
 	// close send/receive options modal
-	const closeOptsModal = () => setModal({ ...modal, receiveOpts: false, sendOpts: false })
+	const closeOptsModal = () => setModal(prev => ({ ...prev, receiveOpts: false, sendOpts: false }))
 	// check for available mints of the user
 	useEffect(() => {
 		void (async () => {
@@ -238,7 +238,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				button1Txt={loading ? t('claiming', { ns: 'wallet' }) : t('pasteToken', { ns: 'wallet' })}
 				onPressFirstBtn={() => void handleClaimBtnPress()}
 				button2Txt={t('createInvoice', { ns: 'wallet' })}
-				onPressSecondBtn={() => void handleLnBtnPress(false)}
+				onPressSecondBtn={() => void handleLnBtnPress()}
 				onPressCancel={closeOptsModal}
 			/>
 			{/* Send options */}
