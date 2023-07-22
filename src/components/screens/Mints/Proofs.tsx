@@ -1,6 +1,7 @@
 import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
 import Separator from '@comps/Separator'
+import { isIOS } from '@consts'
 import { getProofsByMintUrl } from '@db'
 import type { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -47,7 +48,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 							{
 								flex: 1,
 								paddingHorizontal: 0,
-								height: Math.floor(proofs.length * 56),
+								height: Math.floor(proofs.length * (isIOS ? 51 : 56)),
 							}
 						]}
 					>

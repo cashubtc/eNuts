@@ -29,7 +29,7 @@ export default function TopNav({ screenName, withBackBtn, nav, backHandler, canc
 			return
 		}
 		// open QR Scan
-		nav?.navigation.navigate('qr scan')
+		nav?.navigation.navigate('qr scan', { mint: undefined })
 	}
 	return (
 		<View style={styles.topNav}>

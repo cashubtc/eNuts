@@ -16,10 +16,14 @@ export type RootStackParamList = {
 		isSendEcash?: boolean
 		balance?: number
 		allMintsEmpty?: boolean
+		invoice?: string
+		invoiceAmount?: number
 	},
 	selectTarget: {
 		mint: IMintUrl
-		balance?: number
+		balance: number
+		isMelt?: boolean
+		isSendEcash?: boolean
 	}
 	meltInputfield: {
 		mint: IMintUrl
@@ -80,12 +84,12 @@ export type RootStackParamList = {
 		mints?: string[]
 		memo?: string
 	}
-	lightning: {
+	lightning?: {
 		mint?: IMintUrl
 		balance?: number
 		receive?: boolean
 		send?: boolean
-	} | undefined
+	}
 	'pay invoice': {
 		mint?: IMintUrl
 		mintBal: number
@@ -114,7 +118,10 @@ export type RootStackParamList = {
 	'mint proofs': {
 		mintUrl: string
 	}
-	'qr scan': undefined
+	'qr scan': {
+		mint?: IMintUrl
+		balance?: number
+	}
 	'history': undefined
 	'history entry details': {
 		entry: IHistoryEntry
@@ -127,11 +134,11 @@ export type RootStackParamList = {
 	BackupPage: {
 		token: string
 	}
-	'Address book': {
+	'Address book'?: {
 		isMelt: boolean
 		mint: IMintUrl
 		balance: number
-	} | undefined
+	}
 	Contact: {
 		contact?: IContact
 	}

@@ -45,6 +45,10 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 				withBackBtn
 			/>
 			<View style={[styles.wrap, globals(color).wrapContainer]}>
+				<View>
+					
+				</View>
+				<Separator style={[styles.separator]} />
 				<View style={styles.csRow}>
 					<View>
 						<Txt

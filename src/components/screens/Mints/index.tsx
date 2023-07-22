@@ -4,7 +4,7 @@ import { MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
-import { _testmintUrl, defaultMints } from '@consts'
+import { _testmintUrl, defaultMints, isIOS } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -137,7 +137,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					globals(color).wrapContainer,
 					{
 						paddingHorizontal: 0,
-						height: [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints].length * 65
+						height: [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints].length * (isIOS ? 60 : 65)
 					}
 				]}>
 					<FlashList

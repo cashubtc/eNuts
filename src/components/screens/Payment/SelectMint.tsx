@@ -1,7 +1,9 @@
 import Button from '@comps/Button'
 import Empty from '@comps/Empty'
+import usePrompt from '@comps/hooks/Prompt'
 import { MintBoardIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
@@ -11,32 +13,59 @@ import { ThemeContext } from '@src/context/Theme'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
+import { checkFees } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SelectMintScreen({ navigation, route }: TSelectMintPageProps) {
+	const {
+		mints,
+		mintsWithBal,
+		allMintsEmpty,
+		isMelt,
+		isSendEcash,
+		invoice,
+		invoiceAmount
+	} = route.params
+	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['wallet'])
 	const { color, highlight } = useContext(ThemeContext)
 	// mint list
 	const [userMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// the default mint url if user has set one
 	const [defaultMint, setDefaultM] = useState('')
+	const { prompt, openPromptAutoClose } = usePrompt()
 	// navigation screen name
 	const getScreenName = () => {
-		if (route.params.isMelt) { return 'cashOut' }
-		if (route.params.isSendEcash) { return 'sendEcash' }
+		if (isMelt) { return 'cashOut' }
+		if (isSendEcash) { return 'sendEcash' }
 		return 'createInvoice'
 	}
 	// screen text hint (short explaination about feature)
 	const getScreenHint = () => {
-		if (route.params.isMelt) { return 'chooseMeltMintHint' }
-		if (route.params.isSendEcash) { return 'sendEcashHint' }
+		if (isMelt) { return 'chooseMeltMintHint' }
+		if (isSendEcash) { return 'sendEcashHint' }
 		return 'chooseMintHint'
 	}
 	// press mint
-	const handlePressMint = (mint: IMintBalWithName) => {
-		if (route.params.isMelt) {
+	const handlePressMint = async (mint: IMintBalWithName) => {
+		if (invoice && invoiceAmount) {
+			const estFee = await checkFees(mint.mintUrl, invoice)
+			if (invoiceAmount + estFee > mint.amount) {
+				openPromptAutoClose({ msg: t('noFunds', { ns: 'common' }) })
+				return
+			}
+			navigation.navigate('coinSelection', {
+				mint,
+				amount: invoiceAmount,
+				estFee,
+				isMelt: true
+			})
+			return
+		}
+		if (isMelt) {
 			navigation.navigate('selectTarget', {
 				mint,
 				balance: mint.amount,
@@ -46,14 +75,13 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		navigation.navigate('selectAmount', {
 			mint,
 			balance: mint.amount,
-			isMelt: route.params.isMelt,
-			isSendEcash: route.params.isSendEcash
+			isMelt,
+			isSendEcash
 		})
 	}
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
 		void (async () => {
-			const { mints, mintsWithBal } = route.params
 			if (!mints.length) { return }
 			const mintsBalWithName = mints.map((m, i) => ({
 				mintUrl: m.mintUrl,
@@ -63,17 +91,17 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			setUserMints(mintsBalWithName)
 			setDefaultM(await getDefaultMint() ?? '')
 		})()
-	}, [route.params])
+	}, [mints, mintsWithBal])
 	return (
-		<SafeAreaView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t(getScreenName(), { ns: 'common' })} withBackBtn />
-			{userMints.length > 0 && !route.params.allMintsEmpty &&
+			{userMints.length > 0 && !allMintsEmpty &&
 				<Txt
 					styles={[styles.hint]}
 					txt={t(getScreenHint(), { ns: 'mints' })}
 				/>
 			}
-			{userMints.length && !route.params.allMintsEmpty ?
+			{userMints.length && !allMintsEmpty ?
 				<View style={[
 					globals(color).wrapContainer,
 					{ height: !userMints.length ? 65 : userMints.length * 65 }
@@ -85,7 +113,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 							<TouchableOpacity
 								key={data.item.mintUrl}
 								style={styles.mintUrlWrap}
-								onPress={() => handlePressMint(data.item)}
+								onPress={() => void handlePressMint(data.item)}
 							>
 								<View style={styles.mintNameWrap}>
 									{defaultMint === data.item.mintUrl &&
@@ -109,17 +137,17 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 					/>
 				</View>
 				:
-				<Empty txt={t(route.params.allMintsEmpty ? 'noFunds' : 'noMint', { ns: 'common' }) + '...'} />
+				<Empty txt={t(allMintsEmpty ? 'noFunds' : 'noMint', { ns: 'common' }) + '...'} />
 			}
-			{(!userMints.length || route.params.allMintsEmpty) &&
-				<View style={styles.addNewMintWrap}>
+			{(!userMints.length || allMintsEmpty) &&
+				<View style={[styles.addNewMintWrap, {bottom: 20 + insets.bottom}]}>
 					<Button
-						txt={t(route.params.allMintsEmpty ? 'mintNewTokens' : 'addNewMint', { ns: 'mints' })}
+						txt={t(allMintsEmpty ? 'mintNewTokens' : 'addNewMint', { ns: 'mints' })}
 						onPress={() => {
-							if (route.params.allMintsEmpty) {
+							if (allMintsEmpty) {
 								navigation.navigate('selectMint', {
-									mints: route.params.mints,
-									mintsWithBal: route.params.mintsWithBal
+									mints,
+									mintsWithBal
 								})
 								return
 							}
@@ -128,7 +156,8 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 					/>
 				</View>
 			}
-		</SafeAreaView>
+			{prompt.open && <Toaster txt={prompt.msg} />}
+		</View>
 	)
 }
 
@@ -163,7 +192,6 @@ const styles = StyleSheet.create({
 	addNewMintWrap: {
 		position: 'absolute',
 		right: 20,
-		bottom: 20,
 		left: 20,
 	}
 })

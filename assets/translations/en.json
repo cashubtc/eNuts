@@ -111,7 +111,7 @@
 		"keysetID": "Keyset ID",
 		"lnInvoice": "Lightning invoice",
 		"lnPayment": "Lightning payment",
-		"lnPaymentReq": "Lightning payment request",
+		"lnPaymentReq": "Payment request",
 		"manageMints": "Manage mints",
 		"mintBalance": "Mint balance",
 		"minted": "minted",
@@ -254,7 +254,7 @@
 		"meltSwapHint": "Pick another mint from your trusted list as the payment receiver.",
 		"coinSelectionHint": "Your Ecash balance is essentially a collection of coin-sets. Coin selection allows you to choose the set of coins you want to spend. Coin-sets are assigned a keyset-ID by the mint, which may change over time. Newly added keysets are highlighted in green. It is advisable to spend older sets first.",
 		"processingPaymentByMint": "The mint is processing the payment according to your request",
-		"creatingEcashToken": ""
+		"creatingEcashToken": "Cashu token is beeing created"
 	},
 	"topNav": {
 		"about": "About us",

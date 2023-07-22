@@ -72,7 +72,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	const handleAmountSubmit = async () => {
 		if (fee.isCalculating || balTooLow) { return }
 		// error & shake animation if amount === 0 or greater than mint balance
-		if (!amount || +amount < 1 || +amount > balance) {
+		if (isSendEcash || isMelt && (!amount || +amount < 1 || +amount > balance)) {
 			vib(400)
 			setErr(true)
 			shake()
@@ -168,8 +168,8 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				/>
 			}
 			<KeyboardAvoidingView
-				behavior={isIOS ? 'height' : undefined}
-				style={[styles.continue, { bottom: 20 + insets.bottom }]}
+				behavior={isIOS ? 'padding' : undefined}
+				style={[styles.continue, { bottom: (isIOS ? 50 : 20) + insets.bottom }]}
 			>
 				<TouchableOpacity
 					style={styles.actionBtn}
@@ -181,7 +181,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 							txt={getActionBtnTxt()}
 							styles={[
 								globals(color, highlight).pressTxt,
-								{ color: balTooLow ? mainColors.ERROR : fee.isCalculating ? mainColors.WARN : hi[highlight], marginRight: 10 }
+								{
+									color: balTooLow ? mainColors.ERROR : fee.isCalculating ? mainColors.WARN : hi[highlight],
+									marginRight: fee.isCalculating ? 10 : 0
+								}
 							]}
 						/>
 						{fee.isCalculating && <Loading color={mainColors.WARN} />}

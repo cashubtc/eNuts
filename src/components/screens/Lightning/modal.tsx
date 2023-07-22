@@ -3,6 +3,7 @@ import CoinSelectionRow from '@comps/coinSelectionRow'
 import useLoading from '@comps/hooks/Loading'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
 import MyModal from '@modal'
 import type { IMintUrl, IProofSelection } from '@model'
 import { FlashList } from '@shopify/flash-list'
@@ -71,7 +72,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 							{
 								flex: 1,
 								paddingHorizontal: 0,
-								height: Math.floor(proofs.length * 56),
+								height: Math.floor(proofs.length * (isIOS ? 51 : 56)),
 								// adds a margin bottom if the "confirm" button is visible
 								marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0
 							},

@@ -5,16 +5,16 @@ import useCashuToken from '@comps/hooks/Token'
 import { CloseIcon, FlashlightOffIcon, ZapIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
 import { isIOS, QRType } from '@consts'
-import { addMint, getMintsUrls } from '@db'
+import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
 import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
-import ScannedQRDetails from '@screens/Lightning/scannedQR'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
+import { getCustomMintNames } from '@store/mintStore'
 import { hasTrustedMint, isCashuToken, vib } from '@util'
-import { claimToken } from '@wallet'
+import { checkFees, claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
@@ -25,15 +25,12 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import QRMarker from './Marker'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
+	const { mint, balance } = route.params
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)
 	const [flash, setFlash] = useState(false)
-	// LN invoice
-	const [lnDecoded, setLnDecoded] = useState<IDecodedLNInvoice | undefined>()
-	// LN details modal
-	const [detailsOpen, setDetailsOpen] = useState(false)
 	// prompt modal
 	const { prompt, openPromptAutoClose } = usePrompt()
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -116,9 +113,9 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		})
 	}
 
-	const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {
+	const handleBarCodeScanned = async ({ type, data }: { type: string, data: string }) => {
 		setScanned(true)
-		const bcType = isIOS ? 'org.iso.QRCode' : QRType
+		const bcType = isIOS ? 'org.iso.QRCode' : +QRType
 		// early return if barcode is not a QR
 		if (type !== bcType) {
 			openPromptAutoClose({ msg: t('notQrCode') })
@@ -130,14 +127,75 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			void handleCashuToken(data)
 			return
 		}
-		// handle LN invoice (LN payment request (mint -> LN))
+		// handle LN invoice
 		try {
 			const invoice = data.split(':')[1]
-			const ln = getDecodedLnInvoice(invoice)
-			setLnDecoded(ln)
-			setDetailsOpen(true)
+			const decoded: IDecodedLNInvoice = getDecodedLnInvoice(invoice)
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+			const amount = decoded.sections[2].value / 1000
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+			const timePassed = Math.ceil(Date.now() / 1000) - decoded.sections[4].value
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+			const timeLeft = decoded.sections[8].value - timePassed
+			if (timeLeft <= 0) {
+				openPromptAutoClose({ msg: t('invoiceExpired') })
+				return
+			}
+			// user already has selected the mint in the previous screens
+			if (mint && balance) {
+				// check if invoice amount is higher than the selected mint balance to avoid navigating
+				if (amount > balance) {
+					openPromptAutoClose({ msg: t('noFunds') })
+					return
+				}
+				// TODO show loading
+				const estFee = await checkFees(mint.mintUrl, invoice)
+				// TODO stop loading
+				navigation.navigate('coinSelection', {
+					mint,
+					amount,
+					estFee,
+					isMelt: true
+				})
+				return
+			}
+			const mintsWithBal = await getMintsBalances()
+			const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
+			const nonEmptyMint = mintsWithBal.filter(m => m.amount > 0)
+			// user has no funds
+			if (!nonEmptyMint.length) {
+				navigation.navigate('selectMint', {
+					mints,
+					mintsWithBal,
+					isMelt: true,
+					allMintsEmpty: true
+				})
+				return
+			}
+			const mintUsing = mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' }
+			// TODO show loading
+			const estFee = await checkFees(mintUsing.mintUrl, invoice)
+			// TODO stop loading
+			// user has only 1 mint with balance, he can skip the mint, target and amount selection
+			if (nonEmptyMint.length === 1) {
+				navigation.navigate('coinSelection', {
+					mint: mintUsing,
+					amount,
+					estFee,
+					isMelt: true
+				})
+				return
+			}
+			// user needs to select mint
+			navigation.navigate('selectMint', {
+				mints,
+				mintsWithBal,
+				allMintsEmpty: !nonEmptyMint.length,
+				invoiceAmount: amount,
+				invoice,
+			})
+
 		} catch (e) {
-			l(e)
 			openPromptAutoClose({ msg: t('unknownType') + data })
 		}
 	}
@@ -153,7 +211,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			{hasPermission && !detailsOpen ?
+			{hasPermission ?
 				<>
 					<Camera
 						flashMode={flash ? FlashMode.torch : FlashMode.off}
@@ -210,16 +268,6 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					tokenInfo={tokenInfo}
 					handleTrustModal={() => void handleTrustModal()}
 					closeModal={() => setTrustModal(false)}
-				/>
-			}
-			{detailsOpen &&
-				<ScannedQRDetails
-					lnDecoded={lnDecoded}
-					closeDetails={() => {
-						setDetailsOpen(false)
-						setScanned(false)
-					}}
-					nav={{ navigation, route }}
 				/>
 			}
 			{prompt.open &&

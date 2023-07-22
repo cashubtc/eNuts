@@ -1,5 +1,6 @@
 import Empty from '@comps/Empty'
 import Separator from '@comps/Separator'
+import { isIOS } from '@consts'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -53,7 +54,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							{/* Group entries */}
 							<View style={[
 								globals(color).wrapContainer,
-								{ flex: 1, height: Math.floor(data.item[1].length * 74) }
+								{ flex: 1, height: Math.floor(data.item[1].length * (isIOS ? 69 : 74)) }
 							]}>
 								<FlashList
 									data={data.item[1]}

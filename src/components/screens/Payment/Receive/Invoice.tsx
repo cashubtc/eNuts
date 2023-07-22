@@ -13,10 +13,12 @@ import { requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
 	const { mintUrl, amount, hash, expiry, paymentRequest } = route.params
+	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [expire, setExpire] = useState(expiry)
@@ -66,7 +68,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 		}
 	}, [expire, expiryTime])
 	return (
-		<SafeAreaView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav
 				cancel
 				screenName={t('payInvoice', { ns: 'wallet' })}
@@ -105,7 +107,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					</Text>
 				}
 			</View>
-			<View style={styles.lnBtnWrap}>
+			<View style={[styles.lnBtnWrap, { marginBottom: insets.bottom }]}>
 				<Button
 					txt={copied ? t('copied') + '!' : t('copyInvoice')}
 					outlined
@@ -131,7 +133,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				/>
 			</View>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-		</SafeAreaView>
+		</View>
 	)
 }
 

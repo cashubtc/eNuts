@@ -34,15 +34,13 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 				<Target
 					txt={t('inputField')}
 					hint={t('meltInputHint')}
-					onPress={() => navigation.navigate('meltInputfield', { mint, balance: balance || 20 })}
+					onPress={() => navigation.navigate('meltInputfield', { mint, balance })}
 					hasSeparator
 				/>
 				<Target
 					txt={t('scanQR')}
 					hint={t('meltScanQRHint')}
-					onPress={() => {
-						//
-					}}
+					onPress={() => navigation.navigate('qr scan', { mint, balance })}
 					hasSeparator
 				/>
 				<Target

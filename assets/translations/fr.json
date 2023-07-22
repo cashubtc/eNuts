@@ -111,7 +111,7 @@
 		"keysetID": "ID de clés",
 		"lnInvoice": "Facture Lightning",
 		"lnPayment": "Paiement Lightning",
-		"lnPaymentReq": "Demande de paiement Lightning",
+		"lnPaymentReq": "Demande de paiement",
 		"manageMints": "Gérer les Mints",
 		"mintBalance": "Solde de la Mint",
 		"minted": "émis",
@@ -254,7 +254,7 @@
 		"meltSwapHint": "Sélectionnez une autre mint de votre liste de confiance comme destinataire du paiement.",
 		"coinSelectionHint": "Votre solde Ecash est essentiellement une collection d'ensembles de Coins. La sélection de Coins vous permet de choisir l'ensemble de Coins que vous souhaitez dépenser. Les ensembles de Coins se voient attribuer des clés identifiant par la mint, qui peut changer avec le temps. Les nouveaux ensembles sont mis en évidence en vert. Il est conseillé de dépenser les anciens ensembles en premier.",
 		"processingPaymentByMint": "La mint traite le paiement selon votre demande",
-		"creatingEcashToken": ""
+		"creatingEcashToken": "Le Cashu token est en train d'être créé."
 	},
 	"topNav": {
 		"about": "À propos de nous",
