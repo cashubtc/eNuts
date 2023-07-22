@@ -158,7 +158,8 @@
 		"estimateFee": "Estimer les frais.",
 		"balTooLow": "Solde insuffisant",
 		"totalInclFee": "Total incl. frais:",
-		"submitPaymentReq": "Envoyer demande de paiement"
+		"submitPaymentReq": "Envoyer demande de paiement",
+		"sendEcash": "Envoyer Ecash"
 	},
 	"error": {
 		"header": "Une erreur est survenue",
@@ -273,7 +274,6 @@
 		"payLNInvoice": "Payer une facture Lightning",
 		"payInvoice": "Payer une facture",
 		"receive": "Recevoir",
-		"send": "Envoyer",
-		"sendEcash": "Envoyer Ecash"
+		"send": "Envoyer"
 	}
 }

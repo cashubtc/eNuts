@@ -22,6 +22,11 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	const [userMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// the default mint url if user has set one
 	const [defaultMint, setDefaultM] = useState('')
+	const getScreenName = () => {
+		if (route.params.isMelt) { return 'cashOut' }
+		if (route.params.isSendEcash) { return 'sendEcash' }
+		return 'createInvoice'
+	}
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
 		void (async () => {
@@ -38,7 +43,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	}, [route.params])
 	return (
 		<SafeAreaView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<TopNav screenName={t(route.params?.isMelt ? 'cashOut' : 'createInvoice', { ns: 'common' })} withBackBtn />
+			<TopNav screenName={t(getScreenName(), { ns: 'common' })} withBackBtn />
 			{userMints.length > 0 && !route.params.allMintsEmpty &&
 				<Txt
 					styles={[styles.hint]}

@@ -131,6 +131,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			memo: info?.decoded.memo
 		})
 	}
+	// get mints for send/receive process
+	const getMintsForPayment = async () => {
+		const mintsWithBal = await getMintsBalances()
+		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
+		// user has only 1 mint with balance, he can skip the mint selection only for melting (he can mint new token with a mint that has no balance)
+		const mintsWithBalCount = mintsWithBal.filter(m => m.amount > 0).length
+		return { mintsWithBal, mints, mintsWithBalCount }
+	}
 	// receive ecash button
 	const handleClaimBtnPress = async () => {
 		if (token.length) { return }
@@ -145,27 +153,20 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setToken(clipboard)
 		await handleTokenSubmit(clipboard)
 	}
-	// send ecash button
-	const handleSendBtnPress = () => {
-		navigation.navigate('send')
+	// mint/melt/send ecash buttons
+	const handleOptsBtnPress = async ({ isMelt, isSendEcash }: { isMelt?: boolean, isSendEcash?: boolean }) => {
+		const { mintsWithBal, mints, mintsWithBalCount } = await getMintsForPayment()
 		closeOptsModal()
-	}
-	// mint/melt button
-	const handleLnBtnPress = async (isMelt?: boolean) => {
-		const mintsWithBal = await getMintsBalances()
-		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
-		closeOptsModal()
-		// user has only 1 mint with balance, he can skip the mint selection only for melting (he can mint new token with a mint that has no balance)
-		const mintsWithBalCount = mintsWithBal.filter(m => m.amount > 0).length
-		if (isMelt && mintsWithBalCount === 1) {
-			navigation.navigate('selectAmount', { mint: mints[0] })
+		if ((isMelt || isSendEcash) && mintsWithBalCount === 1) {
+			navigation.navigate('selectAmount', { mint: mints[0], isMelt, isSendEcash })
 			return
 		}
 		navigation.navigate('selectMint', {
 			mints,
 			mintsWithBal,
-			allMintsEmpty: isMelt && mintsWithBalCount === 0,
-			isMelt
+			allMintsEmpty: (isMelt || isSendEcash) && mintsWithBalCount === 0,
+			isMelt,
+			isSendEcash
 		})
 	}
 	// close send/receive options modal
@@ -240,16 +241,16 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				button1Txt={loading ? t('claiming', { ns: 'wallet' }) : t('pasteToken', { ns: 'wallet' })}
 				onPressFirstBtn={() => void handleClaimBtnPress()}
 				button2Txt={t('createInvoice', { ns: 'wallet' })}
-				onPressSecondBtn={() => void handleLnBtnPress()}
+				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: false })}
 				onPressCancel={closeOptsModal}
 			/>
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}
-				button1Txt={t('sendEcash', { ns: 'wallet' })}
-				onPressFirstBtn={handleSendBtnPress}
+				button1Txt={t('sendEcash')}
+				onPressFirstBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: true })}
 				button2Txt={t('payLNInvoice', { ns: 'wallet' })}
-				onPressSecondBtn={() => void handleLnBtnPress(true)}
+				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: true, isSendEcash: false })}
 				onPressCancel={closeOptsModal}
 			/>
 			{/* Prompt toaster */}

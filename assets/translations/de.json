@@ -158,7 +158,8 @@
 		"estimateFee": "Gebühren schätzen",
 		"balTooLow": "Nicht genug Guthaben",
 		"totalInclFee": "Gesamt inkl. Gebühr:",
-		"submitPaymentReq": "Zahlungsanfrage absenden"
+		"submitPaymentReq": "Zahlungsanfrage absenden",
+		"sendEcash": "Ecash senden"
 	},
 	"error": {
 		"header": "Ein Fehler ist aufgetreten",
@@ -274,7 +275,6 @@
 		"payInvoice": "Rechnung bezahlen",
 		"receive": "Empfangen",
 		"send": "Senden",
-		"sendEcash": "Ecash senden",
 		"submitIssue": "Problem auf GitHub melden"
 	}
 }

@@ -158,7 +158,8 @@
 		"estimateFee": "Estimate fee",
 		"balTooLow": "Balance too low",
 		"totalInclFee": "Total incl. fee:",
-		"submitPaymentReq": "Submit Payment Request"
+		"submitPaymentReq": "Submit Payment Request",
+		"sendEcash": "Send Ecash"
 	},
 	"error": {
 		"header": "An error occured",
@@ -274,7 +275,6 @@
 		"payInvoice": "Pay invoice",
 		"receive": "Receive",
 		"send": "Send",
-		"sendEcash": "Send Ecash",
 		"submitIssue": "Submit issue on GitHub"
 	}
 }

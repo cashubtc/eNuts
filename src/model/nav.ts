@@ -13,6 +13,7 @@ export type RootStackParamList = {
 		mints: IMintUrl[]
 		mintsWithBal: IMintWithBalance[]
 		isMelt?: boolean
+		isSendEcash?: boolean
 		balance?: number
 		allMintsEmpty?: boolean
 	},
@@ -27,6 +28,7 @@ export type RootStackParamList = {
 	selectAmount: {
 		mint: IMintUrl
 		isMelt?: boolean
+		isSendEcash?: boolean
 		balance?: number
 		lnurl?: string
 	}
@@ -35,6 +37,7 @@ export type RootStackParamList = {
 		amount: number
 		estFee: number
 		isMelt?: boolean
+		isSendEcash?: boolean
 		recipient: string
 	}
 	processing: {
