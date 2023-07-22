@@ -153,18 +153,20 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// mint/melt button
 	const handleLnBtnPress = async (isMelt?: boolean) => {
 		const mintsWithBal = await getMintsBalances()
-		if (!mintsWithBal.length) {
-			// TODO prompt user
-			return
-		}
 		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
 		closeOptsModal()
-		// user has only 1 mint with balance, he can skip the mint selection
-		if (mintsWithBal.filter(m => m.amount > 0).length === 1) {
+		// user has only 1 mint with balance, he can skip the mint selection only for melting (he can mint new token with a mint that has no balance)
+		const mintsWithBalCount = mintsWithBal.filter(m => m.amount > 0).length
+		if (isMelt && mintsWithBalCount === 1) {
 			navigation.navigate('selectAmount', { mint: mints[0] })
 			return
 		}
-		navigation.navigate('selectMint', { mints, mintsWithBal, isMelt })
+		navigation.navigate('selectMint', {
+			mints,
+			mintsWithBal,
+			allMintsEmpty: isMelt && mintsWithBalCount === 0,
+			isMelt
+		})
 	}
 	// close send/receive options modal
 	const closeOptsModal = () => setModal(prev => ({ ...prev, receiveOpts: false, sendOpts: false }))

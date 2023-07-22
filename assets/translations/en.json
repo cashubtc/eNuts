@@ -214,7 +214,7 @@
 		"meltToken": "Melt token",
 		"mintConnectionFail": "Connection to mint failed",
 		"mintInfo": "Mint info",
-		"mintNewTokens": "Mint new token",
+		"mintNewTokens": "Mint New Token",
 		"mintNoContact": "The mint has no contact info",
 		"mntAlreadyAdded": "Mint already added",
 		"newMintSuccess": "{{mintUrl}} added successfully",

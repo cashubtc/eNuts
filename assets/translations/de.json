@@ -214,7 +214,7 @@
 		"meltToken": "Tokens auszahlen",
 		"mintConnectionFail": "Verbindung zu Mint fehlgeschlagen",
 		"mintInfo": "Mint Info",
-		"mintNewTokens": "Neue Tokens anfordern",
+		"mintNewTokens": "Neues Ecash Anfordern",
 		"mintNoContact": "Diese Mint verfügt über keine Kontakt Informationen",
 		"mntAlreadyAdded": "Mint bereits vorhanden",
 		"newMintSuccess": "{{mintUrl}} erfolgreich hinzugefügt",

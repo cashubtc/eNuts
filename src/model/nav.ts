@@ -14,6 +14,7 @@ export type RootStackParamList = {
 		mintsWithBal: IMintWithBalance[]
 		isMelt?: boolean
 		balance?: number
+		allMintsEmpty?: boolean
 	},
 	selectTarget: {
 		mint: IMintUrl

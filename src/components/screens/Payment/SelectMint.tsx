@@ -1,3 +1,5 @@
+import Button from '@comps/Button'
+import Empty from '@comps/Empty'
 import { MintBoardIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
@@ -24,6 +26,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	useEffect(() => {
 		void (async () => {
 			const { mints, mintsWithBal } = route.params
+			if (!mints.length) { return }
 			const mintsBalWithName = mints.map((m, i) => ({
 				mintUrl: m.mintUrl,
 				customName: m.customName || '',
@@ -36,49 +39,72 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	return (
 		<SafeAreaView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t(route.params?.isMelt ? 'cashOut' : 'createInvoice', { ns: 'common' })} withBackBtn />
-			<Txt styles={[styles.hint]} txt={t(route.params?.isMelt ? 'chooseMeltMintHint' : 'chooseMintHint', { ns: 'mints' })} />
-			<View style={[
-				globals(color).wrapContainer,
-				{
-					height: !userMints.length ? 65 : userMints.length * 65
-				}
-			]}>
-				<FlashList
-					data={userMints}
-					estimatedItemSize={300}
-					renderItem={data => (
-						<TouchableOpacity
-							key={data.item.mintUrl}
-							style={styles.mintUrlWrap}
-							onPress={() => {
-								if (route.params?.isMelt && data.item.amount < 1) {
-									// not enough funds
-									return
-								}
-								navigation.navigate(route.params?.isMelt ? 'selectTarget' : 'selectAmount', { mint: data.item, balance: data.item.amount })
-							}}
-						>
-							<View style={styles.mintNameWrap}>
-								{defaultMint === data.item.mintUrl &&
-									<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-								}
-								<Txt
-									txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
-									styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0 }]}
-								/>
-							</View>
-							{/* Add mint icon or show balance */}
-							<View style={styles.mintBal}>
-								<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-									{formatInt(data.item.amount, 'compact', 'en')}
-								</Text>
-								<ZapIcon width={18} height={18} color={color.TEXT} />
-							</View>
-						</TouchableOpacity>
-					)}
-					ItemSeparatorComponent={() => <Separator />}
+			{userMints.length > 0 && !route.params.allMintsEmpty &&
+				<Txt
+					styles={[styles.hint]}
+					txt={t(route.params?.isMelt ? 'chooseMeltMintHint' : 'chooseMintHint', { ns: 'mints' })}
 				/>
-			</View>
+			}
+			{userMints.length && !route.params.allMintsEmpty ?
+				<View style={[
+					globals(color).wrapContainer,
+					{ height: !userMints.length ? 65 : userMints.length * 65 }
+				]}>
+					<FlashList
+						data={userMints}
+						estimatedItemSize={300}
+						renderItem={data => (
+							<TouchableOpacity
+								key={data.item.mintUrl}
+								style={styles.mintUrlWrap}
+								onPress={() => {
+									navigation.navigate(route.params?.isMelt ? 'selectTarget' : 'selectAmount', {
+										mint: data.item,
+										balance: data.item.amount
+									})
+								}}
+							>
+								<View style={styles.mintNameWrap}>
+									{defaultMint === data.item.mintUrl &&
+										<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+									}
+									<Txt
+										txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
+										styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0 }]}
+									/>
+								</View>
+								{/* Add mint icon or show balance */}
+								<View style={styles.mintBal}>
+									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
+										{formatInt(data.item.amount, 'compact', 'en')}
+									</Text>
+									<ZapIcon width={18} height={18} color={color.TEXT} />
+								</View>
+							</TouchableOpacity>
+						)}
+						ItemSeparatorComponent={() => <Separator />}
+					/>
+				</View>
+				:
+				<Empty txt={t(route.params.allMintsEmpty ? 'noFunds' : 'noMint', { ns: 'common' }) + '...'} />
+			}
+			{(!userMints.length || route.params.allMintsEmpty) &&
+				<View style={styles.addNewMintWrap}>
+					<Button
+						txt={t(route.params.allMintsEmpty ? 'mintNewTokens' : 'addNewMint', { ns: 'mints' })}
+						onPress={() => {
+							if (route.params.allMintsEmpty) {
+								navigation.navigate('selectMint', {
+									mints: route.params.mints,
+									mintsWithBal: route.params.mintsWithBal
+								})
+								return
+							}
+							navigation.navigate('mints')
+						}}
+					/>
+				</View>
+			}
 		</SafeAreaView>
 	)
 }
@@ -111,4 +137,10 @@ const styles = StyleSheet.create({
 	mintAmount: {
 		marginRight: 5,
 	},
+	addNewMintWrap: {
+		position: 'absolute',
+		right: 20,
+		bottom: 20,
+		left: 20,
+	}
 })
