@@ -6,7 +6,7 @@ import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
 import InitialModal from '@comps/InitialModal'
 import Toaster from '@comps/Toaster'
-import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
+import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import OptsModal from '@modal/OptsModal'
 import TrustMintModal from '@modal/TrustMint'
@@ -55,7 +55,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		receiveOpts: false,
 		sendOpts: false
 	})
-
 	// This function is only called if the mints of the received token are not in the user DB
 	const handleTrustModal = async () => {
 		if (loading) { return }
@@ -76,13 +75,11 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// add token to db
 		await receiveToken(token)
 	}
-
 	// navigates to the mint list page
 	const handleMintModal = () => {
 		setModal({ ...modal, mint: false })
 		navigation.navigate('mints')
 	}
-
 	// This function is only called if the mint of the received token is available as trusted in user DB
 	const handleTokenSubmit = async (url: string) => {
 		const tokenInfo = getTokenInfo(url)
@@ -105,7 +102,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		}
 		await receiveToken(url)
 	}
-
 	// helper function that gets called either right after submitting input or in the trust modal depending on user permission
 	const receiveToken = async (encodedToken: string) => {
 		const success = await claimToken(encodedToken).catch(l)
@@ -135,7 +131,43 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			memo: info?.decoded.memo
 		})
 	}
-
+	// receive ecash button
+	const handleClaimBtnPress = async () => {
+		if (token.length) { return }
+		startLoading()
+		const clipboard = await Clipboard.getStringAsync()
+		if (!isCashuToken(clipboard)) {
+			openPromptAutoClose({ msg: t('invalidOrSpent') })
+			closeOptsModal()
+			stopLoading()
+			return
+		}
+		setToken(clipboard)
+		await handleTokenSubmit(clipboard)
+	}
+	// send ecash button
+	const handleSendBtnPress = () => {
+		navigation.navigate('send')
+		closeOptsModal()
+	}
+	// mint/melt button
+	const handleLnBtnPress = async (isMelt: boolean) => {
+		const mintsWithBal = await getMintsBalances()
+		if (!mintsWithBal.length) {
+			// TODO prompt user
+			return
+		}
+		const mintsWithName = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
+		closeOptsModal()
+		// user has only 1 mint with balance, he can skip the mint selection
+		if (mintsWithBal.filter(m => m.amount > 0).length === 1) {
+			navigation.navigate('selectAmount', { mint: mintsWithName[0] })
+			return
+		}
+		navigation.navigate('selectMint', { isMelt })
+	}
+	// close send/receive options modal
+	const closeOptsModal = () => setModal({ ...modal, receiveOpts: false, sendOpts: false })
 	// check for available mints of the user
 	useEffect(() => {
 		void (async () => {
@@ -146,7 +178,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
-
 	// handle initial URL passed on by clicking on a cashu link
 	useEffect(() => {
 		void (async () => {
@@ -156,7 +187,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
-
 	// get balance after navigating to this page
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', async () => {
@@ -206,64 +236,19 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<OptsModal
 				visible={modal.receiveOpts}
 				button1Txt={loading ? t('claiming', { ns: 'wallet' }) : t('pasteToken', { ns: 'wallet' })}
-				onPressFirstBtn={() => {
-					if (token.length) { return }
-					void (async () => {
-						startLoading()
-						const clipboard = await Clipboard.getStringAsync()
-						if (!isCashuToken(clipboard)) {
-							openPromptAutoClose({ msg: t('invalidOrSpent') })
-							setModal({ ...modal, receiveOpts: false })
-							stopLoading()
-							return
-						}
-						setToken(clipboard)
-						await handleTokenSubmit(clipboard)
-					})()
-				}}
+				onPressFirstBtn={() => void handleClaimBtnPress()}
 				button2Txt={t('createInvoice', { ns: 'wallet' })}
-				onPressSecondBtn={async () => {
-					// new UX
-					const mints = await getMintsUrls(true)
-					if (!mints.length) {
-						// TODO prompt user
-						return
-					}
-					const mintsWithName = await getCustomMintNames(mints)
-					setModal({ ...modal, receiveOpts: false })
-					if (mintsWithName.length === 1) {
-						navigation.navigate('selectAmount', { mint: mintsWithName[0] })
-						return
-					}
-					navigation.navigate('selectMint')
-				}}
-				onPressCancel={() => setModal({ ...modal, receiveOpts: false })}
+				onPressSecondBtn={() => void handleLnBtnPress(false)}
+				onPressCancel={closeOptsModal}
 			/>
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}
 				button1Txt={t('sendEcash', { ns: 'wallet' })}
-				onPressFirstBtn={() => {
-					navigation.navigate('send')
-					setModal({ ...modal, sendOpts: false })
-				}}
+				onPressFirstBtn={handleSendBtnPress}
 				button2Txt={t('payLNInvoice', { ns: 'wallet' })}
-				onPressSecondBtn={async () => {
-					// new UX
-					const mints = await getMintsUrls(true)
-					if (!mints.length) {
-						// TODO prompt user
-						return
-					}
-					const mintsWithName = await getCustomMintNames(mints)
-					setModal({ ...modal, sendOpts: false })
-					if (mintsWithName.length === 1) {
-						navigation.navigate('selectTarget', { mint: mintsWithName[0] })
-						return
-					}
-					navigation.navigate('selectMint', { isMelt: true })
-				}}
-				onPressCancel={() => setModal({ ...modal, sendOpts: false })}
+				onPressSecondBtn={() => void handleLnBtnPress(true)}
+				onPressCancel={closeOptsModal}
 			/>
 			{/* Prompt toaster */}
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
