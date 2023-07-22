@@ -63,7 +63,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
 			openPromptAutoClose({ msg: t('clipboardInvalid') })
-			setModal({ ...modal, receiveOpts: false })
+			closeOptsModal()
 			stopLoading()
 			return
 		}
@@ -85,7 +85,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		const tokenInfo = getTokenInfo(url)
 		if (!tokenInfo) {
 			openPromptAutoClose({ msg: t('clipboardInvalid') })
-			setModal({ ...modal, receiveOpts: false })
+			closeOptsModal()
 			stopLoading()
 			return
 		}
@@ -102,11 +102,11 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		}
 		await receiveToken(url)
 	}
-	// helper function that gets called either right after submitting input or in the trust modal depending on user permission
+	// helper function that gets called either right after pasting token or in the trust modal depending on user permission
 	const receiveToken = async (encodedToken: string) => {
 		const success = await claimToken(encodedToken).catch(l)
 		setTrustModal(false)
-		setModal({ ...modal, receiveOpts: false })
+		closeOptsModal()
 		setToken('')
 		stopLoading()
 		if (!success) {
