@@ -39,6 +39,7 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		fontSize: 24,
 		fontWeight: '500',
 		marginBottom: 30,
+		marginTop: 10,
 		textAlign: 'center',
 		color: color.TEXT,
 	},

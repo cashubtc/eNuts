@@ -1,6 +1,6 @@
 import Button, { IconBtn } from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
-import { MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
+import { ChevronRightIcon, MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
@@ -25,6 +25,9 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+const flashlistUntrustedHeight = isIOS ? 60 : 65
+const flashlistTrustedHeight = isIOS ? 90 : 95
+
 export default function Mints({ navigation, route }: TMintsPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
@@ -43,8 +46,9 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	// visibility state for trusting a new mint that us not in the user mint list
 	const [trustModalOpen, setTrustModalOpen] = useState(false)
 	const { prompt, closePrompt, openPromptAutoClose } = usePrompt()
-
 	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
+	const allMints = [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]
+	const testMintRowHeight = isTrustedMint(_testmintUrl) ? 0 : flashlistUntrustedHeight
 
 	// adds a mint via input
 	const handleMintInput = async () => {
@@ -138,11 +142,11 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					globals(color).wrapContainer,
 					{
 						paddingHorizontal: 0,
-						height: [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints].length * (isIOS ? 60 : 65)
+						height: usertMints.length * flashlistTrustedHeight + testMintRowHeight
 					}
 				]}>
 					<FlashList
-						data={[...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]}
+						data={allMints}
 						estimatedItemSize={300}
 						contentContainerStyle={{ paddingHorizontal: 20 }}
 						renderItem={data => (
@@ -152,23 +156,28 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 								onPress={() => handleMintEntry(data.item, data.item.amount)}
 							>
 								<View style={styles.mintNameWrap}>
-									{defaultMint === data.item.mintUrl &&
-										<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+									<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+										{defaultMint === data.item.mintUrl &&
+											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+										}
+										<Txt
+											txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
+											styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0, fontWeight: '500' }]}
+										/>
+									</View>
+									{isTrustedMint(data.item.mintUrl) &&
+										<View style={styles.mintBal}>
+											<ZapIcon width={18} height={18} color={color.TEXT} />
+											<Text style={[styles.mintAmount, { color: color.TEXT }]}>
+												{formatInt(data.item.amount, 'compact', 'en') + ' Satoshi'}
+											</Text>
+										</View>
 									}
-									<Txt
-										txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
-										styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0 }]}
-									/>
 								</View>
 								{/* Add mint icon or show balance */}
 								<View>
 									{isTrustedMint(data.item.mintUrl) ?
-										<View style={styles.mintBal}>
-											<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-												{formatInt(data.item.amount, 'compact', 'en')}
-											</Text>
-											<ZapIcon width={18} height={18} color={color.TEXT} />
-										</View>
+										<ChevronRightIcon color={color.TEXT} />
 										:
 										<PlusIcon color={color.TEXT} />
 									}
@@ -244,8 +253,8 @@ const styles = StyleSheet.create({
 		bottom: 80,
 	},
 	mintNameWrap: {
-		flexDirection: 'row',
-		alignItems: 'center'
+		flexDirection: 'column',
+		alignItems: 'flex-start'
 	},
 	mintUrlWrap: {
 		flex: 1,
@@ -255,13 +264,12 @@ const styles = StyleSheet.create({
 		paddingVertical: 20,
 	},
 	mintBal: {
-		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center',
+		marginTop: 10,
 	},
 	mintAmount: {
-		marginRight: 5,
+		marginLeft: 10,
 	},
 	cancel: {
 		alignItems: 'center',
