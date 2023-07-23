@@ -1,4 +1,3 @@
-import { Proof } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
@@ -8,14 +7,14 @@ import type { TCoinSelectionPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { highlight as hi, mainColors } from '@styles/colors'
+import { highlight as hi } from '@styles/colors'
 import { formatMintUrl, getSelectedAmount } from '@util'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Switch, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { CoinSelectionModal, CoinSelectionResume } from './ProofList'
+import { CoinSelectionModal, CoinSelectionResume, OverviewRow } from './ProofList'
 
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
 	const {
@@ -139,75 +138,6 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	)
 }
 
-interface IProofRowProps {
-	proof: Proof | IProofSelection
-	isLatestKeysetId: boolean
-}
-interface ICoinSelectionRowProps extends IProofRowProps {
-	setChecked: () => void
-}
-
-/**
- * A pressable list entry component that handles coin selection
- */
-export function CoinSelectionRow({ proof, isLatestKeysetId, setChecked }: ICoinSelectionRowProps) {
-	return (
-		<TouchableOpacity style={styles.overview} onPress={setChecked}>
-			<ProofRowContent proof={proof} isLatestKeysetId={isLatestKeysetId} />
-		</TouchableOpacity>
-	)
-}
-
-/**
- * A non-pressable list entry component that only shows the proofs
- */
-export function ProofRow({ proof, isLatestKeysetId }: IProofRowProps) {
-	return (
-		<View style={styles.overview}>
-			<ProofRowContent proof={proof} isLatestKeysetId={isLatestKeysetId} />
-		</View>
-	)
-}
-
-function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
-	const { color, highlight } = useContext(ThemeContext)
-	return (
-		<>
-			<Txt txt={`${proof.amount} Satoshi`} />
-			<View style={styles.keyWrap}>
-				<Text style={[
-					styles.keysetID,
-					{ color: isLatestKeysetId ? mainColors.VALID : color.TEXT_SECONDARY, marginRight: 'selected' in proof ? 20 : 0 }
-				]}>
-					{proof.id}
-				</Text>
-				{'selected' in proof &&
-					<View
-						style={[
-							globals(color, highlight).radioBtn,
-							{ backgroundColor: proof.selected ? hi[highlight] : 'transparent' }
-						]}
-					/>
-				}
-			</View>
-		</>
-	)
-}
-
-interface IOverviewRowProps { txt1: string, txt2: string }
-
-function OverviewRow({ txt1, txt2 }: IOverviewRowProps) {
-	return (
-		<>
-			<View style={styles.overviewRow}>
-				<Txt txt={txt1} styles={[{ fontWeight: '500' }]} />
-				<Txt txt={txt2} />
-			</View>
-			<Separator style={[styles.separator]} />
-		</>
-	)
-}
-
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'column',
@@ -215,11 +145,6 @@ const styles = StyleSheet.create({
 	},
 	wrap: {
 		padding: 20,
-	},
-	overviewRow: {
-		flexDirection: 'row',
-		alignItems: 'baseline',
-		justifyContent: 'space-between'
 	},
 	csRow: {
 		flexDirection: 'row',
@@ -233,18 +158,5 @@ const styles = StyleSheet.create({
 	},
 	separator: {
 		marginVertical: 20,
-	},
-	overview: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 15,
-	},
-	keyWrap: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	keysetID: {
-		fontSize: 14,
 	},
 })

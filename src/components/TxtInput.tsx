@@ -8,7 +8,7 @@ interface ITxtInputProps {
 	placeholder: string
 	onChangeText: (text: string) => void
 	onSubmitEditing?: (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void
-	ref?: LegacyRef<TextInput>
+	innerRef?: LegacyRef<TextInput>
 	autoFocus?: boolean
 	ms?: number
 	maxLength?: number
@@ -20,7 +20,7 @@ export default function TxtInput({
 	placeholder,
 	onChangeText,
 	onSubmitEditing,
-	ref,
+	innerRef,
 	autoFocus,
 	ms,
 	maxLength,
@@ -39,7 +39,7 @@ export default function TxtInput({
 	}, [])
 	return (
 		<TextInput
-			ref={ref || inputRef}
+			ref={innerRef || inputRef}
 			keyboardType={keyboardType || 'default'}
 			placeholder={placeholder}
 			placeholderTextColor={color.INPUT_PH}

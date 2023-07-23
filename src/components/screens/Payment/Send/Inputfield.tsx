@@ -37,7 +37,6 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			setDecodedAmount(0)
 			return
 		}
-		inputRef.current?.blur()
 		// paste from clipboard
 		const clipboard = await Clipboard.getStringAsync()
 		if (!clipboard || clipboard === 'null') { return }
@@ -55,10 +54,12 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			const fee = await checkFees(mint.mintUrl, clipboard)
 			setEstFee(fee)
 			stopLoading()
+			inputRef.current?.blur()
 		} catch (e) {
 			// invalid LN invoice
 			stopLoading()
 			openPromptAutoClose({ msg: t('invalidInvoice') })
+			setInput('')
 		}
 	}
 	const handleBtnPress = async () => {
@@ -161,7 +162,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			<View style={styles.paddingHorizontal}>
 				<View style={{ position: 'relative' }}>
 					<TxtInput
-						ref={inputRef}
+						innerRef={inputRef}
 						keyboardType='email-address'
 						placeholder={t('invoiceOrLnurl')}
 						value={input}
