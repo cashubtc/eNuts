@@ -3,6 +3,7 @@ import usePrompt from '@comps/hooks/Prompt'
 import { BackupIcon, CheckmarkIcon, CopyIcon, EyeIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
+import TxtInput from '@comps/TxtInput'
 import { _testmintUrl } from '@consts'
 import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
 import { getBackUpTokenForMint } from '@db/backup'
@@ -21,7 +22,8 @@ import { checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text
+	, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
@@ -306,12 +308,10 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<Text style={globals(color).modalHeader}>
 						{edit ? t('editMintName', { ns: 'mints' }) : t('addCustomName', { ns: 'mints' })}
 					</Text>
-					<TextInput
-						style={[globals(color).input, { marginBottom: 20 }]}
+					<TxtInput
 						placeholder={t('customName', { ns: 'mints' })}
-						placeholderTextColor={color.INPUT_PH}
-						selectionColor={hi[highlight]}
 						onChangeText={setMintName}
+						onSubmitEditing={() => void handleMintName()}
 					/>
 					{(mintName.length > 0 || savedName.length > 0) &&
 						<Button
