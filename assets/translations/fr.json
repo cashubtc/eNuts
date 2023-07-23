@@ -166,7 +166,8 @@
 		"mint": "Mint",
 		"recipient": "Bcénéficiaire",
 		"balanceAfterTX": "Solde après paiement",
-		"multimintSwap": "Multimint-échange."
+		"multimintSwap": "Multimint-échange.",
+		"optionalMemo": "Mémo facultatif"
 	},
 	"error": {
 		"header": "Une erreur est survenue",

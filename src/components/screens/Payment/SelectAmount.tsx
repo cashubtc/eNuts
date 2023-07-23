@@ -84,10 +84,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			await handleFeeEstimation(lnurl)
 			return
 		}
-		// send ecash or melt token
+		// send ecash / melt / swap
 		if (isSendingTX) {
-			// Check if user sends his whole mint balance, so there is no need for coin selection and that can be skipped here
-			if (isSendingWholeMintBal()) {
+			// Check if user melts/swaps his whole mint balance, so there is no need for coin selection and that can be skipped here
+			if (!isSendEcash && isSendingWholeMintBal()) {
 				navigation.navigate('processing', {
 					mint,
 					amount: +amount,
@@ -97,6 +97,16 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					isSwap,
 					targetMint,
 					recipient: lnurl
+				})
+				return
+			}
+			// optional memo
+			if (isSendEcash) {
+				navigation.navigate('memoScreen', {
+					mint,
+					balance,
+					amount: +amount,
+					isSendingWholeMintBal: isSendingWholeMintBal()
 				})
 				return
 			}

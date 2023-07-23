@@ -21,6 +21,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		mint,
 		balance,
 		amount,
+		memo,
 		estFee,
 		recipient,
 		isMelt,
@@ -43,6 +44,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		navigation.navigate('processing', {
 			mint,
 			amount,
+			memo,
 			estFee,
 			isMelt,
 			isSendEcash,
@@ -83,6 +85,9 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 						txt1={t('balanceAfterTX')}
 						txt2={estFee > 0 ? `${balance - amount - estFee} to ${balance - amount} Satoshi` : `${balance - amount} Satoshi`}
 					/>
+					{memo && memo.length > 0 &&
+						<OverviewRow txt1={t('memo', { ns: 'history' })} txt2={memo} />
+					}
 					<View style={styles.csRow}>
 						<View>
 							<Txt

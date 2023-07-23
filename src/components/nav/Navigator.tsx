@@ -1,4 +1,3 @@
-import EncodedTokenPage from '@comps/screens/Payment/Send/EncodedToken'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
 import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -20,7 +19,9 @@ import InvoiceScreen from '@screens/Payment/Receive/Invoice'
 import SelectAmountScreen from '@screens/Payment/SelectAmount'
 import SelectMintScreen from '@screens/Payment/SelectMint'
 import CoinSelectionScreen from '@screens/Payment/Send/CoinSelection'
+import EncodedTokenPage from '@screens/Payment/Send/EncodedToken'
 import InputfieldScreen from '@screens/Payment/Send/Inputfield'
+import MemoScreen from '@screens/Payment/Send/MemoScreen'
 import SelectMintToSwapToScreen from '@screens/Payment/Send/SelectMintToSwapTo'
 import SelectTargetScreen from '@screens/Payment/Send/SelectTarget'
 import SuccessPage from '@screens/Payment/Success'
@@ -66,6 +67,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='selectMintToSwapTo' component={SelectMintToSwapToScreen} />
 				<Stack.Screen name='meltInputfield' component={InputfieldScreen} />
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
+				<Stack.Screen name='memoScreen' component={MemoScreen} />
 				<Stack.Screen name='coinSelection' component={CoinSelectionScreen} />
 				<Stack.Screen name='processing' component={ProcessingScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />

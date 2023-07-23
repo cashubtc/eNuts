@@ -166,7 +166,8 @@
 		"recipient": "Recipient",
 		"mint": "Mint",
 		"balanceAfterTX": "Balance after TX",
-		"multimintSwap": "Multimint swap"
+		"multimintSwap": "Multimint swap",
+		"optionalMemo": "Optional memo"
 	},
 	"error": {
 		"header": "An error occured",

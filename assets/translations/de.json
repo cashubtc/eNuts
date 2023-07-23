@@ -166,7 +166,8 @@
 		"recipient": "Empfänger",
 		"mint": "Mint",
 		"balanceAfterTX": "Guthaben nach Zahlung",
-		"multimintSwap": "Multimint-Tausch"
+		"multimintSwap": "Multimint-Tausch",
+		"optionalMemo": "Optionales Memo"
 	},
 	"error": {
 		"header": "Ein Fehler ist aufgetreten",

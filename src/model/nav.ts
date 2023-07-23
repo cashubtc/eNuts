@@ -57,6 +57,12 @@ export type RootStackParamList = {
 		lnurl?: string
 		targetMint?: IMintUrl
 	}
+	memoScreen: {
+		mint: IMintUrl
+		balance: number
+		amount: number
+		isSendingWholeMintBal: boolean
+	}
 	coinSelection: {
 		mint: IMintUrl
 		balance: number
@@ -67,6 +73,7 @@ export type RootStackParamList = {
 		isSwap?: boolean
 		targetMint?: IMintUrl
 		recipient?: string
+		memo?: string
 	}
 	processing: {
 		mint: IMintUrl
@@ -78,6 +85,7 @@ export type RootStackParamList = {
 		targetMint?: IMintUrl
 		proofs?: IProofSelection[]
 		recipient?: string
+		memo?: string
 	}
 	processingError: {
 		mint: IMintUrl
@@ -143,6 +151,7 @@ export type TSelectTargetPageProps = NativeStackScreenProps<RootStackParamList, 
 export type TSelectMintToSwapToPageProps = NativeStackScreenProps<RootStackParamList, 'selectMintToSwapTo', 'MyStack'>
 export type TMeltInputfieldPageProps = NativeStackScreenProps<RootStackParamList, 'meltInputfield', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
+export type TMemoPageProps = NativeStackScreenProps<RootStackParamList, 'memoScreen', 'MyStack'>
 export type TCoinSelectionPageProps = NativeStackScreenProps<RootStackParamList, 'coinSelection', 'MyStack'>
 export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>
 export type TProcessingErrorPageProps = NativeStackScreenProps<RootStackParamList, 'processingError', 'MyStack'>

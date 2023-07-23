@@ -18,6 +18,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const {
 		mint,
 		amount,
+		memo,
 		estFee,
 		isMelt,
 		isSendEcash,
@@ -124,7 +125,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	}
 	const handleSendingEcashProcess = async () => {
 		try {
-			const token = await sendToken(mint.mintUrl, amount, 'memo', proofs)
+			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
 			// add as history entry
 			await addToHistory({
 				amount: -amount,
@@ -137,7 +138,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			navigation.navigate('processingError', {
 				mint,
 				amount,
-				errorMsg: isErr(e) ? e.message : 'Something went wrong while create the Cashu token.'
+				errorMsg: isErr(e) ? e.message : 'Something went wrong while creating the Cashu token.'
 			})
 		}
 	}
