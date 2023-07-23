@@ -5,11 +5,11 @@ import usePrompt from '@comps/hooks/Prompt'
 import Loading from '@comps/Loading'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
+import TxtInput from '@comps/TxtInput'
 import type { TMeltInputfieldPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { highlight as hi } from '@styles/colors'
 import { decodeLnInvoice, isErr, isLnurl, openUrl } from '@util'
 import { checkFees } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
@@ -113,7 +113,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			inputRef.current?.focus()
 			clearTimeout(t)
 		}, 200)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	// handle case if user pastes value using the device keyboard
 	useEffect(() => {
@@ -160,16 +160,15 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			</View>
 			<View style={styles.paddingHorizontal}>
 				<View style={{ position: 'relative' }}>
-					<TextInput
-						keyboardType='email-address'
+					<TxtInput
 						ref={inputRef}
-						style={[globals(color).input, { marginBottom: 20 }]}
+						keyboardType='email-address'
 						placeholder={t('invoiceOrLnurl')}
-						placeholderTextColor={color.INPUT_PH}
-						selectionColor={hi[highlight]}
 						value={input}
 						onChangeText={setInput}
 						onSubmitEditing={() => void handleBtnPress()}
+						autoFocus
+						ms={200}
 					/>
 					{/* Paste / Clear Input */}
 					<TouchableOpacity

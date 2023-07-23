@@ -4,6 +4,7 @@ import { PlusIcon, UserIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
+import TxtInput from '@comps/TxtInput'
 import { addContact, getContacts } from '@db'
 import MyModal from '@modal'
 import type { TAddressBookPageProps } from '@model/nav'
@@ -13,7 +14,7 @@ import { globals, highlight as hi } from '@styles'
 import { isLnurl } from '@util'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface IAddressBookProps {
@@ -173,20 +174,17 @@ export default function AddressBook({ nav }: IAddressBookProps) {
 					{openNew.isOwner ? t('yourLnurl', { ns: 'addrBook' }) : t('newContact', { ns: 'addrBook' })}
 				</Text>
 				{!openNew.isOwner &&
-					<TextInput
-						style={[globals(color).input, { marginBottom: 20 }]}
+					<TxtInput
 						placeholder={t('name')}
-						placeholderTextColor={color.INPUT_PH}
-						selectionColor={hi[highlight]}
 						onChangeText={name => setNewContact(prev => ({ ...prev, name }))}
+						onSubmitEditing={() => void handleNewContact()}
 					/>
 				}
-				<TextInput
-					style={[globals(color).input, { marginBottom: 20 }]}
+				<TxtInput
+					keyboardType='email-address'
 					placeholder={t('zapMeNow', { ns: 'addrBook' })}
-					placeholderTextColor={color.INPUT_PH}
-					selectionColor={hi[highlight]}
 					onChangeText={lnUrl => setNewContact(prev => ({ ...prev, lnUrl }))}
+					onSubmitEditing={() => void handleNewContact()}
 				/>
 				<Button txt={t('save')} onPress={() => void handleNewContact()} />
 				<TouchableOpacity

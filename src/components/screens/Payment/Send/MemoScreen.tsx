@@ -1,9 +1,9 @@
 import Button from '@comps/Button'
 import Txt from '@comps/Txt'
+import TxtInput from '@comps/TxtInput'
 import type { TMemoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TextInput, View } from 'react-native'
@@ -11,9 +11,30 @@ import { StyleSheet, TextInput, View } from 'react-native'
 export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 	const { mint, balance, amount, isSendingWholeMintBal } = route.params
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color } = useContext(ThemeContext)
 	const memoInputRef = createRef<TextInput>()
 	const [memo, setMemo] = useState('')
+	const handlePress = () => {
+		// Check if user sends his whole mint balance, so there is no need for coin selection and that can be skipped here
+		if (isSendingWholeMintBal) {
+			navigation.navigate('processing', {
+				mint,
+				amount,
+				estFee: 0,
+				isSendEcash: true,
+				memo
+			})
+			return
+		}
+		navigation.navigate('coinSelection', {
+			mint,
+			balance,
+			amount,
+			estFee: 0,
+			isSendEcash: true,
+			memo
+		})
+	}
 	// auto-focus keyboard
 	useEffect(() => {
 		const t = setTimeout(() => {
@@ -33,38 +54,19 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 				styles={[styles.hint]}
 			/>
 			<View style={styles.actionContainer}>
-				<TextInput
+				<TxtInput
 					ref={memoInputRef}
-					style={globals(color, highlight).input}
 					placeholder={t('optionalMemo')}
-					placeholderTextColor={color.INPUT_PH}
 					maxLength={21}
 					onChangeText={setMemo}
+					onSubmitEditing={handlePress}
+					autoFocus
+					ms={400}
 				/>
 				<View style={{ marginVertical: 10 }} />
 				<Button
 					txt={t('continue')}
-					onPress={() => {
-						// Check if user sends his whole mint balance, so there is no need for coin selection and that can be skipped here
-						if (isSendingWholeMintBal) {
-							navigation.navigate('processing', {
-								mint,
-								amount,
-								estFee: 0,
-								isSendEcash: true,
-								memo
-							})
-							return
-						}
-						navigation.navigate('coinSelection', {
-							mint,
-							balance,
-							amount,
-							estFee: 0,
-							isSendEcash: true,
-							memo
-						})
-					}}
+					onPress={handlePress}
 				/>
 			</View>
 		</View>

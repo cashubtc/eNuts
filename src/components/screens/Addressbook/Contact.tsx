@@ -2,6 +2,7 @@ import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { EditIcon, TrashbinIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
+import TxtInput from '@comps/TxtInput'
 import { delContact, editContact as editC, getContacts } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -9,10 +10,10 @@ import type { IContactPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ContactsContext } from '@src/context/Contacts'
 import { ThemeContext } from '@src/context/Theme'
-import { globals, highlight as hi, mainColors } from '@styles'
+import { globals, mainColors } from '@styles'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const { t } = useTranslation(['common'])
@@ -118,22 +119,19 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					{t('editContact', { ns: 'addrBook' })}
 				</Text>
 				{!route.params.contact?.isOwner &&
-					<TextInput
-						style={[globals(color).input, { marginBottom: 20 }]}
+					<TxtInput
 						placeholder={t('name')}
-						placeholderTextColor={color.INPUT_PH}
-						selectionColor={hi[highlight]}
-						onChangeText={name => setEditContact({ ...editContact, name })}
 						value={editContact.name}
+						onChangeText={name => setEditContact({ ...editContact, name })}
+						onSubmitEditing={() => void handleEditContact()}
 					/>
 				}
-				<TextInput
-					style={[globals(color).input, { marginBottom: 20 }]}
+				<TxtInput
+					keyboardType='email-address'
 					placeholder={t('zapMeNow', { ns: 'addrBook' })}
-					placeholderTextColor={color.INPUT_PH}
-					selectionColor={hi[highlight]}
-					onChangeText={ln => setEditContact({ ...editContact, ln })}
 					value={editContact.ln}
+					onChangeText={ln => setEditContact({ ...editContact, ln })}
+					onSubmitEditing={() => void handleEditContact()}
 				/>
 				<Button txt={t('save')} onPress={() => void handleEditContact()}
 				/>

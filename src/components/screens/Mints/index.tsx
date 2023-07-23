@@ -4,6 +4,7 @@ import { MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
+import TxtInput from '@comps/TxtInput'
 import { _testmintUrl, defaultMints, isIOS } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
@@ -21,7 +22,7 @@ import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isErr, isUrl } from '@util'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
@@ -188,12 +189,11 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				<Text style={globals(color).modalHeader}>
 					{t('addNewMint', { ns: 'mints' })}
 				</Text>
-				<TextInput
-					style={[globals(color).input, { marginBottom: 20 }]}
-					placeholder="Mint URL"
-					placeholderTextColor={color.INPUT_PH}
-					selectionColor={hi[highlight]}
+				<TxtInput
+					keyboardType='url'
+					placeholder='Mint URL'
 					onChangeText={setInput}
+					onSubmitEditing={() => { void handleMintInput() }}
 				/>
 				<Button txt={t('addMintBtn', { ns: 'mints' })} onPress={() => { void handleMintInput() }} />
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
