@@ -32,8 +32,8 @@ import { Appearance, AppState, Text, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
-import { CustomErrorBoundary } from './ErrorScreen/ErrorBoundary'
-import { ErrorDetails } from './ErrorScreen/ErrorDetails'
+import { CustomErrorBoundary } from './screens/ErrorScreen/ErrorBoundary'
+import { ErrorDetails } from './screens/ErrorScreen/ErrorDetails'
 import Toaster from './Toaster'
 import Txt from './Txt'
 
