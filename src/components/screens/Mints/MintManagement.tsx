@@ -1,6 +1,6 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
-import { BackupIcon, CheckmarkIcon, CopyIcon, EyeIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
+import { BackupIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
@@ -180,18 +180,9 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					{/* Balance */}
 					<View style={styles.mintOpts}>
 						<Txt txt={t('balance')} />
-						<Text style={{ color: color.TEXT }}>
-							{formatInt(route.params?.amount)}{' Satoshi'}
-						</Text>
+						<Txt txt={formatInt(route.params?.amount) + ' Satoshi'} />
 					</View>
 					<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
-					{/* Mint info */}
-					<MintOption
-						txt={t('mintInfo', { ns: 'mints' })}
-						hasSeparator
-						onPress={() => navigation.navigate('mint info', { mintUrl: route.params.mint?.mintUrl })}
-						icon={<InfoIcon width={18} height={18} color={color.TEXT} />}
-					/>
 					{/* Add custom name */}
 					<MintOption
 						txt={t('customName', { ns: 'mints' })}
@@ -209,6 +200,14 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt={isDefault ? t('removeDefault', { ns: 'mints' }) : t('setDefault', { ns: 'mints' })}
 						onPress={() => void handleDefaultMint()}
 						icon={<MintBoardIcon width={19} height={19} color={color.TEXT} />}
+						hasSeparator
+					/>
+					{/* Mint info */}
+					<MintOption
+						txt={t('mintInfo', { ns: 'mints' })}
+						onPress={() => navigation.navigate('mint info', { mintUrl: route.params.mint?.mintUrl })}
+						icon={<InfoIcon width={18} height={18} color={color.TEXT} />}
+						reverseIcon
 					/>
 				</View>
 				{/* Fund management */}
@@ -220,6 +219,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						hasSeparator
 						onPress={() => navigation.navigate('selectAmount', { mint: route.params.mint, balance: route.params.amount })}
 						icon={<PlusIcon color={color.TEXT} />}
+						reverseIcon
 					/>
 					{/* Redeem to lightning */}
 					<MintOption
@@ -236,6 +236,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							})
 						}}
 						icon={<ZapIcon width={18} height={18} color={color.TEXT} />}
+						reverseIcon
 					/>
 					{/* Inter-mint swap */}
 					<MintOption
@@ -243,6 +244,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						hasSeparator
 						onPress={() => void handleMintSwap()}
 						icon={<SwapIcon width={20} height={20} color={color.TEXT} />}
+						reverseIcon
 					/>
 					{/* Backup mint */}
 					<MintOption
@@ -250,6 +252,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						hasSeparator
 						onPress={() => void handleMintBackup()}
 						icon={<BackupIcon width={20} height={20} color={color.TEXT} />}
+						reverseIcon
 					/>
 					{/* Proof list */}
 					<MintOption
@@ -262,6 +265,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
 						}}
 						icon={<EyeIcon width={19} height={19} color={color.TEXT} />}
+						reverseIcon
 					/>
 				</View>
 				{/* Danger zone */}
@@ -343,15 +347,23 @@ interface IMintOption {
 	icon: React.ReactNode
 	rowColor?: string
 	hasSeparator?: boolean
+	reverseIcon?: boolean
 }
 
-function MintOption({ txt, onPress, icon, rowColor, hasSeparator }: IMintOption) {
+function MintOption({ txt, onPress, icon, rowColor, hasSeparator, reverseIcon }: IMintOption) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
 			<TouchableOpacity onPress={onPress} style={styles.mintOpts}>
-				<Txt txt={txt} styles={[{ color: rowColor || color.TEXT }]} />
-				{icon}
+				<View style={styles.mintOption}>
+					{reverseIcon &&
+						<View style={{ minWidth: 30 }}>
+							{icon}
+						</View>
+					}
+					<Txt txt={txt} styles={[{ color: rowColor || color.TEXT, }]} />
+				</View>
+				{!reverseIcon ? icon : <ChevronRightIcon color={color.TEXT} />}
 			</TouchableOpacity>
 			{hasSeparator &&
 				<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
@@ -394,4 +406,8 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: '500',
 	},
+	mintOption: {
+		flexDirection: 'row',
+		alignItems: 'center'
+	}
 })
