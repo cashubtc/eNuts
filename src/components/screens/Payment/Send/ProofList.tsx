@@ -1,5 +1,4 @@
 import Button from '@comps/Button'
-import CoinSelectionRow from '@comps/coinSelectionRow'
 import useLoading from '@comps/hooks/Loading'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
@@ -14,6 +13,8 @@ import { getMintCurrentKeySetId, } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+
+import { CoinSelectionRow } from './CoinSelection'
 
 interface ICoinSelectionProps {
 	mint?: IMintUrl
@@ -118,12 +119,14 @@ interface IResume {
 	selectedAmount: number
 	padding?: boolean
 	estFee?: number
+	withSeparator?: boolean
 }
 
 /**
  * This component shows the amount and the change of selected proofs in a pressable row of a proofs-list.
+ * // TODO clean up this component
  */
-export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee }: IResume) {
+export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee, withSeparator }: IResume) {
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const getChangeStr = () => {
@@ -132,6 +135,28 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee 
 			return `${change} ${t('to')} ${change + estFee} Satoshi`
 		}
 		return `${change} Satoshi`
+	}
+	if (withSeparator) {
+		return (
+			<>
+				<View style={styles.resumeRow}>
+					<Txt txt={t('selected')} styles={[{ fontWeight: '500' }]} />
+					<Text style={globals(color).txt}>
+						<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? mainColors.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
+					</Text>
+				</View>
+				{selectedAmount > lnAmount &&
+					<>
+						<Separator style={[styles.separator]} />
+						<View style={styles.resumeRow}>
+							<Txt txt={t('change')} styles={[{ fontWeight: '500' }]} />
+							<Txt txt={getChangeStr()} />
+						</View>
+
+					</>
+				}
+			</>
+		)
 	}
 	return (
 		<>
@@ -146,38 +171,6 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee 
 					<Txt txt={t('change')} />
 					<Txt txt={getChangeStr()} />
 				</View>
-			}
-		</>
-	)
-}
-
-export function CoinSelectionResume2({ lnAmount, selectedAmount, estFee }: IResume) {
-	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
-	const getChangeStr = () => {
-		const change = selectedAmount - lnAmount
-		if (estFee && estFee > 0) {
-			return `${change} ${t('to')} ${change + estFee} Satoshi`
-		}
-		return `${change} Satoshi`
-	}
-	return (
-		<>
-			<View style={styles.resumeRow}>
-				<Txt txt={t('selected')} styles={[{fontWeight: '500'}]} />
-				<Text style={globals(color).txt}>
-					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? mainColors.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
-				</Text>
-			</View>
-			{selectedAmount > lnAmount &&
-				<>
-					<Separator style={[styles.separator]} />
-					<View style={styles.resumeRow}>
-						<Txt txt={t('change')} styles={[{fontWeight: '500'}]} />
-						<Txt txt={getChangeStr()} />
-					</View>
-
-				</>
 			}
 		</>
 	)
