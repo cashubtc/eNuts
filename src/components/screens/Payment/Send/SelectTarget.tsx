@@ -44,7 +44,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					hasSeparator
 				/>
 				<Target
-					txt={t('intermintSwap')}
+					txt={t('multimintSwap')}
 					hint={t('meltSwapHint')}
 					onPress={() => {
 						//
