@@ -59,6 +59,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			}
 			navigation.navigate('coinSelection', {
 				mint,
+				balance: mint.amount,
 				amount: invoiceAmount,
 				estFee,
 				isMelt: true

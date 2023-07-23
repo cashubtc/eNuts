@@ -38,6 +38,7 @@ export type RootStackParamList = {
 	}
 	coinSelection: {
 		mint: IMintUrl
+		balance: number
 		amount: number
 		estFee: number
 		isMelt?: boolean

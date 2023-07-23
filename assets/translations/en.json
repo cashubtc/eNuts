@@ -67,7 +67,8 @@
 		"createBackup": "Create a backup token",
 		"createInvoice": "Create invoice",
 		"cashOut": "Cash out",
-		"createToken": "Create token",
+		"cashOutFromMint": "Cash out from mint",
+		"createToken": "Create Token",
 		"createTokenErr": "Could not create a cashu token. Please try again later.",
 		"createViaLn": "Create Invoice",
 		"creating": "Creating",
@@ -159,7 +160,11 @@
 		"balTooLow": "Balance too low",
 		"totalInclFee": "Total incl. fee:",
 		"submitPaymentReq": "Submit Payment Request",
-		"sendEcash": "Send Ecash"
+		"sendEcash": "Send Ecash",
+		"paymentType": "Payment type",
+		"recipient": "Recipient",
+		"mint": "Mint",
+		"balanceAfterTX": "Balance after TX"
 	},
 	"error": {
 		"header": "An error occured",
@@ -252,9 +257,10 @@
 		"meltScanQRHint": "Create a Lightning invoice with another device and simply scan it.",
 		"intermintSwap": "Inter-mint swap",
 		"meltSwapHint": "Pick another mint from your trusted list as the payment receiver.",
-		"coinSelectionHint": "Your Ecash balance is essentially a collection of coin-sets. Coin selection allows you to choose the set of coins you want to spend. Coin-sets are assigned a keyset-ID by the mint, which may change over time. Newly added keysets are highlighted in green. It is advisable to spend older sets first.",
+		"coinSelectionHint": "Your Ecash balance is essentially a collection of coin-sets. Coin selection allows you to choose the coins you want to spend. Coin-sets are assigned a keyset-ID by the mint, which may change over time. Newly added keysets are highlighted in green. It is advisable to spend older sets first.",
 		"processingPaymentByMint": "The mint is processing the payment according to your request",
-		"creatingEcashToken": "Cashu token is beeing created"
+		"creatingEcashToken": "Cashu token is beeing created",
+		"paymentOverview": "Payment overview"
 	},
 	"topNav": {
 		"about": "About us",

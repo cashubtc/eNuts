@@ -153,6 +153,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				// TODO stop loading
 				navigation.navigate('coinSelection', {
 					mint,
+					balance,
 					amount,
 					estFee,
 					isMelt: true
@@ -180,6 +181,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			if (nonEmptyMint.length === 1) {
 				navigation.navigate('coinSelection', {
 					mint: mintUsing,
+					balance: balance || 0,
 					amount,
 					estFee,
 					isMelt: true

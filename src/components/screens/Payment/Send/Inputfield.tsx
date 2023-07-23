@@ -95,6 +95,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			// navigate to coin selection screen
 			navigation.navigate('coinSelection', {
 				mint,
+				balance,
 				amount: decodedAmount,
 				estFee,
 				isMelt: true,

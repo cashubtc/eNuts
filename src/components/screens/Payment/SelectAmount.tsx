@@ -72,7 +72,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	const handleAmountSubmit = async () => {
 		if (fee.isCalculating || balTooLow) { return }
 		// error & shake animation if amount === 0 or greater than mint balance
-		if (isSendEcash || isMelt && (!amount || +amount < 1 || +amount > balance)) {
+		if ((isSendEcash || isMelt) && (!amount || +amount < 1 || +amount > balance)) {
 			vib(400)
 			setErr(true)
 			shake()
@@ -103,6 +103,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			navigation.navigate('coinSelection', {
 				mint,
 				amount: +amount,
+				balance,
 				estFee: fee.estimation,
 				isMelt,
 				isSendEcash,
