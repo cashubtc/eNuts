@@ -16,9 +16,9 @@ import TopNav from '@nav/TopNav'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
-import { getCustomMintNames } from '@src/storage/store/mintStore'
 import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
+import { getCustomMintNames } from '@store/mintStore'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -156,20 +156,20 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		const { mintsWithBal, mints } = await getMintsForPayment()
 		closeOptsModal()
 		// user has only 1 mint with balance, he can skip the mint selection only for melting (he can mint new token with a mint that has no balance)
-		const nonEmptyMint = mintsWithBal.filter(m => m.amount > 0)
-		if ((isMelt || isSendEcash) && nonEmptyMint.length === 1) {
+		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
+		if ((isMelt || isSendEcash) && nonEmptyMints.length === 1) {
 			navigation.navigate(isMelt ? 'selectTarget' : 'selectAmount', {
-				mint: mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
+				mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
 				isMelt,
 				isSendEcash,
-				balance: nonEmptyMint[0].amount
+				balance: nonEmptyMints[0].amount
 			})
 			return
 		}
 		navigation.navigate('selectMint', {
 			mints,
 			mintsWithBal,
-			allMintsEmpty: (isMelt || isSendEcash) && !nonEmptyMint.length,
+			allMintsEmpty: (isMelt || isSendEcash) && !nonEmptyMints.length,
 			isMelt,
 			isSendEcash
 		})

@@ -2,11 +2,12 @@ import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
+import { l } from '@log'
 import type { TProcessingPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { addLnPaymentToHistory, addToHistory } from '@store/HistoryStore'
 import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
-import { payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
+import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
 import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -14,8 +15,19 @@ import { StyleSheet, View } from 'react-native'
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
-	const { mint, amount, isMelt, isSendEcash, proofs, recipient } = route.params
+	const {
+		mint,
+		amount,
+		estFee,
+		isMelt,
+		isSendEcash,
+		isSwap,
+		targetMint,
+		proofs,
+		recipient
+	} = route.params
 	const handleError = (e?: unknown) => {
+		// TODO check error screen msgs
 		const translatedErrMsg = t(isMelt ? 'requestMintErr' : 'requestMintErr', { ns: 'error' })
 		navigation.navigate('processingError', {
 			amount,
@@ -25,6 +37,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	}
 	const getProcessingtxt = () => {
 		if (isMelt) { return 'processingPaymentByMint' }
+		if (isSwap) { return 'processingSwap' }
 		if (isSendEcash) { return 'creatingEcashToken' }
 		return 'awaitingInvoice'
 	}
@@ -78,7 +91,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			}
 		}
 		try {
-			const res = await payLnInvoice(mint.mintUrl, invoice || recipient, proofs || [])
+			const res = await payLnInvoice(mint.mintUrl, invoice || recipient, estFee || 0, proofs || [])
 			if (!res.result?.isPaid) {
 				handleError()
 				return
@@ -95,6 +108,16 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				fee: res.realFee,
 				mints: [mint.mintUrl]
 			})
+		} catch (e) {
+			handleError(e)
+		}
+	}
+	const handleSwapProcess = async () => {
+		// simple way
+		try {
+			const result = await autoMintSwap(mint.mintUrl, targetMint?.mintUrl || '', amount, estFee || 0)
+			l({ swapResult: result })
+			// TODO navigato to success screen
 		} catch (e) {
 			handleError(e)
 		}
@@ -124,13 +147,17 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			void handleMeltingProcess()
 			return
 		}
+		if (isSwap) {
+			void handleSwapProcess()
+			return
+		}
 		if (isSendEcash) {
 			void handleSendingEcashProcess()
 			return
 		}
 		void handleMintingProcess()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [route.params])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isMelt, isSwap, isSendEcash])
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<Loading size={40} />

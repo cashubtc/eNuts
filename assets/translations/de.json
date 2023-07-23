@@ -164,7 +164,8 @@
 		"paymentType": "Zahlungstyp",
 		"recipient": "Empfänger",
 		"mint": "Mint",
-		"balanceAfterTX": "Guthaben nach Zahlung"
+		"balanceAfterTX": "Guthaben nach Zahlung",
+		"multimintSwap": "Multimint-Tausch"
 	},
 	"error": {
 		"header": "Ein Fehler ist aufgetreten",
@@ -255,10 +256,10 @@
 		"invoiceInputHint": "Beachten Sie, dass Lightning Gebühren fallen können. Die zu viel bezahlten Gebühren werden Ihnen zurückerstattet.",
 		"scanQR": "QR-Code scannen",
 		"meltScanQRHint": "Erstellen Sie eine Lightning-Rechnung mit einem anderen Gerät und scannen Sie sie einfach.",
-		"multimintSwap": "Multimint-Tausch",
 		"meltSwapHint": "Wählen Sie eine andere Mint aus Ihrer vertrauenswürdigen Liste als Zahlungsempfänger aus.",
 		"coinSelectionHint": "Ihr Ecash-Guthaben ist im Wesentlichen eine Sammlung von Coin-sets. Die Coin Auswahl ermöglicht es Ihnen, die Coins auszuwählen, die Sie ausgeben möchten. Coin-sets erhalten von der Mint eine Schlüsselsatz-ID, die sich im Laufe der Zeit ändern kann. Neu hinzugefügte Sets werden grün hervorgehoben. Es wird empfohlen, zuerst ältere Sets auszugeben.",
 		"processingPaymentByMint": "Die Mint bearbeitet die Zahlung gemäß Ihrem Antrag",
+		"processingSwap": "Verarbeitung eines Multimint-Swaps gemäß Ihrem Antrag",
 		"creatingEcashToken": "Der Cashu-Token wird erstellt.",
 		"paymentOverview": "Zahlungsübersicht"
 	},

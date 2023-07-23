@@ -18,11 +18,9 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const isMintRelatedScreen =
 		route.name === 'mints' ||
 		route.name === 'mintmanagement' ||
-		route.name === 'mint proofs' ||
-		(route.name === 'lightning' && !route.params?.receive && !route.params?.send)
+		route.name === 'mint proofs'
 
-	const isWalletRelatedScreen = route.name === 'dashboard' ||
-		(route.name === 'lightning' && (route.params?.receive || route.params?.send))
+	const isWalletRelatedScreen = route.name === 'dashboard'
 
 	const isSettingsRelatedScreen = route.name === 'Settings' ||
 		route.name === 'Display settings' ||

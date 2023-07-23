@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { l } from '@log'
-import { CoinSelectionModal } from '@screens/Lightning/modal'
+import { CoinSelectionModal } from '@screens/Payment/Send/ProofList'
 import { render, screen } from '@testing-library/react-native'
 
 describe('Basic styling test of the CoinSelectionModal component', () => {

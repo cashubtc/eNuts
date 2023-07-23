@@ -5,7 +5,6 @@ import { getProofsByMintUrl } from '@db'
 import type { IProofSelection } from '@model'
 import type { TCoinSelectionPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { CoinSelectionModal, CoinSelectionResume2 } from '@screens/Lightning/modal'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
@@ -15,20 +14,40 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Switch, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { CoinSelectionModal, CoinSelectionResume2 } from './ProofList'
+
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
-	const { mint, balance, amount, recipient, estFee, isMelt, isSendEcash } = route.params
+	const {
+		mint,
+		balance,
+		amount,
+		estFee,
+		recipient,
+		isMelt,
+		isSendEcash,
+		isSwap,
+		targetMint
+	} = route.params
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [isEnabled, setIsEnabled] = useState(false)
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
+	const getPaymentType = () => {
+		if (isMelt) { return 'cashOutFromMint' }
+		if (isSwap) { return 'multimintSwap' }
+		return 'sendEcash'
+	}
 	const submitPaymentReq = () => {
 		navigation.navigate('processing', {
 			mint,
 			amount,
+			estFee,
 			isMelt,
 			isSendEcash,
+			isSwap,
+			targetMint,
 			proofs: proofs.filter(p => p.selected),
 			recipient
 		})
@@ -48,10 +67,13 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			/>
 			<ScrollView>
 				<View style={[globals(color).wrapContainer, styles.wrap]}>
-					<OverviewRow txt1={t('paymentType')} txt2={isMelt ? t('cashOutFromMint') : t('sendEcash')} />
+					<OverviewRow txt1={t('paymentType')} txt2={t(getPaymentType())} />
 					<OverviewRow txt1={t('mint')} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
 					{recipient &&
 						<OverviewRow txt1={t('recipient')} txt2={recipient.length > 16 ? recipient.slice(0, 16) + '...' : recipient} />
+					}
+					{isSwap && targetMint &&
+						<OverviewRow txt1={t('recipient')} txt2={targetMint.customName || formatMintUrl(targetMint.mintUrl)} />
 					}
 					<OverviewRow txt1={t('amount')} txt2={`${amount} Satoshi`} />
 					{estFee > 0 &&

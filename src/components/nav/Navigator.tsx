@@ -1,3 +1,4 @@
+import EncodedTokenPage from '@comps/screens/Payment/Send/EncodedToken'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
 import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -6,14 +7,10 @@ import ContactPage from '@screens/Addressbook/Contact'
 import AuthPage from '@screens/Auth'
 import Dashboard from '@screens/Dashboard'
 import { Disclaimer } from '@screens/Disclaimer'
-import EncodedTokenPage from '@screens/EncodedToken'
 import HistoryPage from '@screens/History'
 import DetailsPage from '@screens/History/Details'
-import Lightning from '@screens/Lightning'
-import PayInvoicePage from '@screens/Lightning/payInvoice'
 import Mints from '@screens/Mints'
 import MintInfoPage from '@screens/Mints/Info'
-import IntermintSwap from '@screens/Mints/IntermintSwap'
 import MintBackup from '@screens/Mints/MintBackup'
 import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
@@ -24,10 +21,10 @@ import SelectAmountScreen from '@screens/Payment/SelectAmount'
 import SelectMintScreen from '@screens/Payment/SelectMint'
 import CoinSelectionScreen from '@screens/Payment/Send/CoinSelection'
 import InputfieldScreen from '@screens/Payment/Send/Inputfield'
+import SelectMintToSwapToScreen from '@screens/Payment/Send/SelectMintToSwapTo'
 import SelectTargetScreen from '@screens/Payment/Send/SelectTarget'
 import SuccessPage from '@screens/Payment/Success'
 import QRScanPage from '@screens/QRScan'
-import SendTokenPage from '@screens/Send'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
 import BackupPage from '@screens/Settings/Backup'
@@ -64,28 +61,18 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 					animationDuration: 100,
 				}}
 			>
-				{/* new UX */}
 				<Stack.Screen name='selectMint' component={SelectMintScreen} />
 				<Stack.Screen name='selectTarget' component={SelectTargetScreen} />
+				<Stack.Screen name='selectMintToSwapTo' component={SelectMintToSwapToScreen} />
 				<Stack.Screen name='meltInputfield' component={InputfieldScreen} />
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
 				<Stack.Screen name='coinSelection' component={CoinSelectionScreen} />
 				<Stack.Screen name='processing' component={ProcessingScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />
-				{/*  */}
 				<Stack.Screen name='dashboard' component={Dashboard} />
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
 				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />
-				{/* create sendable token page */}
-				<Stack.Screen
-					name='send'
-					component={SendTokenPage}
-					options={{
-						animation: 'slide_from_bottom',
-						animationDuration: 100,
-					}}
-				/>
 				{/* sendable token created page */}
 				<Stack.Screen
 					name='encodedToken'
@@ -96,19 +83,9 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 					}}
 				/>
 				<Stack.Screen name='success' component={SuccessPage} />
-				<Stack.Screen name='lightning' component={Lightning} />
-				<Stack.Screen
-					name='pay invoice'
-					component={PayInvoicePage}
-					options={{
-						animation: 'slide_from_bottom',
-						animationDuration: 100,
-					}}
-				/>
 				<Stack.Screen name='mints' component={Mints} />
 				<Stack.Screen name='mintmanagement' component={MintManagement} />
 				<Stack.Screen name='mint info' component={MintInfoPage} />
-				<Stack.Screen name='inter-mint swap' component={IntermintSwap} />
 				<Stack.Screen name='mint backup' component={MintBackup} />
 				<Stack.Screen name='mint proofs' component={MintProofsPage} />
 				<Stack.Screen name='qr scan' component={QRScanPage} />

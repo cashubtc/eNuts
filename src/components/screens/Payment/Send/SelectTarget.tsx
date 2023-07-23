@@ -1,6 +1,9 @@
+import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
+import { l } from '@log'
 import type { TSelectTargetPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
@@ -11,9 +14,10 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
-	const { mint, balance } = route.params
+	const { mint, balance, remainingMints } = route.params
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
+	const { prompt, openPromptAutoClose } = usePrompt()
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t('cashOut', { ns: 'common' })} withBackBtn />
@@ -44,13 +48,20 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					hasSeparator
 				/>
 				<Target
-					txt={t('multimintSwap')}
+					txt={t('multimintSwap', { ns: 'common' })}
 					hint={t('meltSwapHint')}
 					onPress={() => {
-						//
+						l({ remainingMints })
+						// check if there is another mint except testmint
+						if (!remainingMints?.length) {
+							openPromptAutoClose({ msg: t('atLeast2Mints') })
+							return
+						}
+						navigation.navigate('selectMintToSwapTo', { mint, balance, remainingMints })
 					}}
 				/>
 			</View>
+			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View>
 	)
 }

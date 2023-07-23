@@ -8,7 +8,20 @@ import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection } from 
  */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RootStackParamList = {
-	// new UX
+	dashboard: undefined
+	disclaimer: undefined
+	history: undefined
+	mints: undefined
+	Settings: undefined
+	'Display settings': undefined
+	'Security settings': undefined
+	'Language settings': undefined
+	'About settings': undefined
+	auth: {
+		pinHash: string
+		shouldEdit?: boolean
+		shouldRemove?: boolean
+	}
 	selectMint: {
 		mints: IMintUrl[]
 		mintsWithBal: IMintWithBalance[]
@@ -24,17 +37,25 @@ export type RootStackParamList = {
 		balance: number
 		isMelt?: boolean
 		isSendEcash?: boolean
+		remainingMints?: IMintUrl[]
 	}
 	meltInputfield: {
 		mint: IMintUrl
 		balance: number
 	}
+	selectMintToSwapTo: {
+		mint: IMintUrl
+		balance: number
+		remainingMints?: IMintUrl[]
+	}
 	selectAmount: {
 		mint: IMintUrl
 		isMelt?: boolean
 		isSendEcash?: boolean
+		isSwap?: boolean
 		balance: number
 		lnurl?: string
+		targetMint?: IMintUrl
 	}
 	coinSelection: {
 		mint: IMintUrl
@@ -43,13 +64,18 @@ export type RootStackParamList = {
 		estFee: number
 		isMelt?: boolean
 		isSendEcash?: boolean
+		isSwap?: boolean
+		targetMint?: IMintUrl
 		recipient?: string
 	}
 	processing: {
 		mint: IMintUrl
 		amount: number
+		estFee?: number
 		isMelt?: boolean
 		isSendEcash?: boolean
+		isSwap?: boolean
+		targetMint?: IMintUrl
 		proofs?: IProofSelection[]
 		recipient?: string
 	}
@@ -65,15 +91,6 @@ export type RootStackParamList = {
 		expiry: number
 		paymentRequest: string
 	}
-	//
-	dashboard: undefined
-	disclaimer: undefined
-	auth: {
-		pinHash: string
-		shouldEdit?: boolean
-		shouldRemove?: boolean
-	}
-	send: undefined
 	encodedToken: {
 		token: string
 		amount: number
@@ -85,17 +102,6 @@ export type RootStackParamList = {
 		mints?: string[]
 		memo?: string
 	}
-	lightning?: {
-		mint?: IMintUrl
-		balance?: number
-		receive?: boolean
-		send?: boolean
-	}
-	'pay invoice': {
-		mint?: IMintUrl
-		mintBal: number
-	}
-	mints: undefined
 	mintmanagement: {
 		mint: IMintUrl
 		amount: number
@@ -103,14 +109,6 @@ export type RootStackParamList = {
 	}
 	'mint info': {
 		mintUrl: string
-	}
-	'inter-mint swap': {
-		swap_out_mint: {
-			mintUrl: string
-			customName: string
-		}
-		mints: IMintUrl[]
-		balance: number
 	}
 	'mint backup': {
 		token: string
@@ -123,15 +121,9 @@ export type RootStackParamList = {
 		mint?: IMintUrl
 		balance?: number
 	}
-	'history': undefined
 	'history entry details': {
 		entry: IHistoryEntry
 	}
-	Settings: undefined
-	'Display settings': undefined
-	'Security settings': undefined
-	'Language settings': undefined
-	'About settings': undefined
 	BackupPage: {
 		token: string
 	}
@@ -145,30 +137,24 @@ export type RootStackParamList = {
 	}
 }
 
-export type TRouteString = 'dashboard' | 'lightning' | 'mints' | 'history' | 'Address book' | 'Settings'
-// new UX
+export type TRouteString = 'dashboard' | 'mints' | 'Address book' | 'Settings'
 export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectTargetPageProps = NativeStackScreenProps<RootStackParamList, 'selectTarget', 'MyStack'>
+export type TSelectMintToSwapToPageProps = NativeStackScreenProps<RootStackParamList, 'selectMintToSwapTo', 'MyStack'>
 export type TMeltInputfieldPageProps = NativeStackScreenProps<RootStackParamList, 'meltInputfield', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
 export type TCoinSelectionPageProps = NativeStackScreenProps<RootStackParamList, 'coinSelection', 'MyStack'>
 export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>
 export type TProcessingErrorPageProps = NativeStackScreenProps<RootStackParamList, 'processingError', 'MyStack'>
 export type TMintInvoicePageProps = NativeStackScreenProps<RootStackParamList, 'mintInvoice', 'MyStack'>
-
-//
 export type TDashboardPageProps = NativeStackScreenProps<RootStackParamList, 'dashboard', 'MyStack'>
 export type TDisclaimerPageProps = NativeStackScreenProps<RootStackParamList, 'disclaimer', 'MyStack'>
 export type TAuthPageProps = NativeStackScreenProps<RootStackParamList, 'auth', 'MyStack'>
-export type TSendTokenPageProps = NativeStackScreenProps<RootStackParamList, 'send', 'MyStack'>
 export type TEncodedTokenPageProps = NativeStackScreenProps<RootStackParamList, 'encodedToken', 'MyStack'>
 export type TSuccessPageProps = NativeStackScreenProps<RootStackParamList, 'success', 'MyStack'>
-export type TLightningPageProps = NativeStackScreenProps<RootStackParamList, 'lightning', 'MyStack'>
-export type TPayLNInvoicePageProps = NativeStackScreenProps<RootStackParamList, 'pay invoice', 'MyStack'>
 export type TMintsPageProps = NativeStackScreenProps<RootStackParamList, 'mints', 'MyStack'>
 export type TMintManagementPageProps = NativeStackScreenProps<RootStackParamList, 'mintmanagement', 'MyStack'>
 export type TMintInfoPageProps = NativeStackScreenProps<RootStackParamList, 'mint info', 'MyStack'>
-export type TIntermintSwapPageProps = NativeStackScreenProps<RootStackParamList, 'inter-mint swap', 'MyStack'>
 export type TMintBackupPageProps = NativeStackScreenProps<RootStackParamList, 'mint backup', 'MyStack'>
 export type TMintProofsPageProps = NativeStackScreenProps<RootStackParamList, 'mint proofs', 'MyStack'>
 export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr scan', 'MyStack'>
@@ -184,11 +170,8 @@ export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, '
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
 export type TBottomNavProps =
 	TDashboardPageProps |
-	TLightningPageProps |
 	TMintsPageProps |
 	TMintManagementPageProps |
-	TSendTokenPageProps |
-	TPayLNInvoicePageProps |
 	THistoryPageProps |
 	THistoryEntryPageProps |
 	TMintProofsPageProps |

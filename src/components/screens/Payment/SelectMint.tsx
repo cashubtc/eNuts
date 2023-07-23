@@ -5,6 +5,7 @@ import { MintBoardIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
+import { _testmintUrl, isIOS } from '@consts'
 import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -18,6 +19,8 @@ import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+const flashlistItemHeight = isIOS ? 60 : 65
 
 export default function SelectMintScreen({ navigation, route }: TSelectMintPageProps) {
 	const {
@@ -51,6 +54,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	}
 	// press mint
 	const handlePressMint = async (mint: IMintBalWithName) => {
+		// pay scanned invoice
 		if (invoice && invoiceAmount) {
 			const estFee = await checkFees(mint.mintUrl, invoice)
 			if (invoiceAmount + estFee > mint.amount) {
@@ -66,17 +70,23 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			})
 			return
 		}
+		// choose a target for a lightning payment
 		if (isMelt) {
+			// get remaining mints for a possible multimint swap
+			const remainingMints = userMints
+				.filter(m => m.mintUrl !== mint.mintUrl && m.mintUrl !== _testmintUrl)
+				.map(m => ({ mintUrl: m.mintUrl, customName: m.customName }))
 			navigation.navigate('selectTarget', {
 				mint,
 				balance: mint.amount,
+				remainingMints
 			})
 			return
 		}
+		// select ecash amount to send
 		navigation.navigate('selectAmount', {
 			mint,
 			balance: mint.amount,
-			isMelt,
 			isSendEcash
 		})
 	}
@@ -105,7 +115,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			{userMints.length && !allMintsEmpty ?
 				<View style={[
 					globals(color).wrapContainer,
-					{ height: !userMints.length ? 65 : userMints.length * 65 }
+					{ height: !userMints.length ? flashlistItemHeight : userMints.length * flashlistItemHeight }
 				]}>
 					<FlashList
 						data={userMints}
@@ -141,7 +151,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				<Empty txt={t(allMintsEmpty ? 'noFunds' : 'noMint', { ns: 'common' }) + '...'} />
 			}
 			{(!userMints.length || allMintsEmpty) &&
-				<View style={[styles.addNewMintWrap, {bottom: 20 + insets.bottom}]}>
+				<View style={[styles.addNewMintWrap, { bottom: 20 + insets.bottom }]}>
 					<Button
 						txt={t(allMintsEmpty ? 'mintNewTokens' : 'addNewMint', { ns: 'mints' })}
 						onPress={() => {

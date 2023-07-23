@@ -164,7 +164,8 @@
 		"paymentType": "Type de paiement",
 		"mint": "Mint",
 		"recipient": "Bcénéficiaire",
-		"balanceAfterTX": "Solde après paiement"
+		"balanceAfterTX": "Solde après paiement",
+		"multimintSwap": "Multimint-échange."
 	},
 	"error": {
 		"header": "Une erreur est survenue",
@@ -255,10 +256,10 @@
 		"invoiceInputHint": "Notez que des frais Lightning peuvent survenir. Les frais surpayés vous seront remboursés.",
 		"scanQR": "Scanner un code QR",
 		"meltScanQRHint": "Créez une facture Lightning avec un autre appareil et scannez-la simplement.",
-		"multimintSwap": "Multimint-échange.",
 		"meltSwapHint": "Sélectionnez une autre mint de votre liste de confiance comme destinataire du paiement.",
 		"coinSelectionHint": "Votre solde Ecash est essentiellement une collection d'ensembles de Coins. La sélection de Coins vous permet de choisir les Coins que vous souhaitez dépenser. Les ensembles de Coins se voient attribuer des clés identifiant par la mint, qui peut changer avec le temps. Les nouveaux ensembles sont mis en évidence en vert. Il est conseillé de dépenser les anciens ensembles en premier.",
 		"processingPaymentByMint": "La mint traite le paiement selon votre demande",
+		"processingSwap": "Traitement d'un échange multimint selon votre demande",
 		"creatingEcashToken": "Le Cashu token est en train d'être créé.",
 		"paymentOverview": "Aperçu du paiement"
 	},

@@ -164,7 +164,8 @@
 		"paymentType": "Payment type",
 		"recipient": "Recipient",
 		"mint": "Mint",
-		"balanceAfterTX": "Balance after TX"
+		"balanceAfterTX": "Balance after TX",
+		"multimintSwap": "Multimint swap"
 	},
 	"error": {
 		"header": "An error occured",
@@ -255,10 +256,10 @@
 		"invoiceInputHint": "Note that Lightning fees can occur. The overpaid fees will be refunded to you.",
 		"scanQR": "Scan a QR code",
 		"meltScanQRHint": "Create a Lightning invoice with another device and simply scan it.",
-		"multimintSwap": "Multimint swap",
 		"meltSwapHint": "Pick another mint from your trusted list as the payment receiver.",
 		"coinSelectionHint": "Your Ecash balance is essentially a collection of coin-sets. Coin selection allows you to choose the coins you want to spend. Coin-sets are assigned a keyset-ID by the mint, which may change over time. Newly added keysets are highlighted in green. It is advisable to spend older sets first.",
 		"processingPaymentByMint": "The mint is processing the payment according to your request",
+		"processingSwap": "Processing multimint-swap according to your request",
 		"creatingEcashToken": "Cashu token is beeing created",
 		"paymentOverview": "Payment overview"
 	},

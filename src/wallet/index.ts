@@ -128,9 +128,9 @@ export async function requestToken(mintUrl: string, amount: number, hash: string
 	await delInvoice(hash)
 	return { success: true, invoice }
 }
-export async function payLnInvoice(mintUrl: string, invoice: string, proofs: Proof[] = []) {
+export async function payLnInvoice(mintUrl: string, invoice: string, fee: number, proofs: Proof[] = []) {
 	const wallet = await getWallet(mintUrl)
-	const fee = await wallet.getFee(invoice)
+	// const fee = await wallet.getFee(invoice)
 	l({ fee })
 	const decoded = getDecodedLnInvoice(invoice)
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -186,10 +186,11 @@ export async function autoMintSwap(
 	srcMintUrl: string,
 	destMintUrl: string,
 	amount: number,
+	fee: number,
 	proofs: Proof[] = []
 ) {
 	let { pr, hash } = await requestMint(destMintUrl, amount)
-	const fee = await checkFees(destMintUrl, pr)
+	// const fee = await checkFees(destMintUrl, pr)
 	if (fee > 0) {
 		// amount = amount + fee
 		l('[autoMintSwap]', { fee, amount, srcMintUrl, destMintUrl })
@@ -204,7 +205,7 @@ export async function autoMintSwap(
 		const { proofsToUse } = await getProofsToUse(srcMintUrl, amount + fee)
 		proofs = proofsToUse
 	}
-	const payResult = await payLnInvoice(srcMintUrl, pr, proofs)
+	const payResult = await payLnInvoice(srcMintUrl, pr, fee, proofs)
 	l('[autoMintSwap]', { payResult })
 	if (!payResult?.result?.isPaid) { throw new Error('Swap Error: pay failed') }
 	const requestTokenResult = await requestToken(destMintUrl, amount, hash)
@@ -215,14 +216,14 @@ export async function autoMintSwap(
 		requestTokenResult,
 	}
 }
-export async function fullAutoMintSwap(srcMintUrl: string, destMintUrl: string) {
+export async function fullAutoMintSwap(srcMintUrl: string, destMintUrl: string, fee: number) {
 	let amount = await getMintBalance(srcMintUrl)
-	let result = await autoMintSwap(srcMintUrl, destMintUrl, amount)
+	let result = await autoMintSwap(srcMintUrl, destMintUrl, amount, fee)
 	amount = await getMintBalance(srcMintUrl)
 	l('[fullAutoMintSwap]', result, 'srcMint new Bal:', amount)
 	if (amount <= 0) { return { result } }
 	try {
-		result = await autoMintSwap(srcMintUrl, destMintUrl, amount)
+		result = await autoMintSwap(srcMintUrl, destMintUrl, amount, fee)
 		l('[fullAutoMintSwap][round: 2]', result)
 	} catch (error) { return { result, error } }
 	return { result }

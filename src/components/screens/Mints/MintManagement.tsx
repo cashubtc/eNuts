@@ -65,8 +65,9 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	}
 
 	const handleMintSwap = async () => {
-		const mints = (await getMintsUrls(true)).filter(m => m.mintUrl !== route.params.mint?.mintUrl && m.mintUrl !== _testmintUrl)
-		const mintsWithCustomNames = await getCustomMintNames(mints)
+		const mints = (await getMintsUrls(true))
+			.filter(m => m.mintUrl !== route.params.mint?.mintUrl && m.mintUrl !== _testmintUrl)
+		const remainingMints = await getCustomMintNames(mints)
 		// needs at least 1 mint after filtering out the current swap-out mint and test mint
 		if (!mints.length) {
 			// promt
@@ -84,15 +85,11 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			openPromptAutoClose({ msg: t('lowBal', { ns: 'mints' }) })
 			return
 		}
-		const swapOutMintName = await getMintName(route.params.mint?.mintUrl)
-		navigation.navigate(
-			'inter-mint swap',
-			{
-				swap_out_mint: { mintUrl: route.params.mint?.mintUrl, customName: swapOutMintName || '' },
-				mints: mintsWithCustomNames,
-				balance: route.params.amount
-			}
-		)
+		navigation.navigate('selectMintToSwapTo', {
+			mint: route.params.mint,
+			balance: route.params.amount,
+			remainingMints
+		})
 	}
 
 	const handleMintBackup = async () => {

@@ -17,7 +17,7 @@ import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
-	const { mint, balance, lnurl, isMelt, isSendEcash } = route.params
+	const { mint, balance, lnurl, isMelt, isSendEcash, isSwap, targetMint } = route.params
 	const { t } = useTranslation(['wallet'])
 	const insets = useSafeAreaInsets()
 	const { color, highlight } = useContext(ThemeContext)
@@ -43,12 +43,13 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	// navigation screen name
 	const getScreenName = () => {
 		if (isMelt) { return 'cashOut' }
+		if (isSwap) { return 'multimintSwap' }
 		if (isSendEcash) { return 'sendEcash' }
 		return 'createInvoice'
 	}
 	// screen text hint (short explaination about feature)
 	const getScreenHint = () => {
-		if (isMelt) { return 'cashOutAmountHint' }
+		if (isMelt || isSwap) { return 'cashOutAmountHint' }
 		if (isSendEcash) { return 'ecashAmountHint' }
 		return 'invoiceAmountHint'
 	}
@@ -60,7 +61,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			setFee(prev => ({ ...prev, isCalculating: false }))
 			return
 		}
-		const estFee = await checkFees(mint.mintUrl, invoice)
+		const estFee = await checkFees(targetMint?.mintUrl || mint.mintUrl, invoice)
 		setFee({ estimation: estFee, isCalculating: false })
 		setShouldEstimate(false)
 	}
@@ -71,8 +72,9 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	}
 	const handleAmountSubmit = async () => {
 		if (fee.isCalculating || balTooLow) { return }
+		const isSendingTX = isSendEcash || isMelt || isSwap
 		// error & shake animation if amount === 0 or greater than mint balance
-		if ((isSendEcash || isMelt) && (!amount || +amount < 1 || +amount > balance)) {
+		if (isSendingTX && (!amount || +amount < 1 || +amount > balance)) {
 			vib(400)
 			setErr(true)
 			shake()
@@ -88,25 +90,30 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			return
 		}
 		// send ecash or melt token
-		if (isSendEcash || isMelt) {
+		if (isSendingTX) {
 			// Check if user sends his whole mint balance, so there is no need for coin selection and that can be skipped here
 			if (isSendingWholeMintBal()) {
 				navigation.navigate('processing', {
 					mint,
 					amount: +amount,
+					estFee: fee.estimation,
 					isMelt,
 					isSendEcash,
+					isSwap,
+					targetMint,
 					recipient: lnurl
 				})
 				return
 			}
 			navigation.navigate('coinSelection', {
 				mint,
-				amount: +amount,
 				balance,
+				amount: +amount,
 				estFee: fee.estimation,
 				isMelt,
 				isSendEcash,
+				isSwap,
+				targetMint,
 				recipient: lnurl
 			})
 			return
@@ -122,10 +129,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		}, 200)
 	}, [inputRef])
 	// check if is melting process
-	useEffect(() => setShouldEstimate(!!isMelt), [isMelt])
+	useEffect(() => setShouldEstimate(!isSendEcash), [isSendEcash])
 	// estimate fee each time the melt amount changes
 	useEffect(() => {
-		if (!isMelt) { return }
+		if (!isMelt || !isSwap) { return }
 		setFee({ estimation: 0, isCalculating: false })
 		setShouldEstimate(true)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,7 +161,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					maxLength={8}
 				/>
 			</Animated.View>
-			{isMelt ?
+			{isMelt || isSwap ?
 				<MeltOverview
 					amount={+amount}
 					balance={balance}
