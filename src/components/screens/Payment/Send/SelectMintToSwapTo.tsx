@@ -37,7 +37,7 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 				screenName={t('multimintSwap', { ns: 'common' })}
 				withBackBtn
 			/>
-			<Txt txt='Select a mint as the payment receiver.' styles={[{ paddingHorizontal: 20 }]} />
+			<Txt txt='Select a mint as the payment receiver.' styles={[styles.hint]} />
 			{remainingMints && remainingMints.length > 0 &&
 				<View style={[
 					globals(color).wrapContainer,
@@ -76,6 +76,11 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: 110,
+	},
+	hint:{
+		paddingHorizontal: 20,
+		marginBottom: 20,
+		fontWeight: '500'
 	},
 	mintUrlWrap: {
 		flex: 1,

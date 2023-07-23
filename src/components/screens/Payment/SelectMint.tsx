@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
 	hint: {
 		paddingHorizontal: 20,
 		marginBottom: 20,
+		fontWeight: '500'
 	},
 	mintUrlWrap: {
 		flex: 1,

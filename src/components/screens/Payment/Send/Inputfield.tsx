@@ -37,6 +37,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			setDecodedAmount(0)
 			return
 		}
+		inputRef.current?.blur()
 		// paste from clipboard
 		const clipboard = await Clipboard.getStringAsync()
 		if (!clipboard || clipboard === 'null') { return }
@@ -112,7 +113,8 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			inputRef.current?.focus()
 			clearTimeout(t)
 		}, 200)
-	}, [inputRef])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 	// handle case if user pastes value using the device keyboard
 	useEffect(() => {
 		if (isLnurl(input)) { return }
@@ -125,7 +127,9 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<TopNav screenName={t('cashOut')} withBackBtn />
 			<View>
-				<Txt styles={[styles.paddingHorizontal]} txt={t('invoiceInputHint', { ns: 'mints' })} />
+				{!input.length &&
+					<Txt styles={[styles.hint]} txt={t('meltInputHint', { ns: 'mints' })} />
+				}
 				{decodedAmount > 0 ?
 					<>
 						{loading ?
@@ -133,12 +137,21 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 								<Loading size={25} />
 							</View>
 							:
-							<MeltOverview
-								amount={decodedAmount}
-								balance={balance}
-								balTooLow={decodedAmount + estFee > balance}
-								fee={estFee}
-							/>
+							<>
+								<View style={[globals(color).wrapContainer, styles.overviewWrap]}>
+									<MeltOverview
+										amount={decodedAmount}
+										balance={balance}
+										balTooLow={decodedAmount + estFee > balance}
+										fee={estFee}
+										isInvoice
+									/>
+								</View>
+								<Txt
+									txt={'* ' + t('cashOutAmountHint', { ns: 'mints' })}
+									styles={[styles.feeHint, { color: color.TEXT_SECONDARY }]}
+								/>
+							</>
 						}
 					</>
 					:
@@ -188,6 +201,16 @@ const styles = StyleSheet.create({
 		paddingTop: 110,
 		paddingBottom: 20,
 	},
+	hint: {
+		paddingHorizontal: 20,
+		marginBottom: 20,
+		fontWeight: '500',
+	},
+	feeHint: {
+		fontSize: 12,
+		paddingHorizontal: 20,
+		marginTop: 10,
+	},
 	pasteInputTxtWrap: {
 		position: 'absolute',
 		right: 10,
@@ -196,8 +219,7 @@ const styles = StyleSheet.create({
 	},
 	overviewWrap: {
 		width: '100%',
-		marginTop: 10,
-		paddingVertical: 10
+		paddingVertical: 20
 	},
 	paddingHorizontal: {
 		paddingHorizontal: 20

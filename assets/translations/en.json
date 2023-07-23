@@ -158,7 +158,8 @@
 		"tryLater": "Please try again later.",
 		"estimateFee": "Estimate fee",
 		"balTooLow": "Balance too low",
-		"totalInclFee": "Total incl. fee:",
+		"totalInclFee": "Total incl. fee",
+		"invoiceInclFee": "Invoice incl. fee",
 		"submitPaymentReq": "Submit Payment Request",
 		"sendEcash": "Send Ecash",
 		"paymentType": "Payment type",
@@ -242,7 +243,7 @@
 		"trustMintSure": "Are you sure that you want to trust this mint?",
 		"updatedDefault": "Updated the default mint",
 		"invoiceAmountHint": "Select the amount of Ecash you would like to receive. The mint will then create an invoice which you will have to pay using a Lightning wallet.",
-		"cashOutAmountHint": "Select the amount. Note that Lightning fees can occur. The overpaid fees will be refunded to you.",
+		"cashOutAmountHint": "Lightning fees may occur, so an estimated fee is added, and any overpaid fees will be refunded.",
 		"ecashAmountHint": "Select the amount of Ecash you would like to send.",
 		"chooseMintHint": "Choose a mint from which you would like to receive Ecash. The mint becomes custodian of your funds.",
 		"chooseMeltMintHint": "Choose a mint from which you would like to cash out your funds.",
@@ -273,8 +274,7 @@
 		"mintBackup": "Mint Backup",
 		"mintSettings": "Mint settings",
 		"security": "Security",
-		"settings": "Settings",
-		"swap": "Swap"
+		"settings": "Settings"
 	},
 	"wallet": {
 		"claiming": "Claiming...",

@@ -47,12 +47,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		if (isSendEcash) { return 'sendEcash' }
 		return 'createInvoice'
 	}
-	// screen text hint (short explaination about feature)
-	const getScreenHint = () => {
-		if (isMelt || isSwap) { return 'cashOutAmountHint' }
-		if (isSendEcash) { return 'ecashAmountHint' }
-		return 'invoiceAmountHint'
-	}
 	const handleFeeEstimation = async (lnurl: string) => {
 		setFee(prev => ({ ...prev, isCalculating: true }))
 		const invoice = await getInvoiceFromLnurl(lnurl, +amount)
@@ -66,6 +60,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		setShouldEstimate(false)
 	}
 	const getActionBtnTxt = () => {
+		if (!isMelt && !isSwap && !isSendEcash) { return t('continue', { ns: 'common' }) }
 		if (fee.isCalculating) { return t('calculateFeeEst', { ns: 'common' }) }
 		if (balTooLow) { return t('balTooLow', { ns: 'common' }) }
 		return t(shouldEstimate ? 'estimateFee' : 'continue', { ns: 'common' })
@@ -74,7 +69,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		if (fee.isCalculating || balTooLow) { return }
 		const isSendingTX = isSendEcash || isMelt || isSwap
 		// error & shake animation if amount === 0 or greater than mint balance
-		if (isSendingTX && (!amount || +amount < 1 || +amount > balance)) {
+		if (!amount || +amount < 1 || (isSendingTX && +amount > balance)) {
 			vib(400)
 			setErr(true)
 			shake()
@@ -143,37 +138,50 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				screenName={t(getScreenName(), { ns: 'common' })}
 				withBackBtn
 			/>
-			<Txt
-				txt={t(getScreenHint(), { ns: 'mints' })}
-				styles={[styles.hint]}
-			/>
-			<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
-				<TextInput
-					keyboardType='numeric'
-					ref={inputRef}
-					placeholder='0'
-					placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
-					style={[styles.amount, { color: err ? mainColors.ERROR : hi[highlight] }]}
-					cursorColor={hi[highlight]}
-					onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
-					onSubmitEditing={() => void handleAmountSubmit()}
-					value={amount}
-					maxLength={8}
-				/>
-			</Animated.View>
-			{isMelt || isSwap ?
-				<MeltOverview
-					amount={+amount}
-					balance={balance}
-					shouldEstimate={shouldEstimate}
-					balTooLow={balTooLow}
-					fee={fee.estimation}
-				/>
-				:
-				<Txt
-					txt={`Balance: ${balance} Satoshi`}
-					styles={[{ fontSize: 14, color: color.TEXT_SECONDARY, textAlign: 'center' }]}
-				/>
+			{!isMelt && !isSwap &&
+				<Txt txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: 'mints' })} styles={[styles.headerHint]} />
+			}
+			<View style={[globals(color).wrapContainer, styles.overviewWrap]}>
+				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
+					<TextInput
+						keyboardType='numeric'
+						ref={inputRef}
+						placeholder='0'
+						placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
+						style={[styles.amount, { color: err ? mainColors.ERROR : hi[highlight] }]}
+						cursorColor={hi[highlight]}
+						onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
+						onSubmitEditing={() => void handleAmountSubmit()}
+						value={amount}
+						maxLength={8}
+					/>
+				</Animated.View>
+				{(isMelt || isSwap || isSendEcash) &&
+					<Separator style={[{ marginVertical: 20 }]} />
+				}
+				{isMelt || isSwap ?
+					<MeltOverview
+						amount={+amount}
+						balance={balance}
+						shouldEstimate={shouldEstimate}
+						balTooLow={balTooLow}
+						fee={fee.estimation}
+					/>
+					:
+					isSendEcash ?
+						<View style={styles.overview}>
+							<Txt
+								txt={t('balance', { ns: 'common' })}
+								styles={[{ fontWeight: '500' }]}
+							/>
+							<Txt txt={`${balance} Satoshi`} />
+						</View>
+						:
+						null
+				}
+			</View>
+			{(isMelt || isSwap) &&
+				<Txt txt={'* ' + t('cashOutAmountHint', { ns: 'mints' })} styles={[styles.feeHint, { color: color.TEXT_SECONDARY }]} />
 			}
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
@@ -209,37 +217,37 @@ interface IMeltOverviewProps {
 	balance: number
 	shouldEstimate?: boolean
 	balTooLow?: boolean
+	isInvoice?: boolean
 	fee: number
 }
 
-export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, fee }: IMeltOverviewProps) {
+export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInvoice, fee }: IMeltOverviewProps) {
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
-		<View style={[globals(color).wrapContainer, styles.overviewWrap]}>
+		<>
 			<View style={styles.overview}>
 				<Txt
-					txt={t('balance') + ':'}
-					styles={[{ color: color.TEXT_SECONDARY, fontWeight: '500' }]}
+					txt={t('balance')}
+					styles={[{ fontWeight: '500' }]}
 
 				/>
 				<Txt
 					txt={`${balance} Satoshi`}
-					styles={[{ color: color.TEXT_SECONDARY }]}
 				/>
 			</View>
-			<Separator style={[{ marginVertical: 10 }]} />
+			<Separator style={[{ marginVertical: 20 }]} />
 			<View style={styles.overview}>
 				<Txt
-					txt={t('totalInclFee', { ns: 'common' })}
-					styles={[{ color: color.TEXT_SECONDARY, fontWeight: '500' }]}
+					txt={t(isInvoice ? 'invoiceInclFee' : 'totalInclFee', { ns: 'common' }) + '*'}
+					styles={[{ fontWeight: '500' }]}
 				/>
 				<Txt
 					txt={`${shouldEstimate ? 0 : amount + fee} Satoshi`}
-					styles={[{ color: !shouldEstimate && balTooLow ? mainColors.ERROR : shouldEstimate ? color.TEXT_SECONDARY : mainColors.VALID }]}
+					styles={[{ color: !shouldEstimate && balTooLow ? mainColors.ERROR : shouldEstimate ? color.TEXT : mainColors.VALID }]}
 				/>
 			</View>
-		</View>
+		</>
 	)
 }
 
@@ -248,16 +256,17 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingTop: 110,
 	},
-	hint: {
+	headerHint: {
 		paddingHorizontal: 20,
+		marginBottom: 20,
+		fontWeight: '500'
 	},
 	amountWrap: {
 		width: '100%',
 		alignItems: 'center',
-		marginTop: 10,
 	},
 	amount: {
-		fontSize: 40,
+		fontSize: 32,
 		width: '100%',
 		textAlign: 'center',
 		marginBottom: 5,
@@ -270,13 +279,17 @@ const styles = StyleSheet.create({
 	},
 	overviewWrap: {
 		width: '100%',
-		marginTop: 10,
-		paddingVertical: 10
+		paddingVertical: 20
 	},
 	overview: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
+	},
+	feeHint: {
+		fontSize: 12,
+		paddingHorizontal: 20,
+		marginTop: 10,
 	},
 	actionBtnTxtWrap: {
 		flexDirection: 'row',

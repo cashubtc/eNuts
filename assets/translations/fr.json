@@ -158,7 +158,8 @@
 		"tryLater": "Veuillez réessayer ultérieurement.",
 		"estimateFee": "Estimer les frais.",
 		"balTooLow": "Solde insuffisant",
-		"totalInclFee": "Total incl. frais:",
+		"totalInclFee": "Total incl. frais",
+		"invoiceInclFee": "Facture incl. frais",
 		"submitPaymentReq": "Envoyer demande de paiement",
 		"sendEcash": "Envoyer Ecash",
 		"paymentType": "Type de paiement",
@@ -242,7 +243,7 @@
 		"trustMintSure": "Êtes-vous sûr de vouloir faire confiance à cette mint?",
 		"updatedDefault": "Modifications enregistrées",
 		"invoiceAmountHint": "Veuillez sélectionner le montant d'Ecash que vous souhaitez recevoir. La mint produira ensuite une facture que vous devrez régler à l'aide d'un portefeuille Lightning.",
-		"cashOutAmountHint": "Veuillez sélectionner le montant. Notez que des frais Lightning peuvent survenir. Les frais surpayés vous seront remboursés.",
+		"cashOutAmountHint": "Des frais Lightning peuvent survenir, donc des frais estimés sont ajoutés, et tout excédent de frais sera remboursé.",
 		"ecashAmountHint": "Sélectionnez le montant d'Ecash que vous souhaitez envoyer.",
 		"chooseMintHint": "Veuillez choisir une mint auprès de laquelle vous souhaitez recevoir de l'Ecash. La mint devient dépositaire de vos fonds.",
 		"chooseMeltMintHint": "Veuillez choisir une mint à partir de laquelle vous souhaitez retirer vos fonds.",
@@ -273,8 +274,7 @@
 		"mintBackup": "Sauvegarde des mints",
 		"mintSettings": "Paramètres des mints",
 		"security": "Sécurité",
-		"settings": "Paramètres",
-		"swap": "Échanger"
+		"settings": "Paramètres"
 	},
 	"wallet": {
 		"claiming": "En cours...",

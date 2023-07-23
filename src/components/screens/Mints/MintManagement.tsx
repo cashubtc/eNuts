@@ -235,7 +235,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Inter-mint swap */}
 					<MintOption
-						txt={t('swap', { ns: 'topNav' })}
+						txt={t('multimintSwap')}
 						hasSeparator
 						onPress={() => void handleMintSwap()}
 						icon={<SwapIcon width={20} height={20} color={color.TEXT} />}
