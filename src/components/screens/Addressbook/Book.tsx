@@ -51,12 +51,13 @@ export default function AddressBook({ nav }: IAddressBookProps) {
 			openPromptAutoClose({ msg: t('invalidName', { ns: 'addrBook' }), ms: 1500 })
 			return
 		}
-		const success = await addContact({
-			name: openNew.isOwner ? t('personalLnurl', { ns: 'addrBook' }) : contact.name,
-			ln: contact.lnUrl,
-			isOwner: openNew.isOwner
-		})
-		if (!success) {
+		try {
+			await addContact({
+				name: openNew.isOwner ? t('personalLnurl', { ns: 'addrBook' }) : contact.name,
+				ln: contact.lnUrl,
+				isOwner: openNew.isOwner
+			})
+		} catch (e) {
 			openPromptAutoClose({ msg: t('addContactErr', { ns: 'addrBook' }) })
 			return
 		}
@@ -245,7 +246,8 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	scroll: {
-		width: '100%'
+		width: '100%',
+		marginBottom: 30,
 	},
 	container: {
 		paddingVertical: 9,
