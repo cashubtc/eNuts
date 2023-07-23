@@ -54,7 +54,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 		}, 3000)
 	}
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				withBackBtn
 				backHandler={() => navigation.navigate('dashboard')}
@@ -89,7 +89,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		paddingTop: 0,
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		width: '100%',

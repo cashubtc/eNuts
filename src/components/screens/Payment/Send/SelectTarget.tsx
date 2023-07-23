@@ -1,3 +1,4 @@
+import Container from '@comps/Container'
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
@@ -19,7 +20,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav screenName={t('cashOut', { ns: 'common' })} withBackBtn />
 			<Txt styles={[styles.hint]} txt={t('chooseTarget')} />
 			<View style={[globals(color).wrapContainer, styles.targets]}>
@@ -62,7 +63,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 				/>
 			</View>
 			{prompt.open && <Toaster txt={prompt.msg} />}
-		</View>
+		</Container>
 	)
 }
 
@@ -90,10 +91,6 @@ function Target({ txt, hint, onPress, hasSeparator }: ITargetProps) {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 110,
-	},
 	hint: {
 		paddingHorizontal: 20,
 		marginBottom: 20,

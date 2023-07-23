@@ -4,6 +4,7 @@ import TxtInput from '@comps/TxtInput'
 import type { TMemoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
+import { globals } from '@styles'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TextInput, View } from 'react-native'
@@ -44,7 +45,7 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={t('sendEcash')}
 				withBackBtn
@@ -75,8 +76,6 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		paddingTop: 110,
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 	},

@@ -76,7 +76,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 		setQr({ ...qr, open: true })
 	}
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav screenName={isLn ? LNstr : Ecash} withBackBtn />
 			<ScrollView style={{ marginTop: 110, marginBottom: insets.bottom }} showsVerticalScrollIndicator={false} >
 				<View style={styles.topSection}>
@@ -277,7 +277,7 @@ function IsSpentContainer({ isSpent, handleCheckSpendable, children }: IIsSpentC
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		paddingTop: 0,
 	},
 	topSection: {
 		marginBottom: 30,

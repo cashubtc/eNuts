@@ -1,3 +1,4 @@
+import Container from '@comps/Container'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from '@model/i18n'
@@ -19,14 +20,14 @@ export default function LanguageSettings() {
 	const { t, i18n } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav screenName={t('language', { ns: 'topNav' })} withBackBtn />
 			<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
 				{langs.map((l, i) => (
 					<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />
 				))}
 			</View>
-		</View>
+		</Container>
 	)
 }
 
@@ -63,10 +64,6 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 110,
-	},
 	highlightWrap: {
 		paddingHorizontal: 0,
 		paddingVertical: 10,

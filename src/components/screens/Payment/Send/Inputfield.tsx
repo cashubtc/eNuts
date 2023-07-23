@@ -124,7 +124,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [input])
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav screenName={t('cashOut')} withBackBtn />
 			<View>
 				{!input.length &&
@@ -194,10 +194,8 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		paddingTop: 110,
 		paddingBottom: 20,
 	},
 	hint: {

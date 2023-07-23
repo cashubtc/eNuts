@@ -68,7 +68,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [openEdit])
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav withBackBtn />
 			{/* Contact info */}
 			<View style={[styles.contactContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
@@ -151,7 +151,6 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
 		paddingTop: 100
 	},
 	contactContainer: {

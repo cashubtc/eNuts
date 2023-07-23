@@ -62,7 +62,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		})()
 	}, [mint.mintUrl])
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={t('paymentOverview', { ns: 'mints' })}
 				withBackBtn
@@ -150,8 +150,6 @@ function OverviewRow({ txt1, txt2 }: IOverviewRowProps) {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		paddingTop: 110,
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 	},

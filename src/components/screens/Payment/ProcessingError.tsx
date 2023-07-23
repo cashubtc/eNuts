@@ -2,7 +2,7 @@ import Button from '@comps/Button'
 import Txt from '@comps/Txt'
 import type { TProcessingErrorPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
-import { mainColors } from '@styles'
+import { globals, mainColors } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -11,7 +11,7 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<View />
 			<View style={styles.setion}>
 				<Txt txt={route.params.errorMsg} styles={[{ color: mainColors.ERROR }]} />
@@ -27,7 +27,7 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		paddingTop: 0,
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		padding: 20

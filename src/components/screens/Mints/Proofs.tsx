@@ -1,5 +1,6 @@
 import type { Proof } from '@cashu/cashu-ts'
 import { ProofRow } from '@comps/coinSelectionRow'
+import Container from '@comps/Container'
 import Separator from '@comps/Separator'
 import { isIOS } from '@consts'
 import { getProofsByMintUrl } from '@db'
@@ -33,7 +34,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 	}, [route.params.mintUrl])
 
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav screenName='Proofs' withBackBtn />
 			<View style={[styles.content, { marginBottom: insets.bottom + 60 }]}>
 				{/* List header */}
@@ -65,17 +66,14 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 				}
 			</View>
 			<BottomNav navigation={navigation} route={route} />
-		</View>
+		</Container>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
 	content: {
 		flex: 1,
-		marginTop: 80
+		marginTop: -30,
 	},
 	mintUrl: {
 		fontSize: 16,

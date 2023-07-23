@@ -1,4 +1,5 @@
 import Button from '@comps/Button'
+import Container from '@comps/Container'
 import Empty from '@comps/Empty'
 import usePrompt from '@comps/hooks/Prompt'
 import { MintBoardIcon, ZapIcon } from '@comps/Icons'
@@ -104,7 +105,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		})()
 	}, [mints, mintsWithBal])
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav screenName={t(getScreenName(), { ns: 'common' })} withBackBtn />
 			{userMints.length > 0 && !allMintsEmpty &&
 				<Txt
@@ -168,15 +169,11 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				</View>
 			}
 			{prompt.open && <Toaster txt={prompt.msg} />}
-		</View>
+		</Container>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 110,
-	},
 	hint: {
 		paddingHorizontal: 20,
 		marginBottom: 20,

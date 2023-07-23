@@ -19,6 +19,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
+import { globals } from '@styles'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -204,7 +205,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}, [navigation])
 
 	return (
-		<SafeAreaView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<SafeAreaView style={[globals(color).container, styles.container]}>
 			<TopNav nav={{ navigation, route }} />
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
@@ -266,7 +267,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		paddingTop: 0,
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		width: '100%',

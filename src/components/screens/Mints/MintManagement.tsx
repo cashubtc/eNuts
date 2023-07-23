@@ -22,8 +22,10 @@ import { checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text
-	, TouchableOpacity, View } from 'react-native'
+import {
+	ScrollView, StyleSheet, Text
+	, TouchableOpacity, View
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
@@ -150,9 +152,9 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	}
 
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav screenName={t('mintSettings', { ns: 'topNav' })} withBackBtn />
-			<ScrollView style={[styles.scrollContainer, { marginBottom: insets.bottom + 60 }]} showsVerticalScrollIndicator={false}>
+			<ScrollView style={{ marginBottom: insets.bottom + 60 }} showsVerticalScrollIndicator={false}>
 				{/* General */}
 				<Txt txt={t('general', { ns: 'mints' })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
@@ -360,11 +362,7 @@ function MintOption({ txt, onPress, icon, rowColor, hasSeparator }: IMintOption)
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-	},
-	scrollContainer: {
-		flex: 1,
-		marginTop: 100,
+		paddingTop: 100
 	},
 	mintUrl: {
 		fontSize: 16,

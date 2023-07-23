@@ -130,7 +130,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	}, [navigation])
 
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav screenName='Mints' nav={{ navigation, route }} />
 			<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
 				{/* Mints list where test mint is always visible */}
@@ -230,7 +230,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		paddingTop: 0,
 		alignItems: 'center',
 	},
 	topSection: {

@@ -1,3 +1,4 @@
+import Container from '@comps/Container'
 import usePrompt from '@comps/hooks/Prompt'
 import { AboutIcon, ChevronRightIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
 import Separator from '@comps/Separator'
@@ -30,7 +31,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 		setConfirm(false)
 	}
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav screenName={t('settings', { ns: 'topNav' })} nav={{ navigation, route }} />
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
@@ -84,7 +85,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 				cancelFn={() => setConfirm(false)}
 			/>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-		</View>
+		</Container>
 	)
 }
 
@@ -120,10 +121,6 @@ function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator, hasChevr
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 110,
-	},
 	wrap: {
 		paddingVertical: 10,
 		marginBottom: 20,

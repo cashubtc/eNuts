@@ -1,4 +1,5 @@
 import type { GetInfoResponse } from '@cashu/cashu-ts'
+import Container from '@comps/Container'
 import Empty from '@comps/Empty'
 import { ExclamationIcon, MintBoardIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
@@ -35,10 +36,10 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 	}, [route.params.mintUrl])
 
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav withBackBtn />
 			{info ?
-				<ScrollView style={{ marginBottom: insets.bottom }}>
+				<ScrollView style={{ marginTop: -20, marginBottom: insets.bottom }}>
 					{/* Name, Version & short description */}
 					<View style={[globals(color).wrapContainer, styles.mainInfo]}>
 						<View style={[styles.circleContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
@@ -111,15 +112,11 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 				:
 				<Empty txt={t('noInfo', { ns: 'mints' }) + '...'} />
 			}
-		</View>
+		</Container>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 80
-	},
 	mainInfo: {
 		padding: 20,
 		alignItems: 'center',

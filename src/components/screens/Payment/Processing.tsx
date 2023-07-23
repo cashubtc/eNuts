@@ -6,6 +6,7 @@ import { l } from '@log'
 import type { TProcessingPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { addLnPaymentToHistory, addToHistory } from '@store/HistoryStore'
+import { globals } from '@styles'
 import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
 import { useContext, useEffect } from 'react'
@@ -160,7 +161,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMelt, isSwap, isSendEcash])
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<Loading size={40} />
 			<Txt
 				styles={[styles.descText]}
@@ -173,7 +174,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		paddingTop: 0,
 		alignItems: 'center',
 		justifyContent: 'center',
 		paddingHorizontal: 20

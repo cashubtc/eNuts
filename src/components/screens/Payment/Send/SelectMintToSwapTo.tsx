@@ -1,3 +1,4 @@
+import Container from '@comps/Container'
 import { ChevronRightIcon, MintBoardIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
@@ -32,7 +33,7 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 		})()
 	}, [])
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav
 				screenName={t('multimintSwap', { ns: 'common' })}
 				withBackBtn
@@ -68,15 +69,11 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 					/>
 				</View>
 			}
-		</View>
+		</Container>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 110,
-	},
 	hint:{
 		paddingHorizontal: 20,
 		marginBottom: 20,

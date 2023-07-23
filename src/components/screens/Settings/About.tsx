@@ -1,4 +1,5 @@
 import Button from '@comps/Button'
+import Container from '@comps/Container'
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
 import MyModal from '@comps/modal'
@@ -30,7 +31,7 @@ export default function AboutSettings() {
 		await openUrl(url)?.catch(e => openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 	}
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav screenName={t('about', { ns: 'topNav' })} withBackBtn />
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<AboutRow
@@ -69,7 +70,7 @@ export default function AboutSettings() {
 				</TouchableOpacity>
 			</MyModal>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-		</View>
+		</Container>
 	)
 }
 
@@ -98,10 +99,6 @@ function AboutRow({ txt, handlePress, hasSeparator }: IAboutRowProps) {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 110,
-	},
 	wrap: {
 		paddingVertical: 10,
 		marginBottom: 20,

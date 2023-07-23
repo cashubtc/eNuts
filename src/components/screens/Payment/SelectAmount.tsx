@@ -1,4 +1,5 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
+import Container from '@comps/Container'
 import usePrompt from '@comps/hooks/Prompt'
 import Loading from '@comps/Loading'
 import Separator from '@comps/Separator'
@@ -143,7 +144,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [amount])
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav
 				screenName={t(getScreenName(), { ns: 'common' })}
 				withBackBtn
@@ -218,7 +219,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				</TouchableOpacity>
 			</KeyboardAvoidingView>
 			{prompt.open && <Toaster txt={prompt.msg} />}
-		</View>
+		</Container>
 	)
 }
 
@@ -262,10 +263,6 @@ export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInv
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 110,
-	},
 	headerHint: {
 		paddingHorizontal: 20,
 		marginBottom: 20,

@@ -5,6 +5,11 @@ import { highlight as hi, type TPref } from './colors'
 // TODO make param "h" type-safe
 
 export const globals = (color: TPref, h?: string) => StyleSheet.create({
+	container: {
+		flex: 1,
+		paddingTop: 110,
+		backgroundColor: color.BACKGROUND
+	},
 	txt: {
 		fontSize: 16,
 		color: color.TEXT

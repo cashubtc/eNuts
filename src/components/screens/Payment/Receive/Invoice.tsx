@@ -7,7 +7,7 @@ import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
-import { dark, highlight as hi, mainColors } from '@styles'
+import { dark, globals, highlight as hi, mainColors } from '@styles'
 import { formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
@@ -68,7 +68,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 		}
 	}, [expire, expiryTime])
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				cancel
 				screenName={t('payInvoice', { ns: 'wallet' })}
@@ -139,7 +139,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		padding: 20,

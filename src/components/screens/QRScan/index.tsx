@@ -13,6 +13,7 @@ import type { TQRScanPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
+import { globals } from '@styles'
 import { hasTrustedMint, isCashuToken, vib } from '@util'
 import { checkFees, claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -212,7 +213,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	}, [])
 
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<View style={[globals(color).container, styles.container]}>
 			{hasPermission ?
 				<>
 					<Camera
@@ -284,7 +285,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		paddingTop: 0,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},

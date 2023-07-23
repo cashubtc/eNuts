@@ -1,3 +1,4 @@
+import Container from '@comps/Container'
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
@@ -48,7 +49,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	}, [navigation])
 	if (isNull(pin)) { return null }
 	return (
-		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+		<Container>
 			<TopNav
 				screenName={t('security', { ns: 'topNav' })}
 				withBackBtn
@@ -84,7 +85,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 			{prompt.open && <Toaster txt={prompt.msg} />}
-		</View>
+		</Container>
 	)
 }
 
@@ -107,10 +108,6 @@ function SecurityOption({ txt, onPress }: ISecurityOptsProps) {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 110,
-	},
 	settingsRow: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
