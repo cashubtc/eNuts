@@ -8,12 +8,12 @@ import MyModal from '@modal'
 import type { IMintUrl, IProofSelection } from '@model'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
-import { globals, highlight as hi,mainColors } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { getSelectedAmount } from '@util'
 import { getMintCurrentKeySetId, } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface ICoinSelectionProps {
 	mint?: IMintUrl
@@ -48,67 +48,69 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	}, [mint?.mintUrl])
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible} close={cancelCoinSelection} hasNoPadding>
-			<View style={styles.proofContainer}>
-				<View style={styles.header}>
-					<Text style={globals(color).navTxt}>
-						{t('coinSelection')}
-					</Text>
-					<TouchableOpacity
-						onPress={cancelCoinSelection}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							{t('cancel')}
+			<SafeAreaView style={{ flex: 1, width: '100%' }}>
+				<View style={styles.proofContainer}>
+					<View style={styles.header}>
+						<Text style={globals(color).navTxt}>
+							{t('coinSelection')}
 						</Text>
-					</TouchableOpacity>
+						<TouchableOpacity
+							onPress={cancelCoinSelection}
+						>
+							<Text style={globals(color, highlight).pressTxt}>
+								{t('cancel')}
+							</Text>
+						</TouchableOpacity>
+					</View>
+					<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} padding />
+					<View style={{ paddingHorizontal: 20 }}>
+						<ProofListHeader />
+					</View>
+					{!loading &&
+						<View
+							style={[
+								globals(color).wrapContainer,
+								{
+									flex: 1,
+									paddingHorizontal: 0,
+									height: Math.floor(proofs.length * (isIOS ? 51 : 56)),
+									// adds a margin bottom if the "confirm" button is visible
+									marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0
+								},
+							]}
+						>
+							<FlashList
+								data={proofs}
+								estimatedItemSize={300}
+								showsVerticalScrollIndicator={false}
+								contentContainerStyle={{ paddingHorizontal: 20 }}
+								ItemSeparatorComponent={() => <Separator />}
+								renderItem={data => (
+									<CoinSelectionRow
+										key={data.item.secret}
+										proof={data.item}
+										isLatestKeysetId={mintKeysetId === data.item.id}
+										setChecked={() => {
+											const proofIdx = proofs.findIndex(proof => proof.secret === data.item.secret)
+											const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
+											setProof(updated)
+										}}
+									/>
+								)}
+							/>
+						</View>
+					}
 				</View>
-				<CoinSelectionResume lnAmount={lnAmount} selectedAmount={getSelectedAmount(proofs)} padding />
-				<View style={{ paddingHorizontal: 20 }}>
-					<ProofListHeader />
-				</View>
-				{!loading &&
-					<View
-						style={[
-							globals(color).wrapContainer,
-							{
-								flex: 1,
-								paddingHorizontal: 0,
-								height: Math.floor(proofs.length * (isIOS ? 51 : 56)),
-								// adds a margin bottom if the "confirm" button is visible
-								marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0
-							},
-						]}
-					>
-						<FlashList
-							data={proofs}
-							estimatedItemSize={300}
-							showsVerticalScrollIndicator={false}
-							contentContainerStyle={{ paddingHorizontal: 20 }}
-							ItemSeparatorComponent={() => <Separator />}
-							renderItem={data => (
-								<CoinSelectionRow
-									key={data.item.secret}
-									proof={data.item}
-									isLatestKeysetId={mintKeysetId === data.item.id}
-									setChecked={() => {
-										const proofIdx = proofs.findIndex(proof => proof.secret === data.item.secret)
-										const updated = proofs.map((p, i) => proofIdx === i ? { ...p, selected: !p.selected } : p)
-										setProof(updated)
-									}}
-								/>
-							)}
+				{/* Confirm button */}
+				{getSelectedAmount(proofs) >= lnAmount &&
+					<View style={[styles.confirmWrap, { backgroundColor: color.BACKGROUND }]}>
+						<Button
+							txt={t('confirm')}
+							onPress={() => setVisible(false)}
 						/>
 					</View>
 				}
-			</View>
-			{/* Confirm button */}
-			{getSelectedAmount(proofs) >= lnAmount &&
-				<View style={[styles.confirmWrap, { backgroundColor: color.BACKGROUND }]}>
-					<Button
-						txt={t('confirm')}
-						onPress={() => setVisible(false)}
-					/>
-				</View>
-			}
+			</SafeAreaView>
 		</MyModal>
 	)
 }

@@ -6,6 +6,7 @@ import Loading from '@comps/Loading'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
+import { isIOS } from '@consts'
 import type { TMeltInputfieldPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
@@ -15,7 +16,7 @@ import { checkFees } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 import { MeltOverview } from '../SelectAmount'
 
@@ -125,7 +126,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [input])
 	return (
-		<View style={[globals(color).container, styles.container]}>
+		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<TopNav screenName={t('cashOut')} withBackBtn />
 			<View>
 				{!input.length &&
@@ -159,7 +160,10 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 					null
 				}
 			</View>
-			<View style={styles.paddingHorizontal}>
+			<KeyboardAvoidingView
+				behavior={isIOS ? 'padding' : undefined}
+				style={styles.paddingHorizontal}
+			>
 				<View style={{ position: 'relative' }}>
 					<TxtInput
 						innerRef={inputRef}
@@ -187,7 +191,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 					txt={input.length > 0 ? t('continue') : t('createViaLn')}
 					onPress={() => void handleBtnPress()}
 				/>
-			</View>
+			</KeyboardAvoidingView>
 			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View>
 	)

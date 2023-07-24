@@ -5,6 +5,7 @@ import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { isIOS } from '@src/consts'
 import { ThemeContext } from '@src/context/Theme'
 import { dark, globals, highlight as hi } from '@styles'
 import { vib } from '@util'
@@ -55,7 +56,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 		}, 3000)
 	}
 	return (
-		<View style={[globals(color).container, styles.container]}>
+		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<TopNav
 				withBackBtn
 				backHandler={() => navigation.navigate('dashboard')}
