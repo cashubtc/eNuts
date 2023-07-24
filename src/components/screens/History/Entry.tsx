@@ -35,6 +35,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 					<EntryTime from={item.timestamp * 1000} fallback={t('justNow')} />
 				</Text>
 			</View>
+			<View style={styles.placeholder} />
 			<Text style={[globals(color, highlight).txt, styles.amount, { color: item.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}>
 				{formatInt(item.amount < 0 ? Math.abs(item.amount) : item.amount, 'compact', 'en')}
 				<ZapIcon width={15} height={15} color={item.amount < 0 ? mainColors.ERROR : mainColors.VALID} />
@@ -45,6 +46,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 
 const styles = StyleSheet.create({
 	listItem: {
+		position: 'relative',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
@@ -53,7 +55,12 @@ const styles = StyleSheet.create({
 	infoWrap: {
 		alignItems: 'center',
 	},
+	placeholder: {
+		width: 30,
+	},
 	amount: {
 		textAlign: 'right',
+		position: 'absolute',
+		right: 0,
 	},
 })
