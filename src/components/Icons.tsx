@@ -389,3 +389,17 @@ export function BackspaceIcon({ width, height, color }: TIconProps) {
 		</Svg>
 	)
 }
+export function SandClockIcon({ width, height, color }: TIconProps) {
+	return (
+		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+			<Path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 2.25H19.75V6.34495L13.1524 12L19.75 17.655V21.75H4.25V17.655L10.8476 12L4.25 6.34495V2.25ZM12 11.0122L16.3892 7.25H7.61078L12 11.0122ZM18 5.75V5.86933L18.25 5.65505V3.75H5.75V5.65505L6 5.86933V5.75H18ZM6 18.1307L5.75 18.345V20.25H18.25V18.345L18 18.1307V18.25H6V18.1307ZM7.61078 16.75H16.3892L12 12.9878L7.61078 16.75Z" fill={color} />
+		</Svg>
+	)
+}
+export function SearchIcon({ width, height, color }: TIconProps) {
+	return (
+		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+			<Path fill-rule="evenodd" clip-rule="evenodd" d="M11 2.25C6.16751 2.25 2.25 6.16751 2.25 11C2.25 15.8325 6.16751 19.75 11 19.75C13.1462 19.75 15.112 18.9773 16.6342 17.6949L21 22.0607L22.0607 21L17.6949 16.6342C18.9773 15.112 19.75 13.1462 19.75 11C19.75 6.16751 15.8325 2.25 11 2.25ZM3.75 11C3.75 6.99594 6.99594 3.75 11 3.75C15.0041 3.75 18.25 6.99594 18.25 11C18.25 15.0041 15.0041 18.25 11 18.25C6.99594 18.25 3.75 15.0041 3.75 11Z" fill={color} />
+		</Svg>
+	)
+}

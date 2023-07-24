@@ -1,11 +1,13 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon, QRIcon } from '@comps/Icons'
+import usePrompt from '@comps/hooks/Prompt'
+import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon, QRIcon, SandClockIcon, SearchIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import QR from '@comps/QR'
 import Separator from '@comps/Separator'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -13,7 +15,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
-import { isTokenSpendable } from '@wallet'
+import { claimToken, isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -41,6 +43,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	const Ecash = t('ecashPayment')
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
 	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('noMemo', { ns: 'history' })
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const copyValue = async () => {
 		await Clipboard.setStringAsync(entry.value)
 		setCopy({ ...copy, value: true })
@@ -72,8 +75,29 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 		await historyStore.updateHistoryEntry(entry, { ...entry, isSpent: !isSpendable })
 		stopLoading()
 	}
+	const handleClaim = async () => {
+		startLoading()
+		const success = await claimToken(entry.value)
+		if (!success) {
+			openPromptAutoClose({ msg: t('invalidOrSpent') })
+			setIsSpent(true)
+			stopLoading()
+			return
+		}
+		// entry.isSpent can only be false here and is not undefined anymore
+		await historyStore.updateHistoryEntry({ ...entry, isSpent: false }, { ...entry, isSpent: true })
+		setIsSpent(true)
+		stopLoading()
+		openPromptAutoClose({ msg: t('claimBackSuccess'), success: true })
+	}
 	const handleQR = () => {
 		setQr({ ...qr, open: true })
+	}
+	const getSpentIcon = () => {
+		if (isSpent) { return <CheckCircleIcon width={18} height={18} color={mainColors.VALID} /> }
+		if (loading) { return <Loading /> }
+		if (isUndef(isSpent)) { return <SearchIcon width={20} height={20} color={color.TEXT} /> }
+		return <SandClockIcon width={20} height={20} color={color.TEXT} />
 	}
 	return (
 		<View style={[globals(color).container, styles.container]}>
@@ -145,18 +169,23 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 								handleCheckSpendable={() => void handleCheckSpendable()}
 							>
 								<Txt
-									txt={isUndef(isSpent) ? t('checkSpent', { ns: 'history' }) : t(isSpent ? 'isSpent' : 'isPending', { ns: 'history' }) + '...'}
+									txt={isUndef(isSpent) ? t('checkSpent', { ns: 'history' }) : t(isSpent ? 'isSpent' : 'isPending', { ns: 'history' })}
 								/>
-								{isSpent ?
-									<CheckCircleIcon width={18} height={18} color={mainColors.VALID} />
-									:
-									loading ?
-										<Loading />
-										:
-										<BackupIcon width={20} height={20} color={color.TEXT} />
-								}
+								{getSpentIcon()}
 							</IsSpentContainer>
 							<Separator />
+							{!isUndef(isSpent) && !isSpent &&
+								<>
+									<TouchableOpacity
+										style={styles.entryInfo}
+										onPress={() => void handleClaim()}
+									>
+										<Txt txt={t('claimToken')} />
+										{loading ? <Loading /> : <BackupIcon width={20} height={20} color={color.TEXT} />}
+									</TouchableOpacity>
+									<Separator />
+								</>
+							}
 						</>
 					}
 					{/* Lightning related */}
@@ -251,6 +280,7 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 					onPress={() => setQr({ open: false, error: false })}
 				/>
 			</MyModal>
+			{prompt.open && <Toaster txt={prompt.msg} success={prompt.success} />}
 		</View>
 	)
 }
