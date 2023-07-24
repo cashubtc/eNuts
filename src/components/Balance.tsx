@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
 	balanceContainer: {
 		flex: 1,
 		position: 'absolute',
-		top: 150,
+		top: 110,
 		left: 0,
 		right: 0,
 	},

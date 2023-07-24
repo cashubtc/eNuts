@@ -204,7 +204,11 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					onChangeText={setInput}
 					onSubmitEditing={() => { void handleMintInput() }}
 				/>
-				<Button txt={t('addMintBtn', { ns: 'mints' })} onPress={() => { void handleMintInput() }} />
+				<Button
+					txt={t('addMintBtn', { ns: 'mints' })}
+					icon={<PlusIcon color='#FAFAFA' />}
+					onPress={() => void handleMintInput()}
+				/>
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
 					<Txt txt={t('cancel')} styles={[globals(color, highlight).pressTxt]} />
 				</TouchableOpacity>

@@ -51,8 +51,6 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 					maxLength={21}
 					onChangeText={setMemo}
 					onSubmitEditing={handlePress}
-					autoFocus
-					ms={400}
 				/>
 				<Button
 					txt={t('continue')}

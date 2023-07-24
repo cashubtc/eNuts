@@ -294,7 +294,9 @@
 		"payLNInvoice": "Pay Lightning invoice",
 		"payInvoice": "Pay invoice",
 		"receive": "Receive",
+		"receiveHint": "Paste Ecash from your clipboard or top up a mint.",
 		"send": "Send",
+		"sendHint": "Send Ecash or cash out from a mint.",
 		"submitIssue": "Submit issue on GitHub"
 	}
 }

@@ -11,6 +11,8 @@ interface IActionBtnsProps {
 	ontopOfNav?: boolean
 	absolutePos?: boolean
 	loading?: boolean
+	topIcon?: React.ReactNode
+	bottomIcon?: React.ReactNode
 }
 
 export default function ActionButtons({
@@ -21,6 +23,8 @@ export default function ActionButtons({
 	ontopOfNav,
 	absolutePos,
 	loading,
+	topIcon,
+	bottomIcon
 }: IActionBtnsProps) {
 	const insets = useSafeAreaInsets()
 	return (
@@ -35,12 +39,14 @@ export default function ActionButtons({
 				loading={loading}
 				txt={topBtnTxt}
 				onPress={topBtnAction}
+				icon={topIcon}
 			/>
 			<View style={{ marginVertical: 10 }} />
 			<Button
 				txt={bottomBtnTxt}
 				outlined
 				onPress={bottomBtnAction}
+				icon={bottomIcon}
 			/>
 		</View>
 	)

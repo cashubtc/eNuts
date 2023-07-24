@@ -1,6 +1,8 @@
 import ActionButtons from '@comps/ActionButtons'
+import { CoinIcon, ZapIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles'
+import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -15,6 +17,7 @@ interface IOptsModal {
 	onPressSecondBtn: () => void
 	onPressCancel: () => void
 	loading?: boolean
+	isSend?: boolean
 }
 
 export default function OptsModal({
@@ -24,17 +27,24 @@ export default function OptsModal({
 	button2Txt,
 	onPressSecondBtn,
 	onPressCancel,
-	loading
+	loading,
+	isSend
 }: IOptsModal) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
-			<View style={{ marginVertical: 10 }} />
+			<Txt
+				txt={isSend ? t('sendHint', { ns: 'wallet' }) : t('receiveHint', { ns: 'wallet' })}
+				styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+			/>
+			<View style={{ marginVertical: 15 }} />
 			<ActionButtons
 				topBtnTxt={button1Txt}
+				topIcon={<CoinIcon color='#FAFAFA' />}
 				topBtnAction={onPressFirstBtn}
 				bottomBtnTxt={button2Txt}
+				bottomIcon={<ZapIcon width={18} height={18} color={hi[highlight]} />}
 				bottomBtnAction={onPressSecondBtn}
 				loading={loading}
 			/>
@@ -48,6 +58,14 @@ export default function OptsModal({
 }
 
 const styles = StyleSheet.create({
+	header: {
+		fontSize: 18,
+		fontWeight: '500'
+	},
+	hint: {
+		fontSize: 16,
+		textAlign: 'center'
+	},
 	no: {
 		marginTop: 15,
 		padding: 10,

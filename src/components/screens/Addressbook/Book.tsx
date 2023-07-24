@@ -187,7 +187,10 @@ export default function AddressBook({ nav }: IAddressBookProps) {
 					onChangeText={lnUrl => setNewContact(prev => ({ ...prev, lnUrl }))}
 					onSubmitEditing={() => void handleNewContact()}
 				/>
-				<Button txt={t('save')} onPress={() => void handleNewContact()} />
+				<Button
+					txt={t('save')}
+					onPress={() => void handleNewContact()}
+				/>
 				<TouchableOpacity
 					style={styles.cancel}
 					onPress={() => setOpenNew({ open: false, isOwner: false })}

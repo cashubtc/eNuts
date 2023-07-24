@@ -7,15 +7,16 @@ import Loading from './Loading'
 
 interface IButtonProps {
 	txt: string
+	onPress: () => void
 	border?: boolean
 	outlined?: boolean
 	filled?: boolean
 	disabled?: boolean
 	loading?: boolean
-	onPress: () => void
+	icon?: React.ReactNode
 }
 
-export default function Button({ txt, border, outlined, filled, disabled, loading, onPress }: IButtonProps) {
+export default function Button({ txt, onPress, border, outlined, filled, disabled, loading, icon }: IButtonProps) {
 	const { highlight } = useContext(ThemeContext)
 	return (
 		<SafeAreaView style={styles.safeArea}>
@@ -36,11 +37,12 @@ export default function Button({ txt, border, outlined, filled, disabled, loadin
 				<Text style={[
 					styles.btnTxt,
 					filled || outlined ? { color: hi[highlight] } : {},
-					loading ? { marginRight: 10 } : {}
+					loading || icon ? { marginRight: 10 } : {}
 				]}>
 					{txt}
 				</Text>
 				{loading && <Loading color='#FAFAFA' />}
+				{!loading ? icon : null}
 			</TouchableOpacity>
 		</SafeAreaView>
 	)

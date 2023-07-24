@@ -4,6 +4,7 @@ import Balance from '@comps/Balance'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
+import { ReceiveIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import Toaster from '@comps/Toaster'
 import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
@@ -19,7 +20,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
-import { globals } from '@styles'
+import { globals , highlight as hi } from '@styles'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -33,7 +34,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url } = useInitialURL()
 	// Theme
-	const { color } = useContext(ThemeContext)
+	const { color, highlight } = useContext(ThemeContext)
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useContext(FocusClaimCtx)
 	// Total Balance state (all mints)
@@ -215,8 +216,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<ActionButtons
 				ontopOfNav
 				topBtnTxt={t('receive', { ns: 'wallet' })}
+				topIcon={<ReceiveIcon color='#FAFAFA' />}
 				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
 				bottomBtnTxt={t('send', { ns: 'wallet' })}
+				bottomIcon={<SendIcon color={hi[highlight]} />}
 				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
 			/>
 			{/* Bottom nav icons */}
@@ -256,6 +259,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				button2Txt={t('payLNInvoice', { ns: 'wallet' })}
 				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: true, isSendEcash: false })}
 				onPressCancel={closeOptsModal}
+				isSend
 			/>
 			{/* Prompt toaster */}
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}

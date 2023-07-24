@@ -294,7 +294,9 @@
 		"payLNInvoice": "Lightning Rechnung bezahlen",
 		"payInvoice": "Rechnung bezahlen",
 		"receive": "Empfangen",
+		"receiveHint": "Ecash aus der Zwischenablage einfügen oder eine Mint aufladen.",
 		"send": "Senden",
+		"sendHint": "Senden Sie Ecash oder lassen Sie sich von einer Mint auszahlen.",
 		"submitIssue": "Problem auf GitHub melden"
 	}
 }

@@ -1,4 +1,5 @@
 import ActionButtons from '@comps/ActionButtons'
+import { CopyIcon, ShareIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
 import { l } from '@log'
@@ -79,8 +80,10 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 			{/* Action buttons */}
 			<ActionButtons
 				topBtnTxt={t('share')}
+				topIcon={<ShareIcon width={20} height={20} color='#FAFAFA' />}
 				topBtnAction={() => void handleShare()}
 				bottomBtnTxt={copied ? t('copied') + '!' : t('copyToken')}
+				bottomIcon={<CopyIcon color={hi[highlight]} />}
 				bottomBtnAction={() => void handleCopy()}
 			/>
 		</View>
