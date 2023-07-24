@@ -51,7 +51,7 @@
 		"claimToken": "Obtenir le token",
 		"claimed": "récupéré",
 		"claimSuccess": "{{amount}} Satoshi récupérés depuis {{mintUrl}}! Note: {{memo}}",
-		"claimBackSuccess": "Successfully Claimed {{amount}} Satoshi back!",
+		"claimBackSuccess": "{{amount}} Satoshi récupérés avec succès!",
 		"clear": "Effacer",
 		"clipboardInvalid": "Le presse-papiers contient un Cashu token invalide!",
 		"close": "Fermer",

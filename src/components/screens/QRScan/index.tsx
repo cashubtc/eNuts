@@ -149,9 +149,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					openPromptAutoClose({ msg: t('noFunds') })
 					return
 				}
-				// TODO show loading
 				const estFee = await checkFees(mint.mintUrl, invoice)
-				// TODO stop loading
 				navigation.navigate('coinSelection', {
 					mint,
 					balance,
@@ -175,9 +173,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				return
 			}
 			const mintUsing = mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' }
-			// TODO show loading
 			const estFee = await checkFees(mintUsing.mintUrl, invoice)
-			// TODO stop loading
 			// user has only 1 mint with balance, he can skip the mint, target and amount selection
 			if (nonEmptyMint.length === 1) {
 				navigation.navigate('coinSelection', {

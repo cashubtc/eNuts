@@ -117,9 +117,13 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const handleSwapProcess = async () => {
 		// simple way
 		try {
-			const result = await autoMintSwap(mint.mintUrl, targetMint?.mintUrl || '', amount, estFee || 0)
-			l({ swapResult: result })
-			// TODO navigato to success screen
+			const res = await autoMintSwap(mint.mintUrl, targetMint?.mintUrl || '', amount, estFee || 0)
+			l({ swapResult: res })
+			navigation.navigate('success', {
+				amount: amount - (estFee || 0),
+				fee: res.payResult.realFee,
+				isMelt: true
+			})
 		} catch (e) {
 			handleError(e)
 		}
@@ -158,7 +162,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			return
 		}
 		void handleMintingProcess()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMelt, isSwap, isSendEcash])
 	return (
 		<View style={[globals(color).container, styles.container]}>

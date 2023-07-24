@@ -51,7 +51,7 @@
 		"claimToken": "Token in Anspruch nehmen",
 		"claimed": "beansprucht",
 		"claimSuccess": "{{amount}} Satoshi erhalten von {{mintUrl}}! Memo: {{memo}}",
-		"claimBackSuccess": "Successfully Claimed {{amount}} Satoshi back!",
+		"claimBackSuccess": "{{amount}} Satoshi erfolgreich erhalten!",
 		"clear": "Löschen",
 		"clipboardInvalid": "Deine Zwischenablage beinhaltet einen invaliden Cashu Token",
 		"close": "Schließen",

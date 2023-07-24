@@ -15,12 +15,10 @@ import { checkFees } from '@wallet'
 import { createRef, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
 	const { mint, balance, lnurl, isMelt, isSendEcash, isSwap, targetMint } = route.params
 	const { t } = useTranslation(['wallet'])
-	const insets = useSafeAreaInsets()
 	const { color, highlight } = useContext(ThemeContext)
 	const { anim, shake } = useShakeAnimation()
 	const inputRef = createRef<TextInput>()
@@ -196,26 +194,24 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			}
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={[styles.continue, { bottom: (isIOS ? 70 : 20) + insets.bottom }]}
+				style={[styles.continue, { bottom: isIOS ? 20 : 0 }]}
 			>
 				<TouchableOpacity
 					style={styles.actionBtn}
 					onPress={() => void handleAmountSubmit()}
 					disabled={balTooLow}
 				>
-					<View style={styles.actionBtnTxtWrap}>
-						<Txt
-							txt={getActionBtnTxt()}
-							styles={[
-								globals(color, highlight).pressTxt,
-								{
-									color: balTooLow ? mainColors.ERROR : fee.isCalculating ? mainColors.WARN : hi[highlight],
-									marginRight: fee.isCalculating ? 10 : 0
-								}
-							]}
-						/>
-						{fee.isCalculating && <Loading color={mainColors.WARN} />}
-					</View>
+					<Txt
+						txt={getActionBtnTxt()}
+						styles={[
+							globals(color, highlight).pressTxt,
+							{
+								color: balTooLow ? mainColors.ERROR : fee.isCalculating ? mainColors.WARN : hi[highlight],
+								marginRight: fee.isCalculating ? 10 : 0
+							}
+						]}
+					/>
+					{fee.isCalculating && <Loading color={mainColors.WARN} />}
 				</TouchableOpacity>
 			</KeyboardAvoidingView>
 			{prompt.open && <Toaster txt={prompt.msg} />}
@@ -279,6 +275,7 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 	},
 	continue: {
+		flex: 1,
 		position: 'absolute',
 		right: 20,
 		left: 20,
@@ -298,13 +295,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		marginTop: 10,
 	},
-	actionBtnTxtWrap: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
 	actionBtn: {
-		padding: 10,
-		alignItems: 'center',
-		width: 250,
+		padding: 20
 	}
 })

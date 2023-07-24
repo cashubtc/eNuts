@@ -12,10 +12,12 @@ import { globals } from '@styles'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import HistoryEntry from './Entry'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
+	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const { claimed } = useContext(FocusClaimCtx)
@@ -35,9 +37,8 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 		return focusHandler
 	}, [navigation])
 	return (
-		<View style={[globals(color).container, styles.container]}>
+		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? insets.bottom : 0 }]}>
 			<TopNav screenName={t('history', { ns: 'topNav' })} withBackBtn />
-			{/* TODO apply filter for ecash or LN TXs */}
 			<View style={styles.listWrap}>
 				{/* History list grouped by settled date */}
 				<FlashList
@@ -52,7 +53,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							{/* Group entries */}
 							<View style={[
 								globals(color).wrapContainer,
-								{ flex: 1, height: Math.floor(data.item[1].length * (isIOS ? 69 : 74)) }
+								{ flex: 1, height: Math.floor(data.item[1].length * (isIOS ? 61 : 66)) }
 							]}>
 								<FlashList
 									data={data.item[1]}

@@ -1,13 +1,14 @@
 import Button from '@comps/Button'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
+import { isIOS } from '@consts'
 import type { TMemoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, View } from 'react-native'
 
 export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 	const { mint, balance, amount, isSendingWholeMintBal } = route.params
@@ -36,7 +37,7 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 		})
 	}
 	return (
-		<View style={[globals(color).container, styles.container]}>
+		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<TopNav
 				screenName={t('sendEcash')}
 				withBackBtn
@@ -45,7 +46,9 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 				txt={t('addMemo')}
 				styles={[styles.hint]}
 			/>
-			<View style={styles.actionContainer}>
+			<KeyboardAvoidingView
+				behavior={isIOS ? 'padding' : undefined}
+			>
 				<TxtInput
 					placeholder={t('optionalMemo')}
 					maxLength={21}
@@ -56,7 +59,7 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 					txt={t('continue')}
 					onPress={handlePress}
 				/>
-			</View>
+			</KeyboardAvoidingView>
 		</View>
 	)
 }
@@ -65,13 +68,9 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'column',
 		justifyContent: 'space-between',
+		paddingHorizontal: 20,
 	},
 	hint: {
-		paddingHorizontal: 20,
-		marginBottom: 20,
 		fontWeight: '500'
 	},
-	actionContainer: {
-		padding: 20,
-	}
 })
