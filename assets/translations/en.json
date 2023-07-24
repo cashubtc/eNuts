@@ -297,6 +297,7 @@
 		"receiveHint": "Paste Ecash from your clipboard or top up a mint.",
 		"send": "Send",
 		"sendHint": "Send Ecash or cash out from a mint.",
-		"submitIssue": "Submit issue on GitHub"
+		"submitIssue": "Submit issue on GitHub",
+		"paidOut": "Paid out"
 	}
 }

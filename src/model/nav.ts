@@ -107,8 +107,9 @@ export type RootStackParamList = {
 		amount?: number
 		fee?: number
 		mint?: string
-		mints?: string[]
 		memo?: string
+		isClaim?: boolean
+		isMelt?: boolean
 	}
 	mintmanagement: {
 		mint: IMintUrl

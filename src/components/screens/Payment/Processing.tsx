@@ -106,9 +106,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				invoice || recipient
 			)
 			navigation.navigate('success', {
-				amount,
+				amount: amount - (estFee || 0),
 				fee: res.realFee,
-				mints: [mint.mintUrl]
+				isMelt: true
 			})
 		} catch (e) {
 			handleError(e)

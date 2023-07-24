@@ -117,7 +117,7 @@
 		"lnPaymentReq": "Zahlungsanforderung",
 		"manageMints": "Mints verwalten",
 		"mintBalance": "Mint Guthaben",
-		"minted": "bekommen",
+		"minted": "erhalten",
 		"n/a": "Nicht verfügbar",
 		"name": "Name",
 		"no": "Nein",
@@ -297,6 +297,7 @@
 		"receiveHint": "Ecash aus der Zwischenablage einfügen oder eine Mint aufladen.",
 		"send": "Senden",
 		"sendHint": "Senden Sie Ecash oder lassen Sie sich von einer Mint auszahlen.",
-		"submitIssue": "Problem auf GitHub melden"
+		"submitIssue": "Problem auf GitHub melden",
+		"sent": "Ausgezahlt"
 	}
 }

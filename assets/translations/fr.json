@@ -297,6 +297,7 @@
 		"receiveHint": "Collez l'Ecash depuis votre presse-papiers ou rechargez une mint.",
 		"send": "Envoyer",
 		"sendHint": "Envoyez de l'Ecash ou retirez votre argent d'une mint.",
-		"submitIssue": "Problem auf GitHub melden"
+		"submitIssue": "Problem auf GitHub melden",
+		"paidOut": "Payé"
 	}
 }

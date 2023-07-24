@@ -129,8 +129,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})
 		navigation.navigate('success', {
 			amount: info?.value,
-			mints: info?.mints,
-			memo: info?.decoded.memo
+			memo: info?.decoded.memo,
+			isClaim: true
 		})
 	}
 	// get mints for send/receive process

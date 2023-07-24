@@ -196,7 +196,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			}
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={[styles.continue, { bottom: (isIOS ? 50 : 20) + insets.bottom }]}
+				style={[styles.continue, { bottom: (isIOS ? 70 : 20) + insets.bottom }]}
 			>
 				<TouchableOpacity
 					style={styles.actionBtn}
