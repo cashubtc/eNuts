@@ -218,8 +218,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
 				bottomBtnTxt={t('send', { ns: 'wallet' })}
 				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
-				withHistory
-				nav={navigation}
 			/>
 			{/* Bottom nav icons */}
 			<BottomNav navigation={navigation} route={route} />

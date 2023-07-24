@@ -1,13 +1,16 @@
-import { ChevronRightIcon, ExclamationIcon, SwapCurrencyIcon } from '@comps/Icons'
+import { ChevronRightIcon, ExclamationIcon, HistoryIcon, SwapCurrencyIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi, mainColors } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { formatBalance, formatInt, isBool } from '@util'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+
+import Separator from './Separator'
+import Txt from './Txt'
 
 interface IBalanceProps {
 	balance: number
@@ -28,51 +31,82 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 
 	return (
 		<View style={styles.balanceContainer}>
-			<TouchableOpacity style={styles.balanceWrap} onPress={toggleBalanceFormat}>
-				{/* <Text style={[styles.balPending, { color: color.TEXT_SECONDARY }]}>
-				Pending{'('}0{')'}
-			</Text> */}
-				<Text style={[styles.balAmount, { color: hi[highlight] }]}>
-					{formatSats ? formatBalance(balance) : formatInt(balance)}
-				</Text>
-				<View style={styles.balAssetNameWrap}>
-					<Text style={[styles.balAssetName, { color: color.TEXT_SECONDARY }]}>
-						{formatSats ? 'BTC' : 'Satoshi'}
+			<View style={[globals(color).wrapContainer, styles.board]}>
+				{/* balance */}
+				<TouchableOpacity style={styles.balanceWrap} onPress={toggleBalanceFormat}>
+					<Text style={[styles.balAmount, { color: hi[highlight] }]}>
+						{formatSats ? formatBalance(balance) : formatInt(balance)}
 					</Text>
-					<SwapCurrencyIcon color={color.TEXT_SECONDARY} />
-				</View>
-			</TouchableOpacity>
-			{/* Disclaimer */}
+					<View style={styles.balAssetNameWrap}>
+						<Text style={[styles.balAssetName, { color: color.TEXT_SECONDARY }]}>
+							{formatSats ? 'BTC' : 'Satoshi'}
+						</Text>
+						<SwapCurrencyIcon width={20} height={20} color={color.TEXT_SECONDARY} />
+					</View>
+				</TouchableOpacity>
+				<Separator style={[styles.separator]} />
+				{/* history */}
+				<BoardEntry
+					txt={t('history', { ns: 'topNav' })}
+					icon={<HistoryIcon width={22} height={22} color={color.TEXT} />}
+					color={color.TEXT}
+					onPress={() => nav?.navigate('history')}
+					withSeparator
+				/>
+				{/* Disclaimer */}
+				<BoardEntry
+					txt={t('risks')}
+					icon={<ExclamationIcon width={20} height={20} color={mainColors.WARN} />}
+					color={mainColors.WARN}
+					onPress={() => nav?.navigate('disclaimer')}
+				/>
+			</View>
+		</View>
+	)
+}
+
+interface IBoardEntryProps {
+	txt: string
+	icon: React.ReactNode
+	onPress: () => void
+	color: string
+	withSeparator?: boolean
+}
+
+function BoardEntry({ txt, icon, onPress, color, withSeparator }: IBoardEntryProps) {
+	return (
+		<>
 			<TouchableOpacity
-				style={styles.disclaimerWrap}
-				onPress={() => nav?.navigate('disclaimer')}
+				style={styles.boardEntry}
+				onPress={onPress}
 			>
 				<View style={styles.disclaimerTxt}>
-					<ExclamationIcon width={22} height={22} color={mainColors.WARN} />
-					<Text style={styles.issue}>
-						{t('risks')}
-					</Text>
+					<View style={styles.iconWrap}>
+						{icon}
+					</View>
+					<Txt txt={txt} styles={[{ color }]} />
 				</View>
-				<ChevronRightIcon color={mainColors.WARN} />
+				<ChevronRightIcon color={color} />
 			</TouchableOpacity>
-		</View>
+			{withSeparator && <Separator style={[styles.separator]} />}
+		</>
 	)
 }
 
 const styles = StyleSheet.create({
 	balanceContainer: {
+		flex: 1,
 		position: 'absolute',
 		top: 150,
-		left: 20,
-		right: 20,
-		flex: 1,
+		left: 0,
+		right: 0,
+	},
+	board: {
+		padding: 20,
 	},
 	balanceWrap: {
 		alignItems: 'center',
 	},
-	/* balPending: {
-		fontSize: 16,
-	}, */
 	balAmount: {
 		flex: 1,
 		alignItems: 'center',
@@ -82,29 +116,25 @@ const styles = StyleSheet.create({
 	balAssetNameWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: 5,
+		marginBottom: 10,
 	},
 	balAssetName: {
-		fontSize: 16,
+		fontSize: 14,
 		marginRight: 5,
 	},
-	disclaimerWrap: {
+	separator: {
+		marginVertical: 20,
+	},
+	iconWrap: {
+		minWidth: 30,
+	},
+	boardEntry: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: 15,
-		borderWidth: 1,
-		borderRadius: 15,
-		borderColor: mainColors.WARN,
-		marginTop: 20,
 	},
 	disclaimerTxt: {
 		flexDirection: 'row',
 		alignItems: 'center',
-	},
-	issue: {
-		fontWeight: '500',
-		color: mainColors.WARN,
-		marginLeft: 10,
 	},
 })

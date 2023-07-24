@@ -1,10 +1,4 @@
-import type { RootStackParamList } from '@model/nav'
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles'
-import { useContext } from 'react'
-import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Button from './Button'
@@ -17,8 +11,6 @@ interface IActionBtnsProps {
 	ontopOfNav?: boolean
 	absolutePos?: boolean
 	loading?: boolean
-	withHistory?: boolean
-	nav?: NativeStackNavigationProp<RootStackParamList, 'dashboard', 'MyStack'>
 }
 
 export default function ActionButtons({
@@ -29,12 +21,8 @@ export default function ActionButtons({
 	ontopOfNav,
 	absolutePos,
 	loading,
-	withHistory,
-	nav
 }: IActionBtnsProps) {
-	const { color, highlight } = useContext(ThemeContext)
 	const insets = useSafeAreaInsets()
-	const { t } = useTranslation(['topNav'])
 	return (
 		<View
 			style={[
@@ -43,16 +31,6 @@ export default function ActionButtons({
 				absolutePos ? { ...styles.absolute, bottom: insets.bottom } : {},
 			]}
 		>
-			{withHistory &&
-				<TouchableOpacity
-					style={styles.historyBtn}
-					onPress={() => nav?.navigate('history')}
-				>
-					<Text style={globals(color, highlight).pressTxt}>
-						{t('history')}
-					</Text>
-				</TouchableOpacity>
-			}
 			<Button
 				loading={loading}
 				txt={topBtnTxt}
@@ -84,9 +62,4 @@ const styles = StyleSheet.create({
 		left: 0,
 		padding: 20,
 	},
-	historyBtn: {
-		padding: 20,
-		width: 130,
-		marginBottom: 10
-	}
 })

@@ -25,13 +25,13 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 					<Txt txt={t('custodialRisk')} styles={[styles.header]} />
 					<Txt txt={t('custodialRiskContent')} />
 					<Separator style={[styles.separator]} />
-					{/* cashu */}
-					<Txt txt={t('cashuExperiment')} styles={[styles.header]} />
-					<Txt txt={t('cashuContent')} />
-					<Separator style={[styles.separator]} />
 					{/* loss */}
 					<Txt txt={t('lossOfTokens')} styles={[styles.header]} />
 					<Txt txt={t('lossContent')} />
+					<Separator style={[styles.separator]} />
+					{/* cashu */}
+					<Txt txt={t('cashuExperiment')} styles={[styles.header]} />
+					<Txt txt={t('cashuContent')} />
 				</View>
 			</ScrollView>
 			<View style={styles.ok}>
