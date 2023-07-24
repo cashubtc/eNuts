@@ -88,7 +88,10 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 		await historyStore.updateHistoryEntry({ ...entry, isSpent: false }, { ...entry, isSpent: true })
 		setIsSpent(true)
 		stopLoading()
-		openPromptAutoClose({ msg: t('claimBackSuccess'), success: true })
+		openPromptAutoClose({
+			msg: t('claimBackSuccess', {amount: entry.amount < 0 ? Math.abs(entry.amount) : entry.amount}),
+			success: true
+		})
 	}
 	const handleQR = () => {
 		setQr({ ...qr, open: true })
