@@ -54,11 +54,11 @@ export const themeColors = [
 ]
 
 // light theme
-const WHITE = '#FAFAFA'
+const WHITE = '#F6F6F6'
 const DARK_GREY = '#656565'
-const GREY = '#BDBDBD'
-const LIGHT_GREY1 = '#F6F6F6'
-const LIGHT_GREY2 = '#E8E8E8'
+const GREY = '#ADADAD'
+const LIGHT_GREY1 = '#F1F3F4'
+const LIGHT_GREY2 = '#D8D8D8'
 // dark theme
 const DARK = '#202124'
 const CLOUD = '#BDC1C6'
