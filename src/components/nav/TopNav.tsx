@@ -1,6 +1,4 @@
 import { QRIcon } from '@comps/Icons'
-import type { TBottomNavProps } from '@model/nav'
-import { useNavigation } from '@react-navigation/native'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
@@ -10,27 +8,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 interface TTopNavProps {
 	screenName?: string
 	withBackBtn?: boolean
-	nav?: TBottomNavProps
-	backHandler?: () => void
 	cancel?: boolean
+	handlePress?: () => void
 }
 
-export default function TopNav({ screenName, withBackBtn, nav, backHandler, cancel }: TTopNavProps) {
+export default function TopNav({ screenName, withBackBtn, cancel, handlePress }: TTopNavProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-	const navHook = useNavigation()
-	const handlePress = () => {
-		if (withBackBtn || cancel) {
-			if (backHandler) {
-				backHandler()
-				return
-			}
-			navHook.goBack()
-			return
-		}
-		// open QR Scan
-		nav?.navigation.navigate('qr scan', { mint: undefined })
-	}
 	return (
 		<View style={styles.topNav}>
 			{screenName ?
@@ -41,17 +25,12 @@ export default function TopNav({ screenName, withBackBtn, nav, backHandler, canc
 				<View />
 			}
 			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
-				{withBackBtn ?
+				{(withBackBtn || cancel) ?
 					<Text style={globals(color, highlight).pressTxt}>
-						{t('back')}
+						{t(withBackBtn ? 'back' : 'cancel')}
 					</Text>
 					:
-					cancel ?
-						<Text style={globals(color, highlight).pressTxt}>
-							{t('cancel')}
-						</Text>
-						:
-						<QRIcon color={color.TEXT} />
+					<QRIcon color={color.TEXT} />
 				}
 			</TouchableOpacity>
 		</View>

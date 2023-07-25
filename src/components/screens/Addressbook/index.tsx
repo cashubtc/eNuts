@@ -16,8 +16,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut', { ns: 'common' }) : t('addressBook')}
-				nav={{ navigation, route }}
 				withBackBtn={route.params?.isMelt}
+				handlePress={() => navigation.goBack()}
 			/>
 			<AddressBook nav={{ navigation, route }} />
 			{!route.params?.isMelt && <BottomNav navigation={navigation} route={route} />}

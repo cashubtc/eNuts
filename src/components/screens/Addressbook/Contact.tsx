@@ -69,7 +69,10 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	}, [openEdit])
 	return (
 		<View style={[globals(color).container, styles.container]}>
-			<TopNav withBackBtn />
+			<TopNav
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			{/* Contact info */}
 			<View style={[styles.contactContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
 				<View style={[styles.circleContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>

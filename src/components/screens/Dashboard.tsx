@@ -20,7 +20,7 @@ import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
-import { globals , highlight as hi } from '@styles'
+import { globals, highlight as hi } from '@styles'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -207,7 +207,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	return (
 		<SafeAreaView style={[globals(color).container, styles.container]}>
-			<TopNav nav={{ navigation, route }} />
+			<TopNav handlePress={() => navigation.navigate('qr scan', { mint: undefined })} />
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
 			{/* Flex space-between empty placeholder */}

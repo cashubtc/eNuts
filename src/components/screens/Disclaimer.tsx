@@ -14,7 +14,11 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 	const { t } = useTranslation(['wallet'])
 	return (
 		<View style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
-			<TopNav screenName={t('disclaimer', { ns: 'common' })} withBackBtn />
+			<TopNav
+				screenName={t('disclaimer', { ns: 'common' })}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			<ScrollView style={styles.container}>
 				<View style={[globals(color).wrapContainer, { paddingVertical: 20 }]}>
 					{/* beta */}
