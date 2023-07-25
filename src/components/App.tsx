@@ -23,6 +23,7 @@ import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, 
 import { routingInstrumentation } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
+import axios from 'axios'
 import * as Clipboard from 'expo-clipboard'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
@@ -284,6 +285,9 @@ function _App() {
 		}
 		async function init() {
 			await initDB()
+			const ten_seconds = 10000
+			const storedTimeout = await store.get('request_timeout')
+			axios.defaults.timeout = isStr(storedTimeout) ? +storedTimeout : ten_seconds
 			await initContacts()
 			await initPreferences()
 			const storedLng = await store.get('settings_lang')
