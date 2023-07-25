@@ -18,7 +18,11 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
 		<Container>
-			<TopNav screenName={t('display', { ns: 'topNav' })} withBackBtn />
+			<TopNav
+				screenName={t('display', { ns: 'topNav' })}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			<ScrollView style={{ width: '100%', marginBottom: 60 + insets.bottom }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Theme

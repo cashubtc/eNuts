@@ -153,7 +153,11 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
-			<TopNav screenName={t('mintSettings', { ns: 'topNav' })} withBackBtn />
+			<TopNav
+				screenName={t('mintSettings', { ns: 'topNav' })}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			<ScrollView style={{ marginBottom: insets.bottom + 60 }} showsVerticalScrollIndicator={false}>
 				{/* General */}
 				<Txt txt={t('general', { ns: 'mints' })} styles={[styles.sectionHeader]} />

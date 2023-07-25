@@ -32,7 +32,10 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	}
 	return (
 		<Container>
-			<TopNav screenName={t('settings', { ns: 'topNav' })} nav={{ navigation, route }} />
+			<TopNav
+				screenName={t('settings', { ns: 'topNav' })}
+				handlePress={() => navigation.navigate('qr scan', { mint: undefined })}
+			/>
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
 					txt={t('security', { ns: 'topNav' })}

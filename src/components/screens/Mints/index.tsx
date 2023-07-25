@@ -135,7 +135,10 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
-			<TopNav screenName='Mints' nav={{ navigation, route }} />
+			<TopNav
+				screenName='Mints'
+				handlePress={() => navigation.navigate('qr scan', { mint: undefined })}
+			/>
 			<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
 				{/* Mints list where test mint is always visible */}
 				<View style={[

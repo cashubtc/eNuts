@@ -106,7 +106,11 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	}, [mints, mintsWithBal])
 	return (
 		<Container>
-			<TopNav screenName={t(getScreenName(), { ns: 'common' })} withBackBtn />
+			<TopNav
+				screenName={t(getScreenName(), { ns: 'common' })}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			{userMints.length > 0 && !allMintsEmpty &&
 				<Txt
 					styles={[styles.hint]}

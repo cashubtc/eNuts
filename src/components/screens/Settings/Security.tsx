@@ -53,7 +53,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 			<TopNav
 				screenName={t('security', { ns: 'topNav' })}
 				withBackBtn
-				backHandler={() => navigation.navigate('Settings')}
+				handlePress={() => navigation.navigate('Settings')}
 			/>
 			<View style={globals(color).wrapContainer}>
 				{pin ?

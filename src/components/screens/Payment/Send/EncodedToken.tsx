@@ -59,7 +59,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<TopNav
 				withBackBtn
-				backHandler={() => navigation.navigate('dashboard')}
+				handlePress={() => navigation.navigate('dashboard')}
 			/>
 			{/* The amount of the created token */}
 			<View style={styles.qrWrap}>

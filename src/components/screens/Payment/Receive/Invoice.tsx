@@ -70,9 +70,9 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
-				cancel
 				screenName={t('payInvoice', { ns: 'wallet' })}
-				backHandler={() => navigation.navigate('dashboard')}
+				cancel
+				handlePress={() => navigation.navigate('dashboard')}
 			/>
 			<View style={styles.invoiceWrap}>
 				<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>

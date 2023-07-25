@@ -38,7 +38,11 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	}, [navigation])
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? insets.bottom : 0 }]}>
-			<TopNav screenName={t('history', { ns: 'topNav' })} withBackBtn />
+			<TopNav
+				screenName={t('history', { ns: 'topNav' })}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			<View style={styles.listWrap}>
 				{/* History list grouped by settled date */}
 				<FlashList

@@ -146,6 +146,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			<TopNav
 				screenName={t(getScreenName(), { ns: 'common' })}
 				withBackBtn
+				handlePress={() => navigation.goBack()}
 			/>
 			{!isMelt && !isSwap &&
 				<Txt txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: 'mints' })} styles={[styles.headerHint]} />

@@ -34,7 +34,11 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 
 	return (
 		<Container>
-			<TopNav screenName='Proofs' withBackBtn />
+			<TopNav
+				screenName='Proofs'
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			<View style={[styles.content, { marginBottom: insets.bottom + 60 }]}>
 				{/* List header */}
 				<View style={{ paddingHorizontal: 20, marginTop: 20 }}>

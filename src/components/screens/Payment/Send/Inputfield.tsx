@@ -127,7 +127,11 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 	}, [input])
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
-			<TopNav screenName={t('cashOut')} withBackBtn />
+			<TopNav
+				screenName={t('cashOut')}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			<View>
 				{!input.length &&
 					<Txt styles={[styles.hint]} txt={t('meltInputHint', { ns: 'mints' })} />

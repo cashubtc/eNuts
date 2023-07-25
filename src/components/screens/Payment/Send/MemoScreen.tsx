@@ -41,6 +41,7 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 			<TopNav
 				screenName={t('sendEcash')}
 				withBackBtn
+				handlePress={() => navigation.goBack()}
 			/>
 			<Txt
 				txt={t('addMemo')}

@@ -21,7 +21,11 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { prompt, openPromptAutoClose } = usePrompt()
 	return (
 		<Container>
-			<TopNav screenName={t('cashOut', { ns: 'common' })} withBackBtn />
+			<TopNav
+				screenName={t('cashOut', { ns: 'common' })}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			<Txt styles={[styles.hint]} txt={t('chooseTarget')} />
 			<View style={[globals(color).wrapContainer, styles.targets]}>
 				<Target

@@ -66,6 +66,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			<TopNav
 				screenName={t('paymentOverview', { ns: 'mints' })}
 				withBackBtn
+				handlePress={() => navigation.goBack()}
 			/>
 			<ScrollView>
 				<View style={[globals(color).wrapContainer, styles.wrap]}>

@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export default function MintInfoPage({ route }: TMintInfoPageProps) {
+export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const insets = useSafeAreaInsets()
@@ -37,7 +37,10 @@ export default function MintInfoPage({ route }: TMintInfoPageProps) {
 
 	return (
 		<Container>
-			<TopNav withBackBtn />
+			<TopNav
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			{info ?
 				<ScrollView style={{ marginTop: -20, marginBottom: insets.bottom }}>
 					{/* Name, Version & short description */}

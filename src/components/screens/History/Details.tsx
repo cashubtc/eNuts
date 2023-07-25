@@ -28,7 +28,7 @@ const initialCopyState = {
 	preimage: false
 }
 
-export default function DetailsPage({ route }: THistoryEntryPageProps) {
+export default function DetailsPage({ navigation, route }: THistoryEntryPageProps) {
 	const { t } = useTranslation(['common'])
 	const insets = useSafeAreaInsets()
 	const entry = route.params.entry
@@ -104,7 +104,11 @@ export default function DetailsPage({ route }: THistoryEntryPageProps) {
 	}
 	return (
 		<View style={[globals(color).container, styles.container]}>
-			<TopNav screenName={isLn ? LNstr : Ecash} withBackBtn />
+			<TopNav
+				screenName={isLn ? LNstr : Ecash}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			<ScrollView style={{ marginTop: 110, marginBottom: insets.bottom }} showsVerticalScrollIndicator={false} >
 				<View style={styles.topSection}>
 					<Text style={[styles.amount, { color: entry.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}>

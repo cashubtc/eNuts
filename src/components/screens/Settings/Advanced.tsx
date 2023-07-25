@@ -2,6 +2,7 @@ import Container from '@comps/Container'
 import RadioBtn from '@comps/RadioBtn'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
+import type { TAdvancedSettingsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
@@ -13,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const reqTimeouts = [5, 10, 20, 30]
 
-export default function AdvancedFunctionScreen() {
+export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettingsPageProps) {
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['topNav'])
 	const { color } = useContext(ThemeContext)
@@ -30,7 +31,11 @@ export default function AdvancedFunctionScreen() {
 	}, [])
 	return (
 		<Container>
-			<TopNav screenName={t('advancedFunctions')} withBackBtn />
+			<TopNav
+				screenName={t('advancedFunctions')}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
+			/>
 			<ScrollView style={{ width: '100%', marginBottom: 60 + insets.bottom }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					{t('reqTimeout', { ns: 'common' })}

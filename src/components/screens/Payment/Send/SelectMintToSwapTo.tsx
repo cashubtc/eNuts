@@ -37,6 +37,7 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 			<TopNav
 				screenName={t('multimintSwap', { ns: 'common' })}
 				withBackBtn
+				handlePress={() => navigation.goBack()}
 			/>
 			<Txt txt='Select a mint as the payment receiver.' styles={[styles.hint]} />
 			{remainingMints && remainingMints.length > 0 &&
