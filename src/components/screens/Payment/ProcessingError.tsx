@@ -1,5 +1,6 @@
 import Button from '@comps/Button'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
 import type { TProcessingErrorPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
@@ -11,7 +12,7 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
-		<View style={[globals(color).container, styles.container]}>
+		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<View />
 			<View style={styles.setion}>
 				<Txt txt={route.params.errorMsg} styles={[{ color: mainColors.ERROR }]} />
