@@ -4,7 +4,6 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TDisplaySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, themeColors } from '@styles'
 import { useContext } from 'react'
@@ -17,12 +16,11 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 	const insets = useSafeAreaInsets()
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
-		<Container>
-			<TopNav
-				screenName={t('display', { ns: 'topNav' })}
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
+		<Container
+			screenName={t('display', { ns: 'topNav' })}
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+		>
 			<ScrollView style={{ width: '100%', marginBottom: 60 + insets.bottom }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Theme

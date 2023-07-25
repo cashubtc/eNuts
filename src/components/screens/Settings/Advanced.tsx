@@ -3,7 +3,6 @@ import RadioBtn from '@comps/RadioBtn'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TAdvancedSettingsPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { globals } from '@styles'
@@ -30,12 +29,11 @@ export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettings
 		})()
 	}, [])
 	return (
-		<Container>
-			<TopNav
-				screenName={t('advancedFunctions')}
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
+		<Container
+			screenName={t('advancedFunctions')}
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+		>
 			<ScrollView style={{ width: '100%', marginBottom: 60 + insets.bottom }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					{t('reqTimeout', { ns: 'common' })}

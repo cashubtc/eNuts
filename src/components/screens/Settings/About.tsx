@@ -7,7 +7,6 @@ import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import type { TAboutSettingsPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { isErr, openUrl } from '@util'
@@ -32,12 +31,11 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 		await openUrl(url)?.catch(e => openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 	}
 	return (
-		<Container>
-			<TopNav
-				screenName={t('about', { ns: 'topNav' })}
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
+		<Container
+			screenName={t('about', { ns: 'topNav' })}
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+		>
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<AboutRow
 					txt={t('readme')}

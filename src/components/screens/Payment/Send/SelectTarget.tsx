@@ -6,7 +6,6 @@ import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TSelectTargetPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { isNum } from '@util'
@@ -20,12 +19,11 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
 	return (
-		<Container>
-			<TopNav
-				screenName={t('cashOut', { ns: 'common' })}
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
+		<Container
+			screenName={t('cashOut', { ns: 'common' })}
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+		>
 			<Txt styles={[styles.hint]} txt={t('chooseTarget')} />
 			<View style={[globals(color).wrapContainer, styles.targets]}>
 				<Target

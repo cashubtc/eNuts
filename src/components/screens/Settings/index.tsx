@@ -7,7 +7,6 @@ import Txt from '@comps/Txt'
 import { QuestionModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
@@ -31,11 +30,10 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 		setConfirm(false)
 	}
 	return (
-		<Container>
-			<TopNav
-				screenName={t('settings', { ns: 'topNav' })}
-				handlePress={() => navigation.navigate('qr scan', { mint: undefined })}
-			/>
+		<Container
+			screenName={t('settings', { ns: 'topNav' })}
+			handlePress={() => navigation.navigate('qr scan', { mint: undefined })}
+		>
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
 					txt={t('security', { ns: 'topNav' })}

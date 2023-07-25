@@ -7,7 +7,6 @@ import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSelectAmountPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, getInvoiceFromLnurl, vib } from '@util'
@@ -142,12 +141,11 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [amount])
 	return (
-		<Container>
-			<TopNav
-				screenName={t(getScreenName(), { ns: 'common' })}
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
+		<Container
+			screenName={t(getScreenName(), { ns: 'common' })}
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+		>
 			{!isMelt && !isSwap &&
 				<Txt txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: 'mints' })} styles={[styles.headerHint]} />
 			}

@@ -5,7 +5,6 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { IMintUrl } from '@model'
 import type { TSelectMintToSwapToPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { getDefaultMint } from '@store/mintStore'
@@ -33,12 +32,11 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 		})()
 	}, [])
 	return (
-		<Container>
-			<TopNav
-				screenName={t('multimintSwap', { ns: 'common' })}
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
+		<Container
+			screenName={t('multimintSwap', { ns: 'common' })}
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+		>
 			<Txt txt='Select a mint as the payment receiver.' styles={[styles.hint]} />
 			{remainingMints && remainingMints.length > 0 &&
 				<View style={[
@@ -75,7 +73,7 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 }
 
 const styles = StyleSheet.create({
-	hint:{
+	hint: {
 		paddingHorizontal: 20,
 		marginBottom: 20,
 		fontWeight: '500'

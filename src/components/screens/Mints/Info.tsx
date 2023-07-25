@@ -6,7 +6,6 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TMintInfoPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getMintInfo } from '@wallet'
@@ -36,11 +35,10 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 	}, [route.params.mintUrl])
 
 	return (
-		<Container>
-			<TopNav
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
+		<Container
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+		>
 			{info ?
 				<ScrollView style={{ marginTop: -20, marginBottom: insets.bottom }}>
 					{/* Name, Version & short description */}

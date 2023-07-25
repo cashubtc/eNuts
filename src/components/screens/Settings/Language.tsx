@@ -4,7 +4,6 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from '@model/i18n'
 import type { TLanguageSettingsPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { globals } from '@styles'
@@ -22,12 +21,11 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
 	const { t, i18n } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
-		<Container>
-			<TopNav
-				screenName={t('language', { ns: 'topNav' })}
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
+		<Container
+			screenName={t('language', { ns: 'topNav' })}
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+		>
 			<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
 				{langs.map((l, i) => (
 					<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />

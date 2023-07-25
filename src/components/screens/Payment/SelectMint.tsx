@@ -9,7 +9,6 @@ import Txt from '@comps/Txt'
 import { _testmintUrl, isIOS } from '@consts'
 import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { getDefaultMint } from '@store/mintStore'
@@ -105,12 +104,11 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		})()
 	}, [mints, mintsWithBal])
 	return (
-		<Container>
-			<TopNav
-				screenName={t(getScreenName(), { ns: 'common' })}
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
+		<Container
+			screenName={t(getScreenName(), { ns: 'common' })}
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+		>
 			{userMints.length > 0 && !allMintsEmpty &&
 				<Txt
 					styles={[styles.hint]}

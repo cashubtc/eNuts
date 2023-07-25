@@ -8,7 +8,6 @@ import { getProofs } from '@db'
 import { getBackUpToken } from '@db/backup'
 import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { isNull } from '@src/util'
 import { secureStore } from '@store'
@@ -49,12 +48,11 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	}, [navigation])
 	if (isNull(pin)) { return null }
 	return (
-		<Container>
-			<TopNav
-				screenName={t('security', { ns: 'topNav' })}
-				withBackBtn
-				handlePress={() => navigation.navigate('Settings')}
-			/>
+		<Container
+			screenName={t('security', { ns: 'topNav' })}
+			withBackBtn
+			handlePress={() => navigation.navigate('Settings')}
+		>
 			<View style={globals(color).wrapContainer}>
 				{pin ?
 					<>
