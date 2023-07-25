@@ -1,5 +1,5 @@
-import Container from '@comps/Container'
 import RadioBtn from '@comps/RadioBtn'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from '@model/i18n'
@@ -21,7 +21,7 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
 	const { t, i18n } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
-		<Container
+		<Screen
 			screenName={t('language', { ns: 'topNav' })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
@@ -31,7 +31,7 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
 					<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />
 				))}
 			</View>
-		</Container>
+		</Screen>
 	)
 }
 

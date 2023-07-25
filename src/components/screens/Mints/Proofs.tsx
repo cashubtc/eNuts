@@ -1,5 +1,5 @@
 import type { Proof } from '@cashu/cashu-ts'
-import Container from '@comps/Container'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import { isIOS } from '@consts'
 import { getProofsByMintUrl } from '@db'
@@ -32,7 +32,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 	}, [route.params.mintUrl])
 
 	return (
-		<Container
+		<Screen
 			screenName='Proofs'
 			withBackBtn
 			handlePress={() => navigation.goBack()}
@@ -67,7 +67,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 				}
 			</View>
 			<BottomNav navigation={navigation} route={route} />
-		</Container>
+		</Screen>
 	)
 }
 

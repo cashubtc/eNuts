@@ -1,6 +1,6 @@
-import Container from '@comps/Container'
 import usePrompt from '@comps/hooks/Prompt'
 import { AboutIcon, ChevronRightIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
@@ -30,7 +30,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 		setConfirm(false)
 	}
 	return (
-		<Container
+		<Screen
 			screenName={t('settings', { ns: 'topNav' })}
 			handlePress={() => navigation.navigate('qr scan', { mint: undefined })}
 		>
@@ -94,7 +94,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 				cancelFn={() => setConfirm(false)}
 			/>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-		</Container>
+		</Screen>
 	)
 }
 

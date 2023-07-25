@@ -1,12 +1,12 @@
 import BackupSuccess from '@comps/Backup'
-import Container from '@comps/Container'
+import Screen from '@comps/Screen'
 import type { TMintBackupPageProps } from '@model/nav'
 import { useTranslation } from 'react-i18next'
 
 export default function MintBackup({ navigation, route }: TMintBackupPageProps) {
 	const { t } = useTranslation(['topNav'])
 	return (
-		<Container
+		<Screen
 			screenName={t('mintBackup')}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
@@ -15,6 +15,6 @@ export default function MintBackup({ navigation, route }: TMintBackupPageProps) 
 				token={route.params.token}
 				mint={route.params.mintUrl}
 			/>
-		</Container>
+		</Screen>
 	)
 }

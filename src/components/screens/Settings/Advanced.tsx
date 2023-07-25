@@ -1,5 +1,5 @@
-import Container from '@comps/Container'
 import RadioBtn from '@comps/RadioBtn'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TAdvancedSettingsPageProps } from '@model/nav'
@@ -29,7 +29,7 @@ export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettings
 		})()
 	}, [])
 	return (
-		<Container
+		<Screen
 			screenName={t('advancedFunctions')}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
@@ -50,7 +50,7 @@ export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettings
 					))}
 				</View>
 			</ScrollView>
-		</Container>
+		</Screen>
 	)
 }
 

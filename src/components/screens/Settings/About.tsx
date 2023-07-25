@@ -1,8 +1,8 @@
 import Button from '@comps/Button'
-import Container from '@comps/Container'
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
 import MyModal from '@comps/modal'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
@@ -31,7 +31,7 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 		await openUrl(url)?.catch(e => openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 	}
 	return (
-		<Container
+		<Screen
 			screenName={t('about', { ns: 'topNav' })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
@@ -73,7 +73,7 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 				</TouchableOpacity>
 			</MyModal>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-		</Container>
+		</Screen>
 	)
 }
 

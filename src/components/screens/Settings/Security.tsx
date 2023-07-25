@@ -1,6 +1,6 @@
-import Container from '@comps/Container'
 import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
@@ -9,9 +9,9 @@ import { getBackUpToken } from '@db/backup'
 import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { ThemeContext } from '@src/context/Theme'
-import { isNull } from '@src/util'
 import { secureStore } from '@store'
 import { globals } from '@styles'
+import { isNull } from '@util'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -48,7 +48,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	}, [navigation])
 	if (isNull(pin)) { return null }
 	return (
-		<Container
+		<Screen
 			screenName={t('security', { ns: 'topNav' })}
 			withBackBtn
 			handlePress={() => navigation.navigate('Settings')}
@@ -83,7 +83,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 			{prompt.open && <Toaster txt={prompt.msg} />}
-		</Container>
+		</Screen>
 	)
 }
 

@@ -1,8 +1,8 @@
 import Button from '@comps/Button'
-import Container from '@comps/Container'
 import Empty from '@comps/Empty'
 import usePrompt from '@comps/hooks/Prompt'
 import { MintBoardIcon, ZapIcon } from '@comps/Icons'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
@@ -104,7 +104,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		})()
 	}, [mints, mintsWithBal])
 	return (
-		<Container
+		<Screen
 			screenName={t(getScreenName(), { ns: 'common' })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
@@ -171,7 +171,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				</View>
 			}
 			{prompt.open && <Toaster txt={prompt.msg} />}
-		</Container>
+		</Screen>
 	)
 }
 

@@ -1,5 +1,5 @@
-import Container from '@comps/Container'
 import RadioBtn from '@comps/RadioBtn'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TDisplaySettingsPageProps } from '@model/nav'
@@ -16,7 +16,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 	const insets = useSafeAreaInsets()
 	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
 	return (
-		<Container
+		<Screen
 			screenName={t('display', { ns: 'topNav' })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
@@ -44,7 +44,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 				</View>
 			</ScrollView>
 			<BottomNav navigation={navigation} route={route} />
-		</Container>
+		</Screen>
 	)
 }
 

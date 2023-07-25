@@ -1,5 +1,5 @@
-import Container from '@comps/Container'
 import { ChevronRightIcon, MintBoardIcon } from '@comps/Icons'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
@@ -32,7 +32,7 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 		})()
 	}, [])
 	return (
-		<Container
+		<Screen
 			screenName={t('multimintSwap', { ns: 'common' })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
@@ -68,7 +68,7 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 					/>
 				</View>
 			}
-		</Container>
+		</Screen>
 	)
 }
 

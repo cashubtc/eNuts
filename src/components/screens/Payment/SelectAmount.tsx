@@ -1,7 +1,7 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
-import Container from '@comps/Container'
 import usePrompt from '@comps/hooks/Prompt'
 import Loading from '@comps/Loading'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
@@ -141,7 +141,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [amount])
 	return (
-		<Container
+		<Screen
 			screenName={t(getScreenName(), { ns: 'common' })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
@@ -214,7 +214,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				</TouchableOpacity>
 			</KeyboardAvoidingView>
 			{prompt.open && <Toaster txt={prompt.msg} />}
-		</Container>
+		</Screen>
 	)
 }
 

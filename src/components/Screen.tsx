@@ -12,7 +12,7 @@ interface IContainerProps {
 	handlePress?: () => void
 }
 
-export default function Container({ children, screenName, withBackBtn, withCancelBtn, handlePress }: IContainerProps) {
+export default function Screen({ children, screenName, withBackBtn, withCancelBtn, handlePress }: IContainerProps) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<View style={globals(color).container}>

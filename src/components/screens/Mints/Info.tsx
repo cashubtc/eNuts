@@ -1,7 +1,7 @@
 import type { GetInfoResponse } from '@cashu/cashu-ts'
-import Container from '@comps/Container'
 import Empty from '@comps/Empty'
 import { ExclamationIcon, MintBoardIcon } from '@comps/Icons'
+import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { l } from '@log'
@@ -35,7 +35,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 	}, [route.params.mintUrl])
 
 	return (
-		<Container
+		<Screen
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
@@ -113,7 +113,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 				:
 				<Empty txt={t('noInfo', { ns: 'mints' }) + '...'} />
 			}
-		</Container>
+		</Screen>
 	)
 }
 
