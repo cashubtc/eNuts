@@ -169,7 +169,9 @@
 		"mint": "Mint",
 		"balanceAfterTX": "Balance after TX",
 		"multimintSwap": "Multimint swap",
-		"optionalMemo": "Optional memo"
+		"optionalMemo": "Optional memo",
+		"reqTimeout": "Network request timeout",
+		"seconds": "seconds"
 	},
 	"error": {
 		"header": "An error occured",
@@ -277,7 +279,8 @@
 		"mintBackup": "Mint Backup",
 		"mintSettings": "Mint settings",
 		"security": "Security",
-		"settings": "Settings"
+		"settings": "Settings",
+		"advancedFunctions": "Advanced functions"
 	},
 	"wallet": {
 		"claiming": "Claiming...",

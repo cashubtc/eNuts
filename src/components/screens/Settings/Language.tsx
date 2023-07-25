@@ -1,11 +1,12 @@
 import Container from '@comps/Container'
+import RadioBtn from '@comps/RadioBtn'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from '@model/i18n'
 import TopNav from '@nav/TopNav'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
-import { globals, highlight as hi } from '@styles'
+import { globals } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -40,7 +41,6 @@ interface ILangSelectionProps {
 
 function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionProps) {
 	const { t, i18n } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
 	const handleLangChange = async () => {
 		await i18n.changeLanguage(code)
 		await store.set('settings_lang', code)
@@ -51,14 +51,9 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 				onPress={() => void handleLangChange()}
 			>
 				<Txt txt={t(name)} />
-				<View
-					style={[
-						globals(color, highlight).radioBtn,
-						{ backgroundColor: selected ? hi[highlight] : 'transparent' }
-					]}
-				/>
+				<RadioBtn selected={selected} />
 			</TouchableOpacity>
-			{hasSeparator && <Separator style={[{ marginHorizontal: 20, marginVertical: 10 }]} />}
+			{hasSeparator && <Separator style={[styles.separator]} />}
 		</>
 	)
 }
@@ -76,4 +71,8 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		paddingHorizontal: 20,
 	},
+	separator: {
+		marginHorizontal: 20,
+		marginVertical: 10
+	}
 })

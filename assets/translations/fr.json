@@ -169,7 +169,9 @@
 		"recipient": "Bcénéficiaire",
 		"balanceAfterTX": "Solde après paiement",
 		"multimintSwap": "Multimint-échange.",
-		"optionalMemo": "Mémo facultatif"
+		"optionalMemo": "Mémo facultatif",
+		"reqTimeout": "Délais de la requête réseau",
+		"seconds": "secondes"
 	},
 	"error": {
 		"header": "Une erreur est survenue",
@@ -277,7 +279,8 @@
 		"mintBackup": "Sauvegarde des mints",
 		"mintSettings": "Paramètres des mints",
 		"security": "Sécurité",
-		"settings": "Paramètres"
+		"settings": "Paramètres",
+		"advancedFunctions": "Fonctions avancées"
 	},
 	"wallet": {
 		"claiming": "En cours...",

@@ -169,7 +169,9 @@
 		"mint": "Mint",
 		"balanceAfterTX": "Guthaben nach Zahlung",
 		"multimintSwap": "Multimint-Tausch",
-		"optionalMemo": "Optionales Memo"
+		"optionalMemo": "Optionales Memo",
+		"reqTimeout": "Timeout für Netzwerkanfragen",
+		"seconds": "Sekunden"
 	},
 	"error": {
 		"header": "Ein Fehler ist aufgetreten",
@@ -277,7 +279,8 @@
 		"mintBackup": "Mint Sicherung",
 		"mintSettings": "Mint Einstellungen",
 		"security": "Sicherheit",
-		"settings": "Einstellungen"
+		"settings": "Einstellungen",
+		"advancedFunctions": "Erweiterte Funktionen"
 	},
 	"wallet": {
 		"claiming": "Überprüft...",

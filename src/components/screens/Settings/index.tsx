@@ -59,6 +59,14 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
+					txt={t('advancedFunctions', { ns: 'topNav' })}
+					txtColor={color.TEXT}
+					icon={<LanguageIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('Advanced settings')}
+					hasSeparator
+					hasChevron
+				/>
+				<SettingsMenuItem
 					txt={t('about', { ns: 'topNav' })}
 					txtColor={color.TEXT}
 					icon={<AboutIcon color={color.TEXT} />}

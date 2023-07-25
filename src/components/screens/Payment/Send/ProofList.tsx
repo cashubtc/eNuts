@@ -1,6 +1,7 @@
 import { Proof } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
+import RadioBtn from '@comps/RadioBtn'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
@@ -8,7 +9,7 @@ import MyModal from '@modal'
 import type { IMintUrl, IProofSelection } from '@model'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
-import { globals, highlight as hi, mainColors } from '@styles'
+import { globals, mainColors } from '@styles'
 import { getSelectedAmount } from '@util'
 import { getMintCurrentKeySetId, } from '@wallet'
 import { useContext, useEffect, useState } from 'react'
@@ -244,7 +245,7 @@ function CoinSelectionRow({ proof, isLatestKeysetId, setChecked }: ICoinSelectio
 }
 
 function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { color } = useContext(ThemeContext)
 	return (
 		<>
 			<Txt txt={`${proof.amount} Satoshi`} />
@@ -255,14 +256,7 @@ function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 				]}>
 					{proof.id}
 				</Text>
-				{'selected' in proof &&
-					<View
-						style={[
-							globals(color, highlight).radioBtn,
-							{ backgroundColor: proof.selected ? hi[highlight] : 'transparent' }
-						]}
-					/>
-				}
+				{'selected' in proof && <RadioBtn selected={proof.selected} />}
 			</View>
 		</>
 	)

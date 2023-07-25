@@ -28,6 +28,7 @@ import SuccessPage from '@screens/Payment/Success'
 import QRScanPage from '@screens/QRScan'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
+import AdvancedFunctionScreen from '@screens/Settings/Advanced'
 import BackupPage from '@screens/Settings/Backup'
 import DisplaySettings from '@screens/Settings/Display'
 import LanguageSettings from '@screens/Settings/Language'
@@ -99,6 +100,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='Display settings' component={DisplaySettings} />
 				<Stack.Screen name='Security settings' component={SecuritySettings} />
 				<Stack.Screen name='Language settings' component={LanguageSettings} />
+				<Stack.Screen name='Advanced settings' component={AdvancedFunctionScreen} />
 				<Stack.Screen name='About settings' component={AboutSettings} />
 				<Stack.Screen name='BackupPage' component={BackupPage} />
 			</Stack.Navigator>

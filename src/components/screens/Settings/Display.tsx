@@ -1,4 +1,5 @@
 import Container from '@comps/Container'
+import RadioBtn from '@comps/RadioBtn'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TDisplaySettingsPageProps } from '@model/nav'
@@ -53,21 +54,16 @@ interface IThemeSelectionProps {
 
 function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight, setHighlight } = useContext(ThemeContext)
+	const { setHighlight } = useContext(ThemeContext)
 	return (
 		<>
 			<TouchableOpacity style={styles.settingsRow}
 				onPress={() => setHighlight(name)}
 			>
 				<Txt txt={name === 'Default' ? t('default') : name} />
-				<View
-					style={[
-						globals(color, highlight).radioBtn,
-						{ backgroundColor: selected ? hi[highlight] : 'transparent' }
-					]}
-				/>
+				<RadioBtn selected={selected} />
 			</TouchableOpacity>
-			{hasSeparator && <Separator style={[{ marginHorizontal: 20, marginVertical: 10 }]} />}
+			{hasSeparator && <Separator style={[styles.separator]} />}
 		</>
 	)
 }
@@ -98,4 +94,8 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		paddingHorizontal: 20,
 	},
+	separator: {
+		marginHorizontal: 20,
+		marginVertical: 10
+	}
 })
