@@ -65,8 +65,9 @@ export function isUrl(url: string) {
 	return false
 }
 export function formatMintUrl(url: string) {
+	const clean = url.startsWith('http') ? url.split('://')[1] : url
+	if (clean.length < 30) { return clean }
 	const u = new URL(url)
-	if (url.length < 30) { return u.pathname }
 	return `${u.hostname.slice(0, 25)}...${u.pathname.slice(-10)}`
 }
 /**
