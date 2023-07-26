@@ -1,8 +1,7 @@
 import ActionButtons from '@comps/ActionButtons'
-import { CoinIcon, ZapIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { ThemeContext } from '@src/context/Theme'
-import { globals, highlight as hi } from '@styles'
+import { globals } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -41,10 +40,8 @@ export default function OptsModal({
 			<View style={{ marginVertical: 15 }} />
 			<ActionButtons
 				topBtnTxt={button1Txt}
-				topIcon={<CoinIcon color='#FAFAFA' />}
 				topBtnAction={onPressFirstBtn}
 				bottomBtnTxt={button2Txt}
-				bottomIcon={<ZapIcon color={hi[highlight]} />}
 				bottomBtnAction={onPressSecondBtn}
 				loading={loading}
 			/>
