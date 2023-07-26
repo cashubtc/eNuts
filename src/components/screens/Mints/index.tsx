@@ -209,7 +209,6 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				/>
 				<Button
 					txt={t('addMintBtn', { ns: 'mints' })}
-					icon={<PlusIcon color='#FAFAFA' />}
 					onPress={() => void handleMintInput()}
 				/>
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
