@@ -150,6 +150,7 @@
         "save": "Save",
         "scanAgain": "Tap to Scan Again",
         "scanTokenOrLn": "Scan Cashu token or Lightning invoice",
+        "scanLn": "Scan Lightning invoice",
         "seconds": "seconds",
         "selectAmount": "Select amount",
         "selected": "Selected",

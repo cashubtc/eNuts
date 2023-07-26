@@ -221,7 +221,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					<QRMarker size={300} />
 					<View style={styles.hint}>
 						<Text style={styles.hintTxt}>
-							{t('scanTokenOrLn')}
+							{mint ? t('scanLn') : t('scanTokenOrLn')}
 						</Text>
 					</View>
 					{scanned &&

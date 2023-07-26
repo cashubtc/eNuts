@@ -150,6 +150,7 @@
         "save": "Speichern",
         "scanAgain": "Hier tippen, um erneut zu scannen",
         "scanTokenOrLn": "Cashu Token oder LN Rechnung scannen",
+        "scanLn": "Lightning Rechnung scannen",
         "seconds": "Sekunden",
         "selectAmount": "Betrag auswählen",
         "selected": "Ausgewählt",
