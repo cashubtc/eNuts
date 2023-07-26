@@ -1,6 +1,6 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
-import { BackupIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, InfoIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
+import { AboutIcon, BitcoinIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, FlagIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
@@ -166,6 +166,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<MintOption
 						txt={formatMintUrl(route.params.mint?.mintUrl)}
 						hasSeparator
+						noChevron
 						onPress={() => {
 							void Clipboard.setStringAsync(route.params.mint?.mintUrl).then(() => {
 								setCopied(true)
@@ -183,35 +184,41 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Balance */}
 					<View style={styles.mintOpts}>
-						<Txt txt={t('balance')} />
+						<View style={styles.mintOption}>
+							<View style={{ minWidth: 30 }}>
+								<BitcoinIcon color={color.TEXT} />
+							</View>
+							<Txt txt={t('balance')} />
+						</View>
 						<Txt txt={formatInt(route.params?.amount) + ' Satoshi'} />
 					</View>
 					<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
 					{/* Add custom name */}
 					<MintOption
 						txt={t('customName', { ns: 'mints' })}
-						hasSeparator
 						onPress={() => {
 							void (async () => {
 								await hasMintName()
 								setCustomNameOpen(true)
 							})()
 						}}
-						icon={<PenIcon width={15} height={15} color={color.TEXT} />}
+						icon={<PenIcon width={22} height={22} color={color.TEXT} />}
+						noChevron
+						hasSeparator
 					/>
 					{/* Default */}
 					<MintOption
 						txt={isDefault ? t('removeDefault', { ns: 'mints' }) : t('setDefault', { ns: 'mints' })}
 						onPress={() => void handleDefaultMint()}
-						icon={<MintBoardIcon width={19} height={19} color={color.TEXT} />}
+						icon={<MintBoardIcon width={22} height={22} color={color.TEXT} />}
+						noChevron
 						hasSeparator
 					/>
 					{/* Mint info */}
 					<MintOption
 						txt={t('mintInfo', { ns: 'mints' })}
 						onPress={() => navigation.navigate('mint info', { mintUrl: route.params.mint?.mintUrl })}
-						icon={<InfoIcon width={18} height={18} color={color.TEXT} />}
-						reverseIcon
+						icon={<AboutIcon width={22} height={22} color={color.TEXT} />}
 					/>
 				</View>
 				{/* Fund management */}
@@ -223,7 +230,6 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						hasSeparator
 						onPress={() => navigation.navigate('selectAmount', { mint: route.params.mint, balance: route.params.amount })}
 						icon={<PlusIcon color={color.TEXT} />}
-						reverseIcon
 					/>
 					{/* Redeem to lightning */}
 					<MintOption
@@ -239,24 +245,21 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 								balance: route.params.amount
 							})
 						}}
-						icon={<ZapIcon width={18} height={18} color={color.TEXT} />}
-						reverseIcon
+						icon={<ZapIcon color={color.TEXT} />}
 					/>
 					{/* Inter-mint swap */}
 					<MintOption
 						txt={t('multimintSwap')}
 						hasSeparator
 						onPress={() => void handleMintSwap()}
-						icon={<SwapIcon width={20} height={20} color={color.TEXT} />}
-						reverseIcon
+						icon={<SwapIcon width={22} height={22} color={color.TEXT} />}
 					/>
 					{/* Backup mint */}
 					<MintOption
 						txt={t('mintBackup', { ns: 'topNav' })}
 						hasSeparator
 						onPress={() => void handleMintBackup()}
-						icon={<BackupIcon width={20} height={20} color={color.TEXT} />}
-						reverseIcon
+						icon={<FlagIcon width={22} height={22} color={color.TEXT} />}
 					/>
 					{/* Proof list */}
 					<MintOption
@@ -268,8 +271,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							}
 							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
 						}}
-						icon={<EyeIcon width={19} height={19} color={color.TEXT} />}
-						reverseIcon
+						icon={<EyeIcon width={22} height={22} color={color.TEXT} />}
 					/>
 				</View>
 				{/* Danger zone */}
@@ -282,13 +284,15 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						onPress={() => setCheckProofsOpen(true)}
 						icon={<ValidateIcon width={22} height={22} color='#FF9900' />}
 						rowColor='#FF9900'
+						noChevron
 					/>
 					{/* Delete mint */}
 					<MintOption
 						txt={t('delMint', { ns: 'mints' })}
 						onPress={() => setDelMintModalOpen(true)}
-						icon={<TrashbinIcon width={16} height={16} color={mainColors.ERROR} />}
+						icon={<TrashbinIcon width={22} height={22} color={mainColors.ERROR} />}
 						rowColor={mainColors.ERROR}
+						noChevron
 					/>
 				</View>
 			</ScrollView>
@@ -351,23 +355,21 @@ interface IMintOption {
 	icon: React.ReactNode
 	rowColor?: string
 	hasSeparator?: boolean
-	reverseIcon?: boolean
+	noChevron?: boolean
 }
 
-function MintOption({ txt, onPress, icon, rowColor, hasSeparator, reverseIcon }: IMintOption) {
+function MintOption({ txt, onPress, icon, rowColor, hasSeparator, noChevron }: IMintOption) {
 	const { color } = useContext(ThemeContext)
 	return (
 		<>
 			<TouchableOpacity onPress={onPress} style={styles.mintOpts}>
 				<View style={styles.mintOption}>
-					{reverseIcon &&
-						<View style={{ minWidth: 30 }}>
-							{icon}
-						</View>
-					}
-					<Txt txt={txt} styles={[{ color: rowColor || color.TEXT, }]} />
+					<View style={{ minWidth: 30 }}>
+						{icon}
+					</View>
+					<Txt txt={txt} styles={[{ color: rowColor || color.TEXT }]} />
 				</View>
-				{!reverseIcon ? icon : <ChevronRightIcon color={color.TEXT} />}
+				{!noChevron ? <ChevronRightIcon color={color.TEXT} /> : <View />}
 			</TouchableOpacity>
 			{hasSeparator &&
 				<View style={[styles.line, { borderBottomColor: color.BORDER }]} />

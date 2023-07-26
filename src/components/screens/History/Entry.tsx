@@ -31,15 +31,18 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			}
 			<View style={styles.infoWrap}>
 				<Txt txt={item.type === 1 ? 'Ecash' : 'Lightning'} />
-				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY }]}>
+				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: 14 }]}>
 					<EntryTime from={item.timestamp * 1000} fallback={t('justNow')} />
 				</Text>
 			</View>
 			<View style={styles.placeholder} />
-			<Text style={[globals(color, highlight).txt, styles.amount, { color: item.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}>
-				{formatInt(item.amount < 0 ? Math.abs(item.amount) : item.amount, 'compact', 'en')}
-				<ZapIcon width={15} height={15} color={item.amount < 0 ? mainColors.ERROR : mainColors.VALID} />
-			</Text>
+			<View style={styles.amount}>
+				<Txt
+					txt={formatInt(item.amount < 0 ? Math.abs(item.amount) : item.amount, 'compact', 'en')}
+					styles={[{ color: item.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}
+				/>
+				<ZapIcon color={item.amount < 0 ? mainColors.ERROR : mainColors.VALID} />
+			</View>
 		</TouchableOpacity>
 	)
 }
@@ -59,7 +62,8 @@ const styles = StyleSheet.create({
 		width: 30,
 	},
 	amount: {
-		textAlign: 'right',
+		flexDirection: 'row',
+		alignItems: 'center',
 		position: 'absolute',
 		right: 0,
 	},

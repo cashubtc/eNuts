@@ -26,7 +26,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const flashlistUntrustedHeight = isIOS ? 60 : 65
-const flashlistTrustedHeight = isIOS ? 90 : 95
+const flashlistTrustedHeight = isIOS ? 94 : 100
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
 	const { t } = useTranslation(['common'])
@@ -170,7 +170,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 									</View>
 									{isTrustedMint(data.item.mintUrl) &&
 										<View style={styles.mintBal}>
-											<ZapIcon width={18} height={18} color={color.TEXT} />
+											<ZapIcon color={color.TEXT} />
 											<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 												{formatInt(data.item.amount, 'compact', 'en') + ' Satoshi'}
 											</Text>
@@ -229,7 +229,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			{/* add new mint button */}
 			<View style={[styles.newMint, { marginBottom: insets.bottom }]}>
 				<IconBtn
-					icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
+					icon={<PlusIcon width={28} height={28} color='#FAFAFA' />}
 					onPress={() => {
 						closePrompt()
 						setNewMintModal(true)
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 	mintAmount: {
-		marginLeft: 10,
+		marginLeft: 5,
 	},
 	cancel: {
 		alignItems: 'center',

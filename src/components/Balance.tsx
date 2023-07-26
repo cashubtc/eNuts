@@ -1,4 +1,4 @@
-import { ChevronRightIcon, ExclamationIcon, HistoryIcon, SwapCurrencyIcon } from '@comps/Icons'
+import { AboutIcon, ChevronRightIcon, HistoryIcon, SwapCurrencyIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -48,7 +48,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 				{/* history */}
 				<BoardEntry
 					txt={t('history', { ns: 'topNav' })}
-					icon={<HistoryIcon width={22} height={22} color={color.TEXT} />}
+					icon={<HistoryIcon color={color.TEXT} />}
 					color={color.TEXT}
 					onPress={() => nav?.navigate('history')}
 					withSeparator
@@ -56,7 +56,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 				{/* Disclaimer */}
 				<BoardEntry
 					txt={t('risks')}
-					icon={<ExclamationIcon width={20} height={20} color={mainColors.WARN} />}
+					icon={<AboutIcon color={mainColors.WARN} />}
 					color={mainColors.WARN}
 					onPress={() => nav?.navigate('disclaimer')}
 				/>

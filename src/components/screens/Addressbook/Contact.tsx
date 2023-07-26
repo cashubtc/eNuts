@@ -1,6 +1,6 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
-import { EditIcon, TrashbinIcon } from '@comps/Icons'
+import { PenIcon, TrashbinIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
 import TxtInput from '@comps/TxtInput'
 import { delContact, editContact as editC, getContacts } from '@db'
@@ -94,7 +94,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					style={styles.action}
 					onPress={() => setOpenEdit(true)}
 				>
-					<EditIcon width={20} height={20} color={color.TEXT} />
+					<PenIcon width={20} height={20} color={color.TEXT} />
 					<Text style={[styles.actionTxt, { color: color.TEXT, marginTop: 2 }]}>
 						{t('edit')}
 					</Text>
@@ -105,7 +105,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						void handleDelete()
 					}}
 				>
-					<TrashbinIcon width={18} height={18} color={mainColors.ERROR} />
+					<TrashbinIcon width={20} height={20} color={mainColors.ERROR} />
 					<Text style={[styles.actionTxt, { color: mainColors.ERROR }]}>
 						{t('delete')}
 					</Text>
@@ -192,8 +192,8 @@ const styles = StyleSheet.create({
 		left: 50,
 		right: 50,
 		flexDirection: 'row',
+		alignItems: 'center',
 		justifyContent: 'space-between',
-		// paddingHorizontal: 80,
 	},
 	action: {
 		alignItems: 'center',

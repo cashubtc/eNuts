@@ -90,8 +90,10 @@ const styles = StyleSheet.create({
 	},
 	// icon button
 	iconBtn: {
-		padding: 20,
-		borderWidth: 1,
-		borderRadius: 50,
+		width: 60,
+		height: 60,
+		borderRadius: 30,
+		alignItems: 'center',
+		justifyContent: 'center',
 	}
 })

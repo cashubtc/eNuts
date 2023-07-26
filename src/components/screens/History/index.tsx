@@ -57,7 +57,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							{/* Group entries */}
 							<View style={[
 								globals(color).wrapContainer,
-								{ flex: 1, height: Math.floor(data.item[1].length * (isIOS ? 61 : 66)) }
+								{ flex: 1, height: Math.floor(data.item[1].length * (isIOS ? 59 : 69)) }
 							]}>
 								<FlashList
 									data={data.item[1]}

@@ -54,10 +54,10 @@ export const themeColors = [
 ]
 
 // light theme
-const WHITE = '#F6F6F6'
+const BACKGROUND = '#E7E8E9'
 const DARK_GREY = '#656565'
 const GREY = '#ADADAD'
-const LIGHT_GREY1 = '#F1F3F4'
+const LIGHT_GREY1 = '#F6F6F6'
 const LIGHT_GREY2 = '#D8D8D8'
 // dark theme
 const DARK = '#202124'
@@ -77,8 +77,8 @@ export const mainColors = {
 
 // light theme
 const lightTheme: TPref = {
-	BACKGROUND: WHITE,
-	DRAWER: WHITE,
+	BACKGROUND,
+	DRAWER: BACKGROUND,
 	TEXT: DARK_GREY,
 	TEXT_SECONDARY: GREY,
 	INPUT_BG: LIGHT_GREY1,

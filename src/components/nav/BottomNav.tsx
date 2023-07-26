@@ -1,4 +1,4 @@
-import { ContactsIcon, MintBoardIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
+import { BookIcon, MintBoardIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
@@ -36,35 +36,30 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				<WalletIcon color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt='Wallet'
-					styles={[{ fontSize: 12, marginTop: 2, color: isWalletRelatedScreen ? hi[highlight] : color.TEXT }]}
+					styles={[styles.iconTxt, { color: isWalletRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => handleNav('mints')}
 			>
-				<MintBoardIcon
-					width={20}
-					height={25}
-					color={isMintRelatedScreen ? hi[highlight] : color.TEXT}
-				/>
+				<MintBoardIcon color={isMintRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt='Mints'
-					styles={[{ fontSize: 12, marginTop: 1, color: isMintRelatedScreen ? hi[highlight] : color.TEXT }]}
+					styles={[styles.iconTxt, { color: isMintRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => handleNav('Address book')}
 			>
-				<ContactsIcon color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
+				<BookIcon color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('contacts', { ns: 'bottomNav' })}
-					styles={[{
-						fontSize: 12,
-						marginTop: -2,
-						color: route.name === 'Address book' ? hi[highlight] : color.TEXT
-					}]}
+					styles={[
+						styles.iconTxt,
+						{ color: route.name === 'Address book' ? hi[highlight] : color.TEXT }
+					]}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity
@@ -74,7 +69,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				<SettingsIcon color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('settings')}
-					styles={[{ fontSize: 12, marginTop: 1, color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT }]}
+					styles={[styles.iconTxt, { color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT }]}
 				/>
 			</TouchableOpacity>
 		</View>
@@ -96,5 +91,9 @@ const styles = StyleSheet.create({
 		minHeight: 50,
 		alignItems: 'center',
 		marginTop: 10,
+	},
+	iconTxt: {
+		fontSize: 12,
+		marginTop: 2,
 	}
 })

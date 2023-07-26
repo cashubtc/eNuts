@@ -2,7 +2,7 @@ import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
-import { CloseIcon, FlashlightOffIcon, ZapIcon } from '@comps/Icons'
+import { CloseIcon, FlashlightOffIcon } from '@comps/Icons'
 import Toaster from '@comps/Toaster'
 import { isIOS, QRType } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
@@ -238,13 +238,8 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 						style={styles.actionLeft}
 						onPress={() => setFlash(prev => !prev)}
 					>
-						<FlashlightOffIcon width={30} height={30} color='#FFF' />
+						<FlashlightOffIcon width={30} height={30} color={flash ? '#FFCC00' : '#FAFAFA'} />
 					</TouchableOpacity>
-					{flash &&
-						<View style={styles.flashOn}>
-							<ZapIcon width={30} height={30} color='#FFCC00' />
-						</View>
-					}
 					<TouchableOpacity
 						style={styles.actionRight}
 						onPress={() => {

@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const flashlistItemHeight = isIOS ? 60 : 65
+const flashlistItemHeight = 66
 
 export default function SelectMintScreen({ navigation, route }: TSelectMintPageProps) {
 	const {
@@ -143,7 +143,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
 										{formatInt(data.item.amount, 'compact', 'en')}
 									</Text>
-									<ZapIcon width={18} height={18} color={color.TEXT} />
+									<ZapIcon color={color.TEXT} />
 								</View>
 							</TouchableOpacity>
 						)}

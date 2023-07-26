@@ -1,5 +1,5 @@
 import usePrompt from '@comps/hooks/Prompt'
-import { AboutIcon, ChevronRightIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon2 } from '@comps/Icons'
+import { AboutIcon, ChevronRightIcon, HamburgerIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
@@ -62,7 +62,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 				<SettingsMenuItem
 					txt={t('advancedFunctions', { ns: 'topNav' })}
 					txtColor={color.TEXT}
-					icon={<LanguageIcon color={color.TEXT} />}
+					icon={<HamburgerIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Advanced settings')}
 					hasSeparator
 					hasChevron
@@ -78,7 +78,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 				<SettingsMenuItem
 					txt={t('delHistory')}
 					txtColor={mainColors.ERROR}
-					icon={<TrashbinIcon2 color={mainColors.ERROR} />}
+					icon={<TrashbinIcon color={mainColors.ERROR} />}
 					onPress={() => setConfirm(true)}
 				/>
 			</View>

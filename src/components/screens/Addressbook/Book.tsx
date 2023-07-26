@@ -156,7 +156,7 @@ export default function AddressBook({ nav }: IAddressBookProps) {
 			{/* Add new contact button */}
 			<View style={[styles.newContactBtn, { marginBottom: insets.bottom }]}>
 				<IconBtn
-					icon={<PlusIcon width={15} height={15} color='#FAFAFA' />}
+					icon={<PlusIcon width={28} height={28} color='#FAFAFA' />}
 					onPress={() => {
 						closePrompt()
 						setOpenNew({ open: true, isOwner: false })

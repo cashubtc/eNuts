@@ -1,4 +1,4 @@
-import { QRIcon } from '@comps/Icons'
+import { ScanQRIcon } from '@comps/Icons'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
@@ -30,7 +30,7 @@ export default function TopNav({ screenName, withBackBtn, cancel, handlePress }:
 						{t(withBackBtn ? 'back' : 'cancel')}
 					</Text>
 					:
-					<QRIcon color={color.TEXT} />
+					<ScanQRIcon color={color.TEXT} />
 				}
 			</TouchableOpacity>
 		</View>

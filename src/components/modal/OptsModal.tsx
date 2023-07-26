@@ -44,7 +44,7 @@ export default function OptsModal({
 				topIcon={<CoinIcon color='#FAFAFA' />}
 				topBtnAction={onPressFirstBtn}
 				bottomBtnTxt={button2Txt}
-				bottomIcon={<ZapIcon width={18} height={18} color={hi[highlight]} />}
+				bottomIcon={<ZapIcon color={hi[highlight]} />}
 				bottomBtnAction={onPressSecondBtn}
 				loading={loading}
 			/>
@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
 	},
 	hint: {
 		fontSize: 16,
-		textAlign: 'center'
+		textAlign: 'center',
+		fontWeight: '500'
 	},
 	no: {
 		marginTop: 15,
