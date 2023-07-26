@@ -36,7 +36,10 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				<WalletIcon color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt='Wallet'
-					styles={[styles.iconTxt, { color: isWalletRelatedScreen ? hi[highlight] : color.TEXT }]}
+					styles={[styles.iconTxt, {
+						color: isWalletRelatedScreen ? hi[highlight] : color.TEXT,
+						fontWeight: isWalletRelatedScreen ? '500' : '400'
+					}]}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity
@@ -46,7 +49,10 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				<MintBoardIcon color={isMintRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt='Mints'
-					styles={[styles.iconTxt, { color: isMintRelatedScreen ? hi[highlight] : color.TEXT }]}
+					styles={[styles.iconTxt, {
+						color: isMintRelatedScreen ? hi[highlight] : color.TEXT,
+						fontWeight: isMintRelatedScreen ? '500' : '400'
+					}]}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity
@@ -57,8 +63,10 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				<Txt
 					txt={t('contacts', { ns: 'bottomNav' })}
 					styles={[
-						styles.iconTxt,
-						{ color: route.name === 'Address book' ? hi[highlight] : color.TEXT }
+						styles.iconTxt, {
+							color: route.name === 'Address book' ? hi[highlight] : color.TEXT,
+							fontWeight: route.name === 'Address book' ? '500' : '400'
+						}
 					]}
 				/>
 			</TouchableOpacity>
@@ -69,7 +77,10 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				<SettingsIcon color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('settings')}
-					styles={[styles.iconTxt, { color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT }]}
+					styles={[styles.iconTxt, {
+						color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT,
+						fontWeight: isSettingsRelatedScreen ? '500' : '400'
+					}]}
 				/>
 			</TouchableOpacity>
 		</View>
