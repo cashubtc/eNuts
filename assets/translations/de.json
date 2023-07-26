@@ -172,7 +172,8 @@
         "unknownType": "Unbekannter Code-Typ",
         "version": "Version",
         "willDoLater": "Mache ich später",
-        "yes": "Ja"
+        "yes": "Ja",
+		"walletLocked": "Wallet gesperrt"
     },
     "error": {
         "addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

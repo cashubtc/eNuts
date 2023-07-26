@@ -172,7 +172,8 @@
         "unknownType": "Données inconnues",
         "version": "Version",
         "willDoLater": "Je ferai plus tard",
-        "yes": "Oui"
+        "yes": "Oui",
+		"walletLocked": "Wallet verrouillé"
     },
     "error": {
         "addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",

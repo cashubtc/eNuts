@@ -1,12 +1,13 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
 import { LockIcon, UnlockIcon } from '@comps/Icons'
+import Txt from '@comps/Txt'
 import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { formatSeconds } from '@util'
+import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -54,6 +55,9 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		const maxMismatchCount = attempts.mismatchCount + 1 === 3
 		const increasedLockedCount = attempts.lockedCount + 1
 		// vibrate longer if locked activated
+		if (maxMismatchCount) {
+			vib(500)
+		}
 		const attemptState = {
 			mismatch: true,
 			mismatchCount: maxMismatchCount ? 0 : attempts.mismatchCount + 1,
@@ -220,10 +224,11 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				:
 				<>
 					{attempts.locked && !isConfirm && <View />}
-					<View style={attempts.locked && !isConfirm ? { alignItems: 'center' } : styles.lockWrap}>
+					<View style={styles.lockWrap}>
 						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
 							<LockIcon width={40} height={40} color='#FAFAFA' />
 						</Animated.View>
+						<Txt txt={t('walletLocked')} styles={[styles.lockTxt]} />
 						{attempts.locked && !isConfirm &&
 							<Text style={styles.lockedTime}>
 								{formatSeconds(attempts.lockedTime)}
@@ -300,7 +305,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 	},
 	lockWrap: {
+		alignItems: 'center',
 		marginTop: 60,
+	},
+	lockTxt: {
+		marginTop: 10,
+		marginBottom: 20,
+		fontWeight: '500',
+		color: '#FAFAFA'
 	},
 	bottomSection: {
 		justifyContent: 'center',
@@ -319,7 +331,6 @@ const styles = StyleSheet.create({
 	},
 	lockedTime: {
 		fontSize: 24,
-		marginTop: 20,
 		color: '#FAFAFA'
 	}
 })

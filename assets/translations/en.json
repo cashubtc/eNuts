@@ -172,7 +172,8 @@
         "unknownType": "Unknown data",
         "version": "Version",
         "willDoLater": "Will do later",
-        "yes": "Yes"
+        "yes": "Yes",
+		"walletLocked": "Wallet locked"
     },
     "error": {
         "addAllMintIdsErr": "Error while getting keyset ids from mint",
