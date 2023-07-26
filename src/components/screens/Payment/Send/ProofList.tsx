@@ -1,8 +1,10 @@
 import { Proof } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
+import usePrompt from '@comps/hooks/Prompt'
 import RadioBtn from '@comps/RadioBtn'
 import Separator from '@comps/Separator'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import MyModal from '@modal'
@@ -33,6 +35,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
 	const { loading, startLoading, stopLoading } = useLoading()
+	const { prompt, openPromptAutoClose } = usePrompt()
 	const cancelCoinSelection = () => {
 		setVisible(false)
 		disableCS()
@@ -42,7 +45,11 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 		if (!mint?.mintUrl) { return }
 		void (async () => {
 			startLoading()
-			setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
+			try {
+				setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
+			} catch (e) {
+				openPromptAutoClose({ msg: 'Can not highlight the latest keyset IDs. Bad mint response.' })
+			}
 			stopLoading()
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,6 +118,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 						/>
 					</View>
 				}
+				{prompt.open && <Toaster txt={prompt.msg} />}
 			</SafeAreaView>
 		</MyModal>
 	)

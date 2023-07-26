@@ -32,13 +32,17 @@ function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string) {
 async function getWallet(mintUrl: string) {
 	if (wallets[mintUrl]) { return wallets[mintUrl] }
 	const mint = new CashuMint(mintUrl)
+	l({mint})
 	const keys = await mint.getKeys()
+	l({keys})
 	const wallet = new CashuWallet(mint, keys)
 	_setKeys(mintUrl, keys)
 	wallets[mintUrl] = wallet
 	return wallet
 }
 async function getCurrentKeySetId(mintUrl: string) {
+	const wallet = await getWallet(mintUrl)
+	l({ wallet })
 	const keys = await (await getWallet(mintUrl)).mint.getKeys()
 	const keySetId = deriveKeysetId(keys)
 	_setKeys(mintUrl, keys, keySetId)
