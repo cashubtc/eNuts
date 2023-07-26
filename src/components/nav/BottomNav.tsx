@@ -1,24 +1,23 @@
-import { BookIcon, MintBoardIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
+import { BookIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { t } = useTranslation(['topNav'])
 	const { color, highlight } = useContext(ThemeContext)
-	const insets = useSafeAreaInsets()
 
 	const handleNav = (routeStr: TRouteString) => navigation.navigate(routeStr)
 
-	const isMintRelatedScreen =
-		route.name === 'mints' ||
-		route.name === 'mintmanagement' ||
-		route.name === 'mint proofs'
+	// const isMintRelatedScreen =
+	// 	route.name === 'mints' ||
+	// 	route.name === 'mintmanagement' ||
+	// 	route.name === 'mint proofs'
 
 	const isWalletRelatedScreen = route.name === 'dashboard'
 
@@ -28,12 +27,12 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		route.name === 'BackupPage'
 
 	return (
-		<View style={[styles.bottomNav, { backgroundColor: color.BACKGROUND, paddingBottom: insets.bottom }]}>
+		<View style={[styles.bottomNav, { backgroundColor: color.BACKGROUND, paddingBottom: isIOS ? 40 : 10 }]}>
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => handleNav('dashboard')}
 			>
-				<WalletIcon color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
+				<WalletIcon width={28} height={28} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt='Wallet'
 					styles={[styles.iconTxt, {
@@ -44,22 +43,9 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.navIcon}
-				onPress={() => handleNav('mints')}
-			>
-				<MintBoardIcon color={isMintRelatedScreen ? hi[highlight] : color.TEXT} />
-				<Txt
-					txt='Mints'
-					styles={[styles.iconTxt, {
-						color: isMintRelatedScreen ? hi[highlight] : color.TEXT,
-						fontWeight: isMintRelatedScreen ? '500' : '400'
-					}]}
-				/>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.navIcon}
 				onPress={() => handleNav('Address book')}
 			>
-				<BookIcon color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
+				<BookIcon width={28} height={28} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('contacts', { ns: 'bottomNav' })}
 					styles={[
@@ -74,7 +60,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				style={styles.navIcon}
 				onPress={() => handleNav('Settings')}
 			>
-				<SettingsIcon color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
+				<SettingsIcon width={28} height={28} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('settings')}
 					styles={[styles.iconTxt, {
@@ -90,21 +76,20 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 const styles = StyleSheet.create({
 	bottomNav: {
 		position: 'absolute',
-		bottom: 0,
 		left: 0,
+		bottom: 0,
 		right: 0,
 		flexDirection: 'row',
 		alignItems: 'flex-start',
 		justifyContent: 'space-around',
 	},
 	navIcon: {
-		minWidth: 70,
-		minHeight: 50,
+		minWidth: 100,
 		alignItems: 'center',
 		marginTop: 10,
 	},
 	iconTxt: {
-		fontSize: 12,
-		marginTop: 2,
+		fontSize: 14,
+		marginTop: 4,
 	}
 })

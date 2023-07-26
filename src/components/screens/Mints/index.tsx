@@ -12,10 +12,8 @@ import MyModal from '@modal'
 import { QuestionModal } from '@modal/Question'
 import type { IMintBalWithName, IMintUrl } from '@model'
 import type { TMintsPageProps } from '@model/nav'
-import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
-import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
@@ -28,10 +26,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 const flashlistUntrustedHeight = isIOS ? 60 : 65
 const flashlistTrustedHeight = isIOS ? 94 : 100
 
-export default function Mints({ navigation, route }: TMintsPageProps) {
+export default function Mints({ navigation }: TMintsPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-	const { isKeyboardOpen } = useKeyboard()
 	const insets = useSafeAreaInsets()
 	// mint list
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
@@ -137,7 +134,8 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName='Mints'
-				handlePress={() => navigation.navigate('qr scan', { mint: undefined })}
+				withBackBtn
+				handlePress={() => navigation.goBack()}
 			/>
 			<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
 				{/* Mints list where test mint is always visible */}
@@ -236,9 +234,6 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				/>
 			</View>
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-			{!isKeyboardOpen && !trustModalOpen && !newMintModal &&
-				<BottomNav navigation={navigation} route={route} />
-			}
 		</View>
 	)
 }
@@ -256,7 +251,7 @@ const styles = StyleSheet.create({
 	newMint: {
 		position: 'absolute',
 		right: 20,
-		bottom: 80,
+		bottom: 20,
 	},
 	mintNameWrap: {
 		flexDirection: 'column',

@@ -1,33 +1,33 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import ActionButtons from '@comps/ActionButtons'
 import Balance from '@comps/Balance'
+import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
-import { ReceiveIcon, SendIcon } from '@comps/Icons'
+import { MintBoardIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import Toaster from '@comps/Toaster'
+import Txt from '@comps/Txt'
 import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import OptsModal from '@modal/OptsModal'
 import TrustMintModal from '@modal/TrustMint'
 import type { TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import TopNav from '@nav/TopNav'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
-import { globals, highlight as hi } from '@styles'
+import { highlight as hi } from '@styles'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SafeAreaView, StyleSheet, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation(['common'])
@@ -206,22 +206,58 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}, [navigation])
 
 	return (
-		<SafeAreaView style={[globals(color).container, styles.container]}>
-			<TopNav handlePress={() => navigation.navigate('qr scan', { mint: undefined })} />
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+			{/* <TopNav handlePress={() => navigation.navigate('qr scan', { mint: undefined })} /> */}
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
 			{/* Flex space-between empty placeholder */}
 			<View />
-			{/* Receive and send buttons */}
-			<ActionButtons
-				ontopOfNav
-				topBtnTxt={t('receive', { ns: 'wallet' })}
-				topIcon={<ReceiveIcon color='#FAFAFA' />}
-				topBtnAction={() => setModal({ ...modal, receiveOpts: true })}
-				bottomBtnTxt={t('send', { ns: 'wallet' })}
-				bottomIcon={<SendIcon color={hi[highlight]} />}
-				bottomBtnAction={() => setModal({ ...modal, sendOpts: true })}
-			/>
+			{/* Receive/send/mints buttons */}
+			<View style={styles.actionWrap}>
+				<View style={styles.btnWrap}>
+					<IconBtn
+						icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
+						size={70}
+						outlined
+						onPress={() => setModal({ ...modal, sendOpts: true })}
+					/>
+					<Txt
+						txt={t('send', { ns: 'wallet' })}
+						styles={[styles.btnTxt, { color: hi[highlight] }]}
+					/>
+				</View>
+				<View style={styles.btnWrap}>
+					<IconBtn
+						icon={<MintBoardIcon width={32} height={32} color={hi[highlight]} />}
+						size={70}
+						outlined
+						onPress={() => navigation.navigate('mints')}
+					/>
+					<Txt
+						txt='Mints'
+						styles={[styles.btnTxt, { color: hi[highlight] }]}
+					/>
+				</View>
+				<View style={styles.btnWrap}>
+					<IconBtn
+						icon={<ReceiveIcon width={32} height={32} color={hi[highlight]} />}
+						size={70}
+						outlined
+						onPress={() => setModal({ ...modal, receiveOpts: true })}
+					/>
+					<Txt
+						txt={t('receive', { ns: 'wallet' })}
+						styles={[styles.btnTxt, { color: hi[highlight] }]}
+					/>
+				</View>
+			</View>
+			<View style={styles.qrBtnWrap}>
+				<TouchableOpacity
+					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
+				>
+					<ScanQRIcon width={60} height={60} color={color.TEXT} />
+				</TouchableOpacity>
+			</View>
 			{/* Bottom nav icons */}
 			<BottomNav navigation={navigation} route={route} />
 			{/* Question modal for mint trusting */}
@@ -263,19 +299,32 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			/>
 			{/* Prompt toaster */}
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-		</SafeAreaView>
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
-		paddingTop: 0,
+		flex: 1,
+	},
+	actionWrap: {
+		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		width: '100%',
+		paddingHorizontal: 30,
+		marginTop: -35,
 	},
-	pasteInputTxt: {
-		fontSize: 16,
+	btnWrap: {
+		alignItems: 'center',
+		minWidth: 100
+	},
+	btnTxt: {
 		fontWeight: '500',
+		marginTop: 10,
 	},
+	qrBtnWrap: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		minHeight: 200
+	}
 })

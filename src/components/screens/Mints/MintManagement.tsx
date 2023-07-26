@@ -4,16 +4,14 @@ import { AboutIcon, BitcoinIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeI
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
-import { _testmintUrl } from '@consts'
+import { _testmintUrl, isIOS } from '@consts'
 import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
 import { getBackUpTokenForMint } from '@db/backup'
 import { l } from '@log'
 import MyModal from '@modal'
 import { QuestionModal } from '@modal/Question'
 import type { TMintManagementPageProps } from '@model/nav'
-import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
-import { useKeyboard } from '@src/context/Keyboard'
 import { ThemeContext } from '@src/context/Theme'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
@@ -26,13 +24,10 @@ import {
 	ScrollView, StyleSheet, Text
 	, TouchableOpacity, View
 } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-	const { isKeyboardOpen } = useKeyboard()
-	const insets = useSafeAreaInsets()
 	// custom name modal
 	const [customNameOpen, setCustomNameOpen] = useState(false)
 	const [mintName, setMintName] = useState('')
@@ -158,7 +153,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<ScrollView style={{ marginBottom: insets.bottom + 60 }} showsVerticalScrollIndicator={false}>
+			<ScrollView style={{ marginBottom: isIOS ? 30 : 0 }} showsVerticalScrollIndicator={false}>
 				{/* General */}
 				<Txt txt={t('general', { ns: 'mints' })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
@@ -341,10 +336,6 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 				</MyModal>}
 			{/* Prompt modal */}
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-			{/* Bottom navigation */}
-			{!isKeyboardOpen && !delMintModalOpen && !checkProofsOpen &&
-				<BottomNav navigation={navigation} route={route} />
-			}
 		</View>
 	)
 }

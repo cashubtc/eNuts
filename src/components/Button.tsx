@@ -51,17 +51,27 @@ export default function Button({ txt, onPress, border, outlined, filled, disable
 interface IIconBtnProps {
 	icon: React.ReactNode
 	onPress: () => void
+	outlined?: boolean
+	size?: number
 	testId?: string
 }
 
-export function IconBtn({ icon, onPress, testId }: IIconBtnProps) {
-	const { highlight } = useContext(ThemeContext)
+export function IconBtn({ icon, size, outlined, onPress, testId }: IIconBtnProps) {
+	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<SafeAreaView>
 			<TouchableOpacity
 				accessibilityRole='button'
 				activeOpacity={.5}
-				style={[styles.iconBtn, { backgroundColor: hi[highlight], borderColor: hi[highlight] }]}
+				style={[
+					styles.iconBtn,
+					{
+						width: size || 60,
+						height: size || 60,
+						borderRadius: (size || 60) / 2,
+						backgroundColor: outlined ? color.BACKGROUND : hi[highlight],
+						borderColor: hi[highlight]
+					}]}
 				onPress={onPress}
 				testID={testId}
 			>
@@ -90,9 +100,7 @@ const styles = StyleSheet.create({
 	},
 	// icon button
 	iconBtn: {
-		width: 60,
-		height: 60,
-		borderRadius: 30,
+		borderWidth: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
 	}
