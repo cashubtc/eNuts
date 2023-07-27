@@ -295,13 +295,7 @@ function _App() {
 				await i18n.changeLanguage(storedLng)
 			}
 			await initAuth()
-			// await dropTable('proofs')
-			// await dropTable('proofsUsed')
-			// await dropTable('keysetIds')
-			// await dropTable('mintKeys')
-			// await dropTable('invoices')
-			// await dropTable('preferences')
-			// await dropTable('contacts')
+			// await dropAll()
 			const mintBalsTotal = (await getMintsBalances()).reduce((acc, cur) => acc + cur.amount, 0)
 			const bal = await getBalance()
 			if (mintBalsTotal !== bal) {

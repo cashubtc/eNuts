@@ -395,3 +395,14 @@ export function dropContacts() {
 export function dropTable(table: string) {
 	return db.execTx(`drop table ${table}`, [])
 }
+export async function dropAll() {
+	await Promise.all([
+		dropTable('proofs'),
+		dropTable('proofsUsed'),
+		dropTable('keysetIds'),
+		dropTable('mintKeys'),
+		dropTable('invoices'),
+		dropTable('preferences'),
+		dropTable('contacts'),
+	])
+}

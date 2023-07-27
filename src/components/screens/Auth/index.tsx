@@ -228,7 +228,9 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
 							<LockIcon width={40} height={40} color='#FAFAFA' />
 						</Animated.View>
-						<Txt txt={t('walletLocked')} styles={[styles.lockTxt]} />
+						{!shouldEdit && !shouldRemove &&
+							<Txt txt={t('walletLocked')} styles={[styles.lockTxt]} />
+						}
 						{attempts.locked && !isConfirm &&
 							<Text style={styles.lockedTime}>
 								{formatSeconds(attempts.lockedTime)}
