@@ -6,6 +6,7 @@ import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from '@model/i18n'
 import type { TLanguageSettingsPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -46,7 +47,7 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 	const { t, i18n } = useTranslation(['common'])
 	const handleLangChange = async () => {
 		await i18n.changeLanguage(code)
-		await store.set('settings_lang', code)
+		await store.set(STORE_KEYS.lang, code)
 	}
 	return (
 		<>

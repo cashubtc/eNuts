@@ -5,6 +5,7 @@ import Txt from '@comps/Txt'
 import type { TAdvancedSettingsPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,7 +22,7 @@ export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettings
 	const setReqTimeoutCB = useCallback((val: number) => { setReqTimeout(val) }, [])
 	useEffect(() => {
 		void (async () => {
-			const savedTimeout = await store.get('request_timeout')
+			const savedTimeout = await store.get(STORE_KEYS.reqTimeout)
 			if (!savedTimeout) {
 				return
 			}
@@ -64,7 +65,7 @@ interface ISelectionRowProps {
 function SelectionRow({ value, selected, handleChange, withSeparator }: ISelectionRowProps) {
 	const handleTimeout = async () => {
 		const newTimeout = value.split(' ')[0]
-		await store.set('request_timeout', newTimeout)
+		await store.set(STORE_KEYS.reqTimeout, newTimeout)
 		handleChange(+newTimeout)
 	}
 	return (

@@ -1,13 +1,15 @@
 import { store } from '@store'
 
+import { STORE_KEYS } from './consts'
+
 const KEY_SEPERATOR = '=|:|='
 const MINT_STORE_KEY_PREFIX = `MINT_STORE${KEY_SEPERATOR}`
 const MINT_STORE_KEY_PREFIX_NAME = `${MINT_STORE_KEY_PREFIX}NAME${KEY_SEPERATOR}`
 export function getDefaultMint(): Promise<string | null | undefined> {
-	return store.get(`${MINT_STORE_KEY_PREFIX}default_mint`)
+	return store.get(`${MINT_STORE_KEY_PREFIX}${STORE_KEYS.defaultMint}`)
 }
 export function setDefaultMint(value: string): Promise<boolean> {
-	return store.set(`${MINT_STORE_KEY_PREFIX}default_mint`, value)
+	return store.set(`${MINT_STORE_KEY_PREFIX}${STORE_KEYS.defaultMint}`, value)
 }
 export function getMintName(mintUrl: string): Promise<string | null | undefined> {
 	return store.get(`${MINT_STORE_KEY_PREFIX_NAME}${mintUrl}`)

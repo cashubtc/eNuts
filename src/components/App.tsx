@@ -17,6 +17,7 @@ import { KeyboardProvider } from '@src/context/Keyboard'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
@@ -90,7 +91,7 @@ function _App() {
 	const handlePinForeground = async () => {
 		// check if app is locked
 		const now = Math.ceil(Date.now() / 1000)
-		const lockData = await store.getObj<ILockData>('auth_lock')
+		const lockData = await store.getObj<ILockData>(STORE_KEYS.lock)
 		if (lockData) {
 			// set state acccording to lockData timestamp
 			const secsPassed = now - lockData.timestamp
@@ -102,7 +103,7 @@ function _App() {
 			})
 		}
 		// handle app was longer than 5 mins in the background
-		const bgTimestamp = await store.get('auth_bg')
+		const bgTimestamp = await store.get(STORE_KEYS.bgCounter)
 		if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
 			if (now - +bgTimestamp > FiveMins) {
 				setBgAuth(true)
@@ -274,7 +275,7 @@ function _App() {
 			}
 		}
 		async function initAuth() {
-			const skipped = await store.get('auth_skipped')
+			const skipped = await store.get(STORE_KEYS.pinSkipped)
 			const pinHash = await secureStore.get('auth_pin')
 			setAuth({
 				pinHash: isNull(pinHash) ? '' : pinHash,
@@ -286,16 +287,17 @@ function _App() {
 		async function init() {
 			await initDB()
 			const ten_seconds = 10000
-			const storedTimeout = await store.get('request_timeout')
+			const storedTimeout = await store.get(STORE_KEYS.reqTimeout)
 			axios.defaults.timeout = isStr(storedTimeout) ? +storedTimeout : ten_seconds
 			await initContacts()
 			await initPreferences()
-			const storedLng = await store.get('settings_lang')
+			const storedLng = await store.get(STORE_KEYS.lang)
 			if (storedLng?.length) {
 				await i18n.changeLanguage(storedLng)
 			}
 			await initAuth()
 			// await dropAll()
+			// await store.clear()
 			const mintBalsTotal = (await getMintsBalances()).reduce((acc, cur) => acc + cur.amount, 0)
 			const bal = await getBalance()
 			if (mintBalsTotal !== bal) {
@@ -323,7 +325,7 @@ function _App() {
 			} else {
 				l('App has gone to the background!')
 				// store timestamp to activate auth after > 5mins in background
-				await store.set('auth_bg', `${Math.ceil(Date.now() / 1000)}`)
+				await store.set(STORE_KEYS.bgCounter, `${Math.ceil(Date.now() / 1000)}`)
 			}
 			appState.current = nextAppState
 		})

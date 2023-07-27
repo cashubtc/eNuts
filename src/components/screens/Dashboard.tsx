@@ -18,6 +18,7 @@ import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
 import { highlight as hi } from '@styles'
@@ -182,7 +183,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	useEffect(() => {
 		void (async () => {
 			const hasUserMints = await hasMints()
-			const skippedInitialMint = await store.get('init_mintSkipped')
+			const skippedInitialMint = await store.get(STORE_KEYS.explainer)
 			setModal({ ...modal, mint: !hasUserMints && skippedInitialMint !== '1' })
 			setBalance(await getBalance())
 		})()
@@ -274,7 +275,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				visible={modal.mint}
 				onConfirm={handleMintModal}
 				onCancel={async () => {
-					await store.set('init_mintSkipped', '1')
+					await store.set(STORE_KEYS.explainer, '1')
 					setModal({ ...modal, mint: false })
 				}}
 			/>
