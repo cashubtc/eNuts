@@ -35,8 +35,7 @@
         "aboutToLeaveTo": "Vous êtes sur le point de quitter",
         "accept": "Accepter",
         "addMemo": "Ajouter une note avec un maximum de 21 caractères.",
-        "addMint": "Ajouter une Mint",
-        "addMintNow": "Ajoutez une mint",
+        "addMint": "Ajouter une mint",
         "amount": "Montant",
         "back": "Retour",
         "backToDashboard": "Retour au tableau de bord",
@@ -159,7 +158,7 @@
         "sendEcash": "Envoyer Ecash",
         "share": "Partager",
         "smthWrong": "Quelque chose s'est mal passé",
-        "startHint": "Vous devriez ajouter une mint à laquelle vous faites confiance avant d'envoyer ou de recevoir des token.",
+        "startHint": "Vous devriez ajouter un mint et le recharger via Lightning pour pouvoir envoyer de l'Ecash.",
         "submitPaymentReq": "Envoyer demande de paiement",
         "to": "à",
         "today": "Aujourd'hui",
@@ -173,7 +172,11 @@
         "version": "Version",
         "willDoLater": "Je ferai plus tard",
         "yes": "Oui",
-		"walletLocked": "Wallet verrouillé"
+		"walletLocked": "Wallet verrouillé",
+        "explainer1": "eNuts est une wallet Lightning sous garde, permettant des transactions privées et instantanées en utilisant le protocole Cashu. Vos fonds sont détenus par des mints avec lesquels vous interagissez, et l'Ecash est stocké localement sur votre appareil.",
+        "explainer2": "Cashu est un nouveau protocole Ecash pour les applications Bitcoin sous garde, où les mints sont des nœuds Lightning facilitant les transactions Bitcoin pour vous offrir de l'Ecash. Soyez rassuré, les mints reste ignorant de vos paiements Ecash.",
+        "explainer3": "Pour ajouter simplement une mint via une URL, payez une facture Lightning pour obtenir de l'Ecash. eNuts vous guide, vous permet de recevoir instantanément de n'importe qui et ajoute automatiquement les mints liés avec votre permission. Échangez des fonds entre les mints et envoyez de l'Ecash une fois que vous avez un solde.",
+        "send&receive": "Envoyer et recevoir"
     },
     "error": {
         "addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",

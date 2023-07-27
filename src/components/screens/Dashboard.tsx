@@ -40,6 +40,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { claimed } = useContext(FocusClaimCtx)
 	// Total Balance state (all mints)
 	const [balance, setBalance] = useState(0)
+	const [hasMint, setHasMint] = useState(false)
 	// Prompt modal
 	const { prompt, openPromptAutoClose } = usePrompt()
 	// Cashu token hook
@@ -79,8 +80,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		await receiveToken(token)
 	}
 	// navigates to the mint list page
-	const handleMintModal = () => {
+	const handleMintModal = async () => {
 		setModal({ ...modal, mint: false })
+		await store.set(STORE_KEYS.explainer, '1')
 		navigation.navigate('mints')
 	}
 	// This function is only called if the mint of the received token is available as trusted in user DB
@@ -179,13 +181,23 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}
 	// close send/receive options modal
 	const closeOptsModal = () => setModal(prev => ({ ...prev, receiveOpts: false, sendOpts: false }))
+	useEffect(() => {
+		void (async () => {
+			setHasMint(await hasMints())
+		})()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 	// check for available mints of the user
 	useEffect(() => {
 		void (async () => {
-			const hasUserMints = await hasMints()
-			const skippedInitialMint = await store.get(STORE_KEYS.explainer)
-			setModal({ ...modal, mint: !hasUserMints && skippedInitialMint !== '1' })
-			setBalance(await getBalance())
+			const data = await Promise.all([
+				hasMints(),
+				store.get(STORE_KEYS.explainer),
+				getBalance(),
+			])
+			setHasMint(data[0])
+			setModal({ ...modal, mint: !data[0] && data[1] !== '1' })
+			setBalance(data[2])
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
@@ -201,7 +213,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// get balance after navigating to this page
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', async () => {
-			setBalance(await getBalance())
+			const data = await Promise.all([
+				getBalance(),
+				hasMints()
+			])
+			setBalance(data[0])
+			setHasMint(data[1])
 		})
 		return focusHandler
 	}, [navigation])
@@ -215,18 +232,20 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<View />
 			{/* Receive/send/mints buttons */}
 			<View style={styles.actionWrap}>
-				<View style={styles.btnWrap}>
-					<IconBtn
-						icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
-						size={70}
-						outlined
-						onPress={() => setModal({ ...modal, sendOpts: true })}
-					/>
-					<Txt
-						txt={t('send', { ns: 'wallet' })}
-						styles={[styles.btnTxt, { color: hi[highlight] }]}
-					/>
-				</View>
+				{hasMint && balance > 0 &&
+					<View style={styles.btnWrap}>
+						<IconBtn
+							icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
+							size={70}
+							outlined
+							onPress={() => setModal({ ...modal, sendOpts: true })}
+						/>
+						<Txt
+							txt={t('send', { ns: 'wallet' })}
+							styles={[styles.btnTxt, { color: hi[highlight] }]}
+						/>
+					</View>
+				}
 				<View style={styles.btnWrap}>
 					<IconBtn
 						icon={<MintBoardIcon width={32} height={32} color={hi[highlight]} />}
@@ -273,7 +292,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Initial mint modal prompt */}
 			<InitialModal
 				visible={modal.mint}
-				onConfirm={handleMintModal}
+				onConfirm={() => void handleMintModal()}
 				onCancel={async () => {
 					await store.set(STORE_KEYS.explainer, '1')
 					setModal({ ...modal, mint: false })

@@ -8,6 +8,7 @@ import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection } from 
  */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RootStackParamList = {
+	explainer: undefined
 	dashboard: undefined
 	disclaimer: undefined
 	history: undefined
@@ -148,6 +149,7 @@ export type RootStackParamList = {
 }
 
 export type TRouteString = 'dashboard' | 'mints' | 'Address book' | 'Settings'
+export type TExplainerPageProps = NativeStackScreenProps<RootStackParamList, 'explainer', 'MyStack'>
 export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectTargetPageProps = NativeStackScreenProps<RootStackParamList, 'selectTarget', 'MyStack'>
 export type TSelectMintToSwapToPageProps = NativeStackScreenProps<RootStackParamList, 'selectMintToSwapTo', 'MyStack'>

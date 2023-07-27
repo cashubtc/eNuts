@@ -139,7 +139,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			resetStates()
 			setSuccess(true)
 			setAuth(hash)
-			navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
+			await handleExplainer()
 			return
 		}
 		// else: bring user in the confirm state after entering his first pin in setup
@@ -184,11 +184,11 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		// check if initial explainer has been viewed
 		const explainer = await store.get(STORE_KEYS.explainer)
 		if (explainer && explainer === '1') {
-			navigation.navigate('dashboard')
+			navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
 			return
 		}
 		// show explainer
-		// navigation.navigate()
+		navigation.navigate('explainer')
 	}
 	// conditional rendering dots of pin input
 	const shouldShowPinSection = () => (

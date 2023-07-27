@@ -1,4 +1,5 @@
 import Button from '@comps/Button'
+import Logo from '@comps/Logo'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSuccessPageProps } from '@model/nav'
@@ -7,7 +8,7 @@ import { highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, vib } from '@util'
 import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
@@ -18,13 +19,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	useEffect(() => vib(400), [])
 	return (
 		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>
-			<View style={styles.imgWrap}>
-				<Image
-					style={styles.img}
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					source={require('@assets/icon_transparent.png')}
-				/>
-			</View>
+			<Logo size={250} style={styles.img} />
 			<View style={{ width: '100%' }}>
 				<Text style={styles.successTxt}>
 					{isMelt ?
@@ -76,13 +71,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		padding: 20,
 	},
-	imgWrap: {
-		alignItems: 'center',
-	},
 	img: {
-		width: 200,
-		height: 250,
-		resizeMode: 'contain',
 		marginTop: 100,
 	},
 	successTxt: {

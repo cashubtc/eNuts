@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const flashlistUntrustedHeight = isIOS ? 60 : 65
+const flashlistUntrustedHeight = isIOS ? 65 : 68
 const flashlistTrustedHeight = isIOS ? 94 : 100
 
 export default function Mints({ navigation }: TMintsPageProps) {

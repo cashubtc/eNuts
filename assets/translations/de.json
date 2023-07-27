@@ -35,8 +35,7 @@
         "aboutToLeaveTo": "Sie sind im Begriff die App zu verlassen",
         "accept": "Annehmen",
         "addMemo": "Füge ein Memo mit max. 21 Zeichen hinzu.",
-        "addMint": "Füge eine Mint hinzu",
-        "addMintNow": "Füge eine mint hinzu",
+        "addMint": "Erste Mint hinzufügen",
         "amount": "Betrag",
         "back": "Zurück",
         "backToDashboard": "Zurück zu Wallet",
@@ -159,7 +158,7 @@
         "sendEcash": "Ecash senden",
         "share": "Teilen",
         "smthWrong": "Etwas is schief gelaufen",
-        "startHint": "Sie sollten eine Mint hinzufügen, der Sie vertrauen, bevor Sie Token senden oder empfangen.",
+        "startHint": "Sie sollten eine Mint hinzufügen und via Lightning aufladen um Ecash senden zu können.",
         "submitPaymentReq": "Zahlungsanfrage absenden",
         "to": "bis",
         "today": "Heute",
@@ -173,7 +172,11 @@
         "version": "Version",
         "willDoLater": "Mache ich später",
         "yes": "Ja",
-		"walletLocked": "Wallet gesperrt"
+		"walletLocked": "Wallet gesperrt",
+        "explainer1": "eNuts ist eine treuhänderische Lightning-Wallet, die private und sofortige Transaktionen mit dem Cashu-Protokoll ermöglicht. Ihre Gelder werden von Mints verwaltet, mit denen Sie interagieren, und Ecash wird lokal auf Ihrem Gerät gespeichert.",
+        "explainer2": "Cashu ist ein neues Ecash-Protokoll für treuhänderische Bitcoin-Apps, bei denen Mints nur Lightning-Knoten sind, die Bitcoin-Transaktionen durchführen und Ihnen Ecash zur Verfügung stellen. Seien Sie versichert, die Mints bleiben unwissend über Ihre Ecash-Zahlungen.",
+        "explainer3": "Fügen Sie einfach eine Mint über die URL hinzu, zahlen Sie eine Lightning-Rechnung, um Ecash zu erhalten. eNuts führt Sie, ermöglicht Ihnen sofortiges Empfangen von jedem und fügt automatisch verbundene Mints hinzu – mit Ihrer Zustimmung. Tauschen Sie Guthaben zwischen Mints aus und senden Sie Ecash, sobald Sie ein Guthaben haben.",
+        "send&receive": "Senden & Empfangen"
     },
     "error": {
         "addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

@@ -1,3 +1,4 @@
+import ExplainerScreen from '@comps/screens/Explainer'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
 import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -73,6 +74,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='processing' component={ProcessingScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />
+				<Stack.Screen name='explainer' component={ExplainerScreen} />
 				<Stack.Screen name='dashboard' component={Dashboard} />
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
 				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />

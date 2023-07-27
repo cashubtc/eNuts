@@ -36,7 +36,6 @@
         "accept": "Accept",
         "addMemo": "Add a memo with max. 21 chars.",
         "addMint": "Add a mint",
-        "addMintNow": "Add a mint now",
         "amount": "Amount",
         "back": "Back",
         "backToDashboard": "Back to dashboard",
@@ -159,7 +158,7 @@
         "sendEcash": "Send Ecash",
         "share": "Share",
         "smthWrong": "Something went wrong",
-        "startHint": "You should add a mint that you trust before sending or receiving token.",
+        "startHint": "You should add a mint and top it up via Lightning to be able to send Ecash.",
         "submitPaymentReq": "Submit Payment Request",
         "to": "to",
         "today": "Today",
@@ -173,7 +172,11 @@
         "version": "Version",
         "willDoLater": "Will do later",
         "yes": "Yes",
-		"walletLocked": "Wallet locked"
+		"walletLocked": "Wallet locked",
+        "explainer1": "eNuts is a custodial Lightning wallet, allowing private and instant transactions using the Cashu protocol. Your funds are held by mints you interact with, and Ecash is stored locally on your device.",
+        "explainer2": "Cashu is a new Ecash protocol for custodial Bitcoin apps, where mints are Lightning nodes performing Bitcoin transactions and offer you Ecash. Rest assured, the mint remains unaware of your Ecash payments.",
+        "explainer3": "Simply add a mint via URL, pay a Lightning invoice to get Ecash. eNuts guides you, lets you receive from anyone instantly and with your permission, automatically adds related mints. Swap funds between mints and send Ecash once you have a balance.",
+        "send&receive": "Send & receive"
     },
     "error": {
         "addAllMintIdsErr": "Error while getting keyset ids from mint",

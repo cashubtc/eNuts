@@ -1,7 +1,7 @@
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
 import { useContext } from 'react'
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableHighlight, TouchableOpacity } from 'react-native'
 
 import Loading from './Loading'
 
@@ -52,17 +52,19 @@ interface IIconBtnProps {
 	icon: React.ReactNode
 	onPress: () => void
 	outlined?: boolean
+	disabled?: boolean
 	size?: number
 	testId?: string
 }
 
-export function IconBtn({ icon, size, outlined, onPress, testId }: IIconBtnProps) {
+export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIconBtnProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<SafeAreaView>
-			<TouchableOpacity
+			<TouchableHighlight
 				accessibilityRole='button'
 				activeOpacity={.5}
+				underlayColor={hi[highlight]}
 				style={[
 					styles.iconBtn,
 					{
@@ -70,13 +72,15 @@ export function IconBtn({ icon, size, outlined, onPress, testId }: IIconBtnProps
 						height: size || 60,
 						borderRadius: (size || 60) / 2,
 						backgroundColor: outlined ? color.BACKGROUND : hi[highlight],
-						borderColor: hi[highlight]
+						borderColor: hi[highlight],
+						opacity: disabled ? .6 : 1
 					}]}
 				onPress={onPress}
+				disabled={disabled}
 				testID={testId}
 			>
 				{icon}
-			</TouchableOpacity>
+			</TouchableHighlight>
 		</SafeAreaView>
 	)
 }

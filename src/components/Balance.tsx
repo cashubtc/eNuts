@@ -7,8 +7,9 @@ import { highlight as hi } from '@styles'
 import { formatBalance, formatInt, isBool } from '@util'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
+import Logo from './Logo'
 import Separator from './Separator'
 import Txt from './Txt'
 
@@ -34,13 +35,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			styles.board,
 			{ borderColor: color.BORDER, backgroundColor: hi[highlight] }
 		]}>
-			<View style={styles.imgWrap}>
-				<Image
-					style={styles.img}
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					source={require('@assets/icon_transparent.png')}
-				/>
-			</View>
+			<Logo size={80} style={{ marginBottom: 20 }} />
 			{/* balance */}
 			<TouchableOpacity style={styles.balanceWrap} onPress={toggleBalanceFormat}>
 				<Text style={styles.balAmount}>
@@ -107,14 +102,6 @@ const styles = StyleSheet.create({
 		borderBottomRightRadius: 50,
 		paddingHorizontal: 30,
 		paddingVertical: 70,
-	},
-	imgWrap: {
-		alignItems: 'center',
-	},
-	img: {
-		height: 80,
-		resizeMode: 'contain',
-		marginBottom: 20
 	},
 	balanceWrap: {
 		alignItems: 'center',
