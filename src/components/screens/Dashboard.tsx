@@ -225,52 +225,32 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			{/* <TopNav handlePress={() => navigation.navigate('qr scan', { mint: undefined })} /> */}
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
-			{/* Flex space-between empty placeholder */}
-			<View />
 			{/* Receive/send/mints buttons */}
 			<View style={styles.actionWrap}>
 				{hasMint && balance > 0 &&
-					<View style={styles.btnWrap}>
-						<IconBtn
-							icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
-							size={70}
-							outlined
-							onPress={() => setModal({ ...modal, sendOpts: true })}
-						/>
-						<Txt
-							txt={t('send', { ns: 'wallet' })}
-							styles={[styles.btnTxt, { color: hi[highlight] }]}
-						/>
-					</View>
+					<ActionBtn
+						icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
+						txt={t('send', { ns: 'wallet' })}
+						color={hi[highlight]}
+						onPress={() => setModal({ ...modal, sendOpts: true })}
+					/>
 				}
-				<View style={styles.btnWrap}>
-					<IconBtn
-						icon={<MintBoardIcon width={32} height={32} color={hi[highlight]} />}
-						size={70}
-						outlined
-						onPress={() => navigation.navigate('mints')}
-					/>
-					<Txt
-						txt='Mints'
-						styles={[styles.btnTxt, { color: hi[highlight] }]}
-					/>
-				</View>
-				<View style={styles.btnWrap}>
-					<IconBtn
-						icon={<ReceiveIcon width={32} height={32} color={hi[highlight]} />}
-						size={70}
-						outlined
-						onPress={() => setModal({ ...modal, receiveOpts: true })}
-					/>
-					<Txt
-						txt={t('receive', { ns: 'wallet' })}
-						styles={[styles.btnTxt, { color: hi[highlight] }]}
-					/>
-				</View>
+				<ActionBtn
+					icon={<MintBoardIcon width={32} height={32} color={hi[highlight]} />}
+					txt='Mints'
+					color={hi[highlight]}
+					onPress={() => navigation.navigate('mints')}
+				/>
+				<ActionBtn
+					icon={<ReceiveIcon width={32} height={32} color={hi[highlight]} />}
+					txt={t('receive', { ns: 'wallet' })}
+					color={hi[highlight]}
+					onPress={() => setModal({ ...modal, receiveOpts: true })}
+				/>
 			</View>
+			{/* scan QR */}
 			<View style={styles.qrBtnWrap}>
 				<TouchableOpacity
 					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
@@ -319,6 +299,30 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			/>
 			{/* Prompt toaster */}
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+		</View>
+	)
+}
+
+interface IActionBtnsProps {
+	icon: React.ReactNode
+	txt: string
+	onPress: () => void
+	color: string
+}
+
+function ActionBtn({ icon, onPress, txt, color }: IActionBtnsProps) {
+	return (
+		<View style={styles.btnWrap}>
+			<IconBtn
+				icon={icon}
+				size={70}
+				outlined
+				onPress={onPress}
+			/>
+			<Txt
+				txt={txt}
+				styles={[styles.btnTxt, { color }]}
+			/>
 		</View>
 	)
 }
