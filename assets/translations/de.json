@@ -294,7 +294,7 @@
         "createLnInvoice": "Lightning Rechnung erstellen",
         "custodialRisk": "Verwahrrisiko, Mints halten die Schlüssel.",
         "custodialRiskContent": "Mit eNuts haben Sie nicht die Kontrolle über die Bitcoin-Schlüssel; die Mint fungiert als Verwahrer. Wenn Sie einer Mint nicht vertrauen, ist es ratsam, nicht mit ihr zu interagieren.",
-        "disclaimer": "Bitte beachten Sie, dass es sich hierbei um eine Alpha-Version in einem frühen Stadium handelt und diese noch vor der offiziellen Veröffentlichung getestet wird. Die Software und alle darauf enthaltenen Inhalte werden als „wie besehen“ und „wie verfügbar“ bereitgestellt. Wir geben keine Garantien, ob ausdrücklich oder stillschweigend, hinsichtlich der Eignung oder Verwendbarkeit der Software oder deren Inhalte. Cashu ist noch experimentell und nicht für den produktiven Einsatz bereit.",
+        "disclaimer": "Bitte beachten Sie, dass es sich hierbei um eine Alpha-Version in einem frühen Stadium handelt und diese noch vor der offiziellen Veröffentlichung getestet wird. Die Software und alle darauf enthaltenen Inhalte werden als „wie besehen“ und „wie verfügbar“ bereitgestellt. Wir geben keine Garantien, ob ausdrücklich oder stillschweigend, hinsichtlich der Eignung oder Verwendbarkeit der Software oder deren Inhalte.",
         "enutsDisclaimer": "eNuts ist unvollendete Alpha-Software.",
         "lossContent": "Cashu-Token sind Inhabertoken, was bedeutet, dass es keine Möglichkeit zur Wiederherstellung gibt, wenn Sie den Zugriff darauf verlieren. eNuts speichert Ihre Token auf Ihrem Gerät. Stellen Sie vor dem Löschen der App sicher, dass Sie Ihre Token gesichert haben.",
         "lossOfTokens": "Verlust von Geldern.",
