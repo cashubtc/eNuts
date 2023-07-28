@@ -65,6 +65,7 @@
 		"expo-status-bar": "^1.6.0",
 		"expo-updates": "~0.18.11",
 		"i18next": "^23.2.8",
+		"nostr-tools": "^1.13.1",
 		"react": "^18.2.0",
 		"react-i18next": "^13.0.1",
 		"react-native": "0.72.3",
