@@ -275,38 +275,43 @@ function _App() {
 			}
 		}
 		async function initAuth() {
-			const skipped = await store.get(STORE_KEYS.pinSkipped)
-			const pinHash = await secureStore.get('auth_pin')
+			const data = await Promise.all([
+				secureStore.get('auth_pin'),
+				store.get(STORE_KEYS.pinSkipped),
+			])
 			setAuth({
-				pinHash: isNull(pinHash) ? '' : pinHash,
-				shouldSetup: !isStr(skipped) || !skipped.length
+				pinHash: isNull(data[0]) ? '' : data[0],
+				shouldSetup: !isStr(data[1]) || !data[1].length
 			})
 			// check for pin attempts and app locked state
 			await handlePinForeground()
 		}
 		async function init() {
 			await initDB()
-			const ten_seconds = 10000
-			const storedTimeout = await store.get(STORE_KEYS.reqTimeout)
-			axios.defaults.timeout = isStr(storedTimeout) ? +storedTimeout : ten_seconds
-			await initContacts()
-			await initPreferences()
-			const storedLng = await store.get(STORE_KEYS.lang)
-			if (storedLng?.length) {
-				await i18n.changeLanguage(storedLng)
+			const ten_seconds = 10_000
+			const data = await Promise.all([
+				store.get(STORE_KEYS.reqTimeout),
+				store.get(STORE_KEYS.lang),
+				getMintsBalances(),
+				getBalance(),
+				initContacts(),
+				initPreferences(),
+				initAuth(),
+			])
+			axios.defaults.timeout = isStr(data[0]) ? +data[0] : ten_seconds
+			if (data[1]?.length) {
+				await i18n.changeLanguage(data[1])
 			}
-			await initAuth()
-			// await dropAll()
-			// await store.clear()
-			const mintBalsTotal = (await getMintsBalances()).reduce((acc, cur) => acc + cur.amount, 0)
-			const bal = await getBalance()
-			if (mintBalsTotal !== bal) {
+			const mintBalsTotal = (data[2]).reduce((acc, cur) => acc + cur.amount, 0)
+			if (mintBalsTotal !== data[3]) {
 				try {
 					await addAllMintIds()
 				} catch (e) {
 					openPromptAutoClose({ msg: isErr(e) ? e.message : t('addAllMintIdsErr', { ns: 'error' }) })
 				}
 			}
+			// await dropAll()
+			// await store.clear()
 			setIsRdy(true)
 		}
 		void init().then(fsInfo)
