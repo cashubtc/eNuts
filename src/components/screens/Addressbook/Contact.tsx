@@ -131,7 +131,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				}
 				<TxtInput
 					keyboardType='email-address'
-					placeholder={t('zapMeNow', { ns: 'addrBook' })}
+					placeholder='test' // {t('zapMeNow', { ns: 'addrBook' })}
 					value={editContact.ln}
 					onChangeText={ln => setEditContact({ ...editContact, ln })}
 					onSubmitEditing={() => void handleEditContact()}

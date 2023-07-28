@@ -109,7 +109,7 @@ export default function AddressBook({ nav }: IAddressBookProps) {
 						onPress={() => setOpenNew({ open: true, isOwner: true })}
 					>
 						<IconCircle
-							icon={<PlusIcon width={16} height={16} color={hi[highlight]} />}
+							icon={<PlusIcon color={hi[highlight]} />}
 						/>
 						<View style={styles.nameEntry}>
 							<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
@@ -172,7 +172,7 @@ export default function AddressBook({ nav }: IAddressBookProps) {
 				close={() => setOpenNew({ open: false, isOwner: false })}
 			>
 				<Text style={globals(color).modalHeader}>
-					{openNew.isOwner ? t('yourLnurl', { ns: 'addrBook' }) : t('newContact', { ns: 'addrBook' })}
+					{openNew.isOwner ? t('yourProfile', { ns: 'addrBook' }) : t('newContact', { ns: 'addrBook' })}
 				</Text>
 				{!openNew.isOwner &&
 					<TxtInput
@@ -183,7 +183,7 @@ export default function AddressBook({ nav }: IAddressBookProps) {
 				}
 				<TxtInput
 					keyboardType='email-address'
-					placeholder={t('zapMeNow', { ns: 'addrBook' })}
+					placeholder={t('npubOrLnurl', { ns: 'addrBook' })}
 					onChangeText={lnUrl => setNewContact(prev => ({ ...prev, lnUrl }))}
 					onSubmitEditing={() => void handleNewContact()}
 				/>

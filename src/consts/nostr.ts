@@ -2,7 +2,6 @@
  * Default bootstrap relays
  */
 export const defaultRelays = [
-	'wss://relay.snort.social',
 	'wss://relay.damus.io',
 	'wss://nostr-pub.wellorder.net',
 	'wss://nostr.mom',
@@ -18,7 +17,8 @@ export const defaultRelays = [
 	'wss://relay.realsearch.cc',
 	'wss://relay.nostrgraph.net',
 	'wss://relay.minds.com/nostr/v1/ws',
-	'wss://nos.lol/'
+	'wss://nos.lol/',
+	'wss://relay.snort.social',
 ]
 
 export const npubLength = 64

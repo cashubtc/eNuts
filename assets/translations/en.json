@@ -2,14 +2,14 @@
 	"addrBook": {
 		"addContactErr": "Contact can not be added. Possible name or LNURL duplication.",
 		"addedContact": "New contact added",
-		"addOwnLnurl": "Add your own LNURL",
+		"addOwnLnurl": "Add your NPUB or LNURL",
 		"editContact": "Edit contact",
 		"invalidLnurl": "Invalid LNURL!",
 		"invalidName": "Invalid name!",
 		"newContact": "New contact",
 		"personalLnurl": "Personal LNURL",
-		"yourLnurl": "Your LNURL",
-		"zapMeNow": "zap@me.now"
+		"yourProfile": "Your profile",
+		"npubOrLnurl": "NPUB or LNURL"
 	},
 	"auth": {
 		"confirmAction": "Please confirm the action.",
