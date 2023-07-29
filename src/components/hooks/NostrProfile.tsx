@@ -1,5 +1,8 @@
 import type { HexKey, IProfileContent } from '@model/nostr'
-import { getNostrProfile } from '@nostr/dataHandler'
+import { relayPool } from '@nostr/Connection'
+import { defaultRelays,EventKind } from '@nostr/consts'
+import { parseProfileContent } from '@src/nostr/util'
+import { type Event as NostrEvent } from 'nostr-tools'
 import { useEffect, useState } from 'react'
 
 interface INostrProfileHookProps {
@@ -9,19 +12,21 @@ interface INostrProfileHookProps {
 export default function useNostrProfile({ pubKey }: INostrProfileHookProps) {
 
 	const [profile, setProfile] = useState<IProfileContent | undefined>()
-	// if pubKey available
-	// check profile metadata in cache
-	// if no metadata in cache, get data from user relays and save in cache
+
 	useEffect(() => {
 		if (!pubKey) { return }
-		void (async() => {
-			const profileData = await getNostrProfile(pubKey)
-			setProfile(profileData)
+		// TODO use cache if available, get contact profile metadata by npub
+		void (() => {
+			// TODO use the users relays
+			relayPool.subscribe(defaultRelays, [pubKey])
+			relayPool.sub?.on('event', (e: NostrEvent) => {
+				if (+e.kind === EventKind.SetMetadata) {
+					setProfile(parseProfileContent<IProfileContent>(e))
+					// TODO save in cache
+				}
+			})
 		})()
 	}, [pubKey])
-
-	// if no pubKey, return pubKey
-
 
 	return {
 		profile,

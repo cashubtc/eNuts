@@ -1,7 +1,6 @@
 import useNostrProfile from '@comps/hooks/NostrProfile'
-import Txt from '@comps/Txt'
+import { ChevronRightIcon } from '@comps/Icons'
 import type { HexKey } from '@model/nostr'
-import { shortNpub } from '@nostr/util'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { useContext } from 'react'
@@ -28,18 +27,14 @@ export default function ContactPreview({ pubKey, handleContactPress }: IContactP
 		>
 			<View style={styles.picNameWrap}>
 				<ProfilePic uri={profile?.picture} />
-				{id ?
-					<Username displayName={profile?.displayName} username={profile?.username} />
-					:
-					<Txt txt={shortNpub(pubKey)} />
-				}
+				<Username displayName={profile?.displayName} username={profile?.username} npub={pubKey} />
 			</View>
 			<View />
-			{/* {userProfile ?
+			{profile ?
 				<ChevronRightIcon color={color.TEXT} />
 				:
 				<View />
-			} */}
+			}
 		</TouchableOpacity>
 	)
 }

@@ -7,15 +7,16 @@ import { Image, StyleSheet, View } from 'react-native'
 interface IProfilePicProps {
 	uri?: string
 	size?: number
+	isUser?: boolean
 	withPlusIcon?: boolean
 }
 
-export default function ProfilePic({ uri, size, withPlusIcon }: IProfilePicProps) {
+export default function ProfilePic({ uri, size, isUser, withPlusIcon }: IProfilePicProps) {
 	const { color, highlight } = useContext(ThemeContext)
 
 	return (
 		<>
-			{uri?.length ?
+			{uri?.length && isUser ?
 				<Image
 					style={[
 						styles.circle,

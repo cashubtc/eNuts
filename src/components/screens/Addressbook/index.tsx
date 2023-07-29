@@ -12,20 +12,22 @@ import type { TAddressBookPageProps } from '@model/nav'
 import type { IProfileContent } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
-import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
+import { relayPool } from '@nostr/Connection'
+import { EventKind, npubLength } from '@nostr/consts'
 import { parseProfileContent } from '@nostr/util'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi } from '@styles'
-import { isErr, isStr } from '@util'
+import { isStr } from '@util'
 import * as Clipboard from 'expo-clipboard'
-import { type Event as NostrEvent, nip19, relayInit } from 'nostr-tools'
+import { type Event as NostrEvent, nip19 } from 'nostr-tools'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
+import ContactPreview from './ContactPreview'
 import ProfilePic from './ProfilePic'
 import Username from './Username'
 
@@ -51,6 +53,19 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		navigation.navigate('selectAmount', { isMelt, lnurl: userLn, mint, balance })
 	}
 
+	// Paste/Clear input for LNURL/LN invoice
+	const handleInputLabelPress = async () => {
+		// clear input
+		if (npub.length > 0) {
+			setNpub('')
+			return
+		}
+		// paste from clipboard
+		const clipboard = await Clipboard.getStringAsync()
+		if (!clipboard || clipboard === 'null') { return }
+		setNpub(clipboard)
+	}
+
 	const handleNewNpub = async () => {
 		if (!npub.length || !npub.startsWith('npub')) {
 			openPromptAutoClose({ msg: 'Invalid NPUB!' })
@@ -65,25 +80,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// save npub and decoded npub id
 		await Promise.all([
 			store.set(STORE_KEYS.npub, npub),
-			store.set(STORE_KEYS.nostrId, nostrId)
+			store.set(STORE_KEYS.npubHex, nostrId)
 		])
 		setId(nostrId)
 		// close modal
 		setNewNpubModal(false)
 		// start syncing
-	}
-
-	// Paste/Clear input for LNURL/LN invoice
-	const handleInputLabelPress = async () => {
-		// clear input
-		if (npub.length > 0) {
-			setNpub('')
-			return
-		}
-		// paste from clipboard
-		const clipboard = await Clipboard.getStringAsync()
-		if (!clipboard || clipboard === 'null') { return }
-		setNpub(clipboard)
 	}
 
 	const handleContactPress = () => {
@@ -109,43 +111,30 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	useEffect(() => {
 		if (!id) { return }
-		try {
-			void (async () => {
-				const relay = relayInit(defaultRelays[0])
-				await relay.connect()
-				const sub = relay.sub([{ authors: [id] }], { skipVerification: true })
-				sub.on('eose', () => {
-					l('Closing relay connection')
-					sub.unsub()
-					relay.close()
-				})
-				sub.on('event', (e: NostrEvent) => {
-					if (+e.kind === EventKind.ContactList) {
-						// l({ EventKindContactList: e.tags })
-						setContacts(e.tags.filter(t => t[0] === 'p').map(t => t[1]))
-					}
-					if (+e.kind === EventKind.SetMetadata) {
-						l({ EventKindMetadata: e.content })
-						// TODO save in cache
-						setUserProfile(parseProfileContent<IProfileContent>(e))
-					}
-					// if (+e.kind === EventKind.TextNote) {
-					// 	console.log({ txtNote: e })
-					// 	setNotes(prev => ([e, ...prev]))
-					// }
-				})
-			})()
-		} catch (e) {
-			l({ useEffectRelayError: isErr(e) ? e.message : 'useEffectRelayError' })
-		}
+		// TODO use cache if available (userProfile: IProfileContent & contacts: string[])
+		relayPool.subscribe([], [id])
+		// this is not working, missing profile metadata event
+		relayPool.sub?.on('event', (e: NostrEvent) => {
+			if (+e.kind === EventKind.ContactList) {
+				l('set user contacts')
+				setContacts(e.tags.filter(t => t[0] === 'p').map(t => t[1]))
+				// TODO save in cache
+			}
+			if (+e.kind === EventKind.SetMetadata) {
+				l('set user profile')
+				setUserProfile(parseProfileContent<IProfileContent>(e))
+				// TODO save in cache
+			}
+		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id])
+
 	// check if user has saved npub previously
 	useEffect(() => {
 		void (async () => {
 			const data = await Promise.all([
 				store.get(STORE_KEYS.npub),
-				store.get(STORE_KEYS.nostrId),
+				store.get(STORE_KEYS.npubHex),
 			])
 			setNpub(data[0] || '')
 			setId(data[1] || '')
@@ -169,9 +158,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				onPress={handleContactPress}
 			>
 				<View style={styles.picNameWrap}>
-					<ProfilePic uri={userProfile?.picture} withPlusIcon={!id} />
+					<ProfilePic uri={userProfile?.picture} withPlusIcon={!id} isUser />
 					{id ?
-						<Username displayName={userProfile?.displayName} username={userProfile?.username} />
+						<Username displayName={userProfile?.displayName} username={userProfile?.username} npub={npub} />
 						:
 						<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
 					}
@@ -189,7 +178,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						data={contacts}
 						estimatedItemSize={300}
 						renderItem={data => (
-							<Txt txt={data.item} />
+							<>
+								<Txt txt={data.item} />
+								{/* <ContactPreview pubKey={data.item} handleContactPress={handleContactPress} /> */}
+							</>
 						)}
 						ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}
 					/>

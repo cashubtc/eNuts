@@ -4,10 +4,9 @@ import type { IContactPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { shortNpub } from '@nostr/util'
 import { ThemeContext } from '@src/context/Theme'
-import { globals, highlight as hi, mainColors } from '@styles'
-import { useContext, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { globals, highlight as hi } from '@styles'
+import { useContext } from 'react'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import ProfilePic from '../ProfilePic'
 import Username from '../Username'
@@ -26,6 +25,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const copyNpub = () => {
 		//
 	}
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
@@ -52,6 +52,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					<Username
 						displayName={contact?.displayName}
 						username={contact?.username}
+						npub={npub}
 						fontSize={24}
 					/>
 					{/* npubs */}
