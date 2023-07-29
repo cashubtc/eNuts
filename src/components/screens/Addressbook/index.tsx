@@ -1,25 +1,25 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
-import { ChevronRightIcon, PlusIcon, UserIcon } from '@comps/Icons'
+import { ChevronRightIcon } from '@comps/Icons'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
-import { defaultRelays, EventKind, npubLength } from '@consts/nostr'
 import { l } from '@log'
 import type { TAddressBookPageProps } from '@model/nav'
+import type { IProfileContent } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
+import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
+import { parseProfileContent } from '@nostr/util'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
-import { IProfileContent } from '@src/model/nostr'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi } from '@styles'
 import { isErr, isStr } from '@util'
-import { parseProfileContent } from '@util/nostr'
 import * as Clipboard from 'expo-clipboard'
 import { type Event as NostrEvent, nip19, relayInit } from 'nostr-tools'
 import { useContext, useEffect, useState } from 'react'
@@ -126,6 +126,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					}
 					if (+e.kind === EventKind.SetMetadata) {
 						l({ EventKindMetadata: e.content })
+						// TODO save in cache
 						setUserProfile(parseProfileContent<IProfileContent>(e))
 					}
 					// if (+e.kind === EventKind.TextNote) {

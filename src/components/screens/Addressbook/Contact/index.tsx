@@ -1,6 +1,8 @@
+import { CopyIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IContactPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { shortNpub } from '@nostr/util'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { useContext, useEffect, useState } from 'react'
@@ -8,10 +10,8 @@ import { useTranslation } from 'react-i18next'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import ProfilePic from '../ProfilePic'
-import ProfileBanner from './Banner'
 import Username from '../Username'
-import { shortNpub } from '@src/util/nostr'
-import { CopyIcon } from '@comps/Icons'
+import ProfileBanner from './Banner'
 import NIP05Verified from './NIP05'
 
 export default function ContactPage({ navigation, route }: IContactPageProps) {

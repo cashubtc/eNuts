@@ -24,6 +24,7 @@ const fn: ConfigFunction = (api: ConfigAPI): TransformOptions => {
 					'@modal': './src/components/modal',
 					'@store': './src/storage/store',
 					'@consts': './src/consts',
+					'@nostr': './src/nostr'
 				},
 				extensions: [
 					'.js',
