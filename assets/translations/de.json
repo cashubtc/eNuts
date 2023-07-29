@@ -2,14 +2,13 @@
 	"addrBook": {
 		"addContactErr": "Kontakt konnte nicht hinzugefügt werden. Möglicher Name oder LNURL Duplikat.",
 		"addedContact": "Neuer Kontakt hinzugefügt",
-		"addOwnLnurl": "Füge NPUB oder LNURL hinzu",
+		"addOwnLnurl": "Füge dein NPUB hinzu",
 		"editContact": "Kontakt bearbeiten",
 		"invalidLnurl": "Invalide LNURL!",
 		"invalidName": "Invalider Name!",
 		"newContact": "Neuer Kontakt",
 		"personalLnurl": "Persönliche LNURL",
-		"yourProfile": "Dein Profil",
-		"npubOrLnurl": "NPUB oder LNURL"
+		"yourProfile": "Dein Profil"
 	},
 	"auth": {
 		"confirmAction": "Bitte bestätigen Sie die Aktion.",
@@ -176,7 +175,9 @@
 		"explainer1": "eNuts ist eine treuhänderische Lightning-Wallet, die private und sofortige Transaktionen mit dem Cashu-Protokoll ermöglicht. Ihre Gelder werden von Mints verwaltet, mit denen Sie interagieren, und Ecash wird lokal auf Ihrem Gerät gespeichert.",
 		"explainer2": "Cashu ist ein neues Ecash-Protokoll für treuhänderische Bitcoin-Apps, bei denen Mints nur Lightning-Knoten sind, die Bitcoin-Transaktionen durchführen und Ihnen Ecash zur Verfügung stellen. Seien Sie versichert, die Mints bleiben unwissend über Ihre Ecash-Zahlungen.",
 		"explainer3": "Fügen Sie einfach eine Mint über die URL hinzu, zahlen Sie eine Lightning-Rechnung, um Ecash zu erhalten. eNuts führt Sie, ermöglicht Ihnen sofortiges Empfangen von jedem und fügt automatisch verbundene Mints hinzu – mit Ihrer Zustimmung. Tauschen Sie Guthaben zwischen Mints aus und senden Sie Ecash, sobald Sie ein Guthaben haben.",
-		"send&receive": "Senden & Empfangen"
+		"send&receive": "Senden & Empfangen",
+		"contactsNostr": "Kontakte & NOSTR",
+		"nostrExplainer": "eNuts ermöglicht Ecash-Überweisungen über NOSTR-DMs und nahtlose Kontaktsynchronisierung mit NPUB. Keine Notwendigkeit, Ihren privaten Schlüssel einzugeben, da eNuts einen neuen für Sie generiert. Ihr NOSTR-Profil und Ihre Daten werden mit Ihrem öffentlichen Schlüssel angezeigt, während der neu generierte private Schlüssel eine reibungslose Interaktion mit NOSTR-DMs ermöglicht."
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

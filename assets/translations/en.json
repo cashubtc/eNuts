@@ -2,14 +2,13 @@
 	"addrBook": {
 		"addContactErr": "Contact can not be added. Possible name or LNURL duplication.",
 		"addedContact": "New contact added",
-		"addOwnLnurl": "Add your NPUB or LNURL",
+		"addOwnLnurl": "Add your NPUB",
 		"editContact": "Edit contact",
 		"invalidLnurl": "Invalid LNURL!",
 		"invalidName": "Invalid name!",
 		"newContact": "New contact",
 		"personalLnurl": "Personal LNURL",
-		"yourProfile": "Your profile",
-		"npubOrLnurl": "NPUB or LNURL"
+		"yourProfile": "Your profile"
 	},
 	"auth": {
 		"confirmAction": "Please confirm the action.",
@@ -176,7 +175,9 @@
 		"explainer1": "eNuts is a custodial Lightning wallet, allowing private and instant transactions using the Cashu protocol. Your funds are held by mints you interact with, and Ecash is stored locally on your device.",
 		"explainer2": "Cashu is a new Ecash protocol for custodial Bitcoin apps, where mints are Lightning nodes performing Bitcoin transactions and offer you Ecash. Rest assured, the mint remains unaware of your Ecash payments.",
 		"explainer3": "Simply add a mint via URL, pay a Lightning invoice to get Ecash. eNuts guides you, lets you receive from anyone instantly and with your permission, automatically adds related mints. Swap funds between mints and send Ecash once you have a balance.",
-		"send&receive": "Send & receive"
+		"send&receive": "Send & receive",
+		"contactsNostr": "Contacts & NOSTR",
+		"nostrExplainer": "eNuts allows Ecash transfers via NOSTR DMs and seamless contact syncing using your NPUB. No need to enter your private key, as eNuts generates a new one for you. Your NOSTR profile and data are displayed using your public key, while the new generated private key enables smooth interaction with NOSTR DMs."
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",

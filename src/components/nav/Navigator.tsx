@@ -1,12 +1,12 @@
-import ExplainerScreen from '@comps/screens/Explainer'
+import ContactPage from '@comps/screens/Addressbook/Contact'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
 import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AddressbookPage from '@screens/Addressbook'
-import ContactPage from '@screens/Addressbook/Contact'
 import AuthPage from '@screens/Auth'
 import Dashboard from '@screens/Dashboard'
 import { Disclaimer } from '@screens/Disclaimer'
+import ExplainerScreen from '@screens/Explainer'
 import HistoryPage from '@screens/History'
 import DetailsPage from '@screens/History/Details'
 import Mints from '@screens/Mints'
@@ -14,6 +14,7 @@ import MintInfoPage from '@screens/Mints/Info'
 import MintBackup from '@screens/Mints/MintBackup'
 import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
+import NostrExplainerScreen from '@screens/NostrExplainer'
 import ProcessingScreen from '@screens/Payment/Processing'
 import ProcessingErrorScreen from '@screens/Payment/ProcessingError'
 import InvoiceScreen from '@screens/Payment/Receive/Invoice'
@@ -75,6 +76,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />
 				<Stack.Screen name='explainer' component={ExplainerScreen} />
+				<Stack.Screen name='nostr explainer' component={NostrExplainerScreen} />
 				<Stack.Screen name='dashboard' component={Dashboard} />
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
 				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />

@@ -10,12 +10,16 @@ export function nip05toURL(identifier: string) {
 	return `https://${domain}/.well-known/nostr.json?name=${name}`
 }
 
-export function parseProfileContent(event: NostrEvent) {
-	return cTo(event.content)
+export function parseProfileContent<T>(event: NostrEvent) {
+	return cTo(event.content) as T
 }
 
 export function shortNpub(npub: string) {
 	return npub.substring(0, 8) + ':' + npub.substring(npub.length - 8, npub.length)
+}
+
+export function shortAbout(about: string) {
+	return `${about.slice(0, 30)}...`
 }
 
 /**

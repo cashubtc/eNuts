@@ -2,6 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import type { IContact } from '@src/context/Contacts'
 
 import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection } from '.'
+import { IProfileContent } from './nostr'
 
 /**
  * Stack Navigator
@@ -9,6 +10,7 @@ import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection } from 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RootStackParamList = {
 	explainer: undefined
+	'nostr explainer': undefined
 	dashboard: undefined
 	disclaimer: undefined
 	history: undefined
@@ -144,12 +146,15 @@ export type RootStackParamList = {
 		balance: number
 	}
 	Contact: {
-		contact?: IContact
+		contact?: IProfileContent
+		npub: string
+		isUser?: boolean
 	}
 }
 
 export type TRouteString = 'dashboard' | 'mints' | 'Address book' | 'Settings'
 export type TExplainerPageProps = NativeStackScreenProps<RootStackParamList, 'explainer', 'MyStack'>
+export type TNostrExplainerPageProps = NativeStackScreenProps<RootStackParamList, 'nostr explainer', 'MyStack'>
 export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectTargetPageProps = NativeStackScreenProps<RootStackParamList, 'selectTarget', 'MyStack'>
 export type TSelectMintToSwapToPageProps = NativeStackScreenProps<RootStackParamList, 'selectMintToSwapTo', 'MyStack'>
@@ -183,6 +188,7 @@ export type TBackupPageProps = NativeStackScreenProps<RootStackParamList, 'Backu
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
 export type TBottomNavProps =
+	TNostrExplainerPageProps |
 	TDashboardPageProps |
 	TMintsPageProps |
 	TMintManagementPageProps |

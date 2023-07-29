@@ -3,7 +3,10 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { highlight as hi } from '@styles'
+import { isStr } from '@util'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -12,7 +15,16 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { t } = useTranslation(['topNav'])
 	const { color, highlight } = useContext(ThemeContext)
 
-	const handleNav = (routeStr: TRouteString) => navigation.navigate(routeStr)
+	const handleNav = async (routeStr: TRouteString) => {
+		// handle nostr explainer for addressbook
+		if (routeStr === 'Address book') {
+			// check if explainer has been viewed, else navigate to screen
+			const nostrExplainer = await store.get(STORE_KEYS.nostrexplainer)
+			navigation.navigate(!isStr(nostrExplainer) || !nostrExplainer.length ? 'nostr explainer' : routeStr)
+			return
+		}
+		navigation.navigate(routeStr)
+	}
 
 	// const isMintRelatedScreen =
 	// 	route.name === 'mints' ||
@@ -30,7 +42,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		<View style={[styles.bottomNav, { backgroundColor: color.BACKGROUND, paddingBottom: isIOS ? 40 : 10 }]}>
 			<TouchableOpacity
 				style={styles.navIcon}
-				onPress={() => handleNav('dashboard')}
+				onPress={() => void handleNav('dashboard')}
 			>
 				<WalletIcon width={28} height={28} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
@@ -43,7 +55,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.navIcon}
-				onPress={() => handleNav('Address book')}
+				onPress={() => void handleNav('Address book')}
 			>
 				<BookIcon width={28} height={28} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
 				<Txt
@@ -58,7 +70,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.navIcon}
-				onPress={() => handleNav('Settings')}
+				onPress={() => void handleNav('Settings')}
 			>
 				<SettingsIcon width={28} height={28} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt

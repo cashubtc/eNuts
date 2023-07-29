@@ -30,7 +30,7 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		color: color.TEXT,
 		borderColor: color.BORDER,
 		backgroundColor: color.INPUT_BG,
-		padding: 18,
+		padding: 20,
 		borderRadius: 50,
 		fontSize: 16,
 		width: '100%',

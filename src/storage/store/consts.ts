@@ -1,5 +1,8 @@
 export const STORE_KEYS = {
 	explainer: 'init_skipped',
+	nostrexplainer: 'nostr_explainer',
+	npub: 'nostr_npub',
+	nostrId: 'nostr_npub_decoded_id',
 	pinSkipped: 'auth_skipped',
 	lock: 'auth_lock',
 	bgCounter: 'auth_bg',
