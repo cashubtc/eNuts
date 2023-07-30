@@ -9,7 +9,7 @@ import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { l } from '@log'
 import type { TAddressBookPageProps } from '@model/nav'
-import type { IProfileContent } from '@model/nostr'
+import type { IContactProfile, IProfileContent } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { relay } from '@nostr/class/Relay'
@@ -17,7 +17,6 @@ import { EventKind, npubLength } from '@nostr/consts'
 import { filterFollows, parseProfileContent } from '@nostr/util'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
-// import { relay } from '@src/nostr/class/Relay'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi } from '@styles'
@@ -38,7 +37,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [npub, setNpub] = useState('')
 	const [npubHex, setNpubHex] = useState('')
 	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
-	const [contacts, setContacts] = useState<string[]>([])
+	const [visibleItems, setVisibleItems] = useState<string[]>([])
+	const [contactsProfiles, setContactsProfiles] = useState<IContactProfile[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()
 
@@ -89,7 +89,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// start syncing
 	}
 
-	const handleContactPress = () => {
+	const handleContactPress = (isUser?: boolean) => {
+		if (!isUser) {
+			// TODO show contact profile
+			return
+		}
 		// add new npub
 		if (!npub) {
 			setNewNpubModal(true)
@@ -101,28 +105,31 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			return
 		}
 		// navigate to user profile
-		// TODO consider all the contacts profile, not only userProfile for contact nav params
 		if (!userProfile) { return }
 		navigation.navigate('Contact', {
 			contact: userProfile,
 			npub,
-			isUser: true
+			isUser
 		})
 	}
 
 	// init user npub data
 	useEffect(() => {
-		if (!npubHex.length) { return }
-		// TODO use cache if available (userProfile: IProfileContent & contacts: string[])
+		if (!npubHex || (userProfile && contactsProfiles.length)) { return }
+		// TODO use cache if available
 		void (async () => {
-			const sub = await relay.subscribeSingle({ authors: [npubHex], skipVerification: true })
+			const sub = await relay.subscribeSingle({
+				authors: [npubHex],
+				kinds: [EventKind.SetMetadata, EventKind.ContactList],
+				skipVerification: true
+			})
 			sub?.on('event', (e: NostrEvent) => {
 				if (+e.kind === EventKind.SetMetadata) {
 					setUserProfile(parseProfileContent<IProfileContent>(e))
 					// TODO save in cache
 				}
 				if (+e.kind === EventKind.ContactList) {
-					setContacts(filterFollows(e.tags))
+					setContactsProfiles(filterFollows(e.tags).map(f => [f, undefined]))
 					// TODO save in cache
 				}
 			})
@@ -143,7 +150,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}, [])
 
 	return (
-		<View style={[globals(color).container, styles.container]}>
+		<View style={[globals(color).container, styles.container]}> 
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut', { ns: 'common' }) : t('addressBook', { ns: 'topNav' })}
 				withBackBtn={route.params?.isMelt}
@@ -151,12 +158,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			/>
 			{/* Header */}
 			<View style={styles.bookHeader}>
-				<ContactsCount count={contacts.length} />
+				<ContactsCount count={contactsProfiles.length} />
 			</View>
 			{/* user own profile */}
 			<TouchableOpacity
 				style={[globals(color).wrapContainer, styles.bookEntry, styles.userEntryContainer]}
-				onPress={handleContactPress}
+				onPress={() => handleContactPress(true)}
 			>
 				<View style={styles.picNameWrap}>
 					<ProfilePic uri={userProfile?.picture} withPlusIcon={!npubHex} isUser />
@@ -173,13 +180,30 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				}
 			</TouchableOpacity>
 			{/* user contacts */}
-			{contacts.length > 0 &&
+			{contactsProfiles.length > 0 &&
 				<View style={[globals(color).wrapContainer, styles.contactsWrap]}>
 					<FlashList
-						data={contacts}
+						data={contactsProfiles}
 						estimatedItemSize={300}
-						renderItem={data => (
-							<Txt txt={data.item} />
+						viewabilityConfig={{
+							minimumViewTime: 250,
+							itemVisiblePercentThreshold: 90,
+						}}
+						onViewableItemsChanged={({ viewableItems }) => {
+							// l('firing onViewableItemsChanged')
+							// TODO avoid executing the following code once all items have been viewed
+							const viewable = viewableItems.map(({ item }: { item: IContactProfile }) => item[0])
+							setVisibleItems(viewable)
+							// setVisibleItems(Array.from(new Set([...visibleItems, ...viewable])))
+							// l({ visibleItems })
+						}}
+						extraData={visibleItems}
+						renderItem={({ item }) => (
+							<ContactPreview
+								pubKey={item[0]}
+								visibleItems={visibleItems}
+								handleContactPress={() => handleContactPress(false)}
+							/>
 						)}
 						ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}
 					/>
@@ -245,8 +269,6 @@ function ContactsCount({ count }: { count: number }) {
 	)
 }
 
-
-
 const styles = StyleSheet.create({
 	container: {
 		paddingTop: 0
@@ -294,40 +316,3 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	}
 })
-
-/* {((contacts.length > 1 && contacts.some(c => c.isOwner)) || (contacts.length > 0 && !contacts.some(c => c.isOwner))) &&
-	<View style={[globals(color).wrapContainer, styles.bookContainer]}>
-		{contacts.sort((a, b) => a.name.localeCompare(b.name)).map((c, i) => (
-			!c.isOwner &&
-			<View key={c.ln}>
-				<View style={styles.bookEntry}>
-					<View
-						style={[
-							styles.circle,
-							{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG }
-						]}
-					>
-						<Text style={{ color: color.TEXT, fontSize: 18 }}>
-							{c.name.charAt(0).toUpperCase()}
-						</Text>
-					</View>
-					<TouchableOpacity
-						style={styles.nameEntry}
-						onPress={() => {
-							if (nav?.route.params?.isMelt) {
-								handleMelt(c.ln)
-								return
-							}
-							nav?.navigation.navigate('Contact', {
-								contact: c
-							})
-						}}
-					>
-						<Txt txt={c.name} />
-					</TouchableOpacity>
-				</View>
-				{i < contacts.filter(c => !c.isOwner).length - 1 && <Separator style={[{ marginLeft: 60 }]} />}
-			</View>
-		))}
-	</View>
-} */

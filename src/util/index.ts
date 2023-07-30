@@ -14,9 +14,26 @@ export { isArr, isArrOf, isArrOfNonNullable, isArrOfNum, isArrOfObj, isArrOfStr,
 export function rndInt(min: number, max: number) { // min and max included
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
+/**
+ * Return the unique values found in the passed iterable
+ */
+export function uniq<T extends string | number | bigint | boolean | symbol>(iter: Iterable<T>) {
+	return [...new Set(iter)]
+}
+
+export function clearArr<T extends U[], U>(array: T) { array.length = 0 }
+
+export function rmArrEntry<T extends U[], U>(arr: T, idx: number) {
+	if (idx < 0||idx >= arr.length) { return }
+	arr[idx] = arr[arr.length - 1]
+	arr.pop()
+}
+
 export function sleep(ms: number) { return new Promise<void>(resolve => setTimeout(resolve, ms)) }
 
 export function formatBalance(bal: number) { return (bal / 100_000_000).toFixed(8) }
+
 /**
  * format a number to a string with a given locale. Compact notation is not yet supported for all locales.
  *
@@ -43,6 +60,7 @@ export function formatInt(
 		return val.toLocaleString()
 	}
 }
+
 export function getShortDateStr(date: Date) {
 	return date.toLocaleDateString(getLanguageCode(), {
 		year: '2-digit',
@@ -51,25 +69,30 @@ export function getShortDateStr(date: Date) {
 		weekday: 'short',
 	})
 }
+
 export function isToday(someDate: Date) {
 	const today = new Date()
 	return someDate.getDate() === today.getDate() &&
 		someDate.getMonth() === today.getMonth() &&
 		someDate.getFullYear() === today.getFullYear()
 }
+
 export function getHistoryGroupDate(date: Date) {
 	return isToday(date) ? 'Today' : getShortDateStr(date)
 }
+
 export function isUrl(url: string) {
 	try { return !!new URL(url) } catch { /* ignore*/ }
 	return false
 }
+
 export function formatMintUrl(url: string) {
 	const clean = url.startsWith('http') ? url.split('://')[1] : url
 	if (clean.length < 30) { return clean }
 	const u = new URL(url)
 	return `${u.hostname.slice(0, 25)}...${u.pathname.slice(-10)}`
 }
+
 /**
  * @param time a number in seconds
  * @returns the following format: 00:00
@@ -79,6 +102,7 @@ export function formatSeconds(time: number) {
 	const seconds = time % 60
 	return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
+
 export function skipRoute(r: string) {
 	return r !== 'root' &&
 		r !== 'Contact' &&
@@ -86,24 +110,31 @@ export function skipRoute(r: string) {
 		r !== 'Security settings' &&
 		r !== 'BackupPage'
 }
+
 export function getSelectedAmount(proofs: IProofSelection[]) {
 	return proofs.reduce((acc, p) => acc + (p.selected ? p.amount : 0), 0)
 }
+
 export function vib(pattern?: number | number[]) {
 	Vibration.vibrate(pattern)
 }
+
 export function isLnurl(addr: string) {
 	const [user, host] = addr.split('@')
 	return addr.includes('.')
 		&& addr.split('@').length === 2
 		&& isUrl(`https://${host}/.well-known/lnurlp/${user}`)
 }
+
 export function hasTrustedMint(userMints: string[], tokenMints: string[]): boolean
+
 export function hasTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]): boolean
+
 export function hasTrustedMint(uMints: ({ mintUrl: string } | string)[], tMints: string[]) {
 	if (!uMints?.length || !isArr(uMints) || !tMints?.length || !isArr(tMints)) { return false }
 	return uMints.some(m => tMints.includes(isStr(m) ? m : m.mintUrl))
 }
+
 export async function getInvoiceFromLnurl(address: string, amount: number) {
 	try {
 		if (!isLnurl(address)) { throw new Error('invalid address') }
@@ -118,6 +149,7 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 	} catch (err) { l('[getInvoiceFromLnurl]', err) }
 	return ''
 }
+
 export function isCashuToken(token: string) {
 	if (!token || !isStr(token)) { return }
 	token = token.trim()
@@ -136,6 +168,7 @@ export function* arrToChunks<T extends T[number][]>(arr: T, n: number) {
 		yield arr.slice(i, i + n)
 	}
 }
+
 /**
  * This function is used to show a few TX info in the history entry details page
  * @param invoice The LN invoice
@@ -145,12 +178,14 @@ export function getLnInvoiceInfo(invoice: string) {
 	const x = decodeLnInvoice(invoice)
 	return { ...x, hash: x.paymentHash, memo: x.memo }
 }
+
 function getFromSection<T>(sections: ISectionEntry[], name: string, fn: (v: unknown) => boolean, toNum = false) {
 	const section = sections.find(s => s?.name === name && s?.value && fn(s.value))
 	return section?.value ?
 		toNum ? +section.value as T : section.value as T
 		: undefined
 }
+
 export function decodeLnInvoice(invoice: string) {
 	const x = getDecodedLnInvoice(invoice)
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -172,10 +207,12 @@ export function decodeLnInvoice(invoice: string) {
 		paymentHash
 	}
 }
+
 export function cleanUpNumericStr(str: string) {
 	if (str.startsWith('0')) { return '' }
 	return str.replace(/\D/g, '')
 }
+
 // TODO FIXXME
 export function openUrl(url: string) {
 	if (!url?.trim()) { return }

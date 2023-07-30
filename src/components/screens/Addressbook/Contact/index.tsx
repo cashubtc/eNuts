@@ -2,7 +2,7 @@ import { CopyIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IContactPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { shortNpub } from '@nostr/util'
+import { truncateNpub } from '@nostr/util'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
@@ -57,13 +57,13 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					/>
 					{/* npubs */}
 					<View style={styles.npubWrap}>
-						<Txt txt={`nostr: ${shortNpub(npub)}`} styles={[styles.npub, { color: color.TEXT_SECONDARY }]} />
+						<Txt txt={`nostr: ${truncateNpub(npub)}`} styles={[styles.npub, { color: color.TEXT_SECONDARY }]} />
 						<TouchableOpacity onPress={copyNpub}>
 							<CopyIcon width={18} height={18} color={color.TEXT_SECONDARY} />
 						</TouchableOpacity>
 					</View>
 					<View style={styles.npubWrap}>
-						<Txt txt={`eNuts: ${shortNpub(npub)}`} styles={[styles.npub, { color: color.TEXT_SECONDARY }]} />
+						<Txt txt={`eNuts: ${truncateNpub(npub)}`} styles={[styles.npub, { color: color.TEXT_SECONDARY }]} />
 						<TouchableOpacity>
 							<CopyIcon width={18} height={18} color={color.TEXT_SECONDARY} />
 						</TouchableOpacity>

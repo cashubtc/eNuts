@@ -1,6 +1,6 @@
 import { l } from '@log'
 import { isErr } from '@util'
-import { relayInit, SimplePool, type Sub } from 'nostr-tools'
+import { type Relay as NostrRelay, relayInit, SimplePool, type Sub } from 'nostr-tools'
 
 import { defaultRelays } from '../consts'
 
@@ -8,15 +8,28 @@ interface ISingleSubProps {
 	relayUrl?: string,
 	skipVerification?: boolean
 	authors: string[],
+	kinds: number[]
 }
 
+/*
+SubscriptionOptions = {
+    id?: string;
+    verb?: 'REQ' | 'COUNT';
+    skipVerification?: boolean;
+    alreadyHaveEvent?: null | ((id: string, relay: string) => boolean);
+};
+*/
+
+// dummy relay class
 class Relay {
 
 	#pool: SimplePool
 	#sub?: Sub<number>
 	#poolSubs: number
-	#singleSubs: number
 	#poolEventsReceived: number
+	#singleRelay?: NostrRelay
+	// #singleRelayUrl?: string
+	#singleSubs: number
 	#singleConnections: number
 
 	constructor() {
@@ -27,25 +40,30 @@ class Relay {
 		this.#singleConnections = 0
 	}
 
-	// this does not block app interaction
-	async subscribeSingle({ relayUrl, skipVerification, authors }: ISingleSubProps) {
+	async subscribeSingle({ relayUrl, authors, kinds, skipVerification }: ISingleSubProps) {
 		try {
-			const relay = relayInit(relayUrl || defaultRelays[0])
-			await relay.connect()
-			relay.on('connect', () => {
-				this.#singleConnections++
-				l(`connected to ${relay.url} - total connections: ${this.#singleConnections}`)
-			})
-			relay.on('error', () => {
-				l(`failed to connect to ${relay.url}`)
-			})
-			const sub = relay.sub([{ authors }], { skipVerification })
+			// connect only if no connections available
+			if (!this.#singleRelay) {
+				this.#singleRelay = relayInit(relayUrl || defaultRelays[0])
+				await this.#singleRelay.connect()
+				this.#singleRelay.on('connect', () => {
+					this.#singleConnections++
+					l(`connected to ${this.#singleRelay?.url} - total connections: ${this.#singleConnections}`)
+				})
+				this.#singleRelay.on('error', () => {
+					l(`failed to connect to ${this.#singleRelay?.url}`)
+					this.#singleRelay = undefined
+				})
+			}
+			// create subscription
+			const sub = this.#singleRelay.sub([{ authors, kinds }], { skipVerification })
 			sub.on('eose', () => {
 				sub.unsub()
 				this.#singleSubs--
-				relay.close()
+				this.#singleRelay?.close()
 				this.#singleConnections--
-				l(`closed connection to ${relay.url} - remaining connections: ${this.#singleConnections}`)
+				l(`closed connection to ${this.#singleRelay?.url} - remaining connections: ${this.#singleConnections}`)
+				this.#singleRelay = undefined
 			})
 			return sub
 
@@ -54,12 +72,12 @@ class Relay {
 		}
 	}
 
-	// this blocks app interaction until eose event...
-	subscribePool(userRelays: string[], authors: string[]) {
+	subscribePool(userRelays: string[], authors: string[], kinds: number[], skipVerification?: boolean) {
 		try {
 			const sub = this.#pool.sub(
 				userRelays.length ? userRelays : defaultRelays,
-				[{ authors }]
+				[{ authors, kinds }],
+				{ skipVerification }
 			)
 			this.#sub = sub
 			this.#poolSubs++

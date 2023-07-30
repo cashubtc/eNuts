@@ -1,57 +1,43 @@
-import useNostrProfile from '@comps/hooks/NostrProfile'
-import { ChevronRightIcon } from '@comps/Icons'
-import type { HexKey } from '@model/nostr'
-import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles'
-import { useContext } from 'react'
-import { useInView } from 'react-intersection-observer'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import Txt from '@comps/Txt'
+import { l } from '@log'
+import type { HexKey, IContactProfile, IProfileContent } from '@model/nostr'
+import { truncateNpub } from '@nostr/util'
+import { nip19 } from 'nostr-tools'
+import { useEffect, useState } from 'react'
+import { TouchableOpacity } from 'react-native'
 
-import ProfilePic from './ProfilePic'
 import Username from './Username'
 
 interface IContactPreviewProps {
 	pubKey: HexKey
+	visibleItems: string[]
 	handleContactPress: () => void
 }
 
-export default function ContactPreview({ pubKey, handleContactPress }: IContactPreviewProps) {
-	const { inView } = useInView({ triggerOnce: true })
-	const { color } = useContext(ThemeContext)
-	const { profile } = useNostrProfile({ pubKey: inView ? pubKey : undefined })
+export default function ContactPreview({ pubKey, visibleItems, handleContactPress }: IContactPreviewProps) {
+	const [metadata, setMetadata] = useState<IProfileContent | undefined>()
+
+	useEffect(() => {
+		if (metadata) { return }
+		const isInView = visibleItems.some(item => item === pubKey)
+		if (!isInView) { return }
+		l('no metadata and item is in view, get metadata!')
+		// TODO use cache if available
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [visibleItems])
 
 	return (
-		<TouchableOpacity
-			style={[globals(color).wrapContainer, styles.bookEntry, styles.userEntryContainer]}
-			onPress={handleContactPress}
-		>
-			<View style={styles.picNameWrap}>
-				<ProfilePic uri={profile?.picture} />
-				<Username displayName={profile?.displayName} username={profile?.username} npub={pubKey} />
-			</View>
-			<View />
-			{profile ?
-				<ChevronRightIcon color={color.TEXT} />
+		<TouchableOpacity onPress={handleContactPress}>
+			{metadata ?
+				<Username
+					displayName={metadata?.displayName}
+					username={metadata?.username}
+					npub={truncateNpub(nip19.npubEncode(pubKey))}
+				/>
 				:
-				<View />
+				<Txt txt={pubKey} />
 			}
 		</TouchableOpacity>
 	)
 }
-
-const styles = StyleSheet.create({
-	bookEntry: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		marginVertical: 8,
-	},
-	userEntryContainer: {
-		paddingVertical: 9,
-		marginBottom: 25,
-	},
-	picNameWrap: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	}
-})

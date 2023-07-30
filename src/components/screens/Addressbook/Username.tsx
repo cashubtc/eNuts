@@ -1,6 +1,6 @@
 import Txt from '@comps/Txt'
 import type { HexKey } from '@model/nostr'
-import { shortNpub } from '@nostr/util'
+import { truncateNpub } from '@nostr/util'
 import { StyleSheet } from 'react-native'
 
 interface IUsernameProps {
@@ -17,7 +17,7 @@ export default function Username({ displayName, username, npub, fontSize }: IUse
 	if (!displayName?.length && username?.length) {
 		return <Txt txt={username} styles={[styles.username, { fontSize: fontSize || 18 }]} />
 	}
-	return <Txt txt={shortNpub(npub)} styles={[styles.username, { fontSize: fontSize || 18 }]} />
+	return <Txt txt={truncateNpub(npub)} styles={[styles.username, { fontSize: fontSize || 18 }]} />
 }
 
 const styles = StyleSheet.create({

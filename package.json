@@ -68,7 +68,6 @@
 		"nostr-tools": "^1.13.1",
 		"react": "^18.2.0",
 		"react-i18next": "^13.0.1",
-		"react-intersection-observer": "^9.5.2",
 		"react-native": "0.72.3",
 		"react-native-qrcode-svg": "^6.2.0",
 		"react-native-reanimated": "^3.3.0",
