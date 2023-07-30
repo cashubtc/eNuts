@@ -1,5 +1,5 @@
 import type { HexKey, IProfileContent } from '@model/nostr'
-import { relayPool } from '@nostr/Connection'
+import { relay } from '@src/nostr/class/Relay'
 import { defaultRelays,EventKind } from '@nostr/consts'
 import { parseProfileContent } from '@src/nostr/util'
 import { type Event as NostrEvent } from 'nostr-tools'
@@ -18,8 +18,8 @@ export default function useNostrProfile({ pubKey }: INostrProfileHookProps) {
 		// TODO use cache if available, get contact profile metadata by npub
 		void (() => {
 			// TODO use the users relays
-			relayPool.subscribe(defaultRelays, [pubKey])
-			relayPool.sub?.on('event', (e: NostrEvent) => {
+			relay.subscribePool(defaultRelays, [pubKey])
+			relay.sub?.on('event', (e: NostrEvent) => {
 				if (+e.kind === EventKind.SetMetadata) {
 					setProfile(parseProfileContent<IProfileContent>(e))
 					// TODO save in cache

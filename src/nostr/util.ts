@@ -14,6 +14,10 @@ export function parseProfileContent<T>(event: NostrEvent) {
 	return cTo(event.content) as T
 }
 
+export function filterFollows(tags: string[][]) {
+	return tags.filter(t => t[0] === 'p').map(t => t[1])
+}
+
 export function shortNpub(npub: string) {
 	return npub.substring(0, 8) + ':' + npub.substring(npub.length - 8, npub.length)
 }

@@ -12,11 +12,12 @@ import type { TAddressBookPageProps } from '@model/nav'
 import type { IProfileContent } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
-import { relayPool } from '@nostr/Connection'
+import { relay } from '@nostr/class/Relay'
 import { EventKind, npubLength } from '@nostr/consts'
-import { parseProfileContent } from '@nostr/util'
+import { filterFollows, parseProfileContent } from '@nostr/util'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
+// import { relay } from '@src/nostr/class/Relay'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi } from '@styles'
@@ -35,7 +36,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [npub, setNpub] = useState('')
-	const [id, setId] = useState('')
+	const [npubHex, setNpubHex] = useState('')
 	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
 	const [contacts, setContacts] = useState<string[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
@@ -71,18 +72,18 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			openPromptAutoClose({ msg: 'Invalid NPUB!' })
 			return
 		}
-		const nostrId = nip19.decode(npub).data
-		l({ nostrId })
-		if (!isStr(nostrId) || nostrId.length !== npubLength) {
+		const npubHex = nip19.decode(npub).data
+		l({ npubHex })
+		if (!isStr(npubHex) || npubHex.length !== npubLength) {
 			openPromptAutoClose({ msg: 'Something went wrong while decoding your NPUB!' })
 			return
 		}
 		// save npub and decoded npub id
 		await Promise.all([
 			store.set(STORE_KEYS.npub, npub),
-			store.set(STORE_KEYS.npubHex, nostrId)
+			store.set(STORE_KEYS.npubHex, npubHex)
 		])
-		setId(nostrId)
+		setNpubHex(npubHex)
 		// close modal
 		setNewNpubModal(false)
 		// start syncing
@@ -109,25 +110,25 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		})
 	}
 
+	// init user npub data
 	useEffect(() => {
-		if (!id) { return }
+		if (!npubHex.length) { return }
 		// TODO use cache if available (userProfile: IProfileContent & contacts: string[])
-		relayPool.subscribe([], [id])
-		// this is not working, missing profile metadata event
-		relayPool.sub?.on('event', (e: NostrEvent) => {
-			if (+e.kind === EventKind.ContactList) {
-				l('set user contacts')
-				setContacts(e.tags.filter(t => t[0] === 'p').map(t => t[1]))
-				// TODO save in cache
-			}
-			if (+e.kind === EventKind.SetMetadata) {
-				l('set user profile')
-				setUserProfile(parseProfileContent<IProfileContent>(e))
-				// TODO save in cache
-			}
-		})
+		void (async () => {
+			const sub = await relay.subscribeSingle({ authors: [npubHex], skipVerification: true })
+			sub?.on('event', (e: NostrEvent) => {
+				if (+e.kind === EventKind.SetMetadata) {
+					setUserProfile(parseProfileContent<IProfileContent>(e))
+					// TODO save in cache
+				}
+				if (+e.kind === EventKind.ContactList) {
+					setContacts(filterFollows(e.tags))
+					// TODO save in cache
+				}
+			})
+		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [id])
+	}, [npubHex])
 
 	// check if user has saved npub previously
 	useEffect(() => {
@@ -137,7 +138,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				store.get(STORE_KEYS.npubHex),
 			])
 			setNpub(data[0] || '')
-			setId(data[1] || '')
+			setNpubHex(data[1] || '')
 		})()
 	}, [])
 
@@ -158,8 +159,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				onPress={handleContactPress}
 			>
 				<View style={styles.picNameWrap}>
-					<ProfilePic uri={userProfile?.picture} withPlusIcon={!id} isUser />
-					{id ?
+					<ProfilePic uri={userProfile?.picture} withPlusIcon={!npubHex} isUser />
+					{npubHex.length ?
 						<Username displayName={userProfile?.displayName} username={userProfile?.username} npub={npub} />
 						:
 						<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
@@ -178,10 +179,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						data={contacts}
 						estimatedItemSize={300}
 						renderItem={data => (
-							<>
-								<Txt txt={data.item} />
-								{/* <ContactPreview pubKey={data.item} handleContactPress={handleContactPress} /> */}
-							</>
+							<Txt txt={data.item} />
 						)}
 						ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}
 					/>
