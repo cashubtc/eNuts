@@ -170,10 +170,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}
 
 	// opens profile screen
-	const handleContactPress = (isUser?: boolean) => {
-		if (!isUser) {
-			// TODO show contact profile
-			l('contact press')
+	const handleContactPress = ({ contact, npub, isUser }: { contact?: IProfileContent, npub?: string, isUser?: boolean }) => {
+		if (!isUser && npub?.length) {
+			navigation.navigate('Contact', {
+				contact,
+				npub,
+				isUser
+			})
 			return
 		}
 		// add new npub
@@ -225,13 +228,19 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			{/* user own profile */}
 			<TouchableOpacity
 				style={[globals(color).wrapContainer, styles.bookEntry, styles.userEntryContainer]}
-				onPress={() => handleContactPress(true)}
+				onPress={() => handleContactPress({ isUser: true })}
 			>
 				<View style={styles.picNameWrap}>
 					<ProfilePic uri={userProfile?.picture} withPlusIcon={!pubKey.hex} isUser />
 					{pubKey.hex.length ?
 						<View>
-							<Username displayName={userProfile?.displayName} username={userProfile?.username} npub={pubKey.encoded} />
+							<Username
+								displayName={userProfile?.displayName}
+								display_name={userProfile?.display_name}
+								username={userProfile?.username}
+								name={userProfile?.name}
+								npub={pubKey.encoded}
+							/>
 							<Txt txt={truncateAbout(userProfile?.about || '')} styles={[{ color: color.TEXT_SECONDARY }]} />
 						</View>
 						:
@@ -251,14 +260,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						data={contacts}
 						estimatedItemSize={300}
 						viewabilityConfig={{
-							minimumViewTime: 500,
-							itemVisiblePercentThreshold: 60,
+							minimumViewTime: 250,
+							itemVisiblePercentThreshold: 70,
 						}}
 						onViewableItemsChanged={onViewableItemsChanged}
 						renderItem={({ item }) => (
 							<ContactPreview
 								contact={item}
-								handleContactPress={() => handleContactPress()}
+								handleContactPress={() => handleContactPress({ contact: item[1], npub: nip19.npubEncode(item[0]) })}
 							/>
 						)}
 						ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}

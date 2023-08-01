@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
 	colWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
+		width: '70%'
 	},
 	sendEcashBtn: {
 		paddingHorizontal: 10,
