@@ -13,7 +13,7 @@ import type { IProfileContent, TContact, TUserRelays } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { relay } from '@nostr/class/Relay'
-import { EventKind, npubLength } from '@nostr/consts'
+import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
 import { filterFollows, parseProfileContent, parseUserRelays } from '@nostr/util'
 import { FlashList, type ViewToken } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
@@ -56,7 +56,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			kinds: [EventKind.SetMetadata, EventKind.ContactList],
 			skipVerification: true // debug
 		})
-		let latestRelays = 0 // createdAt
+		let latestRelays = 0 	// createdAt
+		let latestContacts = 0 	// createdAt
 		sub?.on('event', async (e: NostrEvent) => {
 			if (+e.kind === EventKind.SetMetadata) {
 				// TODO save user metadata in cache
@@ -70,8 +71,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					latestRelays = e.created_at
 					await store.setObj(STORE_KEYS.relays, relays)
 				}
-				// TODO save contacts in cache
-				setContacts(filterFollows(e.tags).map(f => [f, undefined]))
+				if (e.created_at > latestContacts) {
+					l('new contact event')
+					// TODO save contacts in cache
+					latestContacts = e.created_at
+					setContacts(prev => (filterFollows(e.tags).map(f => [f, prev[1]])) as unknown as TContact[])
+				}
 			}
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -215,7 +220,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			/>
 			{/* Header */}
 			<View style={styles.bookHeader}>
-				<ContactsCount count={contacts.length} />
+				<ContactsCount count={contacts.length} relaysCount={userRelays.length} />
 			</View>
 			{/* user own profile */}
 			<TouchableOpacity
@@ -303,7 +308,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	)
 }
 
-function ContactsCount({ count }: { count: number }) {
+function ContactsCount({ count, relaysCount }: { count: number, relaysCount?: number }) {
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	return (
@@ -311,7 +316,7 @@ function ContactsCount({ count }: { count: number }) {
 			{!count ?
 				''
 				:
-				count > 1 ? t('contact_other', { count }) : t('contact_one', { count })
+				`${count > 1 ? t('contact_other', { count }) : t('contact_one', { count })} - ${relaysCount || defaultRelays.length} Relays`
 			}
 		</Text>
 	)
