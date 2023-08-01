@@ -4,6 +4,7 @@ export const STORE_KEYS = {
 	npub: 'nostr_npub',
 	npubHex: 'nostr_npubHex',
 	relays: 'nostr_relays',
+	nutpub: 'enuts_npubHex',
 	pinSkipped: 'auth_skipped',
 	lock: 'auth_lock',
 	bgCounter: 'auth_bg',
@@ -14,3 +15,4 @@ export const STORE_KEYS = {
 }
 
 export const SECURESTORE_KEY = 'auth_pin'
+export const SECRET = 'secret'
