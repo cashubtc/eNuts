@@ -9,7 +9,7 @@ import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { l } from '@log'
 import type { TAddressBookPageProps } from '@model/nav'
-import type { IContactProfile, IProfileContent } from '@model/nostr'
+import type { IProfileContent } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { relay } from '@nostr/class/Relay'
@@ -38,7 +38,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [npubHex, setNpubHex] = useState('')
 	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
 	const [visibleItems, setVisibleItems] = useState<string[]>([])
-	const [contactsProfiles, setContactsProfiles] = useState<IContactProfile[]>([])
+	const [contacts, setContacts] = useState<string[]>([])
+	const [reachedListEnd, setReachedListEnd] = useState(false)
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()
 
@@ -92,6 +93,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const handleContactPress = (isUser?: boolean) => {
 		if (!isUser) {
 			// TODO show contact profile
+			l('contact press')
 			return
 		}
 		// add new npub
@@ -115,25 +117,24 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// init user npub data
 	useEffect(() => {
-		if (!npubHex || (userProfile && contactsProfiles.length)) { return }
+		if (!npubHex || (userProfile && contacts.length)) { return }
 		// TODO use cache if available
-		void (async () => {
-			const sub = await relay.subscribeSingle({
-				authors: [npubHex],
-				kinds: [EventKind.SetMetadata, EventKind.ContactList],
-				skipVerification: true
-			})
-			sub?.on('event', (e: NostrEvent) => {
-				if (+e.kind === EventKind.SetMetadata) {
-					setUserProfile(parseProfileContent<IProfileContent>(e))
-					// TODO save in cache
-				}
-				if (+e.kind === EventKind.ContactList) {
-					setContactsProfiles(filterFollows(e.tags).map(f => [f, undefined]))
-					// TODO save in cache
-				}
-			})
-		})()
+		const sub = relay.subscribePool({
+			authors: [npubHex],
+			kinds: [EventKind.SetMetadata, EventKind.ContactList],
+			// skipVerification: true
+		})
+		// TODO save and use the relays of user
+		sub?.on('event', (e: NostrEvent) => {
+			if (+e.kind === EventKind.SetMetadata) {
+				setUserProfile(parseProfileContent<IProfileContent>(e))
+				// TODO save in cache
+			}
+			if (+e.kind === EventKind.ContactList) {
+				setContacts(Array.from(new Set(filterFollows(e.tags))))
+				// TODO save in cache
+			}
+		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [npubHex])
 
@@ -150,7 +151,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}, [])
 
 	return (
-		<View style={[globals(color).container, styles.container]}> 
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut', { ns: 'common' }) : t('addressBook', { ns: 'topNav' })}
 				withBackBtn={route.params?.isMelt}
@@ -158,7 +159,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			/>
 			{/* Header */}
 			<View style={styles.bookHeader}>
-				<ContactsCount count={contactsProfiles.length} />
+				<ContactsCount count={contacts.length} />
 			</View>
 			{/* user own profile */}
 			<TouchableOpacity
@@ -180,29 +181,27 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				}
 			</TouchableOpacity>
 			{/* user contacts */}
-			{contactsProfiles.length > 0 &&
+			{contacts.length > 0 &&
 				<View style={[globals(color).wrapContainer, styles.contactsWrap]}>
 					<FlashList
-						data={contactsProfiles}
+						data={contacts}
 						estimatedItemSize={300}
 						viewabilityConfig={{
-							minimumViewTime: 250,
-							itemVisiblePercentThreshold: 90,
+							minimumViewTime: 100,
+							itemVisiblePercentThreshold: 100,
 						}}
-						onViewableItemsChanged={({ viewableItems }) => {
-							// l('firing onViewableItemsChanged')
-							// TODO avoid executing the following code once all items have been viewed
-							const viewable = viewableItems.map(({ item }: { item: IContactProfile }) => item[0])
-							setVisibleItems(viewable)
-							// setVisibleItems(Array.from(new Set([...visibleItems, ...viewable])))
-							// l({ visibleItems })
+						// avoid executing event "onViewableItemsChanged" once all items have been viewed
+						onEndReached={() => setReachedListEnd(true)}
+						onViewableItemsChanged={reachedListEnd ? undefined : ({ viewableItems }) => {
+							// not triggered anymore once end of list has been reached
+							setVisibleItems(viewableItems.map(({ item }: { item: string }) => item))
 						}}
-						extraData={visibleItems}
+						// extraData={visibleItems}
 						renderItem={({ item }) => (
 							<ContactPreview
-								pubKey={item[0]}
-								visibleItems={visibleItems}
-								handleContactPress={() => handleContactPress(false)}
+								pubKey={item}
+								visibleItems={reachedListEnd ? [] : visibleItems}
+								handleContactPress={() => handleContactPress()}
 							/>
 						)}
 						ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}
@@ -309,7 +308,7 @@ const styles = StyleSheet.create({
 	},
 	contactSeparator: {
 		marginLeft: 60,
-		marginVertical: 20,
+		marginVertical: 10,
 	},
 	picNameWrap: {
 		flexDirection: 'row',

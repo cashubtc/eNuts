@@ -12,9 +12,6 @@ export interface IProfileContent {
 	website: string
 }
 
-// [['npub', {metadata}], ['npub', {metadata}]...]
-export type IContactProfile = [string, IProfileContent | undefined]
-
 export enum NostrPrefix {
 	PublicKey = 'npub',
 	PrivateKey = 'nsec',

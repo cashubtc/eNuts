@@ -177,7 +177,8 @@
 		"explainer3": "Simply add a mint via URL, pay a Lightning invoice to get Ecash. eNuts guides you, lets you receive from anyone instantly and with your permission, automatically adds related mints. Swap funds between mints and send Ecash once you have a balance.",
 		"send&receive": "Send & receive",
 		"contactsNostr": "Contacts & NOSTR",
-		"nostrExplainer": "eNuts allows Ecash transfers via NOSTR DMs and seamless contact syncing using your NPUB. No need to enter your private key, as eNuts generates a new one for you. Your NOSTR profile and data are displayed using your public key, while the new generated private key enables smooth interaction with NOSTR DMs."
+		"nostrExplainer": "eNuts allows Ecash transfers via NOSTR DMs and seamless contact syncing using your NPUB. No need to enter your private key, as eNuts generates a new one for you. Your NOSTR profile and data are displayed using your public key, while the new generated private key enables smooth interaction with NOSTR DMs.",
+		"send": "Send"
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",

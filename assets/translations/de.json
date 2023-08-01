@@ -177,7 +177,8 @@
 		"explainer3": "Fügen Sie einfach eine Mint über die URL hinzu, zahlen Sie eine Lightning-Rechnung, um Ecash zu erhalten. eNuts führt Sie, ermöglicht Ihnen sofortiges Empfangen von jedem und fügt automatisch verbundene Mints hinzu – mit Ihrer Zustimmung. Tauschen Sie Guthaben zwischen Mints aus und senden Sie Ecash, sobald Sie ein Guthaben haben.",
 		"send&receive": "Senden & Empfangen",
 		"contactsNostr": "Kontakte & NOSTR",
-		"nostrExplainer": "eNuts ermöglicht Ecash-Überweisungen über NOSTR-DMs und nahtlose Kontaktsynchronisierung mit NPUB. Keine Notwendigkeit, Ihren privaten Schlüssel einzugeben, da eNuts einen neuen für Sie generiert. Ihr NOSTR-Profil und Ihre Daten werden mit Ihrem öffentlichen Schlüssel angezeigt, während der neu generierte private Schlüssel eine reibungslose Interaktion mit NOSTR-DMs ermöglicht."
+		"nostrExplainer": "eNuts ermöglicht Ecash-Überweisungen über NOSTR-DMs und nahtlose Kontaktsynchronisierung mit NPUB. Keine Notwendigkeit, Ihren privaten Schlüssel einzugeben, da eNuts einen neuen für Sie generiert. Ihr NOSTR-Profil und Ihre Daten werden mit Ihrem öffentlichen Schlüssel angezeigt, während der neu generierte private Schlüssel eine reibungslose Interaktion mit NOSTR-DMs ermöglicht.",
+		"send": "Senden"
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

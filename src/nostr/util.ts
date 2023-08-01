@@ -42,7 +42,8 @@ export function truncateNpub(npub: string) {
  * // TODO avoid truncating emojis
  */
 export function truncateAbout(about: string) {
-	return `${about.slice(0, 30)}...`
+	if (about.length < 25) { return about }
+	return `${about.slice(0, 25)}...`
 }
 
 /**

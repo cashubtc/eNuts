@@ -4,8 +4,16 @@ import { type Relay as NostrRelay, relayInit, SimplePool, type Sub } from 'nostr
 
 import { defaultRelays } from '../consts'
 
+// TODO use better typing for this 2 similar interfaces
 interface ISingleSubProps {
 	relayUrl?: string,
+	skipVerification?: boolean
+	authors: string[],
+	kinds: number[]
+}
+
+interface IPoolSubProps {
+	relayUrls?: string[],
 	skipVerification?: boolean
 	authors: string[],
 	kinds: number[]
@@ -72,10 +80,10 @@ class Relay {
 		}
 	}
 
-	subscribePool(userRelays: string[], authors: string[], kinds: number[], skipVerification?: boolean) {
+	subscribePool({ relayUrls, authors, kinds, skipVerification }: IPoolSubProps) {
 		try {
 			const sub = this.#pool.sub(
-				userRelays.length ? userRelays : defaultRelays,
+				relayUrls?.length ? relayUrls : defaultRelays,
 				[{ authors, kinds }],
 				{ skipVerification }
 			)
