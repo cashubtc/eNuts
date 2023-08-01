@@ -264,10 +264,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							itemVisiblePercentThreshold: 70,
 						}}
 						onViewableItemsChanged={onViewableItemsChanged}
-						renderItem={({ item }) => (
+						keyExtractor={item => item[0]}
+						renderItem={({ item, index }) => (
 							<ContactPreview
 								contact={item}
 								handleContactPress={() => handleContactPress({ contact: item[1], npub: nip19.npubEncode(item[0]) })}
+								isFirst={index === 0}
+								isLast={index === contacts.length - 1}
 							/>
 						)}
 						ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}
@@ -369,12 +372,13 @@ const styles = StyleSheet.create({
 	},
 	contactsWrap: {
 		flex: 1,
-		paddingVertical: 20,
-		marginBottom: isIOS ? 70 : 50
+		paddingHorizontal: 0,
+		marginBottom: isIOS ? 100 : 75
 	},
 	contactSeparator: {
 		marginLeft: 60,
 		marginVertical: 10,
+		marginRight: 20,
 	},
 	picNameWrap: {
 		flexDirection: 'row',

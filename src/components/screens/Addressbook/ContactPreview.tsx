@@ -15,9 +15,11 @@ import Username from './Username'
 interface IContactPreviewProps {
 	contact: TContact
 	handleContactPress: () => void
+	isFirst: boolean
+	isLast: boolean
 }
 
-export default function ContactPreview({ contact, handleContactPress }: IContactPreviewProps) {
+export default function ContactPreview({ contact, handleContactPress, isFirst, isLast }: IContactPreviewProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 
@@ -28,7 +30,7 @@ export default function ContactPreview({ contact, handleContactPress }: IContact
 	}
 
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { paddingTop: isFirst ? 10 : 0, paddingBottom: isLast ? 10 : 0 }]}>
 			<TouchableOpacity style={styles.colWrap} onPress={handleContactPress}>
 				<ProfilePic uri={contact[1]?.picture} />
 				{contact[1] ?
@@ -67,6 +69,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
+		paddingHorizontal: 20,
 	},
 	colWrap: {
 		flexDirection: 'row',
