@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native'
 
 export default function MemoScreen({ navigation, route }: TMemoPageProps) {
-	const { mint, balance, amount, isSendingWholeMintBal } = route.params
+	const { mint, balance, amount, nostr, isSendingWholeMintBal } = route.params
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
 	const [memo, setMemo] = useState('')
@@ -33,6 +33,7 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 			amount,
 			estFee: 0,
 			isSendEcash: true,
+			nostr,
 			memo
 		})
 	}

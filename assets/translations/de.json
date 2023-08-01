@@ -223,6 +223,7 @@
 		"chooseTarget": "Wählen Sie den Empfänger der Zahlung aus.",
 		"coinSelectionHint": "Ihr Ecash-Guthaben ist im Wesentlichen eine Sammlung von Coin-sets. Die Coin Auswahl ermöglicht es Ihnen, die Coins auszuwählen, die Sie ausgeben möchten. Coin-sets erhalten von der Mint eine Schlüsselsatz-ID, die sich im Laufe der Zeit ändern kann. Neu hinzugefügte Sets werden grün hervorgehoben. Es wird empfohlen, zuerst ältere Sets auszugeben.",
 		"creatingEcashToken": "Der Cashu-Token wird erstellt.",
+		"sendingEcashViaNostr": "Der Cashu-Token wird via NOSTR versendet!",
 		"customName": "Benutzerdefinierter Name",
 		"cutomNameAdded": "Benutzerdefinierter Name hinzugefügt",
 		"dangerZone": "Gefahrenzone",

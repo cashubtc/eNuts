@@ -4,11 +4,16 @@ import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import { l } from '@log'
 import type { TProcessingPageProps } from '@model/nav'
+import { relay } from '@nostr/class/Relay'
 import { ThemeContext } from '@src/context/Theme'
+import { secureStore, store } from '@store'
+import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory, addToHistory } from '@store/HistoryStore'
+import { cTo, toJson } from '@store/utils'
 import { globals } from '@styles'
 import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
+import { nip04 } from 'nostr-tools'
 import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -23,6 +28,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		estFee,
 		isMelt,
 		isSendEcash,
+		nostr,
 		isSwap,
 		targetMint,
 		proofs,
@@ -40,7 +46,12 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const getProcessingtxt = () => {
 		if (isMelt) { return 'processingPaymentByMint' }
 		if (isSwap) { return 'processingSwap' }
-		if (isSendEcash) { return 'creatingEcashToken' }
+		if (isSendEcash) {
+			if (nostr) {
+				return 'sendingEcashViaNostr'
+			}
+			return 'creatingEcashToken'
+		}
 		return 'awaitingInvoice'
 	}
 	const handleMintingProcess = async () => {
@@ -138,6 +149,35 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				value: token,
 				mints: [mint.mintUrl],
 			})
+			if (nostr) {
+				const sk = await secureStore.get(SECRET)
+				l({senderSecret: sk})
+				if (!sk?.length) {
+					navigation.navigate('processingError', {
+						mint,
+						amount,
+						errorMsg: 'Something went wrong while creating the Cashu token.'
+					})
+					return
+				}
+				const pk = await store.get(STORE_KEYS.nutpub)
+				l({ senderPubKey: pk })
+				l({ receiverNpub: nostr.receiverNpub })
+				const msg = `${nostr.senderName} just sent you ${amount} Sat in Ecash using the eNuts wallet! ${token}`
+				l({ msg })
+				const cipherTxt = await nip04.encrypt(sk, nostr.receiverNpub, msg) // error cannot read property 'importkey' of undefined
+				l({ cipherTxt })
+				const event = {
+					kind: 4,
+					pubkey: pk,
+					tags: [['p', nostr.receiverNpub]],
+					content: cipherTxt,
+				}
+				const userRelays = await store.get(STORE_KEYS.relays)
+				l({ userRelays })
+				// relay.publishEvent(toJson(event), !userRelays ? [] : cTo<string []>(userRelays) || [])
+				return
+			}
 			navigation.navigate('encodedToken', { token, amount })
 		} catch (e) {
 			navigation.navigate('processingError', {

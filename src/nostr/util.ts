@@ -53,6 +53,15 @@ export function truncateAbout(about: string) {
 	return `${about.slice(0, 25)}...`
 }
 
+export function getNostrUsername(
+	displayName?: string,
+	display_name?: string,
+	username?: string,
+	name?: string
+) {
+	return displayName || display_name || username || name || ''
+}
+
 /**
  * returns true if note is not a reply
  */

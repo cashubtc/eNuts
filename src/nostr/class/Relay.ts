@@ -1,5 +1,5 @@
 import { l } from '@log'
-import { isErr } from '@util'
+import { isErr, uniq } from '@util'
 import { type Relay as NostrRelay, relayInit, SimplePool, type Sub } from 'nostr-tools'
 
 import { defaultRelays } from '../consts'
@@ -102,6 +102,15 @@ class Relay {
 		}
 	}
 
+	async * publishEvent(event: string, relays: string[]) {
+		const arr = uniq([...relays, ...defaultRelays])
+		const data = JSON.stringify(['EVENT', JSON.parse(event)])
+		for (const item of arr) {
+			// eslint-disable-next-line no-await-in-loop
+			yield await this.#publish(data, item)
+		}
+	}
+
 	#onEvent() {
 		this.#poolEventsReceived++
 	}
@@ -112,6 +121,46 @@ class Relay {
 		this.#poolSubs--
 		l(`pool events received: ${this.#poolEventsReceived}`)
 		l(`active pool subs: ${this.#poolSubs}`)
+	}
+
+	#publish(event: string, url: string) {
+		return new Promise<{ ok: boolean, reason: string, relay: string }>(resolve => {
+			let ws: WebSocket
+			try {
+				ws = new WebSocket(url)
+				url = url.replace('wss://', '').replace('ws://', '')
+				ws.onerror = () => {
+					resolve({ relay: url, ok: false, reason: 'err' })
+					end()
+				}
+				ws.onopen = () => { ws.send(event) }
+				ws.onmessage = msg => {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment
+					const data = JSON.parse(msg.data)
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+					const ok: boolean = data[2]
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+					const reason: string = data[3] || ''
+					resolve({ relay: url, ok, reason })
+					end()
+				}
+				setTimeout(() => {
+					end()
+					resolve({ relay: url, ok: false, reason: 'timeout' })
+				}, 1000)
+			} catch (e) {
+				if (isErr(e)) {
+					resolve({ relay: url, ok: false, reason: e.message })
+					end()
+					return
+				}
+				end()
+				resolve({ relay: url, ok: false, reason: 'err' })
+			}
+			function end() {
+				try { ws?.close(1000, 'not needed anymore, thanks') } catch (_) {/* ignore */ }
+			}
+		})
 	}
 }
 

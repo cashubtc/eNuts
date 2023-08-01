@@ -223,6 +223,7 @@
 		"chooseTarget": "Choose the receiver of the payment.",
 		"coinSelectionHint": "Your Ecash balance is essentially a collection of coin-sets. Coin selection allows you to choose the coins you want to spend. Coin-sets are assigned a keyset-ID by the mint, which may change over time. Newly added keysets are highlighted in green. It is advisable to spend older sets first.",
 		"creatingEcashToken": "Cashu token is beeing created",
+		"sendingEcashViaNostr": "Sending Cashu token via NOSTR!",
 		"customName": "Custom name",
 		"cutomNameAdded": "Added a custom name",
 		"dangerZone": "Danger zone",

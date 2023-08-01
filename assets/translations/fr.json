@@ -223,6 +223,7 @@
 		"chooseTarget": "Veuillez choisir le destinataire du paiement.",
 		"coinSelectionHint": "Votre solde Ecash est essentiellement une collection d'ensembles de Coins. La sélection de Coins vous permet de choisir les Coins que vous souhaitez dépenser. Les ensembles de Coins se voient attribuer des clés identifiant par la mint, qui peut changer avec le temps. Les nouveaux ensembles sont mis en évidence en vert. Il est conseillé de dépenser les anciens ensembles en premier.",
 		"creatingEcashToken": "Le Cashu token est en train d'être créé.",
+		"sendingEcashViaNostr": "Le Cashu-Token est envoyé via NOSTR!",
 		"customName": "Nom personnalisé",
 		"cutomNameAdded": "Ajouté un nom personnalisé",
 		"dangerZone": "Zone dangereuse",

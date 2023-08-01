@@ -1,5 +1,4 @@
 import Txt from '@comps/Txt'
-import { l } from '@log'
 import type { TContact } from '@model/nostr'
 import { truncateAbout, truncateNpub } from '@nostr/util'
 import { ThemeContext } from '@src/context/Theme'
@@ -7,7 +6,7 @@ import { highlight as hi } from '@styles'
 import { nip19 } from 'nostr-tools'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { type GestureResponderEvent, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import ProfilePic from './ProfilePic'
 import Username from './Username'
@@ -15,19 +14,14 @@ import Username from './Username'
 interface IContactPreviewProps {
 	contact: TContact
 	handleContactPress: () => void
+	handleSend: () => void
 	isFirst: boolean
 	isLast: boolean
 }
 
-export default function ContactPreview({ contact, handleContactPress, isFirst, isLast }: IContactPreviewProps) {
+export default function ContactPreview({ contact, handleContactPress, handleSend, isFirst, isLast }: IContactPreviewProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-
-	const handleSend = (e: GestureResponderEvent) => {
-		e.stopPropagation()
-		l('send ecash')
-		//
-	}
 
 	return (
 		<View style={[styles.container, { paddingTop: isFirst ? 10 : 0, paddingBottom: isLast ? 10 : 0 }]}>

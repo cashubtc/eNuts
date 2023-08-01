@@ -7,6 +7,7 @@ import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
+import { getMintsBalances } from '@db'
 import { l } from '@log'
 import type { TAddressBookPageProps } from '@model/nav'
 import type { IProfileContent, TContact, TUserRelays } from '@model/nostr'
@@ -14,11 +15,12 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { relay } from '@nostr/class/Relay'
 import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
-import { filterFollows, parseProfileContent, parseUserRelays, truncateAbout } from '@nostr/util'
+import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays, truncateAbout } from '@nostr/util'
 import { FlashList, type ViewToken } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
+import { getCustomMintNames } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { isStr } from '@util'
 import * as Clipboard from 'expo-clipboard'
@@ -198,6 +200,35 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		})
 	}
 
+	// start sending ecash via nostr
+	const handleSend = async ({ npub, name }: { npub: string, name?: string }) => {
+		const mintsWithBal = await getMintsBalances()
+		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
+		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
+		const nostr = {
+			senderName: getNostrUsername(userProfile?.displayName, userProfile?.display_name, userProfile?.username, userProfile?.name),
+			receiverNpub: npub,
+			receiverName: name,
+		}
+		// TODO this could potentially written in shorter form
+		if (nonEmptyMints.length === 1) {
+			navigation.navigate('selectAmount', {
+				mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
+				isSendEcash: true,
+				balance: nonEmptyMints[0].amount,
+				nostr,
+			})
+			return
+		}
+		navigation.navigate('selectMint', {
+			mints,
+			mintsWithBal,
+			allMintsEmpty: !nonEmptyMints.length,
+			isSendEcash: true,
+			nostr,
+		})
+	}
+
 	// check if user has nostr data saved previously
 	useEffect(() => {
 		void (async () => {
@@ -269,6 +300,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							<ContactPreview
 								contact={item}
 								handleContactPress={() => handleContactPress({ contact: item[1], npub: nip19.npubEncode(item[0]) })}
+								handleSend={() => {
+									void handleSend({
+										npub: item[0],
+										name: getNostrUsername(item[1]?.displayName, item[1]?.display_name, item[1]?.username, item[1]?.name)
+									})
+								}}
 								isFirst={index === 0}
 								isLast={index === contacts.length - 1}
 							/>
