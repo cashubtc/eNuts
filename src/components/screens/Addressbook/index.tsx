@@ -9,13 +9,13 @@ import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { l } from '@log'
 import type { TAddressBookPageProps } from '@model/nav'
-import type { IProfileContent } from '@model/nostr'
+import type { IProfileContent, TContact } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { relay } from '@nostr/class/Relay'
 import { EventKind, npubLength } from '@nostr/consts'
-import { filterFollows, parseProfileContent } from '@nostr/util'
-import { FlashList } from '@shopify/flash-list'
+import { filterFollows, parseProfileContent, truncateNpub } from '@nostr/util'
+import { FlashList, type ViewToken } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
@@ -23,7 +23,7 @@ import { globals, highlight as hi } from '@styles'
 import { isStr } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { type Event as NostrEvent, nip19 } from 'nostr-tools'
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -34,16 +34,45 @@ import Username from './Username'
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-	const [npub, setNpub] = useState('')
-	const [npubHex, setNpubHex] = useState('')
+	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
 	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
-	const [visibleItems, setVisibleItems] = useState<string[]>([])
-	const [contacts, setContacts] = useState<string[]>([])
-	const [reachedListEnd, setReachedListEnd] = useState(false)
+	const [contacts, setContacts] = useState<TContact[]>([])
+	const [, setAlreadySeen] = useState<string[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()
 
-	// user is in melting process
+	// Gets metadata from cache or relay for contact in viewport
+	const setMetadata = useCallback((item: string) => {
+		const hex = item[0]
+		l('### item: ', truncateNpub(nip19.npubEncode(hex)))
+		// TODO use cache if available
+		const sub = relay.subscribePool({
+			authors: [hex],
+			kinds: [EventKind.SetMetadata]
+		})
+		sub?.on('event', (e: NostrEvent) => {
+			if (+e.kind === EventKind.SetMetadata) {
+				// TODO save in cache
+				setContacts(prev => prev.map(c => c[0] === hex ? [c[0], parseProfileContent<IProfileContent>(e)] : c))
+			}
+		})
+	}, [])
+
+	// checks and saves already seen items to avoid multiple data fetch. Otherwise gets metadata from cache or relay
+	const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+		setAlreadySeen(prev => {
+			for (let i = 0; i < viewableItems.length; i++) {
+				const visible = viewableItems[i]
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				const seen = prev.some(itemSeen => visible.item[0] === itemSeen)
+				if (!seen) { setMetadata(visible.item as string) }
+			}
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			return [...prev, ...viewableItems.map(v => v.item[0] as string)]
+		})
+	}, [setMetadata])
+
+	// User is in melting process
 	const handleMelt = () => {
 		if (!route.params) { return }
 		const { isMelt, mint, balance } = route.params
@@ -58,38 +87,40 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// Paste/Clear input for LNURL/LN invoice
 	const handleInputLabelPress = async () => {
 		// clear input
-		if (npub.length > 0) {
-			setNpub('')
+		if (pubKey.encoded.length > 0) {
+			setPubKey({ encoded: '', hex: '' })
 			return
 		}
 		// paste from clipboard
 		const clipboard = await Clipboard.getStringAsync()
 		if (!clipboard || clipboard === 'null') { return }
-		setNpub(clipboard)
+		setPubKey({ encoded: clipboard, hex: '' })
 	}
 
+	// save npub pasted by user
 	const handleNewNpub = async () => {
-		if (!npub.length || !npub.startsWith('npub')) {
+		if (!pubKey.encoded.length || !pubKey.encoded.startsWith('npub')) {
+			// TODO translate
 			openPromptAutoClose({ msg: 'Invalid NPUB!' })
 			return
 		}
-		const npubHex = nip19.decode(npub).data
-		l({ npubHex })
-		if (!isStr(npubHex) || npubHex.length !== npubLength) {
+		const hex = nip19.decode(pubKey.encoded).data
+		if (!isStr(hex) || hex.length !== npubLength) {
+			// TODO translate
 			openPromptAutoClose({ msg: 'Something went wrong while decoding your NPUB!' })
 			return
 		}
 		// save npub and decoded npub id
 		await Promise.all([
-			store.set(STORE_KEYS.npub, npub),
-			store.set(STORE_KEYS.npubHex, npubHex)
+			store.set(STORE_KEYS.npub, pubKey.encoded),
+			store.set(STORE_KEYS.npubHex, hex)
 		])
-		setNpubHex(npubHex)
+		setPubKey(prev => ({ ...prev, hex }))
 		// close modal
 		setNewNpubModal(false)
-		// start syncing
 	}
 
+	// opens profile screen
 	const handleContactPress = (isUser?: boolean) => {
 		if (!isUser) {
 			// TODO show contact profile
@@ -97,7 +128,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			return
 		}
 		// add new npub
-		if (!npub) {
+		if (!pubKey.encoded) {
 			setNewNpubModal(true)
 			return
 		}
@@ -110,19 +141,18 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		if (!userProfile) { return }
 		navigation.navigate('Contact', {
 			contact: userProfile,
-			npub,
+			npub: pubKey.encoded,
 			isUser
 		})
 	}
 
-	// init user npub data
+	// get user data by npub from cache or relay
 	useEffect(() => {
-		if (!npubHex || (userProfile && contacts.length)) { return }
+		if (!pubKey.hex || (userProfile && contacts.length)) { return }
 		// TODO use cache if available
 		const sub = relay.subscribePool({
-			authors: [npubHex],
-			kinds: [EventKind.SetMetadata, EventKind.ContactList],
-			// skipVerification: true
+			authors: [pubKey.hex],
+			kinds: [EventKind.SetMetadata, EventKind.ContactList]
 		})
 		// TODO save and use the relays of user
 		sub?.on('event', (e: NostrEvent) => {
@@ -131,12 +161,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				// TODO save in cache
 			}
 			if (+e.kind === EventKind.ContactList) {
-				setContacts(Array.from(new Set(filterFollows(e.tags))))
+				setContacts(filterFollows(e.tags).map(f => [f, undefined]))
 				// TODO save in cache
 			}
 		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [npubHex])
+	}, [pubKey.hex, contacts.length, userProfile])
 
 	// check if user has saved npub previously
 	useEffect(() => {
@@ -145,8 +174,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				store.get(STORE_KEYS.npub),
 				store.get(STORE_KEYS.npubHex),
 			])
-			setNpub(data[0] || '')
-			setNpubHex(data[1] || '')
+			setPubKey({ encoded: data[0] || '', hex: data[1] || '' })
 		})()
 	}, [])
 
@@ -167,9 +195,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				onPress={() => handleContactPress(true)}
 			>
 				<View style={styles.picNameWrap}>
-					<ProfilePic uri={userProfile?.picture} withPlusIcon={!npubHex} isUser />
-					{npubHex.length ?
-						<Username displayName={userProfile?.displayName} username={userProfile?.username} npub={npub} />
+					<ProfilePic uri={userProfile?.picture} withPlusIcon={!pubKey.hex} isUser />
+					{pubKey.hex.length ?
+						<Username displayName={userProfile?.displayName} username={userProfile?.username} npub={pubKey.encoded} />
 						:
 						<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
 					}
@@ -187,20 +215,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						data={contacts}
 						estimatedItemSize={300}
 						viewabilityConfig={{
-							minimumViewTime: 100,
-							itemVisiblePercentThreshold: 100,
+							minimumViewTime: 500,
+							itemVisiblePercentThreshold: 60,
 						}}
-						// avoid executing event "onViewableItemsChanged" once all items have been viewed
-						onEndReached={() => setReachedListEnd(true)}
-						onViewableItemsChanged={reachedListEnd ? undefined : ({ viewableItems }) => {
-							// not triggered anymore once end of list has been reached
-							setVisibleItems(viewableItems.map(({ item }: { item: string }) => item))
-						}}
-						// extraData={visibleItems}
+						onViewableItemsChanged={onViewableItemsChanged}
 						renderItem={({ item }) => (
 							<ContactPreview
-								pubKey={item}
-								visibleItems={reachedListEnd ? [] : visibleItems}
+								contact={item}
 								handleContactPress={() => handleContactPress()}
 							/>
 						)}
@@ -221,8 +242,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				<View style={{ position: 'relative', width: '100%' }}>
 					<TxtInput
 						placeholder='NPUB'
-						onChangeText={text => setNpub(text)}
-						value={npub}
+						onChangeText={text => setPubKey(prev => ({ ...prev, encoded: text }))}
+						value={pubKey.encoded}
 						onSubmitEditing={() => void handleNewNpub()}
 					/>
 					{/* Paste / Clear Input */}
@@ -231,7 +252,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						onPress={() => void handleInputLabelPress()}
 					>
 						<Text style={globals(color, highlight).pressTxt}>
-							{!npub.length ? t('paste') : t('clear')}
+							{!pubKey.encoded.length ? t('paste') : t('clear')}
 						</Text>
 					</TouchableOpacity>
 				</View>

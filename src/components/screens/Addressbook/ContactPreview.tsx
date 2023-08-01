@@ -1,13 +1,11 @@
 import Txt from '@comps/Txt'
 import { l } from '@log'
-import type { HexKey, IProfileContent } from '@model/nostr'
-import { relay } from '@nostr/class/Relay'
-import { EventKind } from '@nostr/consts'
-import { parseProfileContent, truncateAbout, truncateNpub } from '@nostr/util'
+import type { TContact } from '@model/nostr'
+import { truncateAbout, truncateNpub } from '@nostr/util'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { type Event as NostrEvent, nip19 } from 'nostr-tools'
-import { useContext, useEffect, useState } from 'react'
+import { nip19 } from 'nostr-tools'
+import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { type GestureResponderEvent, StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -15,15 +13,13 @@ import ProfilePic from './ProfilePic'
 import Username from './Username'
 
 interface IContactPreviewProps {
-	pubKey: HexKey
-	visibleItems: string[]
+	contact: TContact
 	handleContactPress: () => void
 }
 
-export default function ContactPreview({ pubKey, visibleItems, handleContactPress }: IContactPreviewProps) {
+export default function ContactPreview({ contact, handleContactPress }: IContactPreviewProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-	const [metadata, setMetadata] = useState<IProfileContent | undefined>()
 
 	const handleSend = (e: GestureResponderEvent) => {
 		e.stopPropagation()
@@ -31,54 +27,29 @@ export default function ContactPreview({ pubKey, visibleItems, handleContactPres
 		//
 	}
 
-	useEffect(() => {
-		// visibleItems is empty once end of list has been reached
-		if (
-			metadata ||
-			!visibleItems.length ||
-			!visibleItems.some(item => item === pubKey)
-		) { return }
-		l('no metadata and item is in view, get metadata!')
-		// TODO use cache if available
-		const sub = relay.subscribePool({
-			authors: [pubKey],
-			kinds: [EventKind.SetMetadata],
-			// skipVerification: true
-		})
-		sub?.on('event', (e: NostrEvent) => {
-			if (+e.kind === EventKind.SetMetadata) {
-				// TODO use latest event
-				setMetadata(parseProfileContent<IProfileContent>(e))
-				// TODO save in cache
-			}
-		})
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [visibleItems])
-
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity style={styles.colWrap} onPress={handleContactPress}>
-				<ProfilePic uri={metadata?.picture} />
-				{metadata ?
+				<ProfilePic uri={contact[1]?.picture} />
+				{contact[1] ?
 					<View>
 						<Username
-							displayName={metadata.displayName}
-							display_name={metadata.display_name}
-							username={metadata.username}
-							name={metadata.name}
-							npub={truncateNpub(nip19.npubEncode(pubKey))}
+							displayName={contact[1].displayName}
+							display_name={contact[1].display_name}
+							username={contact[1].username}
+							name={contact[1].name}
+							npub={truncateNpub(nip19.npubEncode(contact[0]))}
 							fontSize={16}
 						/>
-						{metadata.about?.length > 0 &&
+						{contact[1].about?.length > 0 &&
 							<Txt
-								txt={truncateAbout(metadata.about)}
+								txt={truncateAbout(contact[1].about)}
 								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}
 							/>
 						}
 					</View>
 					:
-					<Txt txt={truncateNpub(nip19.npubEncode(pubKey))} styles={[{ fontWeight: '500' }]} />
+					<Txt txt={truncateNpub(nip19.npubEncode(contact[0]))} styles={[{ fontWeight: '500' }]} />
 				}
 			</TouchableOpacity>
 			<TouchableOpacity
