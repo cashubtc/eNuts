@@ -9,14 +9,14 @@ interface ISingleSubProps {
 	relayUrl?: string,
 	skipVerification?: boolean
 	authors: string[],
-	kinds: number[]
+	kinds?: number[]
 }
 
 interface IPoolSubProps {
 	relayUrls?: string[],
 	skipVerification?: boolean
 	authors: string[],
-	kinds: number[]
+	kinds?: number[]
 }
 
 /*

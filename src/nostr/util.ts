@@ -31,6 +31,13 @@ export function filterFollows(tags: string[][]) {
 }
 
 /**
+ * JSON.parse the nostr relays from user
+ */
+export function parseUserRelays<T>(relays: string) {
+	return Object.keys(cTo(relays)) as T
+}
+
+/**
  * Truncates the npub of a user
  */
 export function truncateNpub(npub: string) {

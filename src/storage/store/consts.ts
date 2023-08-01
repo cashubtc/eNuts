@@ -3,6 +3,7 @@ export const STORE_KEYS = {
 	nostrexplainer: 'nostr_explainer',
 	npub: 'nostr_npub',
 	npubHex: 'nostr_npubHex',
+	relays: 'nostr_relays',
 	pinSkipped: 'auth_skipped',
 	lock: 'auth_lock',
 	bgCounter: 'auth_bg',

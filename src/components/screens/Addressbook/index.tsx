@@ -9,12 +9,12 @@ import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { l } from '@log'
 import type { TAddressBookPageProps } from '@model/nav'
-import type { IProfileContent, TContact } from '@model/nostr'
+import type { IProfileContent, TContact, TUserRelays } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { relay } from '@nostr/class/Relay'
 import { EventKind, npubLength } from '@nostr/consts'
-import { filterFollows, parseProfileContent, truncateNpub } from '@nostr/util'
+import { filterFollows, parseProfileContent, parseUserRelays } from '@nostr/util'
 import { FlashList, type ViewToken } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
@@ -36,6 +36,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { color, highlight } = useContext(ThemeContext)
 	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
 	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
+	const [userRelays, setUserRelays] = useState<TUserRelays>([])
 	const [contacts, setContacts] = useState<TContact[]>([])
 	const [, setAlreadySeen] = useState<string[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
@@ -44,18 +45,20 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// Gets metadata from cache or relay for contact in viewport
 	const setMetadata = useCallback((item: string) => {
 		const hex = item[0]
-		l('### item: ', truncateNpub(nip19.npubEncode(hex)))
 		// TODO use cache if available
 		const sub = relay.subscribePool({
+			relayUrls: userRelays,
 			authors: [hex],
-			kinds: [EventKind.SetMetadata]
+			kinds: [EventKind.SetMetadata],
+			skipVerification: true // debug
 		})
 		sub?.on('event', (e: NostrEvent) => {
 			if (+e.kind === EventKind.SetMetadata) {
-				// TODO save in cache
+				// TODO save contacts in cache
 				setContacts(prev => prev.map(c => c[0] === hex ? [c[0], parseProfileContent<IProfileContent>(e)] : c))
 			}
 		})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	// checks and saves already seen items to avoid multiple data fetch. Otherwise gets metadata from cache or relay
@@ -148,33 +151,49 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// get user data by npub from cache or relay
 	useEffect(() => {
-		if (!pubKey.hex || (userProfile && contacts.length)) { return }
+		if (!pubKey.hex || (userProfile && contacts.length)) {
+			l('no pubKey or user data already available')
+			return
+		}
+		l({ userRelays })
 		// TODO use cache if available
 		const sub = relay.subscribePool({
+			relayUrls: userRelays,
 			authors: [pubKey.hex],
-			kinds: [EventKind.SetMetadata, EventKind.ContactList]
+			kinds: [EventKind.SetMetadata, EventKind.ContactList],
+			skipVerification: true // debug
 		})
-		// TODO save and use the relays of user
-		sub?.on('event', (e: NostrEvent) => {
+		let latestRelays = 0 // createdAt
+		sub?.on('event', async (e: NostrEvent) => {
 			if (+e.kind === EventKind.SetMetadata) {
-				setUserProfile(parseProfileContent<IProfileContent>(e))
-				// TODO save in cache
+				// TODO save user metadata in cache
+				setUserProfile(parseProfileContent(e))
 			}
 			if (+e.kind === EventKind.ContactList) {
+				// save user relays
+				if (!userRelays && e.created_at > latestRelays) {
+					// TODO user relays should be updated (every day?)
+					const relays = parseUserRelays<TUserRelays>(e.content)
+					latestRelays = e.created_at
+					await store.setObj(STORE_KEYS.relays, relays)
+				}
+				// TODO save contacts in cache
 				setContacts(filterFollows(e.tags).map(f => [f, undefined]))
-				// TODO save in cache
 			}
 		})
-	}, [pubKey.hex, contacts.length, userProfile])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userRelays])
 
-	// check if user has saved npub previously
+	// check if user has nostr data saved previously
 	useEffect(() => {
 		void (async () => {
 			const data = await Promise.all([
 				store.get(STORE_KEYS.npub),
 				store.get(STORE_KEYS.npubHex),
+				store.getObj<TUserRelays>(STORE_KEYS.relays)
 			])
 			setPubKey({ encoded: data[0] || '', hex: data[1] || '' })
+			setUserRelays(data[2] || [])
 		})()
 	}, [])
 

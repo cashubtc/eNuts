@@ -16,6 +16,8 @@ export interface IProfileContent {
 
 export type TContact = [HexKey, IProfileContent | undefined]
 
+export type TUserRelays = string[]
+
 export enum NostrPrefix {
 	PublicKey = 'npub',
 	PrivateKey = 'nsec',
