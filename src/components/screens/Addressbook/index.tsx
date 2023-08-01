@@ -14,7 +14,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { relay } from '@nostr/class/Relay'
 import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
-import { filterFollows, parseProfileContent, parseUserRelays } from '@nostr/util'
+import { filterFollows, parseProfileContent, parseUserRelays, truncateAbout } from '@nostr/util'
 import { FlashList, type ViewToken } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
@@ -230,7 +230,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				<View style={styles.picNameWrap}>
 					<ProfilePic uri={userProfile?.picture} withPlusIcon={!pubKey.hex} isUser />
 					{pubKey.hex.length ?
-						<Username displayName={userProfile?.displayName} username={userProfile?.username} npub={pubKey.encoded} />
+						<View>
+							<Username displayName={userProfile?.displayName} username={userProfile?.username} npub={pubKey.encoded} />
+							<Txt txt={truncateAbout(userProfile?.about || '')} styles={[{ color: color.TEXT_SECONDARY }]} />
+						</View>
 						:
 						<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
 					}
