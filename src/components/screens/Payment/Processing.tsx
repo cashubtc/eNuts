@@ -161,8 +161,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					return
 				}
 				const pk = await store.get(STORE_KEYS.nutpub)
-				l({ senderPubKey: pk })
-				l({ receiverNpub: nostr.receiverNpub })
+				l({ senderPubKey: pk }) // hex
+				l({ receiverNpub: nostr.receiverNpub }) // hex
 				const msg = `${nostr.senderName} just sent you ${amount} Sat in Ecash using the eNuts wallet! ${token}`
 				l({ msg })
 				const cipherTxt = await nip04.encrypt(sk, nostr.receiverNpub, msg) // error cannot read property 'importkey' of undefined
