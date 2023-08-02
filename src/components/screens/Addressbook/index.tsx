@@ -55,12 +55,15 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		const sub = relay.subscribePool({
 			relayUrls: userRelays,
 			authors: [pubKey],
-			kinds: [EventKind.SetMetadata, EventKind.ContactList],
+			kinds: [EventKind.SetMetadata, EventKind.ContactList], // EventKind.DirectMessage
 			skipVerification: true // debug
 		})
 		let latestRelays = 0 	// createdAt
 		let latestContacts = 0 	// createdAt
 		sub?.on('event', async (e: NostrEvent) => {
+			// if (+e.kind === EventKind.DirectMessage) {
+			// 	l({ eventDM: e.content })
+			// }
 			if (+e.kind === EventKind.SetMetadata) {
 				// TODO save user metadata in cache
 				setUserProfile(parseProfileContent(e))

@@ -6,14 +6,14 @@ import { l } from '@log'
 import type { TProcessingPageProps } from '@model/nav'
 import { relay } from '@nostr/class/Relay'
 import { ThemeContext } from '@src/context/Theme'
-import { secureStore, store } from '@store'
-import { SECRET, STORE_KEYS } from '@store/consts'
+import { encrypt } from '@src/nostr/crypto'
+import { secureStore } from '@store'
+import { SECRET } from '@store/consts'
 import { addLnPaymentToHistory, addToHistory } from '@store/HistoryStore'
-import { cTo, toJson } from '@store/utils'
 import { globals } from '@styles'
 import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
-import { nip04 } from 'nostr-tools'
+import { finishEvent, validateEvent } from 'nostr-tools'
 import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -151,7 +151,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			})
 			if (nostr) {
 				const sk = await secureStore.get(SECRET)
-				l({senderSecret: sk})
 				if (!sk?.length) {
 					navigation.navigate('processingError', {
 						mint,
@@ -160,22 +159,24 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					})
 					return
 				}
-				const pk = await store.get(STORE_KEYS.nutpub)
-				l({ senderPubKey: pk }) // hex
-				l({ receiverNpub: nostr.receiverNpub }) // hex
-				const msg = `${nostr.senderName} just sent you ${amount} Sat in Ecash using the eNuts wallet! ${token}`
-				l({ msg })
-				const cipherTxt = await nip04.encrypt(sk, nostr.receiverNpub, msg) // error cannot read property 'importkey' of undefined
+				// const pk = await store.get(STORE_KEYS.nutpub)
+				// const msg = token // ${nostr.senderName} just sent you ${amount} Sat in Ecash using the eNuts wallet!
+				const cipherTxt = encrypt(sk, nostr.receiverNpub, token)
 				l({ cipherTxt })
 				const event = {
 					kind: 4,
-					pubkey: pk,
+					// pubkey: pk,
 					tags: [['p', nostr.receiverNpub]],
 					content: cipherTxt,
+					created_at: Math.ceil(Date.now() / 1000)
 				}
-				const userRelays = await store.get(STORE_KEYS.relays)
-				l({ userRelays })
-				// relay.publishEvent(toJson(event), !userRelays ? [] : cTo<string []>(userRelays) || [])
+				// event.id = getEventHash(event)
+				const finishedEvent = finishEvent(event, sk)
+				l({ finishedEvent })
+				const isValid = validateEvent(finishedEvent)
+				l({ isValid })
+				// const userRelays = await store.get(STORE_KEYS.relays)
+				await relay.publishEvent(finishedEvent)
 				return
 			}
 			navigation.navigate('encodedToken', { token, amount })

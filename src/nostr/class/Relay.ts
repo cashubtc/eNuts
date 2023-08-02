@@ -1,5 +1,5 @@
 import { l } from '@log'
-import { isErr, uniq } from '@util'
+import { isErr } from '@util'
 import { type Relay as NostrRelay, relayInit, SimplePool, type Sub } from 'nostr-tools'
 
 import { defaultRelays } from '../consts'
@@ -19,12 +19,19 @@ interface IPoolSubProps {
 	kinds?: number[]
 }
 
+interface IEventDM {
+    kind: number;
+    pubkey: string | null | undefined;
+    tags: string[][];
+    content: string;
+}
+
 /*
 SubscriptionOptions = {
-    id?: string;
-    verb?: 'REQ' | 'COUNT';
-    skipVerification?: boolean;
-    alreadyHaveEvent?: null | ((id: string, relay: string) => boolean);
+	id?: string;
+	verb?: 'REQ' | 'COUNT';
+	skipVerification?: boolean;
+	alreadyHaveEvent?: null | ((id: string, relay: string) => boolean);
 };
 */
 
@@ -102,14 +109,24 @@ class Relay {
 		}
 	}
 
-	async * publishEvent(event: string, relays: string[]) {
-		const arr = uniq([...relays, ...defaultRelays])
-		const data = JSON.stringify(['EVENT', JSON.parse(event)])
-		for (const item of arr) {
-			// eslint-disable-next-line no-await-in-loop
-			yield await this.#publish(data, item)
-		}
+	async publishEvent(event: IEventDM) {
+		l('publish event first log: ', { event })
+		const relay = defaultRelays[0]
+		const data = JSON.stringify(['EVENT', event])
+		await this.#publish(data, relay)
 	}
+
+	// async * publishEvent(event: string, relays: string[]) {
+	// 	l('publish event first log: ', {event})
+	// 	const arr = uniq([...relays, ...defaultRelays])
+	// 	l({ arr })
+	// 	const data = JSON.stringify(['EVENT', JSON.parse(event)])
+	// 	for (const item of arr) {
+	// 		l('this.#publish!')
+	// 		// eslint-disable-next-line no-await-in-loop
+	// 		yield await this.#publish(data, item)
+	// 	}
+	// }
 
 	#onEvent() {
 		this.#poolEventsReceived++
@@ -128,13 +145,19 @@ class Relay {
 			let ws: WebSocket
 			try {
 				ws = new WebSocket(url)
+				l({ ws })
 				url = url.replace('wss://', '').replace('ws://', '')
 				ws.onerror = () => {
+					l('ws.onerror')
 					resolve({ relay: url, ok: false, reason: 'err' })
 					end()
 				}
-				ws.onopen = () => { ws.send(event) }
+				ws.onopen = () => {
+					l('ws.onopen')
+					ws.send(event)
+				}
 				ws.onmessage = msg => {
+					l('onmessage: ', { msg })
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment
 					const data = JSON.parse(msg.data)
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
@@ -145,10 +168,12 @@ class Relay {
 					end()
 				}
 				setTimeout(() => {
+					l('timeout')
 					end()
 					resolve({ relay: url, ok: false, reason: 'timeout' })
 				}, 1000)
 			} catch (e) {
+				l('catch block')
 				if (isErr(e)) {
 					resolve({ relay: url, ok: false, reason: e.message })
 					end()
