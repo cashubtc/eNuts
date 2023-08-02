@@ -1,6 +1,3 @@
-// import * as Crypto from 'expo-crypto'
-// import { randomBytes } from '@noble/hashes/utils'
-import { l } from '@log'
 import { secp256k1 } from '@noble/curves/secp256k1'
 import { randomBytes } from '@noble/hashes/utils'
 import { AES, enc, SHA256 } from 'crypto-js'
@@ -11,18 +8,7 @@ export function encrypt(
 	text: string
 ): string {
 
-	const key = secp256k1.getSharedSecret(privkey, '02' + pubkey)
-	// l({ key })
-
-	// const normalizedKey = getNormalizedX(key)
-	// l({ normalizedKey })
-
-	// const normalizedHex = arrayBufferToHexString(normalizedKey)
-	// l({ normalizedHex })
-
 	const plaintextWordArray = enc.Utf8.parse(text)
-	// l({ plaintextWordArray })
-
 	const iv = Uint8Array.from(randomBytes(16))
 
 	// Convert iv (Uint8Array) to WordArray
@@ -36,7 +22,8 @@ export function encrypt(
 
 	const ctb64 = encrypted.ciphertext.toString(enc.Base64)
 
-	const ivb64 = enc.Base64.stringify(ivWordArray)
+	// Combine the Base64 ciphertext and IV to form the final result
+	const ivb64 = ivWordArray.toString(enc.Base64)
 
 	return `${ctb64}?iv=${ivb64}`
 
