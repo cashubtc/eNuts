@@ -16,7 +16,6 @@ import { addLnPaymentToHistory, addToHistory } from '@store/HistoryStore'
 import { globals } from '@styles'
 import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
-import { nip19 } from 'nostr-tools'
 import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -159,7 +158,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			})
 			if (nostr) {
 				const sk = await secureStore.get(SECRET)
-				const receiverNpub = await store.get(STORE_KEYS.npub)
+				const userNostrNpub = await store.get(STORE_KEYS.npub)
 				if (!sk?.length) {
 					navigation.navigate(
 						'processingError',
@@ -167,8 +166,10 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					)
 					return
 				}
-				const msg = `${nip19.npubEncode(receiverNpub || '') + ` (${nostr.senderName})` || nostr.senderName}  just sent you ${amount} Sat in Ecash using the eNuts wallet!\n\n ${token}`
+				l({})
+				const msg = `${userNostrNpub ? userNostrNpub + ` (${nostr.senderName})` : nostr.senderName}  just sent you ${amount} Sat in Ecash using the eNuts wallet!\n\n ${token}`
 				const cipherTxt = encrypt(sk, nostr.receiverNpub, msg)
+				l({ cipherTxt })
 				const event = {
 					kind: EventKind.DirectMessage,
 					tags: [['p', nostr.receiverNpub]],
