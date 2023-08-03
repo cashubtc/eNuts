@@ -167,7 +167,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					return
 				}
 				l({})
-				const msg = `${userNostrNpub ? userNostrNpub + ` (${nostr.senderName})` : nostr.senderName}  just sent you ${amount} Sat in Ecash using the eNuts wallet!\n\n ${token}`
+				const msg = `${userNostrNpub || nostr.senderName}  just sent you ${amount} Sat in Ecash using the eNuts wallet!\n\n ${token}`
 				const cipherTxt = encrypt(sk, nostr.receiverNpub, msg)
 				l({ cipherTxt })
 				const event = {
