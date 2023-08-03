@@ -137,7 +137,7 @@ declare module 'expo-sqlite' {
 
 	// @docsMissing
 	export interface ResultSetErr {
-		error: Err;
+		error: Error;
 	}
 
 	// @needsAudit
@@ -159,7 +159,7 @@ declare module 'expo-sqlite' {
 
 	// @docsMissing
 	export type SQLiteCb<T = unknown> = (
-		error?: Err | null,
+		error?: Error | null,
 		resultSet?: (ResultSetErr | ResultSet<T>)[]
 	) => void;
 	export type SQLiteCallback<T = unknown> = SQLiteCb<T>

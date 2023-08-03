@@ -310,13 +310,6 @@ function _App() {
 			}
 			appState.current = nextAppState
 		})
-
-		try {
-			throw new Error('Hello this is my first Sentry error!')
-		} catch (e) {
-			Sentry.Native.captureException(e)
-			Sentry.Native.nativeCrash()
-		}
 		return () => subscription.remove()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
