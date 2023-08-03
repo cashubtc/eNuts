@@ -1,57 +1,91 @@
-import useNostrProfile from '@comps/hooks/NostrProfile'
 import { ChevronRightIcon } from '@comps/Icons'
-import type { HexKey } from '@model/nostr'
+import Txt from '@comps/Txt'
+import type { TContact } from '@model/nostr'
+import { truncateAbout, truncateNpub } from '@nostr/util'
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles'
+import { highlight as hi } from '@styles'
+import { nip19 } from 'nostr-tools'
 import { useContext } from 'react'
-import { useInView } from 'react-intersection-observer'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import ProfilePic from './ProfilePic'
 import Username from './Username'
 
 interface IContactPreviewProps {
-	pubKey: HexKey
+	contact: TContact
 	handleContactPress: () => void
+	handleSend: () => void
+	isFirst: boolean
+	isLast: boolean
+	isPayment?: boolean
 }
 
-export default function ContactPreview({ pubKey, handleContactPress }: IContactPreviewProps) {
-	const { inView } = useInView({ triggerOnce: true })
-	const { color } = useContext(ThemeContext)
-	const { profile } = useNostrProfile({ pubKey: inView ? pubKey : undefined })
+export default function ContactPreview({ contact, handleContactPress, handleSend, isFirst, isLast, isPayment }: IContactPreviewProps) {
+	const { t } = useTranslation(['common'])
+	const { color, highlight } = useContext(ThemeContext)
 
 	return (
-		<TouchableOpacity
-			style={[globals(color).wrapContainer, styles.bookEntry, styles.userEntryContainer]}
-			onPress={handleContactPress}
-		>
-			<View style={styles.picNameWrap}>
-				<ProfilePic uri={profile?.picture} />
-				<Username displayName={profile?.displayName} username={profile?.username} npub={pubKey} />
-			</View>
-			<View />
-			{profile ?
-				<ChevronRightIcon color={color.TEXT} />
+		<View style={[styles.container, { paddingTop: isFirst ? 10 : 0, paddingBottom: isLast ? 10 : 0 }]}>
+			<TouchableOpacity style={styles.colWrap} onPress={handleContactPress}>
+				<ProfilePic uri={contact[1]?.picture} />
+				{contact[1] ?
+					<View>
+						<Username
+							displayName={contact[1].displayName}
+							display_name={contact[1].display_name}
+							username={contact[1].username}
+							name={contact[1].name}
+							npub={truncateNpub(nip19.npubEncode(contact[0]))}
+							fontSize={16}
+						/>
+						{contact[1].about?.length > 0 &&
+							<Txt
+								txt={truncateAbout(contact[1].about)}
+								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}
+							/>
+						}
+					</View>
+					:
+					<Txt txt={truncateNpub(nip19.npubEncode(contact[0]))} styles={[{ fontWeight: '500' }]} />
+				}
+			</TouchableOpacity>
+			{isPayment && contact[1] ?
+				<ChevronRightIcon width={16} height={16} color={color.TEXT} />
 				:
-				<View />
+				!isPayment && contact[1] ?
+					<TouchableOpacity
+						style={[styles.sendEcashBtn, { backgroundColor: hi[highlight] }]}
+						onPress={handleSend}
+					>
+						<Txt txt={t('send')} styles={[styles.sendTxt]} />
+					</TouchableOpacity>
+					:
+					null
 			}
-		</TouchableOpacity>
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
-	bookEntry: {
+	container: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		marginVertical: 8,
+		paddingHorizontal: 20,
 	},
-	userEntryContainer: {
-		paddingVertical: 9,
-		marginBottom: 25,
-	},
-	picNameWrap: {
+	colWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
+		width: '70%'
+	},
+	sendEcashBtn: {
+		paddingHorizontal: 10,
+		paddingVertical: 5,
+		borderRadius: 50,
+	},
+	sendTxt: {
+		color: '#FAFAFA',
+		fontWeight: '500'
 	}
 })

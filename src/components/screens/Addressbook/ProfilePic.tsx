@@ -13,6 +13,11 @@ interface IProfilePicProps {
 
 export default function ProfilePic({ uri, size, isUser, withPlusIcon }: IProfilePicProps) {
 	const { color, highlight } = useContext(ThemeContext)
+	const defaultSize = isUser ? 60 : 40
+	const circleStyle = {
+		width: size || defaultSize,
+		height: size || defaultSize,
+		borderRadius: size ? size / 2 : defaultSize / 2 }
 
 	return (
 		<>
@@ -21,14 +26,14 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon }: IProfile
 					style={[
 						styles.circle,
 						styles.img,
-						{ width: size || 60, height: size || 60, borderRadius: size ? size / 2 : 30 }
+						circleStyle
 					]}
 					source={{ uri }}
 				/>
 				:
 				<View style={[
 					styles.circle,
-					{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG }
+					{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, ...circleStyle }
 				]}>
 					{withPlusIcon ?
 						<PlusIcon color={hi[highlight]} />

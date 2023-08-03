@@ -5,10 +5,12 @@ import { getProofsByMintUrl } from '@db'
 import type { IProofSelection } from '@model'
 import type { TCoinSelectionPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { truncateNpub } from '@nostr/util'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
 import { formatMintUrl, getSelectedAmount } from '@util'
+import { nip19 } from 'nostr-tools'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Switch, View } from 'react-native'
@@ -26,6 +28,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		recipient,
 		isMelt,
 		isSendEcash,
+		nostr,
 		isSwap,
 		targetMint
 	} = route.params
@@ -40,6 +43,12 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		if (isSwap) { return 'multimintSwap' }
 		return 'sendEcash'
 	}
+	const getRecipient = () => {
+		if (recipient) {
+			return recipient.length > 16 ? recipient.slice(0, 16) + '...' : recipient
+		}
+		return nostr && nostr.receiverName ? nostr.receiverName : truncateNpub(nip19.npubEncode(nostr?.receiverNpub || ''))
+	}
 	const submitPaymentReq = () => {
 		navigation.navigate('processing', {
 			mint,
@@ -48,6 +57,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			estFee,
 			isMelt,
 			isSendEcash,
+			nostr,
 			isSwap,
 			targetMint,
 			proofs: proofs.filter(p => p.selected),
@@ -72,8 +82,11 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 				<View style={[globals(color).wrapContainer, styles.wrap]}>
 					<OverviewRow txt1={t('paymentType')} txt2={t(getPaymentType())} />
 					<OverviewRow txt1={t('mint')} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
-					{recipient &&
-						<OverviewRow txt1={t('recipient')} txt2={recipient.length > 16 ? recipient.slice(0, 16) + '...' : recipient} />
+					{(recipient || nostr) &&
+						<OverviewRow
+							txt1={t('recipient')}
+							txt2={getRecipient()}
+						/>
 					}
 					{isSwap && targetMint &&
 						<OverviewRow txt1={t('recipient')} txt2={targetMint.customName || formatMintUrl(targetMint.mintUrl)} />
@@ -121,7 +134,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			</ScrollView>
 			<View style={{ padding: 20, paddingBottom: 20 + insets.bottom }}>
 				<Button
-					txt={t(isMelt ? 'submitPaymentReq' : 'createToken')}
+					txt={t(isMelt ? 'submitPaymentReq' : nostr ? 'sendEcash' : 'createToken')}
 					onPress={submitPaymentReq}
 				/>
 			</View>

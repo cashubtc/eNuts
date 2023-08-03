@@ -41,6 +41,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// Total Balance state (all mints)
 	const [balance, setBalance] = useState(0)
 	const [hasMint, setHasMint] = useState(false)
+	const [hasContacts, setHasContacts] = useState(false)
+	useEffect(() => {
+		void (async () => {
+			const npub = await store.get(STORE_KEYS.npub)
+			setHasContacts(!!npub)
+		})()
+	}, [])
 	// Prompt modal
 	const { prompt, openPromptAutoClose } = usePrompt()
 	// Cashu token hook
@@ -163,7 +170,16 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// user has only 1 mint with balance, he can skip the mint selection only for melting (he can mint new token with a mint that has no balance)
 		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
 		if ((isMelt || isSendEcash) && nonEmptyMints.length === 1) {
-			navigation.navigate(isMelt ? 'selectTarget' : 'selectAmount', {
+			// user has no nostr contacts so he can directly navigate to amount selection
+			if (!hasContacts && isSendEcash) {
+				navigation.navigate('selectAmount', {
+					mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
+					isSendEcash,
+					balance: nonEmptyMints[0].amount
+				})
+				return
+			}
+			navigation.navigate('selectTarget', {
 				mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
 				isMelt,
 				isSendEcash,

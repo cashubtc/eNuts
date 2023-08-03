@@ -1,39 +1,20 @@
-import { Image, StyleSheet, View } from 'react-native'
+import { Image, View } from 'react-native'
 
-export default function ProfileBanner({ uri }: { uri?: string }) {
+export default function ProfileBanner({ uri, isUser }: { uri?: string, isUser?: boolean }) {
+	const showBanner = uri?.length && isUser
 	return (
 		<View style={{ width: '100%', maxHeight: 200, justifyContent: 'center', overflow: 'hidden' }}>
 			<Image
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				source={uri?.length ? { uri } : require('@assets/mixed_forest.png')}
-				style={styles.banner}
+				source={showBanner ? { uri } : require('@assets/mixed_forest.png')}
+				style={{
+					width: showBanner ? '100%' : undefined,
+					height: 350,
+					resizeMode: showBanner ? 'cover' : 'contain',
+					opacity: showBanner ? 1 : .4,
+					marginTop: showBanner ? 0 : -150
+				}}
 			/>
 		</View>
 	)
 }
-
-const styles = StyleSheet.create({
-	banner: {
-		height: 250,
-		resizeMode: 'cover',
-	}
-})
-
-/*
-
-
-<div className={styles.bannerWrap}>
-			{src.length ?
-				<img src={src} alt='banner' className={styles.banner} />
-				:
-				<Image
-					src='/imgs/banner.jpg'
-					width={1200}
-					height={720}
-					alt='banner'
-					className={styles.banner}
-				/>
-			}
-		</div>
-
-*/

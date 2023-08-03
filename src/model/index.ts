@@ -126,3 +126,10 @@ export interface IKeyValuePair<T> {
 	key: string,
 	value: T
 }
+
+export interface IContact {
+	id?: number
+	name: string,
+	ln: string,
+	isOwner: boolean
+}

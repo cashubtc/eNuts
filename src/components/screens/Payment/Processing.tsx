@@ -3,8 +3,15 @@ import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import { l } from '@log'
+import type { IMintUrl } from '@model'
 import type { TProcessingPageProps } from '@model/nav'
+import { relay } from '@nostr/class/Relay'
+import { EventKind } from '@nostr/consts'
+import { encrypt } from '@nostr/crypto'
 import { ThemeContext } from '@src/context/Theme'
+import { cTo } from '@src/storage/store/utils'
+import { secureStore, store } from '@store'
+import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory, addToHistory } from '@store/HistoryStore'
 import { globals } from '@styles'
 import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
@@ -23,6 +30,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		estFee,
 		isMelt,
 		isSendEcash,
+		nostr,
 		isSwap,
 		targetMint,
 		proofs,
@@ -37,10 +45,20 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			errorMsg: isErr(e) ? e.message : translatedErrMsg
 		})
 	}
+	const getErrObj = (mint: IMintUrl, amount: number, fallbackMsg: string, e?: unknown) => ({
+		mint,
+		amount,
+		errorMsg: isErr(e) ? e.message : fallbackMsg
+	})
 	const getProcessingtxt = () => {
 		if (isMelt) { return 'processingPaymentByMint' }
 		if (isSwap) { return 'processingSwap' }
-		if (isSendEcash) { return 'creatingEcashToken' }
+		if (isSendEcash) {
+			if (nostr) {
+				return 'sendingEcashViaNostr'
+			}
+			return 'creatingEcashToken'
+		}
 		return 'awaitingInvoice'
 	}
 	const handleMintingProcess = async () => {
@@ -138,13 +156,45 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				value: token,
 				mints: [mint.mintUrl],
 			})
+			if (nostr) {
+				const sk = await secureStore.get(SECRET)
+				const userNostrNpub = await store.get(STORE_KEYS.npub)
+				if (!sk?.length) {
+					navigation.navigate(
+						'processingError',
+						getErrObj(mint, amount, t('createTokenErr', { ns: 'common' }))
+					)
+					return
+				}
+				l({})
+				const msg = `${userNostrNpub || nostr.senderName}  just sent you ${amount} Sat in Ecash using the eNuts wallet!\n\n ${token}`
+				const cipherTxt = encrypt(sk, nostr.receiverNpub, msg)
+				l({ cipherTxt })
+				const event = {
+					kind: EventKind.DirectMessage,
+					tags: [['p', nostr.receiverNpub]],
+					content: cipherTxt,
+					created_at: Math.ceil(Date.now() / 1000),
+				}
+				const userRelays = await store.get(STORE_KEYS.relays)
+				const published = await relay.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
+				if (!published) {
+					l('Something went wrong while publishing the event.')
+					navigation.navigate(
+						'processingError',
+						getErrObj(mint, amount, t('eventError', { ns: 'common' }))
+					)
+					return
+				}
+				navigation.navigate('success', { amount, nostr })
+				return
+			}
 			navigation.navigate('encodedToken', { token, amount })
 		} catch (e) {
-			navigation.navigate('processingError', {
-				mint,
-				amount,
-				errorMsg: isErr(e) ? e.message : 'Something went wrong while creating the Cashu token.'
-			})
+			navigation.navigate(
+				'processingError',
+				getErrObj(mint, amount, t('createTokenErr', { ns: 'common' }), e)
+			)
 		}
 	}
 	// start payment process

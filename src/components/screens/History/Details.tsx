@@ -89,8 +89,16 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		setIsSpent(true)
 		stopLoading()
 		openPromptAutoClose({
-			msg: t('claimBackSuccess', {amount: entry.amount < 0 ? Math.abs(entry.amount) : entry.amount}),
-			success: true
+			msg: t(
+				'claimBackSuccess',
+				{
+					amount: entry.amount < 0 ? Math.abs(entry.amount) : entry.amount,
+					mintUrl: entry.mints.map(m => formatMintUrl(m)).join(', '),
+					memo: tokenMemo
+				}
+			),
+			success: true,
+			ms: 3500
 		})
 	}
 	const handleQR = () => {

@@ -1,8 +1,7 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
 import { CashuMint, deriveKeysetId, getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
-import type { IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
-import type { IContact } from '@src/context/Contacts'
+import type { IContact, IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
 import { arrToChunks, isObj } from '@util'
 import * as SQLite from 'expo-sqlite'
 

@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
-	const { mint, balance, lnurl, isMelt, isSendEcash, isSwap, targetMint } = route.params
+	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
 	const { t } = useTranslation(['wallet'])
 	const { color, highlight } = useContext(ThemeContext)
 	const { anim, shake } = useShakeAnimation()
@@ -104,7 +104,8 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					mint,
 					balance,
 					amount: +amount,
-					isSendingWholeMintBal: isSendingWholeMintBal()
+					nostr,
+					isSendingWholeMintBal: !nostr && isSendingWholeMintBal()
 				})
 				return
 			}

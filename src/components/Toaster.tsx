@@ -1,11 +1,14 @@
 import { mainColors } from '@src/styles'
-import { StyleSheet, Text } from 'react-native'
+import { useState } from 'react'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function Toaster({ success, txt }: { success?: boolean, txt: string }) {
 	const insets = useSafeAreaInsets()
+	const [inView, setInView] = useState(true)
 	return (
+		inView &&
 		<Animated.View
 			entering={FadeInUp}
 			exiting={FadeOutUp}
@@ -14,9 +17,14 @@ export default function Toaster({ success, txt }: { success?: boolean, txt: stri
 				{ backgroundColor: success ? mainColors.VALID : mainColors.ERROR, top: insets.top + 20 }
 			]}
 		>
-			<Text style={styles.txt}>
-				{txt}
-			</Text>
+			<TouchableOpacity
+				onPress={() => setInView(false)}
+				style={{ padding: 15 }}
+			>
+				<Text style={styles.txt}>
+					{txt}
+				</Text>
+			</TouchableOpacity>
 		</Animated.View>
 	)
 }
@@ -24,7 +32,6 @@ export default function Toaster({ success, txt }: { success?: boolean, txt: stri
 const styles = StyleSheet.create({
 	container: {
 		position: 'absolute',
-		padding: 20,
 		alignItems: 'center',
 		left: 20,
 		right: 20,

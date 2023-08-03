@@ -7,17 +7,26 @@ import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TSelectTargetPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
+import { STORE_KEYS } from '@src/storage/store/consts'
+import { store } from '@store'
 import { globals } from '@styles'
 import { isNum } from '@util'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
-	const { mint, balance, remainingMints } = route.params
+	const { mint, balance, remainingMints, isSendEcash, nostr } = route.params
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
+	const [hasContacts, setHasContacts] = useState(false)
+	useEffect(() => {
+		void (async () => {
+			const npub = await store.get(STORE_KEYS.npub)
+			setHasContacts(!!npub)
+		})()
+	}, [])
 	return (
 		<Screen
 			screenName={t('cashOut', { ns: 'common' })}
@@ -26,43 +35,63 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 		>
 			<Txt styles={[styles.hint]} txt={t('chooseTarget')} />
 			<View style={[globals(color).wrapContainer, styles.targets]}>
-				<Target
-					txt={t('addressBook', { ns: 'topNav' })}
-					hint={t('meltAddressbookHint')}
-					onPress={() => {
-						navigation.navigate('Address book', {
-							isMelt: true,
-							mint,
-							balance: isNum(balance) ? balance : 0
-						})
-					}}
-					hasSeparator
-				/>
-				<Target
-					txt={t('inputField')}
-					hint={t('meltInputHint')}
-					onPress={() => navigation.navigate('meltInputfield', { mint, balance })}
-					hasSeparator
-				/>
-				<Target
-					txt={t('scanQR')}
-					hint={t('meltScanQRHint')}
-					onPress={() => navigation.navigate('qr scan', { mint, balance })}
-					hasSeparator
-				/>
-				<Target
-					txt={t('multimintSwap', { ns: 'common' })}
-					hint={t('meltSwapHint')}
-					onPress={() => {
-						l({ remainingMints })
-						// check if there is another mint except testmint
-						if (!remainingMints?.length) {
-							openPromptAutoClose({ msg: t('atLeast2Mints') })
-							return
+				{isSendEcash || nostr ?
+					<>
+						<Target
+							txt={t('copyShareToken')}
+							hint={t('copyShareTokenHint')}
+							onPress={() => navigation.navigate('selectAmount', { mint, balance, nostr, isSendEcash: true })}
+							hasSeparator
+						/>
+						<Target
+							txt={t('sendNostr')}
+							hint={t('sendNostrHint')}
+							onPress={() => navigation.navigate('Address book', { mint, balance, isSendEcash: true })}
+						/>
+					</>
+					:
+					<>
+						{hasContacts &&
+							<Target
+								txt={t('addressBook', { ns: 'topNav' })}
+								hint={t('meltAddressbookHint')}
+								onPress={() => {
+									navigation.navigate('Address book', {
+										isMelt: true,
+										mint,
+										balance: isNum(balance) ? balance : 0
+									})
+								}}
+								hasSeparator
+							/>
 						}
-						navigation.navigate('selectMintToSwapTo', { mint, balance, remainingMints })
-					}}
-				/>
+						<Target
+							txt={t('inputField')}
+							hint={t('meltInputHint')}
+							onPress={() => navigation.navigate('meltInputfield', { mint, balance })}
+							hasSeparator
+						/>
+						<Target
+							txt={t('scanQR')}
+							hint={t('meltScanQRHint')}
+							onPress={() => navigation.navigate('qr scan', { mint, balance })}
+							hasSeparator
+						/>
+						<Target
+							txt={t('multimintSwap', { ns: 'common' })}
+							hint={t('meltSwapHint')}
+							onPress={() => {
+								l({ remainingMints })
+								// check if there is another mint except testmint
+								if (!remainingMints?.length) {
+									openPromptAutoClose({ msg: t('atLeast2Mints') })
+									return
+								}
+								navigation.navigate('selectMintToSwapTo', { mint, balance, remainingMints })
+							}}
+						/>
+					</>
+				}
 			</View>
 			{prompt.open && <Toaster txt={prompt.msg} />}
 		</Screen>

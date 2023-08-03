@@ -1,3 +1,5 @@
+export type HexKey = string
+
 export interface IProfileContent {
 	about: string
 	banner: string
@@ -12,16 +14,17 @@ export interface IProfileContent {
 	website: string
 }
 
+export type TContact = [HexKey, IProfileContent | undefined]
+
+export type TUserRelays = string[]
+
 export enum NostrPrefix {
 	PublicKey = 'npub',
 	PrivateKey = 'nsec',
 	Note = 'note',
-
 	// TLV prefixes
 	Profile = 'nprofile',
 	Event = 'nevent',
 	Relay = 'nrelay',
 	Address = 'naddr',
 }
-
-export type HexKey = string

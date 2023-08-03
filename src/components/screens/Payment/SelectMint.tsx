@@ -29,6 +29,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		allMintsEmpty,
 		isMelt,
 		isSendEcash,
+		nostr,
 		invoice,
 		invoiceAmount
 	} = route.params
@@ -86,6 +87,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		// select ecash amount to send
 		navigation.navigate('selectAmount', {
 			mint,
+			nostr,
 			balance: mint.amount,
 			isSendEcash
 		})

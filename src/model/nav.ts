@@ -1,5 +1,4 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
-import type { IContact } from '@src/context/Contacts'
 
 import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection } from '.'
 import { IProfileContent } from './nostr'
@@ -31,6 +30,11 @@ export type RootStackParamList = {
 		mintsWithBal: IMintWithBalance[]
 		isMelt?: boolean
 		isSendEcash?: boolean
+		nostr?: {
+			senderName: string,
+			receiverNpub: string
+			receiverName?: string
+		}
 		balance?: number
 		allMintsEmpty?: boolean
 		invoice?: string
@@ -41,6 +45,11 @@ export type RootStackParamList = {
 		balance: number
 		isMelt?: boolean
 		isSendEcash?: boolean
+		nostr?: {
+			senderName: string,
+			receiverNpub: string
+			receiverName?: string
+		}
 		remainingMints?: IMintUrl[]
 	}
 	meltInputfield: {
@@ -56,6 +65,11 @@ export type RootStackParamList = {
 		mint: IMintUrl
 		isMelt?: boolean
 		isSendEcash?: boolean
+		nostr?: {
+			senderName: string,
+			receiverNpub: string
+			receiverName?: string
+		}
 		isSwap?: boolean
 		balance: number
 		lnurl?: string
@@ -65,7 +79,12 @@ export type RootStackParamList = {
 		mint: IMintUrl
 		balance: number
 		amount: number
-		isSendingWholeMintBal: boolean
+		isSendingWholeMintBal: boolean,
+		nostr?: {
+			senderName: string,
+			receiverNpub: string
+			receiverName?: string
+		}
 	}
 	coinSelection: {
 		mint: IMintUrl
@@ -74,6 +93,11 @@ export type RootStackParamList = {
 		estFee: number
 		isMelt?: boolean
 		isSendEcash?: boolean
+		nostr?: {
+			senderName: string,
+			receiverNpub: string
+			receiverName?: string
+		}
 		isSwap?: boolean
 		targetMint?: IMintUrl
 		recipient?: string
@@ -85,6 +109,11 @@ export type RootStackParamList = {
 		estFee?: number
 		isMelt?: boolean
 		isSendEcash?: boolean
+		nostr?: {
+			senderName: string,
+			receiverNpub: string
+			receiverName?: string
+		}
 		isSwap?: boolean
 		targetMint?: IMintUrl
 		proofs?: IProofSelection[]
@@ -114,6 +143,11 @@ export type RootStackParamList = {
 		memo?: string
 		isClaim?: boolean
 		isMelt?: boolean
+		nostr?: {
+			senderName: string,
+			receiverNpub: string
+			receiverName?: string
+		}
 	}
 	mintmanagement: {
 		mint: IMintUrl
@@ -141,9 +175,10 @@ export type RootStackParamList = {
 		token: string
 	}
 	'Address book'?: {
-		isMelt: boolean
+		isMelt?: boolean
 		mint: IMintUrl
 		balance: number
+		isSendEcash?: boolean
 	}
 	Contact: {
 		contact?: IProfileContent
