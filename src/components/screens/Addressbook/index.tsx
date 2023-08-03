@@ -77,7 +77,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					await store.setObj(STORE_KEYS.relays, relays)
 				}
 				if (e.created_at > latestContacts) {
-					l('new contact event')
 					// TODO save contacts in cache
 					latestContacts = e.created_at
 					setContacts(prev => (filterFollows(e.tags).map(f => [f, prev[1]])) as unknown as TContact[])
