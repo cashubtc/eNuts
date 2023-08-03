@@ -3,7 +3,7 @@ import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { env } from '@consts'
 import { FiveMins } from '@consts/time'
-import { addAllMintIds, getBalance, getContacts, getMintsBalances, getMintsUrls, getPreferences, initDb, setPreferences } from '@db'
+import { addAllMintIds, getBalance, getMintsBalances, getMintsUrls, getPreferences, initDb, setPreferences } from '@db'
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -11,7 +11,6 @@ import type { IPreferences, ITokenInfo } from '@model'
 import type { INavigatorProps } from '@model/nav'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
-import { ContactsContext, type IContact } from '@src/context/Contacts'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { PinCtx } from '@src/context/Pin'
@@ -125,12 +124,6 @@ function _App() {
 	const [highlight, setHighlight] = useState('Default')
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const themeData = useMemo(() => ({ pref, theme, setTheme, color, highlight, setHighlight }), [pref])
-	// address book
-	const [contacts, setContacts] = useState<IContact[]>([])
-	const hasOwnAddress = () => contacts.some(c => c.isOwner)
-	const getPersonalInfo = () => contacts.find(c => c.isOwner)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const contactData = useMemo(() => ({ contacts, setContacts, hasOwnAddress, getPersonalInfo }), [contacts])
 	// app foregorund, background
 	const appState = useRef(AppState.currentState)
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>()
@@ -267,14 +260,6 @@ function _App() {
 				await SplashScreen.hideAsync()
 			}
 		}
-		async function initContacts() {
-			try {
-				const contactsDB = await getContacts()
-				setContacts(contactsDB)
-			} catch (e) {
-				l('Error while initializing contacts from DB')
-			}
-		}
 		async function initAuth() {
 			const data = await Promise.all([
 				secureStore.get('auth_pin'),
@@ -295,7 +280,6 @@ function _App() {
 				store.get(STORE_KEYS.lang),
 				getMintsBalances(),
 				getBalance(),
-				initContacts(),
 				initPreferences(),
 				initAuth(),
 			])
@@ -356,43 +340,41 @@ function _App() {
 			>
 				<PinCtx.Provider value={pinData}>
 					<FocusClaimCtx.Provider value={claimData}>
-						<ContactsContext.Provider value={contactData}>
-							<KeyboardProvider>
-								<Navigator
-									shouldSetup={auth.shouldSetup}
-									pinHash={auth.pinHash}
-									bgAuth={bgAuth}
-									setBgAuth={setBgAuth}
+						<KeyboardProvider>
+							<Navigator
+								shouldSetup={auth.shouldSetup}
+								pinHash={auth.pinHash}
+								bgAuth={bgAuth}
+								setBgAuth={setBgAuth}
+							/>
+							<StatusBar style="auto" />
+							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
+							<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
+								<Text style={globals(color, highlight).modalHeader}>
+									{t('foundCashuClipboard')}
+								</Text>
+								<Text style={globals(color, highlight).modalTxt}>
+									{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
+									<Txt
+										txt={formatInt(tokenInfo?.value ?? 0)}
+										styles={[{ fontWeight: '500' }]}
+									/>
+									{' '}Satoshi {t('fromMint')}:{' '}
+									{tokenInfo?.mints.join(', ')}
+								</Text>
+								<Button
+									txt={t('accept')}
+									onPress={() => void handleRedeem()}
 								/>
-								<StatusBar style="auto" />
-								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-								<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
-									<Text style={globals(color, highlight).modalHeader}>
-										{t('foundCashuClipboard')}
-									</Text>
-									<Text style={globals(color, highlight).modalTxt}>
-										{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
-										<Txt
-											txt={formatInt(tokenInfo?.value ?? 0)}
-											styles={[{ fontWeight: '500' }]}
-										/>
-										{' '}Satoshi {t('fromMint')}:{' '}
-										{tokenInfo?.mints.join(', ')}
-									</Text>
-									<Button
-										txt={t('accept')}
-										onPress={() => void handleRedeem()}
-									/>
-									<View style={{ marginVertical: 10 }} />
-									<Button
-										txt={t('cancel')}
-										outlined
-										onPress={() => setClaimOpen(false)}
-									/>
-								</MyModal>
-								{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-							</KeyboardProvider>
-						</ContactsContext.Provider>
+								<View style={{ marginVertical: 10 }} />
+								<Button
+									txt={t('cancel')}
+									outlined
+									onPress={() => setClaimOpen(false)}
+								/>
+							</MyModal>
+							{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+						</KeyboardProvider>
 					</FocusClaimCtx.Provider>
 				</PinCtx.Provider>
 			</NavigationContainer>
