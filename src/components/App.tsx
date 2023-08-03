@@ -38,6 +38,7 @@ import { CustomErrorBoundary } from './screens/ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './screens/ErrorScreen/ErrorDetails'
 import Toaster from './Toaster'
 import Txt from './Txt'
+// import { dropAllData } from '@src/storage/dev'
 
 interface ILockData {
 	mismatch: boolean
@@ -310,8 +311,7 @@ function _App() {
 					openPromptAutoClose({ msg: isErr(e) ? e.message : t('addAllMintIdsErr', { ns: 'error' }) })
 				}
 			}
-			// await dropAll()
-			// await store.clear()
+			// await dropAllData()
 			setIsRdy(true)
 		}
 		void init().then(fsInfo)
