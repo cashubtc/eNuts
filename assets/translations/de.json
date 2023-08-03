@@ -138,6 +138,7 @@
 		"pay": "Zahlen",
 		"paymentPending": "Zahlung ausstehend",
 		"paymentSuccess": "Zahlung erfolgreich!",
+		"nostrPaymentSuccess": "via NOSTR versendet!",
 		"paymentType": "Zahlungstyp",
 		"payWithLn": "Zahle mit deiner LN wallet",
 		"processingPayment": "Zahlung wird ausgeführt",

@@ -54,7 +54,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 						<Text style={[styles.mintVersion, { color: color.TEXT, }]}>
 							{t('version')}: {info.version}
 						</Text>
-						{info.description?.length > 0 &&
+						{info.description && info.description.length > 0 &&
 							<Text style={[styles.mintVersion, { color: color.TEXT, }]}>
 								{info.description}
 							</Text>

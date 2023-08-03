@@ -138,6 +138,11 @@ export type RootStackParamList = {
 		memo?: string
 		isClaim?: boolean
 		isMelt?: boolean
+		nostr?: {
+			senderName: string,
+			receiverNpub: string
+			receiverName?: string
+		}
 	}
 	mintmanagement: {
 		mint: IMintUrl

@@ -79,7 +79,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				if (e.created_at > latestContacts) {
 					// TODO save contacts in cache
 					latestContacts = e.created_at
-					setContacts(prev => (filterFollows(e.tags).map(f => [f, prev[1]])) as unknown as TContact[])
+					setContacts(prev => (filterFollows(e.tags).map(f => [f, prev[1]])).reverse() as unknown as TContact[])
 				}
 			}
 		})

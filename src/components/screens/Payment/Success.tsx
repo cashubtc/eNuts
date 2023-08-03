@@ -12,7 +12,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
-	const { amount, memo, fee, mint, isClaim, isMelt } = route.params
+	const { amount, memo, fee, mint, isClaim, isMelt, nostr } = route.params
 	const { t } = useTranslation(['common'])
 	const { highlight } = useContext(ThemeContext)
 	const insets = useSafeAreaInsets()
@@ -22,10 +22,18 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 			<Logo size={250} style={styles.img} />
 			<View style={{ width: '100%' }}>
 				<Text style={styles.successTxt}>
+					{nostr &&
+						<>
+							{formatInt(amount || 0)} Satoshi {t('nostrPaymentSuccess')}!
+						</>
+					}
 					{isMelt ?
 						t('paymentSuccess')
 						:
-						<>{formatInt(amount || 0)} Satoshi {isClaim ? t('claimed') : t('minted')}!</>
+						!nostr ?
+							<>{formatInt(amount || 0)} Satoshi {isClaim ? t('claimed') : t('minted')}!</>
+							:
+							null
 					}
 				</Text>
 				{memo &&

@@ -3,18 +3,20 @@ import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import { l } from '@log'
+import type { IMintUrl } from '@model'
 import type { TProcessingPageProps } from '@model/nav'
 import { relay } from '@nostr/class/Relay'
 import { EventKind } from '@nostr/consts'
 import { encrypt } from '@nostr/crypto'
 import { ThemeContext } from '@src/context/Theme'
-import { secureStore } from '@store'
-import { SECRET } from '@store/consts'
+import { cTo } from '@src/storage/store/utils'
+import { secureStore, store } from '@store'
+import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory, addToHistory } from '@store/HistoryStore'
 import { globals } from '@styles'
 import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
-import { finishEvent, getPublicKey, validateEvent } from 'nostr-tools'
+import { nip19 } from 'nostr-tools'
 import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -44,6 +46,11 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			errorMsg: isErr(e) ? e.message : translatedErrMsg
 		})
 	}
+	const getErrObj = (mint: IMintUrl, amount: number, fallbackMsg: string, e?: unknown) => ({
+		mint,
+		amount,
+		errorMsg: isErr(e) ? e.message : fallbackMsg
+	})
 	const getProcessingtxt = () => {
 		if (isMelt) { return 'processingPaymentByMint' }
 		if (isSwap) { return 'processingSwap' }
@@ -152,44 +159,41 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			})
 			if (nostr) {
 				const sk = await secureStore.get(SECRET)
-				l({sk})
-				const pk = getPublicKey(sk || '')
-				l({pk})
-				l({receiverNpub: nostr.receiverNpub})
+				const receiverNpub = await store.get(STORE_KEYS.npub)
 				if (!sk?.length) {
-					navigation.navigate('processingError', {
-						mint,
-						amount,
-						errorMsg: 'Something went wrong while creating the Cashu token.'
-					})
+					navigation.navigate(
+						'processingError',
+						getErrObj(mint, amount, 'Something went wrong while creating the Cashu token.')
+					)
 					return
 				}
-				// const pk = await store.get(STORE_KEYS.nutpub)
-				// const msg = token // ${nostr.senderName} just sent you ${amount} Sat in Ecash using the eNuts wallet!
-				// const cipherTxt = encrypt(sk, pk, 'Hello world') // token
-				// l({ cipherTxt })
+				const msg = `${nip19.npubEncode(receiverNpub || '') + ` (${nostr.senderName})` || nostr.senderName}  just sent you ${amount} Sat in Ecash using the eNuts wallet!\n\n ${token}`
+				const cipherTxt = encrypt(sk, nostr.receiverNpub, msg)
 				const event = {
 					kind: EventKind.DirectMessage,
 					tags: [['p', nostr.receiverNpub]],
-					content: 'v6Ya9R3DkBx9iYH9kEWjdg==?iv=dyR/C/bTaUJ8Csp4P4JQpQ==',
+					content: cipherTxt,
 					created_at: Math.ceil(Date.now() / 1000),
 				}
-				// event.id = getEventHash(event)
-				const finishedEvent = finishEvent(event, sk)
-				l({ finishedEvent })
-				const isValid = validateEvent(finishedEvent)
-				l({ isValid })
-				// const userRelays = await store.get(STORE_KEYS.relays)
-				await relay.publishEvent(finishedEvent)
+				const userRelays = await store.get(STORE_KEYS.relays)
+				const published = await relay.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
+				if (!published) {
+					l('Something went wrong while publishing the event.')
+					navigation.navigate(
+						'processingError',
+						getErrObj(mint, amount, 'Something went wrong while publishing the event.')
+					)
+					return
+				}
+				navigation.navigate('success', { amount, nostr })
 				return
 			}
 			navigation.navigate('encodedToken', { token, amount })
 		} catch (e) {
-			navigation.navigate('processingError', {
-				mint,
-				amount,
-				errorMsg: isErr(e) ? e.message : 'Something went wrong while creating the Cashu token.'
-			})
+			navigation.navigate(
+				'processingError',
+				getErrObj(mint, amount, 'Something went wrong while creating the Cashu token.', e)
+			)
 		}
 	}
 	// start payment process

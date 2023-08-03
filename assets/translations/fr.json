@@ -138,6 +138,7 @@
 		"pay": "Payer",
 		"paymentPending": "Paiement en attente",
 		"paymentSuccess": "Paiement réussi!",
+		"nostrPaymentSuccess": "envoyé via NOSTR!",
 		"paymentType": "Type de paiement",
 		"payWithLn": "Payer avec votre portefeuille LN",
 		"processingPayment": "Traitement du paiement",
