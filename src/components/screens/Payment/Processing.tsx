@@ -162,7 +162,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				if (!sk?.length) {
 					navigation.navigate(
 						'processingError',
-						getErrObj(mint, amount, 'Something went wrong while creating the Cashu token.')
+						getErrObj(mint, amount, t('createTokenErr', { ns: 'common' }))
 					)
 					return
 				}
@@ -182,7 +182,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					l('Something went wrong while publishing the event.')
 					navigation.navigate(
 						'processingError',
-						getErrObj(mint, amount, 'Something went wrong while publishing the event.')
+						getErrObj(mint, amount, t('eventError', { ns: 'common' }))
 					)
 					return
 				}
@@ -193,7 +193,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		} catch (e) {
 			navigation.navigate(
 				'processingError',
-				getErrObj(mint, amount, 'Something went wrong while creating the Cashu token.', e)
+				getErrObj(mint, amount, t('createTokenErr', { ns: 'common' }), e)
 			)
 		}
 	}

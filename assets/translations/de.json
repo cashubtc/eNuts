@@ -72,6 +72,7 @@
 		"createInvoice": "Rechnung erstellen",
 		"createToken": "Token Erstellen",
 		"createTokenErr": "Es konnte kein Cashu-Token erstellt werden. Bitte versuchen Sie es später noch einmal.",
+		"eventError": "Ein Fehler ist aufgetreten während dem veröffentlichen der Nachricht.",
 		"createViaLn": "Rechnung Erstellen",
 		"creating": "Erstellen",
 		"darkMode": "Dunkler Modus",
@@ -179,7 +180,10 @@
 		"send&receive": "Senden & Empfangen",
 		"contactsNostr": "Kontakte & NOSTR",
 		"nostrExplainer": "eNuts ermöglicht Ecash-Überweisungen über NOSTR-DMs und nahtlose Kontaktsynchronisierung mit NPUB. Keine Notwendigkeit, Ihren privaten Schlüssel einzugeben, da eNuts einen neuen für Sie generiert. Ihr NOSTR-Profil und Ihre Daten werden mit Ihrem öffentlichen Schlüssel angezeigt, während der neu generierte private Schlüssel eine reibungslose Interaktion mit NOSTR-DMs ermöglicht.",
-		"send": "Senden"
+		"send": "Senden",
+		"FoundNoLnurl": "Keine LNURL gefunden",
+		"invalidNpub": "invalider NPUB!",
+		"invalidNpubHex": "Invalider hex!"
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

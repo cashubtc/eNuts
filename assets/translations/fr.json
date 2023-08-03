@@ -72,6 +72,7 @@
 		"createInvoice": "Créer une facture",
 		"createToken": "Créer un token",
 		"createTokenErr": "Impossible de créer un Cashu token. Veuillez réessayer ultérieurement.",
+		"eventError": "Une erreur s'est produite lors de la publication du message.",
 		"createViaLn": "Créer Une Facture",
 		"creating": "Création en cours",
 		"darkMode": "Mode sombre",
@@ -179,7 +180,10 @@
 		"send&receive": "Envoyer et recevoir",
 		"contactsNostr": "Contacts & NOSTR",
 		"nostrExplainer": "eNuts permet des transferts Ecash via NOSTR DMs et une synchronisation transparente des contacts avec NPUB. Pas besoin d'entrer votre clé privée, car eNuts en génère une nouvelle pour vous. Votre profil et vos données NOSTR sont affichés à l'aide de votre clé publique, tandis que la nouvelle clé privée générée facilite une interaction fluide avec les DMs NOSTR.",
-		"send": "Envoyer"
+		"send": "Envoyer",
+		"FoundNoLnurl": "Pas trouver votre LNURL",
+		"invalidNpub": "NPUB invalid!",
+		"invalidNpubHex": "Hex invalid!"
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",

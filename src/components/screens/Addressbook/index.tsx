@@ -129,7 +129,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		}
 		// user wants to melt to his own lnurl
 		if (!userProfile?.lud16) {
-			openPromptAutoClose({ msg: 'no ln TODO: translate' })
+			openPromptAutoClose({ msg: t('FoundNoLnurl') })
 			return
 		}
 		navigation.navigate('selectAmount', { isMelt, lnurl: userProfile?.lud16, mint, balance })
@@ -175,12 +175,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const handleNewNpub = async () => {
 		if (!pubKey.encoded.length || !pubKey.encoded.startsWith('npub')) {
 			// TODO translate
-			openPromptAutoClose({ msg: 'Invalid NPUB!' })
+			openPromptAutoClose({ msg: t('invalidNpub') })
 			return
 		}
 		if (!isStr(pubKey.hex) || pubKey.hex.length !== npubLength) {
 			// TODO translate
-			openPromptAutoClose({ msg: 'Invalid hex!' })
+			openPromptAutoClose({ msg: t('invalidNpubHex') })
 			return
 		}
 		// generate new nsec

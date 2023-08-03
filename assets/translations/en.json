@@ -72,6 +72,7 @@
 		"createInvoice": "Create invoice",
 		"createToken": "Create Token",
 		"createTokenErr": "Could not create a cashu token. Please try again later.",
+		"eventError": "Something went wrong while publishing the event.",
 		"createViaLn": "Create Invoice",
 		"creating": "Creating",
 		"darkMode": "Dark mode",
@@ -179,7 +180,10 @@
 		"send&receive": "Send & receive",
 		"contactsNostr": "Contacts & NOSTR",
 		"nostrExplainer": "eNuts allows Ecash transfers via NOSTR DMs and seamless contact syncing using your NPUB. No need to enter your private key, as eNuts generates a new one for you. Your NOSTR profile and data are displayed using your public key, while the new generated private key enables smooth interaction with NOSTR DMs.",
-		"send": "Send"
+		"send": "Send",
+		"FoundNoLnurl": "Found no LNURL",
+		"invalidNpub": "NPUB invalid!",
+		"invalidNpubHex": "Hex invalid!"
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",
