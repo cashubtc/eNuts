@@ -7,9 +7,11 @@ import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TSelectTargetPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
+import { STORE_KEYS } from '@src/storage/store/consts'
+import { store } from '@store'
 import { globals } from '@styles'
 import { isNum } from '@util'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -18,6 +20,13 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
+	const [hasContacts, setHasContacts] = useState(false)
+	useEffect(() => {
+		void (async () => {
+			const npub = await store.get(STORE_KEYS.npub)
+			setHasContacts(!!npub)
+		})()
+	}, [])
 	return (
 		<Screen
 			screenName={t('cashOut', { ns: 'common' })}
@@ -42,18 +51,20 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					</>
 					:
 					<>
-						<Target
-							txt={t('addressBook', { ns: 'topNav' })}
-							hint={t('meltAddressbookHint')}
-							onPress={() => {
-								navigation.navigate('Address book', {
-									isMelt: true,
-									mint,
-									balance: isNum(balance) ? balance : 0
-								})
-							}}
-							hasSeparator
-						/>
+						{hasContacts &&
+							<Target
+								txt={t('addressBook', { ns: 'topNav' })}
+								hint={t('meltAddressbookHint')}
+								onPress={() => {
+									navigation.navigate('Address book', {
+										isMelt: true,
+										mint,
+										balance: isNum(balance) ? balance : 0
+									})
+								}}
+								hasSeparator
+							/>
+						}
 						<Target
 							txt={t('inputField')}
 							hint={t('meltInputHint')}
