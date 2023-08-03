@@ -1,10 +1,8 @@
 import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
-import { ChevronRightIcon } from '@comps/Icons'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
-import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
@@ -15,13 +13,13 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { relay } from '@nostr/class/Relay'
 import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
-import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays, truncateAbout } from '@nostr/util'
+import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays } from '@nostr/util'
 import { FlashList, type ViewToken } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
-import { globals, highlight as hi } from '@styles'
+import { globals } from '@styles'
 import { isStr } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { type Event as NostrEvent, generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
@@ -30,8 +28,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import ContactPreview from './ContactPreview'
-import ProfilePic from './ProfilePic'
-import Username from './Username'
+import UserProfile from './UserProfile'
 
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
 	const { t } = useTranslation(['common'])
@@ -61,9 +58,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		let latestRelays = 0 	// createdAt
 		let latestContacts = 0 	// createdAt
 		sub?.on('event', async (e: NostrEvent) => {
-			// if (+e.kind === EventKind.DirectMessage) {
-			// 	l({ eventDM: e.content })
-			// }
 			if (+e.kind === EventKind.SetMetadata) {
 				// TODO save user metadata in cache
 				setUserProfile(parseProfileContent(e))
@@ -187,7 +181,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		}
 		// generate new nsec
 		const sk = generatePrivateKey() // `sk` is a hex string
-		l('sk generated')
 		const pk = getPublicKey(sk) 	// `pk` is a hex string
 		await Promise.all([
 			store.set(STORE_KEYS.npub, pubKey.encoded), // save nostr encoded pubKey
@@ -275,7 +268,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				store.getObj<TUserRelays>(STORE_KEYS.relays),
 			])
 			setPubKey({ encoded: data[0] || '', hex: data[1] || '' })
-			l('user relays in store: ', data[2])
 			setUserRelays(data[2] || [])
 			initUserData({ pubKey: data[1] || '', userRelays: data[2] || [] })
 		})()
@@ -294,33 +286,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				<ContactsCount count={contacts.length} relaysCount={userRelays.length} />
 			</View>
 			{/* user own profile */}
-			<TouchableOpacity
-				style={[globals(color).wrapContainer, styles.bookEntry, styles.userEntryContainer]}
-				onPress={() => handleContactPress({ isUser: true })}
-			>
-				<View style={styles.picNameWrap}>
-					<ProfilePic uri={userProfile?.picture} withPlusIcon={!pubKey.hex} isUser />
-					{pubKey.hex.length ?
-						<View>
-							<Username
-								displayName={userProfile?.displayName}
-								display_name={userProfile?.display_name}
-								username={userProfile?.username}
-								name={userProfile?.name}
-								npub={pubKey.encoded}
-							/>
-							<Txt txt={truncateAbout(userProfile?.about || '')} styles={[{ color: color.TEXT_SECONDARY }]} />
-						</View>
-						:
-						<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
-					}
-				</View>
-				{userProfile ?
-					<ChevronRightIcon color={color.TEXT} />
-					:
-					<View />
-				}
-			</TouchableOpacity>
+			<UserProfile
+				pubKey={pubKey}
+				userProfile={userProfile}
+				handlePress={handleContactPress}
+			/>
 			{/* user contacts */}
 			{contacts.length > 0 &&
 				<View style={[globals(color).wrapContainer, styles.contactsWrap]}>
@@ -421,19 +391,9 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		marginTop: 100,
 	},
-	userEntryContainer: {
-		paddingVertical: 9,
-		marginBottom: 25,
-	},
 	subHeader: {
 		fontSize: 16,
 		fontWeight: '500',
-	},
-	bookEntry: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		marginVertical: 8,
 	},
 	cancel: {
 		marginTop: 25,
@@ -455,8 +415,4 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 		marginRight: 20,
 	},
-	picNameWrap: {
-		flexDirection: 'row',
-		alignItems: 'center'
-	}
 })
