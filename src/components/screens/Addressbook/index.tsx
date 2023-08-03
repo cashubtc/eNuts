@@ -281,7 +281,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut', { ns: 'common' }) : t('addressBook', { ns: 'topNav' })}
-				withBackBtn={route.params?.isMelt}
+				withBackBtn={route.params?.isMelt || route.params?.isSendEcash}
 				handlePress={() => navigation.goBack()}
 			/>
 			{/* Header */}
