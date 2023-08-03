@@ -45,6 +45,11 @@ export type RootStackParamList = {
 		balance: number
 		isMelt?: boolean
 		isSendEcash?: boolean
+		nostr?: {
+			senderName: string,
+			receiverNpub: string
+			receiverName?: string
+		}
 		remainingMints?: IMintUrl[]
 	}
 	meltInputfield: {
@@ -170,9 +175,10 @@ export type RootStackParamList = {
 		token: string
 	}
 	'Address book'?: {
-		isMelt: boolean
+		isMelt?: boolean
 		mint: IMintUrl
 		balance: number
+		isSendEcash?: boolean
 	}
 	Contact: {
 		contact?: IProfileContent

@@ -119,16 +119,44 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		})
 	}, [setMetadata])
 
-	// User is in melting process
-	const handleMelt = () => {
+	// User is in payment process
+	const handleMelt = (contact?: IProfileContent) => {
 		if (!route.params) { return }
 		const { isMelt, mint, balance } = route.params
-		const userLn = userProfile?.lud16 || userProfile?.lud06
-		if (!userLn) {
+		// user wants to melt to a contact address
+		if (contact) {
+			if (!contact.lud16) {
+				// melting target contact has no lnurl
+				openPromptAutoClose({ msg: 'Receiver has no LNURL' })
+				return
+			}
+			navigation.navigate('selectAmount', { isMelt, lnurl: contact.lud16, mint, balance })
+			return
+		}
+		// user wants to melt to his own lnurl
+		if (!userProfile?.lud16) {
 			openPromptAutoClose({ msg: 'no ln TODO: translate' })
 			return
 		}
-		navigation.navigate('selectAmount', { isMelt, lnurl: userLn, mint, balance })
+		navigation.navigate('selectAmount', { isMelt, lnurl: userProfile?.lud16, mint, balance })
+	}
+
+	const handleEcash = (receiverNpub?: string, receiverName?: string) => {
+		if (!route.params) { return }
+		const { mint, balance, isSendEcash } = route.params
+		navigation.navigate(
+			'selectAmount',
+			{
+				mint,
+				balance,
+				isSendEcash,
+				nostr: {
+					senderName: getNostrUsername(userProfile?.displayName, userProfile?.display_name, userProfile?.username, userProfile?.name),
+					receiverNpub: (nip19.decode(receiverNpub || '').data || '') as string,
+					receiverName,
+				},
+			}
+		)
 	}
 
 	// Paste/Clear input for LNURL/LN invoice
@@ -173,12 +201,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		initUserData({ pubKey: hex })
 	}
 
-	// opens profile screen
 	const handleContactPress = ({ contact, npub, isUser }: { contact?: IProfileContent, npub?: string, isUser?: boolean }) => {
-		if (!isUser && npub?.length) {
+		if (!contact) { return }
+		// navigate to contact screen
+		if (!isUser && !route.params?.isSendEcash) {
 			navigation.navigate('Contact', {
 				contact,
-				npub,
+				npub: npub || '',
 				isUser
 			})
 			return
@@ -188,13 +217,19 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			setNewNpubModal(true)
 			return
 		}
+		// user is in payment process
 		// user wants to melt
 		if (route.params?.isMelt) {
-			handleMelt()
+			handleMelt(contact)
 			return
 		}
-		// navigate to user profile
+		// user wants to send ecash
+		if (!isUser && route.params?.isSendEcash) {
+			handleEcash(npub, getNostrUsername(contact?.displayName, contact?.display_name, contact?.username, contact?.name))
+			return
+		}
 		if (!userProfile) { return }
+		// navigate to user profile
 		navigation.navigate('Contact', {
 			contact: userProfile,
 			npub: pubKey.encoded,
@@ -310,6 +345,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 								}}
 								isFirst={index === 0}
 								isLast={index === contacts.length - 1}
+								isPayment={route.params?.isSendEcash}
 							/>
 						)}
 						ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}

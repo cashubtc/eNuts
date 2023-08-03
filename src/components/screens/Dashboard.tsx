@@ -163,7 +163,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// user has only 1 mint with balance, he can skip the mint selection only for melting (he can mint new token with a mint that has no balance)
 		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
 		if ((isMelt || isSendEcash) && nonEmptyMints.length === 1) {
-			navigation.navigate(isMelt ? 'selectTarget' : 'selectAmount', {
+			navigation.navigate('selectTarget', {
 				mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
 				isMelt,
 				isSendEcash,

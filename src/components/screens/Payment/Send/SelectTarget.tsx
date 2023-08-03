@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
-	const { mint, balance, remainingMints } = route.params
+	const { mint, balance, remainingMints, isSendEcash, nostr } = route.params
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
@@ -26,43 +26,61 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 		>
 			<Txt styles={[styles.hint]} txt={t('chooseTarget')} />
 			<View style={[globals(color).wrapContainer, styles.targets]}>
-				<Target
-					txt={t('addressBook', { ns: 'topNav' })}
-					hint={t('meltAddressbookHint')}
-					onPress={() => {
-						navigation.navigate('Address book', {
-							isMelt: true,
-							mint,
-							balance: isNum(balance) ? balance : 0
-						})
-					}}
-					hasSeparator
-				/>
-				<Target
-					txt={t('inputField')}
-					hint={t('meltInputHint')}
-					onPress={() => navigation.navigate('meltInputfield', { mint, balance })}
-					hasSeparator
-				/>
-				<Target
-					txt={t('scanQR')}
-					hint={t('meltScanQRHint')}
-					onPress={() => navigation.navigate('qr scan', { mint, balance })}
-					hasSeparator
-				/>
-				<Target
-					txt={t('multimintSwap', { ns: 'common' })}
-					hint={t('meltSwapHint')}
-					onPress={() => {
-						l({ remainingMints })
-						// check if there is another mint except testmint
-						if (!remainingMints?.length) {
-							openPromptAutoClose({ msg: t('atLeast2Mints') })
-							return
-						}
-						navigation.navigate('selectMintToSwapTo', { mint, balance, remainingMints })
-					}}
-				/>
+				{isSendEcash || nostr ?
+					<>
+						<Target
+							txt={t('copyShareToken')}
+							hint={t('copyShareTokenHint')}
+							onPress={() => navigation.navigate('selectAmount', { mint, balance, nostr, isSendEcash: true })}
+							hasSeparator
+						/>
+						<Target
+							txt={t('sendNostr')}
+							hint={t('sendNostrHint')}
+							onPress={() => navigation.navigate('Address book', { mint, balance, isSendEcash: true })}
+						/>
+					</>
+					:
+					<>
+						<Target
+							txt={t('addressBook', { ns: 'topNav' })}
+							hint={t('meltAddressbookHint')}
+							onPress={() => {
+								navigation.navigate('Address book', {
+									isMelt: true,
+									mint,
+									balance: isNum(balance) ? balance : 0
+								})
+							}}
+							hasSeparator
+						/>
+						<Target
+							txt={t('inputField')}
+							hint={t('meltInputHint')}
+							onPress={() => navigation.navigate('meltInputfield', { mint, balance })}
+							hasSeparator
+						/>
+						<Target
+							txt={t('scanQR')}
+							hint={t('meltScanQRHint')}
+							onPress={() => navigation.navigate('qr scan', { mint, balance })}
+							hasSeparator
+						/>
+						<Target
+							txt={t('multimintSwap', { ns: 'common' })}
+							hint={t('meltSwapHint')}
+							onPress={() => {
+								l({ remainingMints })
+								// check if there is another mint except testmint
+								if (!remainingMints?.length) {
+									openPromptAutoClose({ msg: t('atLeast2Mints') })
+									return
+								}
+								navigation.navigate('selectMintToSwapTo', { mint, balance, remainingMints })
+							}}
+						/>
+					</>
+				}
 			</View>
 			{prompt.open && <Toaster txt={prompt.msg} />}
 		</Screen>

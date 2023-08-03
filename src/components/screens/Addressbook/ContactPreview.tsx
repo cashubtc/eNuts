@@ -1,3 +1,4 @@
+import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { TContact } from '@model/nostr'
 import { truncateAbout, truncateNpub } from '@nostr/util'
@@ -17,9 +18,10 @@ interface IContactPreviewProps {
 	handleSend: () => void
 	isFirst: boolean
 	isLast: boolean
+	isPayment?: boolean
 }
 
-export default function ContactPreview({ contact, handleContactPress, handleSend, isFirst, isLast }: IContactPreviewProps) {
+export default function ContactPreview({ contact, handleContactPress, handleSend, isFirst, isLast, isPayment }: IContactPreviewProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 
@@ -48,12 +50,19 @@ export default function ContactPreview({ contact, handleContactPress, handleSend
 					<Txt txt={truncateNpub(nip19.npubEncode(contact[0]))} styles={[{ fontWeight: '500' }]} />
 				}
 			</TouchableOpacity>
-			<TouchableOpacity
-				style={[styles.sendEcashBtn, { backgroundColor: hi[highlight] }]}
-				onPress={handleSend}
-			>
-				<Txt txt={t('send')} styles={[styles.sendTxt]} />
-			</TouchableOpacity>
+			{isPayment && contact[1] ?
+				<ChevronRightIcon width={16} height={16} color={color.TEXT} />
+				:
+				!isPayment && contact[1] ?
+					<TouchableOpacity
+						style={[styles.sendEcashBtn, { backgroundColor: hi[highlight] }]}
+						onPress={handleSend}
+					>
+						<Txt txt={t('send')} styles={[styles.sendTxt]} />
+					</TouchableOpacity>
+					:
+					null
+			}
 		</View>
 	)
 }
