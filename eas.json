@@ -4,6 +4,7 @@
 	},
 	"build": {
 		"development": {
+			"node": "18.16.1",
 			"developmentClient": true,
 			"env": {
 				"APP_VARIANT": "dev"
@@ -17,7 +18,7 @@
 			}
 		},
 		"preview": {
-			"channel": "preview",
+			"node": "18.16.1",
 			"distribution": "internal",
 			"env": {
 				"APP_VARIANT": "preview"
@@ -30,6 +31,7 @@
 			}
 		},
 		"production": {
+			"node": "18.16.1",
 			"ios": {
 				"resourceClass": "m-medium"
 			},

@@ -65,8 +65,7 @@ const config: ExpoConfig = {
 		'expo-localization',
 		['expo-barcode-scanner', { cameraPermission }],
 		['expo-camera', { cameraPermission }],
-		'sentry-expo',
-		'expo-updates'
+		'sentry-expo'
 	],
 	ios: {
 		supportsTablet: true,
@@ -105,13 +104,6 @@ const config: ExpoConfig = {
 				}
 			}
 		]
-	},
-	updates: {
-		enabled:false,
-		url: 'https://u.expo.dev/edb75ccd-71ac-4934-9147-baf1c7f2b068'
-	},
-	runtimeVersion: {
-		policy: 'sdkVersion'
 	}
 }
 

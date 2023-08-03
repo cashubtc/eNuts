@@ -18,7 +18,6 @@ import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
-import { PermissionStatus } from 'expo-modules-core'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -146,7 +145,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	useEffect(() => {
 		const getBarCodeScannerPermissions = async () => {
 			const { status } = await BarCodeScanner.requestPermissionsAsync()
-			setHasPermission(status === PermissionStatus.GRANTED)
+			setHasPermission(status === 'granted')
 		}
 		void getBarCodeScannerPermissions()
 	}, [])
