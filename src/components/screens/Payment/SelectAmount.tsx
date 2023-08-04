@@ -296,6 +296,8 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 	actionBtn: {
-		padding: 20
+		padding: 20,
+		flexDirection: 'row',
+		alignItems: 'center',
 	}
 })

@@ -97,7 +97,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					}
 					<OverviewRow
 						txt1={t('balanceAfterTX')}
-						txt2={estFee > 0 ? `${balance - amount - estFee} to ${balance - amount} Satoshi` : `${balance - amount} Satoshi`}
+						txt2={estFee > 0 ? `${balance - amount - estFee} ${t('to')} ${balance - amount} Satoshi` : `${balance - amount} Satoshi`}
 					/>
 					{memo && memo.length > 0 &&
 						<OverviewRow txt1={t('memo', { ns: 'history' })} txt2={memo} />
