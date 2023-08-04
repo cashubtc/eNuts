@@ -2,6 +2,7 @@ import { AboutIcon, ChevronRightIcon, HistoryIcon, SwapCurrencyIcon } from '@com
 import { setPreferences } from '@db'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { PrivacyContext } from '@src/context/Privacy'
 import { ThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
 import { formatBalance, formatInt, isBool } from '@util'
@@ -21,8 +22,14 @@ interface IBalanceProps {
 export default function Balance({ balance, nav }: IBalanceProps) {
 	const { t } = useTranslation(['common'])
 	const { pref, color, highlight } = useContext(ThemeContext)
+	const { hidden } = useContext(PrivacyContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
+	const showBalance = () => {
+		if (hidden) { return '-' }
+		return formatSats ? formatBalance(balance) : formatInt(balance)
+	}
 	const toggleBalanceFormat = () => {
+		if (hidden) { return }
 		setFormatSats(prev => !prev)
 		if (!pref || !isBool(formatSats)) { return }
 		// update DB
@@ -38,7 +45,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			{/* balance */}
 			<TouchableOpacity style={styles.balanceWrap} onPress={toggleBalanceFormat}>
 				<Text style={styles.balAmount}>
-					{formatSats ? formatBalance(balance) : formatInt(balance)}
+					{showBalance()}
 				</Text>
 				<View style={styles.balAssetNameWrap}>
 					<Text style={styles.balAssetName}>

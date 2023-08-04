@@ -36,7 +36,8 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const isSettingsRelatedScreen = route.name === 'Settings' ||
 		route.name === 'Display settings' ||
 		route.name === 'Security settings' ||
-		route.name === 'BackupPage'
+		route.name === 'BackupPage' ||
+		route.name === 'Privacy settings'
 
 	return (
 		<View style={[styles.bottomNav, { backgroundColor: color.BACKGROUND, paddingBottom: isIOS ? 40 : 10 }]}>

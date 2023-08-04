@@ -14,6 +14,7 @@ import { NavigationContainer, NavigationContainerRef } from '@react-navigation/n
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { PinCtx } from '@src/context/Pin'
+import { PrivacyContext } from '@src/context/Privacy'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
@@ -124,6 +125,8 @@ function _App() {
 	const [highlight, setHighlight] = useState('Default')
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const themeData = useMemo(() => ({ pref, theme, setTheme, color, highlight, setHighlight }), [pref])
+	const [hidden, setHidden] = useState(false)
+	const privacData = useMemo(() => ({ hidden, setHidden }), [hidden])
 	// app foregorund, background
 	const appState = useRef(AppState.currentState)
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>()
@@ -248,6 +251,9 @@ function _App() {
 				setPref({ ...prefsDB, darkmode })
 				setTheme(darkmode ? 'Dark' : 'Light')
 				setHighlight(prefsDB.theme)
+				// init privacy preferences
+				const isHidden = await store.get(STORE_KEYS.hiddenBal)
+				setHidden(!!isHidden)
 			} catch (e) {
 				l(e)
 				setPref({
@@ -265,8 +271,6 @@ function _App() {
 				secureStore.get(SECURESTORE_KEY),
 				store.get(STORE_KEYS.pinSkipped),
 			])
-			l({shouldSetup1: !isStr(data[1])})
-			l({shouldSetup2: !data[1]?.length})
 			setAuth({
 				pinHash: isNull(data[0]) ? '' : data[0],
 				shouldSetup: !isStr(data[1]) || !data[1]?.length
@@ -335,51 +339,53 @@ function _App() {
 
 	return (
 		<ThemeContext.Provider value={themeData}>
-			<NavigationContainer
-				theme={theme === 'Light' ? light : dark}
-				ref={navigation}
-				onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
-			>
-				<PinCtx.Provider value={pinData}>
-					<FocusClaimCtx.Provider value={claimData}>
-						<KeyboardProvider>
-							<Navigator
-								shouldSetup={auth.shouldSetup}
-								pinHash={auth.pinHash}
-								bgAuth={bgAuth}
-								setBgAuth={setBgAuth}
-							/>
-							<StatusBar style="auto" />
-							{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-							<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
-								<Text style={globals(color, highlight).modalHeader}>
-									{t('foundCashuClipboard')}
-								</Text>
-								<Text style={globals(color, highlight).modalTxt}>
-									{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
-									<Txt
-										txt={formatInt(tokenInfo?.value ?? 0)}
-										styles={[{ fontWeight: '500' }]}
+			<PrivacyContext.Provider value={privacData}>
+				<NavigationContainer
+					theme={theme === 'Light' ? light : dark}
+					ref={navigation}
+					onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
+				>
+					<PinCtx.Provider value={pinData}>
+						<FocusClaimCtx.Provider value={claimData}>
+							<KeyboardProvider>
+								<Navigator
+									shouldSetup={auth.shouldSetup}
+									pinHash={auth.pinHash}
+									bgAuth={bgAuth}
+									setBgAuth={setBgAuth}
+								/>
+								<StatusBar style="auto" />
+								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
+								<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
+									<Text style={globals(color, highlight).modalHeader}>
+										{t('foundCashuClipboard')}
+									</Text>
+									<Text style={globals(color, highlight).modalTxt}>
+										{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
+										<Txt
+											txt={formatInt(tokenInfo?.value ?? 0)}
+											styles={[{ fontWeight: '500' }]}
+										/>
+										{' '}Satoshi {t('fromMint')}:{' '}
+										{tokenInfo?.mints.join(', ')}
+									</Text>
+									<Button
+										txt={t('accept')}
+										onPress={() => void handleRedeem()}
 									/>
-									{' '}Satoshi {t('fromMint')}:{' '}
-									{tokenInfo?.mints.join(', ')}
-								</Text>
-								<Button
-									txt={t('accept')}
-									onPress={() => void handleRedeem()}
-								/>
-								<View style={{ marginVertical: 10 }} />
-								<Button
-									txt={t('cancel')}
-									outlined
-									onPress={() => setClaimOpen(false)}
-								/>
-							</MyModal>
-							{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-						</KeyboardProvider>
-					</FocusClaimCtx.Provider>
-				</PinCtx.Provider>
-			</NavigationContainer>
+									<View style={{ marginVertical: 10 }} />
+									<Button
+										txt={t('cancel')}
+										outlined
+										onPress={() => setClaimOpen(false)}
+									/>
+								</MyModal>
+								{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+							</KeyboardProvider>
+						</FocusClaimCtx.Provider>
+					</PinCtx.Provider>
+				</NavigationContainer>
+			</PrivacyContext.Provider>
 		</ThemeContext.Provider>
 	)
 }

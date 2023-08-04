@@ -1,5 +1,5 @@
 import usePrompt from '@comps/hooks/Prompt'
-import { AboutIcon, ChevronRightIcon, HamburgerIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon } from '@comps/Icons'
+import { AboutIcon, ChevronRightIcon, EyeClosedIcon, HamburgerIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
@@ -40,6 +40,14 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					txtColor={color.TEXT}
 					icon={<LockIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Security settings')}
+					hasSeparator
+					hasChevron
+				/>
+				<SettingsMenuItem
+					txt={t('privacy', { ns: 'topNav' })}
+					txtColor={color.TEXT}
+					icon={<EyeClosedIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('Privacy settings')}
 					hasSeparator
 					hasChevron
 				/>

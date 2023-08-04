@@ -1,4 +1,5 @@
 import ContactPage from '@comps/screens/Addressbook/Contact'
+import PrivacySettings from '@comps/screens/Settings/Privacy'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
 import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -103,6 +104,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='Settings' component={Settings} />
 				<Stack.Screen name='Display settings' component={DisplaySettings} />
 				<Stack.Screen name='Security settings' component={SecuritySettings} />
+				<Stack.Screen name='Privacy settings' component={PrivacySettings} />
 				<Stack.Screen name='Language settings' component={LanguageSettings} />
 				<Stack.Screen name='Advanced settings' component={AdvancedFunctionScreen} />
 				<Stack.Screen name='About settings' component={AboutSettings} />

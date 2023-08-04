@@ -189,7 +189,8 @@
 		"receiveEcashDashboard": "Collez et utilisez un Cashu token depuis votre presse-papiers.",
 		"receiveEcashNostr": "NOSTR messages",
 		"receiveEcashNostrHint": "Vérifiez vos messages sur NOSTR pour les Cashu token entrants.",
-		"createInvoiceDashboard": "Recevez l'Ecash depuis une mint en payant une facture Lightning."
+		"createInvoiceDashboard": "Recevez l'Ecash depuis une mint en payant une facture Lightning.",
+		"hideNuts": "Masquer votre solde total"
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",
@@ -303,7 +304,8 @@
 		"mintBackup": "Sauvegarde des fonds",
 		"mintSettings": "Paramètres des mints",
 		"security": "Sécurité",
-		"settings": "Paramètres"
+		"settings": "Paramètres",
+		"privacy": "Vie privée"
 	},
 	"wallet": {
 		"cashuContent": "Bien que l'auteur de Cashu ne soit pas un cryptographe et que le protocole soit encore en cours d'examen, cela suscite des inquiétudes quant à l'existence potentielle de défauts graves. En conséquence, Cashu n'est pas encore prêt pour une utilisation en production.",

@@ -15,8 +15,9 @@ export type RootStackParamList = {
 	history: undefined
 	mints: undefined
 	Settings: undefined
-	'Display settings': undefined
 	'Security settings': undefined
+	'Privacy settings': undefined
+	'Display settings': undefined
 	'Language settings': undefined
 	'Advanced settings': undefined
 	'About settings': undefined
@@ -217,6 +218,7 @@ export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 
 export type TSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Settings'>
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
 export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>
+export type TPrivacySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Privacy settings'>
 export type TLanguageSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Language settings'>
 export type TAdvancedSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Advanced settings'>
 export type TAboutSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'About settings'>
@@ -235,6 +237,7 @@ export type TBottomNavProps =
 	TBackupPageProps |
 	TSecuritySettingsPageProps |
 	TDisplaySettingsPageProps |
+	TPrivacySettingsPageProps |
 	TSettingsPageProps |
 	IContactPageProps
 export interface INavigatorProps {

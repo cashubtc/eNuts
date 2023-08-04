@@ -11,6 +11,7 @@ export const STORE_KEYS = {
 	reqTimeout: 'request_timeout',
 	lang: 'settings_lang',
 	defaultMint: 'MINT_STORE=|:|=default_mint',
+	hiddenBal: 'privacy_balance'
 	// mintCustomName: 'MINT_STORE=|:|=NAME=|:|={{mintUrl}}'
 }
 

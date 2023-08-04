@@ -189,7 +189,8 @@
 		"receiveEcashDashboard": "Fügen Sie ein Cashu-Token aus Ihrer Zwischenablage ein.",
 		"receiveEcashNostr": "NOSTR Nachrichten",
 		"receiveEcashNostrHint": "Überprüfen Sie Ihre NOSTR Nachrichten auf eingehende Cashu-Token.",
-		"createInvoiceDashboard": "Empfangen Sie Ecash von einer Mint, indem Sie eine Lightning-Rechnung bezahlen."
+		"createInvoiceDashboard": "Empfangen Sie Ecash von einer Mint, indem Sie eine Lightning-Rechnung bezahlen.",
+		"hideNuts": "Verbergen Sie Ihren Gesamtsaldo"
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",
@@ -303,7 +304,8 @@
 		"mintBackup": "Guthabensicherung",
 		"mintSettings": "Mint Einstellungen",
 		"security": "Sicherheit",
-		"settings": "Einstellungen"
+		"settings": "Einstellungen",
+		"privacy": "Privatsphäre"
 	},
 	"wallet": {
 		"cashuContent": "Obwohl der Autor von Cashu kein Kryptograf ist und das Protokoll noch überprüft wird, bestehen Bedenken hinsichtlich möglicher schwerwiegender Mängel. Daher ist Cashu noch nicht für den produktiven Einsatz bereit.",

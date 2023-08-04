@@ -189,7 +189,8 @@
 		"receiveEcashDashboard": "Paste and redeem a Cashu token from your clipboard.",
 		"receiveEcashNostr": "NOSTR direct messages",
 		"receiveEcashNostrHint": "Check your personal NOSTR messages for incoming Cashu tokens.",
-		"createInvoiceDashboard": "Receive Ecash from a mint by paying a Lightning invoice."
+		"createInvoiceDashboard": "Receive Ecash from a mint by paying a Lightning invoice.",
+		"hideNuts": "Hide your total balance"
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",
@@ -303,7 +304,8 @@
 		"mintBackup": "Backup funds",
 		"mintSettings": "Mint settings",
 		"security": "Security",
-		"settings": "Settings"
+		"settings": "Settings",
+		"privacy": "Privacy"
 	},
 	"wallet": {
 		"cashuContent": "Although the author of Cashu is not a cryptographer and the protocol is still under review, it raises concerns about the potential existence of fatal flaws. As a result, Cashu is not yet production-ready.",
