@@ -42,8 +42,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { prompt, openPromptAutoClose } = usePrompt()
 
 	// gets user data from cache or relay
-	const initUserData = useCallback(({ userRelays }: { userRelays?: TUserRelays }) => {
-		if (!pubKey.hex || (userProfile && contacts.length)) {
+	const initUserData = useCallback(({ hex, userRelays }: { hex: string, userRelays?: TUserRelays }) => {
+		if (!hex || (userProfile && contacts.length)) {
 			l('no pubKey or user data already available')
 			return
 		}
@@ -51,7 +51,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// TODO use cache if available
 		const sub = relay.subscribePool({
 			relayUrls: userRelays,
-			authors: [pubKey.hex],
+			authors: [hex],
 			kinds: [EventKind.SetMetadata, EventKind.ContactList], // EventKind.DirectMessage
 			skipVerification: true // debug
 		})
@@ -168,7 +168,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			setPubKey({ encoded: clipboard, hex: nip19.decode(clipboard).data as string || '' })
 			return
 		}
-		setPubKey({encoded: nip19.npubEncode(clipboard), hex: clipboard})
+		setPubKey({ encoded: nip19.npubEncode(clipboard), hex: clipboard })
 	}
 
 	// save npub pasted by user
@@ -194,7 +194,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		])
 		// close modal
 		setNewNpubModal(false)
-		initUserData({})
+		initUserData({ hex: pubKey.hex })
 	}
 
 	const handleContactPress = ({ contact, npub, isUser }: { contact?: IProfileContent, npub?: string, isUser?: boolean }) => {
@@ -272,7 +272,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			])
 			setPubKey({ encoded: data[0] || '', hex: data[1] || '' })
 			setUserRelays(data[2] || [])
-			initUserData({ userRelays: data[2] || [] })
+			initUserData({ hex: data[1] || '', userRelays: data[2] || [] })
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])

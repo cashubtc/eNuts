@@ -9,6 +9,7 @@ import { getBackUpToken } from '@db/backup'
 import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { ThemeContext } from '@src/context/Theme'
+import { SECURESTORE_KEY } from '@src/storage/store/consts'
 import { secureStore } from '@store'
 import { globals } from '@styles'
 import { isNull } from '@util'
@@ -35,7 +36,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		}
 	}
 	const handlePin = async () => {
-		const pinHash = await secureStore.get('auth_pin')
+		const pinHash = await secureStore.get(SECURESTORE_KEY)
 		setPin(isNull(pinHash) ? '' : pinHash)
 	}
 	useEffect(() => void handlePin(), [])

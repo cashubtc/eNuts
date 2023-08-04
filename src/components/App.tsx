@@ -16,7 +16,7 @@ import { KeyboardProvider } from '@src/context/Keyboard'
 import { PinCtx } from '@src/context/Pin'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
-import { STORE_KEYS } from '@store/consts'
+import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
@@ -262,12 +262,12 @@ function _App() {
 		}
 		async function initAuth() {
 			const data = await Promise.all([
-				secureStore.get('auth_pin'),
+				secureStore.get(SECURESTORE_KEY),
 				store.get(STORE_KEYS.pinSkipped),
 			])
 			setAuth({
 				pinHash: isNull(data[0]) ? '' : data[0],
-				shouldSetup: !isStr(data[1]) || !data[1].length
+				shouldSetup: !isStr(data[1]) || !data[1]?.length
 			})
 			// check for pin attempts and app locked state
 			await handlePinForeground()
