@@ -9,7 +9,7 @@ import { truncateNpub } from '@nostr/util'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
-import { formatMintUrl, getSelectedAmount } from '@util'
+import { formatMintUrl, getSelectedAmount, isLnurl } from '@util'
 import { nip19 } from 'nostr-tools'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -45,7 +45,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	}
 	const getRecipient = () => {
 		if (recipient) {
-			return recipient.length > 16 ? recipient.slice(0, 16) + '...' : recipient
+			return recipient.length > 16 && !isLnurl(recipient) ? recipient.slice(0, 16) + '...' : recipient
 		}
 		return nostr && nostr.receiverName ? nostr.receiverName : truncateNpub(nip19.npubEncode(nostr?.receiverNpub || ''))
 	}
