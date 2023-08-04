@@ -183,7 +183,13 @@
 		"send": "Senden",
 		"FoundNoLnurl": "Keine LNURL gefunden",
 		"invalidNpub": "invalider NPUB!",
-		"invalidNpubHex": "Invalider hex!"
+		"invalidNpubHex": "Invalider hex!",
+		"sendEcashDashboard": "Erstellen Sie ein Cashu-Token und senden Sie es an jeden beliebigen.",
+		"payInvoiceDashboard": "Senden Sie Ihr Guthaben von einer Mint an eine Lightning-Adresse.",
+		"receiveEcashDashboard": "Fügen Sie ein Cashu-Token aus Ihrer Zwischenablage ein.",
+		"receiveEcashNostr": "NOSTR Nachrichten",
+		"receiveEcashNostrHint": "Überprüfen Sie Ihre NOSTR Nachrichten auf eingehende Cashu-Token.",
+		"createInvoiceDashboard": "Empfangen Sie Ecash von einer Mint, indem Sie eine Lightning-Rechnung bezahlen."
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

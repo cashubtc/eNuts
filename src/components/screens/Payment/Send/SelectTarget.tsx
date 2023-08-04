@@ -1,32 +1,24 @@
+import useNostr from '@comps/hooks/Nostr'
 import usePrompt from '@comps/hooks/Prompt'
-import { ChevronRightIcon } from '@comps/Icons'
+import Option from '@comps/Option'
 import Screen from '@comps/Screen'
-import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TSelectTargetPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
-import { STORE_KEYS } from '@src/storage/store/consts'
-import { store } from '@store'
 import { globals } from '@styles'
 import { isNum } from '@util'
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
 	const { mint, balance, remainingMints, isSendEcash, nostr } = route.params
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
-	const [hasContacts, setHasContacts] = useState(false)
-	useEffect(() => {
-		void (async () => {
-			const npub = await store.get(STORE_KEYS.npub)
-			setHasContacts(!!npub)
-		})()
-	}, [])
+	const { hasContacts } = useNostr()
 	return (
 		<Screen
 			screenName={t('cashOut', { ns: 'common' })}
@@ -37,13 +29,13 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 			<View style={[globals(color).wrapContainer, styles.targets]}>
 				{isSendEcash || nostr ?
 					<>
-						<Target
+						<Option
 							txt={t('copyShareToken')}
 							hint={t('copyShareTokenHint')}
 							onPress={() => navigation.navigate('selectAmount', { mint, balance, nostr, isSendEcash: true })}
 							hasSeparator
 						/>
-						<Target
+						<Option
 							txt={t('sendNostr')}
 							hint={t('sendNostrHint')}
 							onPress={() => navigation.navigate('Address book', { mint, balance, isSendEcash: true })}
@@ -52,7 +44,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					:
 					<>
 						{hasContacts &&
-							<Target
+							<Option
 								txt={t('addressBook', { ns: 'topNav' })}
 								hint={t('meltAddressbookHint')}
 								onPress={() => {
@@ -65,19 +57,19 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 								hasSeparator
 							/>
 						}
-						<Target
+						<Option
 							txt={t('inputField')}
 							hint={t('meltInputHint')}
 							onPress={() => navigation.navigate('meltInputfield', { mint, balance })}
 							hasSeparator
 						/>
-						<Target
+						<Option
 							txt={t('scanQR')}
 							hint={t('meltScanQRHint')}
 							onPress={() => navigation.navigate('qr scan', { mint, balance })}
 							hasSeparator
 						/>
-						<Target
+						<Option
 							txt={t('multimintSwap', { ns: 'common' })}
 							hint={t('meltSwapHint')}
 							onPress={() => {
@@ -98,29 +90,6 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	)
 }
 
-interface ITargetProps {
-	txt: string
-	hint: string
-	onPress: () => void
-	hasSeparator?: boolean
-}
-
-function Target({ txt, hint, onPress, hasSeparator }: ITargetProps) {
-	const { color } = useContext(ThemeContext)
-	return (
-		<>
-			<TouchableOpacity style={styles.target} onPress={onPress}>
-				<View>
-					<Txt styles={[{ fontWeight: '500' }]} txt={txt} />
-					<Txt styles={[styles.targetHint, { color: color.TEXT_SECONDARY }]} txt={hint} />
-				</View>
-				<ChevronRightIcon color={color.TEXT} />
-			</TouchableOpacity>
-			{hasSeparator && <Separator style={[styles.separator]} />}
-		</>
-	)
-}
-
 const styles = StyleSheet.create({
 	hint: {
 		paddingHorizontal: 20,
@@ -129,17 +98,5 @@ const styles = StyleSheet.create({
 	},
 	targets: {
 		paddingVertical: 20,
-	},
-	target: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	targetHint: {
-		fontSize: 12,
-		maxWidth: '95%'
-	},
-	separator: {
-		marginVertical: 20,
 	},
 })

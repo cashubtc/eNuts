@@ -2,6 +2,7 @@
 import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
+import useNostr from '@comps/hooks/Nostr'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
 import { MintBoardIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
@@ -41,13 +42,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// Total Balance state (all mints)
 	const [balance, setBalance] = useState(0)
 	const [hasMint, setHasMint] = useState(false)
-	const [hasContacts, setHasContacts] = useState(false)
-	useEffect(() => {
-		void (async () => {
-			const npub = await store.get(STORE_KEYS.npub)
-			setHasContacts(!!npub)
-		})()
-	}, [])
 	// Prompt modal
 	const { prompt, openPromptAutoClose } = usePrompt()
 	// Cashu token hook
@@ -60,6 +54,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setTrustModal
 	} = useCashuToken()
 	const { loading, startLoading, stopLoading } = useLoading()
+	const { hasContacts } = useNostr()
 	// modals
 	const [modal, setModal] = useState({
 		mint: false,
@@ -294,15 +289,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					setModal({ ...modal, mint: false })
 				}}
 			/>
-			{/* Receive options */}
-			<OptsModal
-				visible={modal.receiveOpts}
-				button1Txt={loading ? t('claiming', { ns: 'wallet' }) : t('pasteToken', { ns: 'wallet' })}
-				onPressFirstBtn={() => void handleClaimBtnPress()}
-				button2Txt={t('createLnInvoice', { ns: 'wallet' })}
-				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: false })}
-				onPressCancel={closeOptsModal}
-			/>
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}
@@ -312,6 +298,16 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: true, isSendEcash: false })}
 				onPressCancel={closeOptsModal}
 				isSend
+			/>
+			{/* Receive options */}
+			<OptsModal
+				visible={modal.receiveOpts}
+				button1Txt={loading ? t('claiming', { ns: 'wallet' }) : t('pasteToken', { ns: 'wallet' })}
+				onPressFirstBtn={() => void handleClaimBtnPress()}
+				button2Txt={t('createLnInvoice', { ns: 'wallet' })}
+				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: false })}
+				onPressCancel={closeOptsModal}
+				loading={loading}
 			/>
 			{/* Prompt toaster */}
 			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}

@@ -183,7 +183,13 @@
 		"send": "Send",
 		"FoundNoLnurl": "Found no LNURL",
 		"invalidNpub": "NPUB invalid!",
-		"invalidNpubHex": "Hex invalid!"
+		"invalidNpubHex": "Hex invalid!",
+		"sendEcashDashboard": "Create a Cashu token and send it to anyone.",
+		"payInvoiceDashboard": "Send your funds from a mint to a Lightning address.",
+		"receiveEcashDashboard": "Paste and redeem a Cashu token from your clipboard.",
+		"receiveEcashNostr": "NOSTR direct messages",
+		"receiveEcashNostrHint": "Check your personal NOSTR messages for incoming Cashu tokens.",
+		"createInvoiceDashboard": "Receive Ecash from a mint by paying a Lightning invoice."
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",
