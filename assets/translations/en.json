@@ -292,7 +292,9 @@
 		"swapSuccess": "Successfully swaped {{amount}} Satoshi from {{srcMint}} to {{targetMint}}",
 		"testMintHint": "This is a test mint to play around with. Add it anyway?",
 		"trustMintSure": "Are you sure that you want to trust this mint?",
-		"updatedDefault": "Updated the default mint"
+		"updatedDefault": "Updated the default mint",
+		"newMintAdded": "Mint added!",
+		"newMintAddedQuestion": "Do you want to receive Ecash from it now?"
 	},
 	"topNav": {
 		"about": "About us",

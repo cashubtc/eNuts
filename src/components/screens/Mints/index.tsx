@@ -1,6 +1,7 @@
+import ActionButtons from '@comps/ActionButtons'
 import Button, { IconBtn } from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
-import { ChevronRightIcon, MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
+import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
@@ -16,7 +17,7 @@ import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl, isErr, isUrl } from '@util'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -38,6 +39,8 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	const [defaultMint, setDefaultM] = useState('')
 	// modal visibility state for adding a new mint
 	const [newMintModal, setNewMintModal] = useState(false)
+	// modal visibility for top up a newly added mint
+	const [topUpModal, setTopUpModal] = useState(false)
 	// the text input for adding a new mint
 	const [input, setInput] = useState('')
 	// visibility state for trusting a new mint that us not in the user mint list
@@ -100,7 +103,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			return
 		}
 		setTrustModalOpen(false)
-		openPromptAutoClose({ msg: t('newMintSuccess', { mintUrl: formatMintUrl(selectedMint.mintUrl), ns: 'mints' }), success: true })
+		setTopUpModal(true)
 		// update mints list state
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
@@ -212,6 +215,35 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
 					<Txt txt={t('cancel')} styles={[globals(color, highlight).pressTxt]} />
 				</TouchableOpacity>
+			</MyModal>
+			{/* Top up newly added mint */}
+			<MyModal
+				type='bottom'
+				animation='slide'
+				visible={topUpModal}
+				close={() => setTopUpModal(false)}
+			>
+				<View style={{ alignItems: 'center', justifyContent: 'center' }}>
+					<CheckCircleIcon width={50} height={50} color={mainColors.VALID} />
+					<Text style={globals(color).modalHeader}>
+						{t('newMintAdded', { ns: 'mints' })}
+					</Text>
+					<Txt
+						txt={t('newMintAddedQuestion', { ns: 'mints' })}
+						styles={[{ marginTop: -20, marginBottom: 30 }]}
+					/>
+				</View>
+				<ActionButtons
+					topBtnTxt={t('yes')}
+					topBtnAction={() => {
+						navigation.navigate('selectAmount', {
+							mint: selectedMint || { mintUrl: '', customName: '' },
+							balance: 0,
+						})
+					}}
+					bottomBtnTxt={t('willDoLater')}
+					bottomBtnAction={() => setTopUpModal(false)}
+				/>
 			</MyModal>
 			<QuestionModal
 				header={selectedMint?.mintUrl === _testmintUrl ?

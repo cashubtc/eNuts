@@ -292,7 +292,9 @@
 		"swapSuccess": "{{amount}} Satoshi erfolgreich von {{srcMint}} zu {{targetMint}} getauscht",
 		"testMintHint": "Dies ist eine Test-Mint für Simulationszwecke. Trotzdem hinzufügen?",
 		"trustMintSure": "Sind Sie sicher, dass Sie dieser Mint vertrauen möchten?",
-		"updatedDefault": "Änderungen gespeichert"
+		"updatedDefault": "Änderungen gespeichert",
+		"newMintAdded": "Mint hinzugefügt!",
+		"newMintAddedQuestion": "Möchten Sie jetzt Ecash empfangen?"
 	},
 	"topNav": {
 		"about": "Über uns",
