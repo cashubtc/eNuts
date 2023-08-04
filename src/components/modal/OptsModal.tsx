@@ -1,13 +1,13 @@
 
 import useNostr from '@comps/hooks/Nostr'
-import { CopyIcon, ReceiveIcon, SendIcon, ZapIcon } from '@comps/Icons'
+import { CopyIcon, NostrIcon, ReceiveIcon, SendIcon, ZapIcon } from '@comps/Icons'
 import Option from '@comps/Option'
 import Txt from '@comps/Txt'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import MyModal from '.'
 
@@ -53,13 +53,7 @@ export default function OptsModal({
 				/>
 				{!isSend && hasContacts &&
 					<Option
-						icon={
-							<Image
-								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-								source={require('@assets/nostr.png')}
-								style={styles.nostrIcon}
-							/>
-						}
+						icon={<NostrIcon />}
 						txt={t('receiveEcashNostr')}
 						hint={t('receiveEcashNostrHint')}
 						onPress={() => {
@@ -103,9 +97,4 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		padding: 10,
 	},
-	nostrIcon: {
-		width: 30,
-		height: 30,
-		marginLeft: -5
-	}
 })

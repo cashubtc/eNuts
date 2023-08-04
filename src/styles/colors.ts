@@ -69,10 +69,13 @@ const GREY2 = '#5F6368'
 const VALID = '#5DB075'
 const WARN = '#FF9900'
 const ERROR = '#FF6666'
+const BLUE = '#027DFF'
 export const mainColors = {
 	VALID,
 	WARN,
-	ERROR
+	ERROR,
+	BLUE,
+
 }
 
 // light theme

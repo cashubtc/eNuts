@@ -1,13 +1,13 @@
 import useNostr from '@comps/hooks/Nostr'
 import usePrompt from '@comps/hooks/Prompt'
+import { BookIcon, NostrIcon, ScanQRIcon, ShareIcon, SwapIcon, ZapIcon } from '@comps/Icons'
 import Option from '@comps/Option'
 import Screen from '@comps/Screen'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
-import { l } from '@log'
 import type { TSelectTargetPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
-import { globals } from '@styles'
+import { globals, highlight, mainColors } from '@styles'
 import { isNum } from '@util'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,12 +30,14 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 				{isSendEcash || nostr ?
 					<>
 						<Option
+							icon={<ShareIcon width={20} height={20} color={mainColors.VALID} />}
 							txt={t('copyShareToken')}
 							hint={t('copyShareTokenHint')}
 							onPress={() => navigation.navigate('selectAmount', { mint, balance, nostr, isSendEcash: true })}
 							hasSeparator
 						/>
 						<Option
+							icon={<NostrIcon />}
 							txt={t('sendNostr')}
 							hint={t('sendNostrHint')}
 							onPress={() => navigation.navigate('Address book', { mint, balance, isSendEcash: true })}
@@ -45,6 +47,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					<>
 						{hasContacts &&
 							<Option
+								icon={<BookIcon color={highlight['Nostr']} />}
 								txt={t('addressBook', { ns: 'topNav' })}
 								hint={t('meltAddressbookHint')}
 								onPress={() => {
@@ -58,22 +61,24 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 							/>
 						}
 						<Option
+							icon={<ZapIcon width={28} height={28} color={mainColors.WARN} />}
 							txt={t('inputField')}
 							hint={t('meltInputHint')}
 							onPress={() => navigation.navigate('meltInputfield', { mint, balance })}
 							hasSeparator
 						/>
 						<Option
+							icon={<ScanQRIcon color={highlight['Sky']} />}
 							txt={t('scanQR')}
 							hint={t('meltScanQRHint')}
 							onPress={() => navigation.navigate('qr scan', { mint, balance })}
 							hasSeparator
 						/>
 						<Option
+							icon={<SwapIcon color={highlight['Zap']} />}
 							txt={t('multimintSwap', { ns: 'common' })}
 							hint={t('meltSwapHint')}
 							onPress={() => {
-								l({ remainingMints })
 								// check if there is another mint except testmint
 								if (!remainingMints?.length) {
 									openPromptAutoClose({ msg: t('atLeast2Mints') })
