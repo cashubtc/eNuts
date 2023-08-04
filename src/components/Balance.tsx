@@ -22,7 +22,6 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 	const { t } = useTranslation(['common'])
 	const { pref, color, highlight } = useContext(ThemeContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
-	// const { prompt, openPromptAutoClose } = usePrompt()
 	const toggleBalanceFormat = () => {
 		setFormatSats(prev => !prev)
 		if (!pref || !isBool(formatSats)) { return }

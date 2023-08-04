@@ -36,6 +36,11 @@ const styles = StyleSheet.create({
 		left: 20,
 		right: 20,
 		borderRadius: 8,
+		shadowColor: '#171717',
+		shadowOffset: { width: 3, height: 3 },
+		shadowOpacity: 0.2,
+		shadowRadius: 3,
+		elevation: 20,
 	},
 	txt: {
 		fontSize: 18,
