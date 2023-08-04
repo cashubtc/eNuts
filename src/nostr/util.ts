@@ -17,6 +17,11 @@ export function nip05toURL(identifier: string) {
 	return `https://${domain}/.well-known/nostr.json?name=${name}`
 }
 
+export function nip05toWebsite(identifier: string) {
+	const domain = identifier.split('@')[1]
+	return `https://${domain}`
+}
+
 /**
  * JSON.parse the nostr user profile metadata
  */

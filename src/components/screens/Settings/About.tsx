@@ -1,16 +1,12 @@
-import Button from '@comps/Button'
-import usePrompt from '@comps/hooks/Prompt'
 import { ChevronRightIcon } from '@comps/Icons'
-import MyModal from '@comps/modal'
+import LeaveAppModal from '@comps/LeaveAppModal'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import type { TAboutSettingsPageProps } from '@model/nav'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { isErr, openUrl } from '@util'
-import { useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -18,17 +14,13 @@ import { version } from '../../../../package.json'
 
 export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { color } = useContext(ThemeContext)
 	const [visible, setVisible] = useState(false)
+	const closeModal = useCallback(() => setVisible(false), [])
 	const [url, setUrl] = useState('')
 	const handlePress = (url: string) => {
 		setVisible(true)
 		setUrl(url)
-	}
-	const handleContinue = async () => {
-		setVisible(false)
-		await openUrl(url)?.catch(e => openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 	}
 	return (
 		<Screen
@@ -58,21 +50,7 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 				/>
 			</View>
 			<Txt txt={`eNuts v${version}`} styles={[styles.version]} />
-			<MyModal type='bottom' animation='slide' visible={visible} close={() => setVisible(false)}>
-				<Text style={globals(color, highlight).modalHeader}>
-					{t('aboutToLeaveTo')}
-				</Text>
-				<Text style={globals(color, highlight).modalTxt}>
-					&quot;{url}&quot;
-				</Text>
-				<Button txt={t('continue')} onPress={() => void handleContinue()} />
-				<TouchableOpacity onPress={() => setVisible(false)}>
-					<Text style={[globals(color, highlight).pressTxt, styles.cancel]}>
-						{t('cancel')}
-					</Text>
-				</TouchableOpacity>
-			</MyModal>
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+			<LeaveAppModal url={url} visible={visible} closeModal={closeModal} />
 		</Screen>
 	)
 }

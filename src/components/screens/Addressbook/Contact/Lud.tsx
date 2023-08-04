@@ -5,11 +5,9 @@ import { highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
-export default function Lud({ lud16, lud06 }: { lud16?: string, lud06?: string }) {
+export default function Lud({ lud16, lud06, onPress }: { lud16?: string, lud06?: string, onPress: (url: string) => void }) {
 	const { highlight } = useContext(ThemeContext)
-	const handleLud = () => {
-		// href={nip05toURL(nip05)}
-	}
+	// TODO add zaps: `lightning:${paymentRequest}`
 	return (
 		<>
 			{lud16 || lud06 ?
@@ -17,7 +15,7 @@ export default function Lud({ lud16, lud06 }: { lud16?: string, lud06?: string }
 					<View style={styles.iconWrap}>
 						<ZapIcon width={22} height={22} color={hi[highlight]} />
 					</View>
-					<TouchableOpacity onPress={handleLud}>
+					<TouchableOpacity onPress={() => onPress('lightning://')}>
 						<Txt
 							txt={(lud16 || lud06)?.substring(0, 50) || ''}
 							styles={[{ color: hi[highlight], paddingBottom: 3 }]}

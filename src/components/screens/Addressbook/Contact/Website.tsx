@@ -5,20 +5,15 @@ import { highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
-export default function Website({ website }: { website?: string }) {
+export default function Website({ website, onPress }: { website?: string, onPress: (url: string) => void }) {
 	const { highlight } = useContext(ThemeContext)
-
-	const handleWebsite = () => {
-		// href={nip05toURL(nip05)}
-	}
-
 	return (
 		website?.length ?
 			<View style={styles.infoWrap}>
 				<View style={styles.iconWrap}>
 					<LinkIcon width={20} height={20} color={hi[highlight]} />
 				</View>
-				<TouchableOpacity onPress={handleWebsite}>
+				<TouchableOpacity onPress={() => onPress(website)}>
 					<Txt txt={website.split('://')[1]} styles={[{color: hi[highlight], paddingBottom: 3}]} />
 				</TouchableOpacity>
 			</View>

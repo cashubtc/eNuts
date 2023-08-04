@@ -1,4 +1,7 @@
+import usePrompt from '@comps/hooks/Prompt'
 import { CopyIcon } from '@comps/Icons'
+import LeaveAppModal from '@comps/LeaveAppModal'
+import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { getMintsBalances } from '@db'
 import type { IContactPageProps } from '@model/nav'
@@ -10,7 +13,7 @@ import { STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -26,6 +29,18 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const { t } = useTranslation(['addrBook'])
 	const { color, highlight } = useContext(ThemeContext)
 	const [nutPub, setNutPub] = useState('')
+	const [visible, setVisible] = useState(false)
+	const closeModal = useCallback(() => setVisible(false), [])
+	const [url, setUrl] = useState('')
+	const { prompt, openPromptAutoClose } = usePrompt()
+	const handlePress = (url: string) => {
+		if (url === 'lightning://') {
+			openPromptAutoClose({ msg: '⚠️ Zaps will be added soon... ⚡👀' })
+			return
+		}
+		setVisible(true)
+		setUrl(url)
+	}
 
 	// start sending ecash via nostr
 	const handleSend = async () => {
@@ -115,16 +130,18 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					}
 					{/* tags */}
 					<View style={styles.tagsWrap}>
-						<NIP05Verified nip05={contact?.nip05} />
-						<Website website={contact?.website} />
-						<Lud lud16={contact?.lud16} lud06={contact?.lud06} />
+						<NIP05Verified nip05={contact?.nip05} onPress={handlePress} />
+						<Website website={contact?.website} onPress={handlePress} />
+						<Lud lud16={contact?.lud16} lud06={contact?.lud06} onPress={handlePress} />
 					</View>
 					{/* about */}
 					{contact?.about && contact.about.length > 0 &&
 						<Txt txt={contact.about} styles={[styles.about]} />
 					}
 				</View>
+				{prompt.open && <Toaster txt={prompt.msg} />}
 			</View>
+			<LeaveAppModal url={url} visible={visible} closeModal={closeModal} />
 		</View >
 	)
 }
