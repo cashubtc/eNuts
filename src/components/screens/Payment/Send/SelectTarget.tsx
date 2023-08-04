@@ -140,6 +140,6 @@ const styles = StyleSheet.create({
 		maxWidth: '95%'
 	},
 	separator: {
-		marginVertical: 10,
+		marginVertical: 20,
 	},
 })

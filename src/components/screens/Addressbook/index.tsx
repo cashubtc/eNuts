@@ -30,6 +30,9 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import ContactPreview from './ContactPreview'
 import UserProfile from './UserProfile'
 
+const marginBottom = isIOS ? 100 : 75
+const marginBottomPayment = isIOS ? 25 : 0
+
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
@@ -198,8 +201,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}
 
 	const handleContactPress = ({ contact, npub, isUser }: { contact?: IProfileContent, npub?: string, isUser?: boolean }) => {
+		// add new npub
+		if (!pubKey.encoded) {
+			setNewNpubModal(true)
+			return
+		}
 		// navigate to contact screen
-		if (contact && !isUser && !route.params?.isSendEcash) {
+		if (contact && !isUser && !route.params?.isSendEcash && !route.params?.isMelt) {
 			navigation.navigate('Contact', {
 				contact,
 				npub: npub || '',
@@ -208,19 +216,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			})
 			return
 		}
-		// add new npub
-		if (!pubKey.encoded) {
-			setNewNpubModal(true)
-			return
-		}
 		// user is in payment process
 		// user wants to melt
-		if (contact && route.params?.isMelt) {
+		if (route.params?.isMelt) {
 			handleMelt(contact)
 			return
 		}
 		// user wants to send ecash
-		if (contact && !isUser && route.params?.isSendEcash) {
+		if (!isUser && route.params?.isSendEcash) {
 			handleEcash(npub, getNostrUsername(contact))
 			return
 		}
@@ -296,7 +299,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			/>
 			{/* user contacts */}
 			{contacts.length > 0 &&
-				<View style={[globals(color).wrapContainer, styles.contactsWrap]}>
+				<View style={[
+					globals(color).wrapContainer,
+					styles.contactsWrap,
+					{ marginBottom: route.params?.isMelt || route.params?.isSendEcash ? marginBottomPayment : marginBottom }
+				]}>
 					<FlashList
 						data={contacts}
 						estimatedItemSize={300}
@@ -318,7 +325,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 								}}
 								isFirst={index === 0}
 								isLast={index === contacts.length - 1}
-								isPayment={route.params?.isSendEcash}
+								isPayment={route.params?.isMelt || route.params?.isSendEcash}
 							/>
 						)}
 						ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}
@@ -365,7 +372,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					</Text>
 				</TouchableOpacity>
 			</MyModal>
-			{!route.params?.isMelt && <BottomNav navigation={navigation} route={route} />}
+			{!route.params?.isMelt && !route.params?.isSendEcash && <BottomNav navigation={navigation} route={route} />}
 			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View>
 	)
@@ -411,7 +418,6 @@ const styles = StyleSheet.create({
 	contactsWrap: {
 		flex: 1,
 		paddingHorizontal: 0,
-		marginBottom: isIOS ? 100 : 75
 	},
 	contactSeparator: {
 		marginLeft: 60,
