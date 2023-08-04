@@ -105,12 +105,13 @@ const styles = StyleSheet.create({
 	},
 	balanceWrap: {
 		alignItems: 'center',
+		marginHorizontal: -20,
 	},
 	balAmount: {
 		alignItems: 'center',
-		fontSize: 50,
+		fontSize: 46,
 		fontWeight: '500',
-		color: '#FAFAFA'
+		color: '#FAFAFA',
 	},
 	balAssetNameWrap: {
 		flexDirection: 'row',
