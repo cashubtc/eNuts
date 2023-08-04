@@ -265,6 +265,8 @@ function _App() {
 				secureStore.get(SECURESTORE_KEY),
 				store.get(STORE_KEYS.pinSkipped),
 			])
+			l({shouldSetup1: !isStr(data[1])})
+			l({shouldSetup2: !data[1]?.length})
 			setAuth({
 				pinHash: isNull(data[0]) ? '' : data[0],
 				shouldSetup: !isStr(data[1]) || !data[1]?.length

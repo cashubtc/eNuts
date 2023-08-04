@@ -198,9 +198,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}
 
 	const handleContactPress = ({ contact, npub, isUser }: { contact?: IProfileContent, npub?: string, isUser?: boolean }) => {
-		if (!contact) { return }
 		// navigate to contact screen
-		if (!isUser && !route.params?.isSendEcash) {
+		if (contact && !isUser && !route.params?.isSendEcash) {
 			navigation.navigate('Contact', {
 				contact,
 				npub: npub || '',
@@ -215,12 +214,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		}
 		// user is in payment process
 		// user wants to melt
-		if (route.params?.isMelt) {
+		if (contact && route.params?.isMelt) {
 			handleMelt(contact)
 			return
 		}
 		// user wants to send ecash
-		if (!isUser && route.params?.isSendEcash) {
+		if (contact && !isUser && route.params?.isSendEcash) {
 			handleEcash(npub, getNostrUsername(contact?.displayName, contact?.display_name, contact?.username, contact?.name))
 			return
 		}

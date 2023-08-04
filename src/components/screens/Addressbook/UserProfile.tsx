@@ -44,7 +44,9 @@ export default function UserProfile({ pubKey, userProfile, handlePress }: IUserP
 							name={userProfile?.name}
 							npub={pubKey.encoded}
 						/>
-						<Txt txt={truncateAbout(userProfile?.about || '')} styles={[{ color: color.TEXT_SECONDARY }]} />
+						{userProfile?.about &&
+							<Txt txt={truncateAbout(userProfile.about || '')} styles={[{ color: color.TEXT_SECONDARY }]} />
+						}
 					</View>
 					:
 					<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
