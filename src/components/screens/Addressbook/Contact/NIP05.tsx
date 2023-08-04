@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
 	infoWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: 20,
 	},
 	iconWrap: {
 		minWidth: 25,

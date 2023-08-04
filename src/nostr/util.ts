@@ -1,3 +1,4 @@
+import type { IProfileContent } from '@model/nostr'
 import { cTo } from '@store/utils'
 import { Event as NostrEvent } from 'nostr-tools'
 
@@ -53,13 +54,8 @@ export function truncateAbout(about: string) {
 	return `${about.slice(0, 25)}...`
 }
 
-export function getNostrUsername(
-	displayName?: string,
-	display_name?: string,
-	username?: string,
-	name?: string
-) {
-	return displayName || display_name || username || name || ''
+export function getNostrUsername( contact?: IProfileContent) {
+	return contact?.displayName || contact?.display_name || contact?.username || contact?.name || ''
 }
 
 /**

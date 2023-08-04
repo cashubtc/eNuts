@@ -145,7 +145,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				balance,
 				isSendEcash,
 				nostr: {
-					senderName: getNostrUsername(userProfile?.displayName, userProfile?.display_name, userProfile?.username, userProfile?.name),
+					senderName: getNostrUsername(userProfile),
 					receiverNpub: (nip19.decode(receiverNpub || '').data || '') as string,
 					receiverName,
 				},
@@ -203,7 +203,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			navigation.navigate('Contact', {
 				contact,
 				npub: npub || '',
-				isUser
+				isUser,
+				userProfile
 			})
 			return
 		}
@@ -220,7 +221,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		}
 		// user wants to send ecash
 		if (contact && !isUser && route.params?.isSendEcash) {
-			handleEcash(npub, getNostrUsername(contact?.displayName, contact?.display_name, contact?.username, contact?.name))
+			handleEcash(npub, getNostrUsername(contact))
 			return
 		}
 		if (!userProfile) { return }
@@ -238,7 +239,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
 		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
 		const nostr = {
-			senderName: getNostrUsername(userProfile?.displayName, userProfile?.display_name, userProfile?.username, userProfile?.name),
+			senderName: getNostrUsername(userProfile),
 			receiverNpub: npub,
 			receiverName: name,
 		}
@@ -312,7 +313,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 								handleSend={() => {
 									void handleSend({
 										npub: item[0],
-										name: getNostrUsername(item[1]?.displayName, item[1]?.display_name, item[1]?.username, item[1]?.name)
+										name: getNostrUsername(item[1])
 									})
 								}}
 								isFirst={index === 0}

@@ -184,6 +184,7 @@ export type RootStackParamList = {
 		contact?: IProfileContent
 		npub: string
 		isUser?: boolean
+		userProfile?: IProfileContent
 	}
 }
 
