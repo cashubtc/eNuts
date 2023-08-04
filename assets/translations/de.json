@@ -190,7 +190,8 @@
 		"receiveEcashNostr": "NOSTR Nachrichten",
 		"receiveEcashNostrHint": "Überprüfen Sie Ihre NOSTR Nachrichten auf eingehende Cashu-Token.",
 		"createInvoiceDashboard": "Empfangen Sie Ecash von einer Mint, indem Sie eine Lightning-Rechnung bezahlen.",
-		"hideNuts": "Verbergen Sie Ihren Gesamtsaldo"
+		"hideNuts": "Verbergen Sie Ihren Gesamtsaldo",
+		"checkingDms": "Ihre Nachrichten werden auf Ecash überprüft..."
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

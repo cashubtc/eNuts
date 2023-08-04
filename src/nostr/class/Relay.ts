@@ -29,17 +29,15 @@ interface IEventDM {
 // dummy relay class
 class Relay {
 
-	#pool: SimplePool
+	#pool?: SimplePool
 	#sub?: Sub<number>
 	#poolSubs: number
 	#poolEventsReceived: number
 	#singleRelay?: NostrRelay
-	// #singleRelayUrl?: string
 	#singleSubs: number
 	#singleConnections: number
 
 	constructor() {
-		this.#pool = new SimplePool()
 		this.#poolSubs = 0
 		this.#poolEventsReceived = 0
 		this.#singleSubs = 0
@@ -65,19 +63,22 @@ class Relay {
 
 	subscribePool({ relayUrls, authors, kinds, skipVerification }: IPoolSubProps) {
 		try {
-			this.#pool
-			const sub = this.#pool.sub(
-				relayUrls?.length ? relayUrls : defaultRelays,
+			if (!this.#pool) {
+				this.#connectPool()
+			}
+			const relays = relayUrls?.length ? relayUrls : defaultRelays
+			const sub = this.#pool?.sub(
+				relays,
 				[{ authors, kinds }],
 				{ skipVerification }
 			)
 			this.#sub = sub
 			this.#poolSubs++
 			l(`active subs: ${this.#poolSubs}`)
-			sub.on('eose', () => {
-				this.#onPoolEose()
+			sub?.on('eose', () => {
+				this.#onPoolEose(relays)
 			})
-			sub.on('event', _e => {
+			sub?.on('event', _e => {
 				this.#onEvent()
 			})
 			return sub
@@ -105,23 +106,13 @@ class Relay {
 		if (!validated) { return }
 		try {
 			// eslint-disable-next-line @typescript-eslint/await-thenable
-			const res = await this.#pool.publish([...relayUrls || [], ...defaultRelays], validated)
+			const res = await this.#pool?.publish([...relayUrls || [], ...defaultRelays], validated)
 			l({ res })
 			return true
 		} catch (e) {
 			l({ publishError: isErr(e) ? e.message : 'Publish error' })
 			return false
 		}
-	}
-
-	#validate(event: IEventDM, sk: string) {
-		const finished = finishEvent(event, sk)
-		const isValid = validateEvent(finished)
-		if (!isValid) {
-			l('Event invalid!')
-			return null
-		}
-		return finished
 	}
 
 	async #connectSingle(relayUrl?: string) {
@@ -147,16 +138,35 @@ class Relay {
 		this.#singleRelay = undefined
 	}
 
+	#connectPool() {
+		this.#pool = new SimplePool()
+	}
+
+	#closePoolConnection(relayUrls: string[]) {
+		this.#pool?.close(relayUrls)
+	}
+
+	#validate(event: IEventDM, sk: string) {
+		const finished = finishEvent(event, sk)
+		const isValid = validateEvent(finished)
+		if (!isValid) {
+			l('Event invalid!')
+			return null
+		}
+		return finished
+	}
+
 	#onEvent() {
 		this.#poolEventsReceived++
 	}
 
-	#onPoolEose() {
+	#onPoolEose(relayUrls: string[]) {
 		l('Unsubscribing pool: ', this.#sub)
 		this.#sub?.unsub()
 		this.#poolSubs--
 		l(`pool events received: ${this.#poolEventsReceived}`)
 		l(`active pool subs: ${this.#poolSubs}`)
+		this.#closePoolConnection(relayUrls)
 	}
 
 }

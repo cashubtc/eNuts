@@ -1,4 +1,5 @@
 import ContactPage from '@comps/screens/Addressbook/Contact'
+import NostrDMScreen from '@comps/screens/Payment/Receive/NostrDM'
 import PrivacySettings from '@comps/screens/Settings/Privacy'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
@@ -73,6 +74,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
 				<Stack.Screen name='memoScreen' component={MemoScreen} />
 				<Stack.Screen name='coinSelection' component={CoinSelectionScreen} />
+				<Stack.Screen name='nostrReceive' component={NostrDMScreen} />
 				<Stack.Screen name='processing' component={ProcessingScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />

@@ -1,4 +1,3 @@
-import useNostr from '@comps/hooks/Nostr'
 import usePrompt from '@comps/hooks/Prompt'
 import { BookIcon, NostrIcon, ScanQRIcon, ShareIcon, SwapIcon, ZapIcon } from '@comps/Icons'
 import Option from '@comps/Option'
@@ -6,6 +5,7 @@ import Screen from '@comps/Screen'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import type { TSelectTargetPageProps } from '@model/nav'
+import { NostrContext } from '@src/context/Nostr'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight, mainColors } from '@styles'
 import { isNum } from '@util'
@@ -18,7 +18,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
 	const { prompt, openPromptAutoClose } = usePrompt()
-	const { hasContacts } = useNostr()
+	const { contacts } = useContext(NostrContext)
 	return (
 		<Screen
 			screenName={t('cashOut', { ns: 'common' })}
@@ -45,7 +45,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					</>
 					:
 					<>
-						{hasContacts &&
+						{contacts.length > 0 &&
 							<Option
 								icon={<BookIcon color={highlight['Nostr']} />}
 								txt={t('addressBook', { ns: 'topNav' })}

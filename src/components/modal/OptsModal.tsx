@@ -1,8 +1,7 @@
-
-import useNostr from '@comps/hooks/Nostr'
 import { CopyIcon, NostrIcon, ReceiveIcon, SendIcon, ZapIcon } from '@comps/Icons'
 import Option from '@comps/Option'
 import Txt from '@comps/Txt'
+import { NostrContext } from '@src/context/Nostr'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { useContext } from 'react'
@@ -18,6 +17,7 @@ interface IOptsModal {
 	button2Txt: string
 	onPressSecondBtn: () => void
 	onPressCancel: () => void
+	handleNostrReceive?: () => void
 	loading?: boolean
 	isSend?: boolean
 }
@@ -29,12 +29,13 @@ export default function OptsModal({
 	button2Txt,
 	onPressSecondBtn,
 	onPressCancel,
+	handleNostrReceive,
 	loading,
 	isSend,
 }: IOptsModal) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-	const { hasContacts } = useNostr()
+	const { contacts } = useContext(NostrContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
 			<Txt
@@ -51,14 +52,12 @@ export default function OptsModal({
 					loading={loading}
 					secondIcon={!isSend && <ReceiveIcon width={26} height={26} color={color.TEXT} /> }
 				/>
-				{!isSend && hasContacts &&
+				{!isSend && contacts.length > 0 &&
 					<Option
 						icon={<NostrIcon />}
 						txt={t('receiveEcashNostr')}
 						hint={t('receiveEcashNostrHint')}
-						onPress={() => {
-							//
-						}}
+						onPress={() => handleNostrReceive?.()}
 						hasSeparator
 					/>
 				}

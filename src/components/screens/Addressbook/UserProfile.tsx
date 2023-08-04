@@ -2,6 +2,7 @@ import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IProfileContent } from '@model/nostr'
 import { truncateAbout } from '@nostr/util'
+import { NostrContext } from '@src/context/Nostr'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
@@ -12,8 +13,6 @@ import ProfilePic from './ProfilePic'
 import Username from './Username'
 
 interface IUserProfileProps {
-	pubKey: { encoded: string, hex: string }
-	userProfile?: IProfileContent
 	handlePress: ({
 		contact,
 		npub,
@@ -25,8 +24,9 @@ interface IUserProfileProps {
 	}) => void
 }
 
-export default function UserProfile({ pubKey, userProfile, handlePress }: IUserProfileProps) {
+export default function UserProfile({ handlePress }: IUserProfileProps) {
 	const { t } = useTranslation()
+	const { pubKey, userProfile, contacts } = useContext(NostrContext)
 	const { color, highlight } = useContext(ThemeContext)
 	return (
 		<TouchableOpacity
@@ -35,7 +35,7 @@ export default function UserProfile({ pubKey, userProfile, handlePress }: IUserP
 		>
 			<View style={styles.picNameWrap}>
 				<ProfilePic uri={userProfile?.picture} withPlusIcon={!pubKey.hex} isUser />
-				{pubKey.hex.length ?
+				{contacts.length > 0 ?
 					<View>
 						<Username
 							displayName={userProfile?.displayName}

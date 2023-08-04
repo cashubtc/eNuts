@@ -15,6 +15,7 @@ import { relay } from '@nostr/class/Relay'
 import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
 import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays } from '@nostr/util'
 import { FlashList, type ViewToken } from '@shopify/flash-list'
+import { NostrContext } from '@src/context/Nostr'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
@@ -36,10 +37,16 @@ const marginBottomPayment = isIOS ? 25 : 0
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
-	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
-	const [userRelays, setUserRelays] = useState<TUserRelays>([])
-	const [contacts, setContacts] = useState<TContact[]>([])
+	const {
+		pubKey,
+		setPubKey,
+		userProfile,
+		setUserProfile,
+		userRelays,
+		setUserRelays,
+		contacts,
+		setContacts
+	} = useContext(NostrContext)
 	const [, setAlreadySeen] = useState<string[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const { prompt, openPromptAutoClose } = usePrompt()
@@ -50,7 +57,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			l('no pubKey or user data already available')
 			return
 		}
-		l({ userRelays })
 		// TODO use cache if available
 		const sub = relay.subscribePool({
 			relayUrls: userRelays,
@@ -85,6 +91,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// Gets metadata from cache or relay for contact in viewport
 	const setMetadata = useCallback((item: string) => {
+		if (item[1]) { return }
 		const hex = item[0]
 		// TODO use cache if available
 		const sub = relay.subscribePool({
@@ -202,7 +209,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	const handleContactPress = ({ contact, npub, isUser }: { contact?: IProfileContent, npub?: string, isUser?: boolean }) => {
 		// add new npub
-		if (!pubKey.encoded) {
+		if (!pubKey.encoded || !contacts.length) {
 			setNewNpubModal(true)
 			return
 		}
@@ -289,14 +296,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			/>
 			{/* Header */}
 			<View style={styles.bookHeader}>
-				<ContactsCount count={contacts.length} relaysCount={userRelays.length} />
+				<ContactsCount />
 			</View>
 			{/* user own profile */}
-			<UserProfile
-				pubKey={pubKey}
-				userProfile={userProfile}
-				handlePress={handleContactPress}
-			/>
+			<UserProfile handlePress={handleContactPress} />
 			{/* user contacts */}
 			{contacts.length > 0 &&
 				<View style={[
@@ -378,15 +381,16 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	)
 }
 
-function ContactsCount({ count, relaysCount }: { count: number, relaysCount?: number }) {
+function ContactsCount() {
 	const { t } = useTranslation(['common'])
 	const { color } = useContext(ThemeContext)
+	const { contacts, userRelays } = useContext(NostrContext)
 	return (
 		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
-			{!count ?
+			{!contacts.length ?
 				''
 				:
-				`${count > 1 ? t('contact_other', { count }) : t('contact_one', { count })} - ${relaysCount || defaultRelays.length} Relays`
+				`${contacts.length > 1 ? t('contact_other', { count: contacts.length }) : t('contact_one', { count: contacts.length })} - ${userRelays.length || defaultRelays.length} Relays`
 			}
 		</Text>
 	)

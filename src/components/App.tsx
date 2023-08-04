@@ -9,10 +9,12 @@ import { l } from '@log'
 import MyModal from '@modal'
 import type { IPreferences, ITokenInfo } from '@model'
 import type { INavigatorProps } from '@model/nav'
+import type { IProfileContent, TContact } from '@model/nostr'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
+import { NostrContext } from '@src/context/Nostr'
 import { PinCtx } from '@src/context/Pin'
 import { PrivacyContext } from '@src/context/Privacy'
 import { ThemeContext } from '@src/context/Theme'
@@ -125,8 +127,24 @@ function _App() {
 	const [highlight, setHighlight] = useState('Default')
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const themeData = useMemo(() => ({ pref, theme, setTheme, color, highlight, setHighlight }), [pref])
+	// privacy context
 	const [hidden, setHidden] = useState(false)
-	const privacData = useMemo(() => ({ hidden, setHidden }), [hidden])
+	const privacyData = useMemo(() => ({ hidden, setHidden }), [hidden])
+	// nostr context
+	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
+	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
+	const [userRelays, setUserRelays] = useState<string[]>([])
+	const [contacts, setContacts] = useState<TContact[]>([])
+	const nostrData = useMemo(() => ({
+		pubKey,
+		setPubKey,
+		userProfile,
+		setUserProfile,
+		userRelays,
+		setUserRelays,
+		contacts,
+		setContacts,
+	}), [contacts, pubKey, userProfile, userRelays])
 	// app foregorund, background
 	const appState = useRef(AppState.currentState)
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>()
@@ -339,53 +357,55 @@ function _App() {
 
 	return (
 		<ThemeContext.Provider value={themeData}>
-			<PrivacyContext.Provider value={privacData}>
-				<NavigationContainer
-					theme={theme === 'Light' ? light : dark}
-					ref={navigation}
-					onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
-				>
-					<PinCtx.Provider value={pinData}>
-						<FocusClaimCtx.Provider value={claimData}>
-							<KeyboardProvider>
-								<Navigator
-									shouldSetup={auth.shouldSetup}
-									pinHash={auth.pinHash}
-									bgAuth={bgAuth}
-									setBgAuth={setBgAuth}
-								/>
-								<StatusBar style="auto" />
-								{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-								<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
-									<Text style={globals(color, highlight).modalHeader}>
-										{t('foundCashuClipboard')}
-									</Text>
-									<Text style={globals(color, highlight).modalTxt}>
-										{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
-										<Txt
-											txt={formatInt(tokenInfo?.value ?? 0)}
-											styles={[{ fontWeight: '500' }]}
+			<NostrContext.Provider value={nostrData}>
+				<PrivacyContext.Provider value={privacyData}>
+					<NavigationContainer
+						theme={theme === 'Light' ? light : dark}
+						ref={navigation}
+						onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
+					>
+						<PinCtx.Provider value={pinData}>
+							<FocusClaimCtx.Provider value={claimData}>
+								<KeyboardProvider>
+									<Navigator
+										shouldSetup={auth.shouldSetup}
+										pinHash={auth.pinHash}
+										bgAuth={bgAuth}
+										setBgAuth={setBgAuth}
+									/>
+									<StatusBar style="auto" />
+									{/* claim token if app comes to foreground and clipboard has valid cashu token */}
+									<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
+										<Text style={globals(color, highlight).modalHeader}>
+											{t('foundCashuClipboard')}
+										</Text>
+										<Text style={globals(color, highlight).modalTxt}>
+											{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
+											<Txt
+												txt={formatInt(tokenInfo?.value ?? 0)}
+												styles={[{ fontWeight: '500' }]}
+											/>
+											{' '}Satoshi {t('fromMint')}:{' '}
+											{tokenInfo?.mints.join(', ')}
+										</Text>
+										<Button
+											txt={t('accept')}
+											onPress={() => void handleRedeem()}
 										/>
-										{' '}Satoshi {t('fromMint')}:{' '}
-										{tokenInfo?.mints.join(', ')}
-									</Text>
-									<Button
-										txt={t('accept')}
-										onPress={() => void handleRedeem()}
-									/>
-									<View style={{ marginVertical: 10 }} />
-									<Button
-										txt={t('cancel')}
-										outlined
-										onPress={() => setClaimOpen(false)}
-									/>
-								</MyModal>
-								{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-							</KeyboardProvider>
-						</FocusClaimCtx.Provider>
-					</PinCtx.Provider>
-				</NavigationContainer>
-			</PrivacyContext.Provider>
+										<View style={{ marginVertical: 10 }} />
+										<Button
+											txt={t('cancel')}
+											outlined
+											onPress={() => setClaimOpen(false)}
+										/>
+									</MyModal>
+									{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+								</KeyboardProvider>
+							</FocusClaimCtx.Provider>
+						</PinCtx.Provider>
+					</NavigationContainer>
+				</PrivacyContext.Provider>
+			</NostrContext.Provider>
 		</ThemeContext.Provider>
 	)
 }

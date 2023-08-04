@@ -2,7 +2,6 @@
 import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import useNostr from '@comps/hooks/Nostr'
 import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
 import { MintBoardIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
@@ -17,6 +16,7 @@ import type { TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
+import { NostrContext } from '@src/context/Nostr'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
@@ -39,9 +39,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { color, highlight } = useContext(ThemeContext)
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useContext(FocusClaimCtx)
-	// Total Balance state (all mints)
-	const [balance, setBalance] = useState(0)
-	const [hasMint, setHasMint] = useState(false)
+	// Nostr
+	const { contacts } = useContext(NostrContext)
+	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
 	const { prompt, openPromptAutoClose } = usePrompt()
 	// Cashu token hook
@@ -53,8 +53,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		trustModal,
 		setTrustModal
 	} = useCashuToken()
-	const { loading, startLoading, stopLoading } = useLoading()
-	const { hasContacts } = useNostr()
+	// Total Balance state (all mints)
+	const [balance, setBalance] = useState(0)
+	const [hasMint, setHasMint] = useState(false)
 	// modals
 	const [modal, setModal] = useState({
 		mint: false,
@@ -166,7 +167,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
 		if ((isMelt || isSendEcash) && nonEmptyMints.length === 1) {
 			// user has no nostr contacts so he can directly navigate to amount selection
-			if (!hasContacts && isSendEcash) {
+			if (!contacts.length && isSendEcash) {
 				navigation.navigate('selectAmount', {
 					mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
 					isSendEcash,
@@ -306,6 +307,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				onPressFirstBtn={() => void handleClaimBtnPress()}
 				button2Txt={t('createLnInvoice', { ns: 'wallet' })}
 				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: false })}
+				handleNostrReceive={() => {
+					closeOptsModal()
+					navigation.navigate('nostrReceive')
+				}}
 				onPressCancel={closeOptsModal}
 				loading={loading}
 			/>
