@@ -18,7 +18,7 @@ import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
 import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
 	const { t } = useTranslation(['mints'])
@@ -216,7 +216,15 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	}, [isMelt, isSwap, isSendEcash])
 	return (
 		<View style={[globals(color).container, styles.container]}>
-			<Loading size={40} />
+			{nostr ?
+				<Image
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					source={require('@assets/nostrGif.gif')}
+					style={styles.nostrGif}
+				/>
+				:
+				<Loading size={40} />
+			}
 			<Txt
 				styles={[styles.descText]}
 				txt={t(getProcessingtxt())}
@@ -240,5 +248,9 @@ const styles = StyleSheet.create({
 	hint: {
 		fontSize: 14,
 		marginTop: 10,
+	},
+	nostrGif: {
+		width: 100,
+		height: 100,
 	}
 })
