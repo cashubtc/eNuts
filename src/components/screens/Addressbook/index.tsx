@@ -309,7 +309,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						estimatedItemSize={300}
 						viewabilityConfig={{
 							minimumViewTime: 250,
-							itemVisiblePercentThreshold: 70,
+							itemVisiblePercentThreshold: 10,
 						}}
 						onViewableItemsChanged={onViewableItemsChanged}
 						keyExtractor={item => item[0]}
