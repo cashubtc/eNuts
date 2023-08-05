@@ -17,7 +17,7 @@ import { globals } from '@styles'
 import { hasTrustedMint, isCashuToken, vib } from '@util'
 import { checkFees, claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
-import { BarCodeScanner } from 'expo-barcode-scanner'
+import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -203,7 +203,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	useEffect(() => {
 		const getBarCodeScannerPermissions = async () => {
 			const { status } = await BarCodeScanner.requestPermissionsAsync()
-			setHasPermission(status === 'granted')
+			setHasPermission(status === PermissionStatus.GRANTED)
 		}
 		void getBarCodeScannerPermissions()
 	}, [])

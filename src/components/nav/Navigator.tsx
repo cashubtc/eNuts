@@ -1,10 +1,8 @@
-import ContactPage from '@comps/screens/Addressbook/Contact'
-import NostrDMScreen from '@comps/screens/Payment/Receive/NostrDM'
-import PrivacySettings from '@comps/screens/Settings/Privacy'
 import type { INavigatorProps, RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
 import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AddressbookPage from '@screens/Addressbook'
+import ContactPage from '@screens/Addressbook/Contact'
 import AuthPage from '@screens/Auth'
 import Dashboard from '@screens/Dashboard'
 import { Disclaimer } from '@screens/Disclaimer'
@@ -20,6 +18,7 @@ import NostrExplainerScreen from '@screens/NostrExplainer'
 import ProcessingScreen from '@screens/Payment/Processing'
 import ProcessingErrorScreen from '@screens/Payment/ProcessingError'
 import InvoiceScreen from '@screens/Payment/Receive/Invoice'
+import NostrDMScreen from '@screens/Payment/Receive/NostrDM'
 import SelectAmountScreen from '@screens/Payment/SelectAmount'
 import SelectMintScreen from '@screens/Payment/SelectMint'
 import CoinSelectionScreen from '@screens/Payment/Send/CoinSelection'
@@ -32,10 +31,12 @@ import SuccessPage from '@screens/Payment/Success'
 import QRScanPage from '@screens/QRScan'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
-import AdvancedFunctionScreen from '@screens/Settings/Advanced'
 import BackupPage from '@screens/Settings/Backup'
-import DisplaySettings from '@screens/Settings/Display'
-import LanguageSettings from '@screens/Settings/Language'
+import GeneralSettings from '@screens/Settings/General'
+import AdvancedFunctionScreen from '@screens/Settings/General/Advanced'
+import DisplaySettings from '@screens/Settings/General/Display'
+import LanguageSettings from '@screens/Settings/General/Language'
+import PrivacySettings from '@screens/Settings/Privacy'
 import SecuritySettings from '@screens/Settings/Security'
 import { ThemeContext } from '@src/context/Theme'
 import { useContext, useEffect } from 'react'
@@ -104,6 +105,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='Address book' component={AddressbookPage} />
 				<Stack.Screen name='Contact' component={ContactPage} />
 				<Stack.Screen name='Settings' component={Settings} />
+				<Stack.Screen name='General settings' component={GeneralSettings} />
 				<Stack.Screen name='Display settings' component={DisplaySettings} />
 				<Stack.Screen name='Security settings' component={SecuritySettings} />
 				<Stack.Screen name='Privacy settings' component={PrivacySettings} />

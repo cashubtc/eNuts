@@ -15,6 +15,7 @@ import { relay } from '@nostr/class/Relay'
 import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
 import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays } from '@nostr/util'
 import { FlashList, type ViewToken } from '@shopify/flash-list'
+import Config from '@src/config'
 import { NostrContext } from '@src/context/Nostr'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
@@ -38,6 +39,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	const {
+		setNutPub,
 		pubKey,
 		setPubKey,
 		userProfile,
@@ -61,16 +63,18 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		const sub = relay.subscribePool({
 			relayUrls: userRelays,
 			authors: [hex],
-			kinds: [EventKind.SetMetadata, EventKind.ContactList], // EventKind.DirectMessage
-			skipVerification: true // debug
+			kinds: [EventKind.SetMetadata, EventKind.ContactList],
+			skipVerification: Config.skipVerification
 		})
 		let latestRelays = 0 	// createdAt
 		let latestContacts = 0 	// createdAt
 		sub?.on('event', async (e: NostrEvent) => {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (+e.kind === EventKind.SetMetadata) {
 				// TODO save user metadata in cache
 				setUserProfile(parseProfileContent(e))
 			}
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (+e.kind === EventKind.ContactList) {
 				// save user relays
 				if (!userRelays && e.created_at > latestRelays) {
@@ -98,9 +102,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			relayUrls: userRelays,
 			authors: [hex],
 			kinds: [EventKind.SetMetadata],
-			skipVerification: true // debug
+			skipVerification: Config.skipVerification
 		})
 		sub?.on('event', (e: NostrEvent) => {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (+e.kind === EventKind.SetMetadata) {
 				// TODO save contacts in cache
 				setContacts(prev => prev.map(c => c[0] === hex ? [c[0], parseProfileContent<IProfileContent>(e)] : c))
@@ -195,7 +200,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		}
 		// generate new nsec
 		const sk = generatePrivateKey() // `sk` is a hex string
-		const pk = getPublicKey(sk) 	// `pk` is a hex string
+		const pk = getPublicKey(sk) 
+		setNutPub(pk)	// `pk` is a hex string
 		await Promise.all([
 			store.set(STORE_KEYS.npub, pubKey.encoded), // save nostr encoded pubKey
 			store.set(STORE_KEYS.npubHex, pubKey.hex),			// save nostr hex pubKey

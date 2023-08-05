@@ -1,7 +1,6 @@
 import usePrompt from '@comps/hooks/Prompt'
-import { AboutIcon, ChevronRightIcon, EyeClosedIcon, HamburgerIcon, LanguageIcon, LockIcon, PaletteIcon, TrashbinIcon } from '@comps/Icons'
+import { AboutIcon, EyeClosedIcon, HamburgerIcon, LockIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
-import Separator from '@comps/Separator'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { QuestionModal } from '@modal/Question'
@@ -12,9 +11,10 @@ import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 import { version } from '../../../../package.json'
+import SettingsMenuItem from './MenuItem'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { t } = useTranslation(['common'])
@@ -36,6 +36,14 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 		>
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
+					txt={t('general', { ns: 'topNav' })}
+					txtColor={color.TEXT}
+					icon={<HamburgerIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('General settings')}
+					hasSeparator
+					hasChevron
+				/>
+				<SettingsMenuItem
 					txt={t('security', { ns: 'topNav' })}
 					txtColor={color.TEXT}
 					icon={<LockIcon color={color.TEXT} />}
@@ -48,30 +56,6 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					txtColor={color.TEXT}
 					icon={<EyeClosedIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Privacy settings')}
-					hasSeparator
-					hasChevron
-				/>
-				<SettingsMenuItem
-					txt={t('display', { ns: 'topNav' })}
-					txtColor={color.TEXT}
-					icon={<PaletteIcon color={color.TEXT} />}
-					onPress={() => navigation.navigate('Display settings')}
-					hasSeparator
-					hasChevron
-				/>
-				<SettingsMenuItem
-					txt={t('language', { ns: 'topNav' })}
-					txtColor={color.TEXT}
-					icon={<LanguageIcon color={color.TEXT} />}
-					onPress={() => navigation.navigate('Language settings')}
-					hasSeparator
-					hasChevron
-				/>
-				<SettingsMenuItem
-					txt={t('advancedFunctions', { ns: 'topNav' })}
-					txtColor={color.TEXT}
-					icon={<HamburgerIcon color={color.TEXT} />}
-					onPress={() => navigation.navigate('Advanced settings')}
 					hasSeparator
 					hasChevron
 				/>
@@ -106,55 +90,10 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	)
 }
 
-interface IMenuItemProps {
-	txt: string
-	txtColor: string
-	onPress: () => void
-	icon: React.ReactElement
-	hasSeparator?: boolean
-	hasChevron?: boolean
-}
-
-function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator, hasChevron }: IMenuItemProps) {
-	return (
-		<>
-			<TouchableOpacity
-				style={styles.settingsRow}
-				onPress={onPress}
-			>
-				<View style={styles.setting}>
-					{icon}
-					<Text style={[styles.settingTxt, { color: txtColor }]}>
-						{txt}
-					</Text>
-				</View>
-				{hasChevron &&
-					<ChevronRightIcon color={txtColor} />
-				}
-			</TouchableOpacity>
-			{hasSeparator && <Separator style={[{ marginVertical: 10 }]} />}
-		</>
-	)
-}
-
 const styles = StyleSheet.create({
 	wrap: {
 		paddingVertical: 10,
 		marginBottom: 20,
-	},
-	settingsRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 10,
-	},
-	setting: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	settingTxt: {
-		marginLeft: 15,
-		fontSize: 16,
 	},
 	version: {
 		fontWeight: '500',

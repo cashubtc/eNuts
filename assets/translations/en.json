@@ -308,7 +308,8 @@
 		"mintSettings": "Mint settings",
 		"security": "Security",
 		"settings": "Settings",
-		"privacy": "Privacy"
+		"privacy": "Privacy",
+		"general": "General"
 	},
 	"wallet": {
 		"cashuContent": "Although the author of Cashu is not a cryptographer and the protocol is still under review, it raises concerns about the potential existence of fatal flaws. As a result, Cashu is not yet production-ready.",

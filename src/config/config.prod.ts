@@ -7,4 +7,5 @@
  */
 export default {
 	API_URL: 'CHANGEME',
+	skipVerification: false
 }

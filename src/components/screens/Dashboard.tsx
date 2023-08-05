@@ -8,6 +8,7 @@ import { MintBoardIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
 import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import OptsModal from '@modal/OptsModal'
@@ -202,14 +203,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// check for available mints of the user
 	useEffect(() => {
 		void (async () => {
-			const data = await Promise.all([
+			const [userHasMints, explainerSeen, balance ] = await Promise.all([
 				hasMints(),
 				store.get(STORE_KEYS.explainer),
 				getBalance(),
 			])
-			setHasMint(data[0])
-			setModal({ ...modal, mint: !data[0] && data[1] !== '1' })
-			setBalance(data[2])
+			setHasMint(userHasMints)
+			setModal({ ...modal, mint: !userHasMints && explainerSeen !== '1' })
+			setBalance(balance)
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
@@ -364,8 +365,9 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 	qrBtnWrap: {
+		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		minHeight: 200
+		marginBottom: isIOS ? 100 : 75
 	}
 })

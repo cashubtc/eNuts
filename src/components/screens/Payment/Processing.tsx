@@ -30,6 +30,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		estFee,
 		isMelt,
 		isSendEcash,
+		// TODO we have to save the relays (write) of the payment receiver to be able to read the DMs (Cashu tokens) he might send us back
 		nostr,
 		isSwap,
 		targetMint,
@@ -168,7 +169,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				}
 				l({})
 				const msg = `${userNostrNpub || nostr.senderName}  just sent you ${amount} Sat in Ecash using the eNuts wallet!\n\n ${token}`
-				const cipherTxt = encrypt(sk, nostr.receiverNpub, msg)
+				const cipherTxt = await encrypt(sk, nostr.receiverNpub, msg)
 				l({ cipherTxt })
 				const event = {
 					kind: EventKind.DirectMessage,

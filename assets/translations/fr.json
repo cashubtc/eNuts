@@ -308,7 +308,8 @@
 		"mintSettings": "Paramètres des mints",
 		"security": "Sécurité",
 		"settings": "Paramètres",
-		"privacy": "Vie privée"
+		"privacy": "Vie privée",
+		"general": "Général"
 	},
 	"wallet": {
 		"cashuContent": "Bien que l'auteur de Cashu ne soit pas un cryptographe et que le protocole soit encore en cours d'examen, cela suscite des inquiétudes quant à l'existence potentielle de défauts graves. En conséquence, Cashu n'est pas encore prêt pour une utilisation en production.",

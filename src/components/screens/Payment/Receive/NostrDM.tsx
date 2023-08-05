@@ -6,36 +6,78 @@ import { l } from '@log'
 import type { TNostrReceivePageProps } from '@model/nav'
 import { relay } from '@nostr/class/Relay'
 import { EventKind } from '@nostr/consts'
+import { decrypt } from '@nostr/crypto'
+import Config from '@src/config'
 import { NostrContext } from '@src/context/Nostr'
+import { secureStore } from '@store'
+import { SECRET } from '@store/consts'
+import { isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
+
+interface INostrDm {
+	created_at: number
+	sender: string
+	msg: string
+}
 
 export default function NostrDMScreen({ navigation }: TNostrReceivePageProps) {
 	const { t } = useTranslation(['common'])
-	const { pubKey, userRelays } = useContext(NostrContext)
+	const { userRelays } = useContext(NostrContext)
 	const { loading, startLoading, stopLoading } = useLoading()
+	const [dms, setDms] = useState<INostrDm[]>([])
+
+	const handleDm = async (sk: string, e: NostrEvent) => {
+		if (!sk.length) {
+			l('can not handle dms, empy key!')
+			return
+		}
+		const tokenMinLength = 25
+		// decrypt content
+		const decrypted = await decrypt(sk, e.pubkey, e.content)
+		const words = decrypted.split(' ')
+		// check each word of content
+		for (let i = 0; i < words.length; i++) {
+			const word = words[i]
+			if (!word || word.length < tokenMinLength) { continue }
+			// set dm state
+			if (isCashuToken(word)) {
+				setDms(prev => {
+					// avoid adding same token event
+					if (prev.some(entry => entry.created_at === e.created_at)) {
+						return prev
+					}
+					return [...prev, { created_at: e.created_at, sender: e.pubkey, msg: word }]
+				})
+			}
+		}
+	}
 
 	useEffect(() => {
-		startLoading()
-		const sub = relay.subscribePool({
-			relayUrls: userRelays,
-			authors: [pubKey.hex],
-			kinds: [EventKind.SetMetadata, EventKind.ContactList], // EventKind.DirectMessage
-			skipVerification: true // debug
-		})
-		sub?.on('event', (e: NostrEvent) => {
-			if (+e.kind === EventKind.DirectMessage) {
-				l({ DM: e.content })
-			}
-		})
-		sub?.on('eose', () => {
-			stopLoading()
-		})
+		void (async () => {
+			startLoading()
+			const sk = await secureStore.get(SECRET)
+			const sub = relay.subscribePool({
+				relayUrls: userRelays,
+				// TODO how to proper check new DMs without checking each contact and
+				// also how to check incoming DMs from ppl you dont have in your contact list.
+				authors: ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635'],
+				kinds: [EventKind.DirectMessage],
+				skipVerification: Config.skipVerification
+			})
+			sub?.on('event', async (e: NostrEvent) => {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+				if (+e.kind === EventKind.DirectMessage) {
+					await handleDm(sk || '', e)
+				}
+			})
+			sub?.on('eose', () => stopLoading())
+		})()
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pubKey, userRelays])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userRelays])
 
 	return (
 		<Screen
@@ -43,6 +85,7 @@ export default function NostrDMScreen({ navigation }: TNostrReceivePageProps) {
 			withCancelBtn
 			handlePress={() => navigation.navigate('dashboard')}
 		>
+			{/* checking DMs */}
 			{loading ?
 				<View style={styles.loadingContainer}>
 					<Loading nostr />
@@ -52,7 +95,15 @@ export default function NostrDMScreen({ navigation }: TNostrReceivePageProps) {
 					/>
 				</View>
 				:
-				<></>
+				dms.length ?
+					dms.map(dm => (
+						<Text key={dm.created_at}>
+							{dm.msg}
+						</Text>
+					))
+					:
+					<>
+					</>
 			}
 		</Screen>
 	)

@@ -29,7 +29,6 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 		return formatSats ? formatBalance(balance) : formatInt(balance)
 	}
 	const toggleBalanceFormat = () => {
-		if (hidden) { return }
 		setFormatSats(prev => !prev)
 		if (!pref || !isBool(formatSats)) { return }
 		// update DB
@@ -41,20 +40,28 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			styles.board,
 			{ borderColor: color.BORDER, backgroundColor: hi[highlight] }
 		]}>
-			<Logo size={80} style={{ marginBottom: 20 }} />
+			<Logo size={ hidden ? 120 : 80} style={{ marginBottom: hidden? 60 : 20, marginTop: hidden ? 60 : 0 }} />
 			{/* balance */}
-			<TouchableOpacity style={styles.balanceWrap} onPress={toggleBalanceFormat}>
-				<Text style={styles.balAmount}>
-					{showBalance()}
-				</Text>
-				<View style={styles.balAssetNameWrap}>
-					<Text style={styles.balAssetName}>
-						{formatSats ? 'BTC' : 'Satoshi'}
-					</Text>
-					<SwapCurrencyIcon width={20} height={20} color='#F0F0F0' />
-				</View>
-			</TouchableOpacity>
-			<Separator style={[styles.separator]} />
+			{!hidden &&
+				<>
+					<TouchableOpacity
+						style={styles.balanceWrap}
+						onPress={toggleBalanceFormat}
+						disabled={hidden}
+					>
+						<Text style={styles.balAmount}>
+							{showBalance()}
+						</Text>
+						<View style={styles.balAssetNameWrap}>
+							<Text style={styles.balAssetName}>
+								{formatSats ? 'BTC' : 'Satoshi'}
+							</Text>
+							<SwapCurrencyIcon width={20} height={20} color='#F0F0F0' />
+						</View>
+					</TouchableOpacity>
+					<Separator style={[styles.separator]} />
+				</>
+			}
 			{/* history */}
 			<BoardEntry
 				txt={t('history', { ns: 'topNav' })}

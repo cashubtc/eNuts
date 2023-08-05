@@ -131,11 +131,14 @@ function _App() {
 	const [hidden, setHidden] = useState(false)
 	const privacyData = useMemo(() => ({ hidden, setHidden }), [hidden])
 	// nostr context
+	const [nutPub, setNutPub] = useState('')
 	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
 	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
 	const [userRelays, setUserRelays] = useState<string[]>([])
 	const [contacts, setContacts] = useState<TContact[]>([])
 	const nostrData = useMemo(() => ({
+		nutPub,
+		setNutPub,
 		pubKey,
 		setPubKey,
 		userProfile,
@@ -144,7 +147,7 @@ function _App() {
 		setUserRelays,
 		contacts,
 		setContacts,
-	}), [contacts, pubKey, userProfile, userRelays])
+	}), [nutPub, pubKey, userProfile, userRelays, contacts])
 	// app foregorund, background
 	const appState = useRef(AppState.currentState)
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>()
@@ -285,13 +288,13 @@ function _App() {
 			}
 		}
 		async function initAuth() {
-			const data = await Promise.all([
+			const [pinHash, shouldSetup] = await Promise.all([
 				secureStore.get(SECURESTORE_KEY),
 				store.get(STORE_KEYS.pinSkipped),
 			])
 			setAuth({
-				pinHash: isNull(data[0]) ? '' : data[0],
-				shouldSetup: !isStr(data[1]) || !data[1]?.length
+				pinHash: isNull(pinHash) ? '' : pinHash,
+				shouldSetup: !isStr(shouldSetup) || !shouldSetup?.length
 			})
 			// check for pin attempts and app locked state
 			await handlePinForeground()
@@ -299,26 +302,28 @@ function _App() {
 		async function init() {
 			await initDB()
 			const ten_seconds = 10_000
-			const data = await Promise.all([
+			const [timeout, lang, balances, balance, nutpub] = await Promise.all([
 				store.get(STORE_KEYS.reqTimeout),
 				store.get(STORE_KEYS.lang),
 				getMintsBalances(),
 				getBalance(),
+				store.get(STORE_KEYS.nutpub),
 				initPreferences(),
 				initAuth(),
 			])
-			axios.defaults.timeout = isStr(data[0]) ? +data[0] : ten_seconds
-			if (data[1]?.length) {
-				await i18n.changeLanguage(data[1])
+			axios.defaults.timeout = isStr(timeout) ? +timeout : ten_seconds
+			if (lang?.length) {
+				await i18n.changeLanguage(lang)
 			}
-			const mintBalsTotal = (data[2]).reduce((acc, cur) => acc + cur.amount, 0)
-			if (mintBalsTotal !== data[3]) {
+			const mintBalsTotal = (balances).reduce((acc, cur) => acc + cur.amount, 0)
+			if (mintBalsTotal !== balance) {
 				try {
 					await addAllMintIds()
 				} catch (e) {
 					openPromptAutoClose({ msg: isErr(e) ? e.message : t('addAllMintIdsErr', { ns: 'error' }) })
 				}
 			}
+			setNutPub(nutpub || '')
 			// await dropAllData()
 			setIsRdy(true)
 		}
@@ -342,13 +347,6 @@ function _App() {
 			}
 			appState.current = nextAppState
 		})
-
-		try {
-			throw new Error('Hello this is my first Sentry error!')
-		} catch (e) {
-			Sentry.Native.captureException(e)
-			Sentry.Native.nativeCrash()
-		}
 		return () => subscription.remove()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])

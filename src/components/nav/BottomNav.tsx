@@ -34,6 +34,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const isWalletRelatedScreen = route.name === 'dashboard'
 
 	const isSettingsRelatedScreen = route.name === 'Settings' ||
+		route.name === 'General settings' ||
 		route.name === 'Display settings' ||
 		route.name === 'Security settings' ||
 		route.name === 'BackupPage' ||

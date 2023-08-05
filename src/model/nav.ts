@@ -15,6 +15,7 @@ export type RootStackParamList = {
 	history: undefined
 	mints: undefined
 	Settings: undefined
+	'General settings': undefined
 	'Security settings': undefined
 	'Privacy settings': undefined
 	'Display settings': undefined
@@ -218,6 +219,7 @@ export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr sc
 export type THistoryPageProps = NativeStackScreenProps<RootStackParamList, 'history', 'MyStack'>
 export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 'history entry details', 'MyStack'>
 export type TSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Settings'>
+export type TGeneralSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'General settings'>
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
 export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>
 export type TPrivacySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Privacy settings'>
@@ -237,10 +239,11 @@ export type TBottomNavProps =
 	TMintProofsPageProps |
 	TAddressBookPageProps |
 	TBackupPageProps |
+	TSettingsPageProps |
+	TGeneralSettingsPageProps |
 	TSecuritySettingsPageProps |
 	TDisplaySettingsPageProps |
 	TPrivacySettingsPageProps |
-	TSettingsPageProps |
 	IContactPageProps
 export interface INavigatorProps {
 	pinHash: string

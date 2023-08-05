@@ -33,7 +33,7 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 			handlePress={() => navigation.goBack()}
 		>
 			<Text style={[styles.subHeader, { color: color.TEXT }]}>
-				Theme
+				{t('general')}
 			</Text>
 			<View style={[globals(color).wrapContainer, styles.wrap, { paddingVertical: isIOS ? 18 : 10 }]}>
 				<Txt txt={t('hideNuts', { ns: 'common' })} />

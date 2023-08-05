@@ -3,11 +3,14 @@ import type { IProfileContent, TContact } from '@model/nostr'
 import { createContext, useState } from 'react'
 
 const useNostr = () => {
+	const [nutPub, setNutPub] = useState('')
 	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
 	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
 	const [userRelays, setUserRelays] = useState<string[]>([])
 	const [contacts, setContacts] = useState<TContact[]>([])
 	return {
+		nutPub,
+		setNutPub,
 		pubKey,
 		setPubKey,
 		userProfile,
@@ -20,6 +23,8 @@ const useNostr = () => {
 }
 type useNostrType = ReturnType<typeof useNostr>
 export const NostrContext = createContext<useNostrType>({
+	nutPub: '',
+	setNutPub: () => l(''),
 	pubKey: { encoded: '', hex: '' },
 	setPubKey: () => l(''),
 	userProfile: {
