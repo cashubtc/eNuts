@@ -1,7 +1,8 @@
+import { l } from '@log'
 import type { IOpenPromptAutoCloseProps, IPromptState } from '@model'
-import { useState } from 'react'
+import { createContext, useState } from 'react'
 
-export default function usePrompt() {
+const usePrompt = () => {
 	const [prompt, setPrompt] = useState<IPromptState>({ open: false, msg: '' })
 	const openPrompt = (msg: string) => {
 		setPrompt({ open: true, msg })
@@ -16,7 +17,6 @@ export default function usePrompt() {
 			clearTimeout(t)
 		}, ms ?? 2500)
 	}
-
 	return {
 		prompt,
 		openPrompt,
@@ -24,3 +24,15 @@ export default function usePrompt() {
 		openPromptAutoClose
 	}
 }
+type usePromptType = ReturnType<typeof usePrompt>
+/**
+ * A state that indicates if a cashu token has been claimed from
+ * clipboard after the app comes to the foreground.
+ * It is used to re-render the total balance after claiming
+ */
+export const PromptCtx = createContext<usePromptType>({
+	prompt: { open: false, msg: '' },
+	openPrompt: (msg: string) => l(msg),
+	closePrompt: () => l(''),
+	openPromptAutoClose: ({ msg, success, ms }) => l(msg, success, ms)
+})

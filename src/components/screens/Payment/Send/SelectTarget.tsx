@@ -1,11 +1,10 @@
-import usePrompt from '@comps/hooks/Prompt'
 import { BookIcon, NostrIcon, ScanQRIcon, ShareIcon, SwapIcon, ZapIcon } from '@comps/Icons'
 import Option from '@comps/Option'
 import Screen from '@comps/Screen'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import type { TSelectTargetPageProps } from '@model/nav'
 import { NostrContext } from '@src/context/Nostr'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight, mainColors } from '@styles'
 import { isNum } from '@util'
@@ -17,7 +16,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { mint, balance, remainingMints, isSendEcash, nostr } = route.params
 	const { t } = useTranslation(['mints'])
 	const { color } = useContext(ThemeContext)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	const { contacts } = useContext(NostrContext)
 	return (
 		<Screen
@@ -90,7 +89,6 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					</>
 				}
 			</View>
-			{prompt.open && <Toaster txt={prompt.msg} />}
 		</Screen>
 	)
 }

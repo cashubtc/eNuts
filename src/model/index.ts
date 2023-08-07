@@ -133,3 +133,14 @@ export interface IContact {
 	ln: string,
 	isOwner: boolean
 }
+export interface IPromptState {
+	open: boolean
+	success?: boolean
+	msg: string
+}
+
+export interface IOpenPromptAutoCloseProps {
+	msg: string
+	success?: boolean
+	ms?: number
+}

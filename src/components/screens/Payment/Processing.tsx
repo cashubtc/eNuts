@@ -9,6 +9,7 @@ import { relay } from '@nostr/class/Relay'
 import { EventKind } from '@nostr/consts'
 import { encrypt } from '@nostr/crypto'
 import { ThemeContext } from '@src/context/Theme'
+import { updateNostrDmUsers } from '@src/storage/store/nostrDms'
 import { cTo } from '@src/storage/store/utils'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
@@ -157,6 +158,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				value: token,
 				mints: [mint.mintUrl],
 			})
+			// https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 			if (nostr) {
 				const sk = await secureStore.get(SECRET)
 				const userNostrNpub = await store.get(STORE_KEYS.npub)
@@ -167,10 +169,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					)
 					return
 				}
-				l({})
 				const msg = `${userNostrNpub || nostr.senderName}  just sent you ${amount} Sat in Ecash using the eNuts wallet!\n\n ${token}`
 				const cipherTxt = await encrypt(sk, nostr.receiverNpub, msg)
-				l({ cipherTxt })
 				const event = {
 					kind: EventKind.DirectMessage,
 					tags: [['p', nostr.receiverNpub]],
@@ -187,6 +187,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					)
 					return
 				}
+				// save receipient pubkey to get the conversation later on
+				await updateNostrDmUsers(nostr.receiverNpub)
 				navigation.navigate('success', { amount, nostr })
 				return
 			}

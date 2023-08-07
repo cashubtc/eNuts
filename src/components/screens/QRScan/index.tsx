@@ -1,15 +1,14 @@
 import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import useLoading from '@comps/hooks/Loading'
-import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
 import { CloseIcon, FlashlightOffIcon } from '@comps/Icons'
-import Toaster from '@comps/Toaster'
 import { isIOS, QRType } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
 import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
@@ -33,7 +32,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const [scanned, setScanned] = useState(false)
 	const [flash, setFlash] = useState(false)
 	// prompt modal
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	const { loading, startLoading, stopLoading } = useLoading()
 	// cashu token
 	const {
@@ -262,12 +261,6 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					tokenInfo={tokenInfo}
 					handleTrustModal={() => void handleTrustModal()}
 					closeModal={() => setTrustModal(false)}
-				/>
-			}
-			{prompt.open &&
-				<Toaster
-					success={prompt.success}
-					txt={prompt.msg}
 				/>
 			}
 		</View>

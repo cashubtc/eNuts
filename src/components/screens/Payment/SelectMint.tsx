@@ -1,15 +1,14 @@
 import Button from '@comps/Button'
 import Empty from '@comps/Empty'
-import usePrompt from '@comps/hooks/Prompt'
 import { MintBoardIcon, ZapIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
 import { FlashList } from '@shopify/flash-list'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
@@ -40,7 +39,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	const [userMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// the default mint url if user has set one
 	const [defaultMint, setDefaultM] = useState('')
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	// navigation screen name
 	const getScreenName = () => {
 		if (isMelt) { return 'cashOut' }
@@ -172,7 +171,6 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 					/>
 				</View>
 			}
-			{prompt.open && <Toaster txt={prompt.msg} />}
 		</Screen>
 	)
 }

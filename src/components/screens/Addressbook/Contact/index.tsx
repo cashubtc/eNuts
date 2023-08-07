@@ -1,12 +1,11 @@
-import usePrompt from '@comps/hooks/Prompt'
 import { CopyIcon } from '@comps/Icons'
 import LeaveAppModal from '@comps/LeaveAppModal'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { getMintsBalances } from '@db'
 import type { IContactPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { getNostrUsername, truncateNpub } from '@nostr/util'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
@@ -32,7 +31,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const [visible, setVisible] = useState(false)
 	const closeModal = useCallback(() => setVisible(false), [])
 	const [url, setUrl] = useState('')
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	const handlePress = (url: string) => {
 		if (url === 'lightning://') {
 			openPromptAutoClose({ msg: '⚠️ Zaps will be added soon... ⚡👀' })
@@ -139,7 +138,6 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						<Txt txt={contact.about} styles={[styles.about]} />
 					}
 				</View>
-				{prompt.open && <Toaster txt={prompt.msg} />}
 			</View>
 			<LeaveAppModal url={url} visible={visible} closeModal={closeModal} />
 		</View >

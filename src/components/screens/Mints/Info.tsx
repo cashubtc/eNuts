@@ -40,7 +40,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 			handlePress={() => navigation.goBack()}
 		>
 			{info ?
-				<ScrollView style={{ marginTop: -20, marginBottom: insets.bottom }}>
+				<ScrollView style={{ marginBottom: insets.bottom }}>
 					{/* Name, Version & short description */}
 					<View style={[globals(color).wrapContainer, styles.mainInfo]}>
 						<View style={[styles.circleContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>

@@ -1,12 +1,11 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
-import usePrompt from '@comps/hooks/Prompt'
 import Loading from '@comps/Loading'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSelectAmountPageProps } from '@model/nav'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, getInvoiceFromLnurl, vib } from '@util'
@@ -29,7 +28,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		estimation: 0,
 		isCalculating: false
 	})
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	const balTooLow = isMelt && +amount + fee.estimation > balance
 	const isSendingWholeMintBal = () => {
 		// includes fee
@@ -214,7 +213,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					{fee.isCalculating && <Loading color={mainColors.WARN} />}
 				</TouchableOpacity>
 			</KeyboardAvoidingView>
-			{prompt.open && <Toaster txt={prompt.msg} />}
 		</Screen>
 	)
 }

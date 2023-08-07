@@ -1,8 +1,8 @@
-import usePrompt from '@comps/hooks/Prompt'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { repoIssueUrl } from '@consts/urls'
+import { PromptCtx } from '@src/context/Prompt'
 import { isErr, openUrl } from '@util'
+import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -15,7 +15,7 @@ export interface ErrorDetailsProps {
 
 export function ErrorDetails(props: ErrorDetailsProps) {
 	const { t } = useTranslation(['common'])
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	return (
 		<View style={styles.container}>
 			<Text style={styles.header}>
@@ -38,7 +38,6 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 					{t('reportBug', { ns: 'error' })}{'  '}🐛
 				</Text>
 			</TouchableOpacity>
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

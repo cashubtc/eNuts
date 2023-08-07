@@ -1,9 +1,7 @@
 import ActionButtons from '@comps/ActionButtons'
 import Button, { IconBtn } from '@comps/Button'
-import usePrompt from '@comps/hooks/Prompt'
 import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { _testmintUrl, defaultMints, isIOS } from '@consts'
@@ -15,6 +13,7 @@ import type { IMintBalWithName, IMintUrl } from '@model'
 import type { TMintsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
@@ -45,7 +44,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	const [input, setInput] = useState('')
 	// visibility state for trusting a new mint that us not in the user mint list
 	const [trustModalOpen, setTrustModalOpen] = useState(false)
-	const { prompt, closePrompt, openPromptAutoClose } = usePrompt()
+	const { prompt, closePrompt, openPromptAutoClose } = useContext(PromptCtx)
 	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
 	const allMints = [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]
 	const testMintRowHeight = isTrustedMint(_testmintUrl) ? 0 : flashlistUntrustedHeight
@@ -265,7 +264,6 @@ export default function Mints({ navigation }: TMintsPageProps) {
 					}}
 				/>
 			</View>
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

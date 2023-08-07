@@ -8,6 +8,7 @@ const useNostr = () => {
 	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
 	const [userRelays, setUserRelays] = useState<string[]>([])
 	const [contacts, setContacts] = useState<TContact[]>([])
+	const [claimedEvtIds, setClaimedEvtIds] = useState<string[]>([])
 	return {
 		nutPub,
 		setNutPub,
@@ -19,6 +20,8 @@ const useNostr = () => {
 		setUserRelays,
 		contacts,
 		setContacts,
+		claimedEvtIds,
+		setClaimedEvtIds
 	}
 }
 type useNostrType = ReturnType<typeof useNostr>
@@ -44,5 +47,7 @@ export const NostrContext = createContext<useNostrType>({
 	userRelays: [],
 	setUserRelays: () => l(''),
 	contacts: [],
-	setContacts: () => l('')
+	setContacts: () => l(''),
+	claimedEvtIds: [],
+	setClaimedEvtIds: () => l(''),
 })

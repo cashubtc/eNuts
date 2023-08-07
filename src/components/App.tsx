@@ -17,10 +17,12 @@ import { KeyboardProvider } from '@src/context/Keyboard'
 import { NostrContext } from '@src/context/Nostr'
 import { PinCtx } from '@src/context/Pin'
 import { PrivacyContext } from '@src/context/Privacy'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/HistoryStore'
+import { getRedeemdedSigs } from '@store/nostrDms'
 import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
 import { routingInstrumentation } from '@util/crashReporting'
@@ -136,6 +138,7 @@ function _App() {
 	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
 	const [userRelays, setUserRelays] = useState<string[]>([])
 	const [contacts, setContacts] = useState<TContact[]>([])
+	const [claimedEvtIds, setClaimedEvtIds] = useState<string[]>([])
 	const nostrData = useMemo(() => ({
 		nutPub,
 		setNutPub,
@@ -147,12 +150,21 @@ function _App() {
 		setUserRelays,
 		contacts,
 		setContacts,
-	}), [nutPub, pubKey, userProfile, userRelays, contacts])
+		claimedEvtIds,
+		setClaimedEvtIds
+	}), [nutPub, pubKey, userProfile, userRelays, contacts, claimedEvtIds])
+	// prompt toaster
+	const { prompt, openPrompt, closePrompt, openPromptAutoClose } = usePrompt()
+	const promptData = useMemo(() => ({
+		prompt,
+		openPrompt,
+		closePrompt,
+		openPromptAutoClose
+	}), [prompt, openPrompt, closePrompt, openPromptAutoClose])
 	// app foregorund, background
 	const appState = useRef(AppState.currentState)
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>()
 	const [claimOpen, setClaimOpen] = useState(false)
-	const { prompt, openPromptAutoClose } = usePrompt()
 
 	const handleForeground = async () => {
 		// TODO immediatly reading clipboard after the app comes to the foreground can result
@@ -302,13 +314,21 @@ function _App() {
 		async function init() {
 			await initDB()
 			const ten_seconds = 10_000
-			const [timeout, lang, balances, balance, nutpub] = await Promise.all([
+			const [timeout, lang, balances, balance, nutpub, redeemed] = await Promise.all([
+				// preferred time in ms for request timeout
 				store.get(STORE_KEYS.reqTimeout),
+				// preferred language
 				store.get(STORE_KEYS.lang),
+				// balances
 				getMintsBalances(),
 				getBalance(),
+				// user enuts pubKey
 				store.get(STORE_KEYS.nutpub),
+				// already claimed ecash from DM: stored event signatures
+				getRedeemdedSigs(),
+				// user preferences (theme, ...)
 				initPreferences(),
+				// PIN setup
 				initAuth(),
 			])
 			axios.defaults.timeout = isStr(timeout) ? +timeout : ten_seconds
@@ -324,6 +344,7 @@ function _App() {
 				}
 			}
 			setNutPub(nutpub || '')
+			setClaimedEvtIds(redeemed)
 			// await dropAllData()
 			setIsRdy(true)
 		}
@@ -362,45 +383,48 @@ function _App() {
 						ref={navigation}
 						onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
 					>
-						<PinCtx.Provider value={pinData}>
-							<FocusClaimCtx.Provider value={claimData}>
-								<KeyboardProvider>
-									<Navigator
-										shouldSetup={auth.shouldSetup}
-										pinHash={auth.pinHash}
-										bgAuth={bgAuth}
-										setBgAuth={setBgAuth}
-									/>
-									<StatusBar style="auto" />
-									{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-									<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
-										<Text style={globals(color, highlight).modalHeader}>
-											{t('foundCashuClipboard')}
-										</Text>
-										<Text style={globals(color, highlight).modalTxt}>
-											{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
-											<Txt
-												txt={formatInt(tokenInfo?.value ?? 0)}
-												styles={[{ fontWeight: '500' }]}
+						<PromptCtx.Provider value={promptData}>
+							<PinCtx.Provider value={pinData}>
+								<FocusClaimCtx.Provider value={claimData}>
+									<KeyboardProvider>
+										<Navigator
+											shouldSetup={auth.shouldSetup}
+											pinHash={auth.pinHash}
+											bgAuth={bgAuth}
+											setBgAuth={setBgAuth}
+										/>
+										<StatusBar style="auto" />
+										{/* claim token if app comes to foreground and clipboard has valid cashu token */}
+										<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
+											<Text style={globals(color, highlight).modalHeader}>
+												{t('foundCashuClipboard')}
+											</Text>
+											<Text style={globals(color, highlight).modalTxt}>
+												{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
+												<Txt
+													txt={formatInt(tokenInfo?.value ?? 0)}
+													styles={[{ fontWeight: '500' }]}
+												/>
+												{' '}Satoshi {t('fromMint')}:{' '}
+												{tokenInfo?.mints.join(', ')}
+											</Text>
+											<Button
+												txt={t('accept')}
+												onPress={() => void handleRedeem()}
 											/>
-											{' '}Satoshi {t('fromMint')}:{' '}
-											{tokenInfo?.mints.join(', ')}
-										</Text>
-										<Button
-											txt={t('accept')}
-											onPress={() => void handleRedeem()}
-										/>
-										<View style={{ marginVertical: 10 }} />
-										<Button
-											txt={t('cancel')}
-											outlined
-											onPress={() => setClaimOpen(false)}
-										/>
-									</MyModal>
-									{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-								</KeyboardProvider>
-							</FocusClaimCtx.Provider>
-						</PinCtx.Provider>
+											<View style={{ marginVertical: 10 }} />
+											<Button
+												txt={t('cancel')}
+												outlined
+												onPress={() => setClaimOpen(false)}
+											/>
+										</MyModal>
+										{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+									</KeyboardProvider>
+								</FocusClaimCtx.Provider>
+							</PinCtx.Provider>
+						</PromptCtx.Provider>
+
 					</NavigationContainer>
 				</PrivacyContext.Provider>
 			</NostrContext.Provider>

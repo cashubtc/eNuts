@@ -1,7 +1,5 @@
 import Button from '@comps/Button'
-import usePrompt from '@comps/hooks/Prompt'
 import { AboutIcon, BitcoinIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, FlagIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { _testmintUrl, isIOS } from '@consts'
@@ -12,6 +10,7 @@ import MyModal from '@modal'
 import { QuestionModal } from '@modal/Question'
 import type { TMintManagementPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
@@ -41,7 +40,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const [delMintModalOpen, setDelMintModalOpen] = useState(false)
 	const [copied, setCopied] = useState(false)
 	// prompt modal
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 
 	// check if it is a default mint
 	useEffect(() => {
@@ -334,8 +333,6 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						</Text>
 					</TouchableOpacity>
 				</MyModal>}
-			{/* Prompt modal */}
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

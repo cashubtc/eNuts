@@ -1,10 +1,9 @@
 import Button from '@comps/Button'
-import usePrompt from '@comps/hooks/Prompt'
 import QR from '@comps/QR'
-import Toaster from '@comps/Toaster'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi, mainColors } from '@styles'
@@ -25,7 +24,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const [copied, setCopied] = useState(false)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	const handlePayment = () => {
 		// state "unpaid" is temporary to prevent btn press spam
 		if (paid === 'unpaid') { return }
@@ -132,7 +131,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					}}
 				/>
 			</View>
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

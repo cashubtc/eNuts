@@ -1,3 +1,4 @@
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { isErr, openUrl } from '@util'
@@ -6,9 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 
 import Button from './Button'
-import usePrompt from './hooks/Prompt'
 import MyModal from './modal'
-import Toaster from './Toaster'
 
 interface ILeaveAppModalProps {
 	url: string
@@ -19,7 +18,7 @@ interface ILeaveAppModalProps {
 export default function LeaveAppModal({ url, visible, closeModal }: ILeaveAppModalProps ) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	const handleContinue = async () => {
 		closeModal()
 		await openUrl(url)?.catch(e => openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
@@ -40,7 +39,6 @@ export default function LeaveAppModal({ url, visible, closeModal }: ILeaveAppMod
 					</Text>
 				</TouchableOpacity>
 			</MyModal>
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</>
 	)
 }

@@ -2,11 +2,9 @@
 import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import usePrompt from '@comps/hooks/Prompt'
 import useCashuToken from '@comps/hooks/Token'
 import { MintBoardIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
@@ -18,6 +16,7 @@ import BottomNav from '@nav/BottomNav'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { NostrContext } from '@src/context/Nostr'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
@@ -44,7 +43,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { contacts } = useContext(NostrContext)
 	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	// Cashu token hook
 	const {
 		token,
@@ -278,7 +277,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				<TrustMintModal
 					loading={loading}
 					tokenInfo={tokenInfo}
-					handleTrustModal={handleTrustModal}
+					handleTrustModal={() => void handleTrustModal()}
 					closeModal={() => setTrustModal(false)}
 				/>
 			}
@@ -315,8 +314,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				onPressCancel={closeOptsModal}
 				loading={loading}
 			/>
-			{/* Prompt toaster */}
-			{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 		</View>
 	)
 }

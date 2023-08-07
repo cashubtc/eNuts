@@ -1,14 +1,13 @@
 import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import usePrompt from '@comps/hooks/Prompt'
 import Loading from '@comps/Loading'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import type { TMeltInputfieldPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { decodeLnInvoice, isErr, isLnurl, openUrl } from '@util'
@@ -29,7 +28,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 	const inputRef = createRef<TextInput>()
 	const [decodedAmount, setDecodedAmount] = useState(0)
 	const [estFee, setEstFee] = useState(0)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	// Paste/Clear input for LNURL/LN invoice
 	const handleInputLabelPress = async () => {
 		// clear input
@@ -196,7 +195,6 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 					onPress={() => void handleBtnPress()}
 				/>
 			</KeyboardAvoidingView>
-			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View>
 	)
 }

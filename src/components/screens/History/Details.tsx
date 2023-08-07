@@ -1,16 +1,15 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import usePrompt from '@comps/hooks/Prompt'
 import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon, QRIcon, SandClockIcon, SearchIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import QR from '@comps/QR'
 import Separator from '@comps/Separator'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
@@ -43,7 +42,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const Ecash = t('ecashPayment')
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
 	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('noMemo', { ns: 'history' })
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	const copyValue = async () => {
 		await Clipboard.setStringAsync(entry.value)
 		setCopy({ ...copy, value: true })
@@ -295,7 +294,6 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					onPress={() => setQr({ open: false, error: false })}
 				/>
 			</MyModal>
-			{prompt.open && <Toaster txt={prompt.msg} success={prompt.success} />}
 		</View>
 	)
 }

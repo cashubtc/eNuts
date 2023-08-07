@@ -1,8 +1,6 @@
 import Button from '@comps/Button'
-import usePrompt from '@comps/hooks/Prompt'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
-import Toaster from '@comps/Toaster'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
@@ -17,6 +15,7 @@ import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays }
 import { FlashList, type ViewToken } from '@shopify/flash-list'
 import Config from '@src/config'
 import { NostrContext } from '@src/context/Nostr'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
@@ -35,6 +34,7 @@ import UserProfile from './UserProfile'
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
 
+// https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
@@ -51,7 +51,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	} = useContext(NostrContext)
 	const [, setAlreadySeen] = useState<string[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 
 	// gets user data from cache or relay
 	const initUserData = useCallback(({ hex, userRelays }: { hex: string, userRelays?: TUserRelays }) => {
@@ -382,7 +382,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				</TouchableOpacity>
 			</MyModal>
 			{!route.params?.isMelt && !route.params?.isSendEcash && <BottomNav navigation={navigation} route={route} />}
-			{prompt.open && <Toaster txt={prompt.msg} />}
 		</View>
 	)
 }

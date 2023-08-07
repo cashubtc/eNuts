@@ -28,3 +28,11 @@ export enum NostrPrefix {
 	Relay = 'nrelay',
 	Address = 'naddr',
 }
+
+export interface INostrDm {
+	created_at: number
+	sender: string
+	msg: string
+	token: string
+	id: string
+}

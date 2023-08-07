@@ -1,15 +1,14 @@
 import { Proof } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import usePrompt from '@comps/hooks/Prompt'
 import RadioBtn from '@comps/RadioBtn'
 import Separator from '@comps/Separator'
-import Toaster from '@comps/Toaster'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import MyModal from '@modal'
 import type { IMintUrl, IProofSelection } from '@model'
 import { FlashList } from '@shopify/flash-list'
+import { PromptCtx } from '@src/context/Prompt'
 import { ThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { getSelectedAmount } from '@util'
@@ -35,7 +34,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
 	const { loading, startLoading, stopLoading } = useLoading()
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const { openPromptAutoClose } = useContext(PromptCtx)
 	const cancelCoinSelection = () => {
 		setVisible(false)
 		disableCS()
@@ -118,7 +117,6 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 						/>
 					</View>
 				}
-				{prompt.open && <Toaster txt={prompt.msg} />}
 			</SafeAreaView>
 		</MyModal>
 	)

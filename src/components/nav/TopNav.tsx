@@ -16,7 +16,7 @@ export default function TopNav({ screenName, withBackBtn, cancel, handlePress }:
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useContext(ThemeContext)
 	return (
-		<View style={styles.topNav}>
+		<View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>
 			{screenName ?
 				<Text style={globals(color).navTxt}>
 					{screenName}
@@ -40,16 +40,20 @@ export default function TopNav({ screenName, withBackBtn, cancel, handlePress }:
 const styles = StyleSheet.create({
 	topNav: {
 		position: 'absolute',
-		top: 40,
-		left: 20,
-		right: 20,
+		top: 0,
+		left: 0,
+		right: 0,
 		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
+		paddingTop: 60,
+		paddingHorizontal: 20,
+		paddingBottom: 10,
+		zIndex: 10
 	},
 	topIconR: {
 		paddingLeft: 20,
-		paddingVertical: 20
+		// paddingVertical: 20
 	},
 })
