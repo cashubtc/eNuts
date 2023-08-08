@@ -221,9 +221,10 @@ export function openUrl(url: string) {
 		.then((canOpen) => canOpen && Linking.openURL(url)) */
 }
 
-// For arrays smaller than 10 elements, a linear search (iterating through the array element by element) is often
-// simpler and faster due to the reduced overhead. Only when you start to deal with larger datasets,
-// such as hundreds or thousands of elements, does binary search's efficiency start to shine.
+/**
+ * Searches for a target value in a sorted array using binary search,
+ * and optionally can insert the target into the .
+ */
 export function binarySearchAndInsert(arr: string[], target: string, shouldInsert = false) {
 	let left = 0, right = arr.length - 1
 	while (left <= right) {
@@ -237,10 +238,12 @@ export function binarySearchAndInsert(arr: string[], target: string, shouldInser
 	return shouldInsert ? left : false
 }
 
+// helper without flag
 export function binarySearch(arr: string[], target: string) {
 	return binarySearchAndInsert(arr, target) as boolean
 }
 
+// helper with flag
 export function sortAndInsert(arr: string[], newStr: string): void {
 	const insertionIndex = binarySearchAndInsert(arr, newStr, true)
 	if (isNum(insertionIndex)) {
@@ -248,6 +251,9 @@ export function sortAndInsert(arr: string[], newStr: string): void {
 	}
 }
 
+// For arrays smaller than 10 elements, a linear search is often
+// simpler and faster due to the reduced overhead. Only when you start to deal with larger datasets,
+// such as hundreds or thousands of elements, does binary search's efficiency start to shine.
 export function hasEventId(arr: string[], target: string) {
 	if (arr.length < 40) {
 		return arr.some(x => x === target)
