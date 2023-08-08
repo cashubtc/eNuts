@@ -19,7 +19,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { contacts } = useNostrContext()
 	return (
 		<Screen
-			screenName={t('cashOut', { ns: 'common' })}
+			screenName={t(isSendEcash ? 'sendEcash' : 'cashOut', { ns: 'common' })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
