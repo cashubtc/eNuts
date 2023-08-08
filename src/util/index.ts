@@ -223,7 +223,13 @@ export function openUrl(url: string) {
 
 /**
  * Searches for a target value in a sorted array using binary search,
- * and optionally can insert the target into the .
+ * and optionally inserts the target value if not found.
+ *
+ * @param arr - The sorted array to search or insert into.
+ * @param target - The value to search for or insert.
+ * @param shouldInsert Optional, Specifies whether to insert the target if not found.
+ * @returns If `shouldInsert` is false, returns `true` if target found, or `false` if not found.
+ * If `shouldInsert` is true, returns the index where target is inserted, or `-1` if the target already exists.
  */
 export function binarySearchAndInsert(arr: string[], target: string, shouldInsert = false) {
 	let left = 0, right = arr.length - 1
