@@ -9,7 +9,7 @@ import { l } from '@log'
 import type { ITokenInfo } from '@model'
 import type { INostrDm } from '@model/nostr'
 import { useNostrContext } from '@src/context/Nostr'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { updateNostrRedeemed } from '@store/nostrDms'
@@ -17,7 +17,7 @@ import { highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 // import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -32,9 +32,9 @@ interface ITokenProps {
 
 export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
 	const { t } = useTranslation(['common'])
+	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const { claimedEvtIds, setClaimedEvtIds } = useNostrContext()
-	const { openPromptAutoClose } = useContext(PromptCtx)
 	const [info, setInfo] = useState<ITokenInfo | undefined>()
 	const { trustModal, setTrustModal } = useCashuToken()
 	const { loading, startLoading, stopLoading } = useLoading()

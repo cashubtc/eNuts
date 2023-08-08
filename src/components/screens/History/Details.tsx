@@ -9,14 +9,14 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -42,7 +42,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const Ecash = t('ecashPayment')
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
 	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('noMemo', { ns: 'history' })
-	const { openPromptAutoClose } = useContext(PromptCtx)
+	const { openPromptAutoClose } = usePromptContext()
 	const copyValue = async () => {
 		await Clipboard.setStringAsync(entry.value)
 		setCopy({ ...copy, value: true })

@@ -6,20 +6,20 @@ import { getProofs } from '@db'
 import { getBackUpToken } from '@db/backup'
 import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { SECURESTORE_KEY } from '@src/storage/store/consts'
 import { secureStore } from '@store'
 import { globals } from '@styles'
 import { isNull } from '@util'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color } = useThemeContext()
-	const { openPromptAutoClose } = useContext(PromptCtx)
+	const { openPromptAutoClose } = usePromptContext()
 	const [pin, setPin] = useState<string | null>(null)
 	const handleBackup = async () => {
 		try {

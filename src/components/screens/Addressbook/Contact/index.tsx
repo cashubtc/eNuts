@@ -5,14 +5,14 @@ import { getMintsBalances } from '@db'
 import type { IContactPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { getNostrUsername, truncateNpub } from '@nostr/util'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -31,7 +31,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const [visible, setVisible] = useState(false)
 	const closeModal = useCallback(() => setVisible(false), [])
 	const [url, setUrl] = useState('')
-	const { openPromptAutoClose } = useContext(PromptCtx)
+	const { openPromptAutoClose } = usePromptContext()
 	const handlePress = (url: string) => {
 		if (url === 'lightning://') {
 			openPromptAutoClose({ msg: '⚠️ Zaps will be added soon... ⚡👀' })

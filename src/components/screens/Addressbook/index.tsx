@@ -15,7 +15,7 @@ import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays }
 import { FlashList, type ViewToken } from '@shopify/flash-list'
 import Config from '@src/config'
 import { useNostrContext } from '@src/context/Nostr'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
@@ -24,7 +24,7 @@ import { globals } from '@styles'
 import { isStr } from '@util'
 import * as Clipboard from 'expo-clipboard'
 import { type Event as NostrEvent, generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -37,6 +37,7 @@ const marginBottomPayment = isIOS ? 25 : 0
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
 	const { t } = useTranslation(['common'])
+	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const {
 		setNutPub,
@@ -51,7 +52,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	} = useNostrContext()
 	const [, setAlreadySeen] = useState<string[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
-	const { openPromptAutoClose } = useContext(PromptCtx)
 
 	// gets user data from cache or relay
 	const initUserData = useCallback(({ hex, userRelays }: { hex: string, userRelays?: TUserRelays }) => {

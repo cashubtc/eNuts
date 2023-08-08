@@ -3,20 +3,21 @@ import QR from '@comps/QR'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi, mainColors } from '@styles'
 import { formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
 	const { mintUrl, amount, hash, expiry, paymentRequest } = route.params
+	const { openPromptAutoClose } = usePromptContext()
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useThemeContext()
@@ -24,7 +25,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const [copied, setCopied] = useState(false)
-	const { openPromptAutoClose } = useContext(PromptCtx)
 	const handlePayment = () => {
 		// state "unpaid" is temporary to prevent btn press spam
 		if (paid === 'unpaid') { return }

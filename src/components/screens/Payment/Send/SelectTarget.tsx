@@ -4,19 +4,18 @@ import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import type { TSelectTargetPageProps } from '@model/nav'
 import { useNostrContext } from '@src/context/Nostr'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight, mainColors } from '@styles'
 import { isNum } from '@util'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
 	const { mint, balance, remainingMints, isSendEcash, nostr } = route.params
 	const { t } = useTranslation(['mints'])
+	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
-	const { openPromptAutoClose } = useContext(PromptCtx)
 	const { contacts } = useNostrContext()
 	return (
 		<Screen

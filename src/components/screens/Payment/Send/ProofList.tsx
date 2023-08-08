@@ -8,12 +8,12 @@ import { isIOS } from '@consts'
 import MyModal from '@modal'
 import type { IMintUrl, IProofSelection } from '@model'
 import { FlashList } from '@shopify/flash-list'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { getSelectedAmount } from '@util'
 import { getMintCurrentKeySetId, } from '@wallet'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -30,11 +30,11 @@ interface ICoinSelectionProps {
  */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
 	const { t } = useTranslation(['common'])
+	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
 	const { loading, startLoading, stopLoading } = useLoading()
-	const { openPromptAutoClose } = useContext(PromptCtx)
 	const cancelCoinSelection = () => {
 		setVisible(false)
 		disableCS()

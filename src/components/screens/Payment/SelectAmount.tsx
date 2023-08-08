@@ -5,17 +5,18 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSelectAmountPageProps } from '@model/nav'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, getInvoiceFromLnurl, vib } from '@util'
 import { checkFees } from '@wallet'
-import { createRef, useContext, useEffect, useState } from 'react'
+import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
 	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
+	const { openPromptAutoClose } = usePromptContext()
 	const { t } = useTranslation(['wallet'])
 	const { color, highlight } = useThemeContext()
 	const { anim, shake } = useShakeAnimation()
@@ -28,7 +29,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		estimation: 0,
 		isCalculating: false
 	})
-	const { openPromptAutoClose } = useContext(PromptCtx)
 	const balTooLow = isMelt && +amount + fee.estimation > balance
 	const isSendingWholeMintBal = () => {
 		// includes fee

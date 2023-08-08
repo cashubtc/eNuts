@@ -10,14 +10,14 @@ import MyModal from '@modal'
 import { QuestionModal } from '@modal/Question'
 import type { TMintManagementPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
 	ScrollView, StyleSheet, Text
@@ -26,6 +26,8 @@ import {
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
 	const { t } = useTranslation(['common'])
+	// prompt modal
+	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	// custom name modal
 	const [customNameOpen, setCustomNameOpen] = useState(false)
@@ -39,8 +41,6 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	// delete mint prompt
 	const [delMintModalOpen, setDelMintModalOpen] = useState(false)
 	const [copied, setCopied] = useState(false)
-	// prompt modal
-	const { openPromptAutoClose } = useContext(PromptCtx)
 
 	// check if it is a default mint
 	useEffect(() => {

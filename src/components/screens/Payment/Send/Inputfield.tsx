@@ -7,13 +7,13 @@ import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import type { TMeltInputfieldPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { decodeLnInvoice, isErr, isLnurl, openUrl } from '@util'
 import { checkFees } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
-import { createRef, useContext, useEffect, useState } from 'react'
+import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -22,13 +22,13 @@ import { MeltOverview } from '../SelectAmount'
 export default function InputfieldScreen({ navigation, route }: TMeltInputfieldPageProps) {
 	const { mint, balance } = route.params
 	const { t } = useTranslation(['common'])
+	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [input, setInput] = useState('')
 	const inputRef = createRef<TextInput>()
 	const [decodedAmount, setDecodedAmount] = useState(0)
 	const [estFee, setEstFee] = useState(0)
-	const { openPromptAutoClose } = useContext(PromptCtx)
 	// Paste/Clear input for LNURL/LN invoice
 	const handleInputLabelPress = async () => {
 		// clear input

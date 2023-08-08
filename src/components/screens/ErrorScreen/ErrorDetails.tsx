@@ -1,8 +1,7 @@
 import Txt from '@comps/Txt'
 import { repoIssueUrl } from '@consts/urls'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { isErr, openUrl } from '@util'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -15,7 +14,7 @@ export interface ErrorDetailsProps {
 
 export function ErrorDetails(props: ErrorDetailsProps) {
 	const { t } = useTranslation(['common'])
-	const { openPromptAutoClose } = useContext(PromptCtx)
+	const { openPromptAutoClose } = usePromptContext()
 	return (
 		<View style={styles.container}>
 			<Text style={styles.header}>

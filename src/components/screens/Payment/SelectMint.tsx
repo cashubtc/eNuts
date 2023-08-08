@@ -8,13 +8,13 @@ import { _testmintUrl } from '@consts'
 import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
 import { FlashList } from '@shopify/flash-list'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { checkFees } from '@wallet'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -32,6 +32,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		invoice,
 		invoiceAmount
 	} = route.params
+	const { openPromptAutoClose } = usePromptContext()
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['wallet'])
 	const { color, highlight } = useThemeContext()
@@ -39,7 +40,6 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	const [userMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// the default mint url if user has set one
 	const [defaultMint, setDefaultM] = useState('')
-	const { openPromptAutoClose } = useContext(PromptCtx)
 	// navigation screen name
 	const getScreenName = () => {
 		if (isMelt) { return 'cashOut' }

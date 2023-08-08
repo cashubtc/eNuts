@@ -11,13 +11,13 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { useTranslation } from 'react-i18next'
 import { AppState } from 'react-native'
 
-import { PromptCtx } from './Prompt'
+import { usePromptContext } from './Prompt'
 
 const useFocusClaim = () => {
-	const { t } = useTranslation()
-	const { openPromptAutoClose } = useContext(PromptCtx)
 	// back-foreground state reference
 	const appState = useRef(AppState.currentState)
+	const { t } = useTranslation()
+	const { openPromptAutoClose } = usePromptContext()
 	const [claimed, setClaimed] = useState(false)
 	// modal
 	const [claimOpen, setClaimOpen] = useState(false)

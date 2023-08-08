@@ -16,7 +16,7 @@ import BottomNav from '@nav/BottomNav'
 import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
@@ -27,7 +27,7 @@ import { hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -43,7 +43,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { contacts } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
-	const { openPromptAutoClose } = useContext(PromptCtx)
+	const { openPromptAutoClose } = usePromptContext()
 	// Cashu token hook
 	const {
 		token,

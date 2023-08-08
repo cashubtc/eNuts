@@ -4,11 +4,11 @@ import Txt from '@comps/Txt'
 import { QuestionModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
@@ -19,7 +19,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color } = useThemeContext()
 	const [confirm, setConfirm] = useState(false)
-	const { openPromptAutoClose } = useContext(PromptCtx)
+	const { openPromptAutoClose } = usePromptContext()
 	const handleDeleteHistory = async () => {
 		const success = await historyStore.clear()
 		openPromptAutoClose({

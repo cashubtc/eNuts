@@ -8,7 +8,7 @@ import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
 import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
@@ -18,7 +18,7 @@ import { checkFees, claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -27,12 +27,12 @@ import QRMarker from './Marker'
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const { mint, balance } = route.params
 	const { t } = useTranslation(['common'])
+	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)
 	const [flash, setFlash] = useState(false)
 	// prompt modal
-	const { openPromptAutoClose } = useContext(PromptCtx)
 	const { loading, startLoading, stopLoading } = useLoading()
 	// cashu token
 	const {

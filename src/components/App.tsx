@@ -1,4 +1,3 @@
-import usePrompt from '@comps/hooks/Prompt'
 import { env } from '@consts'
 import { addAllMintIds, getBalance, getMintsBalances, initDb } from '@db'
 import { fsInfo } from '@db/fs'
@@ -10,7 +9,7 @@ import { KeyboardProvider } from '@src/context/Keyboard'
 import { NostrProvider } from '@src/context/Nostr'
 import { PinProvider } from '@src/context/Pin'
 import { PrivacyProvider } from '@src/context/Privacy'
-import { PromptCtx } from '@src/context/Prompt'
+import { PromptProvider } from '@src/context/Prompt'
 import { ThemeProvider } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
@@ -20,7 +19,7 @@ import { runRequestTokenLoop } from '@wallet'
 import axios from 'axios'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
@@ -63,15 +62,6 @@ function _App() {
 	// app ready to render content
 	const [isRdy, setIsRdy] = useState(false)
 
-	// prompt toaster
-	const { prompt, openPrompt, closePrompt, openPromptAutoClose } = usePrompt()
-	const promptData = useMemo(() => ({
-		prompt,
-		openPrompt,
-		closePrompt,
-		openPromptAutoClose
-	}), [prompt, openPrompt, closePrompt, openPromptAutoClose])
-
 	// init
 	useEffect(() => {
 		async function initDB() {
@@ -108,7 +98,7 @@ function _App() {
 				try {
 					await addAllMintIds()
 				} catch (e) {
-					openPromptAutoClose({ msg: isErr(e) ? e.message : t('addAllMintIdsErr', { ns: 'error' }) })
+					l(isErr(e) ? e.message : 'Error while initiating the app.')
 				}
 			}
 			// await dropAllData()
@@ -133,16 +123,14 @@ function _App() {
 								ref={navigation}
 								onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
 							>
-								<PromptCtx.Provider value={promptData}>
+								<PromptProvider>
 									<KeyboardProvider>
 										<Navigator />
 										<StatusBar style="auto" />
-										{/* claim token if app comes to foreground and clipboard has valid cashu token */}
 										<ClipboardModal />
-										{/* Toaster prompt */}
-										{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
+										<Toaster />
 									</KeyboardProvider>
-								</PromptCtx.Provider>
+								</PromptProvider>
 							</NavigationContainer>
 						</NostrProvider>
 					</PrivacyProvider>

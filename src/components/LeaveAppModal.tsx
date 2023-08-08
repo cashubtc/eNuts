@@ -1,8 +1,7 @@
-import { PromptCtx } from '@src/context/Prompt'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { isErr, openUrl } from '@util'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 
@@ -18,7 +17,7 @@ interface ILeaveAppModalProps {
 export default function LeaveAppModal({ url, visible, closeModal }: ILeaveAppModalProps ) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useThemeContext()
-	const { openPromptAutoClose } = useContext(PromptCtx)
+	const { openPromptAutoClose } = usePromptContext()
 	const handleContinue = async () => {
 		closeModal()
 		await openUrl(url)?.catch(e => openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))

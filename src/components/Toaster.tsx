@@ -1,12 +1,14 @@
+import { usePromptContext } from '@src/context/Prompt'
 import { mainColors } from '@src/styles'
 import { useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export default function Toaster({ success, txt }: { success?: boolean, txt: string }) {
+export default function Toaster() {
 	const insets = useSafeAreaInsets()
 	const [inView, setInView] = useState(true)
+	const { prompt } = usePromptContext()
 	return (
 		inView &&
 		<Animated.View
@@ -14,7 +16,7 @@ export default function Toaster({ success, txt }: { success?: boolean, txt: stri
 			exiting={FadeOutUp}
 			style={[
 				styles.container,
-				{ backgroundColor: success ? mainColors.VALID : mainColors.ERROR, top: insets.top + 20 }
+				{ backgroundColor: prompt.success ? mainColors.VALID : mainColors.ERROR, top: insets.top + 20 }
 			]}
 		>
 			<TouchableOpacity
@@ -22,7 +24,7 @@ export default function Toaster({ success, txt }: { success?: boolean, txt: stri
 				style={{ padding: 15 }}
 			>
 				<Text style={styles.txt}>
-					{txt}
+					{prompt.msg}
 				</Text>
 			</TouchableOpacity>
 		</Animated.View>
