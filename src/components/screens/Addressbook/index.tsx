@@ -67,12 +67,16 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			skipVerification: Config.skipVerification
 		})
 		let latestRelays = 0 	// createdAt
+		let latestProfile = 0	// createdAt
 		let latestContacts = 0 	// createdAt
 		sub?.on('event', async (e: NostrEvent) => {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (+e.kind === EventKind.SetMetadata) {
 				// TODO save user metadata in cache
-				setUserProfile(parseProfileContent(e))
+				if (e.created_at > latestProfile) {
+					latestProfile = e.created_at
+					setUserProfile(parseProfileContent(e))
+				}
 			}
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (+e.kind === EventKind.ContactList) {
