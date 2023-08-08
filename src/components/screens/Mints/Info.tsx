@@ -40,7 +40,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 	return (
 		<Screen
 			withBackBtn
-			handlePress={() => navigation.goBack()}
+			handlePress={() => navigation.navigate('dashboard')}
 		>
 			{info ?
 				<ScrollView style={{ marginBottom: insets.bottom }}>
