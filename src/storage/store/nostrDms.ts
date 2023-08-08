@@ -1,3 +1,5 @@
+import { sortAndInsert } from '@util'
+
 import { store } from '.'
 import { STORE_KEYS } from './consts'
 
@@ -42,5 +44,6 @@ export async function updateNostrRedeemed(newSig: string) {
 		return
 	}
 	if (stored.includes(newSig)) { return }
-	await store.setObj(STORE_KEYS.nostrRedeemed, [...stored, newSig])
+	sortAndInsert(stored, newSig)
+	await store.setObj(STORE_KEYS.nostrRedeemed, stored)
 }

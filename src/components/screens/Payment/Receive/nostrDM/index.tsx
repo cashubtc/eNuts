@@ -15,7 +15,7 @@ import Config from '@src/config'
 import { NostrContext } from '@src/context/Nostr'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
-import { isCashuToken } from '@util'
+import { hasEventId, isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -50,7 +50,7 @@ export default function NostrDMScreen({ navigation }: TNostrReceivePageProps) {
 			if (isCashuToken(word)) {
 				l({ claimedEvtIds })
 				// dont set state if already claimed OR same created_at OR same token
-				setDms(prev => prev.some(entry => claimedEvtIds.includes(entry.id) || entry.created_at === e.created_at || entry.token === word) ?
+				setDms(prev => prev.some(entry => hasEventId(claimedEvtIds, entry.id) || entry.created_at === e.created_at || entry.token === word) ?
 					[...prev]
 					:
 					[...prev, { created_at: e.created_at, sender: e.pubkey, msg: decrypted, token: word, id: e.id }]

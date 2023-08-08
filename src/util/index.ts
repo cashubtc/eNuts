@@ -25,7 +25,7 @@ export function uniq<T extends string | number | bigint | boolean | symbol>(iter
 export function clearArr<T extends U[], U>(array: T) { array.length = 0 }
 
 export function rmArrEntry<T extends U[], U>(arr: T, idx: number) {
-	if (idx < 0||idx >= arr.length) { return }
+	if (idx < 0 || idx >= arr.length) { return }
 	arr[idx] = arr[arr.length - 1]
 	arr.pop()
 }
@@ -219,4 +219,38 @@ export function openUrl(url: string) {
 	return Linking.openURL(url)
 	/* return Linking.canOpenURL(url)
 		.then((canOpen) => canOpen && Linking.openURL(url)) */
+}
+
+// For arrays smaller than 10 elements, a linear search (iterating through the array element by element) is often
+// simpler and faster due to the reduced overhead. Only when you start to deal with larger datasets,
+// such as hundreds or thousands of elements, does binary search's efficiency start to shine.
+export function binarySearchAndInsert(arr: string[], target: string, shouldInsert = false) {
+	let left = 0, right = arr.length - 1
+	while (left <= right) {
+		// bit-wise right shift operation
+		const mid = (left + right) >> 1
+		const midValue = arr[mid]
+		if (midValue === target) { return shouldInsert ? mid : true }
+		if (midValue < target) { left = mid + 1 }
+		else { right = mid - 1 }
+	}
+	return shouldInsert ? left : false
+}
+
+export function binarySearch(arr: string[], target: string) {
+	return binarySearchAndInsert(arr, target) as boolean
+}
+
+export function sortAndInsert(arr: string[], newStr: string): void {
+	const insertionIndex = binarySearchAndInsert(arr, newStr, true)
+	if (isNum(insertionIndex)) {
+		arr.splice(insertionIndex, 0, newStr)
+	}
+}
+
+export function hasEventId(arr: string[], target: string) {
+	if (arr.length < 40) {
+		return arr.some(x => x === target)
+	}
+	return binarySearch(arr, target)
 }
