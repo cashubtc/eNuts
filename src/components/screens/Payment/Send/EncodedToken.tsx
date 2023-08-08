@@ -6,11 +6,11 @@ import { l } from '@log'
 import type { TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { dark, globals, highlight as hi } from '@styles'
 import { vib } from '@util'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Share, StyleSheet, View } from 'react-native'
 
@@ -19,7 +19,7 @@ import { Share, StyleSheet, View } from 'react-native'
  */
 export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const [copied, setCopied] = useState(false)
 	const [error, setError] = useState({ msg: '', open: false })
 	useEffect(() => vib(400), [])

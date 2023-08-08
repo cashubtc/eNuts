@@ -3,7 +3,7 @@ import Txt from '@comps/Txt'
 import type { IProfileContent } from '@model/nostr'
 import { truncateAbout } from '@nostr/util'
 import { NostrContext } from '@src/context/Nostr'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -27,7 +27,7 @@ interface IUserProfileProps {
 export default function UserProfile({ handlePress }: IUserProfileProps) {
 	const { t } = useTranslation()
 	const { pubKey, userProfile, contacts } = useContext(NostrContext)
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	return (
 		<TouchableOpacity
 			style={[globals(color).wrapContainer, styles.bookEntry, styles.userEntryContainer]}

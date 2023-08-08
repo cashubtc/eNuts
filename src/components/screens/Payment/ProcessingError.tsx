@@ -2,15 +2,14 @@ import Button from '@comps/Button'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TProcessingErrorPageProps } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function ProcessingErrorScreen({ navigation, route }: TProcessingErrorPageProps) {
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<View />

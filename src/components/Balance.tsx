@@ -3,7 +3,7 @@ import { setPreferences } from '@db'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { PrivacyContext } from '@src/context/Privacy'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
 import { formatBalance, formatInt, isBool } from '@util'
 import { useContext, useState } from 'react'
@@ -21,7 +21,7 @@ interface IBalanceProps {
 
 export default function Balance({ balance, nav }: IBalanceProps) {
 	const { t } = useTranslation(['common'])
-	const { pref, color, highlight } = useContext(ThemeContext)
+	const { pref, color, highlight } = useThemeContext()
 	const { hidden } = useContext(PrivacyContext)
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const showBalance = () => {

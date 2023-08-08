@@ -1,5 +1,4 @@
-import { ThemeContext } from '@src/context/Theme'
-import { useContext } from 'react'
+import { useThemeContext } from '@src/context/Theme'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import { ChevronRightIcon } from './Icons'
@@ -18,7 +17,7 @@ interface IOptionProps {
 }
 
 export default function Option({ icon, txt, hint, onPress, hasSeparator, loading, secondIcon }: IOptionProps) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<>
 			<TouchableOpacity style={styles.target} onPress={onPress}>

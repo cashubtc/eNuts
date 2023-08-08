@@ -3,10 +3,10 @@ import Logo from '@comps/Logo'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSuccessPageProps } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, vib } from '@util'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	const { amount, memo, fee, mint, isClaim, isMelt, nostr } = route.params
 	const { t } = useTranslation(['common'])
-	const { highlight } = useContext(ThemeContext)
+	const { highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
 	useEffect(() => vib(400), [])
 	return (

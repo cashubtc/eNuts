@@ -4,9 +4,9 @@ import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TAboutSettingsPageProps } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -14,7 +14,7 @@ import { version } from '../../../../package.json'
 
 export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const [visible, setVisible] = useState(false)
 	const closeModal = useCallback(() => setVisible(false), [])
 	const [url, setUrl] = useState('')
@@ -62,7 +62,7 @@ interface IAboutRowProps {
 }
 
 function AboutRow({ txt, handlePress, hasSeparator }: IAboutRowProps) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<>
 			<TouchableOpacity

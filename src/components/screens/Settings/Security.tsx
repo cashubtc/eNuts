@@ -7,7 +7,7 @@ import { getBackUpToken } from '@db/backup'
 import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { SECURESTORE_KEY } from '@src/storage/store/consts'
 import { secureStore } from '@store'
 import { globals } from '@styles'
@@ -18,7 +18,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const { openPromptAutoClose } = useContext(PromptCtx)
 	const [pin, setPin] = useState<string | null>(null)
 	const handleBackup = async () => {
@@ -92,7 +92,7 @@ interface ISecurityOptsProps {
 }
 
 function SecurityOption({ txt, onPress }: ISecurityOptsProps) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<TouchableOpacity
 			style={styles.settingsRow}

@@ -1,7 +1,6 @@
 import TopNav from '@nav/TopNav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { useContext } from 'react'
 import { View } from 'react-native'
 
 interface IContainerProps {
@@ -13,7 +12,7 @@ interface IContainerProps {
 }
 
 export default function Screen({ children, screenName, withBackBtn, withCancelBtn, handlePress }: IContainerProps) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<View style={globals(color).container}>
 			<TopNav

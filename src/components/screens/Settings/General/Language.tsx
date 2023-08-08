@@ -4,11 +4,10 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from '@model/i18n'
 import type { TLanguageSettingsPageProps } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -20,7 +19,7 @@ const langs: ILangsOpt[] = [
 
 export default function LanguageSettings({ navigation }: TLanguageSettingsPageProps) {
 	const { t, i18n } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<Screen
 			screenName={t('language', { ns: 'topNav' })}

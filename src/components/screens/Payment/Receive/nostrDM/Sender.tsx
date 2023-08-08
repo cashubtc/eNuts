@@ -3,9 +3,8 @@ import type { TContact } from '@model/nostr'
 import { truncateAbout, truncateNpub } from '@nostr/util'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import Username from '@screens/Addressbook/Username'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { nip19 } from 'nostr-tools'
-import { useContext } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 interface ISenderProps {
@@ -14,7 +13,7 @@ interface ISenderProps {
 }
 
 export default function Sender({ contact, handleContactPress }: ISenderProps) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<TouchableOpacity style={styles.colWrap} onPress={handleContactPress}>
 			<ProfilePic uri={contact[1]?.picture} />

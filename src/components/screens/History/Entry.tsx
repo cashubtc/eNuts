@@ -2,10 +2,9 @@ import { IncomingArrowIcon, OutgoingArrowIcon, ZapIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { formatInt } from '@util'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -18,7 +17,7 @@ interface IHistoryEntryProps {
 
 export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	const { t } = useTranslation(['history'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	return (
 		<TouchableOpacity
 			style={styles.listItem}

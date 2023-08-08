@@ -4,7 +4,7 @@ import Txt from '@comps/Txt'
 import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
@@ -22,7 +22,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
 	const { t } = useTranslation(['common'])
 	const { anim, shake } = useShakeAnimation()
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	// PIN mismatch context
 	const { attempts, setAttempts } = useContext(PinCtx)
 	// auth state

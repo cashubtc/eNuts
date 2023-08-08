@@ -5,9 +5,8 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TDisplaySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, themeColors } from '@styles'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -15,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
 	const { t } = useTranslation(['common'])
 	const insets = useSafeAreaInsets()
-	const { setTheme, theme, color, highlight } = useContext(ThemeContext)
+	const { setTheme, theme, color, highlight } = useThemeContext()
 	return (
 		<Screen
 			screenName={t('display', { ns: 'topNav' })}
@@ -57,7 +56,7 @@ interface IThemeSelectionProps {
 
 function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
 	const { t } = useTranslation(['common'])
-	const { setHighlight } = useContext(ThemeContext)
+	const { setHighlight } = useThemeContext()
 	return (
 		<>
 			<TouchableOpacity style={styles.settingsRow}

@@ -2,9 +2,8 @@ import Separator from '@comps/Separator'
 import { l } from '@log'
 import type { INostrDm } from '@model/nostr'
 import EntryTime from '@screens/History/entryTime'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
@@ -20,7 +19,7 @@ interface INostrMessageProps {
 
 export default function NostrMessage({ msgEntry, dms, setDms, mints }: INostrMessageProps) {
 	const { t } = useTranslation(['history'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<View style={[globals(color).wrapContainer, styles.msgContainer]}>
 			<Sender contact={[msgEntry.sender, undefined]} handleContactPress={() => l('')} />

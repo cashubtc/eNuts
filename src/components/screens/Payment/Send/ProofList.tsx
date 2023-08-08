@@ -9,7 +9,7 @@ import MyModal from '@modal'
 import type { IMintUrl, IProofSelection } from '@model'
 import { FlashList } from '@shopify/flash-list'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { getSelectedAmount } from '@util'
 import { getMintCurrentKeySetId, } from '@wallet'
@@ -30,7 +30,7 @@ interface ICoinSelectionProps {
  */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -136,7 +136,7 @@ interface IResume {
  */
 export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee, withSeparator }: IResume) {
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const getChangeStr = () => {
 		const change = selectedAmount - lnAmount
 		if (estFee && estFee > 0) {
@@ -191,7 +191,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee,
  */
 export function ProofListHeader() {
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<>
 			<View style={styles.tableHeader}>
@@ -251,7 +251,7 @@ function CoinSelectionRow({ proof, isLatestKeysetId, setChecked }: ICoinSelectio
 }
 
 function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<>
 			<Txt txt={`${proof.amount} Satoshi`} />

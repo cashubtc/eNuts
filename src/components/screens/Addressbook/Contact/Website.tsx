@@ -1,12 +1,11 @@
 import { LinkIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { useContext } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Website({ website, onPress }: { website?: string, onPress: (url: string) => void }) {
-	const { highlight } = useContext(ThemeContext)
+	const { highlight } = useThemeContext()
 	return (
 		website?.length ?
 			<View style={styles.infoWrap}>

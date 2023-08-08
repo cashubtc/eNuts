@@ -1,6 +1,5 @@
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { useContext } from 'react'
 import { SafeAreaView, StyleSheet, Text, TouchableHighlight, TouchableOpacity } from 'react-native'
 
 import Loading from './Loading'
@@ -17,7 +16,7 @@ interface IButtonProps {
 }
 
 export default function Button({ txt, onPress, border, outlined, filled, disabled, loading, icon }: IButtonProps) {
-	const { highlight } = useContext(ThemeContext)
+	const { highlight } = useThemeContext()
 	return (
 		<SafeAreaView style={styles.safeArea}>
 			<TouchableOpacity
@@ -58,7 +57,7 @@ interface IIconBtnProps {
 }
 
 export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIconBtnProps) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	return (
 		<SafeAreaView>
 			<TouchableHighlight

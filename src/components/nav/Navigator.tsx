@@ -38,14 +38,14 @@ import DisplaySettings from '@screens/Settings/General/Display'
 import LanguageSettings from '@screens/Settings/General/Language'
 import PrivacySettings from '@screens/Settings/Privacy'
 import SecuritySettings from '@screens/Settings/Security'
-import { ThemeContext } from '@src/context/Theme'
-import { useContext, useEffect } from 'react'
+import { useThemeContext } from '@src/context/Theme'
+import { useEffect } from 'react'
 import { View } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: INavigatorProps) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 	useEffect(() => {
 		if (!bgAuth || !pinHash.length) { return }

@@ -4,7 +4,7 @@ import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi, mainColors } from '@styles'
 import { formatSeconds, isErr, openUrl } from '@util'
@@ -19,7 +19,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const { mintUrl, amount, hash, expiry, paymentRequest } = route.params
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const [expire, setExpire] = useState(expiry)
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')

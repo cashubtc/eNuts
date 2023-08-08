@@ -2,18 +2,17 @@ import { BookIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi } from '@styles'
 import { isStr } from '@util'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { t } = useTranslation(['topNav'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 
 	const handleNav = async (routeStr: TRouteString) => {
 		// handle nostr explainer for addressbook

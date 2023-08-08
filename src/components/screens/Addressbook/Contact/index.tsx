@@ -6,7 +6,7 @@ import type { IContactPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { getNostrUsername, truncateNpub } from '@nostr/util'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
@@ -26,7 +26,7 @@ import Website from './Website'
 export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const { contact, npub, isUser, userProfile } = route.params
 	const { t } = useTranslation(['addrBook'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const [nutPub, setNutPub] = useState('')
 	const [visible, setVisible] = useState(false)
 	const closeModal = useCallback(() => setVisible(false), [])

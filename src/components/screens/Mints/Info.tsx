@@ -6,17 +6,17 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TMintInfoPageProps } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getMintInfo } from '@wallet'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
 	const [info, setInfo] = useState<GetInfoResponse>()
 

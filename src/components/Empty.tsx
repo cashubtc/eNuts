@@ -1,11 +1,10 @@
-import { ThemeContext } from '@src/context/Theme'
-import { useContext } from 'react'
+import { useThemeContext } from '@src/context/Theme'
 import { Image, StyleSheet } from 'react-native'
 
 import Txt from './Txt'
 
 export default function Empty({txt}: {txt: string}) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<>
 			<Image

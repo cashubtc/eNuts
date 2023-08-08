@@ -9,7 +9,7 @@ import TrustMintModal from '@modal/TrustMint'
 import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
@@ -27,7 +27,7 @@ import QRMarker from './Marker'
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const { mint, balance } = route.params
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)
 	const [flash, setFlash] = useState(false)

@@ -1,6 +1,6 @@
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
-import { createRef, type LegacyRef, useContext, useEffect } from 'react'
+import { createRef, type LegacyRef, useEffect } from 'react'
 import { type KeyboardTypeOptions, type NativeSyntheticEvent, TextInput, type TextInputSubmitEditingEventData } from 'react-native'
 
 interface ITxtInputProps {
@@ -26,7 +26,7 @@ export default function TxtInput({
 	maxLength,
 	value
 }: ITxtInputProps) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const inputRef = createRef<TextInput>()
 	// auto-focus
 	useEffect(() => {

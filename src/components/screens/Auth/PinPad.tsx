@@ -1,7 +1,6 @@
 import { BackspaceIcon, CheckmarkIcon } from '@comps/Icons'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { getPinpadBg, highlight as hi } from '@styles/colors'
-import { useContext } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 const white = '#FAFAFA'
@@ -24,7 +23,7 @@ interface IPinPadProps {
 }
 
 export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, handleInput }: IPinPadProps) {
-	const { highlight } = useContext(ThemeContext)
+	const { highlight } = useThemeContext()
 	// should pad input be disabled
 	const shouldDisablePad = (val: number) => (
 		mismatch ||

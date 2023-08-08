@@ -1,9 +1,8 @@
 import Button from '@comps/Button'
 import type { ITokenInfo } from '@model'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
@@ -18,7 +17,7 @@ interface ITrustModalProps {
 
 export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, closeModal }: ITrustModalProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	return (
 		<MyModal type='question' animation='fade' visible close={closeModal}>
 			<Text style={globals(color, highlight).modalHeader}>

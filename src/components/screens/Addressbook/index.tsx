@@ -16,7 +16,7 @@ import { FlashList, type ViewToken } from '@shopify/flash-list'
 import Config from '@src/config'
 import { NostrContext } from '@src/context/Nostr'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
@@ -37,7 +37,7 @@ const marginBottomPayment = isIOS ? 25 : 0
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const {
 		setNutPub,
 		pubKey,
@@ -388,7 +388,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 function ContactsCount() {
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const { contacts, userRelays } = useContext(NostrContext)
 	return (
 		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>

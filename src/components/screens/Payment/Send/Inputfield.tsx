@@ -8,7 +8,7 @@ import { isIOS } from '@consts'
 import type { TMeltInputfieldPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { decodeLnInvoice, isErr, isLnurl, openUrl } from '@util'
 import { checkFees } from '@wallet'
@@ -22,7 +22,7 @@ import { MeltOverview } from '../SelectAmount'
 export default function InputfieldScreen({ navigation, route }: TMeltInputfieldPageProps) {
 	const { mint, balance } = route.params
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [input, setInput] = useState('')
 	const inputRef = createRef<TextInput>()

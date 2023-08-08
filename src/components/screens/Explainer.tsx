@@ -4,15 +4,15 @@ import Logo from '@comps/Logo'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TExplainerPageProps } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function ExplainerScreen({ navigation }: TExplainerPageProps) {
 	const { t } = useTranslation(['common'])
-	const { highlight } = useContext(ThemeContext)
+	const { highlight } = useThemeContext()
 	const [steps, setSteps] = useState(0)
 	const Steps = () => [
 		<Step key={0} header='eNuts & Ecash' txt={t('explainer1')} />,

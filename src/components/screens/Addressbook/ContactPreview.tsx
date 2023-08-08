@@ -2,10 +2,9 @@ import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { TContact } from '@model/nostr'
 import { truncateAbout, truncateNpub } from '@nostr/util'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -23,7 +22,7 @@ interface IContactPreviewProps {
 
 export default function ContactPreview({ contact, handleContactPress, handleSend, isFirst, isLast, isPayment }: IContactPreviewProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 
 	return (
 		<View style={[styles.container, { paddingTop: isFirst ? 10 : 0, paddingBottom: isLast ? 10 : 0 }]}>

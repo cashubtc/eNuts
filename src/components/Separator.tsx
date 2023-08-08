@@ -1,9 +1,8 @@
-import { ThemeContext } from '@src/context/Theme'
-import { useContext } from 'react'
+import { useThemeContext } from '@src/context/Theme'
 import { type StyleProp, StyleSheet, type TextStyle, View } from 'react-native'
 
 export default function Separator({ style }: { style?: StyleProp<TextStyle>[] }) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return <View style={[styles.separator, { borderColor: color.BORDER }, ...(style || [])]} />
 }
 

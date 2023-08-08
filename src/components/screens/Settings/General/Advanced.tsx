@@ -3,11 +3,11 @@ import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TAdvancedSettingsPageProps } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -17,7 +17,7 @@ const reqTimeouts = [5, 10, 20, 30]
 export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettingsPageProps) {
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['topNav'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const [reqTimeout, setReqTimeout] = useState(10)
 	const setReqTimeoutCB = useCallback((val: number) => { setReqTimeout(val) }, [])
 	useEffect(() => {

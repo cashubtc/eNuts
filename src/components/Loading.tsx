@@ -1,6 +1,5 @@
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { useContext } from 'react'
 import { ActivityIndicator, Image, StyleSheet } from 'react-native'
 
 interface ILoadingProps {
@@ -10,7 +9,7 @@ interface ILoadingProps {
 }
 
 export default function Loading({ color, size, nostr }: ILoadingProps) {
-	const { highlight } = useContext(ThemeContext)
+	const { highlight } = useThemeContext()
 	return nostr ? <NostrIndicator /> : <ActivityIndicator size={size} color={color || hi[highlight]} />
 }
 

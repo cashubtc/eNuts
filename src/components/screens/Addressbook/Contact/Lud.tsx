@@ -1,12 +1,11 @@
 import { ZapIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { useContext } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Lud({ lud16, lud06, onPress }: { lud16?: string, lud06?: string, onPress: (url: string) => void }) {
-	const { highlight } = useContext(ThemeContext)
+	const { highlight } = useThemeContext()
 	// TODO add zaps: `lightning:${paymentRequest}`
 	return (
 		<>

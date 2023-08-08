@@ -9,7 +9,7 @@ import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
 import { FlashList } from '@shopify/flash-list'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
@@ -34,7 +34,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	} = route.params
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['wallet'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	// mint list
 	const [userMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// the default mint url if user has set one

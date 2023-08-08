@@ -6,7 +6,7 @@ import type { THistoryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { getHistory } from '@store/HistoryStore'
 import { globals } from '@styles'
 import { useContext, useEffect, useState } from 'react'
@@ -19,7 +19,7 @@ import HistoryEntry from './Entry'
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const { claimed } = useContext(FocusClaimCtx)
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})
 	// update history after claiming from clipboard when the app comes to the foreground

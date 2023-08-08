@@ -2,7 +2,7 @@ import { CopyIcon, NostrIcon, ReceiveIcon, SendIcon, ZapIcon } from '@comps/Icon
 import Option from '@comps/Option'
 import Txt from '@comps/Txt'
 import { NostrContext } from '@src/context/Nostr'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -34,7 +34,7 @@ export default function OptsModal({
 	isSend,
 }: IOptsModal) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const { contacts } = useContext(NostrContext)
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>

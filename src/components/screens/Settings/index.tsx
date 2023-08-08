@@ -5,7 +5,7 @@ import { QuestionModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { useContext, useState } from 'react'
@@ -17,7 +17,7 @@ import SettingsMenuItem from './MenuItem'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const [confirm, setConfirm] = useState(false)
 	const { openPromptAutoClose } = useContext(PromptCtx)
 	const handleDeleteHistory = async () => {

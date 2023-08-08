@@ -10,7 +10,7 @@ import type { ITokenInfo } from '@model'
 import type { INostrDm } from '@model/nostr'
 import { NostrContext } from '@src/context/Nostr'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
 import { updateNostrRedeemed } from '@store/nostrDms'
 import { highlight as hi, mainColors } from '@styles'
@@ -32,7 +32,7 @@ interface ITokenProps {
 
 export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const { claimedEvtIds, setClaimedEvtIds } = useContext(NostrContext)
 	const { openPromptAutoClose } = useContext(PromptCtx)
 	const [info, setInfo] = useState<ITokenInfo | undefined>()

@@ -10,7 +10,7 @@ import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
@@ -31,7 +31,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const { t } = useTranslation(['common'])
 	const insets = useSafeAreaInsets()
 	const entry = route.params.entry
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const [copy, setCopy] = useState(initialCopyState)
 	const [isSpent, setIsSpent] = useState(entry.isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()

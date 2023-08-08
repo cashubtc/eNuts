@@ -6,11 +6,11 @@ import { isIOS } from '@consts'
 import type { IMintUrl } from '@model'
 import type { TSelectMintToSwapToPageProps } from '@model/nav'
 import { FlashList } from '@shopify/flash-list'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatMintUrl } from '@util'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -19,7 +19,7 @@ const flashlistItemHeight = isIOS ? 60 : 65
 export default function SelectMintToSwapToScreen({ navigation, route }: TSelectMintToSwapToPageProps) {
 	const { mint, balance, remainingMints } = route.params
 	const { t } = useTranslation(['mints'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	// the default mint url if user has set one
 	const [defaultMint, setDefaultM] = useState('')
 	const handlePressMint = (targetMint: IMintUrl) => {

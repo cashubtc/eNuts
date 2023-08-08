@@ -4,16 +4,16 @@ import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import type { TMemoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native'
 
 export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 	const { mint, balance, amount, nostr, isSendingWholeMintBal } = route.params
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const [memo, setMemo] = useState('')
 	const handlePress = () => {
 		// Check if user sends his whole mint balance, so there is no need for coin selection and that can be skipped here

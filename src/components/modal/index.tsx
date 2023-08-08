@@ -1,8 +1,7 @@
 import { isIOS } from '@consts'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import type { TPref } from '@styles'
 import { highlight as hi } from '@styles'
-import { useContext } from 'react'
 import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -26,7 +25,7 @@ export default function MyModal({
 	children
 }: IMyModalProps) {
 
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
 
 	const getCorrectStyle = () => {

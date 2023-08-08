@@ -14,7 +14,7 @@ import type { TMintsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl, isErr, isUrl } from '@util'
@@ -28,7 +28,7 @@ const flashlistTrustedHeight = isIOS ? 94 : 100
 
 export default function Mints({ navigation }: TMintsPageProps) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
 	// mint list
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])

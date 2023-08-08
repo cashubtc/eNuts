@@ -1,13 +1,59 @@
+import { getPreferences, setPreferences } from '@db'
 import { l } from '@log'
 import type { IPreferences } from '@model'
 import { dark, light } from '@styles'
-import { createContext, useState } from 'react'
+import * as SplashScreen from 'expo-splash-screen'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { Appearance } from 'react-native'
 
 const useTheme = () => {
 	const [theme, setTheme] = useState('Light')
-	const [color] = useState(theme === 'Light' ? light.custom : dark.custom)
-	const [pref] = useState<IPreferences | undefined>()
+	const [color, setColors] = useState(theme === 'Light' ? light.custom : dark.custom)
+	const [pref, setPref] = useState<IPreferences | undefined>()
 	const [highlight, setHighlight] = useState('Default')
+	// update theme
+	useEffect(() => {
+		setColors(theme === 'Light' ? light.custom : dark.custom)
+		if (!pref) { return }
+		// update state
+		setPref({ ...pref, darkmode: theme === 'Dark' })
+		// update DB
+		void setPreferences({ ...pref, darkmode: theme === 'Dark' })
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [theme])
+	// update highlighting color
+	useEffect(() => {
+		if (!pref) { return }
+		// update state
+		setPref({ ...pref, theme: highlight })
+		// update DB
+		void setPreferences({ ...pref, theme: highlight })
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [highlight])
+	useEffect(() => {
+		void (async () => {
+			try {
+				// Initialize theme preferences
+				const prefsDB = await getPreferences()
+				const deviceTheme = Appearance.getColorScheme()
+				const darkmode = prefsDB.hasPref ? prefsDB.darkmode : deviceTheme === 'dark'
+				setPref({ ...prefsDB, darkmode })
+				setTheme(darkmode ? 'Dark' : 'Light')
+				setHighlight(prefsDB.theme)
+			} catch (e) {
+				l(e)
+				setPref({
+					id: 1,
+					darkmode: false,
+					formatBalance: false,
+					theme: 'Default'
+				})
+			} finally {
+				await SplashScreen.hideAsync()
+			}
+		})()
+	}, [])
+
 	return {
 		pref,
 		theme,
@@ -17,7 +63,9 @@ const useTheme = () => {
 		setHighlight
 	}
 }
+
 type useThemeType = ReturnType<typeof useTheme>
+
 export const ThemeContext = createContext<useThemeType>({
 	pref: {
 		id: 1,
@@ -39,3 +87,11 @@ export const ThemeContext = createContext<useThemeType>({
 	highlight: '#5DB075',
 	setHighlight: () => l('')
 })
+
+export const useThemeContext = () => useContext(ThemeContext)
+
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => (
+	<ThemeContext.Provider value={useTheme()} >
+		{children}
+	</ThemeContext.Provider>
+)

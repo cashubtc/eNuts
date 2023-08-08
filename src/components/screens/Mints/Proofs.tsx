@@ -7,15 +7,15 @@ import type { TMintProofsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { ProofListHeader, ProofRow } from '@screens/Payment/Send/ProofList'
 import { FlashList } from '@shopify/flash-list'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { getMintCurrentKeySetId } from '@wallet'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function MintProofsPage({ navigation, route }: TMintProofsPageProps) {
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const insets = useSafeAreaInsets()
 	const [proofs, setProofs] = useState<Proof[]>([])
 	const [mintKeysetId, setMintKeysetId] = useState('')

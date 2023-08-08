@@ -6,7 +6,7 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSelectAmountPageProps } from '@model/nav'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, getInvoiceFromLnurl, vib } from '@util'
 import { checkFees } from '@wallet'
@@ -17,7 +17,7 @@ import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
 	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
 	const { t } = useTranslation(['wallet'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const { anim, shake } = useShakeAnimation()
 	const inputRef = createRef<TextInput>()
 	const [amount, setAmount] = useState('')
@@ -228,7 +228,7 @@ interface IMeltOverviewProps {
 
 export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInvoice, fee }: IMeltOverviewProps) {
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	return (
 		<>
 			<View style={styles.overview}>

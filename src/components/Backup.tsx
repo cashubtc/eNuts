@@ -1,9 +1,9 @@
 import { l } from '@log'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { formatMintUrl } from '@util'
 import * as Clipboard from 'expo-clipboard'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Share, StyleSheet, Text } from 'react-native'
 
@@ -16,7 +16,7 @@ interface IBackupSuccessProps {
 
 export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const [copied, setCopied] = useState(false)
 	const handleShare = async () => {
 		try {

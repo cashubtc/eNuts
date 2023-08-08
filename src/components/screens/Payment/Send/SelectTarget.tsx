@@ -5,7 +5,7 @@ import Txt from '@comps/Txt'
 import type { TSelectTargetPageProps } from '@model/nav'
 import { NostrContext } from '@src/context/Nostr'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight, mainColors } from '@styles'
 import { isNum } from '@util'
 import { useContext } from 'react'
@@ -15,7 +15,7 @@ import { StyleSheet, View } from 'react-native'
 export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
 	const { mint, balance, remainingMints, isSendEcash, nostr } = route.params
 	const { t } = useTranslation(['mints'])
-	const { color } = useContext(ThemeContext)
+	const { color } = useThemeContext()
 	const { openPromptAutoClose } = useContext(PromptCtx)
 	const { contacts } = useContext(NostrContext)
 	return (

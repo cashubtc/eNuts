@@ -1,13 +1,12 @@
 import { VerifiedIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { nip05toWebsite } from '@nostr/util'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { useContext } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function NIP05Verified({ nip05, onPress }: { nip05?: string, onPress: (url: string) => void }) {
-	const { highlight } = useContext(ThemeContext)
+	const { highlight } = useThemeContext()
 	return nip05 && nip05.split?.('@').length > 1 ?
 		<View style={styles.infoWrap}>
 			<View style={styles.iconWrap}>

@@ -1,13 +1,11 @@
 import { getEncodedToken } from '@cashu/cashu-ts'
-import Button from '@comps/Button'
 import usePrompt from '@comps/hooks/Prompt'
 import { env } from '@consts'
 import { FiveMins } from '@consts/time'
-import { addAllMintIds, getBalance, getMintsBalances, getMintsUrls, getPreferences, initDb, setPreferences } from '@db'
+import { addAllMintIds, getBalance, getMintsBalances, getMintsUrls, initDb } from '@db'
 import { fsInfo } from '@db/fs'
 import { l } from '@log'
-import MyModal from '@modal'
-import type { IPreferences, ITokenInfo } from '@model'
+import type { ITokenInfo } from '@model'
 import type { INavigatorProps } from '@model/nav'
 import type { IProfileContent, TContact } from '@model/nostr'
 import Navigator from '@nav/Navigator'
@@ -18,12 +16,11 @@ import { NostrContext } from '@src/context/Nostr'
 import { PinCtx } from '@src/context/Pin'
 import { PrivacyContext } from '@src/context/Privacy'
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { ThemeProvider } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/HistoryStore'
 import { getRedeemdedSigs } from '@store/nostrDms'
-import { dark, globals, light } from '@styles'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
 import { routingInstrumentation } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
@@ -34,14 +31,14 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Appearance, AppState, Text, View } from 'react-native'
+import { AppState } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
+import ClipboardModal from './ClipboardModal'
 import { CustomErrorBoundary } from './screens/ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from './screens/ErrorScreen/ErrorDetails'
 import Toaster from './Toaster'
-import Txt from './Txt'
 // import { dropAllData } from '@src/storage/dev'
 
 interface ILockData {
@@ -122,13 +119,6 @@ function _App() {
 	const [isRdy, setIsRdy] = useState(false)
 	const [claimed, setClaimed] = useState(false)
 	const claimData = useMemo(() => ({ claimed, setClaimed }), [claimed])
-	// theme related
-	const [pref, setPref] = useState<IPreferences | undefined>()
-	const [theme, setTheme] = useState('Light')
-	const [color, setColors] = useState(theme === 'Light' ? light.custom : dark.custom)
-	const [highlight, setHighlight] = useState('Default')
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const themeData = useMemo(() => ({ pref, theme, setTheme, color, highlight, setHighlight }), [pref])
 	// privacy context
 	const [hidden, setHidden] = useState(false)
 	const privacyData = useMemo(() => ({ hidden, setHidden }), [hidden])
@@ -241,25 +231,6 @@ function _App() {
 		setClaimed(true)
 	}
 
-	// update theme
-	useEffect(() => {
-		setColors(theme === 'Light' ? light.custom : dark.custom)
-		if (!pref) { return }
-		// update state
-		setPref({ ...pref, darkmode: theme === 'Dark' })
-		// update DB
-		void setPreferences({ ...pref, darkmode: theme === 'Dark' })
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [theme])
-	// update highlighting color
-	useEffect(() => {
-		if (!pref) { return }
-		// update state
-		setPref({ ...pref, theme: highlight })
-		// update DB
-		void setPreferences({ ...pref, theme: highlight })
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [highlight])
 	// init
 	useEffect(() => {
 		async function initDB() {
@@ -273,30 +244,6 @@ function _App() {
 			} catch (e) {
 				l(isErr(e) ? e.message : '')
 				alert(t('dbErr'))
-			}
-		}
-		async function initPreferences() {
-			try {
-				// Initialize theme preferences
-				const prefsDB = await getPreferences()
-				const deviceTheme = Appearance.getColorScheme()
-				const darkmode = prefsDB.hasPref ? prefsDB.darkmode : deviceTheme === 'dark'
-				setPref({ ...prefsDB, darkmode })
-				setTheme(darkmode ? 'Dark' : 'Light')
-				setHighlight(prefsDB.theme)
-				// init privacy preferences
-				const isHidden = await store.get(STORE_KEYS.hiddenBal)
-				setHidden(!!isHidden)
-			} catch (e) {
-				l(e)
-				setPref({
-					id: 1,
-					darkmode: false,
-					formatBalance: false,
-					theme: 'Default'
-				})
-			} finally {
-				await SplashScreen.hideAsync()
 			}
 		}
 		async function initAuth() {
@@ -326,8 +273,6 @@ function _App() {
 				store.get(STORE_KEYS.nutpub),
 				// already claimed ecash from DM: stored event signatures
 				getRedeemdedSigs(),
-				// user preferences (theme, ...)
-				initPreferences(),
 				// PIN setup
 				initAuth(),
 			])
@@ -343,6 +288,9 @@ function _App() {
 					openPromptAutoClose({ msg: isErr(e) ? e.message : t('addAllMintIdsErr', { ns: 'error' }) })
 				}
 			}
+			// init privacy preferences
+			const isHidden = await store.get(STORE_KEYS.hiddenBal)
+			setHidden(!!isHidden)
 			setNutPub(nutpub || '')
 			setClaimedEvtIds(redeemed)
 			// await dropAllData()
@@ -374,12 +322,14 @@ function _App() {
 
 	if (!isRdy) { return null }
 
+	// await SplashScreen.hideAsync() is done in the last context provider
+	// to ensure all initial requests are done before displaying content
 	return (
-		<ThemeContext.Provider value={themeData}>
+		<ThemeProvider>
 			<NostrContext.Provider value={nostrData}>
 				<PrivacyContext.Provider value={privacyData}>
 					<NavigationContainer
-						theme={theme === 'Light' ? light : dark}
+						// theme={theme === 'Light' ? light : dark}
 						ref={navigation}
 						onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
 					>
@@ -395,30 +345,15 @@ function _App() {
 										/>
 										<StatusBar style="auto" />
 										{/* claim token if app comes to foreground and clipboard has valid cashu token */}
-										<MyModal type='question' visible={claimOpen} close={() => setClaimOpen(false)}>
-											<Text style={globals(color, highlight).modalHeader}>
-												{t('foundCashuClipboard')}
-											</Text>
-											<Text style={globals(color, highlight).modalTxt}>
-												{t('memo', { ns: 'history' })}: {tokenInfo?.decoded.memo}{'\n'}
-												<Txt
-													txt={formatInt(tokenInfo?.value ?? 0)}
-													styles={[{ fontWeight: '500' }]}
-												/>
-												{' '}Satoshi {t('fromMint')}:{' '}
-												{tokenInfo?.mints.join(', ')}
-											</Text>
-											<Button
-												txt={t('accept')}
-												onPress={() => void handleRedeem()}
+										{tokenInfo &&
+											<ClipboardModal
+												visible={claimOpen}
+												tokenInfo={tokenInfo}
+												closeModal={() => setClaimOpen(false)}
+												handleRedeem={() => void handleRedeem()}
 											/>
-											<View style={{ marginVertical: 10 }} />
-											<Button
-												txt={t('cancel')}
-												outlined
-												onPress={() => setClaimOpen(false)}
-											/>
-										</MyModal>
+										}
+										{/* Toaster prompt */}
 										{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
 									</KeyboardProvider>
 								</FocusClaimCtx.Provider>
@@ -428,6 +363,6 @@ function _App() {
 					</NavigationContainer>
 				</PrivacyContext.Provider>
 			</NostrContext.Provider>
-		</ThemeContext.Provider>
+		</ThemeProvider>
 	)
 }

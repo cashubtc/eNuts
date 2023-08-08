@@ -1,7 +1,6 @@
 import { PlusIcon, UserIcon } from '@comps/Icons'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { useContext } from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 
 interface IProfilePicProps {
@@ -12,7 +11,7 @@ interface IProfilePicProps {
 }
 
 export default function ProfilePic({ uri, size, isUser, withPlusIcon }: IProfilePicProps) {
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const defaultSize = isUser ? 60 : 40
 	const circleStyle = {
 		width: size || defaultSize,

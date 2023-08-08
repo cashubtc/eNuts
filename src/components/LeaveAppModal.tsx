@@ -1,5 +1,5 @@
 import { PromptCtx } from '@src/context/Prompt'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { isErr, openUrl } from '@util'
 import { useContext } from 'react'
@@ -17,7 +17,7 @@ interface ILeaveAppModalProps {
 
 export default function LeaveAppModal({ url, visible, closeModal }: ILeaveAppModalProps ) {
 	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
 	const { openPromptAutoClose } = useContext(PromptCtx)
 	const handleContinue = async () => {
 		closeModal()
