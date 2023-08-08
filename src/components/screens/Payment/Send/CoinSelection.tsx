@@ -1,6 +1,7 @@
 import Button from '@comps/Button'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
 import { getProofsByMintUrl } from '@db'
 import type { IProofSelection } from '@model'
 import type { TCoinSelectionPageProps } from '@model/nav'
@@ -132,7 +133,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					}
 				</View>
 			</ScrollView>
-			<View style={{ padding: 20, paddingBottom: 20 + insets.bottom }}>
+			<View style={{ padding: 20, paddingBottom: isIOS ? insets.bottom : 0 }}>
 				<Button
 					txt={t(isMelt ? 'submitPaymentReq' : nostr ? 'sendEcash' : 'createToken')}
 					onPress={submitPaymentReq}

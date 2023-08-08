@@ -4,7 +4,6 @@ import Separator from '@comps/Separator'
 import { isIOS } from '@consts'
 import { getProofsByMintUrl } from '@db'
 import type { TMintProofsPageProps } from '@model/nav'
-import BottomNav from '@nav/BottomNav'
 import { ProofListHeader, ProofRow } from '@screens/Payment/Send/ProofList'
 import { FlashList } from '@shopify/flash-list'
 import { useThemeContext } from '@src/context/Theme'
@@ -37,7 +36,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<View style={[styles.content, { marginBottom: insets.bottom + 60 }]}>
+			<View style={[styles.content, { marginBottom: isIOS ? insets.bottom : 0 }]}>
 				{/* List header */}
 				<View style={{ paddingHorizontal: 20, marginTop: 20 }}>
 					<ProofListHeader />
@@ -66,7 +65,6 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 					</View>
 				}
 			</View>
-			<BottomNav navigation={navigation} route={route} />
 		</Screen>
 	)
 }

@@ -6,6 +6,7 @@ import Loading from '@comps/Loading'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
 import type { TMintInfoPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
@@ -40,10 +41,10 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 	return (
 		<Screen
 			withBackBtn
-			handlePress={() => navigation.navigate('dashboard')}
+			handlePress={() => navigation.goBack()}
 		>
 			{info ?
-				<ScrollView style={{ marginBottom: insets.bottom }}>
+				<ScrollView style={{ marginBottom: isIOS ? insets.bottom : 0 }}>
 					{/* Name, Version & short description */}
 					<View style={[globals(color).wrapContainer, styles.mainInfo]}>
 						<View style={[styles.circleContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
