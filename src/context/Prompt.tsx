@@ -1,22 +1,36 @@
 import { l } from '@log'
 import type { IOpenPromptAutoCloseProps, IPromptState } from '@model'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useRef, useState } from 'react'
 
 const usePrompt = () => {
+	const timerId = useRef<ReturnType<typeof setTimeout>>()
 	const [prompt, setPrompt] = useState<IPromptState>({ open: false, msg: '' })
-	const openPrompt = (msg: string) => {
-		setPrompt({ open: true, msg })
-	}
-	const closePrompt = () => {
-		setPrompt({ open: false, msg: '' })
-	}
-	const openPromptAutoClose = ({ msg, success, ms }: IOpenPromptAutoCloseProps) => {
-		setPrompt({ success, open: true, msg })
-		const t = setTimeout(() => {
-			setPrompt({ open: false, msg: '' })
-			clearTimeout(t)
+
+	const startClosingTimer = (ms?: number) => {
+		timerId.current = setTimeout(() => {
+			closePrompt()
+			clearTimer()
 		}, ms ?? 2500)
 	}
+
+	const clearTimer = () => {
+		clearTimeout(timerId.current)
+		timerId.current = undefined
+	}
+
+	const openPrompt = (msg: string, success?: boolean) => setPrompt({ open: true, success, msg })
+
+	const closePrompt = () => {
+		setPrompt({ open: false, msg: '' })
+		if (timerId.current) { clearTimer() }
+	}
+
+	const openPromptAutoClose = ({ msg, success, ms }: IOpenPromptAutoCloseProps) => {
+		openPrompt(msg, success)
+		if (timerId.current) { clearTimer() }
+		startClosingTimer(ms)
+	}
+
 	return {
 		prompt,
 		openPrompt,
