@@ -9,7 +9,7 @@ import { FocusClaimProvider } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { NostrProvider } from '@src/context/Nostr'
 import { PinProvider } from '@src/context/Pin'
-import { PrivacyContext } from '@src/context/Privacy'
+import { PrivacyProvider } from '@src/context/Privacy'
 import { PromptCtx } from '@src/context/Prompt'
 import { ThemeProvider } from '@src/context/Theme'
 import { store } from '@store'
@@ -63,11 +63,6 @@ function _App() {
 	// app ready to render content
 	const [isRdy, setIsRdy] = useState(false)
 
-
-
-	// privacy context
-	const [hidden, setHidden] = useState(false)
-	const privacyData = useMemo(() => ({ hidden, setHidden }), [hidden])
 	// prompt toaster
 	const { prompt, openPrompt, closePrompt, openPromptAutoClose } = usePrompt()
 	const promptData = useMemo(() => ({
@@ -116,9 +111,6 @@ function _App() {
 					openPromptAutoClose({ msg: isErr(e) ? e.message : t('addAllMintIdsErr', { ns: 'error' }) })
 				}
 			}
-			// init privacy preferences
-			const isHidden = await store.get(STORE_KEYS.hiddenBal)
-			setHidden(!!isHidden)
 			// await dropAllData()
 			setIsRdy(true)
 		}
@@ -134,8 +126,8 @@ function _App() {
 		<ThemeProvider>
 			<PinProvider>
 				<FocusClaimProvider>
-					<NostrProvider>
-						<PrivacyContext.Provider value={privacyData}>
+					<PrivacyProvider>
+						<NostrProvider>
 							<NavigationContainer
 								// theme={theme === 'Light' ? light : dark}
 								ref={navigation}
@@ -152,8 +144,8 @@ function _App() {
 									</KeyboardProvider>
 								</PromptCtx.Provider>
 							</NavigationContainer>
-						</PrivacyContext.Provider>
-					</NostrProvider>
+						</NostrProvider>
+					</PrivacyProvider>
 				</FocusClaimProvider>
 			</PinProvider>
 		</ThemeProvider>

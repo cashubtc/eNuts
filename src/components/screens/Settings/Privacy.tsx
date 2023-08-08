@@ -3,19 +3,18 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TPrivacySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { PrivacyContext } from '@src/context/Privacy'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi } from '@styles'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Switch, Text, View } from 'react-native'
 
 export default function PrivacySettings({ navigation, route }: TPrivacySettingsPageProps) {
 	const { t } = useTranslation(['topNav'])
 	const { color, highlight } = useThemeContext()
-	const { hidden, setHidden } = useContext(PrivacyContext)
+	const { hidden, setHidden } = usePrivacyContext()
 	const handleHidden = async () => {
 		if (hidden) {
 			setHidden(false)

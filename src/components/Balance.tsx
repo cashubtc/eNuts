@@ -2,11 +2,11 @@ import { AboutIcon, ChevronRightIcon, HistoryIcon, SwapCurrencyIcon } from '@com
 import { setPreferences } from '@db'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { PrivacyContext } from '@src/context/Privacy'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
 import { formatBalance, formatInt, isBool } from '@util'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -22,7 +22,7 @@ interface IBalanceProps {
 export default function Balance({ balance, nav }: IBalanceProps) {
 	const { t } = useTranslation(['common'])
 	const { pref, color, highlight } = useThemeContext()
-	const { hidden } = useContext(PrivacyContext)
+	const { hidden } = usePrivacyContext()
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const showBalance = () => {
 		if (hidden) { return '-' }
