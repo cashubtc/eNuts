@@ -244,7 +244,7 @@ export function binarySearch(arr: string[], target: string) {
 }
 
 // helper with flag
-export function sortAndInsert(arr: string[], newStr: string): void {
+export function binaryInsert(arr: string[], newStr: string): void {
 	const insertionIndex = binarySearchAndInsert(arr, newStr, true)
 	if (isNum(insertionIndex)) {
 		arr.splice(insertionIndex, 0, newStr)
