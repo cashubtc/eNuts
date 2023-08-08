@@ -90,7 +90,6 @@ export default function NostrDMScreen({ navigation }: TNostrReceivePageProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userRelays])
 
-	// TODO check already spent tokens from trusted mints and filter them out
 	return (
 		<Screen
 			screenName={t('receiveEcashNostr')}
