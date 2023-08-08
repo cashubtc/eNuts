@@ -1,7 +1,6 @@
 import Button from '@comps/Button'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
-import { isIOS } from '@consts'
 import { getProofsByMintUrl } from '@db'
 import type { IProofSelection } from '@model'
 import type { TCoinSelectionPageProps } from '@model/nav'
@@ -10,7 +9,7 @@ import { truncateNpub } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
-import { formatMintUrl, getSelectedAmount, isLnurl } from '@util'
+import { formatInt, formatMintUrl, getSelectedAmount, isLnurl } from '@util'
 import { nip19 } from 'nostr-tools'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -92,13 +91,13 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					{isSwap && targetMint &&
 						<OverviewRow txt1={t('recipient')} txt2={targetMint.customName || formatMintUrl(targetMint.mintUrl)} />
 					}
-					<OverviewRow txt1={t('amount')} txt2={`${amount} Satoshi`} />
+					<OverviewRow txt1={t('amount')} txt2={`${formatInt(amount)} Satoshi`} />
 					{estFee > 0 &&
 						<OverviewRow txt1={t('estimatedFees')} txt2={`${estFee} Satoshi`} />
 					}
 					<OverviewRow
 						txt1={t('balanceAfterTX')}
-						txt2={estFee > 0 ? `${balance - amount - estFee} ${t('to')} ${balance - amount} Satoshi` : `${balance - amount} Satoshi`}
+						txt2={estFee > 0 ? `${formatInt(balance - amount - estFee)} ${t('to')} ${formatInt(balance - amount)} Satoshi` : `${formatInt(balance - amount)} Satoshi`}
 					/>
 					{memo && memo.length > 0 &&
 						<OverviewRow txt1={t('memo', { ns: 'history' })} txt2={memo} />
@@ -133,7 +132,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					}
 				</View>
 			</ScrollView>
-			<View style={{ padding: 20, paddingBottom: isIOS ? insets.bottom : 0 }}>
+			<View style={{ padding: 20, paddingBottom: insets.bottom + 20 }}>
 				<Button
 					txt={t(isMelt ? 'submitPaymentReq' : nostr ? 'sendEcash' : 'createToken')}
 					onPress={submitPaymentReq}
