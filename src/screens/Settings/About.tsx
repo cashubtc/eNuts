@@ -10,7 +10,7 @@ import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-import { version } from '../../../../package.json'
+import { version } from '../../../package.json'
 
 export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 	const { t } = useTranslation(['common'])

@@ -12,7 +12,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
-import { version } from '../../../../package.json'
+import { version } from '../../../package.json'
 import SettingsMenuItem from './MenuItem'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
