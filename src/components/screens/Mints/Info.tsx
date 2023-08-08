@@ -1,10 +1,11 @@
 import type { GetInfoResponse } from '@cashu/cashu-ts'
 import Empty from '@comps/Empty'
+import useLoading from '@comps/hooks/Loading'
 import { ExclamationIcon, MintBoardIcon } from '@comps/Icons'
+import Loading from '@comps/Loading'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
-import { l } from '@log'
 import type { TMintInfoPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
@@ -19,19 +20,21 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
 	const [info, setInfo] = useState<GetInfoResponse>()
+	const { loading, startLoading, stopLoading } = useLoading()
 
 	useEffect(() => {
 		void (async () => {
+			startLoading()
 			try {
 				const mintInfo = await getMintInfo(route.params.mintUrl)
 				setInfo(mintInfo)
-				l({ mintInfo })
 			} catch (e) {
-				l(e)
-				// mint info not available
+				// ignore mint info not available
 			}
+			stopLoading()
 		})()
 		return () => setInfo(undefined)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [route.params.mintUrl])
 
 	return (
@@ -79,7 +82,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 						<Text style={[styles.description, { color: color.TEXT }]}>
 							{t('contact', { count: 1 })}
 						</Text>
-						{info.contact.map((c, i) => (
+						{info.contact?.map((c, i) => (
 							<View key={i} style={styles.contactWrap}>
 								{c[0].length > 0 && c[1].length > 0 ?
 									<>
@@ -95,7 +98,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 						<Text style={[styles.description, { color: color.TEXT }]}>
 							{t('supportedNuts', { ns: 'mints' })}
 						</Text>
-						{info.nuts.map((n, i) => <Txt key={i} txt={n} />)}
+						{info.nuts?.map((n, i) => <Txt key={i} txt={n} />)}
 						<Separator style={[{ marginVertical: 20 }]} />
 						<Text style={[styles.description, { color: color.TEXT }]}>
 							{t('pubKey', { ns: 'mints' })}
@@ -111,7 +114,10 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 					</View>
 				</ScrollView>
 				:
-				<Empty txt={t('noInfo', { ns: 'mints' }) + '...'} />
+				loading ?
+					<Loading />
+					:
+					<Empty txt={t('noInfo', { ns: 'mints' }) + '...'} />
 			}
 		</Screen>
 	)
