@@ -68,8 +68,8 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: 'mints' }), ms: 2000 })
 			return
 		}
-		openPromptAutoClose({ msg: t('newMintSuccess', { mintUrl: formatMintUrl(input), ns: 'mints' }), success: true })
 		setNewMintModal(false)
+		setTopUpModal(true)
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
 	}

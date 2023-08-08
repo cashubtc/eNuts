@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
 		paddingTop: 60,
 		paddingHorizontal: 20,
 		paddingBottom: 10,
-		zIndex: 10
 	},
 	topIconR: {
 		paddingLeft: 20,
