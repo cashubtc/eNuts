@@ -1,4 +1,4 @@
-import { HamburgerIcon, LanguageIcon, PaletteIcon } from '@comps/Icons'
+import { LanguageIcon, PaletteIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import type { TGeneralSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -32,16 +32,17 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 					txtColor={color.TEXT}
 					icon={<LanguageIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Language settings')}
-					hasSeparator
+					// hasSeparator
 					hasChevron
 				/>
-				<SettingsMenuItem
+				{/* // TODO consider cashu-ts removing axios to handle advanced request timeout settings */}
+				{/* <SettingsMenuItem
 					txt={t('advancedFunctions', { ns: 'topNav' })}
 					txtColor={color.TEXT}
 					icon={<HamburgerIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Advanced settings')}
 					hasChevron
-				/>
+				/> */}
 			</View>
 			<BottomNav navigation={navigation} route={route} />
 		</Screen>

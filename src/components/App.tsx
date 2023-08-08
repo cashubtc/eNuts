@@ -10,13 +10,13 @@ import { NostrProvider } from '@src/context/Nostr'
 import { PinProvider } from '@src/context/Pin'
 import { PrivacyProvider } from '@src/context/Privacy'
 import { PromptProvider } from '@src/context/Prompt'
-import { ThemeProvider } from '@src/context/Theme'
+import { ThemeProvider, useThemeContext } from '@src/context/Theme'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { isErr, isStr } from '@util'
+import { dark, light } from '@styles'
+import { isErr } from '@util'
 import { routingInstrumentation } from '@util/crashReporting'
 import { runRequestTokenLoop } from '@wallet'
-import axios from 'axios'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useRef, useState } from 'react'
@@ -55,56 +55,57 @@ export default function App() {
 }
 
 function _App() {
-	// navigation reference
-	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
 	// i18next
 	const { t, i18n } = useTranslation(['common'])
 	// app ready to render content
 	const [isRdy, setIsRdy] = useState(false)
 
-	// init
-	useEffect(() => {
-		async function initDB() {
-			try {
-				await initDb()
-				runRequestTokenLoop()
-				// await addAllMintIds()
-				/* const test = await getProofs()
-				l({ test }, await getBalance())
-				l(await getBalancesByKeysetId()) */
-			} catch (e) {
-				l(isErr(e) ? e.message : '')
-				alert(t('dbErr'))
-			}
+	// init database
+	const initDB = async () => {
+		try {
+			await initDb()
+			runRequestTokenLoop()
+		} catch (e) {
+			l(isErr(e) ? e.message : 'Error while initiating the database.')
+			alert(t('dbErr'))
 		}
-		async function init() {
-			await initDB()
-			const ten_seconds = 10_000
-			const [timeout, lang, balances, balance] = await Promise.all([
+	}
+
+	// init stored data
+	const initData = async () => {
+		try {
+			const [lang, balances, balance] = await Promise.all([
+				// DEPRECATED // TODO consider cashu-ts removing axios
 				// preferred time in ms for request timeout
-				store.get(STORE_KEYS.reqTimeout),
+				// store.get(STORE_KEYS.reqTimeout),
 				// preferred language
 				store.get(STORE_KEYS.lang),
 				// balances
 				getMintsBalances(),
 				getBalance(),
 			])
-			axios.defaults.timeout = isStr(timeout) ? +timeout : ten_seconds
 			if (lang?.length) {
 				await i18n.changeLanguage(lang)
 			}
 			const mintBalsTotal = (balances).reduce((acc, cur) => acc + cur.amount, 0)
-			if (mintBalsTotal !== balance) {
-				try {
-					await addAllMintIds()
-				} catch (e) {
-					l(isErr(e) ? e.message : 'Error while initiating the app.')
-				}
-			}
-			// await dropAllData()
-			setIsRdy(true)
+			if (mintBalsTotal !== balance) { await addAllMintIds() }
+			// await dropAllData() // DEV-ONLY DEBUG
+			setIsRdy(true) // APP is ready to render
+		} catch (e) {
+			l(isErr(e) ? e.message : 'Error while initiating the user app configuration.')
+		} finally {
+			await fsInfo()
 		}
-		void init().then(fsInfo)
+	}
+
+	// init
+	useEffect(() => {
+		void (async () => {
+			// init database
+			await initDB()
+			// init stored data
+			await initData()
+		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -118,11 +119,7 @@ function _App() {
 				<FocusClaimProvider>
 					<PrivacyProvider>
 						<NostrProvider>
-							<NavigationContainer
-								// theme={theme === 'Light' ? light : dark}
-								ref={navigation}
-								onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
-							>
+							<NavContainer>
 								<PromptProvider>
 									<KeyboardProvider>
 										<Navigator />
@@ -131,11 +128,26 @@ function _App() {
 										<Toaster />
 									</KeyboardProvider>
 								</PromptProvider>
-							</NavigationContainer>
+							</NavContainer>
 						</NostrProvider>
 					</PrivacyProvider>
 				</FocusClaimProvider>
 			</PinProvider>
 		</ThemeProvider>
+	)
+}
+
+function NavContainer({ children }: { children: React.ReactNode }) {
+	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
+	const { theme } = useThemeContext()
+
+	return (
+		<NavigationContainer
+			theme={theme === 'Light' ? light : dark}
+			ref={navigation}
+			onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
+		>
+			{children}
+		</NavigationContainer>
 	)
 }
