@@ -12,12 +12,12 @@ import { relay } from '@nostr/class/Relay'
 import { EventKind } from '@nostr/consts'
 import { decrypt } from '@nostr/crypto'
 import Config from '@src/config'
-import { NostrContext } from '@src/context/Nostr'
+import { useNostrContext } from '@src/context/Nostr'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
 import { hasEventId, isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
@@ -25,7 +25,7 @@ import NostrMessage from './NostrMessage'
 
 export default function NostrDMScreen({ navigation }: TNostrReceivePageProps) {
 	const { t } = useTranslation(['common'])
-	const { userRelays, claimedEvtIds } = useContext(NostrContext)
+	const { userRelays, claimedEvtIds } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [userMints, setUserMints] = useState<string[]>([])
 	const [dms, setDms] = useState<INostrDm[]>([])

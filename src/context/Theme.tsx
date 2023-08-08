@@ -11,6 +11,7 @@ const useTheme = () => {
 	const [color, setColors] = useState(theme === 'Light' ? light.custom : dark.custom)
 	const [pref, setPref] = useState<IPreferences | undefined>()
 	const [highlight, setHighlight] = useState('Default')
+
 	// update theme
 	useEffect(() => {
 		setColors(theme === 'Light' ? light.custom : dark.custom)
@@ -21,6 +22,7 @@ const useTheme = () => {
 		void setPreferences({ ...pref, darkmode: theme === 'Dark' })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [theme])
+
 	// update highlighting color
 	useEffect(() => {
 		if (!pref) { return }
@@ -30,6 +32,8 @@ const useTheme = () => {
 		void setPreferences({ ...pref, theme: highlight })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [highlight])
+
+	// init
 	useEffect(() => {
 		void (async () => {
 			try {
@@ -66,7 +70,7 @@ const useTheme = () => {
 
 type useThemeType = ReturnType<typeof useTheme>
 
-export const ThemeContext = createContext<useThemeType>({
+const ThemeContext = createContext<useThemeType>({
 	pref: {
 		id: 1,
 		darkmode: false,

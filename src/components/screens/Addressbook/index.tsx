@@ -14,7 +14,7 @@ import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
 import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays } from '@nostr/util'
 import { FlashList, type ViewToken } from '@shopify/flash-list'
 import Config from '@src/config'
-import { NostrContext } from '@src/context/Nostr'
+import { useNostrContext } from '@src/context/Nostr'
 import { PromptCtx } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
@@ -48,7 +48,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		setUserRelays,
 		contacts,
 		setContacts
-	} = useContext(NostrContext)
+	} = useNostrContext()
 	const [, setAlreadySeen] = useState<string[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const { openPromptAutoClose } = useContext(PromptCtx)
@@ -389,7 +389,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 function ContactsCount() {
 	const { t } = useTranslation(['common'])
 	const { color } = useThemeContext()
-	const { contacts, userRelays } = useContext(NostrContext)
+	const { contacts, userRelays } = useNostrContext()
 	return (
 		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
 			{!contacts.length ?

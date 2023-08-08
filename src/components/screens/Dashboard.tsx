@@ -15,7 +15,7 @@ import type { TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
-import { NostrContext } from '@src/context/Nostr'
+import { useNostrContext } from '@src/context/Nostr'
 import { PromptCtx } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { store } from '@store'
@@ -40,7 +40,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useContext(FocusClaimCtx)
 	// Nostr
-	const { contacts } = useContext(NostrContext)
+	const { contacts } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
 	const { openPromptAutoClose } = useContext(PromptCtx)

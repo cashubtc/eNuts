@@ -3,7 +3,7 @@ import Option from '@comps/Option'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import type { TSelectTargetPageProps } from '@model/nav'
-import { NostrContext } from '@src/context/Nostr'
+import { useNostrContext } from '@src/context/Nostr'
 import { PromptCtx } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight, mainColors } from '@styles'
@@ -17,7 +17,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { t } = useTranslation(['mints'])
 	const { color } = useThemeContext()
 	const { openPromptAutoClose } = useContext(PromptCtx)
-	const { contacts } = useContext(NostrContext)
+	const { contacts } = useNostrContext()
 	return (
 		<Screen
 			screenName={t('cashOut', { ns: 'common' })}

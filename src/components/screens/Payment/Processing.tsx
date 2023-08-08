@@ -31,7 +31,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		estFee,
 		isMelt,
 		isSendEcash,
-		// TODO we have to save the relays (write) of the payment receiver to be able to read the DMs (Cashu tokens) he might send us back
 		nostr,
 		isSwap,
 		targetMint,

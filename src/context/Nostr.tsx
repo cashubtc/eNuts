@@ -1,6 +1,9 @@
 import { l } from '@log'
 import type { IProfileContent, TContact } from '@model/nostr'
-import { createContext, useState } from 'react'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
+import { getRedeemdedSigs } from '@store/nostrDms'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 const useNostr = () => {
 	const [nutPub, setNutPub] = useState('')
@@ -9,6 +12,21 @@ const useNostr = () => {
 	const [userRelays, setUserRelays] = useState<string[]>([])
 	const [contacts, setContacts] = useState<TContact[]>([])
 	const [claimedEvtIds, setClaimedEvtIds] = useState<string[]>([])
+
+	// init
+	useEffect(() => {
+		void (async () => {
+			const [nutpub, redeemed] = await Promise.all([
+				// user enuts pubKey
+				store.get(STORE_KEYS.nutpub),
+				// already claimed ecash from DM: stored event signatures
+				getRedeemdedSigs(),
+			])
+			setNutPub(nutpub || '')
+			setClaimedEvtIds(redeemed)
+		})()
+	}, [])
+
 	return {
 		nutPub,
 		setNutPub,
@@ -25,7 +43,7 @@ const useNostr = () => {
 	}
 }
 type useNostrType = ReturnType<typeof useNostr>
-export const NostrContext = createContext<useNostrType>({
+const NostrContext = createContext<useNostrType>({
 	nutPub: '',
 	setNutPub: () => l(''),
 	pubKey: { encoded: '', hex: '' },
@@ -51,3 +69,11 @@ export const NostrContext = createContext<useNostrType>({
 	claimedEvtIds: [],
 	setClaimedEvtIds: () => l(''),
 })
+
+export const useNostrContext = () => useContext(NostrContext)
+
+export const NostrProvider = ({ children }: { children: React.ReactNode }) => (
+	<NostrContext.Provider value={useNostr()} >
+		{children}
+	</NostrContext.Provider>
+)

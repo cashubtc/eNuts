@@ -1,10 +1,9 @@
 import { CopyIcon, NostrIcon, ReceiveIcon, SendIcon, ZapIcon } from '@comps/Icons'
 import Option from '@comps/Option'
 import Txt from '@comps/Txt'
-import { NostrContext } from '@src/context/Nostr'
+import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { globals, mainColors } from '@styles'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -35,7 +34,7 @@ export default function OptsModal({
 }: IOptsModal) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useThemeContext()
-	const { contacts } = useContext(NostrContext)
+	const { contacts } = useNostrContext()
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
 			<Txt

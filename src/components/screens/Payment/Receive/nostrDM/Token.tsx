@@ -8,7 +8,7 @@ import { addMint } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
 import type { INostrDm } from '@model/nostr'
-import { NostrContext } from '@src/context/Nostr'
+import { useNostrContext } from '@src/context/Nostr'
 import { PromptCtx } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { addToHistory } from '@store/HistoryStore'
@@ -33,7 +33,7 @@ interface ITokenProps {
 export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useThemeContext()
-	const { claimedEvtIds, setClaimedEvtIds } = useContext(NostrContext)
+	const { claimedEvtIds, setClaimedEvtIds } = useNostrContext()
 	const { openPromptAutoClose } = useContext(PromptCtx)
 	const [info, setInfo] = useState<ITokenInfo | undefined>()
 	const { trustModal, setTrustModal } = useCashuToken()

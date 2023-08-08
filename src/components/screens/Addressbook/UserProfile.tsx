@@ -2,10 +2,9 @@ import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IProfileContent } from '@model/nostr'
 import { truncateAbout } from '@nostr/util'
-import { NostrContext } from '@src/context/Nostr'
+import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -26,7 +25,7 @@ interface IUserProfileProps {
 
 export default function UserProfile({ handlePress }: IUserProfileProps) {
 	const { t } = useTranslation()
-	const { pubKey, userProfile, contacts } = useContext(NostrContext)
+	const { pubKey, userProfile, contacts } = useNostrContext()
 	const { color, highlight } = useThemeContext()
 	return (
 		<TouchableOpacity

@@ -7,12 +7,11 @@ import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
 import type { INavigatorProps } from '@model/nav'
-import type { IProfileContent, TContact } from '@model/nostr'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { FocusClaimCtx } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
-import { NostrContext } from '@src/context/Nostr'
+import { NostrProvider } from '@src/context/Nostr'
 import { PinCtx } from '@src/context/Pin'
 import { PrivacyContext } from '@src/context/Privacy'
 import { PromptCtx } from '@src/context/Prompt'
@@ -20,7 +19,6 @@ import { ThemeProvider } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/HistoryStore'
-import { getRedeemdedSigs } from '@store/nostrDms'
 import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, isNull, isStr, sleep } from '@util'
 import { routingInstrumentation } from '@util/crashReporting'
 import { claimToken, isTokenSpendable, runRequestTokenLoop } from '@wallet'
@@ -122,27 +120,6 @@ function _App() {
 	// privacy context
 	const [hidden, setHidden] = useState(false)
 	const privacyData = useMemo(() => ({ hidden, setHidden }), [hidden])
-	// nostr context
-	const [nutPub, setNutPub] = useState('')
-	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
-	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
-	const [userRelays, setUserRelays] = useState<string[]>([])
-	const [contacts, setContacts] = useState<TContact[]>([])
-	const [claimedEvtIds, setClaimedEvtIds] = useState<string[]>([])
-	const nostrData = useMemo(() => ({
-		nutPub,
-		setNutPub,
-		pubKey,
-		setPubKey,
-		userProfile,
-		setUserProfile,
-		userRelays,
-		setUserRelays,
-		contacts,
-		setContacts,
-		claimedEvtIds,
-		setClaimedEvtIds
-	}), [nutPub, pubKey, userProfile, userRelays, contacts, claimedEvtIds])
 	// prompt toaster
 	const { prompt, openPrompt, closePrompt, openPromptAutoClose } = usePrompt()
 	const promptData = useMemo(() => ({
@@ -261,7 +238,7 @@ function _App() {
 		async function init() {
 			await initDB()
 			const ten_seconds = 10_000
-			const [timeout, lang, balances, balance, nutpub, redeemed] = await Promise.all([
+			const [timeout, lang, balances, balance] = await Promise.all([
 				// preferred time in ms for request timeout
 				store.get(STORE_KEYS.reqTimeout),
 				// preferred language
@@ -269,10 +246,6 @@ function _App() {
 				// balances
 				getMintsBalances(),
 				getBalance(),
-				// user enuts pubKey
-				store.get(STORE_KEYS.nutpub),
-				// already claimed ecash from DM: stored event signatures
-				getRedeemdedSigs(),
 				// PIN setup
 				initAuth(),
 			])
@@ -291,8 +264,6 @@ function _App() {
 			// init privacy preferences
 			const isHidden = await store.get(STORE_KEYS.hiddenBal)
 			setHidden(!!isHidden)
-			setNutPub(nutpub || '')
-			setClaimedEvtIds(redeemed)
 			// await dropAllData()
 			setIsRdy(true)
 		}
@@ -326,7 +297,7 @@ function _App() {
 	// to ensure all initial requests are done before displaying content
 	return (
 		<ThemeProvider>
-			<NostrContext.Provider value={nostrData}>
+			<NostrProvider>
 				<PrivacyContext.Provider value={privacyData}>
 					<NavigationContainer
 						// theme={theme === 'Light' ? light : dark}
@@ -359,10 +330,9 @@ function _App() {
 								</FocusClaimCtx.Provider>
 							</PinCtx.Provider>
 						</PromptCtx.Provider>
-
 					</NavigationContainer>
 				</PrivacyContext.Provider>
-			</NostrContext.Provider>
+			</NostrProvider>
 		</ThemeProvider>
 	)
 }
