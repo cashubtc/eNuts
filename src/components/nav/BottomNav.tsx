@@ -44,6 +44,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => void handleNav('dashboard')}
+				disabled={isWalletRelatedScreen}
 			>
 				<WalletIcon width={28} height={28} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
@@ -57,6 +58,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => void handleNav('Address book')}
+				disabled={route.name === 'Address book'}
 			>
 				<BookIcon width={28} height={28} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
 				<Txt
@@ -72,6 +74,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => void handleNav('Settings')}
+				disabled={isSettingsRelatedScreen}
 			>
 				<SettingsIcon width={28} height={28} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
