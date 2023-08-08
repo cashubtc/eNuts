@@ -13,7 +13,7 @@ import OptsModal from '@modal/OptsModal'
 import TrustMintModal from '@modal/TrustMint'
 import type { TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { FocusClaimCtx } from '@src/context/FocusClaim'
+import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
 import { PromptCtx } from '@src/context/Prompt'
@@ -38,7 +38,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// Theme
 	const { color, highlight } = useThemeContext()
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
-	const { claimed } = useContext(FocusClaimCtx)
+	const { claimed } = useFocusClaimContext()
 	// Nostr
 	const { contacts } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()

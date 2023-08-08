@@ -1,4 +1,4 @@
-import type { ITokenInfo } from '@model'
+import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
 import { formatInt } from '@util'
@@ -9,18 +9,13 @@ import Button from './Button'
 import MyModal from './modal'
 import Txt from './Txt'
 
-interface IClipboardModalProps {
-	tokenInfo: ITokenInfo
-	closeModal: () => void
-	visible: boolean
-	handleRedeem: () => void
-}
-
-export default function ClipboardModal({ visible, tokenInfo, closeModal, handleRedeem }: IClipboardModalProps) {
+export default function ClipboardModal() {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useThemeContext()
+	const { tokenInfo, claimOpen, closeModal, handleRedeem } = useFocusClaimContext()
 	return (
-		<MyModal type='question' visible={visible} close={closeModal}>
+		tokenInfo &&
+		<MyModal type='question' visible={claimOpen} close={closeModal}>
 			<Text style={globals(color, highlight).modalHeader}>
 				{t('foundCashuClipboard')}
 			</Text>
@@ -35,7 +30,7 @@ export default function ClipboardModal({ visible, tokenInfo, closeModal, handleR
 			</Text>
 			<Button
 				txt={t('accept')}
-				onPress={handleRedeem}
+				onPress={() => void handleRedeem()}
 			/>
 			<View style={{ marginVertical: 10 }} />
 			<Button

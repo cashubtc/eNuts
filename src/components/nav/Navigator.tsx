@@ -1,4 +1,4 @@
-import type { INavigatorProps, RootStackParamList } from '@model/nav'
+import type { RootStackParamList } from '@model/nav'
 import { useNavigation } from '@react-navigation/core'
 import { createNativeStackNavigator, type NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AddressbookPage from '@screens/Addressbook'
@@ -38,19 +38,21 @@ import DisplaySettings from '@screens/Settings/General/Display'
 import LanguageSettings from '@screens/Settings/General/Language'
 import PrivacySettings from '@screens/Settings/Privacy'
 import SecuritySettings from '@screens/Settings/Security'
+import { usePinContext } from '@src/context/Pin'
 import { useThemeContext } from '@src/context/Theme'
 import { useEffect } from 'react'
 import { View } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
-export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: INavigatorProps) {
+export default function Navigator() {
+	const { auth, bgAuth, setBgAuth } = usePinContext()
 	const { color } = useThemeContext()
 	const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 	useEffect(() => {
-		if (!bgAuth || !pinHash.length) { return }
+		if (!bgAuth || !auth.pinHash.length) { return }
 		setBgAuth?.(false)
-		nav.navigate('auth', { pinHash })
+		nav.navigate('auth', { pinHash: auth.pinHash })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bgAuth])
 	return (
@@ -61,7 +63,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 			backgroundColor: color.BACKGROUND,
 		}}>
 			<Stack.Navigator
-				initialRouteName={shouldSetup || pinHash || bgAuth ? 'auth' : 'dashboard'}
+				initialRouteName={auth.shouldSetup || auth.pinHash || bgAuth ? 'auth' : 'dashboard'}
 				screenOptions={{
 					headerShown: false,
 					animation: 'fade',
@@ -83,7 +85,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='nostr explainer' component={NostrExplainerScreen} />
 				<Stack.Screen name='dashboard' component={Dashboard} />
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
-				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />
+				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash: auth.pinHash }} />
 				{/* sendable token created page */}
 				<Stack.Screen
 					name='encodedToken'
