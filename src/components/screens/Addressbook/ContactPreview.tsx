@@ -25,8 +25,18 @@ export default function ContactPreview({ contact, handleContactPress, handleSend
 	const { color, highlight } = useThemeContext()
 
 	return (
-		<View style={[styles.container, { paddingTop: isFirst ? 10 : 0, paddingBottom: isLast ? 10 : 0 }]}>
-			<TouchableOpacity style={styles.colWrap} onPress={handleContactPress}>
+		<TouchableOpacity
+			onPress={handleSend}
+			disabled={!isPayment}
+			style={[
+				styles.container, { paddingTop: isFirst ? 10 : 0, paddingBottom: isLast ? 10 : 0 }
+			]}
+		>
+			<TouchableOpacity
+				onPress={handleContactPress}
+				disabled={isPayment}
+				style={styles.colWrap}
+			>
 				<ProfilePic uri={contact[1]?.picture} />
 				{contact[1] ?
 					<View>
@@ -62,7 +72,7 @@ export default function ContactPreview({ contact, handleContactPress, handleSend
 					:
 					null
 			}
-		</View>
+		</TouchableOpacity>
 	)
 }
 
