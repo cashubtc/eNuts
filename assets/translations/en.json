@@ -191,7 +191,9 @@
 		"receiveEcashNostrHint": "Check your personal NOSTR messages for incoming Cashu tokens.",
 		"createInvoiceDashboard": "Receive Ecash from a mint by paying a Lightning invoice.",
 		"hideNuts": "Hide your total balance",
-		"checkingDms": "Checking your DMs for Ecash..."
+		"checkingDms": "Checking your DMs for Ecash...",
+		"clearOverHere": "Everything is clear over here!",
+		"totalDmsReceived": "You received {{totalDms}} Cashu token."
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",

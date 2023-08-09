@@ -48,7 +48,6 @@ export class CustomErrorBoundary extends Component<IProps, IState> {
 	}
 
 	// Only enable if we're catching errors in the right environment
-	// TODO use fallbackComponent !
 	isEnabled(): boolean {
 		return (
 			this.props.catchErrors === 'always' ||

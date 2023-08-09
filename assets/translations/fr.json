@@ -294,7 +294,9 @@
 		"trustMintSure": "Êtes-vous sûr de vouloir faire confiance à cette mint?",
 		"updatedDefault": "Modifications enregistrées",
 		"newMintAdded": "Mint ajoutée!",
-		"newMintAddedQuestion": "Möchten Sie jetzt Ecash empfangen?"
+		"newMintAddedQuestion": "Voulez-vous recevoir Ecash maintenant ?",
+		"clearOverHere": "Tout est clair de ce côté-ci!",
+		"totalDmsReceived": "Vous avez reçu 4 Cashu token."
 	},
 	"topNav": {
 		"about": "À propos de nous",

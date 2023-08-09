@@ -193,12 +193,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// save npub pasted by user
 	const handleNewNpub = async () => {
 		if (!pubKey.encoded.length || !pubKey.encoded.startsWith('npub')) {
-			// TODO translate
 			openPromptAutoClose({ msg: t('invalidNpub') })
 			return
 		}
 		if (!isStr(pubKey.hex) || pubKey.hex.length !== npubLength) {
-			// TODO translate
 			openPromptAutoClose({ msg: t('invalidNpubHex') })
 			return
 		}

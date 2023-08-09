@@ -115,7 +115,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 				<View>
 					{dms.length > 0 &&
 						<Txt
-							txt={`You received ${dms.length} Cashu token.`}
+							txt={t('totalDmsReceived')}
 							styles={[styles.heading]}
 						/>
 					}
@@ -133,7 +133,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 								/>
 							))
 							:
-							<Empty txt='Found no Ecash in your DMs...' />}
+							<Empty txt={t('clearOverHere')} />}
 					</ScrollView>
 				</View>
 			}

@@ -89,7 +89,6 @@ export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
 				mints: info.mints,
 			})
 			await handleStoreRedeemed()
-			// TODO
 			openPromptAutoClose({
 				success: true,
 				msg: t('claimSuccess', {

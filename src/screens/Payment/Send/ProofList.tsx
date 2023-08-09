@@ -132,7 +132,6 @@ interface IResume {
 
 /**
  * This component shows the amount and the change of selected proofs in a pressable row of a proofs-list.
- * // TODO clean up this component
  */
 export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee, withSeparator }: IResume) {
 	const { t } = useTranslation(['common'])
