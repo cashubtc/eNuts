@@ -61,13 +61,6 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 		}
 	}
 
-	useEffect(() => {
-		void (async () => {
-			const mints = await getMintsUrls()
-			setUserMints(mints)
-		})()
-	}, [])
-
 	// get dms for conversationsPubKeys from relays
 	useEffect(() => {
 		void (async () => {
@@ -95,6 +88,13 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userRelays])
+
+	useEffect(() => {
+		void (async () => {
+			const mints = await getMintsUrls()
+			setUserMints(mints)
+		})()
+	}, [])
 
 	return (
 		<Screen

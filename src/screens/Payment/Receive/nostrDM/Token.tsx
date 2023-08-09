@@ -19,7 +19,6 @@ import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-// import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 interface ITokenProps {
@@ -48,9 +47,7 @@ export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
 	}
 
 	const handleRedeem = async () => {
-		if (!info) {
-			return
-		}
+		if (!info) { return }
 		startLoading()
 		// check for unknown mint
 		if (!mints.includes(info.mints[0] || '')) {
@@ -64,7 +61,6 @@ export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
 	// This function is only called if the mints of the received token are not in the user DB
 	const handleTrustModal = async () => {
 		if (!info) { return }
-		// TODO only add chosen mints by the user
 		for (const mint of info.mints) {
 			// eslint-disable-next-line no-await-in-loop
 			await addMint(mint)

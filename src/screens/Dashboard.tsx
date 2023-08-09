@@ -202,7 +202,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// check for available mints of the user
 	useEffect(() => {
 		void (async () => {
-			const [userHasMints, explainerSeen, balance ] = await Promise.all([
+			const [userHasMints, explainerSeen, balance] = await Promise.all([
 				hasMints(),
 				store.get(STORE_KEYS.explainer),
 				getBalance(),
@@ -241,14 +241,20 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<Balance balance={balance} nav={navigation} />
 			{/* Receive/send/mints buttons */}
 			<View style={styles.actionWrap}>
-				{hasMint && balance > 0 &&
-					<ActionBtn
-						icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
-						txt={t('send', { ns: 'wallet' })}
-						color={hi[highlight]}
-						onPress={() => setModal({ ...modal, sendOpts: true })}
-					/>
-				}
+				<ActionBtn
+					icon={
+						<SendIcon
+							width={32}
+							height={32}
+							color={hi[highlight]}
+							disabled={!hasMint || balance < 1}
+						/>
+					}
+					txt={t('send', { ns: 'wallet' })}
+					color={hi[highlight]}
+					onPress={() => setModal({ ...modal, sendOpts: true })}
+					disabled={!hasMint || balance < 1}
+				/>
 				<ActionBtn
 					icon={<MintBoardIcon width={32} height={32} color={hi[highlight]} />}
 					txt='Mints'
@@ -323,9 +329,10 @@ interface IActionBtnsProps {
 	txt: string
 	onPress: () => void
 	color: string
+	disabled?: boolean
 }
 
-function ActionBtn({ icon, onPress, txt, color }: IActionBtnsProps) {
+function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 	return (
 		<View style={styles.btnWrap}>
 			<IconBtn
@@ -333,10 +340,11 @@ function ActionBtn({ icon, onPress, txt, color }: IActionBtnsProps) {
 				size={70}
 				outlined
 				onPress={onPress}
+				disabled={disabled}
 			/>
 			<Txt
 				txt={txt}
-				styles={[styles.btnTxt, { color }]}
+				styles={[styles.btnTxt, { color, opacity: disabled ? .5 : 1 }]}
 			/>
 		</View>
 	)

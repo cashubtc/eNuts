@@ -9,6 +9,9 @@ interface TIconProps {
 	height?: number,
 	color: string
 }
+interface IExtendedIconProps extends TIconProps {
+	disabled?: boolean
+}
 export function HamburgerIcon({ width, height, color }: TIconProps) {
 	return (
 		<Svg width={width || 22} height={height || 22} viewBox="0 0 18 11" fill="none">
@@ -345,9 +348,9 @@ export function ReceiveIcon({ width, height, color }: TIconProps) {
 		</Svg>
 	)
 }
-export function SendIcon({ width, height, color }: TIconProps) {
+export function SendIcon({ width, height, color, disabled }: IExtendedIconProps) {
 	return (
-		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+		<Svg width={width || 24} height={height || 24} style={{ opacity: disabled ? .5 : 1 }} viewBox="0 0 24 24" fill="none">
 			<Path d="M13 5.70711V16.5C13 16.7761 12.7761 17 12.5 17C12.2239 17 12 16.7761 12 16.5V5.70711L8.85355 8.85355C8.65829 9.04882 8.34171 9.04882 8.14645 8.85355C7.95118 8.65829 7.95118 8.34171 8.14645 8.14645L12.1464 4.14645C12.3417 3.95118 12.6583 3.95118 12.8536 4.14645L16.8536 8.14645C17.0488 8.34171 17.0488 8.65829 16.8536 8.85355C16.6583 9.04882 16.3417 9.04882 16.1464 8.85355L13 5.70711ZM4.5 20C4.22386 20 4 19.7761 4 19.5C4 19.2239 4.22386 19 4.5 19H20.5C20.7761 19 21 19.2239 21 19.5C21 19.7761 20.7761 20 20.5 20H4.5Z" fill={color} />
 		</Svg>
 	)

@@ -72,7 +72,7 @@ export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIc
 						borderRadius: (size || 60) / 2,
 						backgroundColor: outlined ? color.BACKGROUND : hi[highlight],
 						borderColor: hi[highlight],
-						opacity: disabled ? .6 : 1
+						// opacity: disabled ? .6 : 1
 					}]}
 				onPress={onPress}
 				disabled={disabled}
