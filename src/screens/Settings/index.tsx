@@ -1,4 +1,4 @@
-import { AboutIcon, EyeClosedIcon, HamburgerIcon, LockIcon, TrashbinIcon } from '@comps/Icons'
+import { AboutIcon, EyeClosedIcon, HamburgerIcon, LockIcon, MintBoardIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import { QuestionModal } from '@modal/Question'
@@ -55,6 +55,14 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					txtColor={color.TEXT}
 					icon={<EyeClosedIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Privacy settings')}
+					hasSeparator
+					hasChevron
+				/>
+				<SettingsMenuItem
+					txt='Mints'
+					txtColor={color.TEXT}
+					icon={<MintBoardIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('mints')}
 					hasSeparator
 					hasChevron
 				/>
