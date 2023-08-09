@@ -1,6 +1,6 @@
 import Separator from '@comps/Separator'
-import { l } from '@log'
-import type { INostrDm } from '@model/nostr'
+import type { TNostrReceivePageProps } from '@model/nav'
+import type { INostrDm, TContact } from '@model/nostr'
 import EntryTime from '@screens/History/entryTime'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
@@ -12,17 +12,19 @@ import Sender from './Sender'
 
 interface INostrMessageProps {
 	msgEntry: INostrDm
+	sender?: TContact
 	dms: INostrDm[]
 	setDms: (newDms: INostrDm[]) => void
 	mints: string[]
+	nav: TNostrReceivePageProps
 }
 
-export default function NostrMessage({ msgEntry, dms, setDms, mints }: INostrMessageProps) {
+export default function NostrMessage({ msgEntry, sender, dms, setDms, mints, nav }: INostrMessageProps) {
 	const { t } = useTranslation(['history'])
 	const { color } = useThemeContext()
 	return (
 		<View style={[globals(color).wrapContainer, styles.msgContainer]}>
-			<Sender contact={[msgEntry.sender, undefined]} handleContactPress={() => l('')} />
+			<Sender contact={sender} navigation={nav.navigation} />
 			<Separator style={[styles.separator]} />
 			<MsgContent msgEntry={msgEntry} dms={dms} setDms={setDms} mints={mints} />
 			<Text style={{ color: color.TEXT_SECONDARY }}>

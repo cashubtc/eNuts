@@ -7,10 +7,11 @@ import { isIOS } from '@consts'
 import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { TNostrReceivePageProps } from '@model/nav'
-import type { INostrDm } from '@model/nostr'
+import type { INostrDm, TContact } from '@model/nostr'
 import { relay } from '@nostr/class/Relay'
 import { EventKind } from '@nostr/consts'
 import { decrypt } from '@nostr/crypto'
+import { parseProfileContent } from '@nostr/util'
 import Config from '@src/config'
 import { useNostrContext } from '@src/context/Nostr'
 import { secureStore } from '@store'
@@ -23,11 +24,12 @@ import { ScrollView, StyleSheet, View } from 'react-native'
 
 import NostrMessage from './NostrMessage'
 
-export default function NostrDMScreen({ navigation }: TNostrReceivePageProps) {
+export default function NostrDMScreen({ navigation, route }: TNostrReceivePageProps) {
 	const { t } = useTranslation(['common'])
 	const { userRelays, claimedEvtIds } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [userMints, setUserMints] = useState<string[]>([])
+	const [dmProfiles, setDmProfiles] = useState<TContact[]>([])
 	const [dms, setDms] = useState<INostrDm[]>([])
 	const setDmsCB = useCallback((newDms: INostrDm[]) => setDms(newDms), [])
 
@@ -76,10 +78,14 @@ export default function NostrDMScreen({ navigation }: TNostrReceivePageProps) {
 				relayUrls: userRelays,
 				// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
 				authors: ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635'], //  conversationsPubKeys
-				kinds: [EventKind.DirectMessage],
+				kinds: [EventKind.DirectMessage, EventKind.SetMetadata],
 				skipVerification: Config.skipVerification
 			})
 			sub?.on('event', async (e: NostrEvent) => {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+				if (+e.kind === EventKind.SetMetadata) {
+					setDmProfiles(prev => prev.some(x => x[0] === e.pubkey) ? prev : [...prev, [e.pubkey, parseProfileContent(e)]])
+				}
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 				if (+e.kind === EventKind.DirectMessage) {
 					await handleDm(sk || '', e)
@@ -115,7 +121,17 @@ export default function NostrDMScreen({ navigation }: TNostrReceivePageProps) {
 					}
 					<ScrollView style={{ marginBottom: isIOS ? 30 : 0 }}>
 						{dms.length ?
-							dms.map(dm => <NostrMessage key={dm.id} msgEntry={dm} dms={dms} setDms={setDmsCB} mints={userMints} />)
+							dms.map(dm => (
+								<NostrMessage
+									key={dm.id}
+									msgEntry={dm}
+									sender={dmProfiles.find(x => x[0] === dm.sender)}
+									dms={dms}
+									setDms={setDmsCB}
+									mints={userMints}
+									nav={{ navigation, route }}
+								/>
+							))
 							:
 							<Empty txt='Found no Ecash in your DMs...' />}
 					</ScrollView>
