@@ -1,6 +1,6 @@
 <div align="center">
   <p>
-    <img src="https://i.imgur.com/EI7Uvg1.jpeg">
+    <img src="https://i.imgur.com/yVlwtmz.jpeg">
   </p>
   <h2>A Cashu wallet for Android and iOS</h2>
   <div style="display: flex; align-items: center; justify-content: center">
