@@ -184,6 +184,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					created_at: Math.ceil(Date.now() / 1000),
 				}
 				const userRelays = await store.get(STORE_KEYS.relays)
+				// TODO publish the event to the RECIPIENT relays AND our relays.
 				const published = await relay.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
 				if (!published) {
 					l('Something went wrong while publishing the event.')
