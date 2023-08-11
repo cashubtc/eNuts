@@ -5,14 +5,12 @@ import { getMintsBalances } from '@db'
 import type { IContactPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { getNostrUsername, truncateNpub } from '@nostr/util'
+import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
-import { store } from '@store'
-import { STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
-import { nip19 } from 'nostr-tools'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -26,12 +24,13 @@ import Website from './Website'
 export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const { contact, npub, isUser, userProfile } = route.params
 	const { t } = useTranslation(['addrBook'])
+	const { nutPub } = useNostrContext()
 	const { color, highlight } = useThemeContext()
-	const [nutPub, setNutPub] = useState('')
 	const [visible, setVisible] = useState(false)
 	const closeModal = useCallback(() => setVisible(false), [])
 	const [url, setUrl] = useState('')
 	const { openPromptAutoClose } = usePromptContext()
+
 	const handlePress = (url: string) => {
 		if (url === 'lightning://') {
 			openPromptAutoClose({ msg: '⚠️ Zaps will be added soon... ⚡👀' })
@@ -71,15 +70,8 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	}
 
 	const copyNpub = () => {
-		//
+		// TODO copy npub to clipboard
 	}
-
-	useEffect(() => {
-		void (async () => {
-			const enutsPubKey = await store.get(STORE_KEYS.nutpub)
-			setNutPub(nip19.npubEncode(enutsPubKey || ''))
-		})()
-	}, [])
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
