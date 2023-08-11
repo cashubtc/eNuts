@@ -34,7 +34,7 @@ export default function OptsModal({
 }: IOptsModal) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useThemeContext()
-	const { contacts } = useNostrContext()
+	const { nutPub } = useNostrContext()
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
 			<Txt
@@ -51,7 +51,7 @@ export default function OptsModal({
 					loading={loading}
 					secondIcon={!isSend && <ReceiveIcon width={26} height={26} color={color.TEXT} /> }
 				/>
-				{!isSend && contacts.length > 0 &&
+				{!isSend && nutPub.length > 0 &&
 					<Option
 						icon={<NostrIcon />}
 						txt={t('receiveEcashNostr')}

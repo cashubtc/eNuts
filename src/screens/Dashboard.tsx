@@ -40,7 +40,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
 	// Nostr
-	const { contacts } = useNostrContext()
+	const { nutPub } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
 	const { openPromptAutoClose } = usePromptContext()
@@ -167,7 +167,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
 		if ((isMelt || isSendEcash) && nonEmptyMints.length === 1) {
 			// user has no nostr contacts so he can directly navigate to amount selection
-			if (!contacts.length && isSendEcash) {
+			if (!nutPub.length && isSendEcash) {
 				navigation.navigate('selectAmount', {
 					mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
 					isSendEcash,
