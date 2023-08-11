@@ -25,9 +25,11 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { AppState } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
+import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
 import Toaster from './Toaster'
 // import { dropAllData } from '@src/storage/dev'
@@ -86,6 +88,8 @@ function _App() {
 	const { t, i18n } = useTranslation(['common'])
 	// app ready to render content
 	const [isRdy, setIsRdy] = useState(false)
+	// app foregorund, background
+	const appState = useRef(AppState.currentState)
 
 	// init database
 	const initDB = async () => {
@@ -117,7 +121,6 @@ function _App() {
 			const mintBalsTotal = (balances).reduce((acc, cur) => acc + cur.amount, 0)
 			if (mintBalsTotal !== balance) { await addAllMintIds() }
 			// await dropAllData() // DEV-ONLY DEBUG
-			setIsRdy(true) // APP is ready to render
 		} catch (e) {
 			l(isErr(e) ? e.message : 'Error while initiating the user app configuration.')
 		} finally {
@@ -164,19 +167,35 @@ function _App() {
 
 	// init
 	useEffect(() => {
-		initDB().then(() => {
-			// ignore
-		}).catch(e => l(e))
-		initData().then(() => {
-			// ignore
-		}).catch(e => l(e))
-		initAuth().then(() => {
-			// ignore
-		}).catch(e => l(e))
+		async function init() {
+			await initDB()
+			await initAuth()
+			await initData()
+			await SplashScreen.hideAsync()
+			setIsRdy(true) // APP is ready to render
+		}
+		void init()
+		// eslint-disable-next-line @typescript-eslint/no-misused-promises
+		const subscription = AppState.addEventListener('change', async nextAppState => {
+			if (
+				appState.current.match(/inactive|background/) &&
+				nextAppState === 'active'
+			) {
+				l('App has come to the foreground!')
+				// check for pin attempts and app locked state
+				await handlePinForeground()
+			} else {
+				l('App has gone to the background!')
+				// store timestamp to activate auth after > 5mins in background
+				await store.set(STORE_KEYS.bgCounter, `${Math.ceil(Date.now() / 1000)}`)
+			}
+			appState.current = nextAppState
+		})
+		return () => subscription.remove()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	if (!isRdy) { return null }
+	if (!isRdy) { return <Blank /> }
 
 	// await SplashScreen.hideAsync() is done in the last context provider
 	// to ensure all initial requests are done before displaying content
