@@ -3,14 +3,14 @@ import { LockIcon, UnlockIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
-import { usePinContext } from '@src/context/Pin'
+import { PinCtx } from '@src/context/Pin'
 import { useThemeContext } from '@src/context/Theme'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Animated, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -24,7 +24,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useThemeContext()
 	// PIN mismatch context
-	const { attempts, setAttempts } = usePinContext()
+	const { attempts, setAttempts } = useContext(PinCtx)
 	// auth state
 	const [auth, setAuth] = useState(pinHash)
 	// initial PIN input state
