@@ -37,6 +37,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		proofs,
 		recipient
 	} = route.params
+
 	const handleError = (e?: unknown) => {
 		// TODO check error screen msgs
 		const translatedErrMsg = t(isMelt ? 'requestMintErr' : 'requestMintErr', { ns: 'error' })
@@ -46,11 +47,13 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			errorMsg: isErr(e) ? e.message : translatedErrMsg
 		})
 	}
+
 	const getErrObj = (mint: IMintUrl, amount: number, fallbackMsg: string, e?: unknown) => ({
 		mint,
 		amount,
 		errorMsg: isErr(e) ? e.message : fallbackMsg
 	})
+
 	const getProcessingtxt = () => {
 		if (isMelt) { return 'processingPaymentByMint' }
 		if (isSwap) { return 'processingSwap' }
@@ -62,6 +65,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 		return 'awaitingInvoice'
 	}
+
 	const handleMintingProcess = async () => {
 		try {
 			const resp = await requestMint(mint.mintUrl, amount)
@@ -95,6 +99,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			handleError(e)
 		}
 	}
+
 	const handleMeltingProcess = async () => {
 		if (!recipient?.length) { return }
 		let invoice = ''
@@ -133,6 +138,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			handleError(e)
 		}
 	}
+
 	const handleSwapProcess = async () => {
 		// simple way
 		try {
@@ -147,6 +153,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			handleError(e)
 		}
 	}
+
 	const handleSendingEcashProcess = async () => {
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)

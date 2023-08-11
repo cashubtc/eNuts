@@ -3,6 +3,11 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection } from '.'
 import { IProfileContent } from './nostr'
 
+interface INostrProps {
+	senderName: string
+	receiverNpub: string
+	receiverName?: string
+}
 /**
  * Stack Navigator
  */
@@ -32,11 +37,7 @@ export type RootStackParamList = {
 		mintsWithBal: IMintWithBalance[]
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: {
-			senderName: string,
-			receiverNpub: string
-			receiverName?: string
-		}
+		nostr?: INostrProps
 		balance?: number
 		allMintsEmpty?: boolean
 		invoice?: string
@@ -47,11 +48,7 @@ export type RootStackParamList = {
 		balance: number
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: {
-			senderName: string,
-			receiverNpub: string
-			receiverName?: string
-		}
+		nostr?: INostrProps
 		remainingMints?: IMintUrl[]
 	}
 	meltInputfield: {
@@ -67,11 +64,7 @@ export type RootStackParamList = {
 		mint: IMintUrl
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: {
-			senderName: string,
-			receiverNpub: string
-			receiverName?: string
-		}
+		nostr?: INostrProps
 		isSwap?: boolean
 		balance: number
 		lnurl?: string
@@ -82,11 +75,7 @@ export type RootStackParamList = {
 		balance: number
 		amount: number
 		isSendingWholeMintBal: boolean,
-		nostr?: {
-			senderName: string,
-			receiverNpub: string
-			receiverName?: string
-		}
+		nostr?: INostrProps
 	}
 	coinSelection: {
 		mint: IMintUrl
@@ -95,11 +84,7 @@ export type RootStackParamList = {
 		estFee: number
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: {
-			senderName: string,
-			receiverNpub: string
-			receiverName?: string
-		}
+		nostr?: INostrProps
 		isSwap?: boolean
 		targetMint?: IMintUrl
 		recipient?: string
@@ -112,11 +97,7 @@ export type RootStackParamList = {
 		estFee?: number
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: {
-			senderName: string,
-			receiverNpub: string
-			receiverName?: string
-		}
+		nostr?: INostrProps
 		isSwap?: boolean
 		targetMint?: IMintUrl
 		proofs?: IProofSelection[]
@@ -146,11 +127,7 @@ export type RootStackParamList = {
 		memo?: string
 		isClaim?: boolean
 		isMelt?: boolean
-		nostr?: {
-			senderName: string,
-			receiverNpub: string
-			receiverName?: string
-		}
+		nostr?: INostrProps
 	}
 	mintmanagement: {
 		mint: IMintUrl
