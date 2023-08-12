@@ -193,7 +193,8 @@
 		"hideNuts": "Hide your total balance",
 		"checkingDms": "Checking your DMs for Ecash...",
 		"clearOverHere": "Everything is clear over here!",
-		"totalDmsReceived": "You received {{totalDms}} Cashu token."
+		"totalDmsReceived": "You received {{totalDms}} Cashu token.",
+		"swapNow": "Swap now"
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",
@@ -289,7 +290,6 @@
 		"supportedNuts": "Supported NUTs",
 		"swapFail": "Could not perform an multimint-swap",
 		"swapNotAllowed": "Swap out from a test mint is not possible.",
-		"swapNow": "Swap now",
 		"swapRisk": "Swap token from one mint for token from another mint. For a brief moment, you will be trusting two mints at the same time. There is things that can go wrong. Use at own risk.",
 		"swapSuccess": "Successfully swaped {{amount}} Satoshi from {{srcMint}} to {{targetMint}}",
 		"testMintHint": "This is a test mint to play around with. Add it anyway?",

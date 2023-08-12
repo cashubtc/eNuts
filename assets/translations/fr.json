@@ -191,7 +191,8 @@
 		"receiveEcashNostrHint": "Vérifiez vos messages sur NOSTR pour les Cashu token entrants.",
 		"createInvoiceDashboard": "Recevez l'Ecash depuis une mint en payant une facture Lightning.",
 		"hideNuts": "Masquer votre solde total",
-		"checkingDms": "Vérification de vos DM pour l'Ecash..."
+		"checkingDms": "Vérification de vos DM pour l'Ecash...",
+		"swapNow": "Échanger maintenant"
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",
@@ -287,7 +288,6 @@
 		"supportedNuts": "NUTs pris en charge",
 		"swapFail": "Impossible d'effectuer une multimint-échange",
 		"swapNotAllowed": "Multimint-échange à partir d'une mint de test n'est pas possible.",
-		"swapNow": "Échanger maintenant",
 		"swapRisk": "Échangez des token d'une mint contre des token d'une autre mint. Pendant un court instant, vous ferez confiance à deux mints en même temps. Des problèmes peuvent survenir. Utilisez à vos propres risques.",
 		"swapSuccess": "{{amount}} Satoshi échangés avec succès de {{srcMint}} à {{targetMint}}",
 		"testMintHint": "Il s'agit d'une mint de test pour jouer. Voulez-vous quand même l'ajouter?",

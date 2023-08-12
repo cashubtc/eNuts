@@ -193,7 +193,8 @@
 		"hideNuts": "Verbergen Sie Ihren Gesamtsaldo",
 		"checkingDms": "Ihre Nachrichten werden auf Ecash überprüft...",
 		"clearOverHere": "Sie sind auf dem neusten Stand!",
-		"totalDmsReceived": "Sie haben {{totalDms}} Cashu token erhalten."
+		"totalDmsReceived": "Sie haben {{totalDms}} Cashu token erhalten.",
+		"swapNow": "Jetzt tauschen"
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",
@@ -289,7 +290,6 @@
 		"supportedNuts": "Unterstütze NUTs",
 		"swapFail": "Multimint-Tausch konnte nicht vollbracht werden",
 		"swapNotAllowed": "Multimint-Tausch von einer Test-Mint ist nicht möglich.",
-		"swapNow": "Jetzt tauschen",
 		"swapRisk": "Senden Sie Token von einer Mint zu einer anderen Mint. Für einen kurzen Moment werden Sie zwei Mints gleichzeitig vertrauen. Es gibt Dinge, die schief gehen können. Verwendung auf eigene Gefahr.",
 		"swapSuccess": "{{amount}} Satoshi erfolgreich von {{srcMint}} zu {{targetMint}} getauscht",
 		"testMintHint": "Dies ist eine Test-Mint für Simulationszwecke. Trotzdem hinzufügen?",

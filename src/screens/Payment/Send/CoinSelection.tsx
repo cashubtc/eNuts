@@ -43,6 +43,12 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		if (isSwap) { return 'multimintSwap' }
 		return 'sendEcash'
 	}
+	const getBtnTxt = () => {
+		if (isMelt) { return 'submitPaymentReq' }
+		if (isSwap) { return 'sendEcash' }
+		if (nostr) { return 'swapNow' }
+		return 'createToken'
+	}
 	const getRecipient = () => {
 		if (recipient) {
 			return recipient.length > 16 && !isLnurl(recipient) ? recipient.slice(0, 16) + '...' : recipient
@@ -134,7 +140,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			</ScrollView>
 			<View style={{ padding: 20, paddingBottom: insets.bottom + 20 }}>
 				<Button
-					txt={t(isMelt ? 'submitPaymentReq' : nostr ? 'sendEcash' : 'createToken')}
+					txt={t(getBtnTxt())}
 					onPress={submitPaymentReq}
 				/>
 			</View>
