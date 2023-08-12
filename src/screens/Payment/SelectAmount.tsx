@@ -25,11 +25,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	// invoice amount too low
 	const [err, setErr] = useState(false)
 	const [shouldEstimate, setShouldEstimate] = useState(false)
-	const [fee, setFee] = useState({
-		estimation: 0,
-		isCalculating: false
-	})
+	const [fee, setFee] = useState({ estimation: 0, isCalculating: false })
+
 	const balTooLow = isMelt && +amount + fee.estimation > balance
+
 	const isSendingWholeMintBal = () => {
 		// includes fee
 		if (isMelt && +amount + fee.estimation === balance) { return true }
@@ -37,6 +36,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		if (isSendEcash && +amount === balance) { return true }
 		return false
 	}
+
 	// navigation screen name
 	const getScreenName = () => {
 		if (isMelt) { return 'cashOut' }
@@ -44,6 +44,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		if (isSendEcash) { return 'sendEcash' }
 		return 'createInvoice'
 	}
+
 	const handleFeeEstimation = async (lnurl: string) => {
 		setFee(prev => ({ ...prev, isCalculating: true }))
 		const invoice = await getInvoiceFromLnurl(lnurl, +amount)
@@ -56,12 +57,14 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		setFee({ estimation: estFee, isCalculating: false })
 		setShouldEstimate(false)
 	}
+
 	const getActionBtnTxt = () => {
 		if (!isMelt && !isSwap && !isSendEcash) { return t('continue', { ns: 'common' }) }
 		if (fee.isCalculating) { return t('calculateFeeEst', { ns: 'common' }) }
 		if (balTooLow) { return t('balTooLow', { ns: 'common' }) }
 		return t(shouldEstimate ? 'estimateFee' : 'continue', { ns: 'common' })
 	}
+
 	const handleAmountSubmit = async () => {
 		if (fee.isCalculating || balTooLow) { return }
 		const isSendingTX = isSendEcash || isMelt || isSwap
@@ -76,9 +79,9 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			}, 500)
 			return
 		}
-		// estimate melting fee
-		if (!isSendEcash && shouldEstimate && lnurl?.length) {
-			await handleFeeEstimation(lnurl)
+		// estimate melting/swap fee
+		if (!isSendEcash && shouldEstimate && (lnurl?.length || isSwap)) {
+			await handleFeeEstimation(lnurl || '')
 			return
 		}
 		// send ecash / melt / swap
@@ -124,6 +127,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		// request new token from mint
 		navigation.navigate('processing', { mint, amount: +amount })
 	}
+
 	// auto-focus numeric keyboard
 	useEffect(() => {
 		const t = setTimeout(() => {
@@ -131,8 +135,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			clearTimeout(t)
 		}, 200)
 	}, [inputRef])
+
 	// check if is melting process
 	useEffect(() => setShouldEstimate(!isSendEcash), [isSendEcash])
+
 	// estimate fee each time the melt amount changes
 	useEffect(() => {
 		if (!isMelt || !isSwap) { return }
@@ -140,6 +146,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		setShouldEstimate(true)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [amount])
+
 	return (
 		<Screen
 			screenName={t(getScreenName(), { ns: 'common' })}
