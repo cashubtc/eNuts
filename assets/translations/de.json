@@ -243,7 +243,7 @@
 		"customName": "Benutzerdefinierter Name",
 		"cutomNameAdded": "Benutzerdefinierter Name hinzugefügt",
 		"dangerZone": "Gefahrenzone",
-		"deletedProofs": "{{proofsToDel}] Proofs gelöscht.",
+		"deletedProofs": "{{proofsToDel}} Proofs gelöscht.",
 		"delMint": "Mint löschen",
 		"delMintHint": "Das Löschen einer Mint mit Guthaben kann zu einem unerwarteten Gesamtguthaben führen. Sie behalten die Mint-verbundenen Token, können sie jedoch erst einlösen, wenn Sie die Mint erneut hinzufügen.",
 		"delMintSure": "Sind Sie sicher, dass Sie diese Mint löschen möchten?",

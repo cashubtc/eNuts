@@ -241,7 +241,7 @@
 		"customName": "Nom personnalisé",
 		"cutomNameAdded": "Ajouté un nom personnalisé",
 		"dangerZone": "Zone dangereuse",
-		"deletedProofs": "Supprimé {{proofsToDel}] proofs.",
+		"deletedProofs": "Supprimé {{proofsToDel}} proofs.",
 		"delMint": "Supprimer la mint",
 		"delMintHint": "Supprimer une mint avec un solde peut entraîner un solde total inattendu. Vous conserverez les token associés à la mint, mais vous ne pourrez pas les échanger tant que vous n'aurez pas réajouté la mint.",
 		"delMintSure": "Êtes-vous sûr de vouloir supprimer cette mint?",

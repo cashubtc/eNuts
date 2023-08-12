@@ -118,9 +118,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		const mintUrl = route.params.mint?.mintUrl
 		const proofs = await getProofsByMintUrl(mintUrl)
 		const res = await checkProofsSpent(mintUrl, proofs)
-		l({ res })
 		const proofsToDel = proofs.filter(p => res.map(x => x.secret).includes(p.secret))
-		l({ proofsToDel })
 		try {
 			await deleteProofs(proofsToDel)
 			openPromptAutoClose({ msg: t('deletedProofs', { ns: 'mints', proofsToDel: proofsToDel.length }), success: true })

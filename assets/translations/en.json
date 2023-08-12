@@ -243,7 +243,7 @@
 		"customName": "Custom name",
 		"cutomNameAdded": "Added a custom name",
 		"dangerZone": "Danger zone",
-		"deletedProofs": "Deleted {{proofsToDel}] proofs.",
+		"deletedProofs": "Deleted {{proofsToDel}} proofs.",
 		"delMint": "Delete mint",
 		"delMintHint": "Deleting a mint with balance can result in an unexpected total balance. You will keep the token associated with the mint, but you will not be able to redeem them until you re-add the mint.",
 		"delMintSure": "Are you sure that you want to remove this mint?",
