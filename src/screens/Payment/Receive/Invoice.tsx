@@ -1,4 +1,5 @@
 import Button from '@comps/Button'
+import useCopy from '@comps/hooks/Copy'
 import QR from '@comps/QR'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
@@ -8,7 +9,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi, mainColors } from '@styles'
-import { copyStrToClipboard, formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
+import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,7 +25,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const [expire, setExpire] = useState(expiry)
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
-	const [copied, setCopied] = useState(false)
+	const { copied, copy } = useCopy()
 
 	const handlePayment = async () => {
 		// state "unpaid" is temporary to prevent btn press spam
@@ -56,15 +57,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			// reset state
 			setTimeout(() => setPaid(''), 3000)
 		}
-	}
-
-	const copyPaymentreq = async () => {
-		await copyStrToClipboard(paymentRequest)
-		setCopied(true)
-		const t = setTimeout(() => {
-			setCopied(false)
-			clearTimeout(t)
-		}, 3000)
 	}
 
 	// countdown
@@ -123,7 +115,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				<Button
 					txt={copied ? t('copied') + '!' : t('copyInvoice')}
 					outlined
-					onPress={() => void copyPaymentreq()}
+					onPress={() => void copy(paymentRequest)}
 				/>
 				<View style={{ marginBottom: 20 }} />
 				<Button

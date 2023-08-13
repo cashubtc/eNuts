@@ -15,7 +15,7 @@ import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -42,28 +42,33 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
 	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('noMemo', { ns: 'history' })
 	const { openPromptAutoClose } = usePromptContext()
+
 	const copyValue = async () => {
 		await copyStrToClipboard(entry.value)
 		setCopy({ ...copy, value: true })
 		handleTimeout()
 	}
+
 	const copyHash = async () => {
 		await copyStrToClipboard(hash)
 		setCopy({ ...copy, hash: true })
 		handleTimeout()
 	}
+
 	const copyPreimage = async () => {
 		if (!entry.preImage) { return }
 		await copyStrToClipboard(entry.preImage)
 		setCopy({ ...copy, preimage: true })
 		handleTimeout()
 	}
+
 	const handleTimeout = () => {
 		const t = setTimeout(() => {
 			setCopy(initialCopyState)
 			clearTimeout(t)
 		}, 3000)
 	}
+
 	const handleCheckSpendable = async () => {
 		if (isSpent || loading) { return }
 		startLoading()
@@ -73,6 +78,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		await historyStore.updateHistoryEntry(entry, { ...entry, isSpent: !isSpendable })
 		stopLoading()
 	}
+
 	const handleClaim = async () => {
 		startLoading()
 		const success = await claimToken(entry.value)
@@ -99,15 +105,16 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			ms: 3500
 		})
 	}
-	const handleQR = () => {
-		setQr({ ...qr, open: true })
-	}
+
+	const handleQR = useCallback(() => setQr({ ...qr, open: true }), [qr])
+
 	const getSpentIcon = () => {
 		if (isSpent) { return <CheckCircleIcon width={18} height={18} color={mainColors.VALID} /> }
 		if (loading) { return <Loading /> }
 		if (isUndef(isSpent)) { return <SearchIcon width={20} height={20} color={color.TEXT} /> }
 		return <SandClockIcon width={20} height={20} color={color.TEXT} />
 	}
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav

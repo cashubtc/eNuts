@@ -1,12 +1,12 @@
 import { l } from '@log'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { copyStrToClipboard, formatMintUrl } from '@util'
-import { useState } from 'react'
+import { formatMintUrl } from '@util'
 import { useTranslation } from 'react-i18next'
 import { Share, StyleSheet, Text } from 'react-native'
 
 import ActionButtons from './ActionButtons'
+import useCopy from './hooks/Copy'
 
 interface IBackupSuccessProps {
 	token: string
@@ -16,7 +16,8 @@ interface IBackupSuccessProps {
 export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 	const { t } = useTranslation(['common'])
 	const { color } = useThemeContext()
-	const [copied, setCopied] = useState(false)
+	const { copied, copy } = useCopy()
+
 	const handleShare = async () => {
 		try {
 			const res = await Share.share({
@@ -39,14 +40,6 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 			l(e)
 		}
 	}
-	const handleCopy = async () => {
-		await copyStrToClipboard(token)
-		setCopied(true)
-		const t = setTimeout(() => {
-			setCopied(false)
-			clearTimeout(t)
-		}, 3000)
-	}
 	return (
 		<>
 			<Text style={[globals(color).navTxt, styles.subTxt]}>
@@ -65,7 +58,7 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 				topBtnTxt={t('share')}
 				topBtnAction={() => void handleShare()}
 				bottomBtnTxt={copied ? t('copied') : t('copyToken')}
-				bottomBtnAction={() => void handleCopy()}
+				bottomBtnAction={() => void copy(token)}
 			/>
 		</>
 	)

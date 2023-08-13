@@ -1,4 +1,5 @@
 import ActionButtons from '@comps/ActionButtons'
+import useCopy from '@comps/hooks/Copy'
 import { CopyIcon, ShareIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
@@ -8,7 +9,7 @@ import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { dark, globals, highlight as hi } from '@styles'
-import { copyStrToClipboard, vib } from '@util'
+import { vib } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Share, StyleSheet, View } from 'react-native'
@@ -19,9 +20,11 @@ import { Share, StyleSheet, View } from 'react-native'
 export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
 	const { t } = useTranslation(['common'])
 	const { color, highlight } = useThemeContext()
-	const [copied, setCopied] = useState(false)
+	const { copied, copy } = useCopy()
 	const [error, setError] = useState({ msg: '', open: false })
+
 	useEffect(() => vib(400), [])
+
 	// share token
 	const handleShare = async () => {
 		try {
@@ -45,15 +48,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 			l(e)
 		}
 	}
-	// copy token
-	const handleCopy = async () => {
-		await copyStrToClipboard(route.params.token)
-		setCopied(true)
-		const t = setTimeout(() => {
-			setCopied(false)
-			clearTimeout(t)
-		}, 3000)
-	}
+
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<TopNav
@@ -84,7 +79,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 				topBtnAction={() => void handleShare()}
 				bottomBtnTxt={copied ? t('copied') + '!' : t('copyToken')}
 				bottomIcon={<CopyIcon color={hi[highlight]} />}
-				bottomBtnAction={() => void handleCopy()}
+				bottomBtnAction={() => void copy(route.params.token)}
 			/>
 		</View>
 	)

@@ -1,4 +1,5 @@
 import Button from '@comps/Button'
+import useCopy from '@comps/hooks/Copy'
 import { AboutIcon, BitcoinIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, FlagIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
@@ -14,7 +15,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { copyStrToClipboard, formatInt, formatMintUrl } from '@util'
+import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -39,7 +40,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const [checkProofsOpen, setCheckProofsOpen] = useState(false)
 	// delete mint prompt
 	const [delMintModalOpen, setDelMintModalOpen] = useState(false)
-	const [copied, setCopied] = useState(false)
+	const { copied, copy } = useCopy()
 
 	// check if it is a default mint
 	useEffect(() => {
@@ -142,15 +143,6 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		})()
 	}
 
-	const copyMintUrl = async () => {
-		await copyStrToClipboard(route.params.mint?.mintUrl)
-		setCopied(true)
-		const t = setTimeout(() => {
-			setCopied(false)
-			clearTimeout(t)
-		}, 3000)
-	}
-
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
@@ -167,7 +159,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt={formatMintUrl(route.params.mint?.mintUrl)}
 						hasSeparator
 						noChevron
-						onPress={() => void copyMintUrl()}
+						onPress={() => void copy(route.params.mint?.mintUrl)}
 						icon={copied ?
 							<CheckmarkIcon width={20} height={20} color={mainColors.VALID} />
 							:

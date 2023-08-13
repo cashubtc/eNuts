@@ -6,14 +6,16 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Website({ website, onPress }: { website?: string, onPress: (url: string) => void }) {
 	const { highlight } = useThemeContext()
+	const site = website?.includes('://') ? website.split('://')[1] : website
+	const navSite = website?.includes('://') ? website : `https://${website}`
 	return (
-		website?.length ?
+		site?.length ?
 			<View style={styles.infoWrap}>
 				<View style={styles.iconWrap}>
 					<LinkIcon width={20} height={20} color={hi[highlight]} />
 				</View>
-				<TouchableOpacity onPress={() => onPress(website)}>
-					<Txt txt={website.split('://')[1]} styles={[{color: hi[highlight], paddingBottom: 3}]} />
+				<TouchableOpacity onPress={() => onPress(navSite || '')}>
+					<Txt txt={site} styles={[{ color: hi[highlight], paddingBottom: 3 }]} />
 				</TouchableOpacity>
 			</View>
 			:

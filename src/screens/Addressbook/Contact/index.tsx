@@ -1,4 +1,5 @@
-import { CopyIcon } from '@comps/Icons'
+import useCopy from '@comps/hooks/Copy'
+import { CheckmarkIcon, CopyIcon } from '@comps/Icons'
 import LeaveAppModal from '@comps/LeaveAppModal'
 import Txt from '@comps/Txt'
 import { getMintsBalances } from '@db'
@@ -9,7 +10,7 @@ import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { getCustomMintNames } from '@store/mintStore'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -24,12 +25,13 @@ import Website from './Website'
 export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const { contact, npub, isUser, userProfile } = route.params
 	const { t } = useTranslation(['addrBook'])
-	const { nutPub } = useNostrContext()
+	const { pubKey } = useNostrContext()
 	const { color, highlight } = useThemeContext()
 	const [visible, setVisible] = useState(false)
 	const closeModal = useCallback(() => setVisible(false), [])
 	const [url, setUrl] = useState('')
 	const { openPromptAutoClose } = usePromptContext()
+	const { copied, copy } = useCopy()
 
 	const handlePress = (url: string) => {
 		if (url === 'lightning://') {
@@ -69,10 +71,6 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 		})
 	}
 
-	const copyNpub = () => {
-		// TODO copy npub to clipboard
-	}
-
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
@@ -104,21 +102,21 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						npub={npub}
 						fontSize={24}
 					/>
-					{/* npubs */}
+					{/* npub */}
+
 					<View style={styles.npubWrap}>
-						<Txt txt={`${isUser ? 'nostr: ' : ''}${truncateNpub(npub)}`} styles={[styles.npub, { color: color.TEXT_SECONDARY }]} />
-						<TouchableOpacity style={styles.copyIconWrap} onPress={copyNpub}>
-							<CopyIcon width={18} height={18} color={color.TEXT_SECONDARY} />
+						<Txt
+							txt={`${isUser ? 'Your eNuts pubKey: ' : ''}${truncateNpub(isUser ? pubKey.encoded : npub)}`}
+							styles={[styles.npub, { color: color.TEXT_SECONDARY }]}
+						/>
+						<TouchableOpacity style={styles.copyIconWrap} onPress={() => void copy(isUser ? pubKey.encoded : npub)}>
+							{copied ?
+								<CheckmarkIcon width={18} height={18} color={mainColors.VALID} />
+								:
+								<CopyIcon width={18} height={18} color={color.TEXT_SECONDARY} />
+							}
 						</TouchableOpacity>
 					</View>
-					{isUser &&
-						<View style={styles.npubWrap}>
-							<Txt txt={`eNuts: ${truncateNpub(nutPub)}`} styles={[styles.npub, { color: color.TEXT_SECONDARY }]} />
-							<TouchableOpacity style={styles.copyIconWrap}>
-								<CopyIcon width={18} height={18} color={color.TEXT_SECONDARY} />
-							</TouchableOpacity>
-						</View>
-					}
 					{/* tags */}
 					<View style={styles.tagsWrap}>
 						<NIP05Verified nip05={contact?.nip05} onPress={handlePress} />
