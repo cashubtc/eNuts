@@ -1,5 +1,4 @@
-import useCopy from '@comps/hooks/Copy'
-import { CheckmarkIcon, CopyIcon } from '@comps/Icons'
+import Copy from '@comps/Copy'
 import LeaveAppModal from '@comps/LeaveAppModal'
 import Txt from '@comps/Txt'
 import { getMintsBalances } from '@db'
@@ -10,7 +9,7 @@ import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { getCustomMintNames } from '@store/mintStore'
-import { globals, highlight as hi, mainColors } from '@styles'
+import { globals, highlight as hi } from '@styles'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -31,7 +30,6 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const closeModal = useCallback(() => setVisible(false), [])
 	const [url, setUrl] = useState('')
 	const { openPromptAutoClose } = usePromptContext()
-	const { copied, copy } = useCopy()
 
 	const handlePress = (url: string) => {
 		if (url === 'lightning://') {
@@ -109,13 +107,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 							txt={`${isUser ? 'Your eNuts pubKey: ' : ''}${truncateNpub(isUser ? pubKey.encoded : npub)}`}
 							styles={[styles.npub, { color: color.TEXT_SECONDARY }]}
 						/>
-						<TouchableOpacity style={styles.copyIconWrap} onPress={() => void copy(isUser ? pubKey.encoded : npub)}>
-							{copied ?
-								<CheckmarkIcon width={18} height={18} color={mainColors.VALID} />
-								:
-								<CopyIcon width={18} height={18} color={color.TEXT_SECONDARY} />
-							}
-						</TouchableOpacity>
+						<Copy txt={isUser ? pubKey.encoded : npub} />
 					</View>
 					{/* tags */}
 					<View style={styles.tagsWrap}>
@@ -161,10 +153,6 @@ const styles = StyleSheet.create({
 	},
 	npub: {
 		fontSize: 14,
-	},
-	copyIconWrap: {
-		paddingHorizontal: 10,
-		paddingVertical: 5,
 	},
 	tagsWrap: {
 		marginTop: 20,
