@@ -15,6 +15,7 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 	const { t } = useTranslation(['topNav'])
 	const { color, highlight } = useThemeContext()
 	const { hidden, setHidden } = usePrivacyContext()
+
 	const handleHidden = async () => {
 		if (hidden) {
 			setHidden(false)
@@ -34,7 +35,7 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 			<Text style={[styles.subHeader, { color: color.TEXT }]}>
 				{t('general')}
 			</Text>
-			<View style={[globals(color).wrapContainer, styles.wrap, { paddingVertical: isIOS ? 18 : 10 }]}>
+			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<Txt txt={t('hideNuts', { ns: 'common' })} />
 				<Switch
 					trackColor={{ false: color.BORDER, true: hi[highlight] }}
@@ -60,5 +61,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		marginBottom: 20,
+		paddingVertical: isIOS ? 18 : 10
 	},
 })
