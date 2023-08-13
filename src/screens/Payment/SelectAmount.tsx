@@ -4,6 +4,7 @@ import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
+import { l } from '@log'
 import type { TSelectAmountPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
@@ -48,26 +49,31 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 
 	const handleFeeEstimation = async (lnurl: string) => {
 		setFee(prev => ({ ...prev, isCalculating: true }))
-		// check fee for payment to lnurl
-		if (lnurl.length) {
-			const lnurlInvoice = await getInvoiceFromLnurl(lnurl, +amount)
-			if (!lnurlInvoice?.length) {
-				openPromptAutoClose({ msg: t('feeErr', { ns: NS.common, input: lnurl }) })
-				setFee(prev => ({ ...prev, isCalculating: false }))
+		try {
+			// check fee for payment to lnurl
+			if (lnurl.length) {
+				const lnurlInvoice = await getInvoiceFromLnurl(lnurl, +amount)
+				if (!lnurlInvoice?.length) {
+					openPromptAutoClose({ msg: t('feeErr', { ns: NS.common, input: lnurl }) })
+					setFee(prev => ({ ...prev, isCalculating: false }))
+					return
+				}
+				const estFee = await checkFees(mint.mintUrl, lnurlInvoice)
+				setFee({ estimation: estFee, isCalculating: false })
+				setShouldEstimate(false)
 				return
 			}
-			const estFee = await checkFees(mint.mintUrl, lnurlInvoice)
-			setFee({ estimation: estFee, isCalculating: false })
-			setShouldEstimate(false)
-			return
-		}
-		// check fee for multimint swap
-		if (isSwap && targetMint?.mintUrl.length) {
-			const { pr } = await requestMint(targetMint.mintUrl, +amount)
-			// const invoice = await getInvoice(hash)
-			const estFee = await checkFees(mint.mintUrl, pr)
-			setFee({ estimation: estFee, isCalculating: false })
-			setShouldEstimate(false)
+			// check fee for multimint swap
+			if (isSwap && targetMint?.mintUrl.length) {
+				const { pr } = await requestMint(targetMint.mintUrl, +amount)
+				// const invoice = await getInvoice(hash)
+				const estFee = await checkFees(mint.mintUrl, pr)
+				setFee({ estimation: estFee, isCalculating: false })
+				setShouldEstimate(false)
+			}
+		} catch (e) {
+			l(e)
+			openPromptAutoClose({ msg: t('requestMintErr', { ns: NS.error }) })
 		}
 	}
 
