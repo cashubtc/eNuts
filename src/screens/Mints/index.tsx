@@ -153,34 +153,38 @@ export default function Mints({ navigation }: TMintsPageProps) {
 						data={allMints}
 						estimatedItemSize={300}
 						contentContainerStyle={{ paddingHorizontal: 20 }}
-						renderItem={data => (
+						renderItem={({ item }) => (
 							<TouchableOpacity
-								key={data.item.mintUrl}
+								key={item.mintUrl}
 								style={styles.mintUrlWrap}
-								onPress={() => handleMintEntry(data.item, data.item.amount)}
+								onPress={() => handleMintEntry(item, item.amount)}
 							>
 								<View style={styles.mintNameWrap}>
 									<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-										{defaultMint === data.item.mintUrl &&
+										{defaultMint === item.mintUrl &&
 											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
 										}
 										<Txt
-											txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
-											styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0, fontWeight: '500' }]}
+											txt={item.customName || formatMintUrl(item.mintUrl)}
+											styles={[{ marginLeft: defaultMint === item.mintUrl ? 10 : 0, fontWeight: '500' }]}
 										/>
 									</View>
-									{isTrustedMint(data.item.mintUrl) &&
+									{isTrustedMint(item.mintUrl) &&
 										<View style={styles.mintBal}>
-											<ZapIcon color={color.TEXT} />
-											<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-												{formatInt(data.item.amount, 'compact', 'en') + ' Satoshi'}
+											<ZapIcon color={item.amount > 0 ? hi[highlight] : color.TEXT_SECONDARY} />
+											<Text style={[styles.mintAmount, { color: item.amount > 0 ? color.TEXT : color.TEXT_SECONDARY, marginBottom: 5 }]}>
+												{item.amount > 0 ?
+													formatInt(item.amount, 'compact', 'en') + ' Satoshi'
+													:
+													t('emptyMint')
+												}
 											</Text>
 										</View>
 									}
 								</View>
 								{/* Add mint icon or show balance */}
 								<View>
-									{isTrustedMint(data.item.mintUrl) ?
+									{isTrustedMint(item.mintUrl) ?
 										<ChevronRightIcon color={color.TEXT} />
 										:
 										<PlusIcon color={color.TEXT} />

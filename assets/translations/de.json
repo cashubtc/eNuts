@@ -194,7 +194,8 @@
 		"checkingDms": "Ihre Nachrichten werden auf Ecash überprüft...",
 		"clearOverHere": "Sie sind auf dem neusten Stand!",
 		"totalDmsReceived": "Sie haben {{totalDms}} Cashu token erhalten.",
-		"swapNow": "Jetzt tauschen"
+		"swapNow": "Jetzt tauschen",
+		"emptyMint": "Kein Guthaben vorhanden"
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

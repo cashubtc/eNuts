@@ -192,7 +192,8 @@
 		"createInvoiceDashboard": "Recevez l'Ecash depuis une mint en payant une facture Lightning.",
 		"hideNuts": "Masquer votre solde total",
 		"checkingDms": "Vérification de vos DM pour l'Ecash...",
-		"swapNow": "Échanger maintenant"
+		"swapNow": "Échanger maintenant",
+		"emptyMint": "Mint ne dispose pas de fonds."
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",

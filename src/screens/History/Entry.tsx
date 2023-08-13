@@ -39,7 +39,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			<View style={styles.amount}>
 				<Txt
 					txt={formatInt(item.amount < 0 ? Math.abs(item.amount) : item.amount, 'compact', 'en')}
-					styles={[{ color: item.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}
+					styles={[{ color: item.amount < 0 ? mainColors.ERROR : mainColors.VALID, marginBottom: 5 }]}
 				/>
 				<ZapIcon color={item.amount < 0 ? mainColors.ERROR : mainColors.VALID} />
 			</View>

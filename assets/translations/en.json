@@ -194,7 +194,8 @@
 		"checkingDms": "Checking your DMs for Ecash...",
 		"clearOverHere": "Everything is clear over here!",
 		"totalDmsReceived": "You received {{totalDms}} Cashu token.",
-		"swapNow": "Swap now"
+		"swapNow": "Swap now",
+		"emptyMint": "Mint has no funds"
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",
