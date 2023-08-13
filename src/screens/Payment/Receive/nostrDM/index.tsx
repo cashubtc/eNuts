@@ -14,20 +14,24 @@ import { decrypt } from '@nostr/crypto'
 import { parseProfileContent } from '@nostr/util'
 import Config from '@src/config'
 import { useNostrContext } from '@src/context/Nostr'
+import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
 import { getNostrDmUsers } from '@store/nostrDms'
+import { globals, highlight as hi } from '@styles'
 import { hasEventId, isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import NostrMessage from './NostrMessage'
 
 export default function NostrDMScreen({ navigation, route }: TNostrReceivePageProps) {
 	const { t } = useTranslation([NS.common])
+	const { color, highlight } = useThemeContext()
+	const [isCancel, setIsCancel] = useState(false)
 	const { userRelays, claimedEvtIds } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [userMints, setUserMints] = useState<string[]>([])
@@ -63,6 +67,8 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 		}
 	}
 
+	const handleCancel = () => setIsCancel(true)
+
 	// get dms for conversationsPubKeys from relays
 	useEffect(() => {
 		void (async () => {
@@ -86,10 +92,21 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 					await handleDm(sk || '', e)
 				}
 			})
-			sub?.on('eose', () => stopLoading())
+			sub?.on('eose', () => {
+				stopLoading()
+				setIsCancel(false)
+			})
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userRelays])
+
+	// handle cancel
+	useEffect(() => {
+		if (!isCancel) { return }
+		relay.closePoolConnection(userRelays)
+		navigation.navigate('dashboard')
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isCancel])
 
 	useEffect(() => {
 		void (async () => {
@@ -112,12 +129,21 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 						txt={t('checkingDms')}
 						styles={[styles.loadingtxt]}
 					/>
+					<Txt
+						txt={t('invoiceHint', { ns: NS.mints })}
+						styles={[{ color: color.TEXT_SECONDARY }, styles.hint]}
+					/>
+					<TouchableOpacity
+						onPress={handleCancel}
+					>
+						<Txt txt={t('cancel')} styles={[globals(color).pressTxt, { color: hi[highlight], padding: 10 }]} />
+					</TouchableOpacity>
 				</View>
 				:
 				<View>
 					{dms.length > 0 &&
 						<Txt
-							txt={t('totalDmsReceived')}
+							txt={t('totalDmsReceived', { totalDms: dms.length })}
 							styles={[styles.heading]}
 						/>
 					}
@@ -135,7 +161,12 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 								/>
 							))
 							:
-							<Empty txt={t('clearOverHere')} />}
+							<Empty
+								txt={t('clearOverHere')}
+								hasOk
+								nav={navigation}
+							/>
+						}
 					</ScrollView>
 				</View>
 			}
@@ -157,6 +188,11 @@ const styles = StyleSheet.create({
 	},
 	loadingtxt: {
 		marginTop: 20,
+		marginBottom: 10,
 		textAlign: 'center',
 	},
+	hint: {
+		fontSize: 14,
+		marginBottom: 20
+	}
 })

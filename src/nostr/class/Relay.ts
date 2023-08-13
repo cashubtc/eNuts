@@ -131,6 +131,10 @@ class Relay {
 		}
 	}
 
+	closePoolConnection(relayUrls: string[]) {
+		this.#pool?.close(relayUrls)
+	}
+
 	#closeConnection() {
 		this.#singleRelay?.close()
 		this.#singleConnections--
@@ -140,10 +144,6 @@ class Relay {
 
 	#connectPool() {
 		this.#pool = new SimplePool()
-	}
-
-	#closePoolConnection(relayUrls: string[]) {
-		this.#pool?.close(relayUrls)
 	}
 
 	#validate(event: IEventDM, sk: string) {
@@ -166,7 +166,7 @@ class Relay {
 		this.#poolSubs--
 		l(`pool events received: ${this.#poolEventsReceived}`)
 		l(`active pool subs: ${this.#poolSubs}`)
-		this.#closePoolConnection(relayUrls)
+		this.closePoolConnection(relayUrls)
 	}
 
 }
