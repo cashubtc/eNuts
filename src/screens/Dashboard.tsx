@@ -23,10 +23,9 @@ import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
 import { highlight as hi } from '@styles'
-import { hasTrustedMint, isCashuToken } from '@util'
+import { getStrFromClipboard, hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
-import * as Clipboard from 'expo-clipboard'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -149,7 +148,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const handleClaimBtnPress = async () => {
 		if (token.length) { return }
 		startLoading()
-		const clipboard = await Clipboard.getStringAsync()
+		const clipboard = await getStrFromClipboard()
+		if (!clipboard) { return }
 		if (!isCashuToken(clipboard)) {
 			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			closeOptsModal()

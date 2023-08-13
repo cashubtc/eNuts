@@ -8,9 +8,8 @@ import { useThemeContext } from '@src/context/Theme'
 import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi, mainColors } from '@styles'
-import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
+import { copyStrToClipboard, formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
-import * as Clipboard from 'expo-clipboard'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -57,6 +56,15 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			// reset state
 			setTimeout(() => setPaid(''), 3000)
 		}
+	}
+
+	const copyPaymentreq = async () => {
+		await copyStrToClipboard(paymentRequest)
+		setCopied(true)
+		const t = setTimeout(() => {
+			setCopied(false)
+			clearTimeout(t)
+		}, 3000)
 	}
 
 	// countdown
@@ -115,15 +123,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				<Button
 					txt={copied ? t('copied') + '!' : t('copyInvoice')}
 					outlined
-					onPress={() => {
-						void Clipboard.setStringAsync(paymentRequest).then(() => {
-							setCopied(true)
-							const t = setTimeout(() => {
-								setCopied(false)
-								clearTimeout(t)
-							}, 3000)
-						})
-					}}
+					onPress={() => void copyPaymentreq()}
 				/>
 				<View style={{ marginBottom: 20 }} />
 				<Button

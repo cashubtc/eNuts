@@ -3,10 +3,9 @@ import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
 import { addToHistory } from '@store/HistoryStore'
-import { formatInt, formatMintUrl, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
+import { formatInt, formatMintUrl, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
-import * as Clipboard from 'expo-clipboard'
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AppState } from 'react-native'
@@ -29,7 +28,8 @@ const useFocusClaim = () => {
 		// in an empty string returned. Find a better way than the following function to handle it.
 		let isSpent = false
 		const fn = async () => {
-			const clipboard = await Clipboard.getStringAsync()
+			const clipboard = await getStrFromClipboard()
+			if (!clipboard) { return }
 			if (!isCashuToken(clipboard)) { return false }
 			const info = getTokenInfo(clipboard)
 			if (!info) { return false }

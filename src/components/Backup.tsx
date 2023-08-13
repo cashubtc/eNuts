@@ -1,8 +1,7 @@
 import { l } from '@log'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { formatMintUrl } from '@util'
-import * as Clipboard from 'expo-clipboard'
+import { copyStrToClipboard, formatMintUrl } from '@util'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Share, StyleSheet, Text } from 'react-native'
@@ -41,7 +40,7 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 		}
 	}
 	const handleCopy = async () => {
-		await Clipboard.setStringAsync(token)
+		await copyStrToClipboard(token)
 		setCopied(true)
 		const t = setTimeout(() => {
 			setCopied(false)

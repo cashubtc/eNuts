@@ -8,8 +8,7 @@ import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { dark, globals, highlight as hi } from '@styles'
-import { vib } from '@util'
-import * as Clipboard from 'expo-clipboard'
+import { copyStrToClipboard, vib } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Share, StyleSheet, View } from 'react-native'
@@ -48,7 +47,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	}
 	// copy token
 	const handleCopy = async () => {
-		await Clipboard.setStringAsync(route.params.token)
+		await copyStrToClipboard(route.params.token)
 		setCopied(true)
 		const t = setTimeout(() => {
 			setCopied(false)

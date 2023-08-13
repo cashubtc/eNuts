@@ -21,8 +21,7 @@ import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
-import { isStr } from '@util'
-import * as Clipboard from 'expo-clipboard'
+import { getStrFromClipboard, isStr } from '@util'
 import { type Event as NostrEvent, generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -180,7 +179,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			return
 		}
 		// paste from clipboard
-		const clipboard = await Clipboard.getStringAsync()
+		const clipboard = await getStrFromClipboard()
 		if (!clipboard || clipboard === 'null') { return }
 		// check if is npub
 		if (clipboard.startsWith('npub')) {

@@ -4,6 +4,7 @@ import { l } from '@log'
 import type { ILnUrl, IProofSelection } from '@model'
 import axios from 'axios'
 import type { Buffer } from 'buffer/'
+import * as Clipboard from 'expo-clipboard'
 import { Linking, Vibration } from 'react-native'
 
 import { getLanguageCode } from './localization'
@@ -265,4 +266,13 @@ export function hasEventId(arr: string[], target: string) {
 		return arr.some(x => x === target)
 	}
 	return binarySearch(arr, target)
+}
+
+export async function copyStrToClipboard(str: string) {
+	await Clipboard.setStringAsync(str)
+}
+
+export async function getStrFromClipboard() {
+	const s = await Clipboard.getStringAsync()
+	return !s || s === 'null' ? null : s
 }

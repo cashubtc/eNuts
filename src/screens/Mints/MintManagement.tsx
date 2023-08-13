@@ -14,9 +14,8 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
+import { copyStrToClipboard, formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
-import * as Clipboard from 'expo-clipboard'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -143,6 +142,15 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		})()
 	}
 
+	const copyMintUrl = async () => {
+		await copyStrToClipboard(route.params.mint?.mintUrl)
+		setCopied(true)
+		const t = setTimeout(() => {
+			setCopied(false)
+			clearTimeout(t)
+		}, 3000)
+	}
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
@@ -159,15 +167,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt={formatMintUrl(route.params.mint?.mintUrl)}
 						hasSeparator
 						noChevron
-						onPress={() => {
-							void Clipboard.setStringAsync(route.params.mint?.mintUrl).then(() => {
-								setCopied(true)
-								const t = setTimeout(() => {
-									setCopied(false)
-									clearTimeout(t)
-								}, 3000)
-							})
-						}}
+						onPress={() => void copyMintUrl()}
 						icon={copied ?
 							<CheckmarkIcon width={20} height={20} color={mainColors.VALID} />
 							:

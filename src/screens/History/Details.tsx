@@ -13,9 +13,8 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
-import { formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
+import { copyStrToClipboard, formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
-import * as Clipboard from 'expo-clipboard'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -44,18 +43,18 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('noMemo', { ns: 'history' })
 	const { openPromptAutoClose } = usePromptContext()
 	const copyValue = async () => {
-		await Clipboard.setStringAsync(entry.value)
+		await copyStrToClipboard(entry.value)
 		setCopy({ ...copy, value: true })
 		handleTimeout()
 	}
 	const copyHash = async () => {
-		await Clipboard.setStringAsync(hash)
+		await copyStrToClipboard(hash)
 		setCopy({ ...copy, hash: true })
 		handleTimeout()
 	}
 	const copyPreimage = async () => {
 		if (!entry.preImage) { return }
-		await Clipboard.setStringAsync(entry.preImage)
+		await copyStrToClipboard(entry.preImage)
 		setCopy({ ...copy, preimage: true })
 		handleTimeout()
 	}
