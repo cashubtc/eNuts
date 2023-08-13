@@ -195,7 +195,8 @@
 		"clearOverHere": "Sie sind auf dem neusten Stand!",
 		"totalDmsReceived": "Sie haben {{totalDms}} Cashu token erhalten.",
 		"swapNow": "Jetzt tauschen",
-		"emptyMint": "Kein Guthaben vorhanden"
+		"emptyMint": "Kein Guthaben vorhanden",
+		"zapSoon": "Zaps werden bald hinzugefügt..."
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

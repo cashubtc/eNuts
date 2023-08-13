@@ -193,7 +193,8 @@
 		"hideNuts": "Masquer votre solde total",
 		"checkingDms": "Vérification de vos DM pour l'Ecash...",
 		"swapNow": "Échanger maintenant",
-		"emptyMint": "Mint ne dispose pas de fonds."
+		"emptyMint": "Mint ne dispose pas de fonds.",
+		"zapSoon": "Les zaps seront bientôt ajoutés..."
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",

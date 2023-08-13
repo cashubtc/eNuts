@@ -195,7 +195,8 @@
 		"clearOverHere": "Everything is clear over here!",
 		"totalDmsReceived": "You received {{totalDms}} Cashu token.",
 		"swapNow": "Swap now",
-		"emptyMint": "Mint has no funds"
+		"emptyMint": "Mint has no funds",
+		"zapSoon": "Zaps will be added soon..."
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",
