@@ -9,7 +9,7 @@ import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { dark, globals, highlight as hi } from '@styles'
+import { globals, highlight as hi } from '@styles'
 import { vib } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,7 +20,7 @@ import { Share, StyleSheet, View } from 'react-native'
  */
 export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
 	const { t } = useTranslation([NS.common])
-	const { color, highlight } = useThemeContext()
+	const { color, highlight, theme } = useThemeContext()
 	const { copied, copy } = useCopy()
 	const [error, setError] = useState({ msg: '', open: false })
 
@@ -64,7 +64,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 				{error.open ?
 					<Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
 					:
-					<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>
+					<View style={theme === 'Dark' ? styles.qrCodeWrap : undefined}>
 						<QR
 							size={320}
 							value={`cashu://${route.params.token}`}

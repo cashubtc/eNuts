@@ -9,7 +9,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/HistoryStore'
-import { dark, globals, highlight as hi, mainColors } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
@@ -22,7 +22,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const { openPromptAutoClose } = usePromptContext()
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation([NS.common])
-	const { color, highlight } = useThemeContext()
+	const { color, highlight, theme } = useThemeContext()
 	const [expire, setExpire] = useState(expiry)
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
@@ -80,7 +80,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				handlePress={() => navigation.navigate('dashboard')}
 			/>
 			<View style={styles.invoiceWrap}>
-				<View style={color.BACKGROUND === dark.colors.background ? styles.qrCodeWrap : undefined}>
+				<View style={theme === 'Dark' ? styles.qrCodeWrap : undefined}>
 					<QR
 						size={275}
 						value={paymentRequest}

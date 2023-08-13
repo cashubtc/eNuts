@@ -299,7 +299,7 @@ export async function deleteMint(mintUrl: string) {
 	return result.rowsAffected === 1
 }
 // ################################ Preferences ################################
-export async function getPreferences() {
+export async function getPreferences(): Promise<IPreferences> {
 	const x = await db.get<IPreferencesResp>('SELECT * FROM preferences limit 1', [])
 	return {
 		id: x?.id || 1,

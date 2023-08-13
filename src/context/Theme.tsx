@@ -1,7 +1,7 @@
 import { getPreferences, setPreferences } from '@db'
 import { l } from '@log'
 import type { IPreferences } from '@model'
-import { dark, light } from '@styles'
+import { dark, HighlightKey, light , lightTheme } from '@styles'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Appearance } from 'react-native'
 
@@ -9,7 +9,7 @@ const useTheme = () => {
 	const [theme, setTheme] = useState('Light')
 	const [color, setColors] = useState(theme === 'Light' ? light.custom : dark.custom)
 	const [pref, setPref] = useState<IPreferences | undefined>()
-	const [highlight, setHighlight] = useState('Default')
+	const [highlight, setHighlight] = useState<HighlightKey>('Default')
 
 	// update theme
 	useEffect(() => {
@@ -49,7 +49,8 @@ const useTheme = () => {
 					id: 1,
 					darkmode: false,
 					formatBalance: false,
-					theme: 'Default'
+					theme: 'Default',
+					hasPref: true
 				})
 			}
 		})()
@@ -72,20 +73,13 @@ const ThemeContext = createContext<useThemeType>({
 		id: 1,
 		darkmode: false,
 		formatBalance: false,
-		theme: 'Default'
+		theme: 'Default',
+		hasPref: false
 	},
 	theme: 'Light',
 	setTheme: () => l(''),
-	color: {
-		BACKGROUND: '#FAFAFA',
-		DRAWER: '#FAFAFA',
-		TEXT: '#656565',
-		TEXT_SECONDARY: '#BDBDBD',
-		INPUT_BG: '#F6F6F6',
-		INPUT_PH: '#656565',
-		BORDER: '#E8E8E8'
-	},
-	highlight: '#5DB075',
+	color: lightTheme,
+	highlight: 'Default',
 	setHighlight: () => l('')
 })
 

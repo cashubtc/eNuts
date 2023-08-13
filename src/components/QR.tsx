@@ -9,9 +9,9 @@ interface QRProps {
 }
 
 export default function QR({ size, value, onError }: QRProps) {
-	const { color } = useThemeContext()
+	const { theme } = useThemeContext()
 	return (
-		<View style={color.BACKGROUND === '#202124' ? styles.qrWrap : {}}>
+		<View style={theme === 'Dark' ? styles.qrWrap : {}}>
 			<QRCode
 				size={size}
 				value={value}

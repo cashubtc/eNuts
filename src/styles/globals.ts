@@ -1,10 +1,8 @@
 import { StyleSheet } from 'react-native'
 
-import { highlight as hi, type TPref } from './colors'
+import { highlight, type HighlightKey, type Theme } from './colors'
 
-// TODO make param "h" type-safe
-
-export const globals = (color: TPref, h?: string) => StyleSheet.create({
+export const globals = (color: Theme, h?: HighlightKey) => StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: 110,
@@ -18,7 +16,7 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		fontSize: 16,
 		fontWeight: '500',
 		textAlign: 'center',
-		color: hi[h || '']
+		color: h ? highlight[h] : '#000'
 	},
 	navTxt: {
 		fontSize: 20,

@@ -7,7 +7,7 @@ import type { TDisplaySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { globals, highlight as hi, themeColors } from '@styles'
+import { globals, highlight as hi, HighlightKey, themeColors } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -50,7 +50,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 }
 
 interface IThemeSelectionProps {
-	name: string
+	name: HighlightKey
 	selected: boolean
 	hasSeparator?: boolean
 }

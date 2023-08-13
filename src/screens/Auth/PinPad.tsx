@@ -1,6 +1,6 @@
 import { BackspaceIcon, CheckmarkIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
-import { getPinpadBg, highlight as hi } from '@styles/colors'
+import { getPinpadBg } from '@styles'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 const white = '#FAFAFA'
@@ -50,7 +50,7 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, ha
 						<TouchableOpacity
 							key={`${i}${pad.n}`}
 							onPress={() => void handleInput(pad.n)}
-							style={[styles.numWrap, pad.n < 10 ? { backgroundColor: getPinpadBg(hi[highlight]) } : {}]}
+							style={[styles.numWrap, pad.n < 10 ? { backgroundColor: getPinpadBg(highlight) } : {}]}
 							disabled={shouldDisablePad(pad.n)}
 						>
 							{pad.n === 10 ? <BackspaceIcon width={32} height={32} color={white} /> // backspace

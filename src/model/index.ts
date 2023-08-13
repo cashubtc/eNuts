@@ -1,4 +1,5 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
+import type { HighlightKey } from '@styles'
 import type { ExpoConfig } from 'expo/config'
 import type { SQLStmtCb, SQLStmtErrCb, WebSQLDatabase } from 'expo-sqlite'
 
@@ -58,7 +59,7 @@ export interface IPreferencesResp {
 	id: 1
 	formatBalance: string
 	darkmode: string
-	theme: string
+	theme: HighlightKey
 	hasPref: string
 }
 
@@ -66,7 +67,8 @@ export interface IPreferences {
 	id: 1
 	formatBalance: boolean
 	darkmode: boolean
-	theme: string
+	theme: HighlightKey
+	hasPref: boolean
 }
 
 export interface IContactResp {

@@ -1,7 +1,6 @@
 import { isIOS } from '@consts'
 import { useThemeContext } from '@src/context/Theme'
-import type { TPref } from '@styles'
-import { highlight as hi } from '@styles'
+import { highlight as hi, HighlightKey, Theme } from '@styles'
 import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -82,7 +81,7 @@ export default function MyModal({
 	)
 }
 
-const styles = (pref: TPref, h: string) => StyleSheet.create({
+const styles = (pref: Theme, h: HighlightKey) => StyleSheet.create({
 	modalParent: {
 		position: 'absolute',
 		top: 0,
