@@ -52,5 +52,6 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		fontWeight: '500',
 		color: '#FAFAFA',
+		textAlign: 'center'
 	},
 })

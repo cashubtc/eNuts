@@ -35,7 +35,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const handlePress = (url: string) => {
 		if (url === 'lightning://') {
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			openPromptAutoClose({ msg: `⚠️ ${t('zapSoon', { ns: NS.common })} ⚡👀` })
+			openPromptAutoClose({ msg: `⚠️\n\n${t('zapSoon', { ns: NS.common })}\n\n⚡👀` })
 			return
 		}
 		setVisible(true)

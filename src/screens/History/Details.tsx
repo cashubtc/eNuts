@@ -95,7 +95,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		stopLoading()
 		openPromptAutoClose({
 			msg: t(
-				'claimBackSuccess',
+				'claimSuccess',
 				{
 					amount: entry.amount < 0 ? Math.abs(entry.amount) : entry.amount,
 					mintUrl: entry.mints.map(m => formatMintUrl(m)).join(', '),
