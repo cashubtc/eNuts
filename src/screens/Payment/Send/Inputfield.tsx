@@ -10,9 +10,8 @@ import TopNav from '@nav/TopNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { decodeLnInvoice, isErr, isLnurl, openUrl } from '@util'
+import { decodeLnInvoice, getStrFromClipboard, isErr, isLnurl, openUrl } from '@util'
 import { checkFees } from '@wallet'
-import * as Clipboard from 'expo-clipboard'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -29,6 +28,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 	const inputRef = createRef<TextInput>()
 	const [decodedAmount, setDecodedAmount] = useState(0)
 	const [estFee, setEstFee] = useState(0)
+
 	// Paste/Clear input for LNURL/LN invoice
 	const handleInputLabelPress = async () => {
 		// clear input
@@ -38,14 +38,15 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			return
 		}
 		// paste from clipboard
-		const clipboard = await Clipboard.getStringAsync()
-		if (!clipboard || clipboard === 'null') { return }
+		const clipboard = await getStrFromClipboard()
+		if (!clipboard) { return }
 		setInput(clipboard)
 		// pasted LNURL which does not need decoding
 		if (isLnurl(clipboard)) { return }
 		// pasted LN invoice
 		await handleInvoicePaste(clipboard)
 	}
+
 	const handleInvoicePaste = async (clipboard: string) => {
 		try {
 			const decoded = decodeLnInvoice(clipboard)
@@ -62,6 +63,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			setInput('')
 		}
 	}
+
 	const handleBtnPress = async () => {
 		if (loading) { return }
 		// open user LN wallet
@@ -108,6 +110,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			openPromptAutoClose({ msg: t('invalidInvoice') })
 		}
 	}
+
 	// auto-focus keyboard
 	useEffect(() => {
 		const t = setTimeout(() => {
@@ -116,6 +119,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		}, 200)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
 	// handle case if user pastes value using the device keyboard
 	useEffect(() => {
 		if (isLnurl(input)) { return }
@@ -124,6 +128,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		void handleInvoicePaste(input)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [input])
+
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<TopNav
