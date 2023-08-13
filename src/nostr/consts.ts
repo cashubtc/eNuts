@@ -53,14 +53,14 @@ export const npubLength = 64
 /**
  * Regex to match a mnemonic seed
  */
-export const MnemonicRegex = /(\w+)/g
+// export const MnemonicRegex = /(\w+)/g
 
 /**
  * NIP06-defined derivation path for private keys
  */
-export const DerivationPath = 'm/44\'/1237\'/0\'/0/0'
+// export const DerivationPath = 'm/44\'/1237\'/0\'/0/0'
 
 /**
  * Websocket re-connect timeout
  */
-export const defaultConnectTimeout = 2000
+// export const defaultConnectTimeout = 2000
