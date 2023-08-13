@@ -66,15 +66,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const handleTrustModal = async () => {
 		if (loading) { return }
 		startLoading()
-		// TODO Maybe we should provide the user the possibility to choose mints
-		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
 			openPromptAutoClose({ msg: t('clipboardInvalid') })
 			closeOptsModal()
 			stopLoading()
 			return
 		}
-		// TODO only add chosen mints by the user
 		for (const mint of tokenInfo.mints) {
 			// eslint-disable-next-line no-await-in-loop
 			await addMint(mint)
@@ -101,7 +98,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setTokenInfo(tokenInfo)
 		// check if user wants to trust the token mint
 		const userMints = await getMintsUrls()
-		// TODO update this check for future multiple mints of token
 		if (!hasTrustedMint(userMints, tokenInfo.mints)) {
 			// ask user for permission if token mint is not in his mint list
 			setTrustModal(true)

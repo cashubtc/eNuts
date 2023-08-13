@@ -150,7 +150,6 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					</View>
 					<Separator />
 					{/* Mints */}
-					{/* TODO update style to fit multiple mints */}
 					<View style={styles.entryInfo}>
 						<Txt txt={isLn ? 'Mint' : 'Mints'} />
 						<Txt txt={entry.mints.map(m => formatMintUrl(m)).join(', ')} />

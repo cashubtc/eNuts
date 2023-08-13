@@ -17,6 +17,7 @@ import { useNostrContext } from '@src/context/Nostr'
 import { NS } from '@src/i18n'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
+import { getNostrDmUsers } from '@store/nostrDms'
 import { hasEventId, isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
@@ -67,11 +68,11 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 		void (async () => {
 			startLoading()
 			const sk = await secureStore.get(SECRET)
-			// const conversationsPubKeys = await getNostrDmUsers()
+			const conversationsPubKeys = await getNostrDmUsers()
 			const sub = relay.subscribePool({
 				relayUrls: userRelays,
 				// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
-				authors: ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635'], //  conversationsPubKeys
+				authors: conversationsPubKeys, // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
 				kinds: [EventKind.DirectMessage, EventKind.SetMetadata],
 				skipVerification: Config.skipVerification
 			})

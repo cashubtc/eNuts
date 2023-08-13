@@ -55,7 +55,6 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		setTokenInfo(info)
 		// check if user wants to trust the token mint
 		const userMints = await getMintsUrls()
-		// TODO update this check for future multiple mints of token
 		if (!hasTrustedMint(userMints, info.mints)) {
 			// ask user for permission if token mint is not in his mint list
 			setTrustModal(true)
@@ -67,8 +66,6 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const handleTrustModal = async () => {
 		if (loading) { return }
 		startLoading()
-		// TODO Maybe we should provide the user the possibility to choose mints
-		// in the trust modal-question once multiple mints per token are available...
 		if (!tokenInfo) {
 			openPromptAutoClose({ msg: t('invalidToken') })
 			stopLoading()
@@ -76,7 +73,6 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			setTrustModal(false)
 			return
 		}
-		// TODO only add chosen mints by the user
 		for (const mint of tokenInfo.mints) {
 			// eslint-disable-next-line no-await-in-loop
 			await addMint(mint)
@@ -95,7 +91,6 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			return
 		}
 		const info = getTokenInfo(data)
-		// TODO show all mints of token
 		if (!info) {
 			openPromptAutoClose({ msg: t('tokenInfoErr') })
 			return
