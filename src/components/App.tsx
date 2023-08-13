@@ -172,7 +172,6 @@ function _App() {
 			await initDB()
 			await initAuth()
 			await initData()
-			await SplashScreen.hideAsync()
 			setIsRdy(true) // APP is ready to render
 		}
 		void init()
@@ -198,14 +197,14 @@ function _App() {
 
 	if (!isRdy) { return <Blank /> }
 
-	// await SplashScreen.hideAsync() is done in the last context provider
-	// to ensure all initial requests are done before displaying content
+	// await SplashScreen.hideAsync() is done in the NostrProvider context provider
+	// to ensure all initial DB and store requests are done before displaying content
 	return (
 		<ThemeProvider>
 			<PinCtx.Provider value={pinData}>
-				<FocusClaimProvider>
-					<PrivacyProvider>
-						<NostrProvider>
+				<PrivacyProvider>
+					<NostrProvider>
+						<FocusClaimProvider>
 							<NavContainer>
 								<PromptProvider>
 									<KeyboardProvider>
@@ -221,9 +220,9 @@ function _App() {
 									</KeyboardProvider>
 								</PromptProvider>
 							</NavContainer>
-						</NostrProvider>
-					</PrivacyProvider>
-				</FocusClaimProvider>
+						</FocusClaimProvider>
+					</NostrProvider>
+				</PrivacyProvider>
 			</PinCtx.Provider>
 		</ThemeProvider>
 	)

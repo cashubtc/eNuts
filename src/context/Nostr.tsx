@@ -3,6 +3,7 @@ import type { IProfileContent, TContact } from '@model/nostr'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getRedeemdedSigs } from '@store/nostrDms'
+import * as SplashScreen from 'expo-splash-screen'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const useNostr = () => {
@@ -16,14 +17,20 @@ const useNostr = () => {
 	// init
 	useEffect(() => {
 		void (async () => {
-			const [nutpub, redeemed] = await Promise.all([
-				// user enuts pubKey
-				store.get(STORE_KEYS.nutpub),
-				// already claimed ecash from DM: stored event signatures
-				getRedeemdedSigs(),
-			])
-			setNutPub(nutpub || '')
-			setClaimedEvtIds(redeemed)
+			try {
+				const [nutpub, redeemed] = await Promise.all([
+					// user enuts pubKey
+					store.get(STORE_KEYS.nutpub),
+					// already claimed ecash from DM: stored event signatures
+					getRedeemdedSigs(),
+				])
+				setNutPub(nutpub || '')
+				setClaimedEvtIds(redeemed)
+			} catch (e) {
+				l(e)
+			} finally {
+				await SplashScreen.hideAsync()
+			}
 		})()
 	}, [])
 
