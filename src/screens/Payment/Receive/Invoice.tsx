@@ -5,9 +5,10 @@ import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi, mainColors } from '@styles'
-import { formatSeconds, isErr, openUrl } from '@util'
+import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import * as Clipboard from 'expo-clipboard'
 import { useEffect, useState } from 'react'
@@ -25,37 +26,40 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const [copied, setCopied] = useState(false)
-	const handlePayment = () => {
+
+	const handlePayment = async () => {
 		// state "unpaid" is temporary to prevent btn press spam
 		if (paid === 'unpaid') { return }
-		void (async () => {
-			try {
-				const { success } = await requestToken(mintUrl, amount, hash)
-				if (success) {
-					// add as history entry
-					await addToHistory({
-						amount: amount,
-						type: 2,
-						value: paymentRequest,
-						mints: [mintUrl],
-					})
-				}
-				setPaid(success ? 'paid' : 'unpaid')
-			} catch (e) {
-				l(e)
-				if (isErr(e)) {
-					// TODO update this check
-					if (e.message === 'Tokens already issued for this invoice.') {
-						setPaid('paid')
-						return
-					}
-				}
-				setPaid('unpaid')
-				// reset state
-				setTimeout(() => setPaid(''), 3000)
+		const previousBalance = await getBalance()
+		try {
+			const { success } = await requestToken(mintUrl, amount, hash)
+			const newBalance = await getBalance()
+			// it is possible that success is false but invoice has been paid...
+			if (success || newBalance > previousBalance) {
+				// add as history entry
+				await addToHistory({
+					amount,
+					type: 2,
+					value: paymentRequest,
+					mints: [mintUrl],
+				})
+				setPaid('paid')
+				navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
 			}
-		})()
+		} catch (e) {
+			l(e)
+			// TODO update this check
+			if (isErr(e) && e.message === 'Tokens already issued for this invoice.') {
+				setPaid('paid')
+				return
+			}
+			setPaid('unpaid')
+			// reset state
+			setTimeout(() => setPaid(''), 3000)
+		}
 	}
+
+	// countdown
 	useEffect(() => {
 		const timeLeft = Math.ceil((expiryTime - Date.now()) / 1000)
 		if (timeLeft < 0) {
@@ -66,6 +70,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			setTimeout(() => setExpire(timeLeft - 1), 1000)
 		}
 	}, [expire, expiryTime])
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
@@ -93,8 +98,8 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 						t('invoiceExpired') + '!'
 					}
 				</Text>
-				{expire > 0 && !paid &&
-					<TouchableOpacity onPress={handlePayment}>
+				{expire > 0 && (!paid || paid === 'unpaid') &&
+					<TouchableOpacity onPress={() => void handlePayment()}>
 						<Text style={[styles.checkPaymentTxt, { color: hi[highlight] }]}>
 							{t('checkPayment')}
 						</Text>
