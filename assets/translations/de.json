@@ -325,6 +325,7 @@
 		"enutsDisclaimer": "eNuts ist unvollendete Alpha-Software.",
 		"lossContent": "Cashu-Token sind Inhabertoken, was bedeutet, dass es keine Möglichkeit zur Wiederherstellung gibt, wenn Sie den Zugriff darauf verlieren. eNuts speichert Ihre Token auf Ihrem Gerät. Stellen Sie vor dem Löschen der App sicher, dass Sie Ihre Token gesichert haben.",
 		"lossOfTokens": "Verlust von Geldern.",
+		"paidOut": "Ausbezahlt",
 		"pasteToken": "Ecash aus Zwischenablage",
 		"payInvoice": "Rechnung bezahlen",
 		"payLNInvoice": "Lightning Rechnung bezahlen",
