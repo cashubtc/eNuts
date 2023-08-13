@@ -10,7 +10,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, getInvoiceFromLnurl, vib } from '@util'
-import { checkFees } from '@wallet'
+import { checkFees, requestMint } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
@@ -48,15 +48,27 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 
 	const handleFeeEstimation = async (lnurl: string) => {
 		setFee(prev => ({ ...prev, isCalculating: true }))
-		const invoice = await getInvoiceFromLnurl(lnurl, +amount)
-		if (!invoice?.length) {
-			openPromptAutoClose({ msg: t('feeErr', { ns: NS.common, input: lnurl }) })
-			setFee(prev => ({ ...prev, isCalculating: false }))
+		// check fee for payment to lnurl
+		if (lnurl.length) {
+			const lnurlInvoice = await getInvoiceFromLnurl(lnurl, +amount)
+			if (!lnurlInvoice?.length) {
+				openPromptAutoClose({ msg: t('feeErr', { ns: NS.common, input: lnurl }) })
+				setFee(prev => ({ ...prev, isCalculating: false }))
+				return
+			}
+			const estFee = await checkFees(mint.mintUrl, lnurlInvoice)
+			setFee({ estimation: estFee, isCalculating: false })
+			setShouldEstimate(false)
 			return
 		}
-		const estFee = await checkFees(targetMint?.mintUrl || mint.mintUrl, invoice)
-		setFee({ estimation: estFee, isCalculating: false })
-		setShouldEstimate(false)
+		// check fee for multimint swap
+		if (isSwap && targetMint?.mintUrl.length) {
+			const { pr } = await requestMint(targetMint.mintUrl, +amount)
+			// const invoice = await getInvoice(hash)
+			const estFee = await checkFees(mint.mintUrl, pr)
+			setFee({ estimation: estFee, isCalculating: false })
+			setShouldEstimate(false)
+		}
 	}
 
 	const getActionBtnTxt = () => {
