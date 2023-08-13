@@ -17,6 +17,7 @@ import Config from '@src/config'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
@@ -35,7 +36,7 @@ const marginBottomPayment = isIOS ? 25 : 0
 
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const {
@@ -297,7 +298,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
-				screenName={route.params?.isMelt ? t('cashOut', { ns: 'common' }) : t('addressBook', { ns: 'topNav' })}
+				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
 				withBackBtn={route.params?.isMelt || route.params?.isSendEcash}
 				handlePress={() => navigation.goBack()}
 			/>
@@ -350,7 +351,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				close={() => setNewNpubModal(false)}
 			>
 				<Text style={globals(color).modalHeader}>
-					{t('yourProfile', { ns: 'addrBook' })}
+					{t('yourProfile', { ns: NS.addrBook })}
 				</Text>
 				<View style={{ position: 'relative', width: '100%' }}>
 					<TxtInput
@@ -388,7 +389,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 }
 
 function ContactsCount() {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const { contacts, userRelays } = useNostrContext()
 	return (

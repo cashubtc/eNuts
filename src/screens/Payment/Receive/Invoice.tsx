@@ -6,6 +6,7 @@ import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/HistoryStore'
 import { dark, globals, highlight as hi, mainColors } from '@styles'
@@ -20,7 +21,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const { mintUrl, amount, hash, expiry, paymentRequest } = route.params
 	const { openPromptAutoClose } = usePromptContext()
 	const insets = useSafeAreaInsets()
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const [expire, setExpire] = useState(expiry)
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
@@ -74,7 +75,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
-				screenName={t('payInvoice', { ns: 'wallet' })}
+				screenName={t('payInvoice', { ns: NS.wallet })}
 				cancel
 				handlePress={() => navigation.navigate('dashboard')}
 			/>

@@ -1,5 +1,6 @@
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { isErr, openUrl } from '@util'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +16,7 @@ interface ILeaveAppModalProps {
 }
 
 export default function LeaveAppModal({ url, visible, closeModal }: ILeaveAppModalProps ) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const handleContinue = async () => {

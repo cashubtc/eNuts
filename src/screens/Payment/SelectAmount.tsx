@@ -7,6 +7,7 @@ import { isIOS } from '@consts'
 import type { TSelectAmountPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, getInvoiceFromLnurl, vib } from '@util'
 import { checkFees } from '@wallet'
@@ -17,7 +18,7 @@ import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
 	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
 	const { openPromptAutoClose } = usePromptContext()
-	const { t } = useTranslation(['wallet'])
+	const { t } = useTranslation([NS.wallet])
 	const { color, highlight } = useThemeContext()
 	const { anim, shake } = useShakeAnimation()
 	const inputRef = createRef<TextInput>()
@@ -49,7 +50,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		setFee(prev => ({ ...prev, isCalculating: true }))
 		const invoice = await getInvoiceFromLnurl(lnurl, +amount)
 		if (!invoice?.length) {
-			openPromptAutoClose({ msg: t('feeErr', { ns: 'common', input: lnurl }) })
+			openPromptAutoClose({ msg: t('feeErr', { ns: NS.common, input: lnurl }) })
 			setFee(prev => ({ ...prev, isCalculating: false }))
 			return
 		}
@@ -59,10 +60,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	}
 
 	const getActionBtnTxt = () => {
-		if (!isMelt && !isSwap && !isSendEcash) { return t('continue', { ns: 'common' }) }
-		if (fee.isCalculating) { return t('calculateFeeEst', { ns: 'common' }) }
-		if (balTooLow) { return t('balTooLow', { ns: 'common' }) }
-		return t(shouldEstimate ? 'estimateFee' : 'continue', { ns: 'common' })
+		if (!isMelt && !isSwap && !isSendEcash) { return t('continue', { ns: NS.common }) }
+		if (fee.isCalculating) { return t('calculateFeeEst', { ns: NS.common }) }
+		if (balTooLow) { return t('balTooLow', { ns: NS.common }) }
+		return t(shouldEstimate ? 'estimateFee' : 'continue', { ns: NS.common })
 	}
 
 	const handleAmountSubmit = async () => {
@@ -149,12 +150,12 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 
 	return (
 		<Screen
-			screenName={t(getScreenName(), { ns: 'common' })}
+			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
 			{!isMelt && !isSwap &&
-				<Txt txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: 'mints' })} styles={[styles.headerHint]} />
+				<Txt txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: NS.mints })} styles={[styles.headerHint]} />
 			}
 			<View style={[globals(color).wrapContainer, styles.overviewWrap]}>
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
@@ -186,7 +187,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					isSendEcash ?
 						<View style={styles.overview}>
 							<Txt
-								txt={t('balance', { ns: 'common' })}
+								txt={t('balance', { ns: NS.common })}
 								styles={[{ fontWeight: '500' }]}
 							/>
 							<Txt txt={`${balance} Satoshi`} />
@@ -196,7 +197,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				}
 			</View>
 			{(isMelt || isSwap) &&
-				<Txt txt={'* ' + t('cashOutAmountHint', { ns: 'mints' })} styles={[styles.feeHint, { color: color.TEXT_SECONDARY }]} />
+				<Txt txt={'* ' + t('cashOutAmountHint', { ns: NS.mints })} styles={[styles.feeHint, { color: color.TEXT_SECONDARY }]} />
 			}
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
@@ -234,7 +235,7 @@ interface IMeltOverviewProps {
 }
 
 export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInvoice, fee }: IMeltOverviewProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	return (
 		<>
@@ -251,7 +252,7 @@ export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInv
 			<Separator style={[{ marginVertical: 20 }]} />
 			<View style={styles.overview}>
 				<Txt
-					txt={t(isInvoice ? 'invoiceInclFee' : 'totalInclFee', { ns: 'common' }) + '*'}
+					txt={t(isInvoice ? 'invoiceInclFee' : 'totalInclFee', { ns: NS.common }) + '*'}
 					styles={[{ fontWeight: '500' }]}
 				/>
 				<Txt

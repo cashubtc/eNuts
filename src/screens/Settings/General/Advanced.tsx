@@ -4,6 +4,7 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TAdvancedSettingsPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
@@ -16,7 +17,7 @@ const reqTimeouts = [5, 10, 20, 30]
 
 export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettingsPageProps) {
 	const insets = useSafeAreaInsets()
-	const { t } = useTranslation(['topNav'])
+	const { t } = useTranslation([NS.topNav])
 	const { color } = useThemeContext()
 	const [reqTimeout, setReqTimeout] = useState(10)
 	const setReqTimeoutCB = useCallback((val: number) => { setReqTimeout(val) }, [])
@@ -37,13 +38,13 @@ export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettings
 		>
 			<ScrollView style={{ width: '100%', marginBottom: 60 + insets.bottom }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
-					{t('reqTimeout', { ns: 'common' })}
+					{t('reqTimeout', { ns: NS.common })}
 				</Text>
 				<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
 					{reqTimeouts.map((v, i) => (
 						<SelectionRow
 							key={v}
-							value={`${v} ${t('seconds', { ns: 'common' })}`}
+							value={`${v} ${t('seconds', { ns: NS.common })}`}
 							selected={reqTimeout === v}
 							handleChange={setReqTimeoutCB}
 							withSeparator={i < reqTimeouts.length - 1}

@@ -13,6 +13,7 @@ import type { TMintManagementPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
@@ -25,7 +26,7 @@ import {
 } from 'react-native'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	// prompt modal
 	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
@@ -53,7 +54,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const handleMintName = async () => {
 		await _setMintName(route.params.mint?.mintUrl, mintName)
 		setCustomNameOpen(false)
-		openPromptAutoClose({ msg: t('cutomNameAdded', { ns: 'mints' }), success: true })
+		openPromptAutoClose({ msg: t('cutomNameAdded', { ns: NS.mints }), success: true })
 	}
 
 	const hasMintName = async () => {
@@ -69,18 +70,18 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		// needs at least 1 mint after filtering out the current swap-out mint and test mint
 		if (!mints.length) {
 			// promt
-			openPromptAutoClose({ msg: t('atLeast2Mints', { ns: 'mints' }) })
+			openPromptAutoClose({ msg: t('atLeast2Mints', { ns: NS.mints }) })
 			return
 		}
 		// cant swap out from a test mint
 		if (route.params.mint?.mintUrl === _testmintUrl) {
-			openPromptAutoClose({ msg: t('swapNotAllowed', { ns: 'mints' }) })
+			openPromptAutoClose({ msg: t('swapNotAllowed', { ns: NS.mints }) })
 			return
 		}
 		// balance must be higher than 0
 		if (route.params.amount < 1) {
 			// promt
-			openPromptAutoClose({ msg: t('lowBal', { ns: 'mints' }) })
+			openPromptAutoClose({ msg: t('lowBal', { ns: NS.mints }) })
 			return
 		}
 		navigation.navigate('selectMintToSwapTo', {
@@ -92,7 +93,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 
 	const handleMintBackup = async () => {
 		if (route.params.amount < 1) {
-			openPromptAutoClose({ msg: t('lowBackupBal', { ns: 'mints' }) })
+			openPromptAutoClose({ msg: t('lowBackupBal', { ns: NS.mints }) })
 			return
 		}
 		try {
@@ -100,7 +101,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			navigation.navigate('mint backup', { token, mintUrl: route.params.mint?.mintUrl })
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: t('backupNotCreated', { ns: 'mints' }) })
+			openPromptAutoClose({ msg: t('backupNotCreated', { ns: NS.mints }) })
 		}
 	}
 
@@ -110,7 +111,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		// set or remove default
 		await setDefaultMint(defaultM === mUrl ? '' : mUrl)
 		setIsDefault(defaultM !== mUrl)
-		openPromptAutoClose({ msg: t('updatedDefault', { ns: 'mints' }), success: true })
+		openPromptAutoClose({ msg: t('updatedDefault', { ns: NS.mints }), success: true })
 	}
 
 	const handleProofCheck = async () => {
@@ -121,10 +122,10 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		const proofsToDel = proofs.filter(p => res.map(x => x.secret).includes(p.secret))
 		try {
 			await deleteProofs(proofsToDel)
-			openPromptAutoClose({ msg: t('deletedProofs', { ns: 'mints', proofsToDel: proofsToDel.length }), success: true })
+			openPromptAutoClose({ msg: t('deletedProofs', { ns: NS.mints, proofsToDel: proofsToDel.length }), success: true })
 		} catch (e) {
 			l(e)
-			openPromptAutoClose({ msg: t('errDelProofs', { ns: 'mints' }) })
+			openPromptAutoClose({ msg: t('errDelProofs', { ns: NS.mints }) })
 		}
 	}
 
@@ -146,13 +147,13 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
-				screenName={t('mintSettings', { ns: 'topNav' })}
+				screenName={t('mintSettings', { ns: NS.topNav })}
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
 			<ScrollView style={{ marginBottom: isIOS ? 30 : 0 }} showsVerticalScrollIndicator={false}>
 				{/* General */}
-				<Txt txt={t('general', { ns: 'mints' })} styles={[styles.sectionHeader]} />
+				<Txt txt={t('general', { ns: NS.mints })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
 					{/* Mint url */}
 					<MintOption
@@ -179,7 +180,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
 					{/* Add custom name */}
 					<MintOption
-						txt={t('customName', { ns: 'mints' })}
+						txt={t('customName', { ns: NS.mints })}
 						onPress={() => {
 							void (async () => {
 								await hasMintName()
@@ -192,7 +193,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Default */}
 					<MintOption
-						txt={isDefault ? t('removeDefault', { ns: 'mints' }) : t('setDefault', { ns: 'mints' })}
+						txt={isDefault ? t('removeDefault', { ns: NS.mints }) : t('setDefault', { ns: NS.mints })}
 						onPress={() => void handleDefaultMint()}
 						icon={<MintBoardIcon width={22} height={22} color={color.TEXT} />}
 						noChevron
@@ -200,24 +201,24 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Mint info */}
 					<MintOption
-						txt={t('mintInfo', { ns: 'mints' })}
+						txt={t('mintInfo', { ns: NS.mints })}
 						onPress={() => navigation.navigate('mint info', { mintUrl: route.params.mint?.mintUrl })}
 						icon={<AboutIcon width={22} height={22} color={color.TEXT} />}
 					/>
 				</View>
 				{/* Fund management */}
-				<Txt txt={t('funds', { ns: 'mints' })} styles={[styles.sectionHeader]} />
+				<Txt txt={t('funds', { ns: NS.mints })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
 					{/* Mint new tokens */}
 					<MintOption
-						txt={t('mintNewTokens', { ns: 'mints' })}
+						txt={t('mintNewTokens', { ns: NS.mints })}
 						hasSeparator
 						onPress={() => navigation.navigate('selectAmount', { mint: route.params.mint, balance: route.params.amount })}
 						icon={<PlusIcon color={color.TEXT} />}
 					/>
 					{/* Redeem to lightning */}
 					<MintOption
-						txt={t('meltToken', { ns: 'mints' })}
+						txt={t('meltToken', { ns: NS.mints })}
 						hasSeparator
 						onPress={() => {
 							if (route.params.amount < 1) {
@@ -240,7 +241,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Backup mint */}
 					<MintOption
-						txt={t('mintBackup', { ns: 'topNav' })}
+						txt={t('mintBackup', { ns: NS.topNav })}
 						hasSeparator
 						onPress={() => void handleMintBackup()}
 						icon={<FlagIcon width={22} height={22} color={color.TEXT} />}
@@ -250,7 +251,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt='Proofs'
 						onPress={() => {
 							if (route.params.amount < 1) {
-								openPromptAutoClose({ msg: t('noProofs', { ns: 'mints' }) })
+								openPromptAutoClose({ msg: t('noProofs', { ns: NS.mints }) })
 								return
 							}
 							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
@@ -259,11 +260,11 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 				</View>
 				{/* Danger zone */}
-				<Txt txt={t('dangerZone', { ns: 'mints' })} styles={[styles.sectionHeader]} />
+				<Txt txt={t('dangerZone', { ns: NS.mints })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
 					{/* Check proofs */}
 					<MintOption
-						txt={t('checkProofs', { ns: 'mints' })}
+						txt={t('checkProofs', { ns: NS.mints })}
 						hasSeparator
 						onPress={() => setCheckProofsOpen(true)}
 						icon={<ValidateIcon width={22} height={22} color='#FF9900' />}
@@ -272,7 +273,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					/>
 					{/* Delete mint */}
 					<MintOption
-						txt={t('delMint', { ns: 'mints' })}
+						txt={t('delMint', { ns: NS.mints })}
 						onPress={() => setDelMintModalOpen(true)}
 						icon={<TrashbinIcon width={22} height={22} color={mainColors.ERROR} />}
 						rowColor={mainColors.ERROR}
@@ -283,8 +284,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			{/* modal for deleting a mint */}
 			{delMintModalOpen &&
 				<QuestionModal
-					header={t('delMintSure', { ns: 'mints' })}
-					txt={route.params.amount > 0 ? t('delMintHint', { ns: 'mints' }) : undefined}
+					header={t('delMintSure', { ns: NS.mints })}
+					txt={route.params.amount > 0 ? t('delMintHint', { ns: NS.mints }) : undefined}
 					visible={delMintModalOpen}
 					confirmFn={() => handleMintDelete()}
 					cancelFn={() => setDelMintModalOpen(false)}
@@ -293,8 +294,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			{/* Check proofs modal */}
 			{checkProofsOpen &&
 				<QuestionModal
-					header={t('checkProofsQ', { ns: 'mints' })}
-					txt={t('checkProofsTxt', { ns: 'mints' })}
+					header={t('checkProofsQ', { ns: NS.mints })}
+					txt={t('checkProofsTxt', { ns: NS.mints })}
 					visible={checkProofsOpen}
 					confirmFn={() => void handleProofCheck()}
 					cancelFn={() => setCheckProofsOpen(false)}
@@ -304,10 +305,10 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			{customNameOpen &&
 				<MyModal type='bottom' animation='slide' visible close={() => setCustomNameOpen(false)}>
 					<Text style={globals(color).modalHeader}>
-						{edit ? t('editMintName', { ns: 'mints' }) : t('addCustomName', { ns: 'mints' })}
+						{edit ? t('editMintName', { ns: NS.mints }) : t('addCustomName', { ns: NS.mints })}
 					</Text>
 					<TxtInput
-						placeholder={t('customName', { ns: 'mints' })}
+						placeholder={t('customName', { ns: NS.mints })}
 						onChangeText={setMintName}
 						onSubmitEditing={() => void handleMintName()}
 					/>

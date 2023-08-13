@@ -2,6 +2,7 @@ import { getEncodedToken } from '@cashu/cashu-ts'
 import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
+import { NS } from '@src/i18n'
 import { addToHistory } from '@store/HistoryStore'
 import { formatInt, formatMintUrl, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
@@ -13,9 +14,9 @@ import { AppState } from 'react-native'
 import { usePromptContext } from './Prompt'
 
 const useFocusClaim = () => {
+	const { t } = useTranslation([NS.error])
 	// back-foreground state reference
 	const appState = useRef(AppState.currentState)
-	const { t } = useTranslation()
 	const { openPromptAutoClose } = usePromptContext()
 	const [claimed, setClaimed] = useState(false)
 	// modal
@@ -43,7 +44,7 @@ const useFocusClaim = () => {
 				isSpent = !isSpendable
 				if (!isSpendable) { return false }
 			} catch (e) {
-				// openPromptAutoClose({ msg: isErr(e) ? e.message : t('checkSpendableErr', { ns: 'error' }) })
+				openPromptAutoClose({ msg: isErr(e) ? e.message : t('checkSpendableErr') })
 				return
 			}
 			setTokenInfo(info)
@@ -65,16 +66,16 @@ const useFocusClaim = () => {
 		try {
 			const success = await claimToken(encoded).catch(l)
 			if (!success) {
-				openPromptAutoClose({ msg: t('invalidOrSpent') })
+				openPromptAutoClose({ msg: t('invalidOrSpent', { ns: NS.common }) })
 				return
 			}
 		} catch (e) {
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('claimTokenErr', { ns: 'error' }) })
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('claimTokenErr') })
 			return
 		}
 		const info = getTokenInfo(encoded)
 		if (!info) {
-			openPromptAutoClose({ msg: t('tokenInfoErr') })
+			openPromptAutoClose({ msg: t('tokenInfoErr', { ns: NS.common }) })
 			return
 		}
 		// add as history entry
@@ -89,6 +90,7 @@ const useFocusClaim = () => {
 				msg: t(
 					'claimSuccess',
 					{
+						ns: NS.common,
 						amount: formatInt(info.value),
 						mintUrl: formatMintUrl(info.mints[0]),
 						memo: info.decoded.memo
@@ -116,6 +118,7 @@ const useFocusClaim = () => {
 			appState.current = nextAppState
 		})
 		return () => subscription.remove()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	return {
 		claimed,

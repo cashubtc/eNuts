@@ -7,6 +7,7 @@ import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { getHistory } from '@store/HistoryStore'
 import { globals } from '@styles'
 import { useEffect, useState } from 'react'
@@ -18,7 +19,7 @@ import HistoryEntry from './Entry'
 
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const insets = useSafeAreaInsets()
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const { claimed } = useFocusClaimContext()
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})
@@ -39,7 +40,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? insets.bottom : 0 }]}>
 			<TopNav
-				screenName={t('history', { ns: 'topNav' })}
+				screenName={t('history', { ns: NS.topNav })}
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>

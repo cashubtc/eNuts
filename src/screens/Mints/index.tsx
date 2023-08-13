@@ -15,6 +15,7 @@ import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl, isErr, isUrl } from '@util'
@@ -27,7 +28,7 @@ const flashlistUntrustedHeight = isIOS ? 65 : 68
 const flashlistTrustedHeight = isIOS ? 94 : 100
 
 export default function Mints({ navigation }: TMintsPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { prompt, closePrompt, openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
@@ -52,20 +53,20 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	// adds a mint via input
 	const handleMintInput = async () => {
 		if (!isUrl(input)) {
-			openPromptAutoClose({ msg: t('invalidUrl', { ns: 'mints' }), ms: 1500 })
+			openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
 			return
 		}
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === input)) {
-				openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: 'mints' }), ms: 1500 })
+				openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
 				return
 			}
 			// add mint url to db
 			await addMint(input)
 		} catch (e) {
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: 'mints' }), ms: 2000 })
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
 			return
 		}
 		setNewMintModal(false)
@@ -96,7 +97,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			await addMint(selectedMint.mintUrl)
 		} catch (e) {
 			// prompt error
-			openPromptAutoClose({ msg: t('mintConnectionFail', { ns: 'mints' }), ms: 2000 })
+			openPromptAutoClose({ msg: t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
 			setTrustModalOpen(false)
 			l(e)
 			return
@@ -199,7 +200,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				close={() => setNewMintModal(false)}
 			>
 				<Text style={globals(color).modalHeader}>
-					{t('addNewMint', { ns: 'mints' })}
+					{t('addNewMint', { ns: NS.mints })}
 				</Text>
 				<TxtInput
 					keyboardType='url'
@@ -208,7 +209,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 					onSubmitEditing={() => { void handleMintInput() }}
 				/>
 				<Button
-					txt={t('addMintBtn', { ns: 'mints' })}
+					txt={t('addMintBtn', { ns: NS.mints })}
 					onPress={() => void handleMintInput()}
 				/>
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
@@ -225,10 +226,10 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				<View style={{ alignItems: 'center', justifyContent: 'center' }}>
 					<CheckCircleIcon width={50} height={50} color={mainColors.VALID} />
 					<Text style={globals(color).modalHeader}>
-						{t('newMintAdded', { ns: 'mints' })}
+						{t('newMintAdded', { ns: NS.mints })}
 					</Text>
 					<Txt
-						txt={t('newMintAddedQuestion', { ns: 'mints' })}
+						txt={t('newMintAddedQuestion', { ns: NS.mints })}
 						styles={[{ marginTop: -20, marginBottom: 30 }]}
 					/>
 				</View>
@@ -246,9 +247,9 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			</MyModal>
 			<QuestionModal
 				header={selectedMint?.mintUrl === _testmintUrl ?
-					t('testMintHint', { ns: 'mints' })
+					t('testMintHint', { ns: NS.mints })
 					:
-					t('trustMintSure', { ns: 'mints' })
+					t('trustMintSure', { ns: NS.mints })
 				}
 				visible={trustModalOpen}
 				confirmFn={() => void handleTrustModal()}

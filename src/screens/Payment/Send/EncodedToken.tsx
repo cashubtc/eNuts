@@ -8,6 +8,7 @@ import type { TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { dark, globals, highlight as hi } from '@styles'
 import { vib } from '@util'
 import { useEffect, useState } from 'react'
@@ -18,7 +19,7 @@ import { Share, StyleSheet, View } from 'react-native'
  * The page that shows the created Cashu token that can be scanned, copied or shared
  */
 export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const { copied, copy } = useCopy()
 	const [error, setError] = useState({ msg: '', open: false })

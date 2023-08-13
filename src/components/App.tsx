@@ -15,6 +15,7 @@ import { PinCtx } from '@src/context/Pin'
 import { PrivacyProvider } from '@src/context/Privacy'
 import { PromptProvider } from '@src/context/Prompt'
 import { ThemeProvider, useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { dark, light } from '@styles'
@@ -85,7 +86,7 @@ function _App() {
 	})
 	const pinData = { attempts, setAttempts }
 	// i18next
-	const { t, i18n } = useTranslation(['common'])
+	const { t, i18n } = useTranslation([NS.common])
 	// app ready to render content
 	const [isRdy, setIsRdy] = useState(false)
 	// app foregorund, background

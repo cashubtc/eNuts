@@ -9,6 +9,7 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TMintInfoPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getMintInfo } from '@wallet'
 import { useEffect, useState } from 'react'
@@ -17,7 +18,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
 	const [info, setInfo] = useState<GetInfoResponse>()
@@ -70,7 +71,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 							<View style={styles.motd}>
 								<View>
 									<Text style={[styles.description, { color: color.TEXT }]}>
-										{t('importantNotice', { ns: 'mints' })}
+										{t('importantNotice', { ns: NS.mints })}
 									</Text>
 									<Txt txt={info.motd} />
 								</View>
@@ -91,34 +92,34 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 										<Txt txt={c[1]} />
 									</>
 									:
-									<Txt txt={t('mintNoContact', { ns: 'mints' })} />
+									<Txt txt={t('mintNoContact', { ns: NS.mints })} />
 								}
 							</View>
 						))}
 						<Separator style={[{ marginVertical: 20 }]} />
 						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('supportedNuts', { ns: 'mints' })}
+							{t('supportedNuts', { ns: NS.mints })}
 						</Text>
 						{info.nuts?.map((n, i) => <Txt key={i} txt={n} />)}
 						<Separator style={[{ marginVertical: 20 }]} />
 						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('pubKey', { ns: 'mints' })}
+							{t('pubKey', { ns: NS.mints })}
 						</Text>
 						<Txt txt={info.pubkey} />
 					</View>
 					{/* Long description */}
 					<View style={[globals(color).wrapContainer, styles.infoEntry]}>
 						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('additionalInfo', { ns: 'mints' })}
+							{t('additionalInfo', { ns: NS.mints })}
 						</Text>
-						<Txt txt={info.description_long || t('noAdditional', { ns: 'mints' })} />
+						<Txt txt={info.description_long || t('noAdditional', { ns: NS.mints })} />
 					</View>
 				</ScrollView>
 				:
 				loading ?
 					<Loading />
 					:
-					<Empty txt={t('noInfo', { ns: 'mints' }) + '...'} />
+					<Empty txt={t('noInfo', { ns: NS.mints }) + '...'} />
 			}
 		</Screen>
 	)

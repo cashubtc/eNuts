@@ -6,6 +6,7 @@ import type { TSelectTargetPageProps } from '@model/nav'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals, highlight, mainColors } from '@styles'
 import { isNum } from '@util'
 import { useTranslation } from 'react-i18next'
@@ -13,13 +14,13 @@ import { StyleSheet, View } from 'react-native'
 
 export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
 	const { mint, balance, remainingMints, isSendEcash, nostr } = route.params
-	const { t } = useTranslation(['mints'])
+	const { t } = useTranslation([NS.mints])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
 	const { contacts } = useNostrContext()
 	return (
 		<Screen
-			screenName={t(isSendEcash ? 'sendEcash' : 'cashOut', { ns: 'common' })}
+			screenName={t(isSendEcash ? 'sendEcash' : 'cashOut', { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
@@ -46,7 +47,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 						{contacts.length > 0 &&
 							<Option
 								icon={<BookIcon color={highlight['Nostr']} />}
-								txt={t('addressBook', { ns: 'topNav' })}
+								txt={t('addressBook', { ns: NS.topNav })}
 								hint={t('meltAddressbookHint')}
 								onPress={() => {
 									navigation.navigate('Address book', {
@@ -74,7 +75,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 						/>
 						<Option
 							icon={<SwapIcon color={highlight['Zap']} />}
-							txt={t('multimintSwap', { ns: 'common' })}
+							txt={t('multimintSwap', { ns: NS.common })}
 							hint={t('meltSwapHint')}
 							onPress={() => {
 								// check if there is another mint except testmint

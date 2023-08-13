@@ -8,6 +8,7 @@ import { getNostrUsername, truncateNpub } from '@nostr/util'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { useCallback, useState } from 'react'
@@ -23,7 +24,7 @@ import Website from './Website'
 
 export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const { contact, npub, isUser, userProfile } = route.params
-	const { t } = useTranslation(['addrBook'])
+	const { t } = useTranslation([NS.addrBook])
 	const { pubKey } = useNostrContext()
 	const { color, highlight } = useThemeContext()
 	const [visible, setVisible] = useState(false)

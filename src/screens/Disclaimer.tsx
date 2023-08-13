@@ -4,17 +4,18 @@ import Txt from '@comps/Txt'
 import type { TDisclaimerPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
 export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 	const { color } = useThemeContext()
-	const { t } = useTranslation(['wallet'])
+	const { t } = useTranslation([NS.wallet])
 	return (
 		<View style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
 			<TopNav
-				screenName={t('disclaimer', { ns: 'common' })}
+				screenName={t('disclaimer', { ns: NS.common })}
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>

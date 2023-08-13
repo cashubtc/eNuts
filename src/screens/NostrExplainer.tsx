@@ -4,6 +4,7 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TNostrExplainerPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi } from '@styles'
@@ -11,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function NostrExplainerScreen({navigation}: TNostrExplainerPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { highlight } = useThemeContext()
 	const handlePress = async () => {
 		await store.set(STORE_KEYS.nostrexplainer, '1')

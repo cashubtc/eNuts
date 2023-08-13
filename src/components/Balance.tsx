@@ -4,6 +4,7 @@ import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
 import { formatBalance, formatInt, isBool } from '@util'
 import { useState } from 'react'
@@ -20,7 +21,7 @@ interface IBalanceProps {
 }
 
 export default function Balance({ balance, nav }: IBalanceProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { pref, color, highlight } = useThemeContext()
 	const { hidden } = usePrivacyContext()
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
@@ -64,7 +65,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			}
 			{/* history */}
 			<BoardEntry
-				txt={t('history', { ns: 'topNav' })}
+				txt={t('history', { ns: NS.topNav })}
 				icon={<HistoryIcon color='#FAFAFA' />}
 				color='#FAFAFA'
 				onPress={() => nav?.navigate('history')}

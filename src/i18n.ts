@@ -9,9 +9,20 @@ import { getTranslationLangCode } from '@util/localization'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
-// TODO improve maintainability of namespaces that are used with the t() method across all files
+export enum NS {
+	common = 'common',
+	auth = 'auth',
+	wallet = 'wallet',
+	topNav = 'topNav',
+	bottomNav = 'bottomNav',
+	error = 'error',
+	history = 'history',
+	mints = 'mints',
+	backup = 'backup',
+	addrBook = 'addrBook'
+}
 
-export const defaultNS = 'common'
+export const defaultNS = NS.common
 export const resources = {
 	en, de, fr
 } as const
@@ -25,7 +36,7 @@ i18n.use(initReactI18next)
 			escapeValue: false
 		},
 		defaultNS,
-		ns: ['common', 'auth', 'wallet', 'topNav', 'bottomNav', 'error', 'history', 'mints', 'backup', 'addrBook'],
+		ns: [NS.common, NS.auth, NS.wallet, NS.topNav, NS.bottomNav, NS.error, NS.history, NS.mints, NS.backup, NS.addrBook],
 		lng: getTranslationLangCode(),
 		debug,
 		// Consider external storing of translations and fetch needed language on demand

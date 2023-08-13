@@ -3,6 +3,7 @@ import Txt from '@comps/Txt'
 import type { TContact } from '@model/nostr'
 import { truncateAbout, truncateNpub } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
 import { nip19 } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
@@ -21,7 +22,7 @@ interface IContactPreviewProps {
 }
 
 export default function ContactPreview({ contact, handleContactPress, handleSend, isFirst, isLast, isPayment }: IContactPreviewProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 
 	return (

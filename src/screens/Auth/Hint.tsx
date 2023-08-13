@@ -1,3 +1,4 @@
+import { NS } from '@src/i18n'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text } from 'react-native'
 
@@ -9,7 +10,7 @@ interface IPinHintProps {
 }
 
 export default function PinHint({ confirm, login, shouldEdit, shouldRemove }: IPinHintProps) {
-	const { t } = useTranslation(['auth'])
+	const { t } = useTranslation([NS.auth])
 	const getRightHeaderTxt = () => {
 		if (login && !shouldEdit && !shouldRemove) { return t('welcomeBack') }
 		if (shouldRemove) { return t('removePin') }

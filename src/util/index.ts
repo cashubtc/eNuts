@@ -214,7 +214,6 @@ export function cleanUpNumericStr(str: string) {
 	return str.replace(/\D/g, '')
 }
 
-// TODO FIXXME
 export function openUrl(url: string) {
 	if (!url?.trim()) { return }
 	return Linking.openURL(url)

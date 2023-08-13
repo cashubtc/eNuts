@@ -3,6 +3,7 @@ import Screen from '@comps/Screen'
 import type { TGeneralSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -10,7 +11,7 @@ import { StyleSheet, View } from 'react-native'
 import SettingsMenuItem from '../MenuItem'
 
 export default function GeneralSettings({ navigation, route }: TGeneralSettingsPageProps) {
-	const { t } = useTranslation(['topNav'])
+	const { t } = useTranslation([NS.topNav])
 	const { color } = useThemeContext()
 	return (
 		<Screen
@@ -20,7 +21,7 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 		>
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
-					txt={t('display', { ns: 'topNav' })}
+					txt={t('display', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<PaletteIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Display settings')}
@@ -28,7 +29,7 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt={t('language', { ns: 'topNav' })}
+					txt={t('language', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<LanguageIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Language settings')}
@@ -37,7 +38,7 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 				/>
 				{/* // TODO consider cashu-ts removing axios to handle advanced request timeout settings */}
 				{/* <SettingsMenuItem
-					txt={t('advancedFunctions', { ns: 'topNav' })}
+					txt={t('advancedFunctions', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<HamburgerIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Advanced settings')}

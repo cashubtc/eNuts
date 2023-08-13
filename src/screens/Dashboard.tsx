@@ -18,6 +18,7 @@ import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/HistoryStore'
@@ -31,7 +32,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url } = useInitialURL()
 	// Theme
@@ -250,7 +251,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 							disabled={!hasMint || balance < 1}
 						/>
 					}
-					txt={t('send', { ns: 'wallet' })}
+					txt={t('send', { ns: NS.wallet })}
 					color={hi[highlight]}
 					onPress={() => setModal({ ...modal, sendOpts: true })}
 					disabled={!hasMint || balance < 1}
@@ -263,7 +264,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				/>
 				<ActionBtn
 					icon={<ReceiveIcon width={32} height={32} color={hi[highlight]} />}
-					txt={t('receive', { ns: 'wallet' })}
+					txt={t('receive', { ns: NS.wallet })}
 					color={hi[highlight]}
 					onPress={() => setModal({ ...modal, receiveOpts: true })}
 				/>
@@ -301,7 +302,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				visible={modal.sendOpts}
 				button1Txt={t('sendEcash')}
 				onPressFirstBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: true })}
-				button2Txt={t('payLNInvoice', { ns: 'wallet' })}
+				button2Txt={t('payLNInvoice', { ns: NS.wallet })}
 				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: true, isSendEcash: false })}
 				onPressCancel={closeOptsModal}
 				isSend
@@ -309,9 +310,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive options */}
 			<OptsModal
 				visible={modal.receiveOpts}
-				button1Txt={loading ? t('claiming', { ns: 'wallet' }) : t('pasteToken', { ns: 'wallet' })}
+				button1Txt={loading ? t('claiming', { ns: NS.wallet }) : t('pasteToken', { ns: NS.wallet })}
 				onPressFirstBtn={() => void handleClaimBtnPress()}
-				button2Txt={t('createLnInvoice', { ns: 'wallet' })}
+				button2Txt={t('createLnInvoice', { ns: NS.wallet })}
 				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: false })}
 				handleNostrReceive={() => {
 					closeOptsModal()

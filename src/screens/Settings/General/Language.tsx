@@ -5,6 +5,7 @@ import Txt from '@comps/Txt'
 import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from '@model/i18n'
 import type { TLanguageSettingsPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
@@ -18,11 +19,11 @@ const langs: ILangsOpt[] = [
 ]
 
 export default function LanguageSettings({ navigation }: TLanguageSettingsPageProps) {
-	const { t, i18n } = useTranslation(['common'])
+	const { t, i18n } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	return (
 		<Screen
-			screenName={t('language', { ns: 'topNav' })}
+			screenName={t('language', { ns: NS.topNav })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
@@ -43,7 +44,7 @@ interface ILangSelectionProps {
 }
 
 function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionProps) {
-	const { t, i18n } = useTranslation(['common'])
+	const { t, i18n } = useTranslation([NS.common])
 	const handleLangChange = async () => {
 		await i18n.changeLanguage(code)
 		await store.set(STORE_KEYS.lang, code)

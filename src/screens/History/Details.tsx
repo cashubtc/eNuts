@@ -11,6 +11,7 @@ import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
@@ -27,7 +28,7 @@ const initialCopyState = {
 }
 
 export default function DetailsPage({ navigation, route }: THistoryEntryPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const insets = useSafeAreaInsets()
 	const entry = route.params.entry
 	const { color } = useThemeContext()
@@ -40,7 +41,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const LNstr = t(isPayment ? 'lnPayment' : 'lnInvoice')
 	const Ecash = t('ecashPayment')
 	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
-	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('noMemo', { ns: 'history' })
+	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('noMemo', { ns: NS.history })
 	const { openPromptAutoClose } = usePromptContext()
 
 	const copyValue = async () => {
@@ -135,15 +136,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				<View style={globals(color).wrapContainer}>
 					{/* Settle Time */}
 					<View style={styles.entryInfo}>
-						<Txt txt={t('settleTime', { ns: 'history' })} />
+						<Txt txt={t('settleTime', { ns: NS.history })} />
 						<Txt txt={new Date(entry.timestamp * 1000).toLocaleString()} />
 					</View>
 					<Separator />
 					{/* Memo */}
 					<View style={styles.entryInfo}>
-						<Txt txt={t('memo', { ns: 'history' })} />
+						<Txt txt={t('memo', { ns: NS.history })} />
 						<Txt
-							txt={isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : t('noMemo', { ns: 'history' })}
+							txt={isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : t('noMemo', { ns: NS.history })}
 							styles={[styles.infoValue]}
 						/>
 					</View>
@@ -189,7 +190,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 								handleCheckSpendable={() => void handleCheckSpendable()}
 							>
 								<Txt
-									txt={isUndef(isSpent) ? t('checkSpent', { ns: 'history' }) : t(isSpent ? 'isSpent' : 'isPending', { ns: 'history' })}
+									txt={isUndef(isSpent) ? t('checkSpent', { ns: NS.history }) : t(isSpent ? 'isSpent' : 'isPending', { ns: NS.history })}
 								/>
 								{getSpentIcon()}
 							</IsSpentContainer>
@@ -219,7 +220,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 									void copyHash()
 								}}
 							>
-								<Txt txt={t('paymentHash', { ns: 'history' })} />
+								<Txt txt={t('paymentHash', { ns: NS.history })} />
 								<View style={styles.copyWrap}>
 									<Txt
 										txt={hash.length > 0 ? `${hash.slice(0, 16)}...` : t('n/a')}
@@ -276,7 +277,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						style={styles.entryInfo}
 						onPress={handleQR}
 					>
-						<Txt txt={t('showQr', { ns: 'history' })} />
+						<Txt txt={t('showQr', { ns: NS.history })} />
 						<QRIcon width={17} height={17} color={color.TEXT} />
 					</TouchableOpacity>
 				</View>

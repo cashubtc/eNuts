@@ -1,5 +1,6 @@
 import { ScanQRIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -12,7 +13,7 @@ interface TTopNavProps {
 }
 
 export default function TopNav({ screenName, withBackBtn, cancel, handlePress }: TTopNavProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	return (
 		<View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>

@@ -1,5 +1,6 @@
 import MyModal from '@modal'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet,Text, TouchableOpacity } from 'react-native'
@@ -13,7 +14,7 @@ interface IInitialModalProps {
 }
 
 export default function InitialModal({ visible, onConfirm, onCancel }: IInitialModalProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onCancel}>

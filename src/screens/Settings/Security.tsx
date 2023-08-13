@@ -8,6 +8,7 @@ import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { SECURESTORE_KEY } from '@src/storage/store/consts'
 import { secureStore } from '@store'
 import { globals } from '@styles'
@@ -17,7 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const [pin, setPin] = useState<string | null>(null)
@@ -49,7 +50,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	if (isNull(pin)) { return null }
 	return (
 		<Screen
-			screenName={t('security', { ns: 'topNav' })}
+			screenName={t('security', { ns: NS.topNav })}
 			withBackBtn
 			handlePress={() => navigation.navigate('Settings')}
 		>
@@ -57,12 +58,12 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 				{pin ?
 					<>
 						<SecurityOption
-							txt={t('editPin', { ns: 'auth' })}
+							txt={t('editPin', { ns: NS.auth })}
 							onPress={() => navigation.navigate('auth', { pinHash: pin, shouldEdit: true })}
 						/>
 						<Separator />
 						<SecurityOption
-							txt={t('removePin', { ns: 'auth' })}
+							txt={t('removePin', { ns: NS.auth })}
 							onPress={() => navigation.navigate('auth', { pinHash: pin, shouldRemove: true })}
 						/>
 						<Separator />
@@ -70,7 +71,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 					:
 					<>
 						<SecurityOption
-							txt={t('createPin', { ns: 'auth' })}
+							txt={t('createPin', { ns: NS.auth })}
 							onPress={() => navigation.navigate('auth', { pinHash: '' })}
 						/>
 						<Separator />

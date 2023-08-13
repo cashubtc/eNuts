@@ -3,6 +3,7 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi } from '@styles'
@@ -11,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
-	const { t } = useTranslation(['topNav'])
+	const { t } = useTranslation([NS.topNav])
 	const { color, highlight } = useThemeContext()
 
 	const handleNav = async (routeStr: TRouteString) => {
@@ -62,7 +63,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			>
 				<BookIcon width={28} height={28} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt={t('contacts', { ns: 'bottomNav' })}
+					txt={t('contacts', { ns: NS.bottomNav })}
 					styles={[
 						styles.iconTxt, {
 							color: route.name === 'Address book' ? hi[highlight] : color.TEXT,

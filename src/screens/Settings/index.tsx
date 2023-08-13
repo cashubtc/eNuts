@@ -6,6 +6,7 @@ import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { useState } from 'react'
@@ -16,7 +17,7 @@ import { version } from '../../../package.json'
 import SettingsMenuItem from './MenuItem'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const [confirm, setConfirm] = useState(false)
 	const { openPromptAutoClose } = usePromptContext()
@@ -30,12 +31,12 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	}
 	return (
 		<Screen
-			screenName={t('settings', { ns: 'topNav' })}
+			screenName={t('settings', { ns: NS.topNav })}
 			handlePress={() => navigation.navigate('qr scan', { mint: undefined })}
 		>
 			<View style={[globals(color).wrapContainer, styles.wrap]}>
 				<SettingsMenuItem
-					txt={t('general', { ns: 'topNav' })}
+					txt={t('general', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<HamburgerIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('General settings')}
@@ -43,7 +44,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt={t('security', { ns: 'topNav' })}
+					txt={t('security', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<LockIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Security settings')}
@@ -51,7 +52,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt={t('privacy', { ns: 'topNav' })}
+					txt={t('privacy', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<EyeClosedIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Privacy settings')}
@@ -67,7 +68,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt={t('about', { ns: 'topNav' })}
+					txt={t('about', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<AboutIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('About settings')}

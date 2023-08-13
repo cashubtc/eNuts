@@ -9,6 +9,7 @@ import type { TMeltInputfieldPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { decodeLnInvoice, getStrFromClipboard, isErr, isLnurl, openUrl } from '@util'
 import { checkFees } from '@wallet'
@@ -20,7 +21,7 @@ import { MeltOverview } from '../SelectAmount'
 
 export default function InputfieldScreen({ navigation, route }: TMeltInputfieldPageProps) {
 	const { mint, balance } = route.params
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -138,7 +139,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			/>
 			<View>
 				{!input.length &&
-					<Txt styles={[styles.hint]} txt={t('meltInputHint', { ns: 'mints' })} />
+					<Txt styles={[styles.hint]} txt={t('meltInputHint', { ns: NS.mints })} />
 				}
 				{decodedAmount > 0 ?
 					<>
@@ -158,7 +159,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 									/>
 								</View>
 								<Txt
-									txt={'* ' + t('cashOutAmountHint', { ns: 'mints' })}
+									txt={'* ' + t('cashOutAmountHint', { ns: NS.mints })}
 									styles={[styles.feeHint, { color: color.TEXT_SECONDARY }]}
 								/>
 							</>

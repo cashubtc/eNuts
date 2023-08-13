@@ -5,13 +5,14 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TExplainerPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function ExplainerScreen({ navigation }: TExplainerPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { highlight } = useThemeContext()
 	const [steps, setSteps] = useState(0)
 	const Steps = () => [

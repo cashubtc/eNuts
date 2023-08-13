@@ -6,18 +6,19 @@ import { isIOS } from '@consts'
 import type { TDisplaySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals, highlight as hi, themeColors } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const insets = useSafeAreaInsets()
 	const { setTheme, theme, color, highlight } = useThemeContext()
 	return (
 		<Screen
-			screenName={t('display', { ns: 'topNav' })}
+			screenName={t('display', { ns: NS.topNav })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
@@ -55,7 +56,7 @@ interface IThemeSelectionProps {
 }
 
 function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { setHighlight } = useThemeContext()
 	return (
 		<>

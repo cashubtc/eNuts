@@ -5,6 +5,7 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TAboutSettingsPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +14,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { version } from '../../../package.json'
 
 export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const [visible, setVisible] = useState(false)
 	const closeModal = useCallback(() => setVisible(false), [])
@@ -24,7 +25,7 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 	}
 	return (
 		<Screen
-			screenName={t('about', { ns: 'topNav' })}
+			screenName={t('about', { ns: NS.topNav })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>

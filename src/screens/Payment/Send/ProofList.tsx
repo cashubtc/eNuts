@@ -10,6 +10,7 @@ import type { IMintUrl, IProofSelection } from '@model'
 import { FlashList } from '@shopify/flash-list'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
 import { getSelectedAmount } from '@util'
 import { getMintCurrentKeySetId, } from '@wallet'
@@ -29,7 +30,7 @@ interface ICoinSelectionProps {
  * This component is the main container of the pressable proofs-list aka coin selection list.
  */
 export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof }: ICoinSelectionProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const [visible, setVisible] = useState(true)
@@ -134,7 +135,7 @@ interface IResume {
  * This component shows the amount and the change of selected proofs in a pressable row of a proofs-list.
  */
 export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee, withSeparator }: IResume) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const getChangeStr = () => {
 		const change = selectedAmount - lnAmount
@@ -189,7 +190,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee,
  * If the row of the proofs-list is non-pressable, margin is not required.
  */
 export function ProofListHeader() {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	return (
 		<>

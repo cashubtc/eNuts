@@ -3,6 +3,7 @@ import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
 import { formatInt } from '@util'
 import { useTranslation } from 'react-i18next'
@@ -16,7 +17,7 @@ interface IHistoryEntryProps {
 }
 
 export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
-	const { t } = useTranslation(['history'])
+	const { t } = useTranslation([NS.history])
 	const { color, highlight } = useThemeContext()
 	return (
 		<TouchableOpacity

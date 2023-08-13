@@ -7,6 +7,7 @@ import type { IMintUrl } from '@model'
 import type { TSelectMintToSwapToPageProps } from '@model/nav'
 import { FlashList } from '@shopify/flash-list'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatMintUrl } from '@util'
@@ -18,7 +19,7 @@ const flashlistItemHeight = isIOS ? 60 : 65
 
 export default function SelectMintToSwapToScreen({ navigation, route }: TSelectMintToSwapToPageProps) {
 	const { mint, balance, remainingMints } = route.params
-	const { t } = useTranslation(['mints'])
+	const { t } = useTranslation([NS.mints])
 	const { color, highlight } = useThemeContext()
 	// the default mint url if user has set one
 	const [defaultMint, setDefaultM] = useState('')
@@ -33,7 +34,7 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 	}, [])
 	return (
 		<Screen
-			screenName={t('multimintSwap', { ns: 'common' })}
+			screenName={t('multimintSwap', { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>

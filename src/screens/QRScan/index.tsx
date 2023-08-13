@@ -10,6 +10,7 @@ import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
@@ -26,7 +27,7 @@ import QRMarker from './Marker'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const { mint, balance } = route.params
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)

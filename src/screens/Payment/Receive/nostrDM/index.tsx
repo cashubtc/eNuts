@@ -14,6 +14,7 @@ import { decrypt } from '@nostr/crypto'
 import { parseProfileContent } from '@nostr/util'
 import Config from '@src/config'
 import { useNostrContext } from '@src/context/Nostr'
+import { NS } from '@src/i18n'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
 import { hasEventId, isCashuToken } from '@util'
@@ -25,7 +26,7 @@ import { ScrollView, StyleSheet, View } from 'react-native'
 import NostrMessage from './NostrMessage'
 
 export default function NostrDMScreen({ navigation, route }: TNostrReceivePageProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { userRelays, claimedEvtIds } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [userMints, setUserMints] = useState<string[]>([])

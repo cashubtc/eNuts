@@ -4,6 +4,7 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSuccessPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, vib } from '@util'
 import { useEffect } from 'react'
@@ -13,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	const { amount, memo, fee, mint, isClaim, isMelt, nostr } = route.params
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
 	useEffect(() => vib(400), [])
@@ -49,7 +50,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				{isMelt && amount &&
 					<View style={styles.meltWrap}>
 						<View style={styles.meltOverview}>
-							<Txt txt={t('paidOut', { ns: 'wallet' })} styles={[styles.meltTxt]} />
+							<Txt txt={t('paidOut', { ns: NS.wallet })} styles={[styles.meltTxt]} />
 							<Txt txt={`${amount} Satoshi`} styles={[styles.meltTxt]} />
 						</View>
 						<View style={styles.meltOverview}>

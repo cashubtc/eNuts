@@ -3,6 +3,7 @@ import Option from '@comps/Option'
 import Txt from '@comps/Txt'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -32,13 +33,13 @@ export default function OptsModal({
 	loading,
 	isSend,
 }: IOptsModal) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const { nutPub } = useNostrContext()
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
 			<Txt
-				txt={isSend ? t('send', { ns: 'wallet' }) : t('receive', { ns: 'wallet' })}
+				txt={isSend ? t('send', { ns: NS.wallet }) : t('receive', { ns: NS.wallet })}
 				styles={[styles.hint, { color: color.TEXT }]}
 			/>
 			<View style={styles.optionWrap}>

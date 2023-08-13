@@ -11,6 +11,7 @@ import type { INostrDm } from '@model/nostr'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { addToHistory } from '@store/HistoryStore'
 import { updateNostrRedeemed } from '@store/nostrDms'
 import { highlight as hi, mainColors } from '@styles'
@@ -30,7 +31,7 @@ interface ITokenProps {
 }
 
 export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const { claimedEvtIds, setClaimedEvtIds } = useNostrContext()

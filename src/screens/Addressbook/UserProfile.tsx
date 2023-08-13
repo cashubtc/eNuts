@@ -4,6 +4,7 @@ import type { IProfileContent } from '@model/nostr'
 import { truncateAbout } from '@nostr/util'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals, highlight as hi } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -24,7 +25,7 @@ interface IUserProfileProps {
 }
 
 export default function UserProfile({ handlePress }: IUserProfileProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation([NS.addrBook])
 	const { pubKey, userProfile, contacts } = useNostrContext()
 	const { color, highlight } = useThemeContext()
 	return (
@@ -48,7 +49,7 @@ export default function UserProfile({ handlePress }: IUserProfileProps) {
 						}
 					</View>
 					:
-					<Txt txt={t('addOwnLnurl', { ns: 'addrBook' })} styles={[{ color: hi[highlight] }]} />
+					<Txt txt={t('addOwnLnurl')} styles={[{ color: hi[highlight] }]} />
 				}
 			</View>
 			{userProfile ?

@@ -10,6 +10,7 @@ import type { TSelectMintPageProps } from '@model/nav'
 import { FlashList } from '@shopify/flash-list'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
@@ -34,7 +35,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	} = route.params
 	const { openPromptAutoClose } = usePromptContext()
 	const insets = useSafeAreaInsets()
-	const { t } = useTranslation(['wallet'])
+	const { t } = useTranslation([NS.wallet])
 	const { color, highlight } = useThemeContext()
 	// mint list
 	const [userMints, setUserMints] = useState<IMintBalWithName[]>([])
@@ -58,7 +59,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		if (invoice && invoiceAmount) {
 			const estFee = await checkFees(mint.mintUrl, invoice)
 			if (invoiceAmount + estFee > mint.amount) {
-				openPromptAutoClose({ msg: t('noFunds', { ns: 'common' }) })
+				openPromptAutoClose({ msg: t('noFunds', { ns: NS.common }) })
 				return
 			}
 			navigation.navigate('coinSelection', {
@@ -106,14 +107,14 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	}, [mints, mintsWithBal])
 	return (
 		<Screen
-			screenName={t(getScreenName(), { ns: 'common' })}
+			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
 			{userMints.length > 0 && !allMintsEmpty &&
 				<Txt
 					styles={[styles.hint]}
-					txt={t(getScreenHint(), { ns: 'mints' })}
+					txt={t(getScreenHint(), { ns: NS.mints })}
 				/>
 			}
 			{userMints.length && !allMintsEmpty ?
@@ -152,12 +153,12 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 					/>
 				</View>
 				:
-				<Empty txt={t(allMintsEmpty ? 'noFunds' : 'noMint', { ns: 'common' }) + '...'} />
+				<Empty txt={t(allMintsEmpty ? 'noFunds' : 'noMint', { ns: NS.common }) + '...'} />
 			}
 			{(!userMints.length || allMintsEmpty) &&
 				<View style={[styles.addNewMintWrap, { bottom: 20 + insets.bottom }]}>
 					<Button
-						txt={t(allMintsEmpty ? 'mintNewTokens' : 'addNewMint', { ns: 'mints' })}
+						txt={t(allMintsEmpty ? 'mintNewTokens' : 'addNewMint', { ns: NS.mints })}
 						onPress={() => {
 							if (allMintsEmpty) {
 								navigation.navigate('selectMint', {

@@ -7,6 +7,7 @@ import type { TCoinSelectionPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { truncateNpub } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
 import { formatInt, formatMintUrl, getSelectedAmount, isLnurl } from '@util'
@@ -33,7 +34,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		targetMint
 	} = route.params
 	const insets = useSafeAreaInsets()
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const [isEnabled, setIsEnabled] = useState(false)
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
@@ -80,7 +81,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
-				screenName={t('paymentOverview', { ns: 'mints' })}
+				screenName={t('paymentOverview', { ns: NS.mints })}
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
@@ -106,7 +107,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 						txt2={estFee > 0 ? `${formatInt(balance - amount - estFee)} ${t('to')} ${formatInt(balance - amount)} Satoshi` : `${formatInt(balance - amount)} Satoshi`}
 					/>
 					{memo && memo.length > 0 &&
-						<OverviewRow txt1={t('memo', { ns: 'history' })} txt2={memo} />
+						<OverviewRow txt1={t('memo', { ns: NS.history })} txt2={memo} />
 					}
 					<View style={styles.csRow}>
 						<View>
@@ -115,7 +116,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 								styles={[{ fontWeight: '500' }]}
 							/>
 							<Txt
-								txt={t('coinSelectionHint', { ns: 'mints' })}
+								txt={t('coinSelectionHint', { ns: NS.mints })}
 								styles={[styles.coinSelectionHint, { color: color.TEXT_SECONDARY }]}
 							/>
 						</View>

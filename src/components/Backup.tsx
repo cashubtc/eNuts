@@ -1,5 +1,6 @@
 import { l } from '@log'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { formatMintUrl } from '@util'
 import { useTranslation } from 'react-i18next'
@@ -14,7 +15,7 @@ interface IBackupSuccessProps {
 }
 
 export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const { copied, copy } = useCopy()
 
@@ -43,10 +44,10 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 	return (
 		<>
 			<Text style={[globals(color).navTxt, styles.subTxt]}>
-				{t('copyBackup', { ns: 'backup' })}
+				{t('copyBackup', { ns: NS.backup })}
 			</Text>
 			<Text style={[styles.token, { color: color.TEXT }]}>
-				{t('backup', { ns: 'topNav' })}: {token.substring(0, 25)}...
+				{t('backup', { ns: NS.topNav })}: {token.substring(0, 25)}...
 			</Text>
 			{mint &&
 				<Text style={[styles.token, { color: color.TEXT }]}>

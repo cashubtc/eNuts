@@ -5,6 +5,7 @@ import { isIOS } from '@consts'
 import type { TMemoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -12,7 +13,7 @@ import { KeyboardAvoidingView, StyleSheet, View } from 'react-native'
 
 export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 	const { mint, balance, amount, nostr, isSendingWholeMintBal } = route.params
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const [memo, setMemo] = useState('')
 	const handlePress = () => {

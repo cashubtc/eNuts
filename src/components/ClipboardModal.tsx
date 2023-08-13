@@ -1,5 +1,6 @@
 import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { formatInt } from '@util'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +11,7 @@ import MyModal from './modal'
 import Txt from './Txt'
 
 export default function ClipboardModal() {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const { tokenInfo, claimOpen, closeModal, handleRedeem } = useFocusClaimContext()
 	return (
@@ -20,7 +21,7 @@ export default function ClipboardModal() {
 				{t('foundCashuClipboard')}
 			</Text>
 			<Text style={globals(color, highlight).modalTxt}>
-				{t('memo', { ns: 'history' })}: {tokenInfo.decoded.memo}{'\n'}
+				{t('memo', { ns: NS.history })}: {tokenInfo.decoded.memo}{'\n'}
 				<Txt
 					txt={formatInt(tokenInfo.value)}
 					styles={[{ fontWeight: '500' }]}

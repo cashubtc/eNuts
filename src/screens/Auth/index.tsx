@@ -5,6 +5,7 @@ import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
 import { PinCtx } from '@src/context/Pin'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
@@ -20,7 +21,7 @@ import PinPad from './PinPad'
 
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { anim, shake } = useShakeAnimation()
 	const { color, highlight } = useThemeContext()
 	// PIN mismatch context
@@ -257,7 +258,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 						<View style={styles.bottomSection}>
 							{attempts.mismatch &&
 								<Text style={[styles.mismatch, { color: mainColors.ERROR }]}>
-									{t('pinMismatch', { ns: 'auth' })}
+									{t('pinMismatch', { ns: NS.auth })}
 								</Text>
 							}
 							{shouldShowPinSection() ?

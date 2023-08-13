@@ -1,6 +1,7 @@
 import Button from '@comps/Button'
 import type { ITokenInfo } from '@model'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { useTranslation } from 'react-i18next'
@@ -16,7 +17,7 @@ interface ITrustModalProps {
 }
 
 export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, closeModal }: ITrustModalProps) {
-	const { t } = useTranslation(['common'])
+	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	return (
 		<MyModal type='question' animation='fade' visible close={closeModal}>
@@ -34,7 +35,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			<Text style={globals(color, highlight).modalTxt}>
 				{t('notClaim')}.
 			</Text>
-			<Button loading={loading} txt={loading ? t('claiming', { ns: 'wallet' }) + '...' : t('yes')} onPress={handleTrustModal} />
+			<Button loading={loading} txt={loading ? t('claiming', { ns: NS.wallet }) + '...' : t('yes')} onPress={handleTrustModal} />
 			<View style={{ marginVertical: 10 }} />
 			<Button
 				outlined

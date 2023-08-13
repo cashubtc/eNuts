@@ -9,6 +9,7 @@ import { relay } from '@nostr/class/Relay'
 import { EventKind } from '@nostr/consts'
 import { encrypt } from '@nostr/crypto'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { updateNostrDmUsers } from '@src/storage/store/nostrDms'
 import { cTo } from '@src/storage/store/utils'
 import { secureStore, store } from '@store'
@@ -22,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
-	const { t } = useTranslation(['mints'])
+	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
 	const {
 		mint,
@@ -40,7 +41,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 	const handleError = (e?: unknown) => {
 		// TODO check error screen msgs
-		const translatedErrMsg = t(isMelt ? 'requestMintErr' : 'requestMintErr', { ns: 'error' })
+		const translatedErrMsg = t(isMelt ? 'requestMintErr' : 'requestMintErr', { ns: NS.error })
 		navigation.navigate('processingError', {
 			amount,
 			mint,
@@ -171,7 +172,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				if (!sk?.length) {
 					navigation.navigate(
 						'processingError',
-						getErrObj(mint, amount, t('createTokenErr', { ns: 'common' }))
+						getErrObj(mint, amount, t('createTokenErr', { ns: NS.common }))
 					)
 					return
 				}
@@ -190,7 +191,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					l('Something went wrong while publishing the event.')
 					navigation.navigate(
 						'processingError',
-						getErrObj(mint, amount, t('eventError', { ns: 'common' }))
+						getErrObj(mint, amount, t('eventError', { ns: NS.common }))
 					)
 					return
 				}
@@ -203,7 +204,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		} catch (e) {
 			navigation.navigate(
 				'processingError',
-				getErrObj(mint, amount, t('createTokenErr', { ns: 'common' }), e)
+				getErrObj(mint, amount, t('createTokenErr', { ns: NS.common }), e)
 			)
 		}
 	}

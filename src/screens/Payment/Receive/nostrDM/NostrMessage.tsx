@@ -3,6 +3,7 @@ import type { TNostrReceivePageProps } from '@model/nav'
 import type { INostrDm, TContact } from '@model/nostr'
 import EntryTime from '@screens/History/entryTime'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
@@ -20,7 +21,7 @@ interface INostrMessageProps {
 }
 
 export default function NostrMessage({ msgEntry, sender, dms, setDms, mints, nav }: INostrMessageProps) {
-	const { t } = useTranslation(['history'])
+	const { t } = useTranslation([NS.history])
 	const { color } = useThemeContext()
 	return (
 		<View style={[globals(color).wrapContainer, styles.msgContainer]}>
