@@ -78,7 +78,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={t('payInvoice', { ns: NS.wallet })}
-				cancel
+				txt={t('backToDashboard')}
 				handlePress={() => navigation.navigate('dashboard')}
 			/>
 			<View style={styles.invoiceWrap}>
