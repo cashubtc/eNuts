@@ -92,7 +92,7 @@ The NUT documents (**N**otation, **U**sage and **T**erminology) each specify par
 
 **Troubleshooting**
 
-- If you see this build error: `[GraphQL] Entity not authorized` in you terminal, you can simply remove the following line from the config/app.config.ts file:
+- If you see this build error: `[GraphQL] Entity not authorized` in you terminal, you can simply remove the following line from the `config/app.config.ts` file:
 
 ```javascript
 // Unauthorized error related to the project ID used in the expo organization for eNuts
