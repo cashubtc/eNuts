@@ -3,6 +3,7 @@ import Option from '@comps/Option'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import type { TSelectTargetPageProps } from '@model/nav'
+import { _testmintUrl } from '@src/consts'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
@@ -78,6 +79,11 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 							txt={t('multimintSwap', { ns: NS.common })}
 							hint={t('meltSwapHint')}
 							onPress={() => {
+								// check if source mint is testmint
+								if (mint.mintUrl === _testmintUrl) {
+									openPromptAutoClose({ msg: t('swapNotAllowed') })
+									return
+								}
 								// check if there is another mint except testmint
 								if (!remainingMints?.length) {
 									openPromptAutoClose({ msg: t('atLeast2Mints') })

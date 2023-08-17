@@ -6,7 +6,7 @@ import useCashuToken from '@comps/hooks/Token'
 import { MintBoardIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import Txt from '@comps/Txt'
-import { isIOS } from '@consts'
+import { _testmintUrl, isIOS } from '@consts'
 import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import OptsModal from '@modal/OptsModal'
@@ -172,11 +172,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				})
 				return
 			}
+			// get remaining mints for a possible multimint swap
+			const remainingMints = mints.filter(m => m.mintUrl !== _testmintUrl)
 			navigation.navigate('selectTarget', {
 				mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
 				isMelt,
 				isSendEcash,
-				balance: nonEmptyMints[0].amount
+				balance: nonEmptyMints[0].amount,
+				remainingMints
 			})
 			return
 		}
