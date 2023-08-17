@@ -1,4 +1,5 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
+import { TxtButton } from '@comps/Button'
 import { LockIcon, UnlockIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { MinuteInS } from '@consts/time'
@@ -8,12 +9,12 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
-import { globals, highlight as hi, mainColors } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Animated, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 import PinHint from './Hint'
 import PinDots from './PinDots'
@@ -23,7 +24,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
 	const { t } = useTranslation([NS.common])
 	const { anim, shake } = useShakeAnimation()
-	const { color, highlight } = useThemeContext()
+	const { highlight } = useThemeContext()
 	// PIN mismatch context
 	const { attempts, setAttempts } = useContext(PinCtx)
 	// auth state
@@ -284,21 +285,23 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 								/>
 								{/* skip or go back from confirm */}
 								{!auth.length && !shouldEdit &&
-									<TouchableOpacity onPress={() => void handleSkip()}>
-										<Text style={[globals(color).pressTxt, styles.skip]}>
-											{isConfirm ? t('back') : t('willDoLater')}
-										</Text>
-									</TouchableOpacity>
+									<TxtButton
+										txt={isConfirm ? t('back') : t('willDoLater')}
+										onPress={() => void handleSkip()}
+										style={[styles.skip]}
+										txtColor='#FAFAFA'
+									/>
 								}
 								{(((shouldRemove || shouldEdit) && auth.length > 0) || (shouldEdit && !auth.length)) &&
-									<TouchableOpacity onPress={() => {
-										resetStates()
-										navigation.navigate('Security settings')
-									}}>
-										<Text style={[globals(color).pressTxt, styles.skip]}>
-											{t('cancel')}
-										</Text>
-									</TouchableOpacity>
+									<TxtButton
+										txt={t('cancel')}
+										onPress={() => {
+											resetStates()
+											navigation.navigate('Security settings')
+										}}
+										style={[styles.skip]}
+										txtColor='#FAFAFA'
+									/>
 								}
 							</View>
 						</View>
@@ -342,7 +345,6 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 	},
 	skip: {
-		color: '#FAFAFA',
 		paddingTop: 20,
 		paddingBottom: 10,
 	},

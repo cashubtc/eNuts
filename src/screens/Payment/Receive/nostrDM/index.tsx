@@ -1,3 +1,4 @@
+import { TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import Loading from '@comps/Loading'
@@ -19,18 +20,17 @@ import { NS } from '@src/i18n'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
 import { getNostrDmUsers } from '@store/nostrDms'
-import { globals, highlight as hi } from '@styles'
 import { hasEventId, isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 
 import NostrMessage from './NostrMessage'
 
 export default function NostrDMScreen({ navigation, route }: TNostrReceivePageProps) {
 	const { t } = useTranslation([NS.common])
-	const { color, highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	const [isCancel, setIsCancel] = useState(false)
 	const { userRelays, claimedEvtIds } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -109,7 +109,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 		if (!isCancel) { return }
 		relay.closePoolConnection(userRelays)
 		navigation.navigate('dashboard')
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isCancel])
 
 	useEffect(() => {
@@ -137,11 +137,11 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 						txt={t('invoiceHint', { ns: NS.mints })}
 						styles={[{ color: color.TEXT_SECONDARY }, styles.hint]}
 					/>
-					<TouchableOpacity
+					<TxtButton
+						txt={t('cancel')}
 						onPress={handleCancel}
-					>
-						<Txt txt={t('cancel')} styles={[globals(color).pressTxt, { color: hi[highlight], padding: 10 }]} />
-					</TouchableOpacity>
+						style={[{ paddingTop: 20, paddingBottom: 10 }]}
+					/>
 				</View>
 				:
 				<View>

@@ -1,12 +1,13 @@
+import { TxtButton } from '@comps/Button'
 import { CopyIcon, NostrIcon, ReceiveIcon, SendIcon, ZapIcon } from '@comps/Icons'
 import Option from '@comps/Option'
 import Txt from '@comps/Txt'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { globals, mainColors } from '@styles'
+import { mainColors } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 import MyModal from '.'
 
@@ -34,7 +35,7 @@ export default function OptsModal({
 	isSend,
 }: IOptsModal) {
 	const { t } = useTranslation([NS.common])
-	const { color, highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	const { nutPub } = useNostrContext()
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
@@ -67,11 +68,11 @@ export default function OptsModal({
 					hint={isSend ? t('payInvoiceDashboard') : t('createInvoiceDashboard')}
 					onPress={onPressSecondBtn}
 				/>
-				<TouchableOpacity style={styles.no} onPress={onPressCancel}>
-					<Text style={globals(color, highlight).pressTxt}>
-						{t('cancel')}
-					</Text>
-				</TouchableOpacity>
+				<TxtButton
+					txt={t('cancel')}
+					onPress={onPressCancel}
+					style={[{ paddingBottom: 15 }]}
+				/>
 			</View>
 		</MyModal>
 	)

@@ -91,9 +91,10 @@ interface ITxtBtnProps {
 	icon?: React.ReactNode
 	disabled?: boolean
 	style?: StyleProp<TextStyle>[]
+	txtColor?: string
 }
 
-export function TxtButton({ txt, onPress, icon, disabled, style }: ITxtBtnProps) {
+export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITxtBtnProps) {
 	const { color, highlight } = useThemeContext()
 	return (
 		<TouchableOpacity
@@ -103,7 +104,7 @@ export function TxtButton({ txt, onPress, icon, disabled, style }: ITxtBtnProps)
 		>
 			<Txt
 				txt={txt}
-				styles={[globals(color).pressTxt, { color: hi[highlight], marginRight: icon ? 10 : 0 }]}
+				styles={[globals(color).pressTxt, { color: txtColor || hi[highlight], marginRight: icon ? 10 : 0 }]}
 			/>
 			{icon ? icon : null}
 		</TouchableOpacity>

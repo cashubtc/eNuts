@@ -4,9 +4,9 @@ import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { isErr, openUrl } from '@util'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { Text } from 'react-native'
 
-import Button from './Button'
+import Button, { TxtButton } from './Button'
 import MyModal from './modal'
 
 interface ILeaveAppModalProps {
@@ -15,7 +15,7 @@ interface ILeaveAppModalProps {
 	closeModal: () => void
 }
 
-export default function LeaveAppModal({ url, visible, closeModal }: ILeaveAppModalProps ) {
+export default function LeaveAppModal({ url, visible, closeModal }: ILeaveAppModalProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const { openPromptAutoClose } = usePromptContext()
@@ -33,18 +33,12 @@ export default function LeaveAppModal({ url, visible, closeModal }: ILeaveAppMod
 					&quot;{url}&quot;
 				</Text>
 				<Button txt={t('continue')} onPress={() => void handleContinue()} />
-				<TouchableOpacity onPress={closeModal}>
-					<Text style={[globals(color, highlight).pressTxt, styles.cancel]}>
-						{t('cancel')}
-					</Text>
-				</TouchableOpacity>
+				<TxtButton
+					txt={t('cancel')}
+					onPress={closeModal}
+					style={[{ paddingTop: 25, paddingBottom: 20 }]}
+				/>
 			</MyModal>
 		</>
 	)
 }
-
-const styles = StyleSheet.create({
-	cancel: {
-		marginTop: 25,
-	},
-})
