@@ -90,6 +90,24 @@ The NUT documents (**N**otation, **U**sage and **T**erminology) each specify par
 6. A browser tab will be opened. Press the "Expo Go" button in the bottom of the page.
 7. eNuts will be bundled up and will run on your device.
 
+**Troubleshooting**
+
+- If you see this build error: `[GraphQL] Entity not authorized` in you terminal, you can simply remove the following line from the config/app.config.ts file:
+
+```javascript
+// Unauthorized error related to the project ID used in the expo organization for eNuts
+// If you are not a member of the organization, you will encounter the build error.
+{
+  ...
+  extra: {
+    // Delete the following line to fix the issue:
+    eas: { projectId: 'edb75ccd-71ac-4934-9147-baf1c7f2b068' },
+    ...
+  }
+  ...
+}
+```
+
 ## 👏 Contribute
 
 The main purpose of this repository is to continue evolving and pushing the adoption of Ecash for Bitcoin using the Cashu protocol. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bug fixes and improvements. Read more on [how to contribute](https://github.com/cashubtc/eNuts/blob/main/CONTRIBUTING.md).
