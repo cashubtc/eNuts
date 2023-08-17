@@ -146,8 +146,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		if (token.length) { return }
 		startLoading()
 		const clipboard = await getStrFromClipboard()
-		if (!clipboard) { return }
-		if (!isCashuToken(clipboard)) {
+		if (!clipboard?.length || !isCashuToken(clipboard)) {
 			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			closeOptsModal()
 			stopLoading()
