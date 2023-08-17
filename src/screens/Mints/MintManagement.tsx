@@ -1,4 +1,4 @@
-import Button from '@comps/Button'
+import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
 import { AboutIcon, BitcoinIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, FlagIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
@@ -15,7 +15,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
-import { globals, highlight as hi, mainColors } from '@styles'
+import { globals, mainColors } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
 import { useEffect, useState } from 'react'
@@ -29,7 +29,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	const { t } = useTranslation([NS.common])
 	// prompt modal
 	const { openPromptAutoClose } = usePromptContext()
-	const { color, highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	// custom name modal
 	const [customNameOpen, setCustomNameOpen] = useState(false)
 	const [mintName, setMintName] = useState('')
@@ -318,11 +318,11 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							onPress={() => void handleMintName()}
 						/>
 					}
-					<TouchableOpacity onPress={() => setCustomNameOpen(false)}>
-						<Text style={[styles.cancel, { color: hi[highlight] }]}>
-							{t('cancel')}
-						</Text>
-					</TouchableOpacity>
+					<TxtButton
+						txt={t('cancel')}
+						onPress={() => setCustomNameOpen(false)}
+						style={[{ paddingTop: 15, paddingBottom: 15 }]}
+					/>
 				</MyModal>}
 		</View>
 	)
@@ -381,12 +381,7 @@ const styles = StyleSheet.create({
 	line: {
 		borderBottomWidth: 1,
 	},
-	cancel: {
-		fontSize: 16,
-		fontWeight: '500',
-		marginTop: 25,
-		marginBottom: 10,
-	},
+
 	cancelDel: {
 		fontSize: 16,
 		fontWeight: '500',

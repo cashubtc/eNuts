@@ -2,7 +2,6 @@ import RadioBtn from '@comps/RadioBtn'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
-import { isIOS } from '@consts'
 import type { TDisplaySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { useThemeContext } from '@src/context/Theme'
@@ -26,8 +25,8 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					Theme
 				</Text>
-				<View style={[globals(color).wrapContainer, styles.wrap, { paddingVertical: isIOS ? 18 : 10 }]}>
-					<Txt txt={t('darkMode')} />
+				<View style={[globals(color).wrapContainer, styles.wrap]}>
+					<Txt txt={t('darkMode')} styles={[{ marginVertical: 20 }]} />
 					<Switch
 						trackColor={{ false: color.BORDER, true: hi[highlight] }}
 						thumbColor={color.TEXT}

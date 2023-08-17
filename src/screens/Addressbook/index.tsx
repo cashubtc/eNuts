@@ -1,4 +1,4 @@
-import Button from '@comps/Button'
+import Button, { TxtButton } from '@comps/Button'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
 import TxtInput from '@comps/TxtInput'
@@ -26,7 +26,7 @@ import { getStrFromClipboard, isStr } from '@util'
 import { type Event as NostrEvent, generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 import ContactPreview from './ContactPreview'
 import UserProfile from './UserProfile'
@@ -38,7 +38,7 @@ const marginBottomPayment = isIOS ? 25 : 0
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
-	const { color, highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	const {
 		setNutPub,
 		pubKey,
@@ -202,7 +202,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		}
 		// generate new nsec
 		const sk = generatePrivateKey() // `sk` is a hex string
-		const pk = getPublicKey(sk) 
+		const pk = getPublicKey(sk)
 		setNutPub(pk)	// `pk` is a hex string
 		await Promise.all([
 			store.set(STORE_KEYS.npub, pubKey.encoded), // save nostr encoded pubKey
@@ -361,27 +361,21 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						onSubmitEditing={() => void handleNewNpub()}
 					/>
 					{/* Paste / Clear Input */}
-					<TouchableOpacity
-						style={[styles.pasteInputTxtWrap, { backgroundColor: color.INPUT_BG }]}
+					<TxtButton
+						txt={!pubKey.encoded.length ? t('paste') : t('clear')}
 						onPress={() => void handleInputLabelPress()}
-					>
-						<Text style={globals(color, highlight).pressTxt}>
-							{!pubKey.encoded.length ? t('paste') : t('clear')}
-						</Text>
-					</TouchableOpacity>
+						style={[styles.pasteInputTxtWrap, { backgroundColor: color.INPUT_BG }]}
+					/>
 				</View>
 				<Button
 					txt={t('save')}
 					onPress={() => void handleNewNpub()}
 				/>
-				<TouchableOpacity
-					style={styles.cancel}
+				<TxtButton
+					txt={t('cancel')}
 					onPress={() => setNewNpubModal(false)}
-				>
-					<Text style={globals(color, highlight).pressTxt}>
-						{t('cancel')}
-					</Text>
-				</TouchableOpacity>
+					style={[{ paddingTop: 25, paddingBottom: 10, }]}
+				/>
 			</MyModal>
 			{!route.params?.isMelt && !route.params?.isSendEcash && <BottomNav navigation={navigation} route={route} />}
 		</View>

@@ -30,8 +30,7 @@ const useFocusClaim = () => {
 		let isSpent = false
 		const fn = async () => {
 			const clipboard = await getStrFromClipboard()
-			if (!clipboard) { return }
-			if (!isCashuToken(clipboard)) { return false }
+			if (!clipboard?.length || !isCashuToken(clipboard)) { return false }
 			const info = getTokenInfo(clipboard)
 			if (!info) { return false }
 			// check if mint is a trusted one

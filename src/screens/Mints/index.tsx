@@ -240,6 +240,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				<ActionButtons
 					topBtnTxt={t('yes')}
 					topBtnAction={() => {
+						setTopUpModal(false)
 						navigation.navigate('selectAmount', {
 							mint: selectedMint || { mintUrl: '', customName: '' },
 							balance: 0,

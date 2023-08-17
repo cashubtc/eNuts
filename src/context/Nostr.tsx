@@ -3,7 +3,6 @@ import type { IProfileContent, TContact } from '@model/nostr'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getRedeemdedSigs } from '@store/nostrDms'
-import * as SplashScreen from 'expo-splash-screen'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const useNostr = () => {
@@ -28,8 +27,6 @@ const useNostr = () => {
 				setClaimedEvtIds(redeemed)
 			} catch (e) {
 				l(e)
-			} finally {
-				await SplashScreen.hideAsync()
 			}
 		})()
 	}, [])

@@ -1,5 +1,6 @@
-import Button from '@comps/Button'
+import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
+import { CheckmarkIcon, CopyIcon, SandClockIcon, WalletIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
@@ -14,7 +15,7 @@ import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
@@ -76,7 +77,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={t('payInvoice', { ns: NS.wallet })}
-				cancel
+				txt={t('backToDashboard')}
 				handlePress={() => navigation.navigate('dashboard')}
 			/>
 			<View style={styles.invoiceWrap}>
@@ -99,36 +100,39 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 						t('invoiceExpired') + '!'
 					}
 				</Text>
-				{expire > 0 && (!paid || paid === 'unpaid') &&
-					<TouchableOpacity onPress={() => void handlePayment()}>
-						<Text style={[styles.checkPaymentTxt, { color: hi[highlight] }]}>
-							{t('checkPayment')}
-						</Text>
-					</TouchableOpacity>
-				}
-				{paid === 'unpaid' &&
-					<Text style={styles.pendingTxt}>
-						{t('paymentPending')}...
-					</Text>
-				}
 			</View>
-			<View style={[styles.lnBtnWrap, { marginBottom: insets.bottom }]}>
+			{expire > 0 && (!paid || paid === 'unpaid') ?
+				<View style={[styles.lnBtnWrap, { marginBottom: insets.bottom }]}>
+					<Button
+						txt={t(paid === 'unpaid' ? 'paymentPending' : 'checkPayment')}
+						onPress={() => void handlePayment()}
+						icon={paid === 'unpaid' ? <SandClockIcon color='#FAFAFA' /> : <CheckmarkIcon color='#FAFAFA' />}
+					/>
+					<View style={{ marginVertical: 10 }} />
+					<Button
+						txt={t('payWithLn')}
+						outlined
+						onPress={() => {
+							void (async () => {
+								await openUrl(`lightning:${paymentRequest}`)?.catch(e =>
+									openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+							})()
+						}}
+						icon={<WalletIcon color={hi[highlight]} />}
+					/>
+					<TxtButton
+						txt={copied ? t('copied') + '!' : t('copyInvoice')}
+						icon={copied ? <CheckmarkIcon color={hi[highlight]} /> : <CopyIcon width={24} height={24} color={hi[highlight]} />}
+						disabled={copied}
+						onPress={() => void copy(paymentRequest)}
+					/>
+				</View>
+				:
 				<Button
-					txt={copied ? t('copied') + '!' : t('copyInvoice')}
-					outlined
-					onPress={() => void copy(paymentRequest)}
+					txt={t('backToDashboard')}
+					onPress={() => navigation.navigate('dashboard')}
 				/>
-				<View style={{ marginBottom: 20 }} />
-				<Button
-					txt={t('payWithLn')}
-					onPress={() => {
-						void (async () => {
-							await openUrl(`lightning:${paymentRequest}`)?.catch(e =>
-								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-						})()
-					}}
-				/>
-			</View>
+			}
 		</View>
 	)
 }

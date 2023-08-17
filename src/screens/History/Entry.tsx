@@ -53,10 +53,10 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingVertical: 12,
 	},
 	infoWrap: {
 		alignItems: 'center',
+		marginVertical: 12,
 	},
 	placeholder: {
 		width: 30,

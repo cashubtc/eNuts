@@ -10,9 +10,10 @@ interface TTopNavProps {
 	withBackBtn?: boolean
 	cancel?: boolean
 	handlePress?: () => void
+	txt?: string
 }
 
-export default function TopNav({ screenName, withBackBtn, cancel, handlePress }: TTopNavProps) {
+export default function TopNav({ screenName, withBackBtn, cancel, handlePress, txt }: TTopNavProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	return (
@@ -25,9 +26,13 @@ export default function TopNav({ screenName, withBackBtn, cancel, handlePress }:
 				<View />
 			}
 			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
-				{(withBackBtn || cancel) ?
+				{(withBackBtn || cancel || txt?.length) ?
 					<Text style={globals(color, highlight).pressTxt}>
-						{t(withBackBtn ? 'back' : 'cancel')}
+						{txt ?
+							txt
+							:
+							t(withBackBtn ? 'back' : 'cancel')
+						}
 					</Text>
 					:
 					<ScanQRIcon color={color.TEXT} />

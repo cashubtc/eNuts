@@ -3,9 +3,9 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet,Text, TouchableOpacity } from 'react-native'
+import { Text } from 'react-native'
 
-import Button from './Button'
+import Button, { TxtButton } from './Button'
 
 interface IInitialModalProps {
 	visible: boolean
@@ -25,18 +25,11 @@ export default function InitialModal({ visible, onConfirm, onCancel }: IInitialM
 				{t('startHint')}
 			</Text>
 			<Button txt={t('addMint')} onPress={onConfirm} />
-			<TouchableOpacity onPress={onCancel}>
-				<Text style={[globals(color, highlight).pressTxt, styles.cancel]}>
-					{t('willDoLater')}
-				</Text>
-			</TouchableOpacity>
+			<TxtButton
+				txt={t('willDoLater')}
+				onPress={onCancel}
+				style={[{ paddingTop: 25, paddingBottom: 10, }]}
+			/>
 		</MyModal>
 	)
 }
-
-const styles = StyleSheet.create({
-	cancel: {
-		marginTop: 25,
-		marginBottom: 10,
-	},
-})

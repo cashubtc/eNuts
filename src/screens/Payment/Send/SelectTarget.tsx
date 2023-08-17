@@ -3,6 +3,7 @@ import Option from '@comps/Option'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import type { TSelectTargetPageProps } from '@model/nav'
+import { _testmintUrl } from '@src/consts'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
@@ -17,7 +18,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { t } = useTranslation([NS.mints])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
-	const { contacts } = useNostrContext()
+	const { nutPub } = useNostrContext()
 	return (
 		<Screen
 			screenName={t(isSendEcash ? 'sendEcash' : 'cashOut', { ns: NS.common })}
@@ -44,7 +45,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					</>
 					:
 					<>
-						{contacts.length > 0 &&
+						{nutPub.length > 0 &&
 							<Option
 								icon={<BookIcon color={highlight['Nostr']} />}
 								txt={t('addressBook', { ns: NS.topNav })}
@@ -78,6 +79,11 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 							txt={t('multimintSwap', { ns: NS.common })}
 							hint={t('meltSwapHint')}
 							onPress={() => {
+								// check if source mint is testmint
+								if (mint.mintUrl === _testmintUrl) {
+									openPromptAutoClose({ msg: t('swapNotAllowed') })
+									return
+								}
 								// check if there is another mint except testmint
 								if (!remainingMints?.length) {
 									openPromptAutoClose({ msg: t('atLeast2Mints') })
