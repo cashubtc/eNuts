@@ -1,8 +1,9 @@
 import { useThemeContext } from '@src/context/Theme'
-import { highlight as hi } from '@styles'
-import { SafeAreaView, StyleSheet, Text, TouchableHighlight, TouchableOpacity } from 'react-native'
+import { globals, highlight as hi } from '@styles'
+import { SafeAreaView, type StyleProp, StyleSheet, Text, type TextStyle, TouchableHighlight, TouchableOpacity } from 'react-native'
 
 import Loading from './Loading'
+import Txt from './Txt'
 
 interface IButtonProps {
 	txt: string
@@ -84,6 +85,31 @@ export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIc
 	)
 }
 
+interface ITxtBtnProps {
+	txt: string
+	onPress: () => void
+	icon?: React.ReactNode
+	disabled?: boolean
+	style?: StyleProp<TextStyle>[]
+}
+
+export function TxtButton({ txt, onPress, icon, disabled, style }: ITxtBtnProps) {
+	const { color, highlight } = useThemeContext()
+	return (
+		<TouchableOpacity
+			style={[styles.copyTxt, ...(style || [])]}
+			onPress={onPress}
+			disabled={disabled}
+		>
+			<Txt
+				txt={txt}
+				styles={[globals(color).pressTxt, { color: hi[highlight], marginRight: icon ? 10 : 0 }]}
+			/>
+			{icon ? icon : null}
+		</TouchableOpacity>
+	)
+}
+
 const styles = StyleSheet.create({
 	safeArea: {
 		width: '100%'
@@ -106,5 +132,13 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
+	},
+	// txt button
+	copyTxt: {
+		paddingTop: 30,
+		paddingBottom: 10,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center'
 	}
 })

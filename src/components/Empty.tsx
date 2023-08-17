@@ -1,10 +1,10 @@
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useThemeContext } from '@src/context/Theme'
-import { globals, highlight as hi } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { Image, StyleSheet } from 'react-native'
 
+import { TxtButton } from './Button'
 import Txt from './Txt'
 
 interface IEmptyProps {
@@ -15,7 +15,7 @@ interface IEmptyProps {
 
 export default function Empty({ txt, hasOk, nav }: IEmptyProps) {
 	const { t } = useTranslation()
-	const { color, highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	return (
 		<>
 			<Image
@@ -28,12 +28,11 @@ export default function Empty({ txt, hasOk, nav }: IEmptyProps) {
 				styles={[styles.emptyTxt, { color: color.TEXT_SECONDARY, marginBottom: hasOk ? 10 : 0 }]}
 			/>
 			{hasOk &&
-				<TouchableOpacity
+				<TxtButton
+					txt={t('backToDashboard')}
 					onPress={() => nav?.navigate('dashboard')}
-					style={{ paddingVertical: 10 }}
-				>
-					<Txt txt={t('backToDashboard')} styles={[globals(color).pressTxt, { color: hi[highlight], padding: 10 }]} />
-				</TouchableOpacity>
+					style={[{ paddingVertical: 10 }]}
+				/>
 			}
 		</>
 	)

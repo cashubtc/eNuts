@@ -1,8 +1,7 @@
-import Button from '@comps/Button'
+import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
 import { CheckmarkIcon, CopyIcon, SandClockIcon, WalletIcon } from '@comps/Icons'
 import QR from '@comps/QR'
-import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -16,7 +15,7 @@ import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
@@ -121,13 +120,12 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 						}}
 						icon={<WalletIcon color={hi[highlight]} />}
 					/>
-					<TouchableOpacity style={styles.copyTxt} onPress={() => void copy(paymentRequest)}>
-						<Txt
-							txt={copied ? t('copied') + '!' : t('copyInvoice')}
-							styles={[globals(color).pressTxt, { color: hi[highlight], marginRight: 10 }]}
-						/>
-						<CopyIcon width={24} height={24} color={hi[highlight]} />
-					</TouchableOpacity>
+					<TxtButton
+						txt={copied ? t('copied') + '!' : t('copyInvoice')}
+						icon={copied ? <CheckmarkIcon color={hi[highlight]} /> : <CopyIcon width={24} height={24} color={hi[highlight]} />}
+						disabled={copied}
+						onPress={() => void copy(paymentRequest)}
+					/>
 				</View>
 				:
 				<Button
@@ -178,11 +176,4 @@ const styles = StyleSheet.create({
 	lnBtnWrap: {
 		width: '100%'
 	},
-	copyTxt: {
-		paddingTop: 30,
-		paddingBottom: 10,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center'
-	}
 })
