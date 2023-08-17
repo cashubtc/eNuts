@@ -57,7 +57,6 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 			if (!word || word.length < tokenMinLength) { continue }
 			// set dm state
 			if (isCashuToken(word)) {
-				l({ claimedEvtIds })
 				// dont set state if already claimed OR same created_at OR same token
 				setDms(prev => prev.some(entry => hasEventId(claimedEvtIds, entry.id) || entry.created_at === e.created_at || entry.token === word) ?
 					[...prev]

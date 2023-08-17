@@ -2,6 +2,7 @@ import { getPreferences, setPreferences } from '@db'
 import { l } from '@log'
 import type { IPreferences } from '@model'
 import { dark, HighlightKey, light , lightTheme } from '@styles'
+import * as SplashScreen from 'expo-splash-screen'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Appearance } from 'react-native'
 
@@ -52,6 +53,8 @@ const useTheme = () => {
 					theme: 'Default',
 					hasPref: true
 				})
+			} finally {
+				await SplashScreen.hideAsync()
 			}
 		})()
 	}, [])
