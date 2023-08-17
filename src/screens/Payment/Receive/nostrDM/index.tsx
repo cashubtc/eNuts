@@ -34,6 +34,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	const [isCancel, setIsCancel] = useState(false)
 	const { userRelays, claimedEvtIds } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
+	// user mints is used in case user wants to send Ecash from the DMs screen
 	const [userMints, setUserMints] = useState<string[]>([])
 	const [dmProfiles, setDmProfiles] = useState<TContact[]>([])
 	const [dms, setDms] = useState<INostrDm[]>([])
@@ -73,8 +74,12 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	useEffect(() => {
 		void (async () => {
 			startLoading()
-			const sk = await secureStore.get(SECRET)
 			const conversationsPubKeys = await getNostrDmUsers()
+			if (!conversationsPubKeys.length) {
+				stopLoading()
+				return
+			}
+			const sk = await secureStore.get(SECRET)
 			const sub = relay.subscribePool({
 				relayUrls: userRelays,
 				// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
