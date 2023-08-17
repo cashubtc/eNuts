@@ -17,7 +17,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { t } = useTranslation([NS.mints])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
-	const { contacts } = useNostrContext()
+	const { nutPub } = useNostrContext()
 	return (
 		<Screen
 			screenName={t(isSendEcash ? 'sendEcash' : 'cashOut', { ns: NS.common })}
@@ -44,7 +44,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 					</>
 					:
 					<>
-						{contacts.length > 0 &&
+						{nutPub.length > 0 &&
 							<Option
 								icon={<BookIcon color={highlight['Nostr']} />}
 								txt={t('addressBook', { ns: NS.topNav })}
