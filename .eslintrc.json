@@ -46,7 +46,11 @@
 				"@typescript-eslint/no-unsafe-return": "off",
 				"@typescript-eslint/restrict-plus-operands": "off",
 				"@typescript-eslint/unbound-method": "off",
-				"@typescript-eslint/no-var-requires": "off"
+				"@typescript-eslint/no-var-requires": "off",
+				"@typescript-eslint/no-base-to-string": "off",
+				"@typescript-eslint/no-duplicate-type-constituents": "off",
+				"@typescript-eslint/no-redundant-type-constituents": "off",
+				"@typescript-eslint/no-unsafe-enum-comparison": "off"
 			}
 		},
 		{
@@ -68,7 +72,11 @@
 				"@typescript-eslint/no-unsafe-return": "off",
 				"@typescript-eslint/restrict-plus-operands": "off",
 				"@typescript-eslint/unbound-method": "off",
-				"@typescript-eslint/no-var-requires": "off"
+				"@typescript-eslint/no-var-requires": "off",
+				"@typescript-eslint/no-base-to-string": "off",
+				"@typescript-eslint/no-duplicate-type-constituents": "off",
+				"@typescript-eslint/no-redundant-type-constituents": "off",
+				"@typescript-eslint/no-unsafe-enum-comparison": "off"
 			}
 		}
 	],
@@ -101,7 +109,6 @@
 		"deprecate",
 		"node",
 		"import",
-		"compat",
 		"@getify/proper-arrows",
 		"eslint-plugin",
 		"eslint-plugin-tsdoc",

@@ -1,13 +1,13 @@
 import { l } from '@log'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { formatMintUrl } from '@util'
-import * as Clipboard from 'expo-clipboard'
-import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Share, StyleSheet, Text } from 'react-native'
 
 import ActionButtons from './ActionButtons'
+import useCopy from './hooks/Copy'
 
 interface IBackupSuccessProps {
 	token: string
@@ -15,9 +15,10 @@ interface IBackupSuccessProps {
 }
 
 export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
-	const { t } = useTranslation(['common'])
-	const { color } = useContext(ThemeContext)
-	const [copied, setCopied] = useState(false)
+	const { t } = useTranslation([NS.common])
+	const { color } = useThemeContext()
+	const { copied, copy } = useCopy()
+
 	const handleShare = async () => {
 		try {
 			const res = await Share.share({
@@ -40,21 +41,13 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 			l(e)
 		}
 	}
-	const handleCopy = async () => {
-		await Clipboard.setStringAsync(token)
-		setCopied(true)
-		const t = setTimeout(() => {
-			setCopied(false)
-			clearTimeout(t)
-		}, 3000)
-	}
 	return (
 		<>
 			<Text style={[globals(color).navTxt, styles.subTxt]}>
-				{t('copyBackup', { ns: 'backup' })}
+				{t('copyBackup', { ns: NS.backup })}
 			</Text>
 			<Text style={[styles.token, { color: color.TEXT }]}>
-				{t('backup', { ns: 'topNav' })}: {token.substring(0, 25)}...
+				{t('backup', { ns: NS.topNav })}: {token.substring(0, 25)}...
 			</Text>
 			{mint &&
 				<Text style={[styles.token, { color: color.TEXT }]}>
@@ -66,7 +59,7 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 				topBtnTxt={t('share')}
 				topBtnAction={() => void handleShare()}
 				bottomBtnTxt={copied ? t('copied') : t('copyToken')}
-				bottomBtnAction={() => void handleCopy()}
+				bottomBtnAction={() => void copy(token)}
 			/>
 		</>
 	)

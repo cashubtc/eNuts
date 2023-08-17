@@ -1,37 +1,22 @@
-import { QRIcon } from '@comps/Icons'
-import type { TBottomNavProps } from '@model/nav'
-import { useNavigation } from '@react-navigation/native'
-import { ThemeContext } from '@src/context/Theme'
+import { ScanQRIcon } from '@comps/Icons'
+import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface TTopNavProps {
 	screenName?: string
 	withBackBtn?: boolean
-	nav?: TBottomNavProps
-	backHandler?: () => void
+	cancel?: boolean
+	handlePress?: () => void
 }
 
-export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TTopNavProps) {
-	const { t } = useTranslation(['common'])
-	const { color, highlight } = useContext(ThemeContext)
-	const navHook = useNavigation()
-	const handlePress = () => {
-		if (withBackBtn) {
-			if (backHandler) {
-				backHandler()
-				return
-			}
-			navHook.goBack()
-			return
-		}
-		// open QR Scan
-		nav?.navigation.navigate('qr scan')
-	}
+export default function TopNav({ screenName, withBackBtn, cancel, handlePress }: TTopNavProps) {
+	const { t } = useTranslation([NS.common])
+	const { color, highlight } = useThemeContext()
 	return (
-		<View style={styles.topNav}>
+		<View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>
 			{screenName ?
 				<Text style={globals(color).navTxt}>
 					{screenName}
@@ -40,12 +25,12 @@ export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TT
 				<View />
 			}
 			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
-				{withBackBtn ?
+				{(withBackBtn || cancel) ?
 					<Text style={globals(color, highlight).pressTxt}>
-						{t('back')}
+						{t(withBackBtn ? 'back' : 'cancel')}
 					</Text>
 					:
-					<QRIcon color={color.TEXT} />
+					<ScanQRIcon color={color.TEXT} />
 				}
 			</TouchableOpacity>
 		</View>
@@ -55,16 +40,18 @@ export default function TopNav({ screenName, withBackBtn, nav, backHandler }: TT
 const styles = StyleSheet.create({
 	topNav: {
 		position: 'absolute',
-		top: 40,
-		left: 20,
-		right: 20,
+		top: 0,
+		left: 0,
+		right: 0,
 		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
+		paddingTop: 60,
+		paddingHorizontal: 20,
+		paddingBottom: 10,
 	},
 	topIconR: {
 		paddingLeft: 20,
-		paddingVertical: 20
 	},
 })

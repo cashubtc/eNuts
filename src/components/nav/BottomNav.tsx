@@ -1,92 +1,89 @@
-import { ContactsIcon, HistoryIcon, MintBoardIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
+import { BookIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { highlight as hi } from '@styles'
-import { useContext } from 'react'
+import { isStr } from '@util'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
-	const { t } = useTranslation(['topNav'])
-	const { color, highlight } = useContext(ThemeContext)
+	const { t } = useTranslation([NS.topNav])
+	const { color, highlight } = useThemeContext()
 
-	const handleNav = (routeStr: TRouteString) => navigation.navigate(routeStr)
+	const handleNav = async (routeStr: TRouteString) => {
+		// handle nostr explainer for addressbook
+		if (routeStr === 'Address book') {
+			// check if explainer has been viewed, else navigate to screen
+			const nostrExplainer = await store.get(STORE_KEYS.nostrexplainer)
+			navigation.navigate(!isStr(nostrExplainer) || !nostrExplainer.length ? 'nostr explainer' : routeStr)
+			return
+		}
+		navigation.navigate(routeStr)
+	}
 
-	const isMintRelatedScreen =
-		route.name === 'mints' ||
-		route.name === 'mintmanagement' ||
-		route.name === 'mint proofs' ||
-		(route.name === 'lightning' && !route.params?.receive && !route.params?.send)
+	// const isMintRelatedScreen =
+	// 	route.name === 'mints' ||
+	// 	route.name === 'mintmanagement' ||
+	// 	route.name === 'mint proofs'
 
-	const isWalletRelatedScreen = route.name === 'dashboard' ||
-		(route.name === 'lightning' && (route.params?.receive || route.params?.send))
+	const isWalletRelatedScreen = route.name === 'dashboard'
 
 	const isSettingsRelatedScreen = route.name === 'Settings' ||
+		route.name === 'General settings' ||
 		route.name === 'Display settings' ||
 		route.name === 'Security settings' ||
-		route.name === 'BackupPage'
-
-	const isHistoryRelatedScreen = route.name === 'history' || route.name === 'history entry details'
+		route.name === 'BackupPage' ||
+		route.name === 'Privacy settings'
 
 	return (
-		<View style={styles.bottomNav}>
+		<View style={[styles.bottomNav, { backgroundColor: color.BACKGROUND, paddingBottom: isIOS ? 40 : 10 }]}>
 			<TouchableOpacity
 				style={styles.navIcon}
-				onPress={() => handleNav('dashboard')}
+				onPress={() => void handleNav('dashboard')}
+				disabled={isWalletRelatedScreen}
 			>
-				<WalletIcon color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
+				<WalletIcon width={28} height={28} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt='Wallet'
-					styles={[{ fontSize: 12, marginTop: 2, color: isWalletRelatedScreen ? hi[highlight] : color.TEXT }]}
-				/>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.navIcon}
-				onPress={() => handleNav('history')}
-			>
-				<HistoryIcon color={isHistoryRelatedScreen ? hi[highlight] : color.TEXT} />
-				<Txt
-					txt={t('history')}
-					styles={[{ fontSize: 12, color: isHistoryRelatedScreen ? hi[highlight] : color.TEXT }]}
-				/>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.navIcon}
-				onPress={() => handleNav('mints')}
-			>
-				<MintBoardIcon
-					width={20}
-					height={25}
-					color={isMintRelatedScreen ? hi[highlight] : color.TEXT}
-				/>
-				<Txt
-					txt='Mints'
-					styles={[{ fontSize: 12, marginTop: 1, color: isMintRelatedScreen ? hi[highlight] : color.TEXT }]}
-				/>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.navIcon}
-				onPress={() => handleNav('Address book')}
-			>
-				<ContactsIcon color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
-				<Txt
-					txt={t('contacts', { ns: 'bottomNav' })}
-					styles={[{
-						fontSize: 12,
-						marginTop: -2,
-						color: route.name === 'Address book' ? hi[highlight] : color.TEXT
+					styles={[styles.iconTxt, {
+						color: isWalletRelatedScreen ? hi[highlight] : color.TEXT,
+						fontWeight: isWalletRelatedScreen ? '500' : '400'
 					}]}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.navIcon}
-				onPress={() => handleNav('Settings')}
+				onPress={() => void handleNav('Address book')}
+				disabled={route.name === 'Address book'}
 			>
-				<SettingsIcon color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
+				<BookIcon width={28} height={28} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
+				<Txt
+					txt={t('contacts', { ns: NS.bottomNav })}
+					styles={[
+						styles.iconTxt, {
+							color: route.name === 'Address book' ? hi[highlight] : color.TEXT,
+							fontWeight: route.name === 'Address book' ? '500' : '400'
+						}
+					]}
+				/>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.navIcon}
+				onPress={() => void handleNav('Settings')}
+				disabled={isSettingsRelatedScreen}
+			>
+				<SettingsIcon width={28} height={28} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('settings')}
-					styles={[{ fontSize: 12, marginTop: 1, color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT }]}
+					styles={[styles.iconTxt, {
+						color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT,
+						fontWeight: isSettingsRelatedScreen ? '500' : '400'
+					}]}
 				/>
 			</TouchableOpacity>
 		</View>
@@ -96,17 +93,20 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 const styles = StyleSheet.create({
 	bottomNav: {
 		position: 'absolute',
-		bottom: 0,
 		left: 0,
+		bottom: 0,
 		right: 0,
-		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'flex-start',
 		justifyContent: 'space-around',
 	},
 	navIcon: {
-		minWidth: 70,
-		minHeight: 50,
+		minWidth: 100,
 		alignItems: 'center',
+		marginTop: 10,
+	},
+	iconTxt: {
+		fontSize: 14,
+		marginTop: 4,
 	}
 })

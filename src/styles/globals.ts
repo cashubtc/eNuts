@@ -1,8 +1,13 @@
 import { StyleSheet } from 'react-native'
 
-import { highlight as hi, type TPref } from './colors'
+import { highlight, type HighlightKey, type Theme } from './colors'
 
-export const globals = (color: TPref, h?: string) => StyleSheet.create({
+export const globals = (color: Theme, h?: HighlightKey) => StyleSheet.create({
+	container: {
+		flex: 1,
+		paddingTop: 110,
+		backgroundColor: color.BACKGROUND
+	},
 	txt: {
 		fontSize: 16,
 		color: color.TEXT
@@ -11,7 +16,7 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		fontSize: 16,
 		fontWeight: '500',
 		textAlign: 'center',
-		color: hi[h || '']
+		color: h ? highlight[h] : '#000'
 	},
 	navTxt: {
 		fontSize: 20,
@@ -23,7 +28,7 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		color: color.TEXT,
 		borderColor: color.BORDER,
 		backgroundColor: color.INPUT_BG,
-		padding: 18,
+		padding: 20,
 		borderRadius: 50,
 		fontSize: 16,
 		width: '100%',
@@ -32,6 +37,7 @@ export const globals = (color: TPref, h?: string) => StyleSheet.create({
 		fontSize: 24,
 		fontWeight: '500',
 		marginBottom: 30,
+		marginTop: 10,
 		textAlign: 'center',
 		color: color.TEXT,
 	},

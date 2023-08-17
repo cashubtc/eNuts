@@ -1,9 +1,8 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
 import { CashuMint, deriveKeysetId, getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
-import type { IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
-import type { IContact } from '@src/context/Contacts'
-import { arrToChunks } from '@util'
+import type { IContact, IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
+import { arrToChunks, isObj } from '@util'
 import * as SQLite from 'expo-sqlite'
 
 import { Db } from './Db'
@@ -300,13 +299,14 @@ export async function deleteMint(mintUrl: string) {
 	return result.rowsAffected === 1
 }
 // ################################ Preferences ################################
-export async function getPreferences() {
+export async function getPreferences(): Promise<IPreferences> {
 	const x = await db.get<IPreferencesResp>('SELECT * FROM preferences limit 1', [])
 	return {
 		id: x?.id || 1,
 		darkmode: x?.darkmode === 'true',
-		theme: x?.theme || '',
+		theme: x?.theme || 'Default',
 		formatBalance: x?.formatBalance === 'true',
+		hasPref: isObj(x)
 	}
 }
 export async function setPreferences(p: IPreferences) {
@@ -393,4 +393,15 @@ export function dropContacts() {
 }
 export function dropTable(table: string) {
 	return db.execTx(`drop table ${table}`, [])
+}
+export async function dropAll() {
+	await Promise.all([
+		dropTable('proofs'),
+		dropTable('proofsUsed'),
+		dropTable('keysetIds'),
+		dropTable('mintKeys'),
+		dropTable('invoices'),
+		dropTable('preferences'),
+		dropTable('contacts'),
+	])
 }

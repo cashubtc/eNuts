@@ -1,101 +1,44 @@
 import { DefaultTheme } from '@react-navigation/native'
 import type { ExtendedTheme } from '@react-navigation/native-stack'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type TPref = {
-	BACKGROUND: string
-	DRAWER: string
-	TEXT: string
-	TEXT_SECONDARY: string
-	INPUT_BG: string
-	INPUT_PH: string
-	BORDER: string
-	ERROR: string
+// general theme related colors
+export enum Colors {
+	// light theme
+	L_Background = '#E7E8E9',
+	L_Text = '#656565',
+	L_Text_Secondary = '#ADADAD',
+	L_Input_Bg = '#F6F6F6',
+	L_Border = '#D8D8D8',
+	// dark theme
+	D_Background = '#202124',
+	D_Drawer = '#303134',
+	D_Text = '#BDC1C6',
+	D_Text_Secondary = '#999DA2',
+	D_Border = '#5F6368',
 }
 
-// highlight theme
-export const highlight: { [key: string]: string } = {
-	Default: '#5DB075',
-	Bitcoin: '#FF9900',
-	Nuts: '#B37436',
-	Nostr: '#B780FF',
-	Sky: '#027DFF',
-	Azyre: '#03DDFF',
-	Rosy: '#FC7ED0',
-	Zap: '#FFCC00'
-}
-
-// pin pad background based on selected highlight theme
-const pinpadBg: { [key: string]: string } = {
-	'#5DB075': '#73BD88',
-	'#FF9900': '#FFB340',
-	'#B37436': '#AB8763',
-	'#B780FF': '#CDA9FC',
-	'#027DFF': '#58A8FC',
-	'#03DDFF': '#79EBFC',
-	'#FC7ED0': '#FCB3E3',
-	'#FFCC00': '#FFE16E'
-}
-
-export function getPinpadBg(highlight: string) {
-	return pinpadBg[highlight]
-}
-
-export const themeColors = [
-	'Default',
-	'Bitcoin',
-	'Nuts',
-	'Nostr',
-	'Sky',
-	'Azyre',
-	'Rosy',
-	'Zap',
-]
+export type Theme = typeof lightTheme | typeof darkTheme
 
 // light theme
-const WHITE = '#FAFAFA'
-const DARK_GREY = '#656565'
-const GREY = '#BDBDBD'
-const LIGHT_GREY1 = '#F6F6F6'
-const LIGHT_GREY2 = '#E8E8E8'
-// dark theme
-const DARK = '#202124'
-const CLOUD = '#BDC1C6'
-const DARK_CLOUD = '#999DA2'
-const GREY1 = '#303134'
-const GREY2 = '#5F6368'
-//
-export const mainColors = {
-	VALID: '#5DB075',
-	WARN: '#FF9900',
-}
-
-const common = {
-	ERROR: '#FF6666',
-}
-
-// light theme
-const lightTheme: TPref = {
-	...common,
-	BACKGROUND: WHITE,
-	DRAWER: WHITE,
-	TEXT: DARK_GREY,
-	TEXT_SECONDARY: GREY,
-	INPUT_BG: LIGHT_GREY1,
-	INPUT_PH: DARK_GREY,
-	BORDER: LIGHT_GREY2,
+export const lightTheme = {
+	BACKGROUND: Colors.L_Background,
+	DRAWER: Colors.L_Background,
+	TEXT: Colors.L_Text,
+	TEXT_SECONDARY: Colors.L_Text_Secondary,
+	INPUT_BG: Colors.L_Input_Bg,
+	INPUT_PH: Colors.L_Text,
+	BORDER: Colors.L_Border,
 }
 
 // dark theme
-const darkTheme: TPref = {
-	...common,
-	BACKGROUND: DARK,
-	DRAWER: GREY1,
-	TEXT: CLOUD,
-	TEXT_SECONDARY: DARK_CLOUD,
-	INPUT_BG: GREY1,
-	INPUT_PH: GREY2,
-	BORDER: GREY2,
+const darkTheme = {
+	BACKGROUND: Colors.D_Background,
+	DRAWER: Colors.D_Drawer,
+	TEXT: Colors.D_Text,
+	TEXT_SECONDARY: Colors.D_Text_Secondary,
+	INPUT_BG: Colors.D_Drawer,
+	INPUT_PH: Colors.D_Border,
+	BORDER: Colors.D_Border,
 }
 
 export const light: ExtendedTheme = {
@@ -109,3 +52,55 @@ export const dark: ExtendedTheme = {
 	colors: { ...DefaultTheme.colors },
 	custom: darkTheme
 }
+
+// highlight theme colors
+export enum H_Colors {
+	Default = '#5DB075',
+	Bitcoin = '#FF9900',
+	Nuts = '#B37436',
+	Nostr = '#B780FF',
+	Sky = '#027DFF',
+	Azyre = '#03DDFF',
+	Rosy = '#FC7ED0',
+	Zap = '#FFCC00',
+}
+
+export type HighlightKey = keyof typeof H_Colors;
+
+// Create the highlight object with specific color keys
+export const highlight: { [key in HighlightKey]: H_Colors } = {
+	Default: H_Colors.Default,
+	Bitcoin: H_Colors.Bitcoin,
+	Nuts: H_Colors.Nuts,
+	Nostr: H_Colors.Nostr,
+	Sky: H_Colors.Sky,
+	Azyre: H_Colors.Azyre,
+	Rosy: H_Colors.Rosy,
+	Zap: H_Colors.Zap,
+}
+
+// PIN buttons colors based on highlight theme
+const pinpadBg = {
+	Default: '#73BD88',
+	Bitcoin: '#FFB340',
+	Nuts: '#AB8763',
+	Nostr: '#CDA9FC',
+	Sky: '#58A8FC',
+	Azyre: '#79EBFC',
+	Rosy: '#FCB3E3',
+	Zap: '#FFE16E',
+}
+
+export function getPinpadBg(highlight: keyof typeof pinpadBg) {
+	return pinpadBg[highlight]
+}
+
+export enum mainColors {
+	// indicators
+	VALID = '#5DB076',
+	WARN = '#FF9901',
+	ERROR = '#FF6666',
+	BLUE = '027DFF',
+}
+
+export const themeColors = Object.keys(highlight) as HighlightKey[]

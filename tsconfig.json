@@ -19,8 +19,8 @@
 			"@nav/*": ["src/components/nav/*"],
 			"@comps": ["src/components"],
 			"@comps/*": ["src/components/*"],
-			"@screens": ["src/components/screens"],
-			"@screens/*": ["src/components/screens/*"],
+			"@screens": ["src/screens"],
+			"@screens/*": ["src/screens/*"],
 			"@src": ["src"],
 			"@src/*": ["src/*"],
 			"@assets/*": ["assets/*"],
@@ -41,7 +41,9 @@
 			"@store": ["src/storage/store"],
 			"@store/*": ["src/storage/store/*"],
 			"@consts": ["src/consts"],
-			"@consts/*": ["src/consts/*"]
+			"@consts/*": ["src/consts/*"],
+			"@nostr": ["src/nostr"],
+			"@nostr/*": ["src/nostr/*"]
 		}
 	},
 	"extends": "expo/tsconfig.base"

@@ -20,7 +20,6 @@ export class SimpleKeyValueStore extends StoreBase {
 	public getObj<T extends object>(key: string): Promise<T | null | undefined> {
 		return super.getObj(key)
 	}
-
 	public getByKeyPrefix(prefix: string): Promise<IKeyValuePair<string>[]> {
 		return super.getByKeyPrefix(prefix)
 	}

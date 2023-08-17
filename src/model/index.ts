@@ -1,13 +1,14 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
+import type { HighlightKey } from '@styles'
 import type { ExpoConfig } from 'expo/config'
 import type { SQLStmtCb, SQLStmtErrCb, WebSQLDatabase } from 'expo-sqlite'
 
 export interface IExpoConfig extends ExpoConfig {
 	extra?: {
-		DEBUG?: string | 'full'
-		NODE_ENV?: string | 'development' | 'production' | 'test' | 'preview'
-		NODE_ENV_SHORT?: string | 'prod' | 'dev' | 'test' | 'preview'
-		APP_VARIANT?: string | 'prod' | 'dev' | 'test' | 'preview'
+		DEBUG?: string // | 'full'
+		NODE_ENV?: string // | 'development' | 'production' | 'test' | 'preview'
+		NODE_ENV_SHORT?: string // | 'prod' | 'dev' | 'test' | 'preview'
+		APP_VARIANT?: string // | 'prod' | 'dev' | 'test' | 'preview'
 		SENTRY_DSN?: string
 	}
 }
@@ -58,14 +59,16 @@ export interface IPreferencesResp {
 	id: 1
 	formatBalance: string
 	darkmode: string
-	theme: string
+	theme: HighlightKey
+	hasPref: string
 }
 
 export interface IPreferences {
 	id: 1
 	formatBalance: boolean
 	darkmode: boolean
-	theme: string
+	theme: HighlightKey
+	hasPref: boolean
 }
 
 export interface IContactResp {
@@ -124,4 +127,22 @@ export interface ITx<T = unknown> {
 export interface IKeyValuePair<T> {
 	key: string,
 	value: T
+}
+
+export interface IContact {
+	id?: number
+	name: string,
+	ln: string,
+	isOwner: boolean
+}
+export interface IPromptState {
+	open: boolean
+	success?: boolean
+	msg: string
+}
+
+export interface IOpenPromptAutoCloseProps {
+	msg: string
+	success?: boolean
+	ms?: number
 }

@@ -1,22 +1,22 @@
-import { ThemeContext } from '@src/context/Theme'
+import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { useContext } from 'react'
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableHighlight, TouchableOpacity } from 'react-native'
 
 import Loading from './Loading'
 
 interface IButtonProps {
 	txt: string
+	onPress: () => void
 	border?: boolean
 	outlined?: boolean
 	filled?: boolean
 	disabled?: boolean
 	loading?: boolean
-	onPress: () => void
+	icon?: React.ReactNode
 }
 
-export default function Button({ txt, border, outlined, filled, disabled, loading, onPress }: IButtonProps) {
-	const { highlight } = useContext(ThemeContext)
+export default function Button({ txt, onPress, border, outlined, filled, disabled, loading, icon }: IButtonProps) {
+	const { highlight } = useThemeContext()
 	return (
 		<SafeAreaView style={styles.safeArea}>
 			<TouchableOpacity
@@ -28,18 +28,20 @@ export default function Button({ txt, border, outlined, filled, disabled, loadin
 					{ backgroundColor: hi[highlight], padding: 20 },
 					border ? { borderWidth: 1, borderColor: '#FAFAFA' } : {},
 					filled ? { backgroundColor: '#FAFAFA' } : {},
-					outlined ? { backgroundColor: 'transparent', padding: 18, borderWidth: 1, borderColor: hi[highlight] } : {}
+					outlined ? { backgroundColor: 'transparent', padding: 18, borderWidth: 1, borderColor: hi[highlight] } : {},
+					disabled ? { opacity: .3 } : {}
 				]}
 				onPress={onPress}
 			>
 				<Text style={[
 					styles.btnTxt,
 					filled || outlined ? { color: hi[highlight] } : {},
-					loading ? { marginRight: 10 } : {}
+					loading || icon ? { marginRight: 10 } : {}
 				]}>
 					{txt}
 				</Text>
-				{loading && <Loading white />}
+				{loading && <Loading color='#FAFAFA' />}
+				{!loading ? icon : null}
 			</TouchableOpacity>
 		</SafeAreaView>
 	)
@@ -48,22 +50,36 @@ export default function Button({ txt, border, outlined, filled, disabled, loadin
 interface IIconBtnProps {
 	icon: React.ReactNode
 	onPress: () => void
+	outlined?: boolean
+	disabled?: boolean
+	size?: number
 	testId?: string
 }
 
-export function IconBtn({ icon, onPress, testId }: IIconBtnProps) {
-	const { highlight } = useContext(ThemeContext)
+export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIconBtnProps) {
+	const { color, highlight } = useThemeContext()
 	return (
 		<SafeAreaView>
-			<TouchableOpacity
+			<TouchableHighlight
 				accessibilityRole='button'
 				activeOpacity={.5}
-				style={[styles.iconBtn, { backgroundColor: hi[highlight], borderColor: hi[highlight] }]}
+				underlayColor={hi[highlight]}
+				style={[
+					styles.iconBtn,
+					{
+						width: size || 60,
+						height: size || 60,
+						borderRadius: (size || 60) / 2,
+						backgroundColor: outlined ? color.BACKGROUND : hi[highlight],
+						borderColor: hi[highlight],
+						// opacity: disabled ? .6 : 1
+					}]}
 				onPress={onPress}
+				disabled={disabled}
 				testID={testId}
 			>
 				{icon}
-			</TouchableOpacity>
+			</TouchableHighlight>
 		</SafeAreaView>
 	)
 }
@@ -87,8 +103,8 @@ const styles = StyleSheet.create({
 	},
 	// icon button
 	iconBtn: {
-		padding: 20,
 		borderWidth: 1,
-		borderRadius: 50,
+		alignItems: 'center',
+		justifyContent: 'center',
 	}
 })

@@ -9,13 +9,14 @@ import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
 import en from '@assets/translations/en.json'
+import { NS } from '@src/i18n'
 
 process.env.NODE_ENV = 'test'
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 i18n.use(initReactI18next).init({
 	lng: 'en',
-	defaultNS: 'common',
-	ns: ['common', 'auth', 'wallet', 'topNav', 'bottomNav', 'error', 'history', 'mints', 'backup', 'addrBook'],
+	defaultNS: NS.common,
+	ns: [NS.common, NS.auth, NS.wallet, NS.topNav, NS.bottomNav, NS.error, NS.history, NS.mints, NS.backup, NS.addrBook],
 	resources: { en },
 })
 

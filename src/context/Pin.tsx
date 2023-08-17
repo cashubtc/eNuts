@@ -9,7 +9,10 @@ const usePin = () => {
 		lockedCount: 0,
 		lockedTime: 0,
 	})
-	return { attempts, setAttempts }
+	return {
+		attempts,
+		setAttempts,
+	}
 }
 
 type usePinType = ReturnType<typeof usePin>

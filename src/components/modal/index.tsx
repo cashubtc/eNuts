@@ -1,9 +1,8 @@
 import { isIOS } from '@consts'
-import { ThemeContext } from '@src/context/Theme'
-import type { TPref } from '@styles'
-import { highlight as hi } from '@styles'
-import { useContext } from 'react'
+import { useThemeContext } from '@src/context/Theme'
+import { highlight as hi, HighlightKey, Theme } from '@styles'
 import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface IMyModalProps {
 	type: 'bottom' | 'question' | 'success' | 'error' | 'invoiceAmount'
@@ -25,7 +24,8 @@ export default function MyModal({
 	children
 }: IMyModalProps) {
 
-	const { color, highlight } = useContext(ThemeContext)
+	const { color, highlight } = useThemeContext()
+	const insets = useSafeAreaInsets()
 
 	const getCorrectStyle = () => {
 		if (type === 'bottom') { return styles(color, highlight).bottomView }
@@ -35,7 +35,13 @@ export default function MyModal({
 	}
 
 	const getViewStyle = () => {
-		if (type === 'bottom') { return { ...styles(color, highlight).common, ...styles(color, highlight).modalView } }
+		if (type === 'bottom') {
+			return {
+				...styles(color, highlight).common,
+				...styles(color, highlight).modalView,
+				paddingBottom: 20 + insets.bottom
+			}
+		}
 		if (type === 'question') { return { ...styles(color, highlight).common, ...styles(color, highlight).centeredModalView } }
 		if (type === 'success') { return { ...styles(color, highlight).common, ...styles(color, highlight).successModalView } }
 		if (type === 'error') { return { ...styles(color, highlight).common, ...styles(color, highlight).promptModalView } }
@@ -63,7 +69,7 @@ export default function MyModal({
 				>
 					<KeyboardAvoidingView
 						style={getCorrectStyle()}
-						behavior={isIOS ? 'padding' : undefined}
+						behavior={isIOS ? 'height' : undefined}
 					>
 						<View style={[getViewStyle(), success ? { backgroundColor: hi[highlight] } : {}]}>
 							{children}
@@ -75,7 +81,7 @@ export default function MyModal({
 	)
 }
 
-const styles = (pref: TPref, h: string) => StyleSheet.create({
+const styles = (pref: Theme, h: HighlightKey) => StyleSheet.create({
 	modalParent: {
 		position: 'absolute',
 		top: 0,

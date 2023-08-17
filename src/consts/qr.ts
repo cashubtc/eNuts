@@ -6,4 +6,4 @@ export const qrCodeLimits = {
 	H: { numeric: 3057, alphanumeric: 1852, binary: 1273 }
 } as const
 
-export const QRType = 256 as const
+export const QRType = '256' as const

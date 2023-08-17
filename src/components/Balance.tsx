@@ -1,25 +1,34 @@
-import { ExclamationIcon, SwapCurrencyIcon } from '@comps/Icons'
-import { repoIssueUrl } from '@consts/urls'
+import { AboutIcon, ChevronRightIcon, HistoryIcon, SwapCurrencyIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
-import { ThemeContext } from '@src/context/Theme'
-import { highlight as hi, mainColors } from '@styles'
-import { formatBalance, formatInt, isBool, isErr, openUrl } from '@util'
-import { useContext, useState } from 'react'
+import type { RootStackParamList } from '@model/nav'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { usePrivacyContext } from '@src/context/Privacy'
+import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
+import { highlight as hi } from '@styles'
+import { formatBalance, formatInt, isBool } from '@util'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-import usePrompt from './hooks/Prompt'
-import Toaster from './Toaster'
+import Logo from './Logo'
+import Separator from './Separator'
+import Txt from './Txt'
 
 interface IBalanceProps {
 	balance: number
+	nav?: NativeStackNavigationProp<RootStackParamList, 'dashboard', 'MyStack'>
 }
 
-export default function Balance({ balance }: IBalanceProps) {
-	const { t } = useTranslation(['common'])
-	const { pref, color, highlight } = useContext(ThemeContext)
+export default function Balance({ balance, nav }: IBalanceProps) {
+	const { t } = useTranslation([NS.common])
+	const { pref, color, highlight } = useThemeContext()
+	const { hidden } = usePrivacyContext()
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
-	const { prompt, openPromptAutoClose } = usePrompt()
+	const showBalance = () => {
+		if (hidden) { return '-' }
+		return formatSats ? formatBalance(balance) : formatInt(balance)
+	}
 	const toggleBalanceFormat = () => {
 		setFormatSats(prev => !prev)
 		if (!pref || !isBool(formatSats)) { return }
@@ -28,88 +37,120 @@ export default function Balance({ balance }: IBalanceProps) {
 	}
 
 	return (
-		<View style={styles.balanceContainer}>
-			<TouchableOpacity style={styles.balanceWrap} onPress={toggleBalanceFormat}>
-				{/* <Text style={[styles.balPending, { color: color.TEXT_SECONDARY }]}>
-				Pending{'('}0{')'}
-			</Text> */}
-				<Text style={[styles.balAmount, { color: hi[highlight] }]}>
-					{formatSats ? formatBalance(balance) : formatInt(balance)}
-				</Text>
-				<View style={styles.balAssetNameWrap}>
-					<Text style={[styles.balAssetName, { color: color.TEXT_SECONDARY }]}>
-						{formatSats ? 'BTC' : 'Satoshi'}
-					</Text>
-					<SwapCurrencyIcon color={color.TEXT_SECONDARY} />
-				</View>
-			</TouchableOpacity>
+		<View style={[
+			styles.board,
+			{ borderColor: color.BORDER, backgroundColor: hi[highlight] }
+		]}>
+			<Logo size={ hidden ? 120 : 80} style={{ marginBottom: hidden? 60 : 20, marginTop: hidden ? 60 : 0 }} />
+			{/* balance */}
+			{!hidden &&
+				<>
+					<TouchableOpacity
+						style={styles.balanceWrap}
+						onPress={toggleBalanceFormat}
+						disabled={hidden}
+					>
+						<Text style={styles.balAmount}>
+							{showBalance()}
+						</Text>
+						<View style={styles.balAssetNameWrap}>
+							<Text style={styles.balAssetName}>
+								{formatSats ? 'BTC' : 'Satoshi'}
+							</Text>
+							<SwapCurrencyIcon width={20} height={20} color='#F0F0F0' />
+						</View>
+					</TouchableOpacity>
+					<Separator style={[styles.separator]} />
+				</>
+			}
+			{/* history */}
+			<BoardEntry
+				txt={t('history', { ns: NS.topNav })}
+				icon={<HistoryIcon color='#FAFAFA' />}
+				color='#FAFAFA'
+				onPress={() => nav?.navigate('history')}
+				withSeparator
+			/>
 			{/* Disclaimer */}
-			<View style={styles.disclaimerWrap}>
-				<ExclamationIcon width={22} height={22} color={mainColors.WARN} />
-				<Text style={[styles.disclaimerTxt, { color: color.TEXT }]}>
-					{t('disclaimer', { ns: 'wallet' })}
-				</Text>
-				<TouchableOpacity
-					style={styles.submitIssue}
-					onPress={() => void openUrl(repoIssueUrl)?.catch((err: unknown) =>
-						openPromptAutoClose({ msg: isErr(err) ? err.message : t('deepLinkErr') }))}
-				>
-					<Text style={styles.issue}>
-						{t('submitIssue', { ns: 'wallet' })}
-					</Text>
-				</TouchableOpacity>
-				{prompt.open && <Toaster success={prompt.success} txt={prompt.msg} />}
-			</View>
+			<BoardEntry
+				txt={t('risks')}
+				icon={<AboutIcon color='#FAFAFA' />}
+				color='#FAFAFA'
+				onPress={() => nav?.navigate('disclaimer')}
+			/>
 		</View>
 	)
 }
 
+interface IBoardEntryProps {
+	txt: string
+	icon: React.ReactNode
+	onPress: () => void
+	color: string
+	withSeparator?: boolean
+}
+
+function BoardEntry({ txt, icon, onPress, color, withSeparator }: IBoardEntryProps) {
+	return (
+		<>
+			<TouchableOpacity
+				style={styles.boardEntry}
+				onPress={onPress}
+			>
+				<View style={styles.disclaimerTxt}>
+					<View style={styles.iconWrap}>
+						{icon}
+					</View>
+					<Txt txt={txt} styles={[{ color }]} />
+				</View>
+				<ChevronRightIcon color={color} />
+			</TouchableOpacity>
+			{withSeparator && <Separator style={[styles.separator]} />}
+		</>
+	)
+}
+
 const styles = StyleSheet.create({
-	balanceContainer: {
-		position: 'absolute',
-		top: 150,
-		left: 20,
-		right: 20,
-		flex: 1,
+	board: {
+		borderBottomLeftRadius: 50,
+		borderBottomRightRadius: 50,
+		paddingHorizontal: 30,
+		paddingVertical: 70,
 	},
 	balanceWrap: {
 		alignItems: 'center',
+		marginHorizontal: -20,
 	},
-	/* balPending: {
-		fontSize: 16,
-	}, */
 	balAmount: {
-		flex: 1,
 		alignItems: 'center',
-		fontSize: 50,
+		fontSize: 46,
 		fontWeight: '500',
+		color: '#FAFAFA',
 	},
 	balAssetNameWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: 5,
+		marginBottom: 10,
 	},
 	balAssetName: {
-		fontSize: 16,
+		fontSize: 14,
 		marginRight: 5,
+		color: '#F0F0F0'
 	},
-	disclaimerWrap: {
+	separator: {
+		marginVertical: 20,
+		borderColor: '#E0E0E0'
+	},
+	iconWrap: {
+		minWidth: 30,
+	},
+	boardEntry: {
+		flexDirection: 'row',
 		alignItems: 'center',
-		padding: 15,
-		borderWidth: 1,
-		borderRadius: 15,
-		borderColor: mainColors.WARN,
-		marginTop: 20,
+		justifyContent: 'space-between',
 	},
 	disclaimerTxt: {
-		marginVertical: 10,
-		textAlign: 'center',
-	},
-	submitIssue: {
-		padding: 10,
-	},
-	issue: {
-		fontWeight: '500',
-		color: mainColors.WARN,
+		flexDirection: 'row',
+		alignItems: 'center',
 	},
 })
