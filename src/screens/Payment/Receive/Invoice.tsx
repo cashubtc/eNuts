@@ -1,6 +1,6 @@
 import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
-import { CheckmarkIcon, CopyIcon, SandClockIcon, WalletIcon } from '@comps/Icons'
+import { CheckmarkIcon, CopyIcon, WalletIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
@@ -104,21 +104,21 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			{expire > 0 && (!paid || paid === 'unpaid') ?
 				<View style={[styles.lnBtnWrap, { marginBottom: insets.bottom }]}>
 					<Button
+						outlined
 						txt={t(paid === 'unpaid' ? 'paymentPending' : 'checkPayment')}
 						onPress={() => void handlePayment()}
-						icon={paid === 'unpaid' ? <SandClockIcon color='#FAFAFA' /> : <CheckmarkIcon color='#FAFAFA' />}
+						// icon={paid === 'unpaid' ? <SandClockIcon color={hi[highlight]} /> : <CheckmarkIcon color={hi[highlight]} />}
 					/>
 					<View style={{ marginVertical: 10 }} />
 					<Button
 						txt={t('payWithLn')}
-						outlined
 						onPress={() => {
 							void (async () => {
 								await openUrl(`lightning:${paymentRequest}`)?.catch(e =>
 									openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 							})()
 						}}
-						icon={<WalletIcon color={hi[highlight]} />}
+						icon={<WalletIcon color='#FAFAFA' />}
 					/>
 					<TxtButton
 						txt={copied ? t('copied') + '!' : t('copyInvoice')}
