@@ -53,6 +53,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [, setAlreadySeen] = useState<string[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
 
+	const isSending = route.params?.isMelt || route.params?.isSendEcash
+
 	// gets user data from cache or relay
 	const initUserData = useCallback(({ hex, userRelays }: { hex: string, userRelays?: TUserRelays }) => {
 		if (!hex || (userProfile && contacts.length)) {
@@ -299,8 +301,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
-				withBackBtn={route.params?.isMelt || route.params?.isSendEcash}
-				handlePress={() => navigation.goBack()}
+				withBackBtn={isSending}
+				handlePress={() => isSending ? navigation.goBack() : navigation.navigate('qr scan', {})}
 			/>
 			{/* Header */}
 			<View style={styles.bookHeader}>
