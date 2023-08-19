@@ -239,21 +239,21 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
 			{/* Receive/send/mints buttons */}
-			<View style={styles.actionWrap}>
-				<ActionBtn
-					icon={
-						<SendIcon
-							width={32}
-							height={32}
-							color={hi[highlight]}
-							disabled={!hasMint || balance < 1}
-						/>
-					}
-					txt={t('send', { ns: NS.wallet })}
-					color={hi[highlight]}
-					onPress={() => setModal({ ...modal, sendOpts: true })}
-					disabled={!hasMint || balance < 1}
-				/>
+			<View style={[styles.actionWrap, {paddingHorizontal: !hasMint || balance < 1 ? 75 : 30 }]}>
+				{(hasMint && balance > 0) &&
+					<ActionBtn
+						icon={
+							<SendIcon
+								width={32}
+								height={32}
+								color={hi[highlight]}
+							/>
+						}
+						txt={t('send', { ns: NS.wallet })}
+						color={hi[highlight]}
+						onPress={() => setModal({ ...modal, sendOpts: true })}
+					/>
+				}
 				<ActionBtn
 					icon={<MintBoardIcon width={32} height={32} color={hi[highlight]} />}
 					txt='Mints'
@@ -357,7 +357,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingHorizontal: 30,
 		marginTop: -35,
 	},
 	btnWrap: {
