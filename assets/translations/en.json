@@ -62,6 +62,7 @@
 		"contact_one": "1 Contact",
 		"contact_other": "{{count}} Contacts",
 		"contactDel": "Could not delete contact",
+		"mintDelErr": "Unable to remove a mint with remaining balance",
 		"contactNotSaved": "Contact could not be saved. Possible name or address duplication.",
 		"continue": "Continue",
 		"copied": "Copied",

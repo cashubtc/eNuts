@@ -62,6 +62,7 @@
 		"contact_one": "1 Kontakt",
 		"contact_other": "{{count}} Kontakte",
 		"contactDel": "Kontakt konnte nicht gelöscht werden",
+		"mintDelErr": "Eine Mint mit verbleibendem Guthaben zu entfernen ist nicht möglich",
 		"contactNotSaved": "Kontakt konnte nicht gespeichert werden. Möglicher Duplikat.",
 		"continue": "Fortfahren",
 		"copied": "Kopiert",

@@ -62,6 +62,7 @@
 		"contact_one": "1 Contact",
 		"contact_other": "{{count}} Contacts",
 		"contactDel": "Impossible de supprimer le contact",
+		"mintDelErr": "Impossible de supprimer une mint avec un solde restant",
 		"contactNotSaved": "Le contact n'a pas pu être enregistré. Possibilité de doublon de nom ou d'adresse.",
 		"continue": "Continuer",
 		"copied": "Copié",
