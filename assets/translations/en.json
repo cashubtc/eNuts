@@ -15,7 +15,7 @@
 		"createPin": "Create PIN",
 		"editPin": "Edit PIN",
 		"pinMismatch": "Incorrect PIN!",
-		"pinSetup": "You can setup a PIN to secure your app.",
+		"pinSetup": "You can setup a PIN to secure your app. If the PIN is forgotten, restoration is currently unavailable.",
 		"pleaseConfirm": "Please confirm your PIN.",
 		"pleaseConfirmNewPin": "Please confirm your new PIN.",
 		"pleaseEnter": "Please enter your PIN now.",

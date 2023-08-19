@@ -50,5 +50,6 @@ const styles = StyleSheet.create({
 		color: '#FAFAFA',
 		textAlign: 'center',
 		marginBottom: 20,
+		paddingHorizontal: 20,
 	},
 })
