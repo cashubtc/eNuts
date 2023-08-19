@@ -64,6 +64,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const initUserData = useCallback(({ hex, userRelays }: { hex: string, userRelays?: TUserRelays }) => {
 		if (!hex || (userProfile && contacts.length)) {
 			l('no pubKey or user data already available')
+			stopLoading()
 			return
 		}
 		// TODO use cache if available
