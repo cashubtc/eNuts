@@ -100,6 +100,11 @@ export enum mainColors {
 	VALID = '#5DB076',
 	WARN = '#FF9901',
 	ERROR = '#FF6666',
+	// colors
+	BLACK = '#000',
+	WHITE = '#FAFAFA',
+	GREY = '#999',
+	RED = 'FF6666',
 	BLUE = '027DFF',
 }
 

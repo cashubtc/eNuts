@@ -1,4 +1,5 @@
 import { NS } from '@src/i18n'
+import { mainColors } from '@src/styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text } from 'react-native'
 
@@ -42,12 +43,12 @@ export default function PinHint({ confirm, login, shouldEdit, shouldRemove }: IP
 const styles = StyleSheet.create({
 	welcome: {
 		fontSize: 22,
-		color: '#FAFAFA',
+		color: mainColors.WHITE,
 		marginVertical: 10,
 	},
 	txt: {
 		fontSize: 14,
-		color: '#FAFAFA',
+		color: mainColors.WHITE,
 		textAlign: 'center',
 		marginBottom: 20,
 		paddingHorizontal: 20,

@@ -1,3 +1,4 @@
+import { mainColors } from '@src/styles'
 import { StyleSheet, View } from 'react-native'
 
 export default function QRMarker({ size }: { size: number }) {
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		height: 50,
 		width: 50,
-		borderColor: '#FFF',
+		borderColor: mainColors.WHITE,
 	},
 	tl: {
 		top: 0,

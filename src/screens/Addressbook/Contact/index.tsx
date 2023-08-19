@@ -10,7 +10,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getCustomMintNames } from '@store/mintStore'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -88,7 +88,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 							style={[styles.sendEcash, { backgroundColor: hi[highlight] }]}
 							onPress={() => void handleSend()}
 						>
-							<Txt txt='Send Ecash' styles={[{ fontWeight: '500', color: '#FAFAFA' }]} />
+							<Txt txt='Send Ecash' styles={[{ fontWeight: '500', color: mainColors.WHITE }]} />
 						</TouchableOpacity>
 					}
 				</View>

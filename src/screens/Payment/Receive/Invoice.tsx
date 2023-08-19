@@ -118,7 +118,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 									openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 							})()
 						}}
-						icon={<WalletIcon color='#FAFAFA' />}
+						icon={<WalletIcon color={mainColors.WHITE} />}
 					/>
 					<TxtButton
 						txt={copied ? t('copied') + '!' : t('copyInvoice')}
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
 	},
 	qrCodeWrap: {
 		borderWidth: 5,
-		borderColor: '#FFF'
+		borderColor: mainColors.WHITE
 	},
 	lnAddress: {
 		fontSize: 14,
@@ -163,13 +163,6 @@ const styles = StyleSheet.create({
 	checkPaymentTxt: {
 		fontSize: 16,
 		fontWeight: '500',
-		marginTop: 10,
-		textAlign: 'center',
-	},
-	pendingTxt: {
-		fontSize: 16,
-		fontWeight: '500',
-		color: '#F1C232',
 		marginTop: 10,
 		textAlign: 'center',
 	},

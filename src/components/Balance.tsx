@@ -5,7 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { highlight as hi } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { formatBalance, formatInt, isBool } from '@util'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,6 +14,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Logo from './Logo'
 import Separator from './Separator'
 import Txt from './Txt'
+
+const currencyColor = '#F0F0F0'
 
 interface IBalanceProps {
 	balance: number
@@ -57,7 +59,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 							<Text style={styles.balAssetName}>
 								{formatSats ? 'BTC' : 'Satoshi'}
 							</Text>
-							<SwapCurrencyIcon width={20} height={20} color='#F0F0F0' />
+							<SwapCurrencyIcon width={20} height={20} color={currencyColor} />
 						</View>
 					</TouchableOpacity>
 					<Separator style={[styles.separator]} />
@@ -66,16 +68,16 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			{/* history */}
 			<BoardEntry
 				txt={t('history', { ns: NS.topNav })}
-				icon={<HistoryIcon color='#FAFAFA' />}
-				color='#FAFAFA'
+				icon={<HistoryIcon color={mainColors.WHITE} />}
+				color={mainColors.WHITE}
 				onPress={() => nav?.navigate('history')}
 				withSeparator
 			/>
 			{/* Disclaimer */}
 			<BoardEntry
 				txt={t('risks')}
-				icon={<AboutIcon color='#FAFAFA' />}
-				color='#FAFAFA'
+				icon={<AboutIcon color={mainColors.WHITE} />}
+				color={mainColors.WHITE}
 				onPress={() => nav?.navigate('disclaimer')}
 			/>
 		</View>
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		fontSize: 46,
 		fontWeight: '500',
-		color: '#FAFAFA',
+		color: mainColors.WHITE,
 	},
 	balAssetNameWrap: {
 		flexDirection: 'row',
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
 	balAssetName: {
 		fontSize: 14,
 		marginRight: 5,
-		color: '#F0F0F0'
+		color: currencyColor
 	},
 	separator: {
 		marginVertical: 20,

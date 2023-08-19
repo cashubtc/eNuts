@@ -13,7 +13,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
-import { globals } from '@styles'
+import { globals, mainColors } from '@styles'
 import { hasTrustedMint, isCashuToken } from '@util'
 import { checkFees, claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -233,13 +233,13 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 						style={styles.actionLeft}
 						onPress={() => setFlash(prev => !prev)}
 					>
-						<FlashlightOffIcon width={30} height={30} color={flash ? '#FFCC00' : '#FAFAFA'} />
+						<FlashlightOffIcon width={30} height={30} color={flash ? mainColors.WARN : mainColors.WHITE} />
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={styles.actionRight}
 						onPress={() => navigation.goBack()}
 					>
-						<CloseIcon width={30} height={30} color='#FFF' />
+						<CloseIcon width={30} height={30} color={mainColors.WHITE} />
 					</TouchableOpacity>
 				</>
 				:
@@ -269,13 +269,13 @@ const styles = StyleSheet.create({
 	noAccess: {
 		fontSize: 16,
 		fontWeight: '500',
-		color: '#FFF'
+		color: mainColors.WHITE
 	},
 	flashOn: {
 		position: 'absolute',
 		bottom: 40,
 		padding: 20,
-		backgroundColor: '#000',
+		backgroundColor: mainColors.BLACK,
 		opacity: .8,
 		borderRadius: 40,
 	},
@@ -283,20 +283,20 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		bottom: 150,
 		padding: 20,
-		backgroundColor: '#000',
+		backgroundColor: mainColors.BLACK,
 		opacity: .5,
 		borderRadius: 40,
 	},
 	scanAgainTxt: {
 		fontSize: 16,
 		fontWeight: '500',
-		color: '#FFF',
+		color: mainColors.WHITE,
 		textAlign: 'center',
 	},
 	hint: {
 		position: 'absolute',
 		top: 75,
-		backgroundColor: '#000',
+		backgroundColor: mainColors.BLACK,
 		opacity: .5,
 		padding: 20,
 		borderRadius: 40,
@@ -305,13 +305,13 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		fontSize: 16,
 		fontWeight: '500',
-		color: '#FFF'
+		color: mainColors.WHITE
 	},
 	actionLeft: {
 		position: 'absolute',
 		bottom: 40,
 		left: 40,
-		backgroundColor: '#000',
+		backgroundColor: mainColors.BLACK,
 		opacity: .5,
 		padding: 20,
 		borderRadius: 40,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		bottom: 40,
 		right: 40,
-		backgroundColor: '#000',
+		backgroundColor: mainColors.BLACK,
 		opacity: .5,
 		padding: 20,
 		borderRadius: 40,

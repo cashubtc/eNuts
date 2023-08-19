@@ -236,13 +236,13 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			]}
 		>
 			{success ?
-				<UnlockIcon width={40} height={40} color='#FAFAFA' />
+				<UnlockIcon width={40} height={40} color={mainColors.WHITE} />
 				:
 				<>
 					{attempts.locked && !isConfirm && <View />}
 					<View style={styles.lockWrap}>
 						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
-							<LockIcon width={40} height={40} color='#FAFAFA' />
+							<LockIcon width={40} height={40} color={mainColors.WHITE} />
 						</Animated.View>
 						{!shouldEdit && !shouldRemove && auth.length > 0 &&
 							<Txt txt={t('walletLocked')} styles={[styles.lockTxt]} />
@@ -289,7 +289,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 										txt={isConfirm ? t('back') : t('willDoLater')}
 										onPress={() => void handleSkip()}
 										style={[styles.skip]}
-										txtColor='#FAFAFA'
+										txtColor={mainColors.WHITE}
 									/>
 								}
 								{(((shouldRemove || shouldEdit) && auth.length > 0) || (shouldEdit && !auth.length)) &&
@@ -300,7 +300,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 											navigation.navigate('Security settings')
 										}}
 										style={[styles.skip]}
-										txtColor='#FAFAFA'
+										txtColor={mainColors.WHITE}
 									/>
 								}
 							</View>
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		marginBottom: 20,
 		fontWeight: '500',
-		color: '#FAFAFA'
+		color: mainColors.WHITE
 	},
 	bottomSection: {
 		justifyContent: 'center',
@@ -350,6 +350,6 @@ const styles = StyleSheet.create({
 	},
 	lockedTime: {
 		fontSize: 24,
-		color: '#FAFAFA'
+		color: mainColors.WHITE
 	}
 })

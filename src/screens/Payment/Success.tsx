@@ -5,7 +5,7 @@ import { isIOS } from '@consts'
 import type { TSuccessPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { highlight as hi } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl, vib } from '@util'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
 		fontSize: 30,
 		fontWeight: '800',
 		textAlign: 'center',
-		color: '#FAFAFA',
+		color: mainColors.WHITE,
 	},
 	meltWrap: {
 		width: '100%',
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	meltTxt: {
-		color: '#FFF',
+		color: mainColors.WHITE,
 		fontWeight: '500'
 	},
 	mints: {
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		textAlign: 'center',
 		fontWeight: '500',
-		color: '#FAFAFA'
+		color: mainColors.WHITE
 	},
 	btnWrap: {
 		width: '100%',

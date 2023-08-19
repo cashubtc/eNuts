@@ -4,7 +4,7 @@ import type { TContact } from '@model/nostr'
 import { truncateAbout, truncateNpub } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { highlight as hi } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { nip19 } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 	},
 	sendTxt: {
-		color: '#FAFAFA',
+		color: mainColors.WHITE,
 		fontWeight: '500'
 	}
 })

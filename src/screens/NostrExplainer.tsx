@@ -7,7 +7,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { highlight as hi } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
@@ -44,20 +44,14 @@ const styles = StyleSheet.create({
 		marginTop: 100,
 		marginBottom: 20
 	},
-	/* step: {
-		color: '#FAFAFA',
-		fontWeight: '500',
-		fontSize: 20,
-		marginBottom: 50
-	}, */
 	header: {
-		color: '#FAFAFA',
+		color: mainColors.WHITE,
 		fontWeight: '500',
 		fontSize: 32,
 		marginBottom: 20
 	},
 	p: {
-		color: '#FAFAFA',
+		color: mainColors.WHITE,
 		fontWeight: '500',
 		fontSize: 20,
 		textAlign: 'center'

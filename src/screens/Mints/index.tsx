@@ -285,7 +285,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			{/* add new mint button */}
 			<View style={[styles.newMint, { marginBottom: insets.bottom }]}>
 				<IconBtn
-					icon={<PlusIcon width={28} height={28} color='#FAFAFA' />}
+					icon={<PlusIcon width={28} height={28} color={mainColors.WHITE} />}
 					onPress={() => {
 						closePrompt()
 						setNewMintModal(true)

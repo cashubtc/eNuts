@@ -136,7 +136,7 @@ export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
 					onPress={() => void handleRedeem()}
 					style={[styles.redeem, { backgroundColor: hi[highlight] }]}
 				>
-					<Txt txt='Redeem' styles={[{ color: '#FAFAFA' }]} />
+					<Txt txt='Redeem' styles={[{ color: mainColors.WHITE }]} />
 				</TouchableOpacity>
 			}
 			{/* Question modal for mint trusting */}

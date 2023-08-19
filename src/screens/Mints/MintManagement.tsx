@@ -267,8 +267,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt={t('checkProofs', { ns: NS.mints })}
 						hasSeparator
 						onPress={() => setCheckProofsOpen(true)}
-						icon={<ValidateIcon width={22} height={22} color='#FF9900' />}
-						rowColor='#FF9900'
+						icon={<ValidateIcon width={22} height={22} color={mainColors.WARN} />}
+						rowColor={mainColors.WARN}
 						noChevron
 					/>
 					{/* Delete mint */}

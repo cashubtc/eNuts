@@ -9,7 +9,7 @@ import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { vib } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -76,7 +76,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 			{/* Action buttons */}
 			<ActionButtons
 				topBtnTxt={t('share')}
-				topIcon={<ShareIcon width={20} height={20} color='#FAFAFA' />}
+				topIcon={<ShareIcon width={20} height={20} color={mainColors.WHITE} />}
 				topBtnAction={() => void handleShare()}
 				bottomBtnTxt={copied ? t('copied') + '!' : t('copyToken')}
 				bottomIcon={<CopyIcon color={hi[highlight]} />}
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 	},
 	qrCodeWrap: {
 		borderWidth: 5,
-		borderColor: '#FFF'
+		borderColor: mainColors.WHITE
 	},
 	errorMsg: {
 		marginVertical: 25,
