@@ -14,7 +14,7 @@ import { NS } from '@src/i18n'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
-import { hasTrustedMint, isCashuToken, vib } from '@util'
+import { hasTrustedMint, isCashuToken } from '@util'
 import { checkFees, claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
@@ -237,10 +237,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={styles.actionRight}
-						onPress={() => {
-							vib(100)
-							navigation.goBack()
-						}}
+						onPress={() => navigation.goBack()}
 					>
 						<CloseIcon width={30} height={30} color='#FFF' />
 					</TouchableOpacity>
