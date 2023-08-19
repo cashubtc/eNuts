@@ -86,15 +86,20 @@ The NUT documents (**N**otation, **U**sage and **T**erminology) each specify par
 2. Navigate inside the repository and run `npm i`
 3. Start the Expo dev server by running `npm run start`
 4. Download the [Expo Go](https://expo.dev/client) app.
-5. Scan the QR code provided by your terminal using the app (iOS users will have to use the Camera app).
-6. A browser tab will be opened. Press the "Expo Go" button in the bottom of the page.
-7. eNuts will be bundled up and will run on your device.
+    - **Android users**: Scan the QR code provided by your terminal using the Expo-go app
+    - **iOS users**: Press on the local dev server shown in the Expo-go app or scan the QR code using your camera app.
+5. A browser tab will be opened. Press the "Expo Go" button in the bottom of the page.
+6. eNuts will be bundled up and will run on your device.
+
+**Tip**
+
+- Perform a factory reset to start as a "new user" anytime under `Settings/Factory reset` (Dev mode only)
 
 **Troubleshooting**
 
 - If you see this build error: `[GraphQL] Entity not authorized` in you terminal, you can simply remove the following line from the `config/app.config.ts` file:
 
-```javascript
+```json
 // Unauthorized error related to the project ID used in the expo organization for eNuts
 // If you are not a member of the organization, you will encounter the build error.
 {
