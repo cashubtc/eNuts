@@ -176,6 +176,8 @@
 		"version": "Version",
 		"willDoLater": "Je ferai plus tard",
 		"yes": "Oui",
+		"invalidPubKey": "Clé publique invalide!",
+		"whatsNostr": "C'est quoi NOSTR?",
 		"walletLocked": "Wallet verrouillé",
 		"explainer1": "eNuts est une wallet Lightning sous garde, permettant des transactions privées et instantanées en utilisant le protocole Cashu. Vos fonds sont détenus par des mints avec lesquels vous interagissez, et l'Ecash est stocké localement sur votre appareil.",
 		"explainer2": "Cashu est un nouveau protocole Ecash pour les applications Bitcoin sous garde, où les mints sont des nœuds Lightning facilitant les transactions Bitcoin pour vous offrir de l'Ecash. Soyez rassuré, les mints reste ignorant de vos paiements Ecash.",

@@ -176,6 +176,8 @@
 		"version": "Version",
 		"willDoLater": "Mache ich später",
 		"yes": "Ja",
+		"invalidPubKey": "Invalider öffentlicher Schlüssel!",
+		"whatsNostr": "Was ist NOSTR?",
 		"walletLocked": "Wallet gesperrt",
 		"explainer1": "eNuts ist eine treuhänderische Lightning-Wallet, die private und sofortige Transaktionen mit dem Cashu-Protokoll ermöglicht. Ihre Gelder werden von Mints verwaltet, mit denen Sie interagieren, und Ecash wird lokal auf Ihrem Gerät gespeichert.",
 		"explainer2": "Cashu ist ein neues Ecash-Protokoll für treuhänderische Bitcoin-Apps, bei denen Mints nur Lightning-Knoten sind, die Bitcoin-Transaktionen durchführen und Ihnen Ecash zur Verfügung stellen. Seien Sie versichert, die Mints bleiben unwissend über Ihre Ecash-Zahlungen.",
