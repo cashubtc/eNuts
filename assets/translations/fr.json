@@ -163,7 +163,7 @@
 		"share": "Partager",
 		"smthWrong": "Quelque chose s'est mal passé",
 		"startHint": "Vous devriez ajouter un mint et le recharger via Lightning pour pouvoir envoyer de l'Ecash.",
-		"submitPaymentReq": "Envoyer demande de paiement",
+		"submitPaymentReq": "Demande de paiement",
 		"to": "à",
 		"today": "Aujourd'hui",
 		"tokenInfoErr": "Erreur lors de l'obtention des informations sur le token",
@@ -199,7 +199,8 @@
 		"checkingDms": "Vérification de vos DM pour l'Ecash...",
 		"swapNow": "Échanger maintenant",
 		"emptyMint": "Mint ne dispose pas de fonds.",
-		"zapSoon": "Les zaps seront bientôt ajoutés..."
+		"zapSoon": "Les zaps seront bientôt ajoutés...",
+		"enutsPub": "eNuts clé public: "
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",

@@ -106,7 +106,8 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 
 					<View style={styles.npubWrap}>
 						<Txt
-							txt={`${isUser ? 'Your eNuts pubKey: ' : ''}${truncateNpub(isUser ? pubKey.encoded : npub)}`}
+							// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+							txt={`${isUser ? t('enutsPub', { ns: NS.common }) : ''}${truncateNpub(isUser ? pubKey.encoded : npub)}`}
 							styles={[styles.npub, { color: color.TEXT_SECONDARY }]}
 						/>
 						<Copy txt={isUser ? pubKey.encoded : npub} />
