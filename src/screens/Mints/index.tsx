@@ -19,7 +19,7 @@ import { NS } from '@src/i18n'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl, getStrFromClipboard, isErr, isUrl } from '@util'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -42,6 +42,12 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	const [newMintModal, setNewMintModal] = useState(false)
 	// modal visibility for top up a newly added mint
 	const [topUpModal, setTopUpModal] = useState(false)
+	const openTopUpModal = useCallback(() => {
+		const to = setTimeout(() => {
+			setTopUpModal(true)
+			clearTimeout(to)
+		}, 250)
+	}, [])
 	// the text input for adding a new mint
 	const [input, setInput] = useState('')
 	// visibility state for trusting a new mint that us not in the user mint list
@@ -73,7 +79,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			return
 		}
 		setNewMintModal(false)
-		setTopUpModal(true)
+		openTopUpModal()
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
 	}
@@ -106,7 +112,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			return
 		}
 		setTrustModalOpen(false)
-		setTopUpModal(true)
+		openTopUpModal()
 		// update mints list state
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
