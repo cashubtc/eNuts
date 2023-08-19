@@ -10,7 +10,7 @@ interface IInputAndLabelProps {
 	placeholder: string
 	setInput: (txt: string) => void
 	value: string
-	handleInput: () => void
+	handleInput?: () => void
 	handleLabel: () => void
 	isEmptyInput?: boolean
 }
