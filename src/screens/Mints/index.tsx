@@ -1,9 +1,9 @@
 import ActionButtons from '@comps/ActionButtons'
 import Button, { IconBtn } from '@comps/Button'
 import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
+import InputAndLabel from '@comps/InputAndLabel'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
-import TxtInput from '@comps/TxtInput'
 import { _testmintUrl, defaultMints, isIOS } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
@@ -18,7 +18,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { formatInt, formatMintUrl, isErr, isUrl } from '@util'
+import { formatInt, formatMintUrl, getStrFromClipboard, isErr, isUrl } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -52,19 +52,21 @@ export default function Mints({ navigation }: TMintsPageProps) {
 
 	// adds a mint via input
 	const handleMintInput = async () => {
-		if (!isUrl(input)) {
+		// Allow user to submit URL without "https://" and add it ourself if not available
+		const submitted = input.startsWith('https://') ? input : `https://${input}`
+		if (!isUrl(submitted)) {
 			openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
 			return
 		}
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
-			if (mints.some(m => m.mintUrl === input)) {
+			if (mints.some(m => m.mintUrl === submitted)) {
 				openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
 				return
 			}
 			// add mint url to db
-			await addMint(input)
+			await addMint(submitted)
 		} catch (e) {
 			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
 			return
@@ -112,6 +114,16 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	const handleMintsState = async () => {
 		const mintsBal = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mintsBal))
+	}
+
+	const handleInputLabelPress = async () => {
+		if (input.length) {
+			setInput('')
+			return
+		}
+		const clipboard = await getStrFromClipboard()
+		setInput(clipboard ?? '')
+		await handleMintInput()
 	}
 
 	// Show user mints with balances and default mint icon
@@ -206,11 +218,14 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				<Text style={globals(color).modalHeader}>
 					{t('addNewMint', { ns: NS.mints })}
 				</Text>
-				<TxtInput
+				<InputAndLabel
 					keyboardType='url'
 					placeholder='Mint URL'
-					onChangeText={setInput}
-					onSubmitEditing={() => { void handleMintInput() }}
+					setInput={text => setInput(text)}
+					handleInput={() => void handleMintInput()}
+					value={input}
+					handleLabel={() => void handleInputLabelPress()}
+					isEmptyInput={input.length < 1}
 				/>
 				<Button
 					txt={t('addMintBtn', { ns: NS.mints })}

@@ -1,7 +1,7 @@
 import Button, { TxtButton } from '@comps/Button'
+import InputAndLabel from '@comps/InputAndLabel'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
-import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
 import { l } from '@log'
@@ -177,7 +177,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// Paste/Clear input for LNURL/LN invoice
 	const handleInputLabelPress = async () => {
 		// clear input
-		if (pubKey.encoded.length > 0) {
+		if (pubKey.encoded.length) {
 			setPubKey({ encoded: '', hex: '' })
 			return
 		}
@@ -355,20 +355,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				<Text style={globals(color).modalHeader}>
 					{t('yourProfile', { ns: NS.addrBook })}
 				</Text>
-				<View style={{ position: 'relative', width: '100%' }}>
-					<TxtInput
-						placeholder='NPUB/HEX'
-						onChangeText={text => setPubKey(prev => ({ ...prev, encoded: text }))}
-						value={pubKey.encoded}
-						onSubmitEditing={() => void handleNewNpub()}
-					/>
-					{/* Paste / Clear Input */}
-					<TxtButton
-						txt={!pubKey.encoded.length ? t('paste') : t('clear')}
-						onPress={() => void handleInputLabelPress()}
-						style={[styles.pasteInputTxtWrap, { backgroundColor: color.INPUT_BG }]}
-					/>
-				</View>
+				<InputAndLabel
+					placeholder='NPUB/HEX'
+					setInput={text => setPubKey(prev => ({ ...prev, encoded: text }))}
+					value={pubKey.encoded}
+					handleInput={() => void handleNewNpub()}
+					handleLabel={() => void handleInputLabelPress()}
+					isEmptyInput={pubKey.encoded.length < 1}
+				/>
 				<Button
 					txt={t('save')}
 					onPress={() => void handleNewNpub()}
@@ -415,12 +409,6 @@ const styles = StyleSheet.create({
 	cancel: {
 		marginTop: 25,
 		marginBottom: 10
-	},
-	pasteInputTxtWrap: {
-		position: 'absolute',
-		right: 10,
-		top: 10,
-		padding: 10
 	},
 	contactsWrap: {
 		flex: 1,
