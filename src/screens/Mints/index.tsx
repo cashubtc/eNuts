@@ -51,9 +51,10 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	const testMintRowHeight = isTrustedMint(_testmintUrl) ? 0 : flashlistUntrustedHeight
 
 	// adds a mint via input
-	const handleMintInput = async () => {
+	const handleMintInput = async (clipboard?: string) => {
 		// Allow user to submit URL without "https://" and add it ourself if not available
-		const submitted = input.startsWith('https://') ? input : `https://${input}`
+		const submitting = clipboard || input
+		const submitted = submitting.startsWith('https://') ? submitting : `https://${submitting}`
 		if (!isUrl(submitted)) {
 			openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
 			return
@@ -123,7 +124,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 		}
 		const clipboard = await getStrFromClipboard()
 		setInput(clipboard ?? '')
-		await handleMintInput()
+		await handleMintInput(clipboard || '')
 	}
 
 	// Show user mints with balances and default mint icon

@@ -1,6 +1,6 @@
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
-import { SafeAreaView, type StyleProp, StyleSheet, Text, type TextStyle, TouchableHighlight, TouchableOpacity } from 'react-native'
+import { SafeAreaView, type StyleProp, StyleSheet, Text, type TextStyle, TouchableOpacity } from 'react-native'
 
 import Loading from './Loading'
 import Txt from './Txt'
@@ -61,10 +61,9 @@ export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIc
 	const { color, highlight } = useThemeContext()
 	return (
 		<SafeAreaView>
-			<TouchableHighlight
+			<TouchableOpacity
 				accessibilityRole='button'
 				activeOpacity={.5}
-				underlayColor={hi[highlight]}
 				style={[
 					styles.iconBtn,
 					{
@@ -80,7 +79,7 @@ export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIc
 				testID={testId}
 			>
 				{icon}
-			</TouchableHighlight>
+			</TouchableOpacity>
 		</SafeAreaView>
 	)
 }
