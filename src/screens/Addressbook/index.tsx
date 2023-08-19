@@ -40,6 +40,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
 	const {
+		nutPub,
 		setNutPub,
 		pubKey,
 		setPubKey,
@@ -349,7 +350,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			<MyModal
 				type='bottom'
 				animation='slide'
-				visible={newNpubModal}
+				visible={!nutPub || newNpubModal}
 				close={() => setNewNpubModal(false)}
 			>
 				<Text style={globals(color).modalHeader}>

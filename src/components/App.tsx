@@ -33,7 +33,6 @@ import * as Sentry from 'sentry-expo'
 import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
 import Toaster from './Toaster'
-// import { dropAllData } from '@src/storage/dev'
 
 interface ILockData {
 	mismatch: boolean
@@ -121,7 +120,6 @@ function _App() {
 			}
 			const mintBalsTotal = (balances).reduce((acc, cur) => acc + cur.amount, 0)
 			if (mintBalsTotal !== balance) { await addAllMintIds() }
-			// await dropAllData() // DEV-ONLY DEBUG
 		} catch (e) {
 			l(isErr(e) ? e.message : 'Error while initiating the user app configuration.')
 		} finally {

@@ -7,11 +7,12 @@ import BottomNav from '@nav/BottomNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { dropAllData } from '@src/storage/dev'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 import { version } from '../../../package.json'
 import SettingsMenuItem from './MenuItem'
@@ -20,6 +21,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const [confirm, setConfirm] = useState(false)
+	const [confirmReset, setConfirmReset] = useState(false)
 	const { openPromptAutoClose } = usePromptContext()
 	const handleDeleteHistory = async () => {
 		const success = await historyStore.clear()
@@ -28,6 +30,11 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 			success
 		})
 		setConfirm(false)
+	}
+	const handleReset = async () => {
+		await dropAllData()
+		setConfirmReset(false)
+		openPromptAutoClose({success: true, msg: t('plsRestart')})
 	}
 	return (
 		<Screen
@@ -80,10 +87,20 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					txtColor={mainColors.ERROR}
 					icon={<TrashbinIcon color={mainColors.ERROR} />}
 					onPress={() => setConfirm(true)}
+					hasSeparator={__DEV__}
 				/>
+				{__DEV__ &&
+					<SettingsMenuItem
+						txt={t('factoryReset')}
+						txtColor={mainColors.ERROR}
+						icon={<Text>💥💥💥</Text>}
+						onPress={() => setConfirmReset(true)}
+					/>
+				}
 			</View>
 			<Txt txt={`eNuts v${version}`} styles={[styles.version]} />
 			<BottomNav navigation={navigation} route={route} />
+			{/* confirm history deletion */}
 			<QuestionModal
 				header={t('delHistoryQ')}
 				txt={t('delHistoryTxt')}
@@ -92,6 +109,16 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 				confirmFn={() => void handleDeleteHistory()}
 				cancelTxt={t('no')}
 				cancelFn={() => setConfirm(false)}
+			/>
+			{/* confirm factory reset */}
+			<QuestionModal
+				header={t('resetQ')}
+				txt={t('delHistoryTxt')}
+				visible={confirmReset}
+				confirmTxt={t('yes')}
+				confirmFn={() => void handleReset()}
+				cancelTxt={t('no')}
+				cancelFn={() => setConfirmReset(false)}
 			/>
 		</Screen>
 	)
