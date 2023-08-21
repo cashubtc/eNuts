@@ -1,4 +1,4 @@
-import Button, { TxtButton } from '@comps/Button'
+import { TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import InputAndLabel from '@comps/InputAndLabel'
@@ -393,10 +393,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					handleLabel={() => void handleInputLabelPress()}
 					isEmptyInput={pubKey.encoded.length < 1}
 				/>
-				<Button
-					outlined
+				<TxtButton
 					txt={t('whatsNostr')}
 					onPress={() => void openUrl('https://nostr-resources.com/')}
+					txtColor={color.TEXT}
+					style={[{ paddingTop: 25 }]}
 				/>
 				<TxtButton
 					txt={t('cancel')}
