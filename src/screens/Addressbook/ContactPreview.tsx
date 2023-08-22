@@ -48,6 +48,7 @@ export default function ContactPreview({ contact, handleContactPress, handleSend
 							name={contact[1].name}
 							npub={truncateNpub(nip19.npubEncode(contact[0]))}
 							fontSize={16}
+							shouldTruncate
 						/>
 						{contact[1].about?.length > 0 &&
 							<Txt

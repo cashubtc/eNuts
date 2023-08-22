@@ -10,10 +10,11 @@ interface IUsernameProps {
 	name?: string
 	npub: HexKey
 	fontSize?: number
+	shouldTruncate?: boolean
 }
 
-export default function Username({ displayName, display_name, username, name, npub, fontSize }: IUsernameProps) {
-	const maxLength = 20
+export default function Username({ displayName, display_name, username, name, npub, fontSize, shouldTruncate }: IUsernameProps) {
+	const maxLength = shouldTruncate ? 20 : 100
 	if (displayName?.length) {
 		return <Txt
 			txt={truncateNostrProfileInfo(displayName, maxLength)}

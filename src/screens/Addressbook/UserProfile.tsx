@@ -40,6 +40,7 @@ export default function UserProfile({ handlePress }: IUserProfileProps) {
 						username={userProfile.username}
 						name={userProfile.name}
 						npub={pubKey.encoded}
+						shouldTruncate
 					/>
 					{userProfile.about &&
 						<Txt txt={truncateNostrProfileInfo(userProfile.about, 25)} styles={[{ color: color.TEXT_SECONDARY }]} />
