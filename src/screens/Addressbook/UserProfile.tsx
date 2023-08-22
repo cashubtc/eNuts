@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IProfileContent } from '@model/nostr'
-import { truncateAbout } from '@nostr/util'
+import { truncateNostrProfileInfo } from '@nostr/util'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
@@ -42,7 +42,7 @@ export default function UserProfile({ handlePress }: IUserProfileProps) {
 						npub={pubKey.encoded}
 					/>
 					{userProfile.about &&
-						<Txt txt={truncateAbout(userProfile.about || '')} styles={[{ color: color.TEXT_SECONDARY }]} />
+						<Txt txt={truncateNostrProfileInfo(userProfile.about, 25)} styles={[{ color: color.TEXT_SECONDARY }]} />
 					}
 				</View>
 			</View>

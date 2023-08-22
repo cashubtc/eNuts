@@ -2,7 +2,7 @@ import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { RootStackParamList } from '@model/nav'
 import type { TContact } from '@model/nostr'
-import { truncateAbout, truncateNpub } from '@nostr/util'
+import { truncateNostrProfileInfo, truncateNpub } from '@nostr/util'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import Username from '@screens/Addressbook/Username'
@@ -45,7 +45,7 @@ export default function Sender({ contact, navigation }: ISenderProps) {
 						/>
 						{contact[1].about?.length > 0 &&
 							<Txt
-								txt={truncateAbout(contact[1].about)}
+								txt={truncateNostrProfileInfo(contact[1].about, 25)}
 								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}
 							/>
 						}

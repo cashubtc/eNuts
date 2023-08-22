@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { TContact } from '@model/nostr'
-import { truncateAbout, truncateNpub } from '@nostr/util'
+import { truncateNostrProfileInfo, truncateNpub } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { highlight as hi, mainColors } from '@styles'
@@ -51,7 +51,7 @@ export default function ContactPreview({ contact, handleContactPress, handleSend
 						/>
 						{contact[1].about?.length > 0 &&
 							<Txt
-								txt={truncateAbout(contact[1].about)}
+								txt={truncateNostrProfileInfo(contact[1].about, 25)}
 								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}
 							/>
 						}

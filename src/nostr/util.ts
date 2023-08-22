@@ -51,15 +51,30 @@ export function truncateNpub(npub: string) {
 }
 
 /**
- * Truncates the nostr user about section
- * // TODO avoid truncating emojis
+ * Truncates a string while preserving emojis.
+ *
+ * @param about - The input string to be truncated.
+ * @param maxLength - The maximum length of the truncated string.
+ * @returns The truncated string.
  */
-export function truncateAbout(about: string) {
-	if (about.length < 25) { return about }
-	return `${about.slice(0, 25)}...`
+export function truncateNostrProfileInfo(about: string, maxLength: number) {
+	if (about.length <= maxLength) { return about }
+	const truncated = [...about].reduce((result, char) => {
+		if (result.length < maxLength) {
+			result += char
+		}
+		return result
+	}, '')
+	return truncated + (about.length > maxLength ? '...' : '')
 }
 
-export function getNostrUsername( contact?: IProfileContent) {
+/**
+ * Retrieves the username from a profile contact object, prioritizing different properties.
+ *
+ * @param contact - The profile contact object to extract the username from.
+ * @returns The extracted username. Returns an empty string if no username is found.
+ */
+export function getNostrUsername(contact?: IProfileContent) {
 	return contact?.displayName || contact?.display_name || contact?.username || contact?.name || ''
 }
 
