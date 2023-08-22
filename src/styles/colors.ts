@@ -91,6 +91,9 @@ const pinpadBg = {
 	Zap: '#FFE16E',
 }
 
+/**
+ * Returns the theme-highlight-related PIN button background color
+ */
 export function getPinpadBg(highlight: keyof typeof pinpadBg) {
 	return pinpadBg[highlight]
 }

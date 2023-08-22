@@ -17,6 +17,12 @@ export function nip05toURL(identifier: string) {
 	return `https://${domain}/.well-known/nostr.json?name=${name}`
 }
 
+/**
+ * Converts a NIP-05 identifier to a website URL.
+ *
+ * @param identifier - The NIP-05 identifier to be converted.
+ * @returns The website URL formed from the identifier's domain.
+ */
 export function nip05toWebsite(identifier: string) {
 	const domain = identifier.split('@')[1]
 	return `https://${domain}`
@@ -77,16 +83,3 @@ export function truncateNostrProfileInfo(about: string, maxLength: number) {
 export function getNostrUsername(contact?: IProfileContent) {
 	return contact?.displayName || contact?.display_name || contact?.username || contact?.name || ''
 }
-
-/**
- * returns true if note is not a reply
- */
-// export function isNotReplyNote(tags: string[][]) {
-// 	for (let i = 0; i < tags.length; i++) {
-// 		const tag = tags[i]
-// 		if (tag[0] === 'e') {
-// 			return false
-// 		}
-// 	}
-// 	return true
-// }
