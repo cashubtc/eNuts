@@ -429,6 +429,13 @@ export function NostrIcon() {
 		/>
 	)
 }
+export function LeftArrow({ width, height, color }: TIconProps) {
+	return (
+		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+			<Path d="M21.0001 11H6.41406L11.7071 5.70697L10.2931 4.29297L2.58606 12L10.2931 19.707L11.7071 18.293L6.41406 13H21.0001V11Z" fill={color} />
+		</Svg>
+	)
+}
 
 const styles = StyleSheet.create({
 	nostrIcon: {

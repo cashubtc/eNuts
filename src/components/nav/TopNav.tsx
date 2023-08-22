@@ -1,7 +1,7 @@
-import { ScanQRIcon } from '@comps/Icons'
+import { LeftArrow, ScanQRIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { globals } from '@styles'
+import { globals, highlight as hi } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -18,24 +18,30 @@ export default function TopNav({ screenName, withBackBtn, cancel, handlePress, t
 	const { color, highlight } = useThemeContext()
 	return (
 		<View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>
-			{screenName ?
-				<Text style={globals(color).navTxt}>
-					{screenName}
-				</Text>
-				:
-				<View />
-			}
-			<TouchableOpacity style={styles.topIconR} onPress={handlePress}>
-				{(withBackBtn || cancel || txt?.length) ?
+			{/* Placeholder */}
+			{!screenName && !withBackBtn && <View />}
+			<View style={styles.wrap}>
+				{withBackBtn && !cancel && !txt?.length &&
+					<TouchableOpacity
+						onPress={handlePress}
+						style={styles.backiconWrap}
+					>
+						<LeftArrow color={hi[highlight]} />
+					</TouchableOpacity>
+				}
+				{screenName &&
+					<Text style={globals(color).navTxt}>
+						{screenName}
+					</Text>
+				}
+			</View>
+			<TouchableOpacity style={styles.right} onPress={handlePress}>
+				{(cancel || txt?.length) ?
 					<Text style={globals(color, highlight).pressTxt}>
-						{txt ?
-							txt
-							:
-							t(withBackBtn ? 'back' : 'cancel')
-						}
+						{txt || t('cancel')}
 					</Text>
 					:
-					<ScanQRIcon color={color.TEXT} />
+					!withBackBtn && <ScanQRIcon color={color.TEXT} />
 				}
 			</TouchableOpacity>
 		</View>
@@ -56,7 +62,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		paddingBottom: 10,
 	},
-	topIconR: {
+	wrap: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	backiconWrap: {
+		paddingRight: 20,
+	},
+	right: {
 		paddingLeft: 20,
 	},
 })
