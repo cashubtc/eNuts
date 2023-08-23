@@ -67,6 +67,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	backiconWrap: {
+		marginLeft: -20,
+		paddingLeft: 20,
 		paddingRight: 20,
 	},
 	right: {
