@@ -69,7 +69,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			return
 		}
 		// choose a target for a lightning payment
-		if (isMelt) {
+		if (isMelt || isSendEcash) {
 			// get remaining mints for a possible multimint swap
 			const remainingMints = userMints
 				.filter(m => m.mintUrl !== mint.mintUrl && m.mintUrl !== _testmintUrl)
@@ -77,7 +77,9 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			navigation.navigate('selectTarget', {
 				mint,
 				balance: mint.amount,
-				remainingMints
+				remainingMints,
+				isSendEcash,
+				isMelt
 			})
 			return
 		}

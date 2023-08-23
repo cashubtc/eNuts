@@ -27,7 +27,13 @@ export default function ContactPreview({ contact, handleContactPress, handleSend
 
 	return (
 		<TouchableOpacity
-			onPress={handleSend}
+			onPress={() => {
+				if (isPayment) {
+					handleContactPress()
+					return
+				}
+				handleSend()
+			}}
 			disabled={!isPayment}
 			style={[
 				styles.container, { paddingTop: isFirst ? 10 : 0, paddingBottom: isLast ? 10 : 0 }

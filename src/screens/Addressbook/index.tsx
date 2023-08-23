@@ -267,7 +267,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		})
 	}
 
-	// start sending ecash via nostr
+	// start sending ecash via nostr or melting to a LNURL from a nostr contact
 	const handleSend = async ({ npub, name }: { npub: string, name?: string }) => {
 		const mintsWithBal = await getMintsBalances()
 		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))

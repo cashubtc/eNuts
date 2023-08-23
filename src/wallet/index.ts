@@ -30,9 +30,9 @@ function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string) {
 async function getWallet(mintUrl: string) {
 	if (wallets[mintUrl]) { return wallets[mintUrl] }
 	const mint = new CashuMint(mintUrl)
-	l({mint})
+	l({ mint })
 	const keys = await mint.getKeys()
-	l({keys})
+	l({ keys })
 	const wallet = new CashuWallet(mint, keys)
 	_setKeys(mintUrl, keys)
 	wallets[mintUrl] = wallet
@@ -166,6 +166,9 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 		if (result.isPaid) {
 			await deleteProofs(send)
 		}
+		l({ fee })
+		l({ sumProofsValue: sumProofsValue(result.change) })
+		l({ resultChange: result.change })
 		return {
 			result,
 			error: undefined,
