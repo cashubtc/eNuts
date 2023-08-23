@@ -2,10 +2,8 @@ import { ChevronRightIcon, MintBoardIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
-import { isIOS } from '@consts'
 import type { IMintUrl } from '@model'
 import type { TSelectMintToSwapToPageProps } from '@model/nav'
-import { FlashList } from '@shopify/flash-list'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getDefaultMint } from '@store/mintStore'
@@ -13,9 +11,7 @@ import { globals, highlight as hi } from '@styles'
 import { formatMintUrl } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
-
-const flashlistItemHeight = isIOS ? 60 : 65
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function SelectMintToSwapToScreen({ navigation, route }: TSelectMintToSwapToPageProps) {
 	const { mint, balance, remainingMints } = route.params
@@ -40,34 +36,34 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 		>
 			<Txt txt='Select a mint as the payment receiver.' styles={[styles.hint]} />
 			{remainingMints && remainingMints.length > 0 &&
-				<View style={[
-					globals(color).wrapContainer,
-					{ height: remainingMints.length * flashlistItemHeight }
-				]}>
-					<FlashList
-						data={remainingMints}
-						estimatedItemSize={300}
-						renderItem={data => (
-							<TouchableOpacity
-								key={data.item.mintUrl}
-								style={styles.mintUrlWrap}
-								onPress={() => void handlePressMint(data.item)}
+				<ScrollView>
+					<View style={globals(color).wrapContainer}>
+						{remainingMints.reverse().map((m, i) => (
+							<View
+								key={m.mintUrl}
 							>
-								<View style={styles.mintNameWrap}>
-									{defaultMint === data.item.mintUrl &&
-										<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-									}
-									<Txt
-										txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
-										styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0 }]}
-									/>
-								</View>
-								<ChevronRightIcon color={color.TEXT} />
-							</TouchableOpacity>
-						)}
-						ItemSeparatorComponent={() => <Separator />}
-					/>
-				</View>
+								<TouchableOpacity
+									key={m.mintUrl}
+									style={styles.mintUrlWrap}
+									onPress={() => void handlePressMint(m)}
+								>
+									<View style={styles.mintNameWrap}>
+										{defaultMint === m.mintUrl &&
+											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+										}
+										<Txt
+											txt={m.customName || formatMintUrl(m.mintUrl)}
+											styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0 }]}
+										/>
+									</View>
+									<ChevronRightIcon color={color.TEXT} />
+								</TouchableOpacity>
+								{i < remainingMints.length - 1 && <Separator />}
+							</View>
+						))}
+
+					</View>
+				</ScrollView>
 			}
 		</Screen>
 	)
