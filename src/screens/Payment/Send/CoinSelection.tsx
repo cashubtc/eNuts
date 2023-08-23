@@ -46,8 +46,8 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	}
 	const getBtnTxt = () => {
 		if (isMelt) { return 'submitPaymentReq' }
-		if (isSwap) { return 'sendEcash' }
-		if (nostr) { return 'swapNow' }
+		if (isSwap) { return 'swapNow' }
+		if (nostr) { return 'sendEcash' }
 		return 'createToken'
 	}
 	const getRecipient = () => {
