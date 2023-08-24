@@ -6,7 +6,6 @@ import ContactPage from '@screens/Addressbook/Contact'
 import AuthPage from '@screens/Auth'
 import Dashboard from '@screens/Dashboard'
 import { Disclaimer } from '@screens/Disclaimer'
-// import ExplainerScreen from '@screens/Explainer'
 import HistoryPage from '@screens/History'
 import DetailsPage from '@screens/History/Details'
 import Mints from '@screens/Mints'
@@ -14,7 +13,7 @@ import MintInfoPage from '@screens/Mints/Info'
 import MintBackup from '@screens/Mints/MintBackup'
 import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
-import NostrExplainerScreen from '@screens/NostrExplainer'
+import NostrOnboardingScreen from '@screens/NostrOnboarding'
 import OnboardingScreen from '@screens/Onboarding'
 import ProcessingScreen from '@screens/Payment/Processing'
 import ProcessingErrorScreen from '@screens/Payment/ProcessingError'
@@ -89,7 +88,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 						animationDuration: 250,
 					}}
 				/>
-				<Stack.Screen name='nostr explainer' component={NostrExplainerScreen} />
+				<Stack.Screen name='nostr onboarding' component={NostrOnboardingScreen} />
 				<Stack.Screen
 					name='dashboard'
 					component={Dashboard}
