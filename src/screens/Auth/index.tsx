@@ -190,7 +190,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			return
 		}
 		// show explainer
-		navigation.navigate('explainer')
+		navigation.navigate('onboarding')
 	}
 	// conditional rendering dots of pin input
 	const shouldShowPinSection = () => (
