@@ -13,7 +13,7 @@ interface INostrProps {
  */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RootStackParamList = {
-	explainer: undefined
+	onboarding: undefined
 	'nostr explainer': undefined
 	dashboard: undefined
 	disclaimer: undefined
@@ -169,7 +169,7 @@ export type RootStackParamList = {
 }
 
 export type TRouteString = 'dashboard' | 'mints' | 'Address book' | 'Settings'
-export type TExplainerPageProps = NativeStackScreenProps<RootStackParamList, 'explainer', 'MyStack'>
+export type TOnboardingPageProps = NativeStackScreenProps<RootStackParamList, 'onboarding', 'MyStack'>
 export type TNostrExplainerPageProps = NativeStackScreenProps<RootStackParamList, 'nostr explainer', 'MyStack'>
 export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectTargetPageProps = NativeStackScreenProps<RootStackParamList, 'selectTarget', 'MyStack'>

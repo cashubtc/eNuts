@@ -7,6 +7,7 @@ const fn: ConfigFunction = (api: ConfigAPI): TransformOptions => {
 		plugins: [
 			'@babel/plugin-syntax-jsx',
 			'react-native-reanimated/plugin',
+			'@babel/plugin-transform-flow-strip-types',
 			['@babel/plugin-proposal-private-methods', { loose: true }],
 			['module-resolver', {
 				alias: {
