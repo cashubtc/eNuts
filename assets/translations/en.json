@@ -181,7 +181,7 @@
 		"walletLocked": "Wallet locked",
 		"explainer1": "eNuts is a custodial Lightning wallet, allowing private and instant transactions using the Cashu protocol. Your funds are held by mints you interact with, and Ecash is stored locally on your device.",
 		"explainer2": "Cashu is a new Ecash protocol for custodial Bitcoin apps, where mints are Lightning nodes performing Bitcoin transactions and offer you Ecash. Rest assured, the mint remains unaware of your Ecash payments.",
-		"explainer3": "Simply add a mint via URL, pay a Lightning invoice to get Ecash. eNuts guides you, lets you receive from anyone instantly and with your permission, automatically adds related mints. Swap funds between mints and send Ecash once you have a balance.",
+		"explainer3": "Simply add a mint via URL and pay a Lightning invoice to get Ecash. eNuts guides you, lets you receive from anyone instantly and with your permission, automatically adds related mints. Swap funds between mints and send Ecash once you have a balance.",
 		"send&receive": "Send & receive",
 		"contactsNostr": "Contacts & NOSTR",
 		"nostrExplainer": "The NOSTR implementation enables seamless synchronization of your contacts without the need for you to enter your private key, as we generate a new one for you. Your data is displayed using the public key, while the new private key encrypts/decrypts your messages.",
