@@ -81,18 +81,36 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='processing' component={ProcessingScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />
-				<Stack.Screen name='onboarding' component={OnboardingScreen} />
+				<Stack.Screen
+					name='onboarding'
+					component={OnboardingScreen}
+					options={{
+						animation: 'simple_push',
+						animationDuration: 250,
+					}}
+				/>
 				<Stack.Screen name='nostr explainer' component={NostrExplainerScreen} />
-				<Stack.Screen name='dashboard' component={Dashboard} />
+				<Stack.Screen
+					name='dashboard'
+					component={Dashboard}
+					options={{
+						animation: 'simple_push',
+						animationDuration: 250,
+					}}
+				/>
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
-				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />
+				<Stack.Screen
+					name='auth'
+					component={AuthPage}
+					initialParams={{ pinHash }}
+				/>
 				{/* sendable token created page */}
 				<Stack.Screen
 					name='encodedToken'
 					component={EncodedTokenPage}
 					options={{
 						animation: 'slide_from_bottom',
-						animationDuration: 100,
+						animationDuration: 250,
 					}}
 				/>
 				<Stack.Screen name='success' component={SuccessPage} />
