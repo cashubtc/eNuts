@@ -103,7 +103,7 @@ export default function Navigator({
 					name='onboarding'
 					component={OnboardingScreen}
 					options={{
-						animation: 'simple_push',
+						animation: 'default',
 						animationDuration,
 					}}
 				/>
@@ -112,7 +112,7 @@ export default function Navigator({
 					name='dashboard'
 					component={Dashboard}
 					options={{
-						animation: 'simple_push',
+						animation: 'default',
 						animationDuration,
 					}}
 				/>
