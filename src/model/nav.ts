@@ -224,7 +224,8 @@ export type TBottomNavProps =
 	IContactPageProps
 export interface INavigatorProps {
 	pinHash: string
-	shouldSetup?: boolean
+	// shouldSetup?: boolean
 	bgAuth?: boolean
+	shouldOnboard?: boolean
 	setBgAuth?: (val: boolean) => void
 }

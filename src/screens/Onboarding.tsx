@@ -10,7 +10,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 	return (
 		<Onboarding
 			showSkip={false}
-			onDone={() => navigation.navigate('dashboard')}
+			onDone={() => navigation.navigate('auth', { pinHash: '' })}
 			pages={[
 				{
 					backgroundColor: H_Colors.Default,

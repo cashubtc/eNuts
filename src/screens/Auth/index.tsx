@@ -36,11 +36,13 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	// PIN confirm
 	const [isConfirm, setIsConfirm] = useState(false)
 	const [success, setSuccess] = useState(false)
+
 	const resetStates = () => {
 		setPinInput([])
 		setConfirmInput([])
 		setIsConfirm(false)
 	}
+
 	// backspace handler
 	const handleDelete = () => {
 		// handle delete the confirmation pin input
@@ -51,6 +53,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		// else: handle delete the initial pin input
 		setPinInput(prev => prev.slice(0, -1))
 	}
+
 	// pin mismatch handler
 	const handlePinMismatch = async () => {
 		// shake pin dots
@@ -91,6 +94,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			clearTimeout(t)
 		}, 1000)
 	}
+
 	// pin submit handler
 	const handleSubmit = async () => {
 		// user has setup a pin previously
@@ -141,12 +145,13 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			resetStates()
 			setSuccess(true)
 			setAuth(hash)
-			await handleExplainer()
+			navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
 			return
 		}
 		// else: bring user in the confirm state after entering his first pin in setup
 		setIsConfirm(true)
 	}
+
 	// handle pad press
 	const handleInput = async (val: number) => {
 		// backspace
@@ -167,6 +172,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		// set pin input
 		setPinInput(prev => [...prev, val])
 	}
+
 	// skip pin setup || go back from confirm state to initial pin setup
 	const handleSkip = async () => {
 		if (isConfirm) {
@@ -178,25 +184,16 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		// skip pin setup
 		await store.set(STORE_KEYS.pinSkipped, '1')
 		// check if initial explainer has been viewed
-		await handleExplainer()
+		navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
 
 	}
-	// handle explainer step
-	const handleExplainer = async () => {
-		// check if initial explainer has been viewed
-		const explainer = await store.get(STORE_KEYS.explainer)
-		if (explainer && explainer === '1') {
-			navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
-			return
-		}
-		// show explainer
-		navigation.navigate('onboarding')
-	}
+
 	// conditional rendering dots of pin input
 	const shouldShowPinSection = () => (
 		(pinInput.length > 0 && !isConfirm) ||
 		(isConfirm && confirmInput.length > 0)
 	)
+
 	// handle locked time
 	useEffect(() => {
 		if (!attempts.locked || isConfirm) { return }
@@ -215,15 +212,18 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		return () => clearInterval(t)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [attempts.locked, attempts.lockedTime])
+
 	// handle pin state
 	useEffect(() => {
 		setAuth(pinHash)
 	}, [pinHash])
+
 	// reset success state after navigating to this screen
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', () => setSuccess(false))
 		return focusHandler
 	}, [navigation])
+
 	return (
 		/* this is the initial pin setup page */
 		<SafeAreaView

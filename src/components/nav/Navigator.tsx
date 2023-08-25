@@ -44,16 +44,35 @@ import { View } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
-export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: INavigatorProps) {
-	// const { auth, bgAuth, setBgAuth } = usePinContext()
+const animationDuration = 250
+
+export default function Navigator({
+	pinHash,
+	bgAuth,
+	shouldOnboard,
+	setBgAuth
+}: INavigatorProps) {
+
 	const { color } = useThemeContext()
+
 	const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
+
+	const getInitialRoute = () => {
+		// a pin has been setup previously
+		if (pinHash || bgAuth) { return 'auth' }
+		// initial onboarding
+		if (shouldOnboard) { return 'onboarding' }
+		// no previous pin setup && onboarding done
+		return 'dashboard'
+	}
+
 	useEffect(() => {
 		if (!bgAuth || !pinHash.length) { return }
 		setBgAuth?.(false)
 		nav.navigate('auth', { pinHash })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bgAuth])
+
 	return (
 		<View style={{
 			position: 'absolute',
@@ -62,11 +81,11 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 			backgroundColor: color.BACKGROUND,
 		}}>
 			<Stack.Navigator
-				initialRouteName={shouldSetup || pinHash || bgAuth ? 'auth' : 'dashboard'}
+				initialRouteName={getInitialRoute()}
 				screenOptions={{
 					headerShown: false,
 					animation: 'fade',
-					animationDuration: 100,
+					animationDuration,
 				}}
 			>
 				<Stack.Screen name='selectMint' component={SelectMintScreen} />
@@ -85,7 +104,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 					component={OnboardingScreen}
 					options={{
 						animation: 'simple_push',
-						animationDuration: 250,
+						animationDuration,
 					}}
 				/>
 				<Stack.Screen name='nostr onboarding' component={NostrOnboardingScreen} />
@@ -94,7 +113,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 					component={Dashboard}
 					options={{
 						animation: 'simple_push',
-						animationDuration: 250,
+						animationDuration,
 					}}
 				/>
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
@@ -109,7 +128,7 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 					component={EncodedTokenPage}
 					options={{
 						animation: 'slide_from_bottom',
-						animationDuration: 250,
+						animationDuration,
 					}}
 				/>
 				<Stack.Screen name='success' component={SuccessPage} />
