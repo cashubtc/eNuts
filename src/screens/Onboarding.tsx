@@ -1,12 +1,13 @@
 import Logo from '@comps/Logo'
 import type { TOnboardingPageProps } from '@model/nav'
+import { NS } from '@src/i18n'
 import { H_Colors } from '@styles/colors'
 import { useTranslation } from 'react-i18next'
 import { Image, StyleSheet } from 'react-native'
 import Onboarding from 'react-native-onboarding-swiper'
 
 export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
-	const { t } = useTranslation()
+	const { t } = useTranslation([NS.common])
 	return (
 		<Onboarding
 			showSkip={false}
@@ -36,6 +37,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 			transitionAnimationDuration={250}
 			titleStyles={styles.title}
 			subTitleStyles={styles.subTitle}
+			nextLabel={t('next')}
 		/>
 	)
 }

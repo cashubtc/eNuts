@@ -207,7 +207,9 @@
 		"zapSoon": "Zaps will be added soon...",
 		"enutsPub": "eNuts public key: ",
 		"seeFullHistory": "See full transaction history",
-		"hideLatestTxs": "Hide your latest transactions"
+		"hideLatestTxs": "Hide your latest transactions",
+		"hiddenTxs": "Latest transactions hidden",
+		"next": "Next"
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",

@@ -207,7 +207,9 @@
 		"zapSoon": "Zaps werden bald hinzugefügt...",
 		"enutsPub": "eNuts: ",
 		"seeFullHistory": "Gesamter Transaktionsverlauf",
-		"hideLatestTxs": "Aktuellste Transaktionen verbergen"
+		"hideLatestTxs": "Aktuellste Transaktionen verbergen",
+		"hiddenTxs": "Transaktionen verborgen",
+		"next": "Weiter"
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

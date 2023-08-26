@@ -108,7 +108,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			}
 			{hidden.txs &&
 				<Txt
-					txt='Latest transactions hidden'
+					txt={t('hiddenTxs')}
 					styles={[globals(color).pressTxt, { color: mainColors.WHITE, marginVertical: 50 }]}
 				/>
 			}

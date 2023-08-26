@@ -204,7 +204,9 @@
 		"emptyMint": "Mint ne dispose pas de fonds.",
 		"zapSoon": "Les zaps seront bientôt ajoutés...",
 		"enutsPub": "eNuts clé public: ",
-		"seeFullHistory": "Gesamter Transaktionsverlauf"
+		"seeFullHistory": "Gesamter Transaktionsverlauf",
+		"hiddenTxs": "Dernières transactions masquées",
+		"next": "Suivant"
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",
