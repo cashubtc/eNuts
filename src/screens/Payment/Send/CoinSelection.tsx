@@ -39,23 +39,27 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	const [isEnabled, setIsEnabled] = useState(false)
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
+
 	const getPaymentType = () => {
 		if (isMelt) { return 'cashOutFromMint' }
 		if (isSwap) { return 'multimintSwap' }
 		return 'sendEcash'
 	}
+
 	const getBtnTxt = () => {
 		if (isMelt) { return 'submitPaymentReq' }
 		if (isSwap) { return 'swapNow' }
 		if (nostr) { return 'sendEcash' }
 		return 'createToken'
 	}
+
 	const getRecipient = () => {
 		if (recipient) {
 			return recipient.length > 16 && !isLnurl(recipient) ? recipient.slice(0, 16) + '...' : recipient
 		}
 		return nostr && nostr.receiverName ? nostr.receiverName : truncateNpub(nip19.npubEncode(nostr?.receiverNpub || ''))
 	}
+
 	const submitPaymentReq = () => {
 		navigation.navigate('processing', {
 			mint,
@@ -71,6 +75,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			recipient
 		})
 	}
+
 	// set proofs
 	useEffect(() => {
 		void (async () => {
@@ -78,6 +83,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			setProofs(proofsDB)
 		})()
 	}, [mint.mintUrl])
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav

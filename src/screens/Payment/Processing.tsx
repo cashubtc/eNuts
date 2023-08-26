@@ -145,6 +145,14 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		try {
 			const res = await autoMintSwap(mint.mintUrl, targetMint?.mintUrl || '', amount, estFee || 0)
 			l({ swapResult: res })
+			// add as history entry (multimint swap)
+			await addToHistory({
+				amount: -amount,
+				type: 3,
+				value: res.requestTokenResult.invoice?.pr || '',
+				mints: [mint.mintUrl],
+				recipient: targetMint?.mintUrl || ''
+			})
 			navigation.navigate('success', {
 				amount: amount - (estFee || 0),
 				fee: res.payResult.realFee,

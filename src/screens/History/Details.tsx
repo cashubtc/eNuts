@@ -157,7 +157,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						<>
 							<View style={styles.entryInfo}>
 								<Txt txt={t('recipient')} />
-								<Txt txt={truncateNostrProfileInfo(recipient)} />
+								{/* intermint swap target mint | nostr recipient */}
+								<Txt txt={type === 3 ? recipient : truncateNostrProfileInfo(recipient)} />
 							</View>
 							<Separator />
 						</>
