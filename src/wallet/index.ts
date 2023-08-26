@@ -17,7 +17,6 @@ import { getProofsToUse } from './util'
 const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
 const wallets: { [mintUrl: string]: CashuWallet } = {}
 
-
 function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string) {
 	if (!keySetId) { keySetId = deriveKeysetId(keys) }
 	if (!_mintKeysMap[mintUrl]) { _mintKeysMap[mintUrl] = {} }
@@ -28,18 +27,18 @@ function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string) {
 	}
 }
 
-
 async function getWallet(mintUrl: string) {
 	if (wallets[mintUrl]) { return wallets[mintUrl] }
 	const mint = new CashuMint(mintUrl)
-	l({mint})
+	l({ mint })
 	const keys = await mint.getKeys()
-	l({keys})
+	l({ keys })
 	const wallet = new CashuWallet(mint, keys)
 	_setKeys(mintUrl, keys)
 	wallets[mintUrl] = wallet
 	return wallet
 }
+
 async function getCurrentKeySetId(mintUrl: string) {
 	const wallet = await getWallet(mintUrl)
 	l({ wallet })
@@ -49,16 +48,18 @@ async function getCurrentKeySetId(mintUrl: string) {
 	return keySetId
 }
 
-
 export function getMintCurrentKeySetId(mintUrl: string) {
 	return getCurrentKeySetId(mintUrl)
 }
+
 export function getMintKeySetIds(mintUrl: string) {
 	return CashuMint.getKeySets(mintUrl)
 }
+
 export function getMintInfo(mintUrl: string) {
 	return CashuMint.getInfo(mintUrl)
 }
+
 export async function isTokenSpendable(token: string) {
 	try {
 		const decoded = getDecodedToken(token)
@@ -79,13 +80,16 @@ export async function isTokenSpendable(token: string) {
 		return !!useableTokenProofs.length
 	} catch (_) { return false }
 }
+
 export async function checkProofsSpent(mintUrl: string, toCheck: { secret: string }[]) {
 	return (await getWallet(mintUrl)).checkProofsSpent(toCheck)
 }
+
 export async function checkFees(mintUrl: string, invoice: string) {
 	const { fee } = await CashuMint.checkFees(mintUrl, { pr: invoice })
 	return fee
 }
+
 export async function claimToken(encodedToken: string): Promise<boolean> {
 	encodedToken = isCashuToken(encodedToken) || ''
 	if (!encodedToken?.trim()) { return false }
@@ -114,6 +118,7 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
 	if (!token?.token?.length) { return false }
 	return true
 }
+
 export async function requestMint(mintUrl: string, amount: number) {
 	const wallet = await getWallet(mintUrl)
 	const result = await wallet.requestMint(amount)
@@ -122,6 +127,7 @@ export async function requestMint(mintUrl: string, amount: number) {
 	l('[requestMint]', { result, mintUrl, amount })
 	return result
 }
+
 export async function requestToken(mintUrl: string, amount: number, hash: string) {
 	const invoice = await getInvoice(hash)
 	const wallet = await getWallet(mintUrl)
@@ -132,6 +138,7 @@ export async function requestToken(mintUrl: string, amount: number, hash: string
 	await delInvoice(hash)
 	return { success: true, invoice }
 }
+
 export async function payLnInvoice(mintUrl: string, invoice: string, fee: number, proofs: Proof[] = []) {
 	const wallet = await getWallet(mintUrl)
 	// const fee = await wallet.getFee(invoice)
@@ -159,6 +166,9 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 		if (result.isPaid) {
 			await deleteProofs(send)
 		}
+		l({ fee })
+		l({ sumProofsValue: sumProofsValue(result.change) })
+		l({ resultChange: result.change })
 		return {
 			result,
 			error: undefined,
@@ -172,6 +182,7 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 		return { result: undefined, error }
 	}
 }
+
 export async function sendToken(mintUrl: string, amount: number, memo: string, proofs: Proof[] = []) {
 	const wallet = await getWallet(mintUrl)
 	if (!proofs?.length) {
@@ -186,6 +197,7 @@ export async function sendToken(mintUrl: string, amount: number, memo: string, p
 	await deleteProofs(proofs)
 	return getEncodedToken({ token: [{ mint: mintUrl, proofs: send }], memo: memo.length > 0 ? memo : 'Sent via eNuts.' })
 }
+
 export async function autoMintSwap(
 	srcMintUrl: string,
 	destMintUrl: string,
@@ -220,6 +232,7 @@ export async function autoMintSwap(
 		requestTokenResult,
 	}
 }
+
 export async function fullAutoMintSwap(srcMintUrl: string, destMintUrl: string, fee: number) {
 	let amount = await getMintBalance(srcMintUrl)
 	let result = await autoMintSwap(srcMintUrl, destMintUrl, amount, fee)
@@ -239,6 +252,7 @@ export function runRequestTokenLoop() {
 	// eslint-disable-next-line @typescript-eslint/no-misused-promises
 	loopHandel = setTimeout(requestTokenLoop, 60000)
 }
+
 async function requestTokenLoop() {
 	if (isRequestTokenLoopRunning) { return }
 	isRequestTokenLoopRunning = true

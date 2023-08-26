@@ -1,8 +1,8 @@
-import Button from '@comps/Button'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TDisclaimerPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
@@ -38,20 +38,14 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 					<Txt txt={t('cashuContent')} />
 				</View>
 			</ScrollView>
-			<View style={styles.ok}>
-				<Button
-					txt='OK'
-					onPress={() => navigation.navigate('dashboard')}
-				/>
-			</View>
 		</View>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
-		marginTop: 100,
-		marginBottom: 110,
+		marginTop: 110,
+		marginBottom: isIOS ? 25 : 0,
 	},
 	header: {
 		fontWeight: '500',

@@ -20,16 +20,11 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		if (routeStr === 'Address book') {
 			// check if explainer has been viewed, else navigate to screen
 			const nostrExplainer = await store.get(STORE_KEYS.nostrexplainer)
-			navigation.navigate(!isStr(nostrExplainer) || !nostrExplainer.length ? 'nostr explainer' : routeStr)
+			navigation.navigate(!isStr(nostrExplainer) || !nostrExplainer.length ? 'nostr onboarding' : routeStr)
 			return
 		}
 		navigation.navigate(routeStr)
 	}
-
-	// const isMintRelatedScreen =
-	// 	route.name === 'mints' ||
-	// 	route.name === 'mintmanagement' ||
-	// 	route.name === 'mint proofs'
 
 	const isWalletRelatedScreen = route.name === 'dashboard'
 

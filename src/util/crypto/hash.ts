@@ -7,7 +7,7 @@ import { uint8ArrTo } from './utils'
 
 /**
  * Hashes a string/buffer/Uint8Array using sha256
- * 
+ *
  * if format is not specified, it will default to hex
  * @export
  * @param {(string | Buffer | Uint8Array)} data string | Buffer | Uint8Array

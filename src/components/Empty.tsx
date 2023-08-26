@@ -2,7 +2,7 @@ import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useThemeContext } from '@src/context/Theme'
 import { useTranslation } from 'react-i18next'
-import { Image, StyleSheet } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity } from 'react-native'
 
 import { TxtButton } from './Button'
 import Txt from './Txt'
@@ -10,10 +10,12 @@ import Txt from './Txt'
 interface IEmptyProps {
 	txt: string
 	hasOk?: boolean
+	pressable?: boolean
+	onPress?: () => void
 	nav?: NativeStackNavigationProp<RootStackParamList, 'nostrReceive', 'MyStack'>
 }
 
-export default function Empty({ txt, hasOk, nav }: IEmptyProps) {
+export default function Empty({ txt, hasOk, pressable, onPress, nav }: IEmptyProps) {
 	const { t } = useTranslation()
 	const { color } = useThemeContext()
 	return (
@@ -23,10 +25,19 @@ export default function Empty({ txt, hasOk, nav }: IEmptyProps) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				source={require('@assets/mixed_forest.png')}
 			/>
-			<Txt
-				txt={txt}
-				styles={[styles.emptyTxt, { color: color.TEXT_SECONDARY, marginBottom: hasOk ? 10 : 0 }]}
-			/>
+			{pressable && onPress ?
+				<TouchableOpacity>
+					<TxtButton
+						txt={txt}
+						onPress={onPress}
+					/>
+				</TouchableOpacity>
+				:
+				<Txt
+					txt={txt}
+					styles={[styles.emptyTxt, { color: color.TEXT_SECONDARY, marginBottom: hasOk ? 10 : 0 }]}
+				/>
+			}
 			{hasOk &&
 				<TxtButton
 					txt={t('backToDashboard')}

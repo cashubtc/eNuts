@@ -9,6 +9,9 @@ import { getTranslationLangCode } from '@util/localization'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
+/**
+ * Enumerates namespaces for usage in translations.
+ */
 export enum NS {
 	common = 'common',
 	auth = 'auth',
@@ -27,6 +30,9 @@ export const resources = {
 	en, de, fr
 } as const
 
+/**
+ * Config and Init i18n library
+ */
 i18n.use(initReactI18next)
 	.init({
 		compatibilityJSON: 'v3',

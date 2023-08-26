@@ -1,6 +1,6 @@
 import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
-import { CheckmarkIcon, CopyIcon, SandClockIcon, WalletIcon } from '@comps/Icons'
+import { CheckmarkIcon, CopyIcon, WalletIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
@@ -9,7 +9,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getBalance } from '@src/storage/db'
-import { addToHistory } from '@store/HistoryStore'
+import { addToHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
@@ -38,7 +38,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			const newBalance = await getBalance()
 			// it is possible that success is false but invoice has been paid...
 			if (success || newBalance > previousBalance) {
-				// add as history entry
+				// add as history entry (cash out via lightning)
 				await addToHistory({
 					amount,
 					type: 2,
@@ -104,21 +104,21 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			{expire > 0 && (!paid || paid === 'unpaid') ?
 				<View style={[styles.lnBtnWrap, { marginBottom: insets.bottom }]}>
 					<Button
+						outlined
 						txt={t(paid === 'unpaid' ? 'paymentPending' : 'checkPayment')}
 						onPress={() => void handlePayment()}
-						icon={paid === 'unpaid' ? <SandClockIcon color='#FAFAFA' /> : <CheckmarkIcon color='#FAFAFA' />}
+						// icon={paid === 'unpaid' ? <SandClockIcon color={hi[highlight]} /> : <CheckmarkIcon color={hi[highlight]} />}
 					/>
 					<View style={{ marginVertical: 10 }} />
 					<Button
 						txt={t('payWithLn')}
-						outlined
 						onPress={() => {
 							void (async () => {
 								await openUrl(`lightning:${paymentRequest}`)?.catch(e =>
 									openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 							})()
 						}}
-						icon={<WalletIcon color={hi[highlight]} />}
+						icon={<WalletIcon color={mainColors.WHITE} />}
 					/>
 					<TxtButton
 						txt={copied ? t('copied') + '!' : t('copyInvoice')}
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
 	},
 	qrCodeWrap: {
 		borderWidth: 5,
-		borderColor: '#FFF'
+		borderColor: mainColors.WHITE
 	},
 	lnAddress: {
 		fontSize: 14,
@@ -163,13 +163,6 @@ const styles = StyleSheet.create({
 	checkPaymentTxt: {
 		fontSize: 16,
 		fontWeight: '500',
-		marginTop: 10,
-		textAlign: 'center',
-	},
-	pendingTxt: {
-		fontSize: 16,
-		fontWeight: '500',
-		color: '#F1C232',
 		marginTop: 10,
 		textAlign: 'center',
 	},

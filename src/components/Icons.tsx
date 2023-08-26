@@ -429,6 +429,23 @@ export function NostrIcon() {
 		/>
 	)
 }
+export function LeftArrow({ width, height, color }: TIconProps) {
+	return (
+		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+			<Path d="M21.0001 11H6.41406L11.7071 5.70697L10.2931 4.29297L2.58606 12L10.2931 19.707L11.7071 18.293L6.41406 13H21.0001V11Z" fill={color} />
+		</Svg>
+	)
+}
+export function EcashIcon({ width, height, color }: TIconProps) {
+	return (
+		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+			<Path d="M6.75 11.25C6.33579 11.25 6 11.5858 6 12C6 12.4142 6.33579 12.75 6.75 12.75C7.16421 12.75 7.5 12.4142 7.5 12C7.5 11.5858 7.16421 11.25 6.75 11.25Z" fill={color} />
+			<Path d="M16.5 12C16.5 11.5858 16.8358 11.25 17.25 11.25C17.6642 11.25 18 11.5858 18 12C18 12.4142 17.6642 12.75 17.25 12.75C16.8358 12.75 16.5 12.4142 16.5 12Z" fill={color} />
+			<Path fillRule="evenodd" clipRule="evenodd" d="M12 9.75C10.7574 9.75 9.75 10.7574 9.75 12C9.75 13.2426 10.7574 14.25 12 14.25C13.2426 14.25 14.25 13.2426 14.25 12C14.25 10.7574 13.2426 9.75 12 9.75ZM10.75 12C10.75 11.3096 11.3096 10.75 12 10.75C12.6904 10.75 13.25 11.3096 13.25 12C13.25 12.6904 12.6904 13.25 12 13.25C11.3096 13.25 10.75 12.6904 10.75 12Z" fill={color} />
+			<Path fillRule="evenodd" clipRule="evenodd" d="M21.5 6.5H2.5V17.5H21.5V6.5ZM3.5 16.5V7.5H20.5V16.5H3.5Z" fill={color} />
+		</Svg>
+	)
+}
 
 const styles = StyleSheet.create({
 	nostrIcon: {

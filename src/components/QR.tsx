@@ -1,4 +1,5 @@
 import { useThemeContext } from '@src/context/Theme'
+import { mainColors } from '@src/styles'
 import { StyleSheet, View } from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 
@@ -18,7 +19,7 @@ export default function QR({ size, value, onError }: QRProps) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				logo={require('@assets/app-icon-all.png')}
 				logoBorderRadius={10}
-				logoBackgroundColor='#fafafa'
+				logoBackgroundColor={mainColors.WHITE}
 				logoMargin={3}
 				onError={onError}
 			/>
@@ -29,6 +30,6 @@ export default function QR({ size, value, onError }: QRProps) {
 const styles = StyleSheet.create({
 	qrWrap: {
 		borderWidth: 5,
-		borderColor: '#FFF'
+		borderColor: mainColors.WHITE
 	}
 })

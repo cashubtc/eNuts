@@ -267,14 +267,20 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt={t('checkProofs', { ns: NS.mints })}
 						hasSeparator
 						onPress={() => setCheckProofsOpen(true)}
-						icon={<ValidateIcon width={22} height={22} color='#FF9900' />}
-						rowColor='#FF9900'
+						icon={<ValidateIcon width={22} height={22} color={mainColors.WARN} />}
+						rowColor={mainColors.WARN}
 						noChevron
 					/>
 					{/* Delete mint */}
 					<MintOption
 						txt={t('delMint', { ns: NS.mints })}
-						onPress={() => setDelMintModalOpen(true)}
+						onPress={() => {
+							if (route.params.amount > 0) {
+								openPromptAutoClose({ msg: t('mintDelErr') })
+								return
+							}
+							setDelMintModalOpen(true)
+						}}
 						icon={<TrashbinIcon width={22} height={22} color={mainColors.ERROR} />}
 						rowColor={mainColors.ERROR}
 						noChevron
@@ -285,7 +291,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			{delMintModalOpen &&
 				<QuestionModal
 					header={t('delMintSure', { ns: NS.mints })}
-					txt={route.params.amount > 0 ? t('delMintHint', { ns: NS.mints }) : undefined}
+					txt={route.params.mint.mintUrl}
 					visible={delMintModalOpen}
 					confirmFn={() => handleMintDelete()}
 					cancelFn={() => setDelMintModalOpen(false)}

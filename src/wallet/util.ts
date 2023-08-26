@@ -17,4 +17,3 @@ export async function getProofsToUse(mintUrl: string, amount: number, order: 'as
 	})
 	return { proofsToUse: proofsToSend }
 }
-

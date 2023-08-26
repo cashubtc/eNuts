@@ -12,6 +12,7 @@ const isExpoProd = execEnv && ExecEnv?.Standalone && execEnv === ExecEnv?.Standa
 const isExpo = isExpoDev || isExpoProd
 
 const isReactNativeDevMode = typeof __DEV__ === 'boolean' && __DEV__
+
 export { isExpo, isExpoDev, isExpoProd, isReactNativeDevMode }
 
 type AppVariant = 'preview' | 'prod' | 'dev' | undefined
@@ -26,6 +27,7 @@ function nodeEnvShort(): 'test' | AppVariant {
 	if (process?.env?.NODE_ENV === 'test') { return 'test' }
 	if (process?.env?.NODE_ENV === 'preview') { return 'preview' }
 }
+
 function appVariant(): AppVariant {
 	if (!process?.env?.APP_VARIANT) {
 		process.env.APP_VARIANT = 'dev'
@@ -37,6 +39,7 @@ function appVariant(): AppVariant {
 }
 
 const config: Readonly<IExpoConfig | undefined | null> = Consts?.expoConfig
+
 export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> */ = {
 	DEBUG: process?.env?.DEBUG || config?.extra?.DEBUG,
 
@@ -46,16 +49,15 @@ export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string 
 
 	APP_VARIANT: process?.env?.APP_VARIANT || config?.extra?.APP_VARIANT || appVariant() || nodeEnvShort(),
 
-	SENTRY_DSN: process?.env?.SENTRY_DSN 
+	SENTRY_DSN: process?.env?.SENTRY_DSN
 		|| process?.env?.SENTRY_DSN
 		|| config?.extra?.SENTRY_DSN,
-	
+
 	isExpo,
 	isExpoDev,
 	isExpoProd,
 	isReactNativeDevMode,
 } as const
-
 
 export const isTestMode = (typeof __TEST__ === 'boolean' && __TEST__)
 	|| (typeof jest !== 'undefined' && jest.isMockFunction(jest))
@@ -65,4 +67,3 @@ export const isTestMode = (typeof __TEST__ === 'boolean' && __TEST__)
 	|| process?.env?.NODE_ENV === 'test' || config?.extra?.NODE_ENV === 'test'
 
 export const isIOS = Platform.OS === 'ios'
-

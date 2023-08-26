@@ -17,6 +17,12 @@ export function nip05toURL(identifier: string) {
 	return `https://${domain}/.well-known/nostr.json?name=${name}`
 }
 
+/**
+ * Converts a NIP-05 identifier to a website URL.
+ *
+ * @param identifier - The NIP-05 identifier to be converted.
+ * @returns The website URL formed from the identifier's domain.
+ */
 export function nip05toWebsite(identifier: string) {
 	const domain = identifier.split('@')[1]
 	return `https://${domain}`
@@ -51,27 +57,29 @@ export function truncateNpub(npub: string) {
 }
 
 /**
- * Truncates the nostr user about section
- * // TODO avoid truncating emojis
+ * Truncates a string while preserving emojis.
+ *
+ * @param about - The input string to be truncated.
+ * @param maxLength - The maximum length of the truncated string.
+ * @returns The truncated string.
  */
-export function truncateAbout(about: string) {
-	if (about.length < 25) { return about }
-	return `${about.slice(0, 25)}...`
-}
-
-export function getNostrUsername( contact?: IProfileContent) {
-	return contact?.displayName || contact?.display_name || contact?.username || contact?.name || ''
+export function truncateNostrProfileInfo(str: string, maxLength = 20) {
+	if (str.length <= maxLength) { return str }
+	const truncated = [...str].reduce((result, char) => {
+		if (result.length < maxLength) {
+			result += char
+		}
+		return result
+	}, '')
+	return truncated + (str.length > maxLength ? '...' : '')
 }
 
 /**
- * returns true if note is not a reply
+ * Retrieves the username from a profile contact object, prioritizing different properties.
+ *
+ * @param contact - The profile contact object to extract the username from.
+ * @returns The extracted username. Returns an empty string if no username is found.
  */
-// export function isNotReplyNote(tags: string[][]) {
-// 	for (let i = 0; i < tags.length; i++) {
-// 		const tag = tags[i]
-// 		if (tag[0] === 'e') {
-// 			return false
-// 		}
-// 	}
-// 	return true
-// }
+export function getNostrUsername(contact?: IProfileContent) {
+	return contact?.displayName || contact?.display_name || contact?.username || contact?.name || ''
+}

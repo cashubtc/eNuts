@@ -4,12 +4,21 @@ import { STORE_KEYS } from '@store/consts'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const usePrivacy = () => {
-	const [hidden, setHidden] = useState(false)
+	const [hidden, setHidden] = useState({
+		balance: false,
+		txs: false
+	})
 	useEffect(() => {
 		void (async () => {
 			// init privacy preferences
-			const isHidden = await store.get(STORE_KEYS.hiddenBal)
-			setHidden(!!isHidden)
+			const [isHiddenBal, isHiddenTxs] = await Promise.all([
+				store.get(STORE_KEYS.hiddenBal),
+				store.get(STORE_KEYS.hiddenTxs)
+			])
+			setHidden({
+				balance: !!isHiddenBal,
+				txs: !!isHiddenTxs
+			})
 		})()
 	}, [])
 	return {
@@ -19,7 +28,7 @@ const usePrivacy = () => {
 }
 type usePrivacyType = ReturnType<typeof usePrivacy>
 const PrivacyContext = createContext<usePrivacyType>({
-	hidden: false,
+	hidden: { balance: false, txs: false },
 	setHidden: () => l('')
 })
 

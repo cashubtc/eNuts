@@ -27,7 +27,7 @@ export default function NostrMessage({ msgEntry, sender, dms, setDms, mints, nav
 		<View style={[globals(color).wrapContainer, styles.msgContainer]}>
 			<Sender contact={sender} navigation={nav.navigation} />
 			<Separator style={[styles.separator]} />
-			<MsgContent msgEntry={msgEntry} dms={dms} setDms={setDms} mints={mints} />
+			<MsgContent sender={sender} msgEntry={msgEntry} dms={dms} setDms={setDms} mints={mints} />
 			<Text style={{ color: color.TEXT_SECONDARY }}>
 				<EntryTime from={msgEntry.created_at * 1000} fallback={t('justNow')} />
 			</Text>

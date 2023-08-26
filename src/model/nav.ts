@@ -13,8 +13,8 @@ interface INostrProps {
  */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RootStackParamList = {
-	explainer: undefined
-	'nostr explainer': undefined
+	onboarding: undefined
+	'nostr onboarding': undefined
 	dashboard: undefined
 	disclaimer: undefined
 	history: undefined
@@ -169,8 +169,8 @@ export type RootStackParamList = {
 }
 
 export type TRouteString = 'dashboard' | 'mints' | 'Address book' | 'Settings'
-export type TExplainerPageProps = NativeStackScreenProps<RootStackParamList, 'explainer', 'MyStack'>
-export type TNostrExplainerPageProps = NativeStackScreenProps<RootStackParamList, 'nostr explainer', 'MyStack'>
+export type TOnboardingPageProps = NativeStackScreenProps<RootStackParamList, 'onboarding', 'MyStack'>
+export type TNostrOnboardingPageProps = NativeStackScreenProps<RootStackParamList, 'nostr onboarding', 'MyStack'>
 export type TSelectMintPageProps = NativeStackScreenProps<RootStackParamList, 'selectMint', 'MyStack'>
 export type TSelectTargetPageProps = NativeStackScreenProps<RootStackParamList, 'selectTarget', 'MyStack'>
 export type TSelectMintToSwapToPageProps = NativeStackScreenProps<RootStackParamList, 'selectMintToSwapTo', 'MyStack'>
@@ -207,7 +207,7 @@ export type TBackupPageProps = NativeStackScreenProps<RootStackParamList, 'Backu
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
 export type TBottomNavProps =
-	TNostrExplainerPageProps |
+	TNostrOnboardingPageProps |
 	TDashboardPageProps |
 	TMintsPageProps |
 	TMintManagementPageProps |
@@ -224,7 +224,8 @@ export type TBottomNavProps =
 	IContactPageProps
 export interface INavigatorProps {
 	pinHash: string
-	shouldSetup?: boolean
+	// shouldSetup?: boolean
 	bgAuth?: boolean
+	shouldOnboard?: boolean
 	setBgAuth?: (val: boolean) => void
 }

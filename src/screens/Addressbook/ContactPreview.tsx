@@ -1,10 +1,10 @@
 import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { TContact } from '@model/nostr'
-import { truncateAbout, truncateNpub } from '@nostr/util'
+import { truncateNostrProfileInfo, truncateNpub } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { highlight as hi } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { nip19 } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -27,7 +27,13 @@ export default function ContactPreview({ contact, handleContactPress, handleSend
 
 	return (
 		<TouchableOpacity
-			onPress={handleSend}
+			onPress={() => {
+				if (isPayment) {
+					handleContactPress()
+					return
+				}
+				handleSend()
+			}}
 			disabled={!isPayment}
 			style={[
 				styles.container, { paddingTop: isFirst ? 10 : 0, paddingBottom: isLast ? 10 : 0 }
@@ -51,7 +57,7 @@ export default function ContactPreview({ contact, handleContactPress, handleSend
 						/>
 						{contact[1].about?.length > 0 &&
 							<Txt
-								txt={truncateAbout(contact[1].about)}
+								txt={truncateNostrProfileInfo(contact[1].about)}
 								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}
 							/>
 						}
@@ -95,7 +101,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 	},
 	sendTxt: {
-		color: '#FAFAFA',
+		color: mainColors.WHITE,
 		fontWeight: '500'
 	}
 })

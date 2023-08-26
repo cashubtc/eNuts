@@ -1,4 +1,6 @@
-
+/**
+ * Specifies QR code capacity limits for different error correction levels.
+ */
 export const qrCodeLimits = {
 	L: { numeric: 7089, alphanumeric: 4296, binary: 2953 },
 	M: { numeric: 5596, alphanumeric: 3391, binary: 2331 },

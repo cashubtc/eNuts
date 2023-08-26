@@ -1,6 +1,6 @@
 import { isIOS } from '@consts'
 import { useThemeContext } from '@src/context/Theme'
-import { highlight as hi, HighlightKey, Theme } from '@styles'
+import { highlight as hi, HighlightKey, mainColors, Theme } from '@styles'
 import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -93,7 +93,7 @@ const styles = (pref: Theme, h: HighlightKey) => StyleSheet.create({
 	common: {
 		backgroundColor: pref.BACKGROUND,
 		alignItems: 'center',
-		shadowColor: '#000',
+		shadowColor: mainColors.BLACK,
 		shadowOffset: {
 			width: 0,
 			height: 2,

@@ -3,10 +3,10 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { MintBoardIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import { AboutIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import Txt from '@comps/Txt'
-import { _testmintUrl, isIOS } from '@consts'
+import { _testmintUrl } from '@consts'
 import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import OptsModal from '@modal/OptsModal'
@@ -21,9 +21,9 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { addToHistory } from '@store/HistoryStore'
+import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames } from '@store/mintStore'
-import { highlight as hi } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { getStrFromClipboard, hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -62,6 +62,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		receiveOpts: false,
 		sendOpts: false
 	})
+
 	// This function is only called if the mints of the received token are not in the user DB
 	const handleTrustModal = async () => {
 		if (loading) { return }
@@ -79,12 +80,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// add token to db
 		await receiveToken(token)
 	}
+
 	// navigates to the mint list page
 	const handleMintModal = async () => {
 		setModal({ ...modal, mint: false })
 		await store.set(STORE_KEYS.explainer, '1')
 		navigation.navigate('mints')
 	}
+
 	// This function is only called if the mint of the received token is available as trusted in user DB
 	const handleTokenSubmit = async (url: string) => {
 		const tokenInfo = getTokenInfo(url)
@@ -106,6 +109,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		}
 		await receiveToken(url)
 	}
+
 	// helper function that gets called either right after pasting token or in the trust modal depending on user permission
 	const receiveToken = async (encodedToken: string) => {
 		const success = await claimToken(encodedToken).catch(l)
@@ -122,7 +126,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			openPromptAutoClose({ msg: t('tokenInfoErr') })
 			return
 		}
-		// add as history entry
+		// add as history entry (receive ecash)
 		await addToHistory({
 			amount: info.value,
 			type: 1,
@@ -135,12 +139,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			isClaim: true
 		})
 	}
+
 	// get mints for send/receive process
 	const getMintsForPayment = async () => {
 		const mintsWithBal = await getMintsBalances()
 		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
 		return { mintsWithBal, mints }
 	}
+
 	// receive ecash button
 	const handleClaimBtnPress = async () => {
 		if (token.length) { return }
@@ -155,6 +161,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setToken(clipboard)
 		await handleTokenSubmit(clipboard)
 	}
+
 	// mint/melt/send ecash buttons
 	const handleOptsBtnPress = async ({ isMelt, isSendEcash }: { isMelt?: boolean, isSendEcash?: boolean }) => {
 		const { mintsWithBal, mints } = await getMintsForPayment()
@@ -190,14 +197,17 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			isSendEcash
 		})
 	}
+
 	// close send/receive options modal
 	const closeOptsModal = () => setModal(prev => ({ ...prev, receiveOpts: false, sendOpts: false }))
+
 	useEffect(() => {
 		void (async () => {
 			setHasMint(await hasMints())
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
 	// check for available mints of the user
 	useEffect(() => {
 		void (async () => {
@@ -212,6 +222,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
+
 	// handle initial URL passed on by clicking on a cashu link
 	useEffect(() => {
 		void (async () => {
@@ -221,6 +232,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
+
 	// get balance after navigating to this page
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', async () => {
@@ -239,26 +251,26 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
 			{/* Receive/send/mints buttons */}
-			<View style={styles.actionWrap}>
+			<View style={[styles.actionWrap, { paddingHorizontal: !hasMint || balance < 1 ? 75 : 30 }]}>
+				{(hasMint && balance > 0) &&
+					<ActionBtn
+						icon={
+							<SendIcon
+								width={32}
+								height={32}
+								color={hi[highlight]}
+							/>
+						}
+						txt={t('send', { ns: NS.wallet })}
+						color={hi[highlight]}
+						onPress={() => setModal({ ...modal, sendOpts: true })}
+					/>
+				}
 				<ActionBtn
-					icon={
-						<SendIcon
-							width={32}
-							height={32}
-							color={hi[highlight]}
-							disabled={!hasMint || balance < 1}
-						/>
-					}
-					txt={t('send', { ns: NS.wallet })}
+					icon={<ScanQRIcon width={32} height={32} color={hi[highlight]} />}
+					txt={t('scan')}
 					color={hi[highlight]}
-					onPress={() => setModal({ ...modal, sendOpts: true })}
-					disabled={!hasMint || balance < 1}
-				/>
-				<ActionBtn
-					icon={<MintBoardIcon width={32} height={32} color={hi[highlight]} />}
-					txt='Mints'
-					color={hi[highlight]}
-					onPress={() => navigation.navigate('mints')}
+					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
 				/>
 				<ActionBtn
 					icon={<ReceiveIcon width={32} height={32} color={hi[highlight]} />}
@@ -268,11 +280,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				/>
 			</View>
 			{/* scan QR */}
-			<View style={styles.qrBtnWrap}>
+			<View style={styles.hintWrap}>
 				<TouchableOpacity
-					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
+					onPress={() => navigation.navigate('disclaimer')}
+					style={styles.betaHint}
 				>
-					<ScanQRIcon width={60} height={60} color={color.TEXT} />
+					<AboutIcon color={mainColors.WARN} />
+					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginLeft: 10 }]} />
 				</TouchableOpacity>
 			</View>
 			{/* Bottom nav icons */}
@@ -357,7 +371,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingHorizontal: 30,
 		marginTop: -35,
 	},
 	btnWrap: {
@@ -368,10 +381,15 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 		marginTop: 10,
 	},
-	qrBtnWrap: {
+	hintWrap: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: isIOS ? 100 : 75
+		marginBottom: 50
+	},
+	betaHint: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		padding: 10
 	}
 })

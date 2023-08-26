@@ -3,7 +3,7 @@ import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
 import { NS } from '@src/i18n'
-import { addToHistory } from '@store/HistoryStore'
+import { addToHistory } from '@store/latestHistoryEntries'
 import { formatInt, formatMintUrl, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -77,7 +77,7 @@ const useFocusClaim = () => {
 			openPromptAutoClose({ msg: t('tokenInfoErr', { ns: NS.common }) })
 			return
 		}
-		// add as history entry
+		// add as history entry (receive ecash)
 		await addToHistory({
 			amount: info.value,
 			type: 1,

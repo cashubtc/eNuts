@@ -33,7 +33,6 @@ import * as Sentry from 'sentry-expo'
 import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
 import Toaster from './Toaster'
-// import { dropAllData } from '@src/storage/dev'
 
 interface ILockData {
 	mismatch: boolean
@@ -70,10 +69,8 @@ export default function App() {
 
 function _App() {
 	// initial auth state
-	const [auth, setAuth] = useState<INavigatorProps>({
-		shouldSetup: false,
-		pinHash: ''
-	})
+	const [auth, setAuth] = useState<INavigatorProps>({ pinHash: '' })
+	const [shouldOnboard, setShouldOnboard] = useState(false)
 	// app was longer than 5 mins in the background
 	const [bgAuth, setBgAuth] = useState(false)
 	// PIN mismatch state
@@ -121,7 +118,6 @@ function _App() {
 			}
 			const mintBalsTotal = (balances).reduce((acc, cur) => acc + cur.amount, 0)
 			if (mintBalsTotal !== balance) { await addAllMintIds() }
-			// await dropAllData() // DEV-ONLY DEBUG
 		} catch (e) {
 			l(isErr(e) ? e.message : 'Error while initiating the user app configuration.')
 		} finally {
@@ -129,16 +125,14 @@ function _App() {
 		}
 	}
 
-	// init pin auth data
+	// init auth data
 	const initAuth = async () => {
-		const [pinHash, shouldSetup] = await Promise.all([
+		const [pinHash, onboard] = await Promise.all([
 			secureStore.get(SECURESTORE_KEY),
-			store.get(STORE_KEYS.pinSkipped),
+			store.get(STORE_KEYS.explainer)
 		])
-		setAuth({
-			pinHash: isNull(pinHash) ? '' : pinHash,
-			shouldSetup: !isStr(shouldSetup) || !shouldSetup?.length
-		})
+		setAuth({ pinHash: isNull(pinHash) ? '' : pinHash })
+		setShouldOnboard(onboard && onboard === '1' ? false : true)
 		// check for pin attempts and app locked state
 		await handlePinForeground()
 	}
@@ -209,7 +203,7 @@ function _App() {
 								<PromptProvider>
 									<KeyboardProvider>
 										<Navigator
-											shouldSetup={auth.shouldSetup}
+											shouldOnboard={shouldOnboard}
 											pinHash={auth.pinHash}
 											bgAuth={bgAuth}
 											setBgAuth={setBgAuth}

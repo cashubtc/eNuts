@@ -50,6 +50,11 @@ const config: ExpoConfig = {
 	name: `eNuts${!IS_PROD ? ` (${_appVariant})` : ''}`,
 	slug: 'enuts',
 	owner: 'enuts_wallet',
+	privacy: 'public',
+	platforms: [
+		'ios',
+		'android',
+	],
 	version: `${version}${!IS_PROD ? `-${_appVariant}` : ''}`,
 	scheme: 'cashu',
 	orientation: 'portrait',
@@ -69,10 +74,11 @@ const config: ExpoConfig = {
 		'expo-updates'
 	],
 	ios: {
-		supportsTablet: true,
+		supportsTablet: false,
 		infoPlist: {
 			LSApplicationQueriesSchemes: ['cashu']
-		}
+		},
+		bundleIdentifier: 'com.agron.enuts'
 	},
 	android: {
 		icon: './assets/app-icon-android-legacy.png',

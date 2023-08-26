@@ -17,8 +17,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import HistoryEntry from './Entry'
 
-const listEntryHeight = isIOS ? 59 : 70
-
 export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation([NS.common])
@@ -60,7 +58,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 							{/* Group entries */}
 							<View style={[
 								globals(color).wrapContainer,
-								{ height: Math.ceil(data.item[1].length * listEntryHeight) }
+								{ minHeight: 5 }
 							]}>
 								<FlashList
 									data={data.item[1]}
@@ -80,7 +78,6 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 					ListEmptyComponent={<Empty txt={t('noTX') + '...'} />}
 				/>
 			</View>
-			{/* <BottomNav navigation={navigation} route={route} /> */}
 		</View>
 	)
 }

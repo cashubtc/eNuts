@@ -1,7 +1,10 @@
-import Button, { TxtButton } from '@comps/Button'
+import { TxtButton } from '@comps/Button'
+import Empty from '@comps/Empty'
+import useLoading from '@comps/hooks/Loading'
+import InputAndLabel from '@comps/InputAndLabel'
+import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
-import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
 import { l } from '@log'
@@ -10,7 +13,7 @@ import type { IProfileContent, TContact, TUserRelays } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { relay } from '@nostr/class/Relay'
-import { defaultRelays, EventKind, npubLength } from '@nostr/consts'
+import { defaultRelays, EventKind } from '@nostr/consts'
 import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays } from '@nostr/util'
 import { FlashList, type ViewToken } from '@shopify/flash-list'
 import Config from '@src/config'
@@ -22,7 +25,7 @@ import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
-import { getStrFromClipboard, isStr } from '@util'
+import { getStrFromClipboard, openUrl } from '@util'
 import { type Event as NostrEvent, generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -40,6 +43,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
 	const {
+		nutPub,
 		setNutPub,
 		pubKey,
 		setPubKey,
@@ -50,13 +54,17 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		contacts,
 		setContacts
 	} = useNostrContext()
+	const { loading, startLoading, stopLoading } = useLoading()
 	const [, setAlreadySeen] = useState<string[]>([])
 	const [newNpubModal, setNewNpubModal] = useState(false)
+
+	const isSending = route.params?.isMelt || route.params?.isSendEcash
 
 	// gets user data from cache or relay
 	const initUserData = useCallback(({ hex, userRelays }: { hex: string, userRelays?: TUserRelays }) => {
 		if (!hex || (userProfile && contacts.length)) {
 			l('no pubKey or user data already available')
+			stopLoading()
 			return
 		}
 		// TODO use cache if available
@@ -69,6 +77,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		let latestRelays = 0 	// createdAt
 		let latestProfile = 0	// createdAt
 		let latestContacts = 0 	// createdAt
+		stopLoading()
 		sub?.on('event', async (e: NostrEvent) => {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (+e.kind === EventKind.SetMetadata) {
@@ -175,44 +184,51 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// Paste/Clear input for LNURL/LN invoice
 	const handleInputLabelPress = async () => {
 		// clear input
-		if (pubKey.encoded.length > 0) {
+		if (pubKey.encoded.length) {
 			setPubKey({ encoded: '', hex: '' })
 			return
 		}
+		startLoading()
+		setNewNpubModal(false)
 		// paste from clipboard
 		const clipboard = await getStrFromClipboard()
-		if (!clipboard || clipboard === 'null') { return }
+		if (!clipboard) {
+			stopLoading()
+			return
+		}
+		let pub = { encoded: '', hex: '' }
 		// check if is npub
 		if (clipboard.startsWith('npub')) {
-			setPubKey({ encoded: clipboard, hex: nip19.decode(clipboard).data as string || '' })
+			pub = { encoded: clipboard, hex: nip19.decode(clipboard).data as string || '' }
+			setPubKey(pub)
+			await handleNewNpub(pub)
 			return
 		}
-		setPubKey({ encoded: nip19.npubEncode(clipboard), hex: clipboard })
+		try {
+			const encoded = nip19.npubEncode(clipboard)
+			pub = { encoded, hex: clipboard }
+			setPubKey(pub)
+		} catch (e) {
+			openPromptAutoClose({ msg: t('invalidPubKey') })
+			stopLoading()
+			return
+		}
+		// close modal
+		await handleNewNpub(pub)
 	}
 
-	// save npub pasted by user
-	const handleNewNpub = async () => {
-		if (!pubKey.encoded.length || !pubKey.encoded.startsWith('npub')) {
-			openPromptAutoClose({ msg: t('invalidNpub') })
-			return
-		}
-		if (!isStr(pubKey.hex) || pubKey.hex.length !== npubLength) {
-			openPromptAutoClose({ msg: t('invalidNpubHex') })
-			return
-		}
-		// generate new nsec
+	const handleNewNpub = async (pub: { encoded: string, hex: string }) => {
+		// generate new secret key
 		const sk = generatePrivateKey() // `sk` is a hex string
-		const pk = getPublicKey(sk)
-		setNutPub(pk)	// `pk` is a hex string
+		const pk = getPublicKey(sk)		// `pk` is a hex string
+		setNutPub(pk)
 		await Promise.all([
-			store.set(STORE_KEYS.npub, pubKey.encoded), // save nostr encoded pubKey
-			store.set(STORE_KEYS.npubHex, pubKey.hex),			// save nostr hex pubKey
+			store.set(STORE_KEYS.npub, pub.encoded), // save nostr encoded pubKey
+			store.set(STORE_KEYS.npubHex, pub.hex),	// save nostr hex pubKey
 			store.set(STORE_KEYS.nutpub, pk),			// save enuts hex pubKey
 			secureStore.set(SECRET, sk)					// save nostr secret generated by enuts for nostr DM interactions
 		])
-		// close modal
-		setNewNpubModal(false)
-		initUserData({ hex: pubKey.hex })
+		initUserData({ hex: pub.hex })
 	}
 
 	const handleContactPress = ({ contact, npub, isUser }: { contact?: IProfileContent, npub?: string, isUser?: boolean }) => {
@@ -251,7 +267,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		})
 	}
 
-	// start sending ecash via nostr
+	// start sending ecash via nostr or melting to a LNURL from a nostr contact
 	const handleSend = async ({ npub, name }: { npub: string, name?: string }) => {
 		const mintsWithBal = await getMintsBalances()
 		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
@@ -283,6 +299,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// check if user has nostr data saved previously
 	useEffect(() => {
 		void (async () => {
+			startLoading()
 			const data = await Promise.all([
 				store.get(STORE_KEYS.npub),
 				store.get(STORE_KEYS.npubHex),
@@ -291,6 +308,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			setPubKey({ encoded: data[0] || '', hex: data[1] || '' })
 			setUserRelays(data[2] || [])
 			initUserData({ hex: data[1] || '', userRelays: data[2] || [] })
+			if (!data[0]) { setNewNpubModal(true) }
+			stopLoading()
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -299,49 +318,63 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
-				withBackBtn={route.params?.isMelt || route.params?.isSendEcash}
-				handlePress={() => navigation.goBack()}
+				withBackBtn={isSending}
+				handlePress={() => isSending ? navigation.goBack() : navigation.navigate('qr scan', {})}
 			/>
 			{/* Header */}
 			<View style={styles.bookHeader}>
 				<ContactsCount />
 			</View>
-			{/* user own profile */}
-			<UserProfile handlePress={handleContactPress} />
-			{/* user contacts */}
-			{contacts.length > 0 &&
-				<View style={[
-					globals(color).wrapContainer,
-					styles.contactsWrap,
-					{ marginBottom: route.params?.isMelt || route.params?.isSendEcash ? marginBottomPayment : marginBottom }
-				]}>
-					<FlashList
-						data={contacts}
-						estimatedItemSize={300}
-						viewabilityConfig={{
-							minimumViewTime: 250,
-							itemVisiblePercentThreshold: 10,
-						}}
-						onViewableItemsChanged={onViewableItemsChanged}
-						keyExtractor={item => item[0]}
-						renderItem={({ item, index }) => (
-							<ContactPreview
-								contact={item}
-								handleContactPress={() => handleContactPress({ contact: item[1], npub: nip19.npubEncode(item[0]) })}
-								handleSend={() => {
-									void handleSend({
-										npub: item[0],
-										name: getNostrUsername(item[1])
-									})
-								}}
-								isFirst={index === 0}
-								isLast={index === contacts.length - 1}
-								isPayment={route.params?.isMelt || route.params?.isSendEcash}
-							/>
-						)}
-						ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}
-					/>
+			{loading ?
+				<View style={styles.loadingWrap}>
+					<Loading />
 				</View>
+				:
+				<>
+					{/* user own profile */}
+					{nutPub && userProfile && <UserProfile handlePress={handleContactPress} />}
+					{/* user contacts */}
+					{contacts.length > 0 ?
+						<View style={[
+							globals(color).wrapContainer,
+							styles.contactsWrap,
+							{ marginBottom: route.params?.isMelt || route.params?.isSendEcash ? marginBottomPayment : marginBottom }
+						]}>
+							<FlashList
+								data={contacts}
+								estimatedItemSize={300}
+								viewabilityConfig={{
+									minimumViewTime: 250,
+									itemVisiblePercentThreshold: 10,
+								}}
+								onViewableItemsChanged={onViewableItemsChanged}
+								keyExtractor={item => item[0]}
+								renderItem={({ item, index }) => (
+									<ContactPreview
+										contact={item}
+										handleContactPress={() => handleContactPress({ contact: item[1], npub: nip19.npubEncode(item[0]) })}
+										handleSend={() => {
+											void handleSend({
+												npub: item[0],
+												name: getNostrUsername(item[1])
+											})
+										}}
+										isFirst={index === 0}
+										isLast={index === contacts.length - 1}
+										isPayment={route.params?.isMelt || route.params?.isSendEcash}
+									/>
+								)}
+								ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}
+							/>
+						</View>
+						:
+						<Empty
+							txt={newNpubModal ? '' : t('addOwnLnurl', { ns: NS.addrBook })}
+							pressable={!newNpubModal}
+							onPress={() => setNewNpubModal(true)}
+						/>
+					}
+				</>
 			}
 			{/* Add user npub modal */}
 			<MyModal
@@ -351,25 +384,20 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				close={() => setNewNpubModal(false)}
 			>
 				<Text style={globals(color).modalHeader}>
-					{t('yourProfile', { ns: NS.addrBook })}
+					{t('addOwnLnurl', { ns: NS.addrBook })}
 				</Text>
-				<View style={{ position: 'relative', width: '100%' }}>
-					<TxtInput
-						placeholder='NPUB/HEX'
-						onChangeText={text => setPubKey(prev => ({ ...prev, encoded: text }))}
-						value={pubKey.encoded}
-						onSubmitEditing={() => void handleNewNpub()}
-					/>
-					{/* Paste / Clear Input */}
-					<TxtButton
-						txt={!pubKey.encoded.length ? t('paste') : t('clear')}
-						onPress={() => void handleInputLabelPress()}
-						style={[styles.pasteInputTxtWrap, { backgroundColor: color.INPUT_BG }]}
-					/>
-				</View>
-				<Button
-					txt={t('save')}
-					onPress={() => void handleNewNpub()}
+				<InputAndLabel
+					placeholder='NPUB/HEX'
+					setInput={text => setPubKey(prev => ({ ...prev, encoded: text }))}
+					value={pubKey.encoded}
+					handleLabel={() => void handleInputLabelPress()}
+					isEmptyInput={pubKey.encoded.length < 1}
+				/>
+				<TxtButton
+					txt={t('whatsNostr')}
+					onPress={() => void openUrl('https://nostr-resources.com/')}
+					txtColor={color.TEXT}
+					style={[{ paddingTop: 25 }]}
 				/>
 				<TxtButton
 					txt={t('cancel')}
@@ -401,6 +429,12 @@ const styles = StyleSheet.create({
 	container: {
 		paddingTop: 0
 	},
+	loadingWrap: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginBottom: 100,
+	},
 	bookHeader: {
 		paddingHorizontal: 20,
 		marginBottom: 20,
@@ -413,12 +447,6 @@ const styles = StyleSheet.create({
 	cancel: {
 		marginTop: 25,
 		marginBottom: 10
-	},
-	pasteInputTxtWrap: {
-		position: 'absolute',
-		right: 10,
-		top: 10,
-		padding: 10
 	},
 	contactsWrap: {
 		flex: 1,

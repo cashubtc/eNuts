@@ -6,7 +6,6 @@ import ContactPage from '@screens/Addressbook/Contact'
 import AuthPage from '@screens/Auth'
 import Dashboard from '@screens/Dashboard'
 import { Disclaimer } from '@screens/Disclaimer'
-import ExplainerScreen from '@screens/Explainer'
 import HistoryPage from '@screens/History'
 import DetailsPage from '@screens/History/Details'
 import Mints from '@screens/Mints'
@@ -14,7 +13,8 @@ import MintInfoPage from '@screens/Mints/Info'
 import MintBackup from '@screens/Mints/MintBackup'
 import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
-import NostrExplainerScreen from '@screens/NostrExplainer'
+import NostrOnboardingScreen from '@screens/NostrOnboarding'
+import OnboardingScreen from '@screens/Onboarding'
 import ProcessingScreen from '@screens/Payment/Processing'
 import ProcessingErrorScreen from '@screens/Payment/ProcessingError'
 import InvoiceScreen from '@screens/Payment/Receive/Invoice'
@@ -44,16 +44,35 @@ import { View } from 'react-native'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
-export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: INavigatorProps) {
-	// const { auth, bgAuth, setBgAuth } = usePinContext()
+const animationDuration = 250
+
+export default function Navigator({
+	pinHash,
+	bgAuth,
+	shouldOnboard,
+	setBgAuth
+}: INavigatorProps) {
+
 	const { color } = useThemeContext()
+
 	const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
+
+	const getInitialRoute = () => {
+		// a pin has been setup previously
+		if (pinHash || bgAuth) { return 'auth' }
+		// initial onboarding
+		if (shouldOnboard) { return 'onboarding' }
+		// no previous pin setup && onboarding done
+		return 'dashboard'
+	}
+
 	useEffect(() => {
 		if (!bgAuth || !pinHash.length) { return }
 		setBgAuth?.(false)
 		nav.navigate('auth', { pinHash })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bgAuth])
+
 	return (
 		<View style={{
 			position: 'absolute',
@@ -62,11 +81,11 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 			backgroundColor: color.BACKGROUND,
 		}}>
 			<Stack.Navigator
-				initialRouteName={shouldSetup || pinHash || bgAuth ? 'auth' : 'dashboard'}
+				initialRouteName={getInitialRoute()}
 				screenOptions={{
 					headerShown: false,
 					animation: 'fade',
-					animationDuration: 100,
+					animationDuration,
 				}}
 			>
 				<Stack.Screen name='selectMint' component={SelectMintScreen} />
@@ -80,18 +99,36 @@ export default function Navigator({ shouldSetup, pinHash, bgAuth, setBgAuth }: I
 				<Stack.Screen name='processing' component={ProcessingScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />
-				<Stack.Screen name='explainer' component={ExplainerScreen} />
-				<Stack.Screen name='nostr explainer' component={NostrExplainerScreen} />
-				<Stack.Screen name='dashboard' component={Dashboard} />
+				<Stack.Screen
+					name='onboarding'
+					component={OnboardingScreen}
+					options={{
+						animation: 'default',
+						animationDuration,
+					}}
+				/>
+				<Stack.Screen name='nostr onboarding' component={NostrOnboardingScreen} />
+				<Stack.Screen
+					name='dashboard'
+					component={Dashboard}
+					options={{
+						animation: 'default',
+						animationDuration,
+					}}
+				/>
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
-				<Stack.Screen name='auth' component={AuthPage} initialParams={{ pinHash }} />
+				<Stack.Screen
+					name='auth'
+					component={AuthPage}
+					initialParams={{ pinHash }}
+				/>
 				{/* sendable token created page */}
 				<Stack.Screen
 					name='encodedToken'
 					component={EncodedTokenPage}
 					options={{
 						animation: 'slide_from_bottom',
-						animationDuration: 100,
+						animationDuration,
 					}}
 				/>
 				<Stack.Screen name='success' component={SuccessPage} />

@@ -25,6 +25,12 @@ export function uniq<T extends string | number | bigint | boolean | symbol>(iter
 
 export function clearArr<T extends U[], U>(array: T) { array.length = 0 }
 
+/**
+ * Removes an entry from an array while maintaining element order.
+ *
+ * @param arr - The array from which the entry should be removed.
+ * @param idx - The index of the entry to be removed.
+ */
 export function rmArrEntry<T extends U[], U>(arr: T, idx: number) {
 	if (idx < 0 || idx >= arr.length) { return }
 	arr[idx] = arr[arr.length - 1]
@@ -62,6 +68,12 @@ export function formatInt(
 	}
 }
 
+/**
+ * Generates a short date string representation based on the provided date.
+ *
+ * @param date - The date for which the short date string is generated.
+ * @returns A short date string representation f.E: "Mo., 17. Aug. 23"
+ */
 export function getShortDateStr(date: Date) {
 	return date.toLocaleDateString(getLanguageCode(), {
 		year: '2-digit',
@@ -102,14 +114,6 @@ export function formatSeconds(time: number) {
 	const minutes = Math.floor(time / 60)
 	const seconds = time % 60
 	return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-}
-
-export function skipRoute(r: string) {
-	return r !== 'root' &&
-		r !== 'Contact' &&
-		r !== 'Display settings' &&
-		r !== 'Security settings' &&
-		r !== 'BackupPage'
 }
 
 export function getSelectedAmount(proofs: IProofSelection[]) {
@@ -217,8 +221,6 @@ export function cleanUpNumericStr(str: string) {
 export function openUrl(url: string) {
 	if (!url?.trim()) { return }
 	return Linking.openURL(url)
-	/* return Linking.canOpenURL(url)
-		.then((canOpen) => canOpen && Linking.openURL(url)) */
 }
 
 /**

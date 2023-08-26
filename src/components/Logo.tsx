@@ -19,4 +19,9 @@ const styles = StyleSheet.create({
 	img: {
 		resizeMode: 'contain',
 	},
+	Img: {
+		width: 200,
+		height: 200,
+		resizeMode: 'contain'
+	},
 })

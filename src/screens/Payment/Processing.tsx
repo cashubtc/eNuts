@@ -14,7 +14,8 @@ import { updateNostrDmUsers } from '@src/storage/store/nostrDms'
 import { cTo } from '@src/storage/store/utils'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
-import { addLnPaymentToHistory, addToHistory } from '@store/HistoryStore'
+import { addLnPaymentToHistory } from '@store/HistoryStore'
+import { addToHistory } from '@store/latestHistoryEntries'
 import { globals } from '@styles'
 import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
@@ -78,7 +79,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					handleError()
 					return
 				}
-				// add as history entry
+				// add as history entry (receive ecash via lightning)
 				await addToHistory({
 					amount,
 					type: 2,
@@ -145,6 +146,14 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		try {
 			const res = await autoMintSwap(mint.mintUrl, targetMint?.mintUrl || '', amount, estFee || 0)
 			l({ swapResult: res })
+			// add as history entry (multimint swap)
+			await addToHistory({
+				amount: -amount,
+				type: 3,
+				value: res.requestTokenResult.invoice?.pr || '',
+				mints: [mint.mintUrl],
+				recipient: targetMint?.mintUrl || ''
+			})
 			navigation.navigate('success', {
 				amount: amount - (estFee || 0),
 				fee: res.payResult.realFee,
@@ -158,12 +167,13 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const handleSendingEcashProcess = async () => {
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
-			// add as history entry
+			// add as history entry (send ecash)
 			await addToHistory({
 				amount: -amount,
 				type: 1,
 				value: token,
 				mints: [mint.mintUrl],
+				recipient: nostr?.receiverName || ''
 			})
 			// https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 			if (nostr) {

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native'
 
-import { highlight, type HighlightKey, type Theme } from './colors'
+import { highlight, type HighlightKey, mainColors, type Theme } from './colors'
 
 export const globals = (color: Theme, h?: HighlightKey) => StyleSheet.create({
 	container: {
@@ -16,7 +16,7 @@ export const globals = (color: Theme, h?: HighlightKey) => StyleSheet.create({
 		fontSize: 16,
 		fontWeight: '500',
 		textAlign: 'center',
-		color: h ? highlight[h] : '#000'
+		color: h ? highlight[h] : mainColors.BLACK
 	},
 	navTxt: {
 		fontSize: 20,

@@ -2,6 +2,7 @@ import Txt from '@comps/Txt'
 import { repoIssueUrl } from '@consts/urls'
 import { usePromptContext } from '@src/context/Prompt'
 import { NS } from '@src/i18n'
+import { mainColors } from '@src/styles'
 import { isErr, openUrl } from '@util'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -26,7 +27,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 				styles={[{ marginBottom: 20 }]}
 			/>
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-				<Txt txt={props.error.message} styles={[{ color: '#FF6666' }]} />
+				<Txt txt={props.error.message} styles={[{ color: mainColors.RED }]} />
 				<Txt txt={props?.componentStack || t('stackNA')} />
 			</ScrollView>
 			<TouchableOpacity

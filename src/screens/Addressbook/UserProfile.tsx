@@ -1,12 +1,10 @@
 import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IProfileContent } from '@model/nostr'
-import { truncateAbout } from '@nostr/util'
+import { truncateNostrProfileInfo } from '@nostr/util'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
-import { NS } from '@src/i18n'
-import { globals, highlight as hi } from '@styles'
-import { useTranslation } from 'react-i18next'
+import { globals } from '@styles'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import ProfilePic from './ProfilePic'
@@ -25,38 +23,30 @@ interface IUserProfileProps {
 }
 
 export default function UserProfile({ handlePress }: IUserProfileProps) {
-	const { t } = useTranslation([NS.addrBook])
-	const { pubKey, userProfile, contacts } = useNostrContext()
-	const { color, highlight } = useThemeContext()
+	const { pubKey, userProfile } = useNostrContext()
+	const { color } = useThemeContext()
+	if (!userProfile) { return null }
 	return (
 		<TouchableOpacity
 			style={[globals(color).wrapContainer, styles.bookEntry, styles.userEntryContainer]}
 			onPress={() => handlePress({ isUser: true })}
 		>
 			<View style={styles.picNameWrap}>
-				<ProfilePic uri={userProfile?.picture} withPlusIcon={!pubKey.hex} isUser />
-				{contacts.length > 0 ?
-					<View>
-						<Username
-							displayName={userProfile?.displayName}
-							display_name={userProfile?.display_name}
-							username={userProfile?.username}
-							name={userProfile?.name}
-							npub={pubKey.encoded}
-						/>
-						{userProfile?.about &&
-							<Txt txt={truncateAbout(userProfile.about || '')} styles={[{ color: color.TEXT_SECONDARY }]} />
-						}
-					</View>
-					:
-					<Txt txt={t('addOwnLnurl')} styles={[{ color: hi[highlight] }]} />
-				}
+				<ProfilePic uri={userProfile.picture} withPlusIcon={!pubKey.hex} isUser />
+				<View>
+					<Username
+						displayName={userProfile.displayName}
+						display_name={userProfile.display_name}
+						username={userProfile.username}
+						name={userProfile.name}
+						npub={pubKey.encoded}
+					/>
+					{userProfile.about &&
+						<Txt txt={truncateNostrProfileInfo(userProfile.about)} styles={[{ color: color.TEXT_SECONDARY }]} />
+					}
+				</View>
 			</View>
-			{userProfile ?
-				<ChevronRightIcon color={color.TEXT} />
-				:
-				<View />
-			}
+			<ChevronRightIcon color={color.TEXT} />
 		</TouchableOpacity>
 	)
 }
