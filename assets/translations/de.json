@@ -329,7 +329,7 @@
 		"general": "Allgemein"
 	},
 	"wallet": {
-		"cashuContent": "Der Autor von Cashu kein Kryptograf und das Protokoll wird noch überprüft. Es bestehen Bedenken hinsichtlich möglicher schwerwiegender Mängel. Daher ist Cashu noch nicht für den produktiven Einsatz bereit.",
+		"cashuContent": "Die Autoren von Cashu und eNuts sind keine Kryptografen und das Cashu-Protokoll wird noch überprüft. Es bestehen Bedenken hinsichtlich möglicher schwerwiegender Mängel. Daher ist Cashu noch nicht für den produktiven Einsatz bereit.",
 		"cashuExperiment": "Cashu ist immer noch experimentell.",
 		"claiming": "Überprüft...",
 		"createLnInvoice": "Lightning Rechnung erstellen",
