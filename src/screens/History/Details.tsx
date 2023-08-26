@@ -49,7 +49,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [qr, setQr] = useState({ open: false, error: false })
 	const isPayment = amount < 0
-	const isLn = type === 2
+	const isLn = type === 2 || type === 3
 	const LNstr = t(isPayment ? 'lnPayment' : 'lnInvoice')
 	const Ecash = t('ecashPayment')
 	const { hash, memo } = isLn ? getLnInvoiceInfo(value) : { hash: '', memo: '' }

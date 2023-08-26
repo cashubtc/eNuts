@@ -203,7 +203,8 @@
 		"swapNow": "Échanger maintenant",
 		"emptyMint": "Mint ne dispose pas de fonds.",
 		"zapSoon": "Les zaps seront bientôt ajoutés...",
-		"enutsPub": "eNuts clé public: "
+		"enutsPub": "eNuts clé public: ",
+		"seeFullHistory": "Gesamter Transaktionsverlauf"
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",
@@ -307,7 +308,8 @@
 		"newMintAdded": "Mint ajoutée!",
 		"newMintAddedQuestion": "Voulez-vous recevoir Ecash maintenant ?",
 		"clearOverHere": "Tout est clair de ce côté-ci!",
-		"totalDmsReceived": "Vous avez reçu 4 Cashu token."
+		"totalDmsReceived": "Vous avez reçu 4 Cashu token.",
+		"seeFullHistory": "Voir l'historique complet"
 	},
 	"topNav": {
 		"about": "À propos de nous",

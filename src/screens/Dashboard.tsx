@@ -21,7 +21,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { addToHistory } from '@store/HistoryStore'
+import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
 import { getStrFromClipboard, hasTrustedMint, isCashuToken } from '@util'
@@ -62,6 +62,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		receiveOpts: false,
 		sendOpts: false
 	})
+
 	// This function is only called if the mints of the received token are not in the user DB
 	const handleTrustModal = async () => {
 		if (loading) { return }
@@ -79,12 +80,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// add token to db
 		await receiveToken(token)
 	}
+
 	// navigates to the mint list page
 	const handleMintModal = async () => {
 		setModal({ ...modal, mint: false })
 		await store.set(STORE_KEYS.explainer, '1')
 		navigation.navigate('mints')
 	}
+
 	// This function is only called if the mint of the received token is available as trusted in user DB
 	const handleTokenSubmit = async (url: string) => {
 		const tokenInfo = getTokenInfo(url)
@@ -106,6 +109,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		}
 		await receiveToken(url)
 	}
+
 	// helper function that gets called either right after pasting token or in the trust modal depending on user permission
 	const receiveToken = async (encodedToken: string) => {
 		const success = await claimToken(encodedToken).catch(l)
@@ -135,12 +139,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			isClaim: true
 		})
 	}
+
 	// get mints for send/receive process
 	const getMintsForPayment = async () => {
 		const mintsWithBal = await getMintsBalances()
 		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
 		return { mintsWithBal, mints }
 	}
+
 	// receive ecash button
 	const handleClaimBtnPress = async () => {
 		if (token.length) { return }
@@ -155,6 +161,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		setToken(clipboard)
 		await handleTokenSubmit(clipboard)
 	}
+
 	// mint/melt/send ecash buttons
 	const handleOptsBtnPress = async ({ isMelt, isSendEcash }: { isMelt?: boolean, isSendEcash?: boolean }) => {
 		const { mintsWithBal, mints } = await getMintsForPayment()
@@ -190,14 +197,17 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			isSendEcash
 		})
 	}
+
 	// close send/receive options modal
 	const closeOptsModal = () => setModal(prev => ({ ...prev, receiveOpts: false, sendOpts: false }))
+
 	useEffect(() => {
 		void (async () => {
 			setHasMint(await hasMints())
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
 	// check for available mints of the user
 	useEffect(() => {
 		void (async () => {
@@ -212,6 +222,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
+
 	// handle initial URL passed on by clicking on a cashu link
 	useEffect(() => {
 		void (async () => {
@@ -221,6 +232,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
+
 	// get balance after navigating to this page
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', async () => {

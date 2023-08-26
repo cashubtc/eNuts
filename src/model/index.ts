@@ -84,7 +84,7 @@ export interface IProofSelection extends Proof {
 
 export interface IHistoryEntry {
 	amount: number
-	type: 1 | 2 | 3 	// LN invoice | cashu token | multimint swap
+	type: 1 | 2 | 3 	// 1 = send/receive Ecash | 2 = LN invoice | 3 = multimint swap
 	timestamp: number
 	value: string		// Lightning invoice or encoded Cashu token
 	mints: string[] 	// mints involved

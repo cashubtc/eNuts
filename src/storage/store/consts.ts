@@ -16,7 +16,8 @@ export const STORE_KEYS = {
 	reqTimeout: 'request_timeout',
 	lang: 'settings_lang',
 	defaultMint: 'MINT_STORE=|:|=default_mint',
-	hiddenBal: 'privacy_balance'
+	hiddenBal: 'privacy_balance',
+	latestHistory: 'history_latest'
 }
 
 export const SECURESTORE_KEY = 'auth_pin'

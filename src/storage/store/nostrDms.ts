@@ -17,8 +17,8 @@ export async function getNostrDmUsers() {
  * Pushes a new pubkey into an array to save the user that we have a conversation with
  */
 export async function updateNostrDmUsers(newDm: string) {
-	const stored = await store.getObj<string[]>(STORE_KEYS.nostrDms)
-	if (!stored) {
+	const stored = await getNostrDmUsers()
+	if (!stored.length) {
 		await store.setObj(STORE_KEYS.nostrDms, [newDm])
 		return
 	}

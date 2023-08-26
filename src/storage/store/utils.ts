@@ -7,6 +7,7 @@ import * as SQLite from 'expo-sqlite'
 export function getDb(name: string) {
 	return new Db(SQLite.openDatabase(`${name}.db`))
 }
+
 /* export function getStore(name: string) {
 	const tmp = _storeDbs[name]
 	if (tmp && tmp instanceof StoreBase) { return tmp }
@@ -20,6 +21,7 @@ export function getBlankSQLResultSetRowList<T>() { return { length: 0, _array: [
 export function cTo<T extends object>(s: string) {
 	return JSON.parse(s) as T
 }
+
 export function toJson<T extends object>(o: T) {
 	return JSON.stringify(o)
 }
