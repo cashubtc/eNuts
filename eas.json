@@ -32,16 +32,10 @@
 		"production": {
 			"channel": "production",
 			"ios": {
-				"resourceClass": "m-medium",
-				"env": {
-					"APP_VARIANT": "prod"
-				}
+				"resourceClass": "m-medium"
 			},
 			"android": {
-				"buildType": "apk",
-				"env": {
-					"APP_VARIANT": "prod"
-				}
+				"buildType": "apk"
 			},
 			"env": {
 				"APP_VARIANT": "prod"
