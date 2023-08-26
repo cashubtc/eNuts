@@ -9,6 +9,7 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { truncateNostrProfileInfo } from '@nostr/util'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -30,22 +31,32 @@ const initialCopyState = {
 export default function DetailsPage({ navigation, route }: THistoryEntryPageProps) {
 	const { t } = useTranslation([NS.common])
 	const insets = useSafeAreaInsets()
-	const entry = route.params.entry
+	const {
+		timestamp,
+		amount,
+		type,
+		value,
+		mints,
+		recipient,
+		preImage,
+		fee,
+		isSpent
+	} = route.params.entry
 	const { color } = useThemeContext()
 	const [copy, setCopy] = useState(initialCopyState)
-	const [isSpent, setIsSpent] = useState(entry.isSpent)
+	const [spent, setSpent] = useState(isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [qr, setQr] = useState({ open: false, error: false })
-	const isPayment = entry.amount < 0
-	const isLn = entry.type === 2
+	const isPayment = amount < 0
+	const isLn = type === 2
 	const LNstr = t(isPayment ? 'lnPayment' : 'lnInvoice')
 	const Ecash = t('ecashPayment')
-	const { hash, memo } = isLn ? getLnInvoiceInfo(entry.value) : { hash: '', memo: '' }
-	const tokenMemo = !isLn ? getDecodedToken(entry.value).memo : t('noMemo', { ns: NS.history })
+	const { hash, memo } = isLn ? getLnInvoiceInfo(value) : { hash: '', memo: '' }
+	const tokenMemo = !isLn ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history })
 	const { openPromptAutoClose } = usePromptContext()
 
 	const copyValue = async () => {
-		await copyStrToClipboard(entry.value)
+		await copyStrToClipboard(value)
 		setCopy({ ...copy, value: true })
 		handleTimeout()
 	}
@@ -57,8 +68,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}
 
 	const copyPreimage = async () => {
-		if (!entry.preImage) { return }
-		await copyStrToClipboard(entry.preImage)
+		if (!preImage) { return }
+		await copyStrToClipboard(preImage)
 		setCopy({ ...copy, preimage: true })
 		handleTimeout()
 	}
@@ -71,34 +82,34 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}
 
 	const handleCheckSpendable = async () => {
-		if (isSpent || loading) { return }
+		if (spent || loading) { return }
 		startLoading()
-		const isSpendable = await isTokenSpendable(entry.value)
-		setIsSpent(!isSpendable)
+		const isSpendable = await isTokenSpendable(value)
+		setSpent(!isSpendable)
 		// update history item
-		await historyStore.updateHistoryEntry(entry, { ...entry, isSpent: !isSpendable })
+		await historyStore.updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: !isSpendable })
 		stopLoading()
 	}
 
 	const handleClaim = async () => {
 		startLoading()
-		const success = await claimToken(entry.value)
+		const success = await claimToken(value)
 		if (!success) {
 			openPromptAutoClose({ msg: t('invalidOrSpent') })
-			setIsSpent(true)
+			setSpent(true)
 			stopLoading()
 			return
 		}
 		// entry.isSpent can only be false here and is not undefined anymore
-		await historyStore.updateHistoryEntry({ ...entry, isSpent: false }, { ...entry, isSpent: true })
-		setIsSpent(true)
+		await historyStore.updateHistoryEntry({ ...route.params.entry, isSpent: false }, { ...route.params.entry, isSpent: true })
+		setSpent(true)
 		stopLoading()
 		openPromptAutoClose({
 			msg: t(
 				'claimSuccess',
 				{
-					amount: entry.amount < 0 ? Math.abs(entry.amount) : entry.amount,
-					mintUrl: entry.mints.map(m => formatMintUrl(m)).join(', '),
+					amount: amount < 0 ? Math.abs(amount) : amount,
+					mintUrl: mints.map(m => formatMintUrl(m)).join(', '),
 					memo: tokenMemo
 				}
 			),
@@ -110,9 +121,9 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const handleQR = useCallback(() => setQr({ ...qr, open: true }), [qr])
 
 	const getSpentIcon = () => {
-		if (isSpent) { return <CheckCircleIcon width={18} height={18} color={mainColors.VALID} /> }
+		if (spent) { return <CheckCircleIcon width={18} height={18} color={mainColors.VALID} /> }
 		if (loading) { return <Loading /> }
-		if (isUndef(isSpent)) { return <SearchIcon width={20} height={20} color={color.TEXT} /> }
+		if (isUndef(spent)) { return <SearchIcon width={20} height={20} color={color.TEXT} /> }
 		return <SandClockIcon width={20} height={20} color={color.TEXT} />
 	}
 
@@ -125,8 +136,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			/>
 			<ScrollView style={{ marginTop: 110, marginBottom: insets.bottom }} showsVerticalScrollIndicator={false} >
 				<View style={styles.topSection}>
-					<Text style={[styles.amount, { color: entry.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}>
-						{formatInt(entry.amount < 0 ? Math.abs(entry.amount) : entry.amount)}
+					<Text style={[styles.amount, { color: amount < 0 ? mainColors.ERROR : mainColors.VALID }]}>
+						{formatInt(amount < 0 ? Math.abs(amount) : amount)}
 					</Text>
 					<Txt
 						txt='Satoshi'
@@ -137,9 +148,19 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					{/* Settle Time */}
 					<View style={styles.entryInfo}>
 						<Txt txt={t('settleTime', { ns: NS.history })} />
-						<Txt txt={new Date(entry.timestamp * 1000).toLocaleString()} />
+						<Txt txt={new Date(timestamp * 1000).toLocaleString()} />
 					</View>
 					<Separator />
+					{/* nostr recipient */}
+					{recipient?.length &&
+						<>
+							<View style={styles.entryInfo}>
+								<Txt txt={t('recipient')} />
+								<Txt txt={truncateNostrProfileInfo(recipient, 15)} />
+							</View>
+							<Separator />
+						</>
+					}
 					{/* Memo */}
 					<View style={styles.entryInfo}>
 						<Txt txt={t('memo', { ns: NS.history })} />
@@ -152,24 +173,24 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					{/* Mints */}
 					<View style={styles.entryInfo}>
 						<Txt txt={isLn ? 'Mint' : 'Mints'} />
-						<Txt txt={entry.mints.map(m => formatMintUrl(m)).join(', ')} />
+						<Txt txt={mints.map(m => formatMintUrl(m)).join(', ')} />
 					</View>
 					<Separator />
 					{/* cashu token or ln invoice */}
 					<TouchableOpacity
 						style={styles.entryInfo}
 						onPress={() => {
-							if (!entry.value.length || copy.value) { return }
+							if (!value.length || copy.value) { return }
 							void copyValue()
 						}}
 					>
 						<Txt txt={isLn ? t('invoice') : 'Token'} />
 						<View style={styles.copyWrap}>
 							<Txt
-								txt={entry.value.length ? `${entry.value.slice(0, 16)}...` : t('n/a')}
-								styles={[styles.infoValue, entry.value.length > 0 ? styles.mr10 : {}]}
+								txt={value.length ? `${value.slice(0, 16)}...` : t('n/a')}
+								styles={[styles.infoValue, value.length > 0 ? styles.mr10 : {}]}
 							/>
-							{entry.value.length > 0 &&
+							{value.length > 0 &&
 								<>
 									{copy.value ?
 										<CheckmarkIcon width={18} height={20} color={mainColors.VALID} />
@@ -185,16 +206,16 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					{isPayment && !isLn &&
 						<>
 							<IsSpentContainer
-								isSpent={isSpent}
+								isSpent={spent}
 								handleCheckSpendable={() => void handleCheckSpendable()}
 							>
 								<Txt
-									txt={isUndef(isSpent) ? t('checkSpent', { ns: NS.history }) : t(isSpent ? 'isSpent' : 'isPending', { ns: NS.history })}
+									txt={isUndef(spent) ? t('checkSpent', { ns: NS.history }) : t(spent ? 'isSpent' : 'isPending', { ns: NS.history })}
 								/>
 								{getSpentIcon()}
 							</IsSpentContainer>
 							<Separator />
-							{!isUndef(isSpent) && !isSpent &&
+							{!isUndef(spent) && !spent &&
 								<>
 									<TouchableOpacity
 										style={styles.entryInfo}
@@ -241,17 +262,17 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							<TouchableOpacity
 								style={styles.entryInfo}
 								onPress={() => {
-									if (!entry.preImage || copy.preimage) { return }
+									if (!preImage || copy.preimage) { return }
 									void copyPreimage()
 								}}
 							>
 								<Txt txt='Pre-Image' />
 								<View style={styles.copyWrap}>
 									<Txt
-										txt={entry.preImage || t('n/a')}
-										styles={[styles.infoValue, entry.preImage && entry.preImage.length > 0 ? styles.mr10 : {}]}
+										txt={preImage || t('n/a')}
+										styles={[styles.infoValue, preImage && preImage.length > 0 ? styles.mr10 : {}]}
 									/>
-									{entry.preImage && entry.preImage.length > 0 &&
+									{preImage && preImage.length > 0 &&
 										<>
 											{copy.preimage ?
 												<CheckmarkIcon width={18} height={20} color={mainColors.VALID} />
@@ -266,7 +287,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							{/* LN payment fees */}
 							<View style={styles.entryInfo}>
 								<Txt txt={t('fee')} />
-								<Txt txt={entry.fee ? `${entry.fee} Satoshi` : t('n/a')} />
+								<Txt txt={fee ? `${fee} Satoshi` : t('n/a')} />
 							</View>
 							<Separator />
 						</>
@@ -286,7 +307,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					<Txt txt={t('bigQrMsg')} styles={[{ textAlign: 'center' }]} />
 					:
 					<QR
-						value={entry.value}
+						value={value}
 						size={300}
 						onError={() => {
 							setQr({ open: true, error: true })

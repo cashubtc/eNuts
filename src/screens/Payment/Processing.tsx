@@ -78,7 +78,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					handleError()
 					return
 				}
-				// add as history entry
+				// add as history entry (receive ecash via lightning)
 				await addToHistory({
 					amount,
 					type: 2,
@@ -158,12 +158,13 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const handleSendingEcashProcess = async () => {
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
-			// add as history entry
+			// add as history entry (send ecash)
 			await addToHistory({
 				amount: -amount,
 				type: 1,
 				value: token,
 				mints: [mint.mintUrl],
+				recipient: nostr?.receiverName || ''
 			})
 			// https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 			if (nostr) {

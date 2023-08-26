@@ -122,7 +122,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			openPromptAutoClose({ msg: t('tokenInfoErr') })
 			return
 		}
-		// add as history entry
+		// add as history entry (receive ecash)
 		await addToHistory({
 			amount: info.value,
 			type: 1,

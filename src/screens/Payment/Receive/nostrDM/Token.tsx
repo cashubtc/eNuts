@@ -82,7 +82,7 @@ export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
 				stopLoading()
 				return
 			}
-			// add as history entry
+			// add as history entry (receive ecash)
 			await addToHistory({
 				amount: info.value,
 				type: 1,

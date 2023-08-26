@@ -100,7 +100,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			msg: t('claimSuccess', { amount: info?.value, mintUrl: info?.mints[0], memo: info?.decoded.memo }),
 			success: true
 		})
-		// add as history entry
+		// add as history entry (receive ecash)
 		await addToHistory({
 			amount: info.value,
 			type: 1,

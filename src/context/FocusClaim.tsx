@@ -77,7 +77,7 @@ const useFocusClaim = () => {
 			openPromptAutoClose({ msg: t('tokenInfoErr', { ns: NS.common }) })
 			return
 		}
-		// add as history entry
+		// add as history entry (receive ecash)
 		await addToHistory({
 			amount: info.value,
 			type: 1,

@@ -51,6 +51,14 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
+					txt='Mints'
+					txtColor={color.TEXT}
+					icon={<MintBoardIcon color={color.TEXT} />}
+					onPress={() => navigation.navigate('mints')}
+					hasSeparator
+					hasChevron
+				/>
+				<SettingsMenuItem
 					txt={t('security', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<LockIcon color={color.TEXT} />}
@@ -63,14 +71,6 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					txtColor={color.TEXT}
 					icon={<EyeClosedIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('Privacy settings')}
-					hasSeparator
-					hasChevron
-				/>
-				<SettingsMenuItem
-					txt='Mints'
-					txtColor={color.TEXT}
-					icon={<MintBoardIcon color={color.TEXT} />}
-					onPress={() => navigation.navigate('mints')}
 					hasSeparator
 					hasChevron
 				/>
