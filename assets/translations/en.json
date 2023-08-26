@@ -147,6 +147,7 @@
 		"payWithLn": "Pay with your LN wallet",
 		"processingPayment": "Processing payment",
 		"readme": "Read me",
+		"sender": "Sender",
 		"recipient": "Recipient",
 		"reqTimeout": "Network request timeout",
 		"risks": "Understand the current risks",

@@ -7,11 +7,12 @@ import Txt from '@comps/Txt'
 import { addMint } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
-import type { INostrDm } from '@model/nostr'
+import type { INostrDm, TContact } from '@model/nostr'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { getNostrUsername, truncateNostrProfileInfo } from '@src/nostr/util'
 import { addToHistory } from '@store/HistoryStore'
 import { updateNostrRedeemed } from '@store/nostrDms'
 import { highlight as hi, mainColors } from '@styles'
@@ -23,6 +24,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 interface ITokenProps {
+	sender?: TContact
 	token: string
 	id: string
 	dms: INostrDm[]
@@ -30,7 +32,7 @@ interface ITokenProps {
 	mints: string[]
 }
 
-export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
+export default function Token({ sender, token, id, dms, setDms, mints }: ITokenProps) {
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
@@ -82,12 +84,13 @@ export default function Token({ token, id, dms, setDms, mints }: ITokenProps) {
 				stopLoading()
 				return
 			}
-			// add as history entry (receive ecash)
+			// add as history entry (receive ecash from nostr)
 			await addToHistory({
 				amount: info.value,
 				type: 1,
 				value: token,
 				mints: info.mints,
+				sender: truncateNostrProfileInfo(getNostrUsername(sender?.[1]) || '')
 			})
 			await handleStoreRedeemed()
 			openPromptAutoClose({

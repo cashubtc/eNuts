@@ -37,6 +37,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		type,
 		value,
 		mints,
+		sender,
 		recipient,
 		preImage,
 		fee,
@@ -156,7 +157,17 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						<>
 							<View style={styles.entryInfo}>
 								<Txt txt={t('recipient')} />
-								<Txt txt={truncateNostrProfileInfo(recipient, 15)} />
+								<Txt txt={truncateNostrProfileInfo(recipient)} />
+							</View>
+							<Separator />
+						</>
+					}
+					{/* nostr sender (in case user claims from nostr DMs) */}
+					{sender?.length &&
+						<>
+							<View style={styles.entryInfo}>
+								<Txt txt={t('sender')} />
+								<Txt txt={truncateNostrProfileInfo(sender)} />
 							</View>
 							<Separator />
 						</>

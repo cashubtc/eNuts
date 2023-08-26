@@ -10,32 +10,30 @@ interface IUsernameProps {
 	name?: string
 	npub: HexKey
 	fontSize?: number
-	shouldTruncate?: boolean
 }
 
-export default function Username({ displayName, display_name, username, name, npub, fontSize, shouldTruncate }: IUsernameProps) {
-	const maxLength = shouldTruncate ? 20 : 100
+export default function Username({ displayName, display_name, username, name, npub, fontSize }: IUsernameProps) {
 	if (displayName?.length) {
 		return <Txt
-			txt={truncateNostrProfileInfo(displayName, maxLength)}
+			txt={truncateNostrProfileInfo(displayName)}
 			styles={[styles.username, { fontSize: fontSize || 18 }]}
 		/>
 	}
 	if (display_name?.length) {
 		return <Txt
-			txt={truncateNostrProfileInfo(display_name, maxLength)}
+			txt={truncateNostrProfileInfo(display_name)}
 			styles={[styles.username, { fontSize: fontSize || 18 }]}
 		/>
 	}
 	if (username?.length) {
 		return <Txt
-			txt={truncateNostrProfileInfo(username, maxLength)}
+			txt={truncateNostrProfileInfo(username)}
 			styles={[styles.username, { fontSize: fontSize || 18 }]}
 		/>
 	}
 	if (name?.length) {
 		return <Txt
-			txt={truncateNostrProfileInfo(name, maxLength)}
+			txt={truncateNostrProfileInfo(name)}
 			styles={[styles.username, { fontSize: fontSize || 18 }]}
 		/>
 	}

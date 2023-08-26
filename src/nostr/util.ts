@@ -63,7 +63,7 @@ export function truncateNpub(npub: string) {
  * @param maxLength - The maximum length of the truncated string.
  * @returns The truncated string.
  */
-export function truncateNostrProfileInfo(str: string, maxLength: number) {
+export function truncateNostrProfileInfo(str: string, maxLength = 20) {
 	if (str.length <= maxLength) { return str }
 	const truncated = [...str].reduce((result, char) => {
 		if (result.length < maxLength) {

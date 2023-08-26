@@ -42,11 +42,10 @@ export default function Sender({ contact, navigation }: ISenderProps) {
 							name={contact[1].name}
 							npub={truncateNpub(nip19.npubEncode(contact[0]))}
 							fontSize={16}
-							shouldTruncate
 						/>
 						{contact[1].about?.length > 0 &&
 							<Txt
-								txt={truncateNostrProfileInfo(contact[1].about, 25)}
+								txt={truncateNostrProfileInfo(contact[1].about)}
 								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}
 							/>
 						}
