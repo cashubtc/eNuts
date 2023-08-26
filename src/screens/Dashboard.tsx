@@ -3,10 +3,10 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { MintBoardIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import { AboutIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import Txt from '@comps/Txt'
-import { _testmintUrl, isIOS } from '@consts'
+import { _testmintUrl } from '@consts'
 import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import OptsModal from '@modal/OptsModal'
@@ -23,7 +23,7 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/HistoryStore'
 import { getCustomMintNames } from '@store/mintStore'
-import { highlight as hi } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { getStrFromClipboard, hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
@@ -239,7 +239,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
 			{/* Receive/send/mints buttons */}
-			<View style={[styles.actionWrap, {paddingHorizontal: !hasMint || balance < 1 ? 75 : 30 }]}>
+			<View style={[styles.actionWrap, { paddingHorizontal: !hasMint || balance < 1 ? 75 : 30 }]}>
 				{(hasMint && balance > 0) &&
 					<ActionBtn
 						icon={
@@ -255,10 +255,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					/>
 				}
 				<ActionBtn
-					icon={<MintBoardIcon width={32} height={32} color={hi[highlight]} />}
-					txt='Mints'
+					icon={<ScanQRIcon width={32} height={32} color={hi[highlight]} />}
+					txt={t('scan')}
 					color={hi[highlight]}
-					onPress={() => navigation.navigate('mints')}
+					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
 				/>
 				<ActionBtn
 					icon={<ReceiveIcon width={32} height={32} color={hi[highlight]} />}
@@ -268,11 +268,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				/>
 			</View>
 			{/* scan QR */}
-			<View style={styles.qrBtnWrap}>
+			<View style={styles.hintWrap}>
 				<TouchableOpacity
-					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
+					onPress={() => navigation.navigate('disclaimer')}
+					style={styles.betaHint}
 				>
-					<ScanQRIcon width={60} height={60} color={color.TEXT} />
+					<AboutIcon color={mainColors.WARN} />
+					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginLeft: 10 }]} />
 				</TouchableOpacity>
 			</View>
 			{/* Bottom nav icons */}
@@ -367,10 +369,15 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 		marginTop: 10,
 	},
-	qrBtnWrap: {
+	hintWrap: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: isIOS ? 100 : 75
+		marginBottom: 50
+	},
+	betaHint: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		padding: 10
 	}
 })

@@ -1,4 +1,4 @@
-import { AboutIcon, ChevronRightIcon, HistoryIcon, SwapCurrencyIcon } from '@comps/Icons'
+import { ChevronRightIcon, HistoryIcon, MintBoardIcon, SwapCurrencyIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -67,18 +67,19 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			}
 			{/* history */}
 			<BoardEntry
+				txt='Mints'
+				icon={<MintBoardIcon color={mainColors.WHITE} />}
+				color={mainColors.WHITE}
+				onPress={() => nav?.navigate('mints')}
+				withSeparator
+			/>
+			{/* history */}
+			<BoardEntry
 				txt={t('history', { ns: NS.topNav })}
 				icon={<HistoryIcon color={mainColors.WHITE} />}
 				color={mainColors.WHITE}
 				onPress={() => nav?.navigate('history')}
 				withSeparator
-			/>
-			{/* Disclaimer */}
-			<BoardEntry
-				txt={t('risks')}
-				icon={<AboutIcon color={mainColors.WHITE} />}
-				color={mainColors.WHITE}
-				onPress={() => nav?.navigate('disclaimer')}
 			/>
 		</View>
 	)

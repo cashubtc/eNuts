@@ -125,7 +125,7 @@ function _App() {
 		}
 	}
 
-	// init pin auth data
+	// init auth data
 	const initAuth = async () => {
 		const [pinHash, onboard] = await Promise.all([
 			secureStore.get(SECURESTORE_KEY),

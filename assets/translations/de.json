@@ -154,6 +154,8 @@
 		"scanAgain": "Hier tippen, um erneut zu scannen",
 		"scanTokenOrLn": "Cashu Token oder LN Rechnung scannen",
 		"scanLn": "Lightning Rechnung scannen",
+		"scan": "Scannen",
+		"enutsBeta": "eNuts ist beta Software.",
 		"seconds": "Sekunden",
 		"selectAmount": "Betrag auswählen",
 		"selected": "Ausgewählt",
