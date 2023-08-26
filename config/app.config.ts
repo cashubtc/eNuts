@@ -74,11 +74,11 @@ const config: ExpoConfig = {
 		'expo-updates'
 	],
 	ios: {
-		supportsTablet: true,
+		supportsTablet: false,
 		infoPlist: {
 			LSApplicationQueriesSchemes: ['cashu']
 		},
-		bundleIdentifier: ''
+		bundleIdentifier: 'com.agron.enuts'
 	},
 	android: {
 		icon: './assets/app-icon-android-legacy.png',
