@@ -31,10 +31,16 @@
 		},
 		"production": {
 			"ios": {
-				"resourceClass": "m-medium"
+				"resourceClass": "m-medium",
+				"env": {
+					"APP_VARIANT": "prod"
+				}
 			},
 			"android": {
-				"buildType": "apk"
+				"buildType": "apk",
+				"env": {
+					"APP_VARIANT": "prod"
+				}
 			},
 			"env": {
 				"APP_VARIANT": "prod"
