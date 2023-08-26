@@ -21,6 +21,8 @@
 		"build:preview:android": "npx -y eas-cli@latest build -e preview -p android -m previewNoDevClient --no-wait",
 		"build:preview:ios": "npx -y eas-cli@latest build -e preview -p ios -m previewNoDevClient --no-wait",
 		"build:ci": "npx -y eas-cli@latest build --non-interactive -e preview -p android -m ciPreviewBuild --no-wait",
+		"build:prod:android": "npx -y eas-cli@latest build -e production -p android -m production --no-wait",
+		"build:prod:ios":"npx -y eas-cli@latest build -e production -p ios -m production --no-wait",
 		"ios": "expo start --ios",
 		"web": "expo start --web",
 		"test": "npx jest -c ./config/jest.config.ts --passWithNoTests ",
