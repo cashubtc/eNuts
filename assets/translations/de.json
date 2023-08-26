@@ -206,7 +206,8 @@
 		"emptyMint": "Kein Guthaben vorhanden",
 		"zapSoon": "Zaps werden bald hinzugefügt...",
 		"enutsPub": "eNuts: ",
-		"seeFullHistory": "Gesamter Transaktionsverlauf"
+		"seeFullHistory": "Gesamter Transaktionsverlauf",
+		"hideLatestTxs": "Aktuellste Transaktionen verbergen"
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

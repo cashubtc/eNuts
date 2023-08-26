@@ -17,6 +17,7 @@ export const STORE_KEYS = {
 	lang: 'settings_lang',
 	defaultMint: 'MINT_STORE=|:|=default_mint',
 	hiddenBal: 'privacy_balance',
+	hiddenTxs: 'privacy_txs',
 	latestHistory: 'history_latest'
 }
 

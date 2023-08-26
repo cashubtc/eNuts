@@ -33,11 +33,6 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const [history, setHistory] = useState<IHistoryEntry[]>([])
 
-	const showBalance = () => {
-		if (hidden) { return '-' }
-		return formatSats ? formatBalance(balance) : formatInt(balance)
-	}
-
 	const toggleBalanceFormat = () => {
 		setFormatSats(prev => !prev)
 		if (!pref || !isBool(formatSats)) { return }
@@ -67,16 +62,16 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			styles.board,
 			{ borderColor: color.BORDER, backgroundColor: hi[highlight] }
 		]}>
-			<Logo size={hidden ? 100 : 60} style={{ marginTop: hidden ? 40 : 0, marginBottom: hidden ? 40 : 20 }} />
+			<Logo size={hidden.balance ? 100 : 60} style={{ marginTop: hidden.balance ? 40 : 0, marginBottom: hidden.balance ? 40 : 20 }} />
 			{/* balance */}
-			{!hidden &&
+			{!hidden.balance &&
 				<TouchableOpacity
 					style={styles.balanceWrap}
 					onPress={toggleBalanceFormat}
-					disabled={hidden}
+					disabled={hidden.balance}
 				>
 					<Text style={styles.balAmount}>
-						{showBalance()}
+						{formatSats ? formatBalance(balance) : formatInt(balance)}
 					</Text>
 					<View style={styles.balAssetNameWrap}>
 						<Text style={styles.balAssetName}>
@@ -88,7 +83,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			}
 			<Separator style={[styles.separator]} />
 			{/* latest 3 history entries */}
-			{history.length ?
+			{history.length && !hidden.txs ?
 				history.map(h => (
 					<HistoryEntry
 						key={h.timestamp}
@@ -104,11 +99,20 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					/>
 				))
 				:
-				<View style={{ padding: 10 }}>
-					<Txt txt={t('noTX')} styles={[globals(color).pressTxt, { color: mainColors.WHITE }]} />
-				</View>
+				!hidden.txs ?
+					<View style={{ padding: 10 }}>
+						<Txt txt={t('noTX')} styles={[globals(color).pressTxt, { color: mainColors.WHITE }]} />
+					</View>
+					:
+					null
 			}
-			{history.length === 3 &&
+			{hidden.txs &&
+				<Txt
+					txt='Latest transactions hidden'
+					styles={[globals(color).pressTxt, { color: mainColors.WHITE, marginVertical: 50 }]}
+				/>
+			}
+			{history.length === 3 && !hidden.txs &&
 				<TxtButton
 					txt={t('seeFullHistory')}
 					onPress={() => nav?.navigate('history')}

@@ -206,7 +206,8 @@
 		"emptyMint": "Mint has no funds",
 		"zapSoon": "Zaps will be added soon...",
 		"enutsPub": "eNuts public key: ",
-		"seeFullHistory": "See full transaction history"
+		"seeFullHistory": "See full transaction history",
+		"hideLatestTxs": "Hide your latest transactions"
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",

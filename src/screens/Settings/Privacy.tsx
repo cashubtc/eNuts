@@ -1,4 +1,5 @@
 import Screen from '@comps/Screen'
+import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TPrivacySettingsPageProps } from '@model/nav'
@@ -17,14 +18,22 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 	const { color, highlight } = useThemeContext()
 	const { hidden, setHidden } = usePrivacyContext()
 
-	const handleHidden = async () => {
-		if (hidden) {
-			setHidden(false)
+	const handleHiddenBalance = async () => {
+		setHidden({ balance: !hidden.balance, txs: hidden.txs })
+		if (hidden.balance) {
 			await store.delete(STORE_KEYS.hiddenBal)
 			return
 		}
-		setHidden(true)
 		await store.set(STORE_KEYS.hiddenBal, '1')
+	}
+
+	const handleHiddenTxs = async () => {
+		setHidden({ balance: hidden.balance, txs: !hidden.txs })
+		if (hidden.txs) {
+			await store.delete(STORE_KEYS.hiddenTxs)
+			return
+		}
+		await store.set(STORE_KEYS.hiddenTxs, '1')
 	}
 
 	return (
@@ -36,17 +45,29 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 			<Text style={[styles.subHeader, { color: color.TEXT }]}>
 				{t('general')}
 			</Text>
-			<View style={[globals(color).wrapContainer, styles.wrap]}>
-				<Txt txt={t('hideNuts', { ns: NS.common })} />
-				<Switch
-					trackColor={{ false: color.BORDER, true: hi[highlight] }}
-					thumbColor={color.TEXT}
-					onValueChange={handleHidden}
-					value={hidden}
-				/>
+			<View style={globals(color).wrapContainer}>
+				<View style={styles.wrap}>
+					<Txt txt={t('hideNuts', { ns: NS.common })} />
+					<Switch
+						trackColor={{ false: color.BORDER, true: hi[highlight] }}
+						thumbColor={color.TEXT}
+						onValueChange={handleHiddenBalance}
+						value={hidden.balance}
+					/>
+				</View>
+				<Separator />
+				<View style={styles.wrap}>
+					<Txt txt={t('hideLatestTxs', { ns: NS.common })} />
+					<Switch
+						trackColor={{ false: color.BORDER, true: hi[highlight] }}
+						thumbColor={color.TEXT}
+						onValueChange={handleHiddenTxs}
+						value={hidden.txs}
+					/>
+				</View>
 			</View>
 			<BottomNav navigation={navigation} route={route} />
-		</Screen>
+		</Screen >
 	)
 }
 
@@ -61,7 +82,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginBottom: 20,
 		paddingVertical: isIOS ? 18 : 10
 	},
 })

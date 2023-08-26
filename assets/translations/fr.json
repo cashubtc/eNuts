@@ -309,7 +309,8 @@
 		"newMintAddedQuestion": "Voulez-vous recevoir Ecash maintenant ?",
 		"clearOverHere": "Tout est clair de ce côté-ci!",
 		"totalDmsReceived": "Vous avez reçu 4 Cashu token.",
-		"seeFullHistory": "Voir l'historique complet"
+		"seeFullHistory": "Voir l'historique complet",
+		"hideLatestTxs": "Masquer vos dernières transactions"
 	},
 	"topNav": {
 		"about": "À propos de nous",
