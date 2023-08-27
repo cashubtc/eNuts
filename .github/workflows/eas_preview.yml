@@ -9,6 +9,7 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
         env:
             BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
         steps:
@@ -30,8 +31,8 @@ jobs:
             - name: 📦 Install dependencies
               run: npm install
 
-            - name: 🚀 Build android apk
+            - name: 🚀 Build android preview apk
               run: npm run build:ci:preview:android
 
-            - name: 🚀 Build ios ipa
+            - name: 🚀 Build ios preview ipa
               run: npm run build:ci:preview:ios
