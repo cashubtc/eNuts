@@ -4,9 +4,8 @@
 name: Node.js CI
 
 on:
-    push:
-        branches: [main, dev]
     pull_request:
+        branches: main
         # types: [opened, reopened]
         # types: [opened, synchronize, edited, ready_for_review]
 
