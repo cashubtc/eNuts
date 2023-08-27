@@ -2,18 +2,13 @@ name: eas preview build
 
 on:
     workflow_run:
-        workflows:
-          - "Node.js CI" # Replace with the actual name of your node.js.yml workflow
+        workflows: [Node.js CI]
         types:
           - completed
-    pull_request:
-        branches:
-          - main
 
 jobs:
     build:
         runs-on: ubuntu-latest
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
         env:
             BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
         steps:
