@@ -38,6 +38,13 @@ jobs:
                   --reset-cache \
                   -O build \
                   src/AppEntry.ts
+            - run: |
+                  npx -y metro build \
+                  -c metro.config.js \
+                  -p ios -g \
+                  --reset-cache \
+                  -O build \
+                  src/AppEntry.ts
 
             # - run: npx tsc
 
