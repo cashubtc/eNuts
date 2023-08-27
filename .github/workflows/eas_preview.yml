@@ -1,8 +1,9 @@
 name: eas preview build
+
 on:
-    push:
-        tags:
-            - "pre-v*"
+  pull_request:
+    branches:
+      - main
 
 jobs:
     build:
