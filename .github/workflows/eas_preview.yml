@@ -11,10 +11,11 @@ on:
           - completed
 
 jobs:
-    build:
+    on-success:
+        runs-on: ubuntu-latest
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
         env:
             BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
-        runs-on: ubuntu-latest
         steps:
             - name: 🏗 Setup repo
               uses: actions/checkout@v3
