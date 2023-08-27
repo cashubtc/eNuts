@@ -28,8 +28,8 @@ jobs:
             - name: 📦 Install dependencies
               run: npm install
 
-            - name: 🚀 Build android apk
+            - name: 🚀 Build android production apk
               run: npm run build:ci:prod:android
 
-            - name: 🚀 Build ios ipa
+            - name: 🚀 Build ios production ipa
               run: npm run build:ci:prod:ios
