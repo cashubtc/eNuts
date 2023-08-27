@@ -1,8 +1,8 @@
-name: eas build
+name: eas production build
 on:
     push:
         tags:
-            - "v**"
+            - "v*"
 
 jobs:
     build:
@@ -28,5 +28,8 @@ jobs:
             - name: 📦 Install dependencies
               run: npm install
 
-            - name: 🚀 Build app
-              run: npm run build:ci
+            - name: 🚀 Build android apk
+              run: npm run build:ci:prod:android
+
+            - name: 🚀 Build ios ipa
+              run: npm run build:ci:prod:ios
