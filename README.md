@@ -29,6 +29,7 @@
 - 🚀 [Getting started](#-getting-started)
 - 👏 [Contribute](#-contribute)
 - 🎉 [Releases](#-releases)
+- 🔐 [Verify releases](#-verify-releases)
 - 📄 [License](#-license)
 
 ## ⚠️ Disclaimer
@@ -116,6 +117,42 @@ The main purpose of this repository is to continue evolving and pushing the adop
 ## 🎉 Releases
 
 [https://github.com/cashubtc/eNuts/releases](https://github.com/cashubtc/eNuts/releases)
+
+## 🔐 Verify releases
+
+A verification process adds an extra layer of security to our releases. It's important to verify the integrity of software you download to ensure a safe experience.
+
+**Download the Release Files:**
+- Go to the [release](https://github.com/cashubtc/eNuts/releases) section of this repository.
+- Download the APK file you want to verify.
+
+**Download Verification Files:**
+In the same release section, locate and download the following verification files:
+- `chosen_app_version.apk.sig` (Detached signature for the APK)
+- `hash_list.txt` (List of hash values for all releases)
+- `gpg_key.asc` (Our GPG public key)
+
+**Import the GPG Public Key:**
+Import our GPG public key using the following command:
+```bash
+gpg --import gpg_key.asc
+```
+
+**Verify the Detached Signature:**
+ Run the following command to verify the detached signature:
+```bash
+gpg --verify chosen_app_version.apk.sig chosen_app_version.apk
+```
+
+**Verify the Hash Value:**
+- Open the `hash_list.txt` file and locate the hash value associated with the downloaded APK file.
+- Calculate the hash value of your downloaded APK file using a hash tool, for example, sha256sum:
+```bash
+sha256sum chosen_app_version.apk
+```
+- Compare the calculated hash value with the one in the `hash_list.txt` file.
+
+If the verification process is successful, you can be confident that the release is authentic and hasn't been tampered with. If you encounter any issues or have questions, please [contact us](https://t.me/eNutsWallet).
 
 ## 📄 License
 
