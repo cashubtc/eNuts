@@ -48,6 +48,7 @@ export function ZapModal({ visible, close }: IQuestionModalProps) {
 				openPromptAutoClose({ msg: 'Zap error' })
 				return
 			}
+			// TODO store invoice and check if it has been payed
 			const invoice = await getInvoiceFromLnurl(DONATION_ADDR, zap.amount)
 			stopLoading()
 			close()

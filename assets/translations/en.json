@@ -214,7 +214,7 @@
 		"next": "Next",
 		"donateLn": "Donate via Lightning",
 		"supportDev": "Zap the devs",
-		"supportHint": "Every contribution, no matter the size, makes a significant impact."
+		"supportHint": "Every contribution, no matter the size, makes a significant impact. (eNuts confirmation screen is under development)"
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",
