@@ -153,18 +153,17 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					</View>
 					<Separator />
 					{/* nostr recipient */}
-					{recipient?.length &&
+					{recipient && recipient.length > 0 &&
 						<>
 							<View style={styles.entryInfo}>
 								<Txt txt={t('recipient')} />
-								{/* intermint swap target mint | nostr recipient */}
 								<Txt txt={type === 3 ? recipient : truncateNostrProfileInfo(recipient)} />
 							</View>
 							<Separator />
 						</>
 					}
 					{/* nostr sender (in case user claims from nostr DMs) */}
-					{sender?.length &&
+					{sender && sender.length > 0 &&
 						<>
 							<View style={styles.entryInfo}>
 								<Txt txt={t('sender')} />
