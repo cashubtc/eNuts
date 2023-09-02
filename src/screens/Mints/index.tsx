@@ -6,7 +6,6 @@ import InputAndLabel from '@comps/InputAndLabel'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
-import { customName, mintUrl } from '@consts/mints'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -70,6 +69,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			}
 			// add mint url to db
 			await addMint(submitted)
+			setSelectedMint({ mintUrl: submitted })
 		} catch (e) {
 			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
 			return
@@ -138,7 +138,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				openTopUpModal()
 			}
 		})()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	// get mints balances and default mint after navigating to this page
@@ -153,7 +153,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			}
 		})
 		return focusHandler
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [navigation])
 
 	return (
@@ -221,7 +221,6 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					onPress={() => setNewMintModal(true)}
 				/>
 			}
-
 			{/* Submit new mint URL modal */}
 			<MyModal
 				type='bottom'
@@ -270,8 +269,12 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					topBtnTxt={t('yes')}
 					topBtnAction={() => {
 						setTopUpModal(false)
+						if (!selectedMint) {
+							openPromptAutoClose({ msg: '' })
+							return
+						}
 						navigation.navigate('selectAmount', {
-							mint: selectedMint || { mintUrl, customName },
+							mint: selectedMint,
 							balance: 0,
 						})
 					}}
