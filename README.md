@@ -119,8 +119,7 @@ The main purpose of this repository is to continue evolving and pushing the adop
 
 ## 🔐 Verify releases
 
-A verification process adds an extra layer of security to our releases. It's important to verify the integrity of software you download to ensure a safe experience.
-To ensure that the files you download are those originally posted by the maintainers, you should both check that the hashes of your files match those on the signed list, and that the signature on the list is valid.
+A verification process adds an extra layer of security to our releases. It's important to verify the integrity of software you download to ensure that the files you download are those originally posted by the maintainers. You should both check that the hashes of your files match those on the signed list, and that the signature on the list is valid.
 
 **Download the Release APK:**
 - Go to the [release](https://github.com/cashubtc/eNuts/releases) section of this repository.
