@@ -28,6 +28,7 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 					{/* enuts mint */}
 					<Txt txt={t('enutsMint')} styles={[styles.header]} />
 					<Txt txt={t('mintDisclaimer')} />
+					<Separator style={[styles.separator]} />
 					{/* custodial */}
 					<Txt txt={t('custodialRisk')} styles={[styles.header]} />
 					<Txt txt={t('custodialRiskContent')} />
