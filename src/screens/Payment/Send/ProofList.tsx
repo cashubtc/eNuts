@@ -12,7 +12,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
-import { getSelectedAmount } from '@util'
+import { formatInt, getSelectedAmount } from '@util'
 import { getMintCurrentKeySetId, } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -254,7 +254,7 @@ function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 	const { color } = useThemeContext()
 	return (
 		<>
-			<Txt txt={`${proof.amount} Satoshi`} />
+			<Txt txt={`${formatInt(proof.amount)} Satoshi`} />
 			<View style={styles.keyWrap}>
 				<Text style={[
 					styles.keysetID,
