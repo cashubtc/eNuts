@@ -80,7 +80,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 							hint={t('meltSwapHint')}
 							onPress={() => {
 								// check if source mint is testmint
-								if (__DEV__ && mint.mintUrl === _testmintUrl) {
+								if (mint.mintUrl === _testmintUrl) {
 									openPromptAutoClose({ msg: t('swapNotAllowed') })
 									return
 								}
