@@ -8,7 +8,8 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { dropAllData } from '@src/storage/dev'
-import { historyStore } from '@store'
+import { historyStore, store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { globals, mainColors } from '@styles'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,6 +26,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { openPromptAutoClose } = usePromptContext()
 	const handleDeleteHistory = async () => {
 		const success = await historyStore.clear()
+		await store.delete(STORE_KEYS.latestHistory)
 		openPromptAutoClose({
 			msg: success ? t('historyDeleted') : t('delHistoryErr'),
 			success
