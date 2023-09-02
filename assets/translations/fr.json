@@ -208,7 +208,10 @@
 		"enutsPub": "eNuts clé public: ",
 		"seeFullHistory": "Gesamter Transaktionsverlauf",
 		"hiddenTxs": "Dernières transactions masquées",
-		"next": "Suivant"
+		"next": "Suivant",
+		"donateLn": "Faire un don via Lightning",
+		"supportDev": "Zap le développement",
+		"supportHint": "Chaque contribution, quelle que soit sa taille, a un impact significatif."
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",

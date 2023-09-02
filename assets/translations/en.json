@@ -211,7 +211,10 @@
 		"seeFullHistory": "See full transaction history",
 		"hideLatestTxs": "Hide your latest transactions",
 		"hiddenTxs": "Latest transactions hidden",
-		"next": "Next"
+		"next": "Next",
+		"donateLn": "Donate via Lightning",
+		"supportDev": "Zap the devs",
+		"supportHint": "Every contribution, no matter the size, makes a significant impact."
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",
