@@ -1,10 +1,12 @@
 import ActionButtons from '@comps/ActionButtons'
 import Button, { IconBtn } from '@comps/Button'
+import Empty from '@comps/Empty'
 import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
 import InputAndLabel from '@comps/InputAndLabel'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
-import { _testmintUrl, defaultMints } from '@consts'
+import { _testmintUrl } from '@consts'
+import { customName, mintUrl } from '@consts/mints'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -23,7 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export default function Mints({ navigation }: TMintsPageProps) {
+export default function Mints({ navigation, route }: TMintsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { prompt, closePrompt, openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
@@ -46,10 +48,9 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	}, [])
 	// the text input for adding a new mint
 	const [input, setInput] = useState('')
-	// visibility state for trusting a new mint that us not in the user mint list
+	// visibility state for trusting a new mint that is not in the user mint list
 	const [trustModalOpen, setTrustModalOpen] = useState(false)
 	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
-	const allMints = [...defaultMints.filter(m => !isTrustedMint(m.mintUrl)), ...usertMints]
 
 	// adds a mint via input
 	const handleMintInput = async (clipboard?: string) => {
@@ -133,7 +134,11 @@ export default function Mints({ navigation }: TMintsPageProps) {
 		void (async () => {
 			await handleMintsState()
 			setDefaultM(await getDefaultMint() ?? '')
+			if (route.params?.newMint) {
+				openTopUpModal()
+			}
 		})()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	// get mints balances and default mint after navigating to this page
@@ -143,63 +148,80 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			await handleMintsState()
 			const defaultt = await getDefaultMint()
 			setDefaultM(defaultt ?? '')
+			if (route.params?.newMint) {
+				openTopUpModal()
+			}
 		})
 		return focusHandler
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [navigation])
 
 	return (
-		<View style={[globals(color).container, styles.container]}>
+		<View style={[
+			globals(color).container,
+			styles.container,
+			{ justifyContent: usertMints.length ? 'flex-start' : 'center' }
+		]}>
 			<TopNav
 				screenName='Mints'
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
-				{/* Mints list where test mint is always visible */}
-				<ScrollView style={[globals(color).wrapContainer]}>
-					{allMints.reverse().map((m, i) => (
-						<View key={m.mintUrl}>
-							<TouchableOpacity
-								style={styles.mintUrlWrap}
-								onPress={() => handleMintEntry(m, m.amount)}
-							>
-								<View style={styles.mintNameWrap}>
-									<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-										{defaultMint === m.mintUrl &&
-											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-										}
-										<Txt
-											txt={m.customName || formatMintUrl(m.mintUrl)}
-											styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0, fontWeight: '500' }]}
-										/>
-									</View>
-									{isTrustedMint(m.mintUrl) &&
-										<View style={styles.mintBal}>
-											<ZapIcon color={m.amount > 0 ? hi[highlight] : color.TEXT_SECONDARY} />
-											<Text style={[styles.mintAmount, { color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY, marginBottom: 5 }]}>
-												{m.amount > 0 ?
-													formatInt(m.amount, 'compact', 'en') + ' Satoshi'
-													:
-													t('emptyMint')
-												}
-											</Text>
+			{usertMints.length > 0 ?
+				<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
+					{/* Mints list where test mint is always visible */}
+					<ScrollView style={[globals(color).wrapContainer]}>
+						{usertMints.reverse().map((m, i) => (
+							<View key={m.mintUrl}>
+								<TouchableOpacity
+									style={styles.mintUrlWrap}
+									onPress={() => handleMintEntry(m, m.amount)}
+								>
+									<View style={styles.mintNameWrap}>
+										<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+											{defaultMint === m.mintUrl &&
+												<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+											}
+											<Txt
+												txt={m.customName || formatMintUrl(m.mintUrl)}
+												styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0, fontWeight: '500' }]}
+											/>
 										</View>
-									}
-								</View>
-								{/* Add mint icon or show balance */}
-								<View>
-									{isTrustedMint(m.mintUrl) ?
-										<ChevronRightIcon color={color.TEXT} />
-										:
-										<PlusIcon color={color.TEXT} />
-									}
-								</View>
-							</TouchableOpacity>
-							{i < allMints.length - 1 && <Separator />}
-						</View>
-					))}
-				</ScrollView>
-			</View>
+										{isTrustedMint(m.mintUrl) &&
+											<View style={styles.mintBal}>
+												<ZapIcon color={m.amount > 0 ? hi[highlight] : color.TEXT_SECONDARY} />
+												<Text style={[styles.mintAmount, { color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY, marginBottom: 5 }]}>
+													{m.amount > 0 ?
+														formatInt(m.amount, 'compact', 'en') + ' Satoshi'
+														:
+														t('emptyMint')
+													}
+												</Text>
+											</View>
+										}
+									</View>
+									{/* Add mint icon or show balance */}
+									<View>
+										{isTrustedMint(m.mintUrl) ?
+											<ChevronRightIcon color={color.TEXT} />
+											:
+											<PlusIcon color={color.TEXT} />
+										}
+									</View>
+								</TouchableOpacity>
+								{i < usertMints.length - 1 && <Separator />}
+							</View>
+						))}
+					</ScrollView>
+				</View>
+				:
+				<Empty
+					txt={t('addNewMint', { ns: NS.mints })}
+					pressable
+					onPress={() => setNewMintModal(true)}
+				/>
+			}
+
 			{/* Submit new mint URL modal */}
 			<MyModal
 				type='bottom'
@@ -249,7 +271,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 					topBtnAction={() => {
 						setTopUpModal(false)
 						navigation.navigate('selectAmount', {
-							mint: selectedMint || { mintUrl: '', customName: '' },
+							mint: selectedMint || { mintUrl, customName },
 							balance: 0,
 						})
 					}}
@@ -268,15 +290,17 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				cancelFn={() => setTrustModalOpen(false)}
 			/>
 			{/* add new mint button */}
-			<View style={[styles.newMint, { marginBottom: insets.bottom }]}>
-				<IconBtn
-					icon={<PlusIcon width={28} height={28} color={mainColors.WHITE} />}
-					onPress={() => {
-						closePrompt()
-						setNewMintModal(true)
-					}}
-				/>
-			</View>
+			{usertMints.length > 0 &&
+				<View style={[styles.newMint, { marginBottom: insets.bottom }]}>
+					<IconBtn
+						icon={<PlusIcon width={28} height={28} color={mainColors.WHITE} />}
+						onPress={() => {
+							closePrompt()
+							setNewMintModal(true)
+						}}
+					/>
+				</View>
+			}
 		</View>
 	)
 }

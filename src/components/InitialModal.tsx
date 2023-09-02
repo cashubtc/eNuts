@@ -24,9 +24,9 @@ export default function InitialModal({ visible, onConfirm, onCancel }: IInitialM
 			<Text style={globals(color, highlight).modalTxt}>
 				{t('startHint')}
 			</Text>
-			<Button txt={t('addMint')} onPress={onConfirm} />
+			<Button txt={t('addEnutsMint')} onPress={onConfirm} />
 			<TxtButton
-				txt={t('willDoLater')}
+				txt={t('addOwn')}
 				onPress={onCancel}
 				style={[{ paddingTop: 25, paddingBottom: 10, }]}
 			/>

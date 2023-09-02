@@ -1,33 +1,9 @@
 import type { IMintBalWithName } from '@model'
 
-
+export const customName = `mint.enuts.${__DEV__ ? 'dev' : 'beta'}`
 export const _testmintUrl = 'https://testnut.cashu.space'
+const ENUTS_MINT = 'https://legend.lnbits.com/cashu/api/v1/AptDNABNBXv8gpuywhx6NV'
+export const mintUrl = __DEV__ ? _testmintUrl : ENUTS_MINT
+export const DONATION_ADDR = 'zap@agron.dev'
 
-export const defaultMints: Readonly<IMintBalWithName[]> = [
-	/* {
-		mintUrl: 'https://8333.space:3338',
-		amount: 0,
-		customName: ''
-	},
-	{
-		mintUrl: 'https://legend.lnbits.com/cashu/api/v1/TGM7mVpYBkva7sCqLECTk5',
-		amount: 0,
-		customName: ''
-	}, */
-	{
-		mintUrl: _testmintUrl,
-		amount: 0,
-		customName: ''
-	}
-] as const
-
-// https://reactnative.dev/docs/platform
-// export const osAndroid = 'android'
-// export const osIOS = 'ios'
-
-// const PATTERN = [1000, 2000, 3000]
-// Android: wait 1s -> vibrate 2s -> wait 3s
-// iOS: wait 1s -> vibrate -> wait 2s -> vibrate -> wait 3s -> vibrate
-// const androidSuccessVibrationPattern = [0, 100, 0, 100, 0, 300]
-// const iosSuccessVibrationPattern = [0, 100, 100, 100]
-// export const successPattern = Platform.OS === osAndroid ? androidSuccessVibrationPattern : iosSuccessVibrationPattern
+export const defaultMints: Readonly<IMintBalWithName[]> = [{ mintUrl, amount: 0, customName }] as const

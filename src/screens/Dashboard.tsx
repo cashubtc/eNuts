@@ -3,7 +3,7 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { AboutIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import { AboutIcon, ChevronRightIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
@@ -22,7 +22,7 @@ import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
-import { getCustomMintNames } from '@store/mintStore'
+import { getCustomMintNames, saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
 import { getStrFromClipboard, hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
@@ -82,10 +82,15 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}
 
 	// navigates to the mint list page
-	const handleMintModal = async () => {
+	const handleMintModal = async (forEnutsMint = false) => {
 		setModal({ ...modal, mint: false })
 		await store.set(STORE_KEYS.explainer, '1')
-		navigation.navigate('mints')
+		navigation.navigate('mints', { newMint: forEnutsMint })
+	}
+
+	const handleEnutsMint = async () => {
+		await saveDefaultOnInit()
+		await handleMintModal(true)
 	}
 
 	// This function is only called if the mint of the received token is available as trusted in user DB
@@ -286,7 +291,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					style={styles.betaHint}
 				>
 					<AboutIcon color={mainColors.WARN} />
-					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginLeft: 10 }]} />
+					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginHorizontal: 10 }]} />
+					<ChevronRightIcon color={mainColors.WARN} />
 				</TouchableOpacity>
 			</View>
 			{/* Bottom nav icons */}
@@ -303,11 +309,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Initial mint modal prompt */}
 			<InitialModal
 				visible={modal.mint}
-				onConfirm={() => void handleMintModal()}
-				onCancel={async () => {
-					await store.set(STORE_KEYS.explainer, '1')
-					setModal({ ...modal, mint: false })
-				}}
+				onConfirm={() => void handleEnutsMint()}
+				onCancel={() => void handleMintModal()}
 			/>
 			{/* Send options */}
 			<OptsModal
@@ -385,11 +388,15 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 50
+		marginBottom: 50,
 	},
 	betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		padding: 10
+		padding: 10,
+		borderWidth: 1,
+		borderStyle: 'dashed',
+		borderColor: mainColors.WARN,
+		borderRadius: 50,
 	}
 })
