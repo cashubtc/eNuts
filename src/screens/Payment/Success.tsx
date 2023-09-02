@@ -5,6 +5,7 @@ import { isIOS } from '@consts'
 import type { TSuccessPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { highlight as hi, mainColors } from '@styles'
 import { formatInt, formatMintUrl, vib } from '@util'
 import { useEffect } from 'react'
@@ -14,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	const { amount, memo, fee, mint, isClaim, isMelt, nostr } = route.params
+	l({mint})
 	const { t } = useTranslation([NS.common])
 	const { highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()

@@ -10,7 +10,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { cleanUpNumericStr, getInvoiceFromLnurl, vib } from '@util'
+import { cleanUpNumericStr, formatInt, getInvoiceFromLnurl, vib } from '@util'
 import { checkFees, requestMint } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -208,7 +208,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 								txt={t('balance', { ns: NS.common })}
 								styles={[{ fontWeight: '500' }]}
 							/>
-							<Txt txt={`${balance} Satoshi`} />
+							<Txt txt={`${formatInt(balance)} Satoshi`} />
 						</View>
 						:
 						null
@@ -263,9 +263,7 @@ export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInv
 					styles={[{ fontWeight: '500' }]}
 
 				/>
-				<Txt
-					txt={`${balance} Satoshi`}
-				/>
+				<Txt txt={`${formatInt(balance)} Satoshi`} />
 			</View>
 			<Separator style={[{ marginVertical: 20 }]} />
 			<View style={styles.overview}>

@@ -1,4 +1,5 @@
-import { AboutIcon, EyeClosedIcon, HamburgerIcon, LockIcon, MintBoardIcon, TrashbinIcon } from '@comps/Icons'
+import { AboutIcon, EyeClosedIcon, HamburgerIcon, LockIcon, MintBoardIcon, TrashbinIcon, ZapIcon } from '@comps/Icons'
+import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import { QuestionModal } from '@modal/Question'
@@ -8,7 +9,8 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { dropAllData } from '@src/storage/dev'
-import { historyStore } from '@store'
+import { historyStore, store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { globals, mainColors } from '@styles'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,11 +22,13 @@ import SettingsMenuItem from './MenuItem'
 export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
+	const { openPromptAutoClose } = usePromptContext()
 	const [confirm, setConfirm] = useState(false)
 	const [confirmReset, setConfirmReset] = useState(false)
-	const { openPromptAutoClose } = usePromptContext()
+	const [zapModal, setZapModal] = useState(false)
 	const handleDeleteHistory = async () => {
 		const success = await historyStore.clear()
+		await store.delete(STORE_KEYS.latestHistory)
 		openPromptAutoClose({
 			msg: success ? t('historyDeleted') : t('delHistoryErr'),
 			success
@@ -51,7 +55,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt='Mints'
+					txt={t('mintSettings', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<MintBoardIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('mints')}
@@ -83,6 +87,13 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
+					txt='Zap'
+					txtColor={mainColors.ZAP}
+					icon={<ZapIcon color={mainColors.ZAP} />}
+					onPress={() => setZapModal(true)}
+					hasSeparator
+				/>
+				<SettingsMenuItem
 					txt={t('delHistory')}
 					txtColor={mainColors.ERROR}
 					icon={<TrashbinIcon color={mainColors.ERROR} />}
@@ -100,6 +111,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 			</View>
 			<Txt txt={`eNuts v${version}`} styles={[styles.version]} />
 			<BottomNav navigation={navigation} route={route} />
+			<ZapModal visible={zapModal} close={() => setZapModal(false)} />
 			{/* confirm history deletion */}
 			<QuestionModal
 				header={t('delHistoryQ')}

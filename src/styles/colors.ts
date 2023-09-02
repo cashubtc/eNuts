@@ -101,14 +101,14 @@ export function getPinpadBg(highlight: keyof typeof pinpadBg) {
 export enum mainColors {
 	// indicators
 	VALID = '#5DB076',
-	WARN = '#FF9901',
+	WARN = '#FF9900',
 	ERROR = '#FF6666',
 	// colors
 	BLACK = '#000',
 	WHITE = '#FAFAFA',
 	GREY = '#999',
-	RED = 'FF6666',
-	BLUE = '027DFF',
+	BLUE = '#027DFF',
+	ZAP = H_Colors.Zap
 }
 
 export const themeColors = Object.keys(highlight) as HighlightKey[]

@@ -5,7 +5,7 @@ import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { globals } from '@styles'
+import { globals, mainColors } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
@@ -24,6 +24,10 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 					{/* beta */}
 					<Txt txt={t('enutsDisclaimer')} styles={[styles.header]} />
 					<Txt txt={t('disclaimer')} />
+					<Separator style={[styles.separator]} />
+					{/* enuts mint */}
+					<Txt txt={t('enutsMint')} styles={[styles.header]} />
+					<Txt txt={t('mintDisclaimer')} />
 					<Separator style={[styles.separator]} />
 					{/* custodial */}
 					<Txt txt={t('custodialRisk')} styles={[styles.header]} />
@@ -50,7 +54,8 @@ const styles = StyleSheet.create({
 	header: {
 		fontWeight: '500',
 		fontSize: 18,
-		marginBottom: 10
+		marginBottom: 10,
+		color: mainColors.WARN
 	},
 	separator: {
 		marginVertical: 20

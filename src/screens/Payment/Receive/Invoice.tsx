@@ -11,7 +11,7 @@ import { NS } from '@src/i18n'
 import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
+import { formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,6 +28,8 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const { copied, copy } = useCopy()
+
+	l({ mintUrl })
 
 	const handlePayment = async () => {
 		// state "unpaid" is temporary to prevent btn press spam
@@ -46,13 +48,14 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					mints: [mintUrl],
 				})
 				setPaid('paid')
-				navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
+				navigation.navigate('success', { amount, mint: mintUrl })
 			}
 		} catch (e) {
 			l(e)
 			// TODO update this check
 			if (isErr(e) && e.message === 'Tokens already issued for this invoice.') {
 				setPaid('paid')
+				navigation.navigate('success', { amount, mint: mintUrl })
 				return
 			}
 			setPaid('unpaid')
@@ -107,7 +110,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 						outlined
 						txt={t(paid === 'unpaid' ? 'paymentPending' : 'checkPayment')}
 						onPress={() => void handlePayment()}
-						// icon={paid === 'unpaid' ? <SandClockIcon color={hi[highlight]} /> : <CheckmarkIcon color={hi[highlight]} />}
+					// icon={paid === 'unpaid' ? <SandClockIcon color={hi[highlight]} /> : <CheckmarkIcon color={hi[highlight]} />}
 					/>
 					<View style={{ marginVertical: 10 }} />
 					<Button

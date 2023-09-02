@@ -27,7 +27,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 				styles={[{ marginBottom: 20 }]}
 			/>
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-				<Txt txt={props.error.message} styles={[{ color: mainColors.RED }]} />
+				<Txt txt={props.error.message} styles={[{ color: mainColors.ERROR }]} />
 				<Txt txt={props?.componentStack || t('stackNA')} />
 			</ScrollView>
 			<TouchableOpacity
