@@ -13,7 +13,6 @@
   </div>
 </div>
 
-<!-- <a  href="cashu://cashuAeyJ0b2tlbiI6W3sicHJvb2ZzIjpbeyJpZCI6InVUWTFBTE5ZZmQ2ZyIsImFtb3VudCI6MSwic2VjcmV0IjoiRnRIL2EvWUppMGtPVHAvL2R0UkxHcFk2Mjl1VzcxNHBQZE1YZmJTRTFmQT0iLCJDIjoiMDJhZTg2ZWZjODk1OWZiYmU2MzUyM2NiMGVjMDY2MDMzOGNiZjAwNDUxZmFhNTYyNDQ2NGYxNDQ0Zjc4ODhiMDFhIn0seyJpZCI6InVUWTFBTE5ZZmQ2ZyIsImFtb3VudCI6NCwic2VjcmV0IjoiS3lJTDRrOWtNZkhrMjdQeER4MGFBV3E0Qk9RMWZUYzc3RmRjdG1sZVNFRT0iLCJDIjoiMDNiYWNjMjU3ZDFlYmRlNWQ0OThiOTQxNzZkZTFlNmEyYWM5Y2I0Njg4MjYwZDJkMjE1NzU3NWFkYTM1ODFmMjQyIn0seyJpZCI6InVUWTFBTE5ZZmQ2ZyIsImFtb3VudCI6NjQsInNlY3JldCI6IjZoYmptak1ZT01LMVpaS0pmek1LR0NjeXM3TEpUeE9MQ3p2VmJSZ1dqZ289IiwiQyI6IjAyODkwMTk5ODIyOTY4YzM1NWZlZDgzOTBkMDQxOWU2MjY3MjBlNWQ1NjQzMzNjYzRlOGQyOWM2NzdjZDA1MGM1NSJ9XSwibWludCI6Imh0dHBzOi8vdGVzdG51dC5jYXNodS5zcGFjZSJ9XX0"> token</a> -->
 **eNuts** is a strictly typed mobile [**Cashu**](https://github.com/cashubtc) wallet that has Lightning support and can connect to multiple mints. A [**NOSTR**](https://nostr-resources.com/) integration allows seemless transactions between you and your contacts. We aim to provide a great user experience by implementing features that make the usage of Ecash easier and safer at the same time. The [**cashu-ts**](https://github.com/cashubtc/cashu-ts) library and SQLite are used to manage the Cashu related features. This project is in early stage and we **strongly** encourage you to exercise caution and only use it for **experimental** or **educational** purposes. Read more about Cashu at [https://docs.cashu.space/](https://docs.cashu.space/)
 
 ## 🐿️ Join the research and development groups
@@ -29,6 +28,7 @@
 - 🚀 [Getting started](#-getting-started)
 - 👏 [Contribute](#-contribute)
 - 🎉 [Releases](#-releases)
+- 🔐 [Verify releases](#-verify-releases)
 - 📄 [License](#-license)
 
 ## ⚠️ Disclaimer
@@ -116,6 +116,43 @@ The main purpose of this repository is to continue evolving and pushing the adop
 ## 🎉 Releases
 
 [https://github.com/cashubtc/eNuts/releases](https://github.com/cashubtc/eNuts/releases)
+
+## 🔐 Verify releases
+
+A verification process adds an extra layer of security to our releases. It's important to verify the integrity of software you download to ensure a safe experience.
+To ensure that the files you download are those originally posted by the maintainers, you should both check that the hashes of your files match those on the signed list, and that the signature on the list is valid.
+
+**Download the Release APK:**
+- Go to the [release](https://github.com/cashubtc/eNuts/releases) section of this repository.
+- Download the APK file you want to verify.
+
+**Download Verification Files:**
+In the same release section, locate and download the following verification files:
+- `chosen_app_version.apk.sig` (Detached signature for the APK)
+- `hash_list.txt` (List of hash values for all releases)
+- `gpg_key.asc` (Our GPG public key)
+
+**Import the GPG Public Key:**
+Import our GPG public key using the following command:
+```bash
+gpg --import gpg_key.asc
+```
+
+**Verify the Detached Signature:**
+ Run the following command to verify the detached signature:
+```bash
+gpg --verify chosen_app_version.apk.sig chosen_app_version.apk
+```
+
+**Verify the Hash Value:**
+- Open the `hash_list.txt` file and locate the hash value associated with the downloaded APK file.
+- Calculate the hash value of your downloaded APK file using a hash tool, for example, sha256sum:
+```bash
+sha256sum chosen_app_version.apk
+```
+- Compare the calculated hash value with the one in the `hash_list.txt` file.
+
+If the verification process is successful, you can be confident that the release is authentic and hasn't been tampered with. If you encounter any issues or have questions, please [contact us](https://t.me/eNutsWallet).
 
 ## 📄 License
 
