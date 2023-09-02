@@ -5,7 +5,7 @@ import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { globals } from '@styles'
+import { globals, mainColors } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
 	header: {
 		fontWeight: '500',
 		fontSize: 18,
-		marginBottom: 10
+		marginBottom: 10,
+		color: mainColors.WARN
 	},
 	separator: {
 		marginVertical: 20

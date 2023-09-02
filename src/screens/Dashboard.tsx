@@ -3,7 +3,7 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { AboutIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import { AboutIcon, ChevronRightIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
@@ -291,7 +291,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					style={styles.betaHint}
 				>
 					<AboutIcon color={mainColors.WARN} />
-					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginLeft: 10 }]} />
+					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginHorizontal: 10 }]} />
+					<ChevronRightIcon color={mainColors.WARN} />
 				</TouchableOpacity>
 			</View>
 			{/* Bottom nav icons */}
@@ -387,11 +388,15 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 50
+		marginBottom: 50,
 	},
 	betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		padding: 10
+		padding: 10,
+		borderWidth: 1,
+		borderStyle: 'dashed',
+		borderColor: mainColors.WARN,
+		borderRadius: 50,
 	}
 })
