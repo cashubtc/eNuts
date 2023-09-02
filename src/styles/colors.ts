@@ -108,7 +108,7 @@ export enum mainColors {
 	WHITE = '#FAFAFA',
 	GREY = '#999',
 	BLUE = '#027DFF',
-	ZAP = '#FFFF00'
+	ZAP = H_Colors.Zap
 }
 
 export const themeColors = Object.keys(highlight) as HighlightKey[]
