@@ -73,7 +73,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			const resp = await requestMint(mint.mintUrl, amount)
 			const decoded = getDecodedLnInvoice(resp.pr)
 			// immediatly claim and navigate to success page for test-mint
-			if (mint.mintUrl === _testmintUrl) {
+			if (__DEV__ && mint.mintUrl === _testmintUrl) {
 				const { success, invoice } = await requestToken(mint.mintUrl, amount, resp.hash)
 				if (!success) {
 					handleError()

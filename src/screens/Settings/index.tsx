@@ -53,7 +53,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt='Mints'
+					txt={t('mintSettings', { ns: NS.topNav })}
 					txtColor={color.TEXT}
 					icon={<MintBoardIcon color={color.TEXT} />}
 					onPress={() => navigation.navigate('mints')}
