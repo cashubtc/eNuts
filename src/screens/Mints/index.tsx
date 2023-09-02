@@ -6,6 +6,7 @@ import InputAndLabel from '@comps/InputAndLabel'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
+import { customName, mintUrl } from '@consts/mints'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -24,7 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export default function Mints({ navigation }: TMintsPageProps) {
+export default function Mints({ navigation, route }: TMintsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { prompt, closePrompt, openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
@@ -133,7 +134,11 @@ export default function Mints({ navigation }: TMintsPageProps) {
 		void (async () => {
 			await handleMintsState()
 			setDefaultM(await getDefaultMint() ?? '')
+			if (route.params?.newMint) {
+				openTopUpModal()
+			}
 		})()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	// get mints balances and default mint after navigating to this page
@@ -143,8 +148,12 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			await handleMintsState()
 			const defaultt = await getDefaultMint()
 			setDefaultM(defaultt ?? '')
+			if (route.params?.newMint) {
+				openTopUpModal()
+			}
 		})
 		return focusHandler
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [navigation])
 
 	return (
@@ -262,7 +271,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 					topBtnAction={() => {
 						setTopUpModal(false)
 						navigation.navigate('selectAmount', {
-							mint: selectedMint || { mintUrl: '', customName: '' },
+							mint: selectedMint || { mintUrl, customName },
 							balance: 0,
 						})
 					}}

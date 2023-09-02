@@ -1,4 +1,4 @@
-import { customName, ENUTS_MINT, mintUrl } from '@consts/mints'
+import { customName, mintUrl } from '@consts/mints'
 import { addMint } from '@db'
 import { store } from '@store'
 
@@ -33,6 +33,6 @@ export async function saveDefaultOnInit() {
 	await Promise.all([
 		addMint(mintUrl),
 		_setMintName(mintUrl, customName),
-		setDefaultMint(ENUTS_MINT),
+		setDefaultMint(mintUrl),
 	])
 }

@@ -22,7 +22,7 @@ import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
-import { getCustomMintNames } from '@store/mintStore'
+import { getCustomMintNames, saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
 import { getStrFromClipboard, hasTrustedMint, isCashuToken } from '@util'
 import { claimToken } from '@wallet'
@@ -82,10 +82,15 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}
 
 	// navigates to the mint list page
-	const handleMintModal = async () => {
+	const handleMintModal = async (forEnutsMint = false) => {
 		setModal({ ...modal, mint: false })
 		await store.set(STORE_KEYS.explainer, '1')
-		navigation.navigate('mints')
+		navigation.navigate('mints', { newMint: forEnutsMint })
+	}
+
+	const handleEnutsMint = async () => {
+		await saveDefaultOnInit()
+		await handleMintModal(true)
 	}
 
 	// This function is only called if the mint of the received token is available as trusted in user DB
@@ -303,11 +308,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Initial mint modal prompt */}
 			<InitialModal
 				visible={modal.mint}
-				onConfirm={() => void handleMintModal()}
-				onCancel={async () => {
-					await store.set(STORE_KEYS.explainer, '1')
-					setModal({ ...modal, mint: false })
-				}}
+				onConfirm={() => void handleEnutsMint()}
+				onCancel={() => void handleMintModal()}
 			/>
 			{/* Send options */}
 			<OptsModal
