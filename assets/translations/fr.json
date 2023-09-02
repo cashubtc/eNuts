@@ -342,6 +342,8 @@
 		"enutsDisclaimer": "eNuts est un logiciel beta inachevé.",
 		"lossContent": "Les token Cashu sont des token au porteur, ce qui signifie qu'en cas de perte d'accès, il n'y a pas d'option de récupération. eNuts stocke vos token sur votre appareil. Avant de supprimer l'application, assurez-vous de sauvegarder vos token.",
 		"lossOfTokens": "Perte de fonds.",
+		"enutsMint": "Die standardmäßige eNuts-Mint",
+		"mintDisclaimer": "L'utilisation de la mint eNuts par défaut se fait entièrement à vos propres risques. Nous vous encourageons vivement à faire preuve de prudence et à ne l'utiliser que à des fins expérimentales ou éducatives. Aucune garantie n'est donnée quant à sa fonctionnalité, sa sécurité ou sa disponibilité, et elle peut disparaître sans préavis. Les dépôts effectués dans cette mint doivent être considérés comme des dons et ne pourront éventuellement pas être restitués, mais pourraient être utilisés pour le développement ultérieur. Soyez conscient des risques associés aux logiciels en version bêta, et il est de votre responsabilité de protéger vos actifs lors de l'utilisation de cette mint.",
 		"paidOut": "Payé",
 		"pasteToken": "Coller et échanger Ecash",
 		"payInvoice": "Payer une facture",
