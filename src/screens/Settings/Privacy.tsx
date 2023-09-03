@@ -45,7 +45,7 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 			<Text style={[styles.subHeader, { color: color.TEXT }]}>
 				{t('general')}
 			</Text>
-			<View style={[globals(color).wrapContainer, { paddingVertical: 10 }]}>
+			<View style={[globals(color).wrapContainer, { paddingVertical: isIOS ? 18 : 10 }]}>
 				<View style={styles.wrap}>
 					<Txt txt={t('hideNuts', { ns: NS.common })} />
 					<Switch
