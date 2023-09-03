@@ -24,7 +24,7 @@ import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames, saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
-import { getStrFromClipboard, hasTrustedMint, isCashuToken } from '@util'
+import { getStrFromClipboard, hasTrustedMint, isCashuToken, isErr } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
@@ -89,7 +89,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}
 
 	const handleEnutsMint = async () => {
-		await saveDefaultOnInit()
+		try {
+			await saveDefaultOnInit()
+		} catch (e) {
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('smthWrong') })
+			await handleMintModal(false)
+			return
+		}
 		await handleMintModal(true)
 	}
 

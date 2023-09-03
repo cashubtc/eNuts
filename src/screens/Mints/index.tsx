@@ -270,7 +270,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					topBtnAction={() => {
 						setTopUpModal(false)
 						if (!selectedMint) {
-							openPromptAutoClose({ msg: '' })
+							openPromptAutoClose({ msg: t('smthWrong') })
 							return
 						}
 						navigation.navigate('selectAmount', {
