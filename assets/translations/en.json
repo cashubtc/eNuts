@@ -214,7 +214,8 @@
 		"next": "Next",
 		"donateLn": "Donate via Lightning",
 		"supportDev": "Zap the devs",
-		"supportHint": "Every contribution, no matter the size, makes a significant impact. Zap confirmation screen is under development"
+		"supportHint": "Every contribution, no matter the size, makes a significant impact. Zap confirmation screen is under development",
+		"newToken": "New Cashu token"
 	},
 	"error": {
 		"addAllMintIdsErr": "Error while getting keyset ids from mint",
