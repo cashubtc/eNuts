@@ -2,6 +2,7 @@ import { AboutIcon, EyeClosedIcon, HamburgerIcon, LockIcon, MintBoardIcon, Trash
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
+import { appVersion } from '@consts/env'
 import { QuestionModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -16,7 +17,6 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
-import { version } from '../../../package.json'
 import SettingsMenuItem from './MenuItem'
 
 export default function Settings({ navigation, route }: TSettingsPageProps) {
@@ -109,7 +109,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					/>
 				}
 			</View>
-			<Txt txt={`eNuts v${version}`} styles={[styles.version]} />
+			<Txt txt={appVersion} styles={[styles.version]} />
 			<BottomNav navigation={navigation} route={route} />
 			<ZapModal visible={zapModal} close={() => setZapModal(false)} />
 			{/* confirm history deletion */}
