@@ -55,7 +55,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 			<TopNav
 				withBackBtn
 				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-				screenName={`${t('newToken')}  🥜`}
+				screenName={`${t('newToken')}  🥜🐿️`}
 				handlePress={() => navigation.navigate('dashboard')}
 			/>
 			{/* The amount of the created token */}
