@@ -19,6 +19,7 @@ export type RootStackParamList = {
 	disclaimer: undefined
 	history: undefined
 	mints: {
+		defaultMint?: boolean
 		newMint?: boolean
 	} | undefined
 	Settings: undefined

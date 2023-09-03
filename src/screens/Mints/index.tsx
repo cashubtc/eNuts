@@ -130,11 +130,20 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	}
 
 	const handleInitialRender = async () => {
+		// user comes from dashboard and wants to add his own mint url, open prompt
+		if (route.params?.newMint) {
+			// timeout is needed on IOS only when different prompts are called synchronously
+			const t = setTimeout(() => {
+				setNewMintModal(true)
+				clearTimeout(t)
+			}, 200)
+			return
+		}
 		await handleMintsState()
 		const defaultt = await getDefaultMint()
 		setDefaultM(defaultt ?? '')
 		// this is the case when user adds the initial default mint
-		if (route.params?.newMint) {
+		if (route.params?.defaultMint) {
 			// ask to mint new token
 			openTopUpModal()
 		}
