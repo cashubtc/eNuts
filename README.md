@@ -5,6 +5,7 @@
   <h2>eNuts – A Cashu wallet for Android and iOS</h2>
   <div style="display: flex; align-items: center; justify-content: center">
 
+  [![Website eNuts](https://img.shields.io/badge/Website-eNuts-%230088cc?style=plastic&logo=WebMoney&logoColor=white&labelColor=%23666&color=%235DB075)](https://www.enuts.cash)
   [![codecov](https://codecov.io/gh/cashubtc/eNuts/branch/main/graph/badge.svg?token=MGBC95KGHQ)](https://codecov.io/gh/cashubtc/eNuts)
   ![example workflow](https://github.com/cashubtc/eNuts/actions/workflows/node.js.yml/badge.svg)
   ![ts](https://badgen.net/badge/Built%20with/TypeScript/blue)
@@ -18,7 +19,7 @@
 ## 🐿️ Join the research and development groups
 
 [![Cashu R&D](https://img.shields.io/badge/Cashu_R&D-Telegram-0088cc.svg)](https://t.me/CashuBTC)
-[![Cashu R&D](https://img.shields.io/badge/eNuts_R&D-Telegram-0088cc.svg)](https://t.me/eNutsWallet)
+[![eNuts R&D](https://img.shields.io/badge/eNuts_R&D-Telegram-0088cc.svg)](https://t.me/eNutsWallet)
 
 ## Contents
 
@@ -119,7 +120,7 @@ The main purpose of this repository is to continue evolving and pushing the adop
 
 ## 🔐 Verify releases
 
-A verification process adds an extra layer of security to our releases. It's important to verify the integrity of software you download to ensure that the files you download are those originally posted by the maintainers. You should both check that the hashes of your files match those on the signed list, and that the signature on the list is valid.
+A verification process adds an extra layer of security to our releases. It's important to verify the integrity of software you download to ensure that the files are those originally posted by the maintainers. You should both check that the hashes of your files match those on the signed list, and that the signature on the list is valid.
 
 **Download the Release APK:**
 - Go to the [release](https://github.com/cashubtc/eNuts/releases) section of this repository.
