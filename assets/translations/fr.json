@@ -211,7 +211,7 @@
 		"next": "Suivant",
 		"donateLn": "Faire un don via Lightning",
 		"supportDev": "Zap le développement",
-		"supportHint": "Chaque contribution, quelle que soit sa taille, a un impact significatif. (L'écran de confirmation eNuts est en cours de développement)"
+		"supportHint": "Chaque contribution, quelle que soit sa taille, a un impact significatif. L'écran de confirmation est en cours de développement"
 	},
 	"error": {
 		"addAllMintIdsErr": "Erreur lors de l'obtention de l'ensemble de clés de la mint",
