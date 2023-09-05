@@ -3,28 +3,44 @@ import Logo from '@comps/Logo'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSuccessPageProps } from '@model/nav'
+import { useFocusEffect } from '@react-navigation/core'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
-import { highlight as hi, mainColors } from '@styles'
-import { formatInt, formatMintUrl, vib } from '@util'
-import { useEffect } from 'react'
+import { mainColors } from '@styles'
+import { formatInt, vib } from '@util'
+import LottieView from 'lottie-react-native'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { BackHandler, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	const { amount, memo, fee, mint, isClaim, isMelt, nostr } = route.params
-	l({mint})
 	const { t } = useTranslation([NS.common])
-	const { highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	const insets = useSafeAreaInsets()
+	const [shouldHide, setShouldHide] = useState(false)
+
 	useEffect(() => vib(400), [])
-	return (
-		<View style={[styles.container, { backgroundColor: hi[highlight] }]}>
-			<Logo size={250} style={styles.img} />
+
+	// prevent android back button to go back to previous nav screen
+	useFocusEffect(
+		useCallback(() => {
+			setShouldHide(false)
+			const onBackPress = () => true
+			BackHandler.addEventListener('hardwareBackPress', onBackPress)
+			return () => {
+				BackHandler.removeEventListener('hardwareBackPress', onBackPress)
+				setShouldHide(true)
+			}
+		}, [])
+	)
+
+	return shouldHide ? null : (
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+			<Logo size={250} style={styles.img} success />
 			<View style={{ width: '100%' }}>
-				<Text style={styles.successTxt}>
+				<Text style={[styles.successTxt, { color: color.TEXT }]}>
 					{nostr &&
 						<>
 							{formatInt(amount || 0)} Satoshi {t('nostrPaymentSuccess')}!
@@ -40,15 +56,25 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					}
 				</Text>
 				{memo &&
-					<Text style={styles.mints}>
+					<Text style={[styles.mints, { color: color.TEXT_SECONDARY }]}>
 						{memo}
 					</Text>
 				}
 				{mint && mint.length > 0 &&
-					<Text style={styles.mints}>
-						{formatMintUrl(mint)}
+					<Text style={[styles.mints, { color: color.TEXT_SECONDARY }]}>
+						{mint}
 					</Text>
 				}
+				<View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+					<LottieView
+						imageAssetsFolder='lottie/success'
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						source={require('../../../main/assets/lottie/success/success.json')}
+						autoPlay
+						loop={false}
+						style={{ width: 130 }}
+					/>
+				</View>
 				{isMelt && amount &&
 					<View style={styles.meltWrap}>
 						<View style={styles.meltOverview}>
@@ -67,10 +93,16 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				}
 			</View>
 			<View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
-				<Button border txt={t('manageMints')} onPress={() => navigation.navigate('mints')} />
-				<View style={{ marginVertical: 10 }} />
-				<Button filled txt={t('backToDashboard')} onPress={() => navigation.navigate('dashboard')} />
+				<Button txt={t('backToDashboard')} onPress={() => navigation.navigate('dashboard')} />
 			</View>
+			<LottieView
+				imageAssetsFolder='lottie/confetti'
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				source={require('../../../main/assets/lottie/success/confetti.json')}
+				autoPlay
+				loop={false}
+				style={{ width: 401, position: 'absolute', top: 0, right: 0, bottom: -300, left: 0, zIndex: -1 }}
+			/>
 		</View>
 	)
 }
@@ -78,18 +110,18 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'space-between',
 		padding: 20,
 	},
 	img: {
 		marginTop: 100,
+		height: 100,
+		opacity: .8
 	},
 	successTxt: {
 		fontSize: 30,
 		fontWeight: '800',
 		textAlign: 'center',
-		color: mainColors.WHITE,
+		marginTop: 30,
 	},
 	meltWrap: {
 		width: '100%',
@@ -110,9 +142,12 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		textAlign: 'center',
 		fontWeight: '500',
-		color: mainColors.WHITE
 	},
 	btnWrap: {
-		width: '100%',
+		position: 'absolute',
+		bottom: 0,
+		right: 0,
+		left: 0,
+		paddingHorizontal: 20,
 	},
 })
