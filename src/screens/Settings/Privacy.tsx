@@ -45,7 +45,7 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 			<Text style={[styles.subHeader, { color: color.TEXT }]}>
 				{t('general')}
 			</Text>
-			<View style={globals(color).wrapContainer}>
+			<View style={[globals(color).wrapContainer, { paddingVertical: isIOS ? 18 : 10 }]}>
 				<View style={styles.wrap}>
 					<Txt txt={t('hideNuts', { ns: NS.common })} />
 					<Switch
@@ -55,7 +55,7 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 						value={hidden.balance}
 					/>
 				</View>
-				<Separator />
+				<Separator style={[{ marginVertical: isIOS ? 18 : 10 }]} />
 				<View style={styles.wrap}>
 					<Txt txt={t('hideLatestTxs', { ns: NS.common })} />
 					<Switch
@@ -82,6 +82,5 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingVertical: isIOS ? 18 : 10
 	},
 })

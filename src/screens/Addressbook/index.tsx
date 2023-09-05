@@ -34,6 +34,10 @@ import { StyleSheet, Text, View } from 'react-native'
 import ContactPreview from './ContactPreview'
 import UserProfile from './UserProfile'
 
+/****************************************************************************/
+/* State issues will occur while debugging Android and IOS at the same time */
+/****************************************************************************/
+
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
 

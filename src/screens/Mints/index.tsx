@@ -129,15 +129,29 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		await handleMintInput(clipboard || '')
 	}
 
+	const handleInitialRender = async () => {
+		// user comes from dashboard and wants to add his own mint url, open prompt
+		if (route.params?.newMint) {
+			// timeout is needed on IOS only when different prompts are called synchronously
+			const t = setTimeout(() => {
+				setNewMintModal(true)
+				clearTimeout(t)
+			}, 200)
+			return
+		}
+		await handleMintsState()
+		const defaultt = await getDefaultMint()
+		setDefaultM(defaultt ?? '')
+		// this is the case when user adds the initial default mint
+		if (route.params?.defaultMint) {
+			// ask to mint new token
+			openTopUpModal()
+		}
+	}
+
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
-		void (async () => {
-			await handleMintsState()
-			setDefaultM(await getDefaultMint() ?? '')
-			if (route.params?.newMint) {
-				openTopUpModal()
-			}
-		})()
+		void handleInitialRender()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -145,12 +159,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const focusHandler = navigation.addListener('focus', async () => {
-			await handleMintsState()
-			const defaultt = await getDefaultMint()
-			setDefaultM(defaultt ?? '')
-			if (route.params?.newMint) {
-				openTopUpModal()
-			}
+			await handleInitialRender()
 		})
 		return focusHandler
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -269,12 +278,11 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					topBtnTxt={t('yes')}
 					topBtnAction={() => {
 						setTopUpModal(false)
-						if (!selectedMint) {
-							openPromptAutoClose({ msg: '' })
-							return
-						}
+						l({ selectedMint })
 						navigation.navigate('selectAmount', {
-							mint: selectedMint,
+							// either for initial default mint (selectedMint->undefined & userMints.length == 1 (user has only the 1 initial mint))
+							// or mint via input (selectedMint->defined)
+							mint: !selectedMint ? { mintUrl: usertMints[0].mintUrl, customName: usertMints[0].customName } : selectedMint,
 							balance: 0,
 						})
 					}}

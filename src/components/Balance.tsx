@@ -1,4 +1,4 @@
-import { EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
+import { ChevronRightIcon, EcashIcon, HistoryIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
 import type { IHistoryEntry } from '@model'
 import type { RootStackParamList } from '@model/nav'
@@ -82,8 +82,14 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 				</TouchableOpacity>
 			}
 			<Separator style={[styles.separator]} />
+			{/* No transactions yet */}
+			{!history.length &&
+				<View style={{ padding: 10 }}>
+					<Txt txt={t('noTX')} styles={[globals(color).pressTxt, { color: mainColors.WHITE }]} />
+				</View>
+			}
 			{/* latest 3 history entries */}
-			{history.length && !hidden.txs ?
+			{history.length > 0 && !hidden.txs ?
 				history.map(h => (
 					<HistoryEntry
 						key={h.timestamp}
@@ -99,18 +105,23 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					/>
 				))
 				:
-				!hidden.txs ?
-					<View style={{ padding: 10 }}>
-						<Txt txt={t('noTX')} styles={[globals(color).pressTxt, { color: mainColors.WHITE }]} />
-					</View>
+				hidden.txs ?
+					<>
+						<TouchableOpacity
+							style={styles.boardEntry}
+							onPress={() => nav?.navigate('history')}
+						>
+							<View style={styles.hiddenTxtWrap}>
+								<View style={styles.iconWrap}>
+									<HistoryIcon color={mainColors.WHITE} />
+								</View>
+								<Txt txt={t('hiddenTxs')} styles={[{ color: mainColors.WHITE }]} />
+							</View>
+							<ChevronRightIcon color={mainColors.WHITE} />
+						</TouchableOpacity>
+					</>
 					:
 					null
-			}
-			{hidden.txs &&
-				<Txt
-					txt={t('hiddenTxs')}
-					styles={[globals(color).pressTxt, { color: mainColors.WHITE, marginVertical: 50 }]}
-				/>
 			}
 			{history.length === 3 && !hidden.txs &&
 				<TxtButton
@@ -193,6 +204,12 @@ const styles = StyleSheet.create({
 		minWidth: 45,
 		paddingTop: 3,
 	},
+	boardEntry: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginVertical: 10,
+	},
 	entry: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -200,6 +217,10 @@ const styles = StyleSheet.create({
 		paddingVertical: 5,
 	},
 	wrap: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	hiddenTxtWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},

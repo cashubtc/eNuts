@@ -3,7 +3,7 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { AboutIcon, ChevronRightIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import { AboutIcon, ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
@@ -24,7 +24,7 @@ import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames, saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
-import { getStrFromClipboard, hasTrustedMint, isCashuToken } from '@util'
+import { getStrFromClipboard, hasTrustedMint, isCashuToken, isErr } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
@@ -85,11 +85,17 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const handleMintModal = async (forEnutsMint = false) => {
 		setModal({ ...modal, mint: false })
 		await store.set(STORE_KEYS.explainer, '1')
-		navigation.navigate('mints', { newMint: forEnutsMint })
+		navigation.navigate('mints', { defaultMint: forEnutsMint, newMint: !forEnutsMint })
 	}
 
 	const handleEnutsMint = async () => {
-		await saveDefaultOnInit()
+		try {
+			await saveDefaultOnInit()
+		} catch (e) {
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('smthWrong') })
+			await handleMintModal(false)
+			return
+		}
 		await handleMintModal(true)
 	}
 
@@ -256,19 +262,21 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
 			{/* Receive/send/mints buttons */}
-			<View style={[styles.actionWrap, { paddingHorizontal: !hasMint || balance < 1 ? 75 : 30 }]}>
-				{(hasMint && balance > 0) &&
+			<View style={[styles.actionWrap, { paddingHorizontal: 30 }]}>
+				{/* Send button or add first mint */}
+				{(hasMint && balance > 0) ?
 					<ActionBtn
-						icon={
-							<SendIcon
-								width={32}
-								height={32}
-								color={hi[highlight]}
-							/>
-						}
+						icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
 						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
 						onPress={() => setModal({ ...modal, sendOpts: true })}
+					/>
+					:
+					<ActionBtn
+						icon={<PlusIcon width={36} height={36} color={hi[highlight]} />}
+						txt='Mint'
+						color={hi[highlight]}
+						onPress={() => setModal({ ...modal, mint: true })}
 					/>
 				}
 				<ActionBtn
@@ -284,7 +292,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					onPress={() => setModal({ ...modal, receiveOpts: true })}
 				/>
 			</View>
-			{/* scan QR */}
+			{/* beta warning */}
 			<View style={styles.hintWrap}>
 				<TouchableOpacity
 					onPress={() => navigation.navigate('disclaimer')}

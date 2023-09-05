@@ -3,6 +3,7 @@ import LeaveAppModal from '@comps/LeaveAppModal'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
+import { appVersion } from '@consts/env'
 import type { TAboutSettingsPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -10,8 +11,6 @@ import { globals } from '@styles'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-
-import { version } from '../../../package.json'
 
 export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -50,7 +49,7 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 					handlePress={() => handlePress('https://t.me/eNutsWallet')}
 				/>
 			</View>
-			<Txt txt={`eNuts v${version}`} styles={[styles.version]} />
+			<Txt txt={appVersion} styles={[styles.version]} />
 			<LeaveAppModal url={url} visible={visible} closeModal={closeModal} />
 		</Screen>
 	)
