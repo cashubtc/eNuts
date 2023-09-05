@@ -215,7 +215,8 @@
 		"donateLn": "Spenden über Lightning",
 		"supportDev": "Zap die Entwicklung",
 		"supportHint": "Jeder Beitrag, ganz gleich in welcher Höhe, hat eine bedeutende Auswirkung. Die Zap Bestätigungsseite befindet sich in der Entwicklung",
-		"newToken": "Neuer Cashu Token"
+		"newToken": "Neuer Cashu Token",
+		"EcashRdy": "Du bist nun bereit, die Magie von privatem Ecash auf Bitcoin zu erleben!"
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

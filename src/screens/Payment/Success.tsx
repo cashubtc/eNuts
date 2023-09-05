@@ -65,7 +65,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						{mint}
 					</Text>
 				}
-				<View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+				<View style={styles.successAnim}>
 					<LottieView
 						imageAssetsFolder='lottie/success'
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -75,6 +75,9 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						style={{ width: 130 }}
 					/>
 				</View>
+				{mint && mint.length > 0 &&
+					<Txt txt={t('EcashRdy')} styles={[styles.rdy]} />
+				}
 				{isMelt && amount &&
 					<View style={styles.meltWrap}>
 						<View style={styles.meltOverview}>
@@ -101,7 +104,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				source={require('../../../main/assets/lottie/success/confetti.json')}
 				autoPlay
 				loop={false}
-				style={{ width: 401, position: 'absolute', top: 0, right: 0, bottom: -300, left: 0, zIndex: -1 }}
+				style={styles.confetti}
 			/>
 		</View>
 	)
@@ -150,4 +153,23 @@ const styles = StyleSheet.create({
 		left: 0,
 		paddingHorizontal: 20,
 	},
+	rdy: {
+		textAlign: 'center',
+		marginTop: 20,
+		fontSize: 20
+	},
+	confetti: {
+		width: 400,
+		position: 'absolute',
+		top: 0,
+		right: 0,
+		bottom: -300,
+		left: 0,
+		zIndex: -1
+	},
+	successAnim: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginTop: 20
+	}
 })
