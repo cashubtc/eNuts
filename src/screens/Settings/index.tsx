@@ -1,4 +1,4 @@
-import { AboutIcon, EyeClosedIcon, HamburgerIcon, LockIcon, MintBoardIcon, TrashbinIcon, ZapIcon } from '@comps/Icons'
+import { AboutIcon, BitcoinIcon, EyeClosedIcon, HamburgerIcon, LockIcon, MintBoardIcon, TrashbinIcon } from '@comps/Icons'
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
@@ -13,6 +13,7 @@ import { dropAllData } from '@src/storage/dev'
 import { historyStore, store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, mainColors } from '@styles'
+import { H_Colors } from '@styles/colors'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
@@ -87,9 +88,9 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					hasChevron
 				/>
 				<SettingsMenuItem
-					txt='Zap'
-					txtColor={mainColors.ZAP}
-					icon={<ZapIcon color={mainColors.ZAP} />}
+					txt={t('donateLn')}
+					txtColor={color.TEXT}
+					icon={<BitcoinIcon color={H_Colors.Bitcoin} />}
 					onPress={() => setZapModal(true)}
 					hasSeparator
 				/>

@@ -61,9 +61,10 @@ export function ZapModal({ visible, close }: IQuestionModalProps) {
 
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={close} >
-			<Text style={globals(color).modalHeader}>
-				⚡ {t('supportDev')}
-			</Text>
+			<Txt
+				txt={`⚡ ${t('supportDev')}`}
+				styles={[styles.modalHeader]}
+			/>
 			<Text style={globals(color).modalTxt}>
 				{t('supportHint')}
 			</Text>
@@ -72,7 +73,7 @@ export function ZapModal({ visible, close }: IQuestionModalProps) {
 			</View>
 			<Button
 				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-				txt={`${t('donateLn')}  🎁`} 
+				txt={`${t('donateLn')}  🎁`}
 				onPress={() => void handleDonation()}
 				loading={loading}
 			/>
@@ -105,6 +106,11 @@ function Selection({ zap, onPress }: ISelectionProps) {
 }
 
 const styles = StyleSheet.create({
+	modalHeader: {
+		fontSize: 24,
+		fontWeight: '500',
+		marginBottom: 20
+	},
 	zapRow: {
 		flexDirection: 'row',
 		alignItems: 'center',

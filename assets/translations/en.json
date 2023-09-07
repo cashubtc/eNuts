@@ -216,7 +216,7 @@
 		"skip": "Skip",
 		"donateLn": "Donate via Lightning",
 		"supportDev": "Zap the devs",
-		"supportHint": "Every contribution, no matter the size, makes a significant impact. Zap confirmation screen is under development",
+		"supportHint": "Every contribution, no matter the size, makes a significant impact. Confirmation screen is under development.",
 		"newToken": "New Cashu token",
 		"EcashRdy": "You are now ready to experience the magic of private Ecash on Bitcoin!",
 		"disclaimerHint": "This disclaimer should be taken seriously and should not be ignored or underestimated. We appreciate your interest in this project and will continue to work on improving it."
