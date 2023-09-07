@@ -30,4 +30,4 @@ We appreciate your understanding and patience in this matter. In the meantime, p
 
 We kindly request that you refrain from disclosing any security-related information publicly until we have had a chance to review and address the reported issue. We are committed to acting in accordance with all relevant laws and regulations to protect the security of our users and data.
 
-Thank you for helping us make [Project Name] more secure.
+Thank you for helping us make eNuts more secure.
