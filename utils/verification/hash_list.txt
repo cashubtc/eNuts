@@ -1,2 +1,3 @@
 Not approved by apple store enuts-v0.0.1-beta.apk
 a0ad78925f5ba81f0014cd29221ba0f8a15b877189507afdde2675d11c879c0c enuts-v0.0.2-beta.apk
+69fc6947e8640d259d1b33e8e658380e4bd8dd648eb368f422ccf420067299c3 enuts-v0.0.3-beta.apk
