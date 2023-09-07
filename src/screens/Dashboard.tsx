@@ -289,7 +289,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					icon={<ReceiveIcon width={32} height={32} color={hi[highlight]} />}
 					txt={t('receive', { ns: NS.wallet })}
 					color={hi[highlight]}
-					onPress={() => setModal({ ...modal, receiveOpts: true })}
+					onPress={() => {
+						if (!hasMint) {
+							// try to claim from clipboard to avoid receive-options-modal to popup and having to press again
+							void handleClaimBtnPress()
+							return
+						}
+						setModal({ ...modal, receiveOpts: true })
+					}}
 				/>
 			</View>
 			{/* beta warning */}
