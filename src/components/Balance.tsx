@@ -162,7 +162,7 @@ function HistoryEntry({ icon, txType, timestamp, amount, onPress }: IHistoryEntr
 						</Text>
 					</View>
 				</View>
-				<Txt txt={`${amount > 0 ? '+' : ''}${formatInt(amount)}`} styles={[{ color: mainColors.WHITE, fontWeight: '500' }]} />
+				<Txt txt={`${amount > 0 ? '+' : ''}${formatInt(amount)} Satoshi`} styles={[{ color: mainColors.WHITE }]} />
 			</TouchableOpacity>
 		</>
 	)

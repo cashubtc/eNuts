@@ -1,4 +1,4 @@
-import { IncomingArrowIcon, OutgoingArrowIcon, ZapIcon } from '@comps/Icons'
+import { IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
@@ -38,10 +38,13 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			<View style={styles.placeholder} />
 			<View style={styles.amount}>
 				<Txt
-					txt={formatInt(item.amount < 0 ? Math.abs(item.amount) : item.amount, 'compact', 'en')}
-					styles={[{ color: item.amount < 0 ? mainColors.ERROR : mainColors.VALID, marginBottom: 5 }]}
+					txt={`${item.amount > 0 ? '+' : '-'}${formatInt(item.amount < 0 ? Math.abs(item.amount) : item.amount, 'compact', 'en')}`}
+					styles={[{ color: item.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}
 				/>
-				<ZapIcon color={item.amount < 0 ? mainColors.ERROR : mainColors.VALID} />
+				<Txt
+					txt=' Sat.'
+					styles={[{ color: item.amount < 0 ? mainColors.ERROR : mainColors.VALID }]}
+				/>
 			</View>
 		</TouchableOpacity>
 	)
