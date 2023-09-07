@@ -67,7 +67,7 @@
 		"contactNotSaved": "Contact could not be saved. Possible name or address duplication.",
 		"continue": "Continue",
 		"copied": "Copied",
-		"copyInvoice": "Copy invoice",
+		"shareInvoice": "Share invoice",
 		"copyToken": "Copy token",
 		"createBackup": "Create a backup token",
 		"createInvoice": "Create invoice",

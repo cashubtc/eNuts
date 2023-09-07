@@ -1,6 +1,6 @@
 import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
-import { CheckmarkIcon, CopyIcon, WalletIcon } from '@comps/Icons'
+import { CheckmarkIcon, CopyIcon, ShareIcon, WalletIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
@@ -15,7 +15,7 @@ import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
@@ -62,6 +62,28 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 		}
 	}
 
+	const handleShare = async () => {
+		try {
+			const res = await Share.share({
+				message: paymentRequest,
+			})
+			if (res.action === Share.sharedAction) {
+				if (res.activityType) {
+					// shared with activity type of result.activityType
+					l('shared with activity type of result.activityType')
+				} else {
+					// shared
+					l('shared')
+				}
+			} else if (res.action === Share.dismissedAction) {
+				// dismissed
+				l('sharing dismissed')
+			}
+		} catch (e) {
+			l(e)
+		}
+	}
+
 	// countdown
 	useEffect(() => {
 		const timeLeft = Math.ceil((expiryTime - Date.now()) / 1000)
@@ -90,9 +112,19 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 						onError={() => l('Error while generating the LN QR code')}
 					/>
 				</View>
-				<Text style={[styles.lnAddress, { color: color.TEXT }]}>
-					{paymentRequest.substring(0, 40) + '...' || t('smthWrong')}
-				</Text>
+				<TouchableOpacity
+					onPress={() => void copy(paymentRequest)}
+					style={styles.copyWrap}
+				>
+					{copied ?
+						<CheckmarkIcon color={mainColors.VALID} />
+						:
+						<CopyIcon color={color.TEXT} />
+					}
+					<Text style={[styles.invoiceStr, { color: color.TEXT }]}>
+						{paymentRequest.substring(0, 30) + '...' || t('smthWrong')}
+					</Text>
+				</TouchableOpacity>
 			</View>
 			<View>
 				<Text style={[styles.lnExpiry, { color: expire < 1 ? mainColors.ERROR : hi[highlight], fontSize: 28 }]}>
@@ -123,10 +155,9 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 						icon={<WalletIcon color={mainColors.WHITE} />}
 					/>
 					<TxtButton
-						txt={copied ? t('copied') + '!' : t('copyInvoice')}
-						icon={copied ? <CheckmarkIcon color={hi[highlight]} /> : <CopyIcon width={24} height={24} color={hi[highlight]} />}
-						disabled={copied}
-						onPress={() => void copy(paymentRequest)}
+						txt={t('shareInvoice')}
+						icon={<ShareIcon width={24} height={24} color={hi[highlight]} />}
+						onPress={() => void handleShare()}
 					/>
 				</View>
 				:
@@ -153,9 +184,14 @@ const styles = StyleSheet.create({
 		borderWidth: 5,
 		borderColor: mainColors.WHITE
 	},
-	lnAddress: {
-		fontSize: 14,
+	copyWrap: {
+		flexDirection: 'row',
+		alignItems: 'center',
 		marginTop: 20,
+	},
+	invoiceStr: {
+		fontSize: 14,
+		marginLeft: 10,
 	},
 	lnExpiry: {
 		fontSize: 36,

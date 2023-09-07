@@ -67,7 +67,7 @@
 		"contactNotSaved": "Le contact n'a pas pu être enregistré. Possibilité de doublon de nom ou d'adresse.",
 		"continue": "Continuer",
 		"copied": "Copié",
-		"copyInvoice": "Copier la facture",
+		"shareInvoice": "Partager la facture",
 		"copyToken": "Copier le token",
 		"createBackup": "Créer un token de sauvegarde",
 		"createInvoice": "Créer une facture",

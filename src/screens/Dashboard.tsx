@@ -264,7 +264,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive/send/mints buttons */}
 			<View style={[styles.actionWrap, { paddingHorizontal: 30 }]}>
 				{/* Send button or add first mint */}
-				{(hasMint && balance > 0) ?
+				{hasMint ?
 					<ActionBtn
 						icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
 						txt={t('send', { ns: NS.wallet })}
