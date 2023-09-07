@@ -168,7 +168,7 @@
 		"share": "Share",
 		"smthWrong": "Something went wrong",
 		"startHint": "You can either use the pre-existing eNuts mint or introduce another custom mint.",
-		"submitPaymentReq": "Submit Payment Request",
+		"submitPaymentReq": "Cash out",
 		"to": "to",
 		"today": "Today",
 		"tokenInfoErr": "Error while getting token info",
@@ -334,7 +334,7 @@
 		"mintBackup": "Backup funds",
 		"mintSettings": "Mint management",
 		"security": "Security",
-		"settings": "Settings",
+		"settings": "Options",
 		"privacy": "Privacy",
 		"general": "General"
 	},

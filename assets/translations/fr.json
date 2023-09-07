@@ -168,7 +168,7 @@
 		"share": "Partager",
 		"smthWrong": "Quelque chose s'est mal passé",
 		"startHint": "Vous pouvez soit utiliser la mint de eNuts préexistante, soit une autre out votre propre mint.",
-		"submitPaymentReq": "Demande de paiement",
+		"submitPaymentReq": "Retirer votre argent",
 		"to": "à",
 		"today": "Aujourd'hui",
 		"tokenInfoErr": "Erreur lors de l'obtention des informations sur le token",
@@ -335,7 +335,7 @@
 		"mintBackup": "Sauvegarde des fonds",
 		"mintSettings": "Paramètres des mints",
 		"security": "Sécurité",
-		"settings": "Paramètres",
+		"settings": "Options",
 		"privacy": "Vie privée",
 		"general": "Général"
 	},
