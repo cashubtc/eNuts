@@ -105,7 +105,8 @@
 		"generateInvoiceErr": "Rechnung für \"{{input}}\" konnte nicht erstellt werden.",
 		"german": "Deutsch",
 		"getStarted": "Loslegen",
-		"githubIssues": "GitHub Probleme und Fragen",
+		"githubIssues": "Melden Sie Fehler auf Github",
+		"shareOrReport": "Feedback teilen oder Fehler melden",
 		"historyDeleted": "Verlauf gelöscht",
 		"invalidInvoice": "Rechnung invalid",
 		"invalidOrSpent": "Invalider Token oder bereits ausgegeben",
@@ -217,7 +218,8 @@
 		"supportDev": "Zap die Entwicklung",
 		"supportHint": "Jeder Beitrag, ganz gleich in welcher Höhe, hat eine bedeutende Auswirkung. Die Zap Bestätigungsseite befindet sich in der Entwicklung",
 		"newToken": "Neuer Cashu Token",
-		"EcashRdy": "Du bist nun bereit, die Magie von privatem Ecash auf Bitcoin zu erleben!"
+		"EcashRdy": "Du bist nun bereit, die Magie von privatem Ecash auf Bitcoin zu erleben!",
+		"disclaimerHint": "Dieser Haftungsausschluss sollte ernst genommen und nicht ignoriert oder unterschätzt werden. Wir schätzen Ihr Interesse an diesem Projekt und werden weiterhin daran arbeiten, es zu verbessern."
 	},
 	"error": {
 		"addAllMintIdsErr": "Fehler beim Abrufen der Schlüsselsatz-IDs von Mint",

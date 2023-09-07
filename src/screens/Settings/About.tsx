@@ -39,11 +39,11 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 					handlePress={() => handlePress('https://github.com/cashubtc/eNuts/issues')}
 					hasSeparator
 				/>
-				<AboutRow
+				{/* <AboutRow
 					txt={t('cashuRandD')}
 					handlePress={() => handlePress('https://t.me/CashuBTC')}
 					hasSeparator
-				/>
+				/> */}
 				<AboutRow
 					txt={t('enutsRandD')}
 					handlePress={() => handlePress('https://t.me/eNutsWallet')}
