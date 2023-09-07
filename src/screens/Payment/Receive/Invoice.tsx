@@ -11,7 +11,7 @@ import { NS } from '@src/i18n'
 import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { formatSeconds, isErr, openUrl } from '@util'
+import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,8 +28,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
 	const { copied, copy } = useCopy()
-
-	l({ mintUrl })
 
 	const handlePayment = async () => {
 		// state "unpaid" is temporary to prevent btn press spam
@@ -48,14 +46,14 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					mints: [mintUrl],
 				})
 				setPaid('paid')
-				navigation.navigate('success', { amount, mint: mintUrl })
+				navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
 			}
 		} catch (e) {
 			l(e)
 			// TODO update this check
 			if (isErr(e) && e.message === 'Tokens already issued for this invoice.') {
 				setPaid('paid')
-				navigation.navigate('success', { amount, mint: mintUrl })
+				navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
 				return
 			}
 			setPaid('unpaid')
@@ -67,13 +65,14 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	// countdown
 	useEffect(() => {
 		const timeLeft = Math.ceil((expiryTime - Date.now()) / 1000)
-		if (timeLeft < 0) {
+		if (timeLeft < 0 || paid === 'paid') {
 			setExpire(0)
 			return
 		}
 		if (expire && expire > 0) {
 			setTimeout(() => setExpire(timeLeft - 1), 1000)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [expire, expiryTime])
 
 	return (

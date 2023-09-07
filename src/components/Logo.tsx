@@ -1,12 +1,20 @@
 import { Image, type ImageStyle, type StyleProp, StyleSheet, View } from 'react-native'
 
-export default function Logo({ size, style }: { size: number, style?: StyleProp<ImageStyle> }) {
+interface ILogoProps {
+	size: number
+	success?: boolean
+	style?: StyleProp<ImageStyle>
+}
+
+export default function Logo({ size, success, style }: ILogoProps) {
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	const src = success ? require('@assets/icon_transparent_success.png') : require('@assets/icon_transparent.png')
 	return (
 		<View style={styles.imgWrap}>
 			<Image
 				style={[styles.img, { height: size }, style]}
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				source={require('@assets/icon_transparent.png')}
+				source={src}
 			/>
 		</View>
 	)

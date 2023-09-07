@@ -17,7 +17,7 @@ import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { globals } from '@styles'
-import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
+import { formatMintUrl, getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -86,7 +86,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					value: invoice?.pr || '',
 					mints: [mint.mintUrl],
 				})
-				navigation.navigate('success', { amount, mint: mint.mintUrl })
+				navigation.navigate('success', { amount, mint: mint.customName || formatMintUrl(mint.mintUrl) })
 				return
 			}
 			// navigate to invoice overview screen
