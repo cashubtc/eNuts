@@ -348,9 +348,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<OptsModal
 				visible={modal.sendOpts}
 				button1Txt={t('sendEcash')}
-				onPressFirstBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: true })}
+				onPressFirstBtn={() => void handleOptsBtnPress({ isSendEcash: true })}
 				button2Txt={t('payLNInvoice', { ns: NS.wallet })}
-				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: true, isSendEcash: false })}
+				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: true })}
 				onPressCancel={closeOptsModal}
 				isSend
 			/>
@@ -360,7 +360,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				button1Txt={loading ? t('claiming', { ns: NS.wallet }) : t('pasteToken', { ns: NS.wallet })}
 				onPressFirstBtn={() => void handleClaimBtnPress()}
 				button2Txt={t('createLnInvoice', { ns: NS.wallet })}
-				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: false })}
+				onPressSecondBtn={() => void handleOptsBtnPress({ isMinting: true })}
 				handleNostrReceive={() => {
 					closeOptsModal()
 					navigation.navigate('nostrReceive')
