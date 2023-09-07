@@ -78,6 +78,9 @@ const config: ExpoConfig = {
 		infoPlist: {
 			LSApplicationQueriesSchemes: ['cashu']
 		},
+		config: {
+			usesNonExemptEncryption: false
+		},
 		bundleIdentifier: 'com.agron.enuts'
 	},
 	android: {
@@ -113,7 +116,7 @@ const config: ExpoConfig = {
 		]
 	},
 	updates: {
-		enabled:false,
+		enabled: false,
 		url: 'https://u.expo.dev/edb75ccd-71ac-4934-9147-baf1c7f2b068'
 	},
 	runtimeVersion: {
