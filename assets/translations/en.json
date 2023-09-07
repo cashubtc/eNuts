@@ -212,6 +212,7 @@
 		"hideLatestTxs": "Hide your latest transactions",
 		"hiddenTxs": "Latest transactions hidden",
 		"next": "Next",
+		"skip": "Skip",
 		"donateLn": "Donate via Lightning",
 		"supportDev": "Zap the devs",
 		"supportHint": "Every contribution, no matter the size, makes a significant impact. Zap confirmation screen is under development",

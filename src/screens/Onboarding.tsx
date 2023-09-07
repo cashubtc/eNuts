@@ -10,7 +10,6 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 	const { t } = useTranslation([NS.common])
 	return (
 		<Onboarding
-			showSkip={false}
 			onDone={() => navigation.navigate('auth', { pinHash: '' })}
 			pages={[
 				{
@@ -38,6 +37,8 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 			titleStyles={styles.title}
 			subTitleStyles={styles.subTitle}
 			nextLabel={t('next')}
+			skipLabel={t('skip')}
+			onSkip={() => navigation.navigate('auth', { pinHash: '' })}
 		/>
 	)
 }
