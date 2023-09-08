@@ -8,9 +8,16 @@ We take the security of our users and data seriously. If you believe you have di
 
 To report a security vulnerability or concern, you can use one of the following methods:
 
-- Email: [m.echerbebo@gmail.com](mailto:m.echerbebo@gmail.com)
+#### Related to the eNuts implementation
 
-When reporting, please provide as much detail as possible, including a clear description of the vulnerability and any potential impact.
+- Email: [m.echerbebo@gmail.com](mailto:m.echerbebo@gmail.com)
+- Telegram: [https://t.me/eNutsWallet](https://t.me/eNutsWallet)
+
+#### Related to the Cashu protocol
+
+- Telegram: [https://t.me/CashuBTC](https://t.me/CashuBTC)
+
+To connect with and reach out to the maintainers, you can easily locate them through Telegram groups. Feel free to request a private discussion with the maintainers for a more personalized conversation. When reporting, please provide as much detail as possible, including a clear description of the vulnerability and any potential impact.
 
 ### Disclosure Process
 
