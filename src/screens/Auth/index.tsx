@@ -286,7 +286,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 								{/* skip or go back from confirm */}
 								{!auth.length && !shouldEdit &&
 									<TxtButton
-										txt={isConfirm ? t('back') : t('willDoLater')}
+										txt={isConfirm ? t('back') : t('skip')}
 										onPress={() => void handleSkip()}
 										style={[styles.skip]}
 										txtColor={mainColors.WHITE}

@@ -154,11 +154,13 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				})
 				return
 			}
+			// user has not selected the mint yet (Pressed scan QR and scanned a Lightning invoice)
 			const mintsWithBal = await getMintsBalances()
 			const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
 			const nonEmptyMint = mintsWithBal.filter(m => m.amount > 0)
 			// user has no funds
 			if (!nonEmptyMint.length) {
+				// user is redirected to the mint selection screen where he gets an appropriate message
 				navigation.navigate('selectMint', {
 					mints,
 					mintsWithBal,
@@ -167,20 +169,21 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				})
 				return
 			}
+			// user has funds, select his first mint for the case that he has only one (2 lines later)
 			const mintUsing = mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' }
 			const estFee = await checkFees(mintUsing.mintUrl, invoice)
-			// user has only 1 mint with balance, he can skip the mint, target and amount selection
+			// user has only 1 mint with enough balance, he can directly navigate to the payment overview page
 			if (nonEmptyMint.length === 1) {
 				navigation.navigate('coinSelection', {
 					mint: mintUsing,
-					balance: balance || 0,
+					balance: nonEmptyMint[0].amount,
 					amount,
 					estFee,
 					isMelt: true
 				})
 				return
 			}
-			// user needs to select mint
+			// user needs to select mint from which he wants to pay the invoice
 			navigation.navigate('selectMint', {
 				mints,
 				mintsWithBal,

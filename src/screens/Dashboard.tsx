@@ -153,9 +153,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	// get mints for send/receive process
 	const getMintsForPayment = async () => {
-		const mintsWithBal = await getMintsBalances()
-		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
-		return { mintsWithBal, mints }
+		const mintsBals = await getMintsBalances()
+		const mints = await getCustomMintNames(mintsBals.map(m => ({ mintUrl: m.mintUrl })))
+		return { mintsBals, mints }
 	}
 
 	// receive ecash button
@@ -173,14 +173,22 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		await handleTokenSubmit(clipboard)
 	}
 
-	// mint/melt/send ecash buttons
-	const handleOptsBtnPress = async ({ isMelt, isSendEcash }: { isMelt?: boolean, isSendEcash?: boolean }) => {
-		const { mintsWithBal, mints } = await getMintsForPayment()
+	// Options modal buttons -> mint (RECEIVE OPTION) - melt/send ecash (SEND OPTION)
+	const handleOptsBtnPress = async ({ isMelt, isSendEcash, isMinting }: { isMelt?: boolean, isSendEcash?: boolean, isMinting?: boolean }) => {
+		const { mintsBals, mints } = await getMintsForPayment()
 		closeOptsModal()
 		// user has only 1 mint with balance, he can skip the mint selection only for melting (he can mint new token with a mint that has no balance)
-		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
-		if ((isMelt || isSendEcash) && nonEmptyMints.length === 1) {
-			// user has no nostr contacts so he can directly navigate to amount selection
+		const nonEmptyMints = mintsBals.filter(m => m.amount > 0)
+		if ((isMelt || isSendEcash || isMinting) && nonEmptyMints.length === 1) {
+			// (RECEIVE OPTION) user wants to mint new token with his single mint so he can skip selectMint screen
+			if (isMinting) {
+				navigation.navigate('selectAmount', {
+					mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
+					balance: nonEmptyMints[0].amount
+				})
+				return
+			}
+			// (SEND OPTION) user has no nostr contacts so he can directly navigate to amount selection
 			if (!nutPub.length && isSendEcash) {
 				navigation.navigate('selectAmount', {
 					mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
@@ -189,7 +197,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				})
 				return
 			}
-			// get remaining mints for a possible multimint swap
+			// (SEND OPTION) otherwise he can select his contacts as target, get remaining mints for a possible multimint swap
 			const remainingMints = mints.filter(m => m.mintUrl !== _testmintUrl)
 			navigation.navigate('selectTarget', {
 				mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
@@ -200,9 +208,18 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			})
 			return
 		}
+		// user has only 1 mint and no balance in it
+		if (mints.length === 1 && !nonEmptyMints.length) {
+			navigation.navigate('selectAmount', {
+				mint: mints[0],
+				balance: mintsBals[0].amount
+			})
+			return
+		}
+		// user has more than 1 mint so he has to choose the one he wants to communicate to
 		navigation.navigate('selectMint', {
 			mints,
-			mintsWithBal,
+			mintsWithBal: mintsBals,
 			allMintsEmpty: (isMelt || isSendEcash) && !nonEmptyMints.length,
 			isMelt,
 			isSendEcash
@@ -264,7 +281,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Receive/send/mints buttons */}
 			<View style={[styles.actionWrap, { paddingHorizontal: 30 }]}>
 				{/* Send button or add first mint */}
-				{(hasMint && balance > 0) ?
+				{hasMint ?
 					<ActionBtn
 						icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
 						txt={t('send', { ns: NS.wallet })}
@@ -289,7 +306,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					icon={<ReceiveIcon width={32} height={32} color={hi[highlight]} />}
 					txt={t('receive', { ns: NS.wallet })}
 					color={hi[highlight]}
-					onPress={() => setModal({ ...modal, receiveOpts: true })}
+					onPress={() => {
+						if (!hasMint) {
+							// try to claim from clipboard to avoid receive-options-modal to popup and having to press again
+							void handleClaimBtnPress()
+							return
+						}
+						setModal({ ...modal, receiveOpts: true })
+					}}
 				/>
 			</View>
 			{/* beta warning */}
@@ -324,9 +348,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			<OptsModal
 				visible={modal.sendOpts}
 				button1Txt={t('sendEcash')}
-				onPressFirstBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: true })}
+				onPressFirstBtn={() => void handleOptsBtnPress({ isSendEcash: true })}
 				button2Txt={t('payLNInvoice', { ns: NS.wallet })}
-				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: true, isSendEcash: false })}
+				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: true })}
 				onPressCancel={closeOptsModal}
 				isSend
 			/>
@@ -336,7 +360,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				button1Txt={loading ? t('claiming', { ns: NS.wallet }) : t('pasteToken', { ns: NS.wallet })}
 				onPressFirstBtn={() => void handleClaimBtnPress()}
 				button2Txt={t('createLnInvoice', { ns: NS.wallet })}
-				onPressSecondBtn={() => void handleOptsBtnPress({ isMelt: false, isSendEcash: false })}
+				onPressSecondBtn={() => void handleOptsBtnPress({ isMinting: true })}
 				handleNostrReceive={() => {
 					closeOptsModal()
 					navigation.navigate('nostrReceive')
