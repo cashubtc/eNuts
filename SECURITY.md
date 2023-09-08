@@ -1,5 +1,17 @@
 # Security Policy
 
+<!-- ## Supported Versions
+
+Use this section to tell people about which versions of your project are
+currently being supported with security updates.
+
+| Version | Supported          |
+| ------- | ------------------ |
+| 5.1.x   | :white_check_mark: |
+| 5.0.x   | :x:                |
+| 4.0.x   | :white_check_mark: |
+| < 4.0   | :x:                | -->
+
 ## Reporting a Vulnerability
 
 We take the security of our users seriously. If you believe you have discovered a security vulnerability or have any security concerns regarding this project, please follow our responsible disclosure guidelines outlined below.
@@ -10,6 +22,7 @@ To report a security vulnerability or concern, you can use one of the following 
 
 #### Related to the eNuts implementation
 
+- Github: [https://github.com/cashubtc/eNuts/security/advisories/new](https://github.com/cashubtc/eNuts/security/advisories/new)
 - Email: [m.echerbebo@gmail.com](mailto:m.echerbebo@gmail.com)
 - Telegram: [https://t.me/eNutsWallet](https://t.me/eNutsWallet)
 
@@ -17,7 +30,7 @@ To report a security vulnerability or concern, you can use one of the following 
 
 - Telegram: [https://t.me/CashuBTC](https://t.me/CashuBTC)
 
-To connect with and reach out to the maintainers, you can easily locate them through Telegram groups. Feel free to request a private discussion with the maintainers for a more personalized conversation. When reporting, please provide as much detail as possible, including a clear description of the vulnerability and any potential impact.
+Feel free to request a private discussion with the maintainers for a more personalized conversation. When reporting, please provide as much detail as possible, including a clear description of the vulnerability and any potential impact.
 
 ### Disclosure Process
 
