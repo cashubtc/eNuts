@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-We take the security of our users and data seriously. If you believe you have discovered a security vulnerability or have any security concerns regarding this project, please follow our responsible disclosure guidelines outlined below.
+We take the security of our users seriously. If you believe you have discovered a security vulnerability or have any security concerns regarding this project, please follow our responsible disclosure guidelines outlined below.
 
 ### How to Report
 
@@ -29,12 +29,12 @@ Once the vulnerability is confirmed and resolved, we will coordinate with you to
 
 We highly value the contributions of security researchers who responsibly disclose security vulnerabilities to us. While we aspire to have a bug bounty program in place to reward these efforts, we regret to inform you that, at the moment, we do not have sufficient funds allocated for this purpose.
 
-We are committed to the idea of establishing a bug bounty program as soon as our financial situation allows. Our aim is to fairly compensate security researchers and any collaborator for their valuable contributions to our project.
+We are committed to the idea of establishing a bug bounty program as soon as our financial situation allows. Our aim is to fairly compensate security researchers and any collaborator for their valuable contributions to our projects.
 
 We appreciate your understanding and patience in this matter. In the meantime, please continue to report security vulnerabilities using the methods outlined above.
 
 ## Legal Disclaimer
 
-We kindly request that you refrain from disclosing any security-related information publicly until we have had a chance to review and address the reported issue. We are committed to acting in accordance with all relevant laws and regulations to protect the security of our users and data.
+We kindly request that you refrain from disclosing any security-related information publicly until we have had a chance to review and address the reported issue. We are committed to acting in accordance with all relevant laws and regulations to protect the security of our users.
 
 Thank you for helping us make eNuts more secure.
