@@ -6,6 +6,7 @@ import type { TSuccessPageProps } from '@model/nav'
 import { useFocusEffect } from '@react-navigation/core'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { mainColors } from '@styles'
 import { formatInt, vib } from '@util'
 import LottieView from 'lottie-react-native'
@@ -35,6 +36,8 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 			}
 		}, [])
 	)
+
+	l('render success page')
 
 	return shouldHide ? null : (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

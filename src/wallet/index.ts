@@ -142,7 +142,7 @@ export async function requestToken(mintUrl: string, amount: number, hash: string
 export async function payLnInvoice(mintUrl: string, invoice: string, fee: number, proofs: Proof[] = []) {
 	const wallet = await getWallet(mintUrl)
 	// const fee = await wallet.getFee(invoice)
-	l({ fee })
+	// l({ fee })
 	const decoded = getDecodedLnInvoice(invoice)
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const amount = decoded.sections[2]!.value as number / 1000
@@ -151,16 +151,17 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 		const { proofsToUse } = await getProofsToUse(mintUrl, amountToPay)
 		proofs = proofsToUse
 	}
-	l({ amountToPay })
+	// l({ amountToPay })
 	const { send, returnChange, newKeys } = await wallet.send(amountToPay, proofs)
-	l({ send })
+	// l({ send })
 	if (newKeys) { _setKeys(mintUrl, newKeys) }
 	// add change back to db
 	if (returnChange.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
 	if (send?.length) { await deleteProofs(proofs) }
 	try {
+		// l({invoiceeeeee: invoice})
 		const result = await wallet.payLnInvoice(invoice, send, fee)
-		l('[payLnInvoice]', { result, mintUrl, amount })
+		// l('[payLnInvoice]', { result, mintUrl, amount })
 		if (result?.newKeys) { _setKeys(mintUrl, result.newKeys) }
 		if (result?.change?.length) { await addToken({ token: [{ mint: mintUrl, proofs: result.change }] }) }
 		if (result.isPaid) {

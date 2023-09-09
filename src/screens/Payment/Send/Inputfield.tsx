@@ -89,9 +89,11 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			// decode again in case the user changes the input after pasting it
 			const ln = getDecodedLnInvoice(input)
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const timePassed = Math.ceil(Date.now() / 1000) - (ln.sections[4]!.value as number)
+			const createdTime = ln.sections[4]!.value as number
+			const timePassed = Math.ceil(Date.now() / 1000) - createdTime
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const timeLeft = ln.sections[8]!.value as number - timePassed
+			const invoiceExpiryTime = ln.sections[8]!.value as number
+			const timeLeft = invoiceExpiryTime - timePassed
 			// Invoice expired
 			if (timeLeft <= 0) {
 				openPromptAutoClose({ msg: t('expired') + '!' })

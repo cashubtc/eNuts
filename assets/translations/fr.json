@@ -227,7 +227,9 @@
 		"msg": "Nous sommes désolés que vous ayez rencontré ce problème. Vous pouvez nous aider à améliorer le logiciel en prenant une capture d'écran et en créant un court rapport de bug.",
 		"reportBug": "Signaler le bug",
 		"requestMintErr": "Erreur lors de la demande de la facture à partir de mint.",
-		"stackNA": "Pile d'erreur non disponible"
+		"stackNA": "Pile d'erreur non disponible",
+		"generalMeltingErr": "La mint n'a pas pu trouver un itinéraire de paiement Lightning approprié vers votre nœud.",
+		"invoiceFromLnurlError": "Impossible de créer une facture à l'aide de votre LNURL."
 	},
 	"history": {
 		"checkSpent": "Vérifier si le token a été dépensé",

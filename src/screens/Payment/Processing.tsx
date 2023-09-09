@@ -15,13 +15,18 @@ import { cTo } from '@src/storage/store/utils'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
-import { addToHistory } from '@store/latestHistoryEntries'
+import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { globals } from '@styles'
 import { formatMintUrl, getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
+
+interface IErrorProps {
+	e?: unknown
+	customMsg?: 'requestMintErr' | 'generalMeltingErr' | 'invoiceFromLnurlError'
+}
 
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
 	const { t } = useTranslation([NS.mints])
@@ -40,9 +45,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		recipient
 	} = route.params
 
-	const handleError = (e?: unknown) => {
-		// TODO check error screen msgs
-		const translatedErrMsg = t(isMelt ? 'requestMintErr' : 'requestMintErr', { ns: NS.error })
+	const handleError = ({ e, customMsg }: IErrorProps) => {
+		const translatedErrMsg = t(customMsg || 'requestMintErr', { ns: NS.error })
 		navigation.navigate('processingError', {
 			amount,
 			mint,
@@ -76,7 +80,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			if (mint.mintUrl === _testmintUrl) {
 				const { success, invoice } = await requestToken(mint.mintUrl, amount, resp.hash)
 				if (!success) {
-					handleError()
+					handleError({})
 					return
 				}
 				// add as history entry (receive ecash via lightning)
@@ -98,7 +102,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				paymentRequest: decoded.paymentRequest
 			})
 		} catch (e) {
-			handleError(e)
+			handleError({ e })
 		}
 	}
 
@@ -110,18 +114,19 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			try {
 				invoice = await getInvoiceFromLnurl(recipient, +amount)
 				if (!invoice?.length) {
-					handleError()
+					handleError({ customMsg: 'invoiceFromLnurlError' })
 					return
 				}
 			} catch (e) {
-				handleError(e)
+				handleError({ e })
 				return
 			}
 		}
 		try {
 			const res = await payLnInvoice(mint.mintUrl, invoice || recipient, estFee || 0, proofs || [])
 			if (!res.result?.isPaid) {
-				handleError()
+				// here it could be a routing path finding issue
+				handleError({ customMsg: 'generalMeltingErr' })
 				return
 			}
 			// payment success, add as history entry
@@ -131,13 +136,21 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				-amount,
 				invoice || recipient
 			)
+			// update latest 3 history entries
+			await updateLatestHistory({
+				amount: -amount,
+				type: 2,
+				value: invoice || recipient,
+				mints: [mint.mintUrl],
+				timestamp: Math.ceil(Date.now() / 1000)
+			})
 			navigation.navigate('success', {
 				amount: amount - (estFee || 0),
 				fee: res.realFee,
 				isMelt: true
 			})
 		} catch (e) {
-			handleError(e)
+			handleError({ e })
 		}
 	}
 
@@ -160,7 +173,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				isMelt: true
 			})
 		} catch (e) {
-			handleError(e)
+			handleError({ e })
 		}
 	}
 
@@ -218,6 +231,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			)
 		}
 	}
+
 	// start payment process
 	useEffect(() => {
 		if (isMelt) {
@@ -235,6 +249,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		void handleMintingProcess()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMelt, isSwap, isSendEcash])
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<Loading size={40} nostr={!!nostr} />

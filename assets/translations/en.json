@@ -230,7 +230,9 @@
 		"msg": "We are sorry that you encountered this problem. You can help us improve the software by taking a screenshot and creating a short bug report.",
 		"reportBug": "Report the bug",
 		"requestMintErr": "Error while requesting invoice from mint.",
-		"stackNA": "Error stack not available"
+		"stackNA": "Error stack not available",
+		"generalMeltingErr": "The mint was not able to find a proper Lightning payment route to your node.",
+		"invoiceFromLnurlError": "Could not create an invoice using your LNURL."
 	},
 	"history": {
 		"checkSpent": "Check if token has been spent",
