@@ -64,7 +64,8 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				balance: mint.amount,
 				amount: invoiceAmount,
 				estFee,
-				isMelt: true
+				isMelt: true,
+				recipient: invoice
 			})
 			return
 		}

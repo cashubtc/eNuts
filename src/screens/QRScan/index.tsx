@@ -125,7 +125,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		}
 		// handle LN invoice
 		try {
-			const invoice = data.split(':')[1]
+			const invoice = data.includes(':') ? data.split(':')[1] : data
 			const decoded: IDecodedLNInvoice = getDecodedLnInvoice(invoice)
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
 			const amount = decoded.sections[2].value / 1000
