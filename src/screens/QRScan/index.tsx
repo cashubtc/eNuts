@@ -140,11 +140,11 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			// user already has selected the mint in the previous screens
 			if (mint && balance) {
 				// check if invoice amount is higher than the selected mint balance to avoid navigating
-				if (amount > balance) {
-					openPromptAutoClose({ msg: t('noFunds') })
+				const estFee = await checkFees(mint.mintUrl, invoice)
+				if (amount + estFee > balance) {
+					openPromptAutoClose({ msg: t('noFundsForFee', { fee: estFee }), ms: 4000 })
 					return
 				}
-				const estFee = await checkFees(mint.mintUrl, invoice)
 				navigation.navigate('coinSelection', {
 					mint,
 					balance,
@@ -169,9 +169,13 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				})
 				return
 			}
-			// user has funds, select his first mint for the case that he has only one (2 lines later)
+			// user has funds, select his first mint for the case that he has only one
 			const mintUsing = mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' }
 			const estFee = await checkFees(mintUsing.mintUrl, invoice)
+			if (nonEmptyMint.length === 1 && amount + estFee > nonEmptyMint[0].amount) {
+				openPromptAutoClose({ msg: t('noFundsForFee', { fee: estFee }), ms: 4000 })
+				return
+			}
 			// user has only 1 mint with enough balance, he can directly navigate to the payment overview page
 			if (nonEmptyMint.length === 1) {
 				navigation.navigate('coinSelection', {
@@ -179,7 +183,8 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					balance: nonEmptyMint[0].amount,
 					amount,
 					estFee,
-					isMelt: true
+					isMelt: true,
+					recipient: invoice
 				})
 				return
 			}

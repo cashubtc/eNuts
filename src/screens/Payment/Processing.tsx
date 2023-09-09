@@ -8,6 +8,7 @@ import type { TProcessingPageProps } from '@model/nav'
 import { relay } from '@nostr/class/Relay'
 import { EventKind } from '@nostr/consts'
 import { encrypt } from '@nostr/crypto'
+import { useFocusEffect } from '@react-navigation/core'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { updateNostrDmUsers } from '@src/storage/store/nostrDms'
@@ -19,9 +20,9 @@ import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { globals } from '@styles'
 import { formatMintUrl, getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { BackHandler, StyleSheet, View } from 'react-native'
 
 interface IErrorProps {
 	e?: unknown
@@ -107,10 +108,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	}
 
 	const handleMeltingProcess = async () => {
-		if (!recipient?.length) { return }
 		let invoice = ''
 		// recipient can be a LNURL or a LN invoice
-		if (isLnurl(recipient)) {
+		if (recipient?.length && isLnurl(recipient)) {
 			try {
 				invoice = await getInvoiceFromLnurl(recipient, +amount)
 				if (!invoice?.length) {
@@ -123,10 +123,11 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			}
 		}
 		try {
-			const res = await payLnInvoice(mint.mintUrl, invoice || recipient, estFee || 0, proofs || [])
-			if (!res.result?.isPaid) {
+			const target = invoice || recipient || ''
+			const res = await payLnInvoice(mint.mintUrl, target, estFee || 0, proofs || [])
+			if (!res?.result?.isPaid) {
 				// here it could be a routing path finding issue
-				handleError({ customMsg: 'generalMeltingErr' })
+				handleError({ e: isErr(res.error) ? res.error : undefined })
 				return
 			}
 			// payment success, add as history entry
@@ -134,13 +135,13 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				res,
 				[mint.mintUrl],
 				-amount,
-				invoice || recipient
+				target
 			)
 			// update latest 3 history entries
 			await updateLatestHistory({
 				amount: -amount,
 				type: 2,
-				value: invoice || recipient,
+				value: target,
 				mints: [mint.mintUrl],
 				timestamp: Math.ceil(Date.now() / 1000)
 			})
@@ -249,6 +250,17 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		void handleMintingProcess()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMelt, isSwap, isSendEcash])
+
+	// prevent android back button to go back to previous nav screen
+	useFocusEffect(
+		useCallback(() => {
+			const onBackPress = () => true
+			BackHandler.addEventListener('hardwareBackPress', onBackPress)
+			return () => {
+				BackHandler.removeEventListener('hardwareBackPress', onBackPress)
+			}
+		}, [])
+	)
 
 	return (
 		<View style={[globals(color).container, styles.container]}>

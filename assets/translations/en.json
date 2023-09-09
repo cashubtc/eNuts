@@ -134,6 +134,7 @@
 		"noCamAccess": "No access to camera",
 		"noEnoughFunds": "Chosen mint has not enough funds",
 		"noFunds": "Not enough funds",
+		"noFundsForFee": "Not enough funds, please leave room for potential fees: ~{{fee}} Sat.",
 		"noMint": "Found no mint",
 		"noProofsToBackup": "Found no proofs to create a backup.",
 		"notClaim": "If you choose \"No\", the token will not be claimed",

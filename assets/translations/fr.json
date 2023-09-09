@@ -134,6 +134,7 @@
 		"noCamAccess": "Accès à la caméra non autorisé",
 		"noEnoughFunds": "La Mint choisie n'a pas suffisamment de fonds",
 		"noFunds": "Fonds insuffisants",
+		"noFundsForFee": "Solde insuffisant, veuillez prévoir de la marge pour les frais éventuels: ~{{fee}} Sat.",
 		"noMint": "Aucune Mint trouvée",
 		"noProofsToBackup": "Aucune preuve trouvée pour créer une sauvegarde.",
 		"notClaim": "Si vous choisissez \"Non\", le token ne sera pas réclamé",

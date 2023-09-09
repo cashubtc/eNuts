@@ -134,6 +134,7 @@
 		"noCamAccess": "Kein Zugriff auf die Kamera",
 		"noEnoughFunds": "Nicht genügend Guthaben",
 		"noFunds": "Nicht genügend Guthaben",
+		"noFundsForFee": "Nicht genug Guthaben, bitte lassen Sie Platz für eventuelle Gebühren: ~{{fee}} Sat.",
 		"noMint": "Keine Mint gefunden",
 		"noProofsToBackup": "Keine Proofs verfügbar für eine Sicherung.",
 		"notClaim": "Wenn Sie \"Nein\" wählen, wird der Token nicht beansprucht",
