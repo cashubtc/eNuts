@@ -8,6 +8,8 @@ import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { share, vib } from '@util'
 import { useEffect, useState } from 'react'
@@ -23,7 +25,11 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	const { copied, copy } = useCopy()
 	const [error, setError] = useState({ msg: '', open: false })
 
-	useEffect(() => vib(400), [])
+	useEffect(() => {
+		// we can save the created token here to avoid foreground prompts of self-created tokens
+		void store.set(STORE_KEYS.createdToken, route.params.token)
+		vib(400)
+	}, [route.params.token])
 
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
