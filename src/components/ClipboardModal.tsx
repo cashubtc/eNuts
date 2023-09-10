@@ -21,7 +21,9 @@ export default function ClipboardModal() {
 				{t('foundCashuClipboard')}
 			</Text>
 			<Text style={globals(color, highlight).modalTxt}>
-				{t('memo', { ns: NS.history })}: {tokenInfo.decoded.memo}{'\n'}
+				{tokenInfo.decoded.memo && tokenInfo.decoded.memo.length > 0 &&
+					<>{t('memo', { ns: NS.history })}: {tokenInfo.decoded.memo}{'\n'}</>
+				}
 				<Txt
 					txt={formatInt(tokenInfo.value)}
 					styles={[{ fontWeight: '500' }]}
