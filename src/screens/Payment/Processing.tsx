@@ -134,12 +134,13 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			await addLnPaymentToHistory(
 				res,
 				[mint.mintUrl],
-				-amount,
+				-amount - res.realFee,
 				target
 			)
 			// update latest 3 history entries
 			await updateLatestHistory({
-				amount: -amount,
+				amount: -amount - res.realFee,
+				fee: res.realFee,
 				type: 2,
 				value: target,
 				mints: [mint.mintUrl],
