@@ -29,7 +29,7 @@ export default function ClipboardModal() {
 					styles={[{ fontWeight: '500' }]}
 				/>
 				{' '}Satoshi {t('fromMint')}:{'\n'}
-				{tokenInfo.mints.map((m, i) => `${formatMintUrl(m)}${i < tokenInfo.mints.length - 1 ? ', ' : ''}`)}
+				{tokenInfo.mints.map(m => formatMintUrl(m)).join(', ')}
 			</Text>
 			<Button
 				txt={t('accept')}
