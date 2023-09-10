@@ -83,7 +83,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			}
 			<Separator style={[styles.separator]} />
 			{/* No transactions yet */}
-			{!history.length &&
+			{!history.length && !hidden.txs &&
 				<View style={{ padding: 10 }}>
 					<Txt txt={t('noTX')} styles={[globals(color).pressTxt, { color: mainColors.WHITE }]} />
 				</View>
