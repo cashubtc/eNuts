@@ -146,7 +146,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				timestamp: Math.ceil(Date.now() / 1000)
 			})
 			navigation.navigate('success', {
-				amount: amount - (estFee || 0),
+				amount,
 				fee: res.realFee,
 				isMelt: true
 			})
