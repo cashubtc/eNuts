@@ -159,7 +159,6 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 	if (returnChange.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
 	if (send?.length) { await deleteProofs(proofs) }
 	try {
-		// l({invoiceeeeee: invoice})
 		const result = await wallet.payLnInvoice(invoice, send, fee)
 		// l('[payLnInvoice]', { result, mintUrl, amount })
 		if (result?.newKeys) { _setKeys(mintUrl, result.newKeys) }
