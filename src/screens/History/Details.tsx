@@ -13,6 +13,7 @@ import { truncateNostrProfileInfo } from '@nostr/util'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { addToHistory } from '@src/storage/store/latestHistoryEntries'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
@@ -104,6 +105,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		// entry.isSpent can only be false here and is not undefined anymore
 		await historyStore.updateHistoryEntry({ ...route.params.entry, isSpent: false }, { ...route.params.entry, isSpent: true })
 		setSpent(true)
+		await addToHistory({ ...route.params.entry, amount: Math.abs(route.params.entry.amount), isSpent: true })
 		stopLoading()
 		openPromptAutoClose({
 			msg: t(
