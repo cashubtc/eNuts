@@ -2,7 +2,7 @@ import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt } from '@util'
+import { formatInt, formatMintUrl } from '@util'
 import { useTranslation } from 'react-i18next'
 import { Text, View } from 'react-native'
 
@@ -28,8 +28,8 @@ export default function ClipboardModal() {
 					txt={formatInt(tokenInfo.value)}
 					styles={[{ fontWeight: '500' }]}
 				/>
-				{' '}Satoshi {t('fromMint')}:{' '}
-				{tokenInfo.mints.join(', ')}
+				{' '}Satoshi {t('fromMint')}:{'\n'}
+				{tokenInfo.mints.map((m, i) => `${formatMintUrl(m)}${i < tokenInfo.mints.length - 1 ? ', ' : ''}`)}
 			</Text>
 			<Button
 				txt={t('accept')}
