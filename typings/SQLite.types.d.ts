@@ -129,7 +129,8 @@ declare module 'expo-sqlite' {
 		 * Delete the database file.
 		 * > The database has to be closed prior to deletion.
 		 */
-		// deleteAsync(): Promise<void>;
+		deleteAsync(): Promise<void>;
+		delete(): void;
 	}
 
 	// @docsMissing

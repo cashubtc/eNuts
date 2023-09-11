@@ -36,7 +36,6 @@ async function getWallet(mintUrl: string): Promise<CashuWallet> {
 	const mint = new CashuMint(mintUrl)
 	l({ mint })
 	const keys = await mint.getKeys()
-	l({ keys })
 	const wallet = new CashuWallet(mint, keys)
 	_setKeys(mintUrl, keys)
 	wallets[mintUrl] = wallet

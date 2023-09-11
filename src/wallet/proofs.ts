@@ -1,11 +1,12 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
 import { getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
+import { uniq } from '@util'
 
 export function getTokenInfo(encodedToken: string) {
 	try {
 		const decoded = getDecodedToken(encodedToken)
-		const mints = new Set(decoded?.token?.map(x => x.mint))
+		const mints = uniq(decoded?.token?.map(x => x.mint))
 		return { mints: [...mints], value: sumTokenValue(decoded), decoded }
 	} catch (e) { l(e) }
 }
