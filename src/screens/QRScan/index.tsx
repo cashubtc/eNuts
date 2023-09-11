@@ -1,4 +1,5 @@
 import { getDecodedLnInvoice } from '@cashu/cashu-ts'
+import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
 import { CloseIcon, FlashlightOffIcon } from '@comps/Icons'
@@ -223,7 +224,11 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	}, [isFocused])
 
 	return (
-		<View style={[globals(color).container, styles.container]}>
+		<View style={[
+			globals(color).container,
+			styles.container,
+			isFocused && hasPermission ? { justifyContent: 'center' } : {}
+		]}>
 			{isFocused && hasPermission ?
 				<>
 					<Camera
@@ -262,9 +267,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					</TouchableOpacity>
 				</>
 				:
-				<Text style={styles.noAccess}>
-					{t('noCamAccess')}
-				</Text>
+				<Empty txt={t('noCamAccess')} hasOk nav={navigation} />
 			}
 			{/* Question modal for mint trusting */}
 			{trustModal &&
@@ -283,12 +286,6 @@ const styles = StyleSheet.create({
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	noAccess: {
-		fontSize: 16,
-		fontWeight: '500',
-		color: mainColors.WHITE
 	},
 	flashOn: {
 		position: 'absolute',
