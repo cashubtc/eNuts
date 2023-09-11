@@ -6,7 +6,6 @@ import type { TSuccessPageProps } from '@model/nav'
 import { useFocusEffect } from '@react-navigation/core'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { mainColors } from '@styles'
 import { formatInt, vib } from '@util'
 import LottieView from 'lottie-react-native'
 import { useCallback, useEffect, useState } from 'react'
@@ -137,7 +136,6 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	meltTxt: {
-		color: mainColors.WHITE,
 		fontWeight: '500'
 	},
 	mints: {
