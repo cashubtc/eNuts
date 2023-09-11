@@ -176,6 +176,10 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			const estFee = await checkFees(mintUsing.mintUrl, invoice)
 			// user has only 1 mint with enough balance, he can directly navigate to the payment overview page
 			if (nonEmptyMint.length === 1) {
+				if (nonEmptyMint[0].amount < amount + estFee) {
+					openPromptAutoClose({ msg: t('noFunds') })
+					return
+				}
 				navigation.navigate('coinSelection', {
 					mint: mintUsing,
 					balance: nonEmptyMint[0].amount,
@@ -185,14 +189,18 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				})
 				return
 			}
-			// user needs to select mint from which he wants to pay the invoice
-			navigation.navigate('selectMint', {
-				mints,
-				mintsWithBal,
-				allMintsEmpty: !nonEmptyMint.length,
-				invoiceAmount: amount,
-				invoice,
-			})
+			if (mintsWithBal.some(m => m.amount >= amount + estFee)) {
+				// user needs to select mint from which he wants to pay the invoice
+				navigation.navigate('selectMint', {
+					mints,
+					mintsWithBal,
+					allMintsEmpty: !nonEmptyMint.length,
+					invoiceAmount: amount,
+					invoice,
+				})
+			} else {
+				openPromptAutoClose({ msg: t('noFunds') })
+			}
 
 		} catch (e) {
 			openPromptAutoClose({ msg: t('unknownType') + data })
