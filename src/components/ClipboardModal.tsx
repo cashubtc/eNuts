@@ -2,7 +2,7 @@ import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt } from '@util'
+import { formatInt, formatMintUrl } from '@util'
 import { useTranslation } from 'react-i18next'
 import { Text, View } from 'react-native'
 
@@ -21,13 +21,15 @@ export default function ClipboardModal() {
 				{t('foundCashuClipboard')}
 			</Text>
 			<Text style={globals(color, highlight).modalTxt}>
-				{t('memo', { ns: NS.history })}: {tokenInfo.decoded.memo}{'\n'}
+				{tokenInfo.decoded.memo && tokenInfo.decoded.memo.length > 0 &&
+					<>{t('memo', { ns: NS.history })}: {tokenInfo.decoded.memo}{'\n'}</>
+				}
 				<Txt
 					txt={formatInt(tokenInfo.value)}
 					styles={[{ fontWeight: '500' }]}
 				/>
-				{' '}Satoshi {t('fromMint')}:{' '}
-				{tokenInfo.mints.join(', ')}
+				{' '}Satoshi {t('fromMint')}:{'\n'}
+				{tokenInfo.mints.map(m => formatMintUrl(m)).join(', ')}
 			</Text>
 			<Button
 				txt={t('accept')}
