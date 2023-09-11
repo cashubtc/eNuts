@@ -8,6 +8,7 @@ import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
 import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
+import { useIsFocused } from '@react-navigation/core'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -30,6 +31,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
+	const isFocused = useIsFocused()
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)
 	const [flash, setFlash] = useState(false)
@@ -206,9 +208,15 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		void getBarCodeScannerPermissions()
 	}, [])
 
+	useEffect(() => {
+		if (!isFocused) {
+			setScanned(false)
+		}
+	}, [isFocused])
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
-			{hasPermission ?
+			{isFocused && hasPermission ?
 				<>
 					<Camera
 						flashMode={flash ? FlashMode.torch : FlashMode.off}
