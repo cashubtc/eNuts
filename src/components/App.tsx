@@ -175,11 +175,11 @@ function _App() {
 				appState.current.match(/inactive|background/) &&
 				nextAppState === 'active'
 			) {
-				l('App has come to the foreground!')
+				l('[PIN] App has come to the foreground!')
 				// check for pin attempts and app locked state
 				await handlePinForeground()
 			} else {
-				l('App has gone to the background!')
+				l('[PIN] App has gone to the background!')
 				// store timestamp to activate auth after > 5mins in background
 				await store.set(STORE_KEYS.bgCounter, `${Math.ceil(Date.now() / 1000)}`)
 			}
