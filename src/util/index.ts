@@ -5,7 +5,7 @@ import type { ILnUrl, IProofSelection } from '@model'
 import axios from 'axios'
 import type { Buffer } from 'buffer/'
 import * as Clipboard from 'expo-clipboard'
-import { Linking, Vibration } from 'react-native'
+import { Linking, Share, Vibration } from 'react-native'
 
 import { getLanguageCode } from './localization'
 import { isArr, isBuf, isNum, isStr } from './typeguards'
@@ -276,4 +276,24 @@ export async function copyStrToClipboard(str: string) {
 export async function getStrFromClipboard() {
 	const s = await Clipboard.getStringAsync()
 	return !s || s === 'null' ? null : s
+}
+
+export async function share(message: string, url?: string) {
+	try {
+		const res = await Share.share({ message, url })
+		if (res.action === Share.sharedAction) {
+			if (res.activityType) {
+				// shared with activity type of result.activityType
+				l('shared with activity type of result.activityType')
+			} else {
+				// shared
+				l('shared')
+			}
+		} else if (res.action === Share.dismissedAction) {
+			// dismissed
+			l('sharing dismissed')
+		}
+	} catch (e) {
+		l('[quick-share error] ', e)
+	}
 }

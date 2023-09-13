@@ -1,10 +1,9 @@
-import { l } from '@log'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatMintUrl } from '@util'
+import { formatMintUrl, share } from '@util'
 import { useTranslation } from 'react-i18next'
-import { Share, StyleSheet, Text } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 
 import ActionButtons from './ActionButtons'
 import useCopy from './hooks/Copy'
@@ -19,28 +18,6 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 	const { color } = useThemeContext()
 	const { copied, copy } = useCopy()
 
-	const handleShare = async () => {
-		try {
-			const res = await Share.share({
-				message: token, // `cashu://${route.params.token}`
-				url: `cashu://${token}`
-			})
-			if (res.action === Share.sharedAction) {
-				if (res.activityType) {
-					// shared with activity type of result.activityType
-					l('shared with activity type of result.activityType')
-				} else {
-					// shared
-					l('shared')
-				}
-			} else if (res.action === Share.dismissedAction) {
-				// dismissed
-				l('sharing dismissed')
-			}
-		} catch (e) {
-			l(e)
-		}
-	}
 	return (
 		<>
 			<Text style={[globals(color).navTxt, styles.subTxt]}>
@@ -57,7 +34,7 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 			<ActionButtons
 				absolutePos
 				topBtnTxt={t('share')}
-				topBtnAction={() => void handleShare()}
+				topBtnAction={() => void share(token, `cashu://${token}`)}
 				bottomBtnTxt={copied ? t('copied') : t('copyToken')}
 				bottomBtnAction={() => void copy(token)}
 			/>
