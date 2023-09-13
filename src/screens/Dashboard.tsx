@@ -113,9 +113,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// check if user wants to trust the token mint
 		const userMints = await getMintsUrls()
 		if (!hasTrustedMint(userMints, tokenInfo.mints)) {
+			closeOptsModal()
 			// ask user for permission if token mint is not in his mint list
-			setTrustModal(true)
-			stopLoading()
+			const t = setTimeout(() => {
+				setTrustModal(true)
+				stopLoading()
+				clearTimeout(t)
+			}, 250)
 			return
 		}
 		await receiveToken(url)
@@ -124,16 +128,17 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// helper function that gets called either right after pasting token or in the trust modal depending on user permission
 	const receiveToken = async (encodedToken: string) => {
 		const success = await claimToken(encodedToken).catch(l)
-		setTrustModal(false)
 		closeOptsModal()
 		setToken('')
 		stopLoading()
 		if (!success) {
+			setTrustModal(false)
 			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			return
 		}
 		const info = getTokenInfo(encodedToken)
 		if (!info) {
+			setTrustModal(false)
 			openPromptAutoClose({ msg: t('tokenInfoErr') })
 			return
 		}
@@ -144,6 +149,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			value: encodedToken,
 			mints: info.mints,
 		})
+		setTrustModal(false)
 		navigation.navigate('success', {
 			amount: info?.value,
 			memo: info?.decoded.memo,

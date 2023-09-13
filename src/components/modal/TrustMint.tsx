@@ -25,12 +25,12 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 				{t('trustMint')}?
 			</Text>
 			{/* token amount */}
-			<Text style={[styles.mintPrompt, { color: color.TEXT_SECONDARY, }]}>
+			<Text style={[styles.mintPrompt, { color: color.TEXT }]}>
 				{formatInt(tokenInfo?.value || 0)} Satoshi {t('from')}:
 			</Text>
 			{/* Show in which mint(s) the tokens are */}
 			<View style={styles.tokenMintsView}>
-				{tokenInfo?.mints.map(m => <Text style={[styles.mintPrompt, { color: color.TEXT_SECONDARY, }]} key={m}>{formatMintUrl(m)}</Text>)}
+				{tokenInfo?.mints.map(m => <Text style={[styles.mintPrompt, { color: color.TEXT }]} key={m}>{formatMintUrl(m)}</Text>)}
 			</View>
 			<Text style={globals(color, highlight).modalTxt}>
 				{t('notClaim')}.
@@ -48,7 +48,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 
 const styles = StyleSheet.create({
 	mintPrompt: {
-		fontSize: 12,
+		fontSize: 14,
 		marginBottom: 5,
 	},
 	tokenMintsView: {
