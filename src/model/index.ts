@@ -82,9 +82,15 @@ export interface IProofSelection extends Proof {
 	selected: boolean
 }
 
+/**
+ * type: 1 | 2 | 3
+ * 1 = send/receive Ecash
+ * 2 = LN invoice
+ * 3 = multimint swap
+ */
 export interface IHistoryEntry {
 	amount: number
-	type: 1 | 2 | 3 	// 1 = send/receive Ecash | 2 = LN invoice | 3 = multimint swap
+	type: 1 | 2 | 3
 	timestamp: number
 	value: string		// Lightning invoice or encoded Cashu token
 	mints: string[] 	// mints involved

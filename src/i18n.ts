@@ -2,7 +2,6 @@
 import de from '@assets/translations/de.json'
 import en from '@assets/translations/en.json'
 import fr from '@assets/translations/fr.json'
-import { isReactNativeDevMode as debug } from '@consts'
 import { l } from '@log'
 import { isErr } from '@util'
 import { getTranslationLangCode } from '@util/localization'
@@ -44,7 +43,7 @@ i18n.use(initReactI18next)
 		defaultNS,
 		ns: [NS.common, NS.auth, NS.wallet, NS.topNav, NS.bottomNav, NS.error, NS.history, NS.mints, NS.backup, NS.addrBook],
 		lng: getTranslationLangCode(),
-		debug,
+		// debug,
 		// Consider external storing of translations and fetch needed language on demand
 		// https://www.i18next.com/how-to/backend-fallback
 		resources,

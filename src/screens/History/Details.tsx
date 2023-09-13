@@ -13,6 +13,7 @@ import { truncateNostrProfileInfo } from '@nostr/util'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { addToHistory } from '@src/storage/store/latestHistoryEntries'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
@@ -56,6 +57,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const { hash, memo } = isLn ? getLnInvoiceInfo(value) : { hash: '', memo: '' }
 	const tokenMemo = !isLn ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history })
 	const { openPromptAutoClose } = usePromptContext()
+	l({ fee })
 
 	const copyValue = async () => {
 		await copyStrToClipboard(value)

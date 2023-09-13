@@ -2,7 +2,6 @@ import { getDecodedLnInvoice, getDecodedToken } from '@cashu/cashu-ts'
 import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
 import type { ILnUrl, IProofSelection } from '@model'
-import axios from 'axios'
 import type { Buffer } from 'buffer/'
 import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
@@ -145,11 +144,11 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 		if (!isLnurl(address)) { throw new Error('invalid address') }
 		const [user, host] = address.split('@')
 		amount *= 1000
-		const { data: { tag, callback, minSendable, maxSendable } } = await axios.get<ILnUrl>(`https://${host}/.well-known/lnurlp/${user}`)
+		const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json() as ILnUrl
 		if (tag === 'payRequest' && minSendable <= amount && amount <= maxSendable) {
-			const resp = await axios.get<{ pr: string }>(`${callback}?amount=${amount}`)
-			if (!resp?.data?.pr) { l('[getInvoiceFromLnurl]', { resp }) }
-			return resp?.data?.pr || ''
+			const resp = await (await fetch(`${callback}?amount=${amount}`)).json() as { pr: string }
+			if (!resp?.pr) { l('[getInvoiceFromLnurl]', { resp }) }
+			return resp?.pr || ''
 		}
 	} catch (err) { l('[getInvoiceFromLnurl]', err) }
 	return ''
@@ -274,8 +273,12 @@ export async function copyStrToClipboard(str: string) {
 }
 
 export async function getStrFromClipboard() {
-	const s = await Clipboard.getStringAsync()
-	return !s || s === 'null' ? null : s
+	try {
+		if (!await Clipboard.hasStringAsync()) { return null }
+		const s = await Clipboard.getStringAsync()
+		return !s || s === 'null' ? null : s
+	} catch (error) { l('[getStrFromClipboard]', error) }
+	return null
 }
 
 export async function share(message: string, url?: string) {

@@ -15,7 +15,7 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<View />
 			<View style={styles.setion}>
-				<Txt txt={route.params.errorMsg} styles={[{ color: mainColors.ERROR }]} />
+				<Txt txt={route.params.errorMsg} styles={[{ color: mainColors.ERROR, textAlign: 'center' }]} />
 				<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('tryLater')} />
 			</View>
 			<Button

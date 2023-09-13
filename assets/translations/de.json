@@ -134,6 +134,7 @@
 		"noCamAccess": "Kein Zugriff auf die Kamera",
 		"noEnoughFunds": "Nicht genügend Guthaben",
 		"noFunds": "Nicht genügend Guthaben",
+		"noFundsForFee": "Nicht genug Guthaben, bitte lassen Sie Platz für eventuelle Gebühren: ~{{fee}} Sat.",
 		"noMint": "Keine Mint gefunden",
 		"noProofsToBackup": "Keine Proofs verfügbar für eine Sicherung.",
 		"notClaim": "Wenn Sie \"Nein\" wählen, wird der Token nicht beansprucht",
@@ -230,7 +231,9 @@
 		"msg": "Es tut uns leid, dass dieses Problem bei Ihnen aufgetreten ist. Sie können uns helfen, die Software zu verbessern, indem Sie einen Screenshot machen und einen kurzen Fehlerbericht erstellen.",
 		"reportBug": "Fehler melden",
 		"requestMintErr": "Fehler beim Abrufen der Rechnung von der Mint.",
-		"stackNA": "Ursprung des Fehlers nicht verfügbar"
+		"stackNA": "Ursprung des Fehlers nicht verfügbar",
+		"generalMeltingErr": "Die Mint konnte keine geeignete Lightning-Zahlungsroute zu Ihrer Node finden.",
+		"invoiceFromLnurlError": "Es konnte keine Rechnung erstellt werden mit deiner LNURL."
 	},
 	"history": {
 		"checkSpent": "Überprüfen ob Token ausgegeben wurde",

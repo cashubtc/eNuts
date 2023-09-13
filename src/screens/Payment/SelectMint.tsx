@@ -56,7 +56,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		if (invoice && invoiceAmount) {
 			const estFee = await checkFees(mint.mintUrl, invoice)
 			if (invoiceAmount + estFee > mint.amount) {
-				openPromptAutoClose({ msg: t('noFunds', { ns: NS.common }) })
+				openPromptAutoClose({ msg: t('noFundsForFee', { ns: NS.common, fee: estFee }), ms: 4000 })
 				return
 			}
 			navigation.navigate('coinSelection', {
@@ -64,7 +64,8 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				balance: mint.amount,
 				amount: invoiceAmount,
 				estFee,
-				isMelt: true
+				isMelt: true,
+				recipient: invoice
 			})
 			return
 		}

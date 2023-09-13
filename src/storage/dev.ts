@@ -1,5 +1,5 @@
 import { dropAll } from './db'
-import { secureStore, store } from './store'
+import { historyStore, secureStore, store } from './store'
 import { SECRET, SECURESTORE_KEY } from './store/consts'
 
 export async function dropAllData() {
@@ -8,5 +8,6 @@ export async function dropAllData() {
 		store.clear(),
 		secureStore.delete(SECRET),
 		secureStore.delete(SECURESTORE_KEY),
+		historyStore.clear()
 	])
 }
