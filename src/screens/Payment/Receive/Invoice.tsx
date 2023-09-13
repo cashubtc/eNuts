@@ -83,6 +83,10 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	// auto check payment in intervals
 	useEffect(() => {
 		const interval = setInterval(() => {
+			if (paid === 'paid') {
+				clearInterval(interval)
+				return
+			}
 			void handlePayment()
 		}, 3000)
 		return () => clearInterval(interval)
