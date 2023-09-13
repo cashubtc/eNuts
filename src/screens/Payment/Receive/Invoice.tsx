@@ -1,7 +1,9 @@
 import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
 import { CheckmarkIcon, CopyIcon, ShareIcon, WalletIcon } from '@comps/Icons'
+import Loading from '@comps/Loading'
 import QR from '@comps/QR'
+import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -29,9 +31,9 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const [paid, setPaid] = useState('')
 	const { copied, copy } = useCopy()
 
-	const handlePayment = async () => {
-		// state "unpaid" is temporary to prevent btn press spam
-		if (paid === 'unpaid') { return }
+	const handlePayment = async (isCancelling?: boolean) => {
+		// only check the payment if paid === ''
+		if (paid === 'unpaid' || paid === 'paid') { return }
 		const previousBalance = await getBalance()
 		try {
 			const { success } = await requestToken(mintUrl, amount, hash)
@@ -59,6 +61,9 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			setPaid('unpaid')
 			// reset state
 			setTimeout(() => setPaid(''), 3000)
+			if (isCancelling) {
+				navigation.navigate('dashboard')
+			}
 		}
 	}
 
@@ -75,12 +80,25 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [expire, expiryTime])
 
+	// auto check payment in intervals
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (paid === 'paid') {
+				clearInterval(interval)
+				return
+			}
+			void handlePayment()
+		}, 3000)
+		return () => clearInterval(interval)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={t('payInvoice', { ns: NS.wallet })}
 				txt={t('backToDashboard')}
-				handlePress={() => navigation.navigate('dashboard')}
+				handlePress={() => void handlePayment(true)}
 			/>
 			<View style={styles.invoiceWrap}>
 				<View style={theme === 'Dark' ? styles.qrCodeWrap : undefined}>
@@ -112,23 +130,20 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 						t('invoiceExpired') + '!'
 					}
 				</Text>
+				{expire > 0 &&
+					<View style={styles.awaitingWrap}>
+						<Txt txt='Awaiting payment...' styles={[{ fontWeight: '500', marginRight: 10 }]} />
+						<Loading />
+					</View>
+				}
 			</View>
 			{expire > 0 && (!paid || paid === 'unpaid') ?
 				<View style={[styles.lnBtnWrap, { marginBottom: insets.bottom }]}>
 					<Button
-						outlined
-						txt={t(paid === 'unpaid' ? 'paymentPending' : 'checkPayment')}
-						onPress={() => void handlePayment()}
-					// icon={paid === 'unpaid' ? <SandClockIcon color={hi[highlight]} /> : <CheckmarkIcon color={hi[highlight]} />}
-					/>
-					<View style={{ marginVertical: 10 }} />
-					<Button
 						txt={t('payWithLn')}
 						onPress={() => {
-							void (async () => {
-								await openUrl(`lightning:${paymentRequest}`)?.catch(e =>
-									openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-							})()
+							void openUrl(`lightning:${paymentRequest}`)?.catch(e =>
+								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 						}}
 						icon={<WalletIcon color={mainColors.WHITE} />}
 					/>
@@ -153,7 +168,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		padding: 20,
-		paddingTop: 140,
+		paddingTop: 120,
 	},
 	invoiceWrap: {
 		alignItems: 'center',
@@ -176,11 +191,11 @@ const styles = StyleSheet.create({
 		fontWeight: '600',
 		textAlign: 'center',
 	},
-	checkPaymentTxt: {
-		fontSize: 16,
-		fontWeight: '500',
+	awaitingWrap: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
 		marginTop: 10,
-		textAlign: 'center',
 	},
 	lnBtnWrap: {
 		width: '100%'
