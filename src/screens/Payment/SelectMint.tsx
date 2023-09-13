@@ -5,6 +5,7 @@ import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
+import { l } from '@log'
 import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
@@ -59,6 +60,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				openPromptAutoClose({ msg: t('noFundsForFee', { ns: NS.common, fee: estFee }), ms: 4000 })
 				return
 			}
+			l('user has scanned an invoice, navigate to payment overview')
 			navigation.navigate('coinSelection', {
 				mint,
 				balance: mint.amount,
@@ -69,12 +71,25 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			})
 			return
 		}
-		// choose a target for a lightning payment
+		// choose a target for a payment
 		if (isMelt || isSendEcash) {
 			// get remaining mints for a possible multimint swap
 			const remainingMints = userMints
 				.filter(m => m.mintUrl !== mint.mintUrl && m.mintUrl !== _testmintUrl)
 				.map(m => ({ mintUrl: m.mintUrl, customName: m.customName }))
+			// user has already selected a nostr target
+			if (nostr) {
+				l('user has already selected a nostr target, navigate to amount selection')
+				// select ecash amount to send
+				navigation.navigate('selectAmount', {
+					mint,
+					nostr,
+					balance: mint.amount,
+					isSendEcash
+				})
+				return
+			}
+			l('user wants to send payment, navigate to target selection')
 			navigation.navigate('selectTarget', {
 				mint,
 				balance: mint.amount,
@@ -84,7 +99,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			})
 			return
 		}
-		// select ecash amount to send
+		l('[last condition] navigate to amount selection')
 		navigation.navigate('selectAmount', {
 			mint,
 			nostr,
@@ -92,6 +107,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			isSendEcash
 		})
 	}
+
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
 		void (async () => {
@@ -105,6 +121,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			setDefaultM(await getDefaultMint() ?? '')
 		})()
 	}, [mints, mintsWithBal])
+
 	return (
 		<Screen
 			screenName={t(getScreenName(), { ns: NS.common })}
