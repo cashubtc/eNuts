@@ -130,6 +130,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		return <SandClockIcon width={20} height={20} color={color.TEXT} />
 	}
 
+	const getMemo = () => {
+		if (isLn) {
+			if (memo === 'enuts') { return 'Cashu deposit' }
+			return memo
+		}
+		if (tokenMemo) { return tokenMemo }
+		return t('noMemo', { ns: NS.history })
+	}
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
@@ -178,7 +187,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					<View style={styles.entryInfo}>
 						<Txt txt={t('memo', { ns: NS.history })} />
 						<Txt
-							txt={isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : t('noMemo', { ns: NS.history })}
+							txt={getMemo()}
 							styles={[styles.infoValue]}
 						/>
 					</View>

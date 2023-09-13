@@ -38,7 +38,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			const newBalance = await getBalance()
 			// it is possible that success is false but invoice has been paid...
 			if (success || newBalance > previousBalance) {
-				// add as history entry (cash out via lightning)
+				// add as history entry
 				await addToHistory({
 					amount,
 					type: 2,
