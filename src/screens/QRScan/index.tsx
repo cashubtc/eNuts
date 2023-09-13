@@ -1,4 +1,5 @@
 import { getDecodedLnInvoice } from '@cashu/cashu-ts'
+import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
 import { CloseIcon, FlashlightOffIcon } from '@comps/Icons'
@@ -8,6 +9,7 @@ import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
 import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
+import { useIsFocused } from '@react-navigation/core'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -30,6 +32,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
+	const isFocused = useIsFocused()
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)
 	const [flash, setFlash] = useState(false)
@@ -178,6 +181,10 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			}
 			// user has only 1 mint with enough balance, he can directly navigate to the payment overview page
 			if (nonEmptyMint.length === 1) {
+				if (nonEmptyMint[0].amount < amount + estFee) {
+					openPromptAutoClose({ msg: t('noFunds') })
+					return
+				}
 				navigation.navigate('coinSelection', {
 					mint: mintUsing,
 					balance: nonEmptyMint[0].amount,
@@ -188,14 +195,18 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				})
 				return
 			}
-			// user needs to select mint from which he wants to pay the invoice
-			navigation.navigate('selectMint', {
-				mints,
-				mintsWithBal,
-				allMintsEmpty: !nonEmptyMint.length,
-				invoiceAmount: amount,
-				invoice,
-			})
+			if (mintsWithBal.some(m => m.amount >= amount + estFee)) {
+				// user needs to select mint from which he wants to pay the invoice
+				navigation.navigate('selectMint', {
+					mints,
+					mintsWithBal,
+					allMintsEmpty: !nonEmptyMint.length,
+					invoiceAmount: amount,
+					invoice,
+				})
+			} else {
+				openPromptAutoClose({ msg: t('noFunds') })
+			}
 
 		} catch (e) {
 			openPromptAutoClose({ msg: t('unknownType') + data })
@@ -211,9 +222,19 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		void getBarCodeScannerPermissions()
 	}, [])
 
+	useEffect(() => {
+		if (!isFocused) {
+			setScanned(false)
+		}
+	}, [isFocused])
+
 	return (
-		<View style={[globals(color).container, styles.container]}>
-			{hasPermission ?
+		<View style={[
+			globals(color).container,
+			styles.container,
+			isFocused && hasPermission ? { justifyContent: 'center' } : {}
+		]}>
+			{isFocused && hasPermission ?
 				<>
 					<Camera
 						flashMode={flash ? FlashMode.torch : FlashMode.off}
@@ -251,9 +272,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					</TouchableOpacity>
 				</>
 				:
-				<Text style={styles.noAccess}>
-					{t('noCamAccess')}
-				</Text>
+				<Empty txt={t('noCamAccess')} hasOk nav={navigation} />
 			}
 			{/* Question modal for mint trusting */}
 			{trustModal &&
@@ -272,12 +291,6 @@ const styles = StyleSheet.create({
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	noAccess: {
-		fontSize: 16,
-		fontWeight: '500',
-		color: mainColors.WHITE
 	},
 	flashOn: {
 		position: 'absolute',

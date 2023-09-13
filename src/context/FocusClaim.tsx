@@ -3,6 +3,8 @@ import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
 import { NS } from '@src/i18n'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { formatInt, formatMintUrl, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
@@ -29,8 +31,10 @@ const useFocusClaim = () => {
 		// in an empty string returned. Find a better way than the following function to handle it.
 		let isSpent = false
 		const fn = async () => {
+			const selfCreated = await store.get(STORE_KEYS.createdToken)
 			const clipboard = await getStrFromClipboard()
 			if (!clipboard?.length || !isCashuToken(clipboard)) { return false }
+			if (selfCreated === clipboard) { return false }
 			const info = getTokenInfo(clipboard)
 			if (!info) { return false }
 			// check if mint is a trusted one

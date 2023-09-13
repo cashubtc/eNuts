@@ -18,7 +18,8 @@ export const STORE_KEYS = {
 	defaultMint: 'MINT_STORE=|:|=default_mint',
 	hiddenBal: 'privacy_balance',
 	hiddenTxs: 'privacy_txs',
-	latestHistory: 'history_latest'
+	latestHistory: 'history_latest',
+	createdToken: 'createdToken',
 }
 
 export const SECURESTORE_KEY = 'auth_pin'

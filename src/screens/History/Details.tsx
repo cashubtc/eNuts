@@ -14,6 +14,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { l } from '@src/logger'
+import { addToHistory } from '@src/storage/store/latestHistoryEntries'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
@@ -106,6 +107,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		// entry.isSpent can only be false here and is not undefined anymore
 		await historyStore.updateHistoryEntry({ ...route.params.entry, isSpent: false }, { ...route.params.entry, isSpent: true })
 		setSpent(true)
+		await addToHistory({ ...route.params.entry, amount: Math.abs(route.params.entry.amount), isSpent: true })
 		stopLoading()
 		openPromptAutoClose({
 			msg: t(
@@ -128,6 +130,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		if (loading) { return <Loading /> }
 		if (isUndef(spent)) { return <SearchIcon width={20} height={20} color={color.TEXT} /> }
 		return <SandClockIcon width={20} height={20} color={color.TEXT} />
+	}
+
+	const getMemo = () => {
+		if (isLn) {
+			if (memo === 'enuts') { return 'Cashu deposit' }
+			return memo
+		}
+		if (tokenMemo) { return tokenMemo }
+		return t('noMemo', { ns: NS.history })
 	}
 
 	return (
@@ -159,7 +170,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						<>
 							<View style={styles.entryInfo}>
 								<Txt txt={t('recipient')} />
-								<Txt txt={type === 3 ? recipient : truncateNostrProfileInfo(recipient)} />
+								<Txt txt={type === 3 ? formatMintUrl(recipient) : truncateNostrProfileInfo(recipient)} />
 							</View>
 							<Separator />
 						</>
@@ -178,7 +189,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					<View style={styles.entryInfo}>
 						<Txt txt={t('memo', { ns: NS.history })} />
 						<Txt
-							txt={isLn && memo.length > 0 ? memo : tokenMemo && tokenMemo.length > 0 ? tokenMemo : t('noMemo', { ns: NS.history })}
+							txt={getMemo()}
 							styles={[styles.infoValue]}
 						/>
 					</View>

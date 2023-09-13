@@ -12,7 +12,8 @@ interface IEmptyProps {
 	hasOk?: boolean
 	pressable?: boolean
 	onPress?: () => void
-	nav?: NativeStackNavigationProp<RootStackParamList, 'nostrReceive', 'MyStack'>
+	nav?: NativeStackNavigationProp<RootStackParamList, 'nostrReceive', 'MyStack'> |
+	NativeStackNavigationProp<RootStackParamList, 'qr scan', 'MyStack'>
 }
 
 export default function Empty({ txt, hasOk, pressable, onPress, nav }: IEmptyProps) {

@@ -11,11 +11,11 @@ import { NS } from '@src/i18n'
 import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { formatMintUrl, formatSeconds, isErr, openUrl } from '@util'
+import { formatMintUrl, formatSeconds, isErr, openUrl, share } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
@@ -38,7 +38,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			const newBalance = await getBalance()
 			// it is possible that success is false but invoice has been paid...
 			if (success || newBalance > previousBalance) {
-				// add as history entry (cash out via lightning)
+				// add as history entry
 				await addToHistory({
 					amount,
 					type: 2,
@@ -59,28 +59,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			setPaid('unpaid')
 			// reset state
 			setTimeout(() => setPaid(''), 3000)
-		}
-	}
-
-	const handleShare = async () => {
-		try {
-			const res = await Share.share({
-				message: paymentRequest,
-			})
-			if (res.action === Share.sharedAction) {
-				if (res.activityType) {
-					// shared with activity type of result.activityType
-					l('shared with activity type of result.activityType')
-				} else {
-					// shared
-					l('shared')
-				}
-			} else if (res.action === Share.dismissedAction) {
-				// dismissed
-				l('sharing dismissed')
-			}
-		} catch (e) {
-			l(e)
 		}
 	}
 
@@ -157,7 +135,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					<TxtButton
 						txt={t('shareInvoice')}
 						icon={<ShareIcon width={24} height={24} color={hi[highlight]} />}
-						onPress={() => void handleShare()}
+						onPress={() => void share(paymentRequest)}
 					/>
 				</View>
 				:

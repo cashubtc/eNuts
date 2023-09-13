@@ -3,17 +3,18 @@ import useCopy from '@comps/hooks/Copy'
 import { CopyIcon, ShareIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
-import { l } from '@log'
 import type { TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { vib } from '@util'
+import { share, vib } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Share, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
@@ -24,31 +25,11 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	const { copied, copy } = useCopy()
 	const [error, setError] = useState({ msg: '', open: false })
 
-	useEffect(() => vib(400), [])
-
-	// share token
-	const handleShare = async () => {
-		try {
-			const res = await Share.share({
-				message: route.params.token, // `cashu://${route.params.token}`
-				url: `cashu://${route.params.token}`
-			})
-			if (res.action === Share.sharedAction) {
-				if (res.activityType) {
-					// shared with activity type of result.activityType
-					l('shared with activity type of result.activityType')
-				} else {
-					// shared
-					l('shared')
-				}
-			} else if (res.action === Share.dismissedAction) {
-				// dismissed
-				l('sharing dismissed')
-			}
-		} catch (e) {
-			l(e)
-		}
-	}
+	useEffect(() => {
+		// we can save the created token here to avoid foreground prompts of self-created tokens
+		void store.set(STORE_KEYS.createdToken, route.params.token)
+		vib(400)
+	}, [route.params.token])
 
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
@@ -79,7 +60,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 			<ActionButtons
 				topBtnTxt={t('share')}
 				topIcon={<ShareIcon width={20} height={20} color={mainColors.WHITE} />}
-				topBtnAction={() => void handleShare()}
+				topBtnAction={() => void share(route.params.token, `cashu://${route.params.token}`)}
 				bottomBtnTxt={copied ? t('copied') + '!' : t('copyToken')}
 				bottomIcon={<CopyIcon color={hi[highlight]} />}
 				bottomBtnAction={() => void copy(route.params.token)}
