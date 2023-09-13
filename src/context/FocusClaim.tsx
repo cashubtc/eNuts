@@ -1,4 +1,5 @@
 import { getEncodedToken } from '@cashu/cashu-ts'
+import { isIOS } from '@consts'
 import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
@@ -105,24 +106,27 @@ const useFocusClaim = () => {
 	}
 
 	useEffect(() => {
+		// disable foreground claim on iOS
+		if (isIOS) { return }
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const subscription = AppState.addEventListener('change', async nextAppState => {
 			if (
 				appState.current.match(/inactive|background/) &&
 				nextAppState === 'active'
 			) {
-				l('App has come to the foreground!')
+				l('[Claim token] App has come to the foreground!')
 				setClaimed(false)
 				// check for clipboard valid cashu token when the app comes to the foregorund
 				await handleForeground()
 			} else {
-				l('App has gone to the background!')
+				l('[Claim token] App has gone to the background!')
 			}
 			appState.current = nextAppState
 		})
 		return () => subscription.remove()
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
 	return {
 		claimed,
 		setClaimed,
