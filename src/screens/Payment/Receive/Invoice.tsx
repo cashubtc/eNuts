@@ -138,10 +138,8 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					<Button
 						txt={t('payWithLn')}
 						onPress={() => {
-							void (async () => {
-								await openUrl(`lightning:${paymentRequest}`)?.catch(e =>
-									openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-							})()
+							void openUrl(`lightning:${paymentRequest}`)?.catch(e =>
+								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 						}}
 						icon={<WalletIcon color={mainColors.WHITE} />}
 					/>
