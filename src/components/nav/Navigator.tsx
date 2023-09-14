@@ -126,6 +126,7 @@ export default function Navigator({
 					name='auth'
 					component={AuthPage}
 					initialParams={{ pinHash }}
+					options={{ gestureEnabled: false }}
 				/>
 				{/* sendable token created page */}
 				<Stack.Screen
