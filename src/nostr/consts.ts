@@ -50,6 +50,8 @@ export enum EventKind {
 
 export const npubLength = 64
 
+export const enutsPubkey = 'npub1dx5q2el8nd4eh3eg9t2e25fd7zuqg7zxz6ldkc3uzgh66ss2yc6st288sj'
+
 /**
  * Regex to match a mnemonic seed
  */

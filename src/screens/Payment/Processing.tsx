@@ -7,7 +7,7 @@ import type { IMintUrl } from '@model'
 import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import { relay } from '@nostr/class/Relay'
-import { EventKind } from '@nostr/consts'
+import { enutsPubkey, EventKind } from '@nostr/consts'
 import { encrypt } from '@nostr/crypto'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -202,7 +202,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					)
 					return
 				}
-				const msg = `${userNostrNpub || nostr.senderName}  just sent you ${amount} Sat in Ecash using the eNuts wallet!\n\n ${token}`
+				const msg = `${userNostrNpub || nostr.senderName}  (sender not verified) just sent you ${amount} Sat in Ecash using ${enutsPubkey}!\n\n ${token}`
 				const cipherTxt = await encrypt(sk, nostr.receiverNpub, msg)
 				const event = {
 					kind: EventKind.DirectMessage,
