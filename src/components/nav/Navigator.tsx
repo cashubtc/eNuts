@@ -118,6 +118,7 @@ export default function Navigator({
 					options={{
 						animation: 'default',
 						animationDuration,
+						gestureEnabled: false
 					}}
 				/>
 				<Stack.Screen name='disclaimer' component={Disclaimer} />
