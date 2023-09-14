@@ -23,12 +23,14 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const { color } = useThemeContext()
 	const { claimed } = useFocusClaimContext()
 	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})
+
 	// update history after claiming from clipboard when the app comes to the foreground
 	useEffect(() => {
 		void (async () => {
 			setData(await getHistory())
 		})()
 	}, [claimed])
+
 	// update history after navigating to this page
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -37,6 +39,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 		})
 		return focusHandler
 	}, [navigation])
+
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? insets.bottom : 0 }]}>
 			<TopNav

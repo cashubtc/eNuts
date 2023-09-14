@@ -207,6 +207,7 @@
 		"clearOverHere": "Everything is clear over here!",
 		"totalDmsReceived": "You received {{totalDms}} Cashu token.",
 		"swapNow": "Swap now",
+		"swap": "Swap",
 		"emptyMint": "Mint has no funds",
 		"zapSoon": "Zaps will be added soon...",
 		"enutsPub": "eNuts public key: ",
