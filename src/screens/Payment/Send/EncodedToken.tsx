@@ -3,8 +3,9 @@ import useCopy from '@comps/hooks/Copy'
 import { CopyIcon, ShareIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
-import type { TEncodedTokenPageProps } from '@model/nav'
+import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { preventBack } from '@nav/utils'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -31,11 +32,17 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 		vib(400)
 	}, [route.params.token])
 
+	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
+	useEffect(() => {
+		const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch)
+		navigation.addListener('beforeRemove', backHandler)
+		return () => navigation.removeListener('beforeRemove', backHandler)
+	}, [navigation])
+
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
 			<TopNav
 				withBackBtn
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 				screenName={`${t('newToken')}  🥜🐿️`}
 				handlePress={() => navigation.navigate('dashboard')}
 			/>

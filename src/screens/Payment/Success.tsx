@@ -2,15 +2,15 @@ import Button from '@comps/Button'
 import Logo from '@comps/Logo'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
-import type { TSuccessPageProps } from '@model/nav'
-import { useFocusEffect } from '@react-navigation/core'
+import type { TBeforeRemoveEvent, TSuccessPageProps } from '@model/nav'
+import { preventBack } from '@nav/utils'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { formatInt, vib } from '@util'
 import LottieView from 'lottie-react-native'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
@@ -18,24 +18,17 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const insets = useSafeAreaInsets()
-	const [shouldHide, setShouldHide] = useState(false)
 
 	useEffect(() => vib(400), [])
 
-	// prevent android back button to go back to previous nav screen
-	useFocusEffect(
-		useCallback(() => {
-			setShouldHide(false)
-			const onBackPress = () => true
-			BackHandler.addEventListener('hardwareBackPress', onBackPress)
-			return () => {
-				BackHandler.removeEventListener('hardwareBackPress', onBackPress)
-				setShouldHide(true)
-			}
-		}, [])
-	)
+	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
+	useEffect(() => {
+		const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch)
+		navigation.addListener('beforeRemove', backHandler)
+		return () => navigation.removeListener('beforeRemove', backHandler)
+	}, [navigation])
 
-	return shouldHide ? null : (
+	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			<Logo size={250} style={styles.img} success />
 			<View style={{ width: '100%' }}>

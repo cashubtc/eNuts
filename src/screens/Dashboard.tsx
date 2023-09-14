@@ -11,8 +11,9 @@ import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@
 import { l } from '@log'
 import OptsModal from '@modal/OptsModal'
 import TrustMintModal from '@modal/TrustMint'
-import type { TDashboardPageProps } from '@model/nav'
+import type { TBeforeRemoveEvent, TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
+import { preventBack } from '@nav/utils'
 import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
@@ -119,7 +120,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				setTrustModal(true)
 				stopLoading()
 				clearTimeout(t)
-			}, 250)
+			}, 200)
 			return
 		}
 		await receiveToken(url)
@@ -278,6 +279,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			setHasMint(data[1])
 		})
 		return focusHandler
+	}, [navigation])
+
+	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
+	useEffect(() => {
+		const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch)
+		navigation.addListener('beforeRemove', backHandler)
+		return () => navigation.removeListener('beforeRemove', backHandler)
 	}, [navigation])
 
 	return (
