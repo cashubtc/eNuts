@@ -159,9 +159,9 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	// check if is melting process
 	useEffect(() => setShouldEstimate(!isSendEcash), [isSendEcash])
 
-	// estimate fee each time the melt amount changes
+	// estimate fee each time the melt or swap amount changes
 	useEffect(() => {
-		if (!isMelt || !isSwap) { return }
+		if (isSendEcash) { return }
 		setFee({ estimation: 0, isCalculating: false })
 		setShouldEstimate(true)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -256,6 +256,7 @@ interface IMeltOverviewProps {
 export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInvoice, fee }: IMeltOverviewProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
+	l({fee})
 	return (
 		<>
 			<View style={styles.overview}>
