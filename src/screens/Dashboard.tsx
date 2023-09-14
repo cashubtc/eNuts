@@ -120,7 +120,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				setTrustModal(true)
 				stopLoading()
 				clearTimeout(t)
-			}, 250)
+			}, 200)
 			return
 		}
 		await receiveToken(url)
