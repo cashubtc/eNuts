@@ -4,11 +4,11 @@ import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import { l } from '@log'
 import type { IMintUrl } from '@model'
-import type { TProcessingPageProps } from '@model/nav'
+import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
+import { preventBack } from '@nav/utils'
 import { relay } from '@nostr/class/Relay'
 import { EventKind } from '@nostr/consts'
 import { encrypt } from '@nostr/crypto'
-import { useFocusEffect } from '@react-navigation/core'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { updateNostrDmUsers } from '@src/storage/store/nostrDms'
@@ -20,9 +20,9 @@ import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { globals } from '@styles'
 import { formatMintUrl, getInvoiceFromLnurl, isErr, isLnurl } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 interface IErrorProps {
 	e?: unknown
@@ -253,16 +253,12 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMelt, isSwap, isSendEcash])
 
-	// prevent android back button to go back to previous nav screen
-	useFocusEffect(
-		useCallback(() => {
-			const onBackPress = () => true
-			BackHandler.addEventListener('hardwareBackPress', onBackPress)
-			return () => {
-				BackHandler.removeEventListener('hardwareBackPress', onBackPress)
-			}
-		}, [])
-	)
+	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
+	useEffect(() => {
+		const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch)
+		navigation.addListener('beforeRemove', backHandler)
+		return () => navigation.removeListener('beforeRemove', backHandler)
+	}, [navigation])
 
 	return (
 		<View style={[globals(color).container, styles.container]}>

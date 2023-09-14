@@ -1,3 +1,4 @@
+import type { EventArg } from '@react-navigation/core'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection } from '.'
@@ -232,3 +233,11 @@ export interface INavigatorProps {
 	shouldOnboard?: boolean
 	setBgAuth?: (val: boolean) => void
 }
+export type TBeforeRemoveEvent = EventArg<'beforeRemove', true, {
+	action: Readonly<{
+		type: string
+		payload?: object | undefined
+		source?: string | undefined
+		target?: string | undefined
+	}>
+}>
