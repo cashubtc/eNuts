@@ -191,6 +191,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 						maxLength={8}
 					/>
 				</Animated.View>
+				<Txt txt='Satoshi' styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center' }]} />
 				{(isMelt || isSwap || isSendEcash) &&
 					<Separator style={[{ marginVertical: 20 }]} />
 				}
@@ -256,7 +257,7 @@ interface IMeltOverviewProps {
 export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInvoice, fee }: IMeltOverviewProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	l({fee})
+	l({ fee })
 	return (
 		<>
 			<View style={styles.overview}>
