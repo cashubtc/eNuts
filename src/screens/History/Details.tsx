@@ -17,7 +17,7 @@ import { l } from '@src/logger'
 import { addToHistory } from '@src/storage/store/latestHistoryEntries'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
-import { copyStrToClipboard, formatInt, formatMintUrl, getLnInvoiceInfo, isUndef } from '@util'
+import { copyStrToClipboard, formatInt, formatMintUrl, getLnInvoiceInfo, isNum, isUndef } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -57,7 +57,23 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const { hash, memo } = isLn ? getLnInvoiceInfo(value) : { hash: '', memo: '' }
 	const tokenMemo = !isLn ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history })
 	const { openPromptAutoClose } = usePromptContext()
-	l({ fee })
+
+	l({fee})
+
+	const getTxColor = () => {
+		if (type === 3) { return color.TEXT }
+		return amount < 0 ? mainColors.ERROR : mainColors.VALID
+	}
+
+	const getScreenName = () => {
+		if (type === 3) { return t('multimintSwap') }
+		return isLn ? LNstr : Ecash
+	}
+
+	const getAmount = () => {
+		if (type === 3) { return `${formatInt(Math.abs(amount))}` }
+		return `${amount > 0 ? '+' : ''}${formatInt(amount)}`
+	}
 
 	const copyValue = async () => {
 		await copyStrToClipboard(value)
@@ -144,14 +160,14 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
-				screenName={isLn ? LNstr : Ecash}
+				screenName={getScreenName()}
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
 			<ScrollView style={{ marginTop: 110, marginBottom: insets.bottom }} showsVerticalScrollIndicator={false} >
 				<View style={styles.topSection}>
-					<Text style={[styles.amount, { color: amount < 0 ? mainColors.ERROR : mainColors.VALID }]}>
-						{formatInt(amount < 0 ? Math.abs(amount) : amount)}
+					<Text style={[styles.amount, { color: getTxColor() }]}>
+						{getAmount()}
 					</Text>
 					<Txt
 						txt='Satoshi'
@@ -311,7 +327,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							{/* LN payment fees */}
 							<View style={styles.entryInfo}>
 								<Txt txt={t('fee')} />
-								<Txt txt={fee ? `${fee} Satoshi` : t('n/a')} />
+								<Txt txt={isNum(fee) ? `${fee} Satoshi` : t('n/a')} />
 							</View>
 							<Separator />
 						</>

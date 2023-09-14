@@ -40,6 +40,12 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 		void setPreferences({ ...pref, formatBalance: !formatSats })
 	}
 
+	const getTxTypeStr = (type: number) => {
+		if (type === 1) { return 'Ecash' }
+		if (type === 2) { return 'Lightning' }
+		return t('swap')
+	}
+
 	useEffect(() => {
 		void (async () => {
 			const stored = (await getLatestHistory()).reverse()
@@ -98,7 +104,8 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 							:
 							<EcashIcon color={mainColors.WHITE} />
 						}
-						txType={h.type === 2 || h.type === 3 ? 'Lightning' : 'Ecash'}
+						isSwap={h.type === 3}
+						txType={getTxTypeStr(h.type)}
 						timestamp={h.timestamp}
 						amount={h.amount}
 						onPress={() => nav?.navigate('history entry details', { entry: h })}
@@ -138,13 +145,20 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 interface IHistoryEntryProps {
 	icon: React.ReactNode
 	txType: string
+	isSwap?: boolean
 	timestamp: number
 	amount: number
 	onPress: () => void
 }
 
-function HistoryEntry({ icon, txType, timestamp, amount, onPress }: IHistoryEntryProps) {
+function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHistoryEntryProps) {
 	const { t } = useTranslation([NS.history])
+
+	const getAmount = () => {
+		if (isSwap) { return `${formatInt(Math.abs(amount))} Satoshi` }
+		return `${amount > 0 ? '+' : ''}${formatInt(amount)} Satoshi`
+	}
+
 	return (
 		<>
 			<TouchableOpacity
@@ -162,7 +176,7 @@ function HistoryEntry({ icon, txType, timestamp, amount, onPress }: IHistoryEntr
 						</Text>
 					</View>
 				</View>
-				<Txt txt={`${amount > 0 ? '+' : ''}${formatInt(amount)} Satoshi`} styles={[{ color: mainColors.WHITE }]} />
+				<Txt txt={getAmount()} styles={[{ color: mainColors.WHITE }]} />
 			</TouchableOpacity>
 		</>
 	)
