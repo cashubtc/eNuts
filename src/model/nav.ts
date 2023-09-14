@@ -135,7 +135,7 @@ export type RootStackParamList = {
 	mintmanagement: {
 		mint: IMintUrl
 		amount: number
-		// mint_key: string
+		remainingMints: IMintUrl[]
 	}
 	'mint info': {
 		mintUrl: string

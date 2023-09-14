@@ -134,12 +134,12 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			await addLnPaymentToHistory(
 				res,
 				[mint.mintUrl],
-				-amount - (res?.realFee??0),
+				-amount - (res?.realFee ?? 0),
 				target
 			)
 			// update latest 3 history entries
 			await updateLatestHistory({
-				amount: -amount -  (res?.realFee??0),
+				amount: -amount - (res?.realFee ?? 0),
 				fee: res.realFee,
 				type: 2,
 				value: target,
@@ -161,10 +161,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		// simple way
 		try {
 			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0)
-			l({ swapResult: res })
 			// add as history entry (multimint swap)
 			await addToHistory({
-				amount: -amount - (res?.payResult?.realFee??0),
+				amount: -amount - (res?.payResult?.realFee ?? 0),
 				fee: res.payResult.realFee,
 				type: 3,
 				value: res.requestTokenResult.invoice?.pr || '',

@@ -74,6 +74,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		} catch (e) {
 			l(e)
 			openPromptAutoClose({ msg: t('requestMintErr', { ns: NS.error }) })
+			setFee(prev => ({ ...prev, isCalculating: false }))
 		}
 	}
 
