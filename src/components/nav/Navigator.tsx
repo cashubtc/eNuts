@@ -96,7 +96,11 @@ export default function Navigator({
 				<Stack.Screen name='memoScreen' component={MemoScreen} />
 				<Stack.Screen name='coinSelection' component={CoinSelectionScreen} />
 				<Stack.Screen name='nostrReceive' component={NostrDMScreen} />
-				<Stack.Screen name='processing' component={ProcessingScreen} />
+				<Stack.Screen
+					name='processing'
+					component={ProcessingScreen}
+					options={{ gestureEnabled: false }}
+				/>
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />
 				<Stack.Screen
@@ -129,9 +133,14 @@ export default function Navigator({
 					options={{
 						animation: 'slide_from_bottom',
 						animationDuration,
+						gestureEnabled: false,
 					}}
 				/>
-				<Stack.Screen name='success' component={SuccessPage} />
+				<Stack.Screen
+					name='success'
+					component={SuccessPage}
+					options={{ gestureEnabled: false }}
+				/>
 				<Stack.Screen name='mints' component={Mints} />
 				<Stack.Screen name='mintmanagement' component={MintManagement} />
 				<Stack.Screen name='mint info' component={MintInfoPage} />

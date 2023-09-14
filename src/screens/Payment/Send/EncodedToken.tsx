@@ -5,6 +5,7 @@ import QR from '@comps/QR'
 import Txt from '@comps/Txt'
 import type { TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { useFocusEffect } from '@react-navigation/core'
 import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -12,9 +13,9 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { share, vib } from '@util'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { BackHandler, StyleSheet, View } from 'react-native'
 
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
@@ -30,6 +31,17 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 		void store.set(STORE_KEYS.createdToken, route.params.token)
 		vib(400)
 	}, [route.params.token])
+
+	// prevent android back button to go back to previous nav screen
+	useFocusEffect(
+		useCallback(() => {
+			const onBackPress = () => true
+			BackHandler.addEventListener('hardwareBackPress', onBackPress)
+			return () => {
+				BackHandler.removeEventListener('hardwareBackPress', onBackPress)
+			}
+		}, [])
+	)
 
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
