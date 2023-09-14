@@ -13,7 +13,7 @@ import {
 } from '@db'
 import { l } from '@log'
 import type { IInvoice } from '@src/model'
-import { isCashuToken, isNum } from '@util'
+import { isCashuToken, isNum, isStr } from '@util'
 
 import { sumProofsValue } from './proofs'
 import { getProofsToUse } from './util'
@@ -143,8 +143,17 @@ export async function requestToken(mintUrl: string, amount: number, hash: string
 export async function payLnInvoice(mintUrl: string, invoice: string, fee: number, proofs: Proof[] = []): Promise<{ result?: PayLnInvoiceResponse, fee?: number, realFee?: number, error?: unknown }> {
 	const wallet = await getWallet(mintUrl)
 	const decoded = getDecodedLnInvoice(invoice)
-	if (!decoded.sections[2] || !isNum(decoded.sections[2].value)) { throw new Error('bad invoice amount') }
-	const amount = decoded.sections[2].value / 1000
+	const invoiceAmount = decoded.sections[2].value
+	// TODO create a function to get the amount from the invoice
+	let amount = 0
+	if (isStr(invoiceAmount)) {
+		amount = parseInt(invoiceAmount)
+	} else if (isNum(invoiceAmount)) {
+		amount = invoiceAmount
+	}
+	// if amount is still 0, throw (wasn't either a string or a number)
+	if (!amount) { throw new Error('bad invoice amount') }
+	amount = amount / 1000
 	const amountToPay = amount + fee
 	if (!proofs?.length) {
 		const { proofsToUse } = await getProofsToUse(mintUrl, amountToPay)

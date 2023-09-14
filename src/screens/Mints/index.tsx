@@ -81,12 +81,13 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	}
 
 	// navigates to mint-management page if mint available in db or shows the trust modal
-	const handleMintEntry = (selectedMintEntry: IMintUrl, amount: number) => {
+	const handleMintEntry = (selectedMintEntry: IMintUrl, amount: number, remainingMints: IMintUrl[]) => {
 		// navigate to mint management page
 		if (isTrustedMint(selectedMintEntry.mintUrl)) {
 			navigation.navigate('mintmanagement', {
 				mint: selectedMintEntry,
-				amount
+				amount,
+				remainingMints
 			})
 			return
 		}
@@ -184,7 +185,10 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 							<View key={m.mintUrl}>
 								<TouchableOpacity
 									style={styles.mintUrlWrap}
-									onPress={() => handleMintEntry(m, m.amount)}
+									onPress={() => {
+										const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
+										handleMintEntry(m, m.amount, remainingMints)
+									}}
 								>
 									<View style={styles.mintNameWrap}>
 										<View style={{ flexDirection: 'row', alignItems: 'center' }}>

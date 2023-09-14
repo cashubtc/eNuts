@@ -20,10 +20,7 @@ import { formatInt, formatMintUrl } from '@util'
 import { checkProofsSpent } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-	ScrollView, StyleSheet, Text
-	, TouchableOpacity, View
-} from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -227,7 +224,8 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							}
 							navigation.navigate('selectTarget', {
 								mint: route.params.mint,
-								balance: route.params.amount
+								balance: route.params.amount,
+								remainingMints: route.params.remainingMints
 							})
 						}}
 						icon={<ZapIcon color={color.TEXT} />}
