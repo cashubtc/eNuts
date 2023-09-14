@@ -209,7 +209,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			}
 
 		} catch (e) {
-			openPromptAutoClose({ msg: t('unknownType') + data })
+			openPromptAutoClose({ msg: t('unknownType') + ` "${data}"` })
 		}
 	}
 
