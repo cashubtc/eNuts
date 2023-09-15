@@ -4,6 +4,7 @@ import type { IHistoryEntry } from '@model'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import EntryTime from '@screens/History/entryTime'
+import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -29,9 +30,16 @@ interface IBalanceProps {
 export default function Balance({ balance, nav }: IBalanceProps) {
 	const { t } = useTranslation([NS.common])
 	const { pref, color, highlight } = useThemeContext()
+	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
+	const { claimed } = useFocusClaimContext()
 	const { hidden } = usePrivacyContext()
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const [history, setHistory] = useState<IHistoryEntry[]>([])
+
+	const setHistoryEntries = async () => {
+		const stored = (await getLatestHistory()).reverse()
+		setHistory(stored)
+	}
 
 	const toggleBalanceFormat = () => {
 		setFormatSats(prev => !prev)
@@ -47,21 +55,21 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 	}
 
 	useEffect(() => {
-		void (async () => {
-			const stored = (await getLatestHistory()).reverse()
-			setHistory(stored)
-		})()
+		void setHistoryEntries()
 	}, [])
 
 	// get history after navigating to this page
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const focusHandler = nav?.addListener('focus', async () => {
-			const stored = (await getLatestHistory()).reverse()
-			setHistory(stored)
+			await setHistoryEntries()
 		})
 		return focusHandler
 	}, [nav])
+
+	useEffect(() => {
+		void setHistoryEntries()
+	}, [claimed])
 
 	return (
 		<View style={[
