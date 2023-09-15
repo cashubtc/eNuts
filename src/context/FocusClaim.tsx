@@ -3,11 +3,13 @@ import { isIOS } from '@consts'
 import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
+import type { RootStackParamList } from '@model/nav'
+import { type NavigationProp, useNavigation } from '@react-navigation/core'
 import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
-import { formatInt, formatMintUrl, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
+import { getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
@@ -16,10 +18,13 @@ import { AppState } from 'react-native'
 
 import { usePromptContext } from './Prompt'
 
+type StackNavigation = NavigationProp<RootStackParamList>
+
 const useFocusClaim = () => {
 	const { t } = useTranslation([NS.error])
 	// back-foreground state reference
 	const appState = useRef(AppState.currentState)
+	const nav = useNavigation<StackNavigation>()
 	const { openPromptAutoClose } = usePromptContext()
 	const [claimed, setClaimed] = useState(false)
 	// modal
@@ -89,19 +94,24 @@ const useFocusClaim = () => {
 			value: encoded,
 			mints: info.mints,
 		})
-		openPromptAutoClose(
-			{
-				msg: t(
-					'claimSuccess',
-					{
-						ns: NS.common,
-						amount: formatInt(info.value),
-						mintUrl: formatMintUrl(info.mints[0]),
-						memo: info.decoded.memo
-					}
-				),
-				success: true
-			})
+		nav.navigate('success', {
+			amount: info?.value,
+			memo: info?.decoded.memo,
+			isClaim: true
+		})
+		// openPromptAutoClose(
+		// 	{
+		// 		msg: t(
+		// 			'claimSuccess',
+		// 			{
+		// 				ns: NS.common,
+		// 				amount: formatInt(info.value),
+		// 				mintUrl: formatMintUrl(info.mints[0]),
+		// 				memo: info.decoded.memo
+		// 			}
+		// 		),
+		// 		success: true
+		// 	})
 		setClaimed(true)
 	}
 

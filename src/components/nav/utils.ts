@@ -9,8 +9,12 @@ export function preventBack(e: TBeforeRemoveEvent, dispatch: (action: any) => vo
 		source: e.data.action.source,
 		target: e.data.action.target,
 	})
-	// allow navigating to dashboard
-	if (e.data.action.payload && 'name' in e.data.action.payload && e.data.action.payload.name === 'dashboard') {
+	// allow navigating to dashboard or auth
+	if (
+		(e.data.action.payload && 'name' in e.data.action.payload && e.data.action.payload.name === 'dashboard')
+		||
+		(e.data.action.payload && 'name' in e.data.action.payload && e.data.action.payload.name === 'auth')
+	) {
 		dispatch(e.data.action)
 	}
 }

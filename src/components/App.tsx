@@ -154,7 +154,7 @@ function _App() {
 		// handle app was longer than 5 mins in the background
 		const bgTimestamp = await store.get(STORE_KEYS.bgCounter)
 		if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
-			if (now - +bgTimestamp > FiveMins) {
+			if (now - +bgTimestamp > 5) {
 				setBgAuth(true)
 			}
 		}
@@ -198,8 +198,8 @@ function _App() {
 			<PinCtx.Provider value={pinData}>
 				<PrivacyProvider>
 					<NostrProvider>
-						<FocusClaimProvider>
-							<NavContainer>
+						<NavContainer>
+							<FocusClaimProvider >
 								<PromptProvider>
 									<KeyboardProvider>
 										<Navigator
@@ -213,8 +213,8 @@ function _App() {
 										<Toaster />
 									</KeyboardProvider>
 								</PromptProvider>
-							</NavContainer>
-						</FocusClaimProvider>
+							</FocusClaimProvider>
+						</NavContainer>
 					</NostrProvider>
 				</PrivacyProvider>
 			</PinCtx.Provider>
