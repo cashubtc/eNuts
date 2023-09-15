@@ -349,7 +349,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					loading={loading}
 					tokenInfo={tokenInfo}
 					handleTrustModal={() => void handleTrustModal()}
-					closeModal={() => setTrustModal(false)}
+					closeModal={() => {
+						setTrustModal(false)
+						setToken('')
+					}}
 				/>
 			}
 			{/* Initial mint modal prompt */}
