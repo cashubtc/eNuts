@@ -35,7 +35,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			<Text style={globals(color, highlight).modalTxt}>
 				{t('notClaim')}.
 			</Text>
-			<Button loading={loading} txt={loading ? t('claiming', { ns: NS.wallet }) + '...' : t('yes')} onPress={handleTrustModal} />
+			<Button loading={loading} txt={loading ? t('claiming', { ns: NS.wallet }) : t('yes')} onPress={handleTrustModal} />
 			<View style={{ marginVertical: 10 }} />
 			<Button
 				outlined

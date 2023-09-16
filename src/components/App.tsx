@@ -198,8 +198,8 @@ function _App() {
 			<PinCtx.Provider value={pinData}>
 				<PrivacyProvider>
 					<NostrProvider>
-						<FocusClaimProvider>
-							<NavContainer>
+						<NavContainer>
+							<FocusClaimProvider >
 								<PromptProvider>
 									<KeyboardProvider>
 										<Navigator
@@ -213,8 +213,8 @@ function _App() {
 										<Toaster />
 									</KeyboardProvider>
 								</PromptProvider>
-							</NavContainer>
-						</FocusClaimProvider>
+							</FocusClaimProvider>
+						</NavContainer>
 					</NostrProvider>
 				</PrivacyProvider>
 			</PinCtx.Provider>

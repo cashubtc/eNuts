@@ -99,9 +99,11 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			return
 		}
 		// success prompt
-		openPromptAutoClose({
-			msg: t('claimSuccess', { amount: info?.value, mintUrl: info?.mints[0], memo: info?.decoded.memo }),
-			success: true
+		navigation.navigate('success', {
+			amount: info?.value,
+			memo: info?.decoded.memo,
+			isClaim: true,
+			isScanned: true
 		})
 		// add as history entry (receive ecash)
 		await addToHistory({
