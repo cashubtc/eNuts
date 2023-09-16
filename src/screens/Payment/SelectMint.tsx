@@ -162,7 +162,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 											<Text style={[styles.mintAmount, { color: color.TEXT, paddingBottom: 3 }]}>
 												{formatInt(m.amount, 'compact', 'en')}
 											</Text>
-											{m.amount > 0 && <ZapIcon color={hi[highlight]} />}
+											<ZapIcon color={m.amount > 0 ? hi[highlight] : color.TEXT} />
 										</View>
 									</TouchableOpacity>
 									{i < userMints.length - 1 && <Separator />}
