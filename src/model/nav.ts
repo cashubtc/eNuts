@@ -132,6 +132,7 @@ export type RootStackParamList = {
 		isClaim?: boolean
 		isMelt?: boolean
 		nostr?: INostrProps
+		isScanned?: boolean
 	}
 	mintmanagement: {
 		mint: IMintUrl
