@@ -13,6 +13,7 @@ import { NS } from '@src/i18n'
 import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi, mainColors } from '@styles'
+import { getColor } from '@styles/colors'
 import { formatMintUrl, formatSeconds, isErr, openUrl, share } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useState } from 'react'
@@ -141,7 +142,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 							void openUrl(`lightning:${paymentRequest}`)?.catch(e =>
 								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 						}}
-						icon={<WalletIcon color={mainColors.WHITE} />}
+						icon={<WalletIcon color={getColor(highlight, color)} />}
 					/>
 					<TxtButton
 						txt={t('shareInvoice')}

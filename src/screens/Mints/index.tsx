@@ -18,6 +18,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
+import { getColor } from '@styles/colors'
 import { formatInt, formatMintUrl, getStrFromClipboard, isErr, isUrl } from '@util'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -181,50 +182,62 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
 					{/* Mints list where test mint is always visible */}
 					<ScrollView style={[globals(color).wrapContainer]}>
-						{usertMints.reverse().map((m, i) => (
-							<View key={m.mintUrl}>
-								<TouchableOpacity
-									style={styles.mintUrlWrap}
-									onPress={() => {
-										const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
-										handleMintEntry(m, m.amount, remainingMints)
-									}}
-								>
-									<View style={styles.mintNameWrap}>
-										<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-											{defaultMint === m.mintUrl &&
-												<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-											}
-											<Txt
-												txt={m.customName || formatMintUrl(m.mintUrl)}
-												styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0, fontWeight: '500' }]}
-											/>
-										</View>
-										{isTrustedMint(m.mintUrl) &&
-											<View style={styles.mintBal}>
-												<ZapIcon color={m.amount > 0 ? hi[highlight] : color.TEXT_SECONDARY} />
-												<Text style={[styles.mintAmount, { color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY, marginBottom: 5 }]}>
-													{m.amount > 0 ?
-														formatInt(m.amount, 'compact', 'en') + ' Satoshi'
-														:
-														t('emptyMint')
-													}
-												</Text>
+						{usertMints
+							.sort((a, b) => {
+								if (a.mintUrl === defaultMint) { return -1 }
+								if (b.mintUrl === defaultMint) { return 1 }
+								return 0
+							})
+							.map((m, i) => (
+								<View key={m.mintUrl}>
+									<TouchableOpacity
+										style={styles.mintUrlWrap}
+										onPress={() => {
+											const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
+											handleMintEntry(m, m.amount, remainingMints)
+										}}
+									>
+										<View style={styles.mintNameWrap}>
+											<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+												{defaultMint === m.mintUrl &&
+													<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+												}
+												<Txt
+													txt={m.customName || formatMintUrl(m.mintUrl)}
+													styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0, fontWeight: '500' }]}
+												/>
 											</View>
-										}
-									</View>
-									{/* Add mint icon or show balance */}
-									<View>
-										{isTrustedMint(m.mintUrl) ?
-											<ChevronRightIcon color={color.TEXT} />
-											:
-											<PlusIcon color={color.TEXT} />
-										}
-									</View>
-								</TouchableOpacity>
-								{i < usertMints.length - 1 && <Separator />}
-							</View>
-						))}
+											{isTrustedMint(m.mintUrl) &&
+												<View style={styles.mintBal}>
+													{m.amount > 0 && <ZapIcon color={hi[highlight]} />}
+													<Text
+														style={{
+															color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY,
+															marginLeft: m.amount > 0 ? 5 : 0,
+															marginBottom: 5
+														}}
+													>
+														{m.amount > 0 ?
+															formatInt(m.amount, 'compact', 'en') + ' Satoshi'
+															:
+															t('emptyMint')
+														}
+													</Text>
+												</View>
+											}
+										</View>
+										{/* Add mint icon or show balance */}
+										<View>
+											{isTrustedMint(m.mintUrl) ?
+												<ChevronRightIcon color={color.TEXT} />
+												:
+												<PlusIcon color={color.TEXT} />
+											}
+										</View>
+									</TouchableOpacity>
+									{i < usertMints.length - 1 && <Separator />}
+								</View>
+							))}
 					</ScrollView>
 				</View>
 				:
@@ -291,7 +304,10 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 						})
 					}}
 					bottomBtnTxt={t('willDoLater')}
-					bottomBtnAction={() => setTopUpModal(false)}
+					bottomBtnAction={() => {
+						setTopUpModal(false)
+						navigation.navigate('dashboard')
+					}}
 				/>
 			</MyModal>
 			<QuestionModal
@@ -308,7 +324,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			{usertMints.length > 0 &&
 				<View style={[styles.newMint, { marginBottom: insets.bottom }]}>
 					<IconBtn
-						icon={<PlusIcon width={28} height={28} color={mainColors.WHITE} />}
+						icon={<PlusIcon width={28} height={28} color={getColor(highlight, color)} />}
 						onPress={() => {
 							closePrompt()
 							setNewMintModal(true)
@@ -349,9 +365,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		marginTop: 10,
-	},
-	mintAmount: {
-		marginLeft: 5,
 	},
 	cancel: {
 		alignItems: 'center',
