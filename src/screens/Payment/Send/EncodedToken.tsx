@@ -12,6 +12,7 @@ import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
+import { getColor } from '@styles/colors'
 import { share, vib } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -66,7 +67,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 			{/* Action buttons */}
 			<ActionButtons
 				topBtnTxt={t('share')}
-				topIcon={<ShareIcon width={20} height={20} color={mainColors.WHITE} />}
+				topIcon={<ShareIcon width={20} height={20} color={getColor(highlight, color)} />}
 				topBtnAction={() => void share(route.params.token, `cashu://${route.params.token}`)}
 				bottomBtnTxt={copied ? t('copied') + '!' : t('copyToken')}
 				bottomIcon={<CopyIcon color={hi[highlight]} />}

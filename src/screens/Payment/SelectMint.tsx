@@ -137,31 +137,37 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			{userMints.length && !allMintsEmpty ?
 				<ScrollView>
 					<View style={globals(color).wrapContainer}>
-						{userMints.reverse().map((m, i) => (
-							<View key={m.mintUrl}>
-								<TouchableOpacity
-									style={styles.mintUrlWrap}
-									onPress={() => void handlePressMint(m)}
-								>
-									<View style={styles.mintNameWrap}>
-										{defaultMint === m.mintUrl &&
-											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-										}
-										<Txt
-											txt={m.customName || formatMintUrl(m.mintUrl)}
-											styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0 }]}
-										/>
-									</View>
-									<View style={styles.mintBal}>
-										<Text style={[styles.mintAmount, { color: color.TEXT, paddingBottom: 3 }]}>
-											{formatInt(m.amount, 'compact', 'en')}
-										</Text>
-										<ZapIcon color={hi[highlight]} />
-									</View>
-								</TouchableOpacity>
-								{i < userMints.length - 1 && <Separator />}
-							</View>
-						))}
+						{userMints
+							.sort((a, b) => {
+								if (a.mintUrl === defaultMint) { return -1 }
+								if (b.mintUrl === defaultMint) { return 1 }
+								return 0
+							})
+							.map((m, i) => (
+								<View key={m.mintUrl}>
+									<TouchableOpacity
+										style={styles.mintUrlWrap}
+										onPress={() => void handlePressMint(m)}
+									>
+										<View style={styles.mintNameWrap}>
+											{defaultMint === m.mintUrl &&
+												<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+											}
+											<Txt
+												txt={m.customName || formatMintUrl(m.mintUrl)}
+												styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0 }]}
+											/>
+										</View>
+										<View style={styles.mintBal}>
+											<Text style={[styles.mintAmount, { color: color.TEXT, paddingBottom: 3 }]}>
+												{formatInt(m.amount, 'compact', 'en')}
+											</Text>
+											{m.amount > 0 && <ZapIcon color={hi[highlight]} />}
+										</View>
+									</TouchableOpacity>
+									{i < userMints.length - 1 && <Separator />}
+								</View>
+							))}
 					</View>
 				</ScrollView>
 				:
