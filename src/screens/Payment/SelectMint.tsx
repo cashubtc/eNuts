@@ -178,7 +178,14 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 					<Button
 						txt={t(allMintsEmpty ? 'mintNewTokens' : 'addNewMint', { ns: NS.mints })}
 						onPress={() => {
-							if (allMintsEmpty) {
+							if (allMintsEmpty && userMints.length === 1) {
+								navigation.navigate('selectAmount', {
+									mint: userMints[0],
+									balance: userMints[0].amount,
+								})
+								return
+							}
+							if (allMintsEmpty && userMints.length > 1) {
 								navigation.navigate('selectMint', {
 									mints,
 									mintsWithBal
