@@ -53,7 +53,7 @@ const useFocusClaim = () => {
 				isSpent = !isSpendable
 				if (!isSpendable) { return false }
 			} catch (e) {
-				openPromptAutoClose({ msg: isErr(e) ? e.message : t('checkSpendableErr') })
+				// openPromptAutoClose({ msg: isErr(e) ? e.message : t('checkSpendableErr') })
 				return
 			}
 			setTokenInfo(info)
@@ -99,19 +99,6 @@ const useFocusClaim = () => {
 			memo: info?.decoded.memo,
 			isClaim: true
 		})
-		// openPromptAutoClose(
-		// 	{
-		// 		msg: t(
-		// 			'claimSuccess',
-		// 			{
-		// 				ns: NS.common,
-		// 				amount: formatInt(info.value),
-		// 				mintUrl: formatMintUrl(info.mints[0]),
-		// 				memo: info.decoded.memo
-		// 			}
-		// 		),
-		// 		success: true
-		// 	})
 		setClaimed(true)
 	}
 

@@ -88,7 +88,19 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				}
 			</View>
 			<View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
-				<Button txt={t('backToDashboard')} onPress={() => navigation.navigate('dashboard')} />
+				<Button txt={t('backToDashboard')} onPress={() => {
+					const routes = navigation.getState()?.routes
+					const prevRoute = routes[routes.length - 2]
+					// if user comes from auth screen, navigate back to auth
+					// @ts-expect-error navigation type is not complete
+					if (prevRoute?.name === 'auth' && prevRoute.params?.pinHash) {
+						// @ts-expect-error navigation type is not complete
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						navigation.navigate('auth', { pinHash: prevRoute.params.pinHash })
+						return
+					}
+					navigation.navigate('dashboard')
+				}} />
 			</View>
 			<LottieView
 				imageAssetsFolder='lottie/confetti'
