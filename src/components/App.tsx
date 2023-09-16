@@ -154,7 +154,7 @@ function _App() {
 		// handle app was longer than 5 mins in the background
 		const bgTimestamp = await store.get(STORE_KEYS.bgCounter)
 		if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
-			if (now - +bgTimestamp > 5) {
+			if (now - +bgTimestamp > FiveMins) {
 				setBgAuth(true)
 			}
 		}

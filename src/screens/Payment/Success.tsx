@@ -67,9 +67,6 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						style={{ width: 130 }}
 					/>
 				</View>
-				{mint && mint.length > 0 &&
-					<Txt txt={t('EcashRdy')} styles={[styles.rdy]} />
-				}
 				{isMelt && amount &&
 					<View style={styles.meltWrap}>
 						<View style={styles.meltOverview}>

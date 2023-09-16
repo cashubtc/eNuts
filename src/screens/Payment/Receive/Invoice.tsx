@@ -32,8 +32,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const { copied, copy } = useCopy()
 
 	const handlePayment = async (isCancelling?: boolean) => {
-		// only check the payment if paid === ''
-		if (paid === 'unpaid' || paid === 'paid') { return }
 		const previousBalance = await getBalance()
 		try {
 			const { success } = await requestToken(mintUrl, amount, hash)
@@ -59,8 +57,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				return
 			}
 			setPaid('unpaid')
-			// reset state
-			setTimeout(() => setPaid(''), 3000)
 			if (isCancelling) {
 				navigation.navigate('dashboard')
 			}
@@ -132,7 +128,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				</Text>
 				{expire > 0 &&
 					<View style={styles.awaitingWrap}>
-						<Txt txt='Awaiting payment...' styles={[{ fontWeight: '500', marginRight: 10 }]} />
+						<Txt txt={t('paymentPending') + '...'} styles={[{ fontWeight: '500', marginRight: 10 }]} />
 						<Loading />
 					</View>
 				}
