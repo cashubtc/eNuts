@@ -31,7 +31,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 	const { pref, color, highlight } = useThemeContext()
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
-	const { hidden } = usePrivacyContext()
+	const { hidden, handleLogoPress } = usePrivacyContext()
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const [history, setHistory] = useState<IHistoryEntry[]>([])
 
@@ -75,7 +75,11 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			styles.board,
 			{ borderColor: color.BORDER, backgroundColor: hi[highlight] }
 		]}>
-			<Logo size={hidden.balance ? 100 : 40} style={{ marginTop: hidden.balance ? 40 : 0, marginBottom: hidden.balance ? 40 : 10 }} />
+			<TouchableOpacity
+				onPress={() => void handleLogoPress()}
+			>
+				<Logo size={hidden.balance ? 100 : 40} style={{ marginTop: hidden.balance ? 40 : 0, marginBottom: hidden.balance ? 40 : 10 }} />
+			</TouchableOpacity>
 			{/* balance */}
 			{!hidden.balance &&
 				<TouchableOpacity
