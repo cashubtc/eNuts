@@ -21,6 +21,7 @@ import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { ttlCache } from '@src/storage/store/ttl'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
@@ -111,20 +112,29 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}, [])
 
 	// Gets metadata from cache or relay for contact in viewport
-	const setMetadata = useCallback((item: string) => {
+	const setMetadata = useCallback(async (item: string) => {
 		if (item[1]) { return }
 		const hex = item[0]
 		// TODO use cache if available
+		// TODO uncomment when cache is available
+		const e = await ttlCache.getObj<NostrEvent>(hex)
+		if (e) {
+			console.log('cache hit')
+			// events.map(e => [e.pubkey, parseProfileContent<IProfileContent>(e)]))
+			return setContacts(prev => prev.map(c => c[0] === hex ? [c[0], parseProfileContent<IProfileContent>(e)] : c))
+		}
+		console.log('cache miss')
 		const sub = relay.subscribePool({
 			relayUrls: userRelays,
 			authors: [hex],
 			kinds: [EventKind.SetMetadata],
 			skipVerification: Config.skipVerification
 		})
-		sub?.on('event', (e: NostrEvent) => {
+		sub?.on('event', async (e: NostrEvent) => {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (+e.kind === EventKind.SetMetadata) {
-				// TODO save contacts in cache
+				// TODO uncomment when cache is available
+				await ttlCache.setObj(hex, e)
 				setContacts(prev => prev.map(c => c[0] === hex ? [c[0], parseProfileContent<IProfileContent>(e)] : c))
 			}
 		})
@@ -138,7 +148,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				const visible = viewableItems[i]
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				const seen = prev.some(itemSeen => visible.item[0] === itemSeen)
-				if (!seen) { setMetadata(visible.item as string) }
+				if (!seen) { void setMetadata(visible.item as string) }
 			}
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 			return [...prev, ...viewableItems.map(v => v.item[0] as string)]
