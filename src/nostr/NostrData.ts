@@ -34,6 +34,10 @@ export interface INostrDataUser {
 }
 export class NostrData {
 	get hex(){return this.#user.hex}
+	get profile():Readonly<{  profile: IProfileContent; createdAt: number; }>{return this.#profiles[this.#user.hex]}
+	get profiles():Readonly<{ [k: string]: { profile: IProfileContent; createdAt: number } }>{return this.#profiles}
+	get relays():Readonly<{ read: string[]; write: string[]; createdAt: number }>{return this.#user.relays}
+	get user():Readonly<INostrDataUser>{return this.#user}
 	#ttlCache = new TTLCache('__ttlCacheProfiles__', 1000 * 60 * 60 * 24)
 	#onProfilesChanged?: IOnProfilesChangedHandler
 	#onContactsChanged?: IOnContactsChangedHandler
@@ -47,10 +51,12 @@ export class NostrData {
 			onProfilesChanged,
 			onContactsChanged,
 			onUserMetadataChanged,
+			userRelays
 		}: {
       onProfilesChanged?: IOnProfilesChangedHandler;
       onContactsChanged?: IOnContactsChangedHandler;
       onUserMetadataChanged?: IOnUserMetadataChangedHandler;
+      userRelays?: string[]
     },
 	) {
 		this.#user = {
@@ -61,6 +67,7 @@ export class NostrData {
 		this.#onProfilesChanged = onProfilesChanged
 		this.#onContactsChanged = onContactsChanged
 		this.#onUserMetadataChanged = onUserMetadataChanged
+		this.initUserData(userRelays)
 	}
 	#parseRelays(e: NostrEvent) {
 		if (

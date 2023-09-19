@@ -75,6 +75,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				onUserMetadataChanged: p => setUserProfile(p.profile),
 				// onContactsChanged: (contacts => setContacts(contacts.),
 				onProfilesChanged: contacts => setContacts(Object.entries(contacts).map(x => ([x[0], x[1].profile]))),
+				userRelays
 			})
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -262,8 +263,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		if (!ref?.current) {
 			ref.current = new NostrData(pubKey.hex, {
 				onUserMetadataChanged: p => setUserProfile(p.profile),
-				// onContactsChanged: (contacts => setContacts(contacts.),
+				// onContactsChanged: (contacts => setContacts(contacts.), 
 				onProfilesChanged: contacts => setContacts(Object.entries(contacts).map(x => ([x[0], x[1].profile]))),
+				userRelays
 			})
 		}
 		void (async () => {
