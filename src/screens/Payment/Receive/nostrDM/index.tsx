@@ -83,15 +83,15 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 				relayUrls: userRelays,
 				// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
 				authors: conversationsPubKeys, // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
-				kinds: [EventKind.DirectMessage, EventKind.SetMetadata],
+				kinds: [EventKind.DirectMessage, EventKind.Metadata],
 				skipVerification: Config.skipVerification
 			})
 			sub?.on('event', async (e: NostrEvent) => {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-				if (+e.kind === EventKind.SetMetadata) {
+
+				if (+e.kind === EventKind.Metadata) {
 					setDmProfiles(prev => prev.some(x => x[0] === e.pubkey) ? prev : [...prev, [e.pubkey, parseProfileContent(e)]])
 				}
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+
 				if (+e.kind === EventKind.DirectMessage) {
 					await handleDm(sk || '', e)
 				}

@@ -144,9 +144,9 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 		if (!isLnurl(address)) { throw new Error('invalid address') }
 		const [user, host] = address.split('@')
 		amount *= 1000
-		const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json() as ILnUrl
+		const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json<ILnUrl>() 
 		if (tag === 'payRequest' && minSendable <= amount && amount <= maxSendable) {
-			const resp = await (await fetch(`${callback}?amount=${amount}`)).json() as { pr: string }
+			const resp = await (await fetch(`${callback}?amount=${amount}`)).json<{ pr: string }>() 
 			if (!resp?.pr) { l('[getInvoiceFromLnurl]', { resp }) }
 			return resp?.pr || ''
 		}

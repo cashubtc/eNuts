@@ -45,14 +45,6 @@ export class TTLCache extends SimpleKeyValueStore {
 	public setObj<T extends object>(key: string, value: T): Promise<boolean> {
 		return super.setObj(key, value)
 	}
-	public count(): Promise<number> {
-		return super.count()
-	}
-	public clear(): Promise<boolean> { return super.clear() }
-	public close(): void { return super.close() }
-	public delete(key: string): Promise<boolean> {
-		return super.removeItem(key)
-	}
 }
 
 

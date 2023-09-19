@@ -6,7 +6,7 @@ import { Event as NostrEvent } from 'nostr-tools'
  * Get a huge list of available relays
  */
 export async function getRelays() {
-	return (await fetch('https://api.nostr.watch/v1/online')).json() as Promise<string[]>
+	return (await fetch('https://api.nostr.watch/v1/online')).json<Promise<string[]>>() 
 }
 
 /**
@@ -31,8 +31,8 @@ export function nip05toWebsite(identifier: string) {
 /**
  * JSON.parse the nostr user profile metadata
  */
-export function parseProfileContent<T>(event: NostrEvent) {
-	return cTo(event.content) as T
+export function parseProfileContent(event: NostrEvent) {
+	return cTo<IProfileContent>(event.content)
 }
 
 /**
@@ -45,8 +45,8 @@ export function filterFollows(tags: string[][]) {
 /**
  * JSON.parse the nostr relays from user
  */
-export function parseUserRelays<T>(relays: string) {
-	return Object.keys(cTo(relays)) as T
+export function parseUserRelays(relays: string) {
+	return Object.keys(cTo(relays))
 }
 
 /**
