@@ -87,18 +87,30 @@ export class NostrData {
 				{ read: [], write: [], createdAt: e.created_at },
 			)
 		}
+		this.#userRelays=this.mergeRelays([])
+		void this.#ttlCache.setObj('relays', this.#userRelays)
 	}
-	#loadCached() {
+	async #loadCached() {
 		// TODO refactor
 		const keys = Object.keys(this.#profiles)
-		this.#user.contacts.list
-			.filter(x => !keys.includes(x))
-			.forEach(x => {
-				void (async () => {
+		await Promise.allSettled(
+			this.#user.contacts.list
+				.filter(x => !keys.includes(x))
+				.map(async x => {
 					const p = await this.#ttlCache.getObj<{ profile: IProfileContent, createdAt: number }>(x)
 					if (p) { this.#profiles[x] = p }
-				})()
-			})
+				})
+		)
+		this.#onProfilesChanged?.(this.#profiles)
+	}
+	mergeRelays(relays: string[]) {
+		return uniq([
+			'wss://purplepag.es',
+			...this.#user.relays.read,
+			...this.#user.relays.write,
+			...this.#userRelays,
+			...relays
+		])
 	}
 	public async initUserData(userRelays?: string[]) {
 		const e = await this.#ttlCache.getObj<{ profile: IProfileContent; createdAt: number }>(this.#user.hex)
@@ -112,20 +124,14 @@ export class NostrData {
 		if (cachedContacts) {
 			this.#user.contacts = cachedContacts
 			this.#onContactsChanged?.(this.#user.contacts)
+			void this.#loadCached()
 		}
-		this.#loadCached()
 		const cachedRelays = await this.#ttlCache.getObj<string[]>('relays')
-		if (cachedRelays) {
-			this.#userRelays = uniq([
-				'wss://purplepag.es',
-				...this.#user.relays.read,
-				...this.#user.relays.write,
-				...this.#userRelays,
-				...cachedRelays
-			])
-		}
+		if (cachedRelays) { this.#userRelays = this.mergeRelays(cachedRelays) }
+		let relays =this.mergeRelays([])
+		if (!relays.length) { relays = defaultRelays }
 		const sub = relay.subscribePool({
-			relayUrls: uniq(['wss://purplepag.es', ...this.#user.relays.read, ...this.#user.relays.write, ...this.#userRelays]),
+			relayUrls: relays,
 			authors: [this.#user.hex],
 			kinds: [EventKind.Metadata, EventKind.ContactList, EventKind.Relays],
 			skipVerification: Config.skipVerification,
@@ -148,13 +154,7 @@ export class NostrData {
 				// TODO do we still need this???
 				if (!userRelays && e.created_at > latestRelays) {
 					// TODO user relays should be updated (every day?)
-					const relays = uniq([
-						'wss://purplepag.es',
-						...this.#user.relays.read,
-						...this.#user.relays.write,
-						...this.#userRelays,
-						...parseUserRelays(e.content)
-					])
+					const relays =this.mergeRelays(parseUserRelays(e.content))
 					latestRelays = e.created_at
 					void store.setObj(STORE_KEYS.relays, relays)
 					this.#userRelays = relays
@@ -165,13 +165,13 @@ export class NostrData {
 					this.#user.contacts.createdAt = e.created_at
 					this.#onContactsChanged?.(this.#user.contacts)
 					void this.#ttlCache.setObj('contacts', this.#user.contacts)
-					this.#loadCached()
+					void this.#loadCached()
 				}
 			}
 		})
 	}
 	public async setupMetadataSub(hex: string) {
-		if (!hex) { return }
+		if (!hex||this.#profiles[hex]?.profile) { return }
 		const e = await this.#ttlCache.getObj<{ profile: IProfileContent; createdAt: number }>(hex)
 		if (e) {
 			l('cache hit')
@@ -183,7 +183,7 @@ export class NostrData {
 			return
 		}
 		l('cache miss')
-		let relays = uniq(['wss://purplepag.es', ...this.#user.relays.read, ...this.#user.relays.write, ...this.#userRelays])
+		let relays =this.mergeRelays([])
 		if (!relays.length) { relays = defaultRelays }
 		const sub = relay.subscribePool({
 			relayUrls: relays,

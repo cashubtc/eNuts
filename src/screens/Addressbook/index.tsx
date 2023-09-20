@@ -86,6 +86,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				userRelays
 			})
 		}
+		stopLoading()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	// gets user data from cache or relay
