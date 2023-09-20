@@ -114,15 +114,17 @@ export class NostrData {
 	}
 	public async initUserData(userRelays?: string[]) {
 		const cachedUser = await this.#ttlCache.get('userHex')
+		l(cachedUser ,this.#user.hex, cachedUser !== this.#user.hex)
 		if (cachedUser && cachedUser !== this.#user.hex) {
 			await Promise.allSettled([
 				this.#ttlCache.delete('contacts'),
-				this.#ttlCache.delete('relays')
+				this.#ttlCache.delete('relays'),
+				this.#ttlCache.set('userHex', this.#user.hex)
 			])
-		} else { void this.#ttlCache.set('userHex', this.#user.hex) }
+		} else { void this.#ttlCache.set('userHex', this.#user.hex) } /* */
 		const e = await this.#ttlCache.getObj<{ profile: IProfileContent; createdAt: number }>(this.#user.hex)
 		if (e) {
-			l('cache hit')
+			l('cache hit main user metadata in init')
 			this.#profiles[this.#user.hex] = e
 			this.#onProfilesChanged?.(this.#profiles)
 			this.#onUserMetadataChanged?.(this.#profiles[this.#user.hex])
