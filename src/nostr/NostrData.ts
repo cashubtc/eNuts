@@ -92,16 +92,21 @@ export class NostrData {
 	}
 	async #loadCached() {
 		// TODO refactor
+		let hasChanged = false
 		const keys = Object.keys(this.#profiles)
 		await Promise.allSettled(
 			this.#user.contacts.list
 				.filter(x => !keys.includes(x))
 				.map(async x => {
+					if (this.#profiles[x]) { return }
 					const p = await this.#ttlCache.getObj<{ profile: IProfileContent, createdAt: number }>(x)
-					if (p) { this.#profiles[x] = p }
+					if (p) {
+						this.#profiles[x] = p
+						hasChanged = true
+					}
 				})
 		)
-		this.#onProfilesChanged?.(this.#profiles)
+		if (hasChanged) { this.#onProfilesChanged?.(this.#profiles) }
 	}
 	mergeRelays(relays: string[]) {
 		return uniq([
@@ -114,7 +119,7 @@ export class NostrData {
 	}
 	public async initUserData(userRelays?: string[]) {
 		const cachedUser = await this.#ttlCache.get('userHex')
-		l(cachedUser ,this.#user.hex, cachedUser !== this.#user.hex)
+		l(cachedUser, this.#user.hex, cachedUser !== this.#user.hex)
 		if (cachedUser && cachedUser !== this.#user.hex) {
 			await Promise.allSettled([
 				this.#ttlCache.delete('contacts'),
