@@ -87,7 +87,7 @@ export class NostrData {
 				{ read: [], write: [], createdAt: e.created_at },
 			)
 		}
-		this.#userRelays=this.mergeRelays([])
+		this.#userRelays = this.mergeRelays([])
 		void this.#ttlCache.setObj('relays', this.#userRelays)
 	}
 	async #loadCached() {
@@ -113,6 +113,13 @@ export class NostrData {
 		])
 	}
 	public async initUserData(userRelays?: string[]) {
+		const cachedUser = await this.#ttlCache.get('userHex')
+		if (cachedUser && cachedUser !== this.#user.hex) {
+			await Promise.allSettled([
+				this.#ttlCache.delete('contacts'),
+				this.#ttlCache.delete('relays')
+			])
+		} else { void this.#ttlCache.set('userHex', this.#user.hex) }
 		const e = await this.#ttlCache.getObj<{ profile: IProfileContent; createdAt: number }>(this.#user.hex)
 		if (e) {
 			l('cache hit')
@@ -128,7 +135,7 @@ export class NostrData {
 		}
 		const cachedRelays = await this.#ttlCache.getObj<string[]>('relays')
 		if (cachedRelays) { this.#userRelays = this.mergeRelays(cachedRelays) }
-		let relays =this.mergeRelays([])
+		let relays = this.mergeRelays([])
 		if (!relays.length) { relays = defaultRelays }
 		const sub = relay.subscribePool({
 			relayUrls: relays,
@@ -154,7 +161,7 @@ export class NostrData {
 				// TODO do we still need this???
 				if (!userRelays && e.created_at > latestRelays) {
 					// TODO user relays should be updated (every day?)
-					const relays =this.mergeRelays(parseUserRelays(e.content))
+					const relays = this.mergeRelays(parseUserRelays(e.content))
 					latestRelays = e.created_at
 					void store.setObj(STORE_KEYS.relays, relays)
 					this.#userRelays = relays
@@ -171,7 +178,7 @@ export class NostrData {
 		})
 	}
 	public async setupMetadataSub(hex: string) {
-		if (!hex||this.#profiles[hex]?.profile) { return }
+		if (!hex || this.#profiles[hex]?.profile) { return }
 		const e = await this.#ttlCache.getObj<{ profile: IProfileContent; createdAt: number }>(hex)
 		if (e) {
 			l('cache hit')
@@ -183,7 +190,7 @@ export class NostrData {
 			return
 		}
 		l('cache miss')
-		let relays =this.mergeRelays([])
+		let relays = this.mergeRelays([])
 		if (!relays.length) { relays = defaultRelays }
 		const sub = relay.subscribePool({
 			relayUrls: relays,
