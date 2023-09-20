@@ -129,6 +129,7 @@ export class NostrData {
 		}
 		const cachedContacts = await this.#ttlCache.getObj<{ list: string[], createdAt: number }>('contacts')
 		if (cachedContacts) {
+			l('cache hit contacts', cachedContacts)
 			this.#user.contacts = cachedContacts
 			this.#onContactsChanged?.(this.#user.contacts)
 			void this.#loadCached()
@@ -136,7 +137,8 @@ export class NostrData {
 		const cachedRelays = await this.#ttlCache.getObj<string[]>('relays')
 		if (cachedRelays) { this.#userRelays = this.mergeRelays(cachedRelays) }
 		let relays = this.mergeRelays([])
-		if (!relays.length) { relays = defaultRelays }
+		if (relays.length < 2) { relays = defaultRelays }
+		l('relays we use in init', relays)
 		const sub = relay.subscribePool({
 			relayUrls: relays,
 			authors: [this.#user.hex],
@@ -191,7 +193,7 @@ export class NostrData {
 		}
 		l('cache miss')
 		let relays = this.mergeRelays([])
-		if (!relays.length) { relays = defaultRelays }
+		if (relays.length < 2) { relays = defaultRelays }
 		const sub = relay.subscribePool({
 			relayUrls: relays,
 			authors: [hex],
