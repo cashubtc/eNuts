@@ -80,17 +80,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		}
 		if (!ref?.current?.hex || hex !== ref.current.hex) {
 			ref.current = new NostrData(hex, {
-				onUserMetadataChanged: p => {
-					l('onUserMetadataChanged', { p })
-					setUserProfile(p.profile)
-				},
-				onContactsChanged: hexArr => {
-					l('onContactsChanged', { hexArr })
-					setContacts(prev =>
-						uniq([...prev.map(x => x[0]), ...hexArr.list])
-							.map(x => ([x, undefined]))
-					)
-				},
+				onUserMetadataChanged: p => setUserProfile(p.profile),
+				onContactsChanged: hexArr => setContacts(prev => uniq([...prev.map(x => x[0]), ...hexArr.list]).map(x => ([x, undefined])) ),
 				onProfilesChanged: profiles => setContacts(prev => merge(prev, profiles)),
 				userRelays
 			})

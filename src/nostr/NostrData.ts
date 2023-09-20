@@ -12,28 +12,22 @@ import { defaultRelays, EventKind } from './consts'
 import { filterFollows, parseProfileContent, parseUserRelays } from './util'
 
 export interface IOnProfilesChangedHandler {
-	(
-		profiles: { [k: string]: { profile: IProfileContent; createdAt: number } },
-	): void;
+	(profiles: { [k: string]: { profile: IProfileContent; createdAt: number } }): void
 }
 export interface IOnContactsChangedHandler {
-	(
-		contacts: { list: string[]; createdAt: number },
-	): void;
+	(contacts: { list: string[]; createdAt: number }): void
 }
 
 export interface IOnUserMetadataChangedHandler {
-	(
-		profile: { profile: IProfileContent; createdAt: number },
-	): void;
+	(profile: { profile: IProfileContent; createdAt: number }): void
 }
 export interface INostrDataUser {
 	hex: string;
-	relays: { read: string[]; write: string[]; createdAt: number };
-	contacts: { list: string[]; createdAt: number };
+	relays: { read: string[]; write: string[]; createdAt: number }
+	contacts: { list: string[]; createdAt: number }
 }
 export class NostrData {
-	get hex() { return this.#user.hex }
+	get hex(): Readonly<string> { return this.#user.hex }
 	get profile(): Readonly<{ profile: IProfileContent; createdAt: number; }> { return this.#profiles[this.#user.hex] }
 	get profiles(): Readonly<{ [k: string]: { profile: IProfileContent; createdAt: number } }> { return this.#profiles }
 	get relays(): Readonly<{ read: string[]; write: string[]; createdAt: number }> { return this.#user.relays }
@@ -53,9 +47,9 @@ export class NostrData {
 			onUserMetadataChanged,
 			userRelays
 		}: {
-			onProfilesChanged?: IOnProfilesChangedHandler;
-			onContactsChanged?: IOnContactsChangedHandler;
-			onUserMetadataChanged?: IOnUserMetadataChangedHandler;
+			onProfilesChanged?: IOnProfilesChangedHandler,
+			onContactsChanged?: IOnContactsChangedHandler,
+			onUserMetadataChanged?: IOnUserMetadataChangedHandler,
 			userRelays?: string[]
 		},
 	) {
@@ -111,9 +105,7 @@ export class NostrData {
 		sub?.on('event', async (e: NostrEvent) => {
 			if (+e.kind === EventKind.Relays) { this.#parseRelays(e) }
 			if (+e.kind === EventKind.Metadata) {
-				const cached = await this.#ttlCache.getObj<
-					{ profile: IProfileContent; createdAt: number }
-				>(this.#user.hex)
+				const cached = await this.#ttlCache.getObj<{ profile: IProfileContent, createdAt: number }>(this.#user.hex)
 				if (cached) {
 					l('cache hit')
 					this.#profiles[this.#user.hex] = cached
