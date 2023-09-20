@@ -62,7 +62,7 @@ export class NostrData {
 		this.#onProfilesChanged = onProfilesChanged
 		this.#onContactsChanged = onContactsChanged
 		this.#onUserMetadataChanged = onUserMetadataChanged
-		this.initUserData(userRelays)
+		void this.initUserData(userRelays)
 	}
 	#parseRelays(e: NostrEvent) {
 		if (
@@ -88,69 +88,84 @@ export class NostrData {
 			)
 		}
 	}
-	public initUserData(userRelays?: string[]) {
-		// if (!hex /* || (userProfile && contacts.length) */) {
-		//   l("no pubKey or user data already available");
-		//   // stopLoading();
-		//   return;
-		// }
-		// TODO use cache if available
+	#loadCached() {
+		// TODO refactor
+		const keys = Object.keys(this.#profiles)
+		this.#user.contacts.list
+			.filter(x => !keys.includes(x))
+			.forEach(x => {
+				void (async () => {
+					const p = await this.#ttlCache.getObj<{ profile: IProfileContent, createdAt: number }>(x)
+					if (p) { this.#profiles[x] = p }
+				})()
+			})
+	}
+	public async initUserData(userRelays?: string[]) {
+		const e = await this.#ttlCache.getObj<{ profile: IProfileContent; createdAt: number }>(this.#user.hex)
+		if (e) {
+			l('cache hit')
+			this.#profiles[this.#user.hex] = e
+			this.#onProfilesChanged?.(this.#profiles)
+			this.#onUserMetadataChanged?.(this.#profiles[this.#user.hex])
+		}
+		const cachedContacts = await this.#ttlCache.getObj<{ list: string[], createdAt: number }>('contacts')
+		if (cachedContacts) {
+			this.#user.contacts = cachedContacts
+			this.#onContactsChanged?.(this.#user.contacts)
+		}
+		this.#loadCached()
+		const cachedRelays = await this.#ttlCache.getObj<string[]>('relays')
+		if (cachedRelays) {
+			this.#userRelays = uniq([
+				'wss://purplepag.es',
+				...this.#user.relays.read,
+				...this.#user.relays.write,
+				...this.#userRelays,
+				...cachedRelays
+			])
+		}
 		const sub = relay.subscribePool({
-			relayUrls: uniq([...this.#user.relays.read, ...this.#user.relays.write, ...this.#userRelays]),
+			relayUrls: uniq(['wss://purplepag.es', ...this.#user.relays.read, ...this.#user.relays.write, ...this.#userRelays]),
 			authors: [this.#user.hex],
 			kinds: [EventKind.Metadata, EventKind.ContactList, EventKind.Relays],
 			skipVerification: Config.skipVerification,
 		})
 		let latestRelays = 0 // createdAt
-		sub?.on('event', async (e: NostrEvent) => {
+		sub?.on('event', (e: NostrEvent) => {
 			if (+e.kind === EventKind.Relays) { this.#parseRelays(e) }
 			if (+e.kind === EventKind.Metadata) {
-				const cached = await this.#ttlCache.getObj<{ profile: IProfileContent, createdAt: number }>(this.#user.hex)
-				if (cached) {
-					l('cache hit')
-					this.#profiles[this.#user.hex] = cached
-					this.#onProfilesChanged?.(this.#profiles)
-					this.#onUserMetadataChanged?.(this.#profiles[this.#user.hex])
-					return
-				}
-				l({ profiles: this.#profiles })
-				l({ user: this.#user })
 				const p = this.#profiles[this.#user.hex]
-				l({ p })
 				if (!p || e.created_at > p.createdAt) {
 					this.#profiles[this.#user.hex] = {
 						profile: parseProfileContent(e),
 						createdAt: e.created_at,
 					}
-					l(this.#onUserMetadataChanged)
 					this.#onUserMetadataChanged?.(this.#profiles[this.#user.hex])
-					// TODO set cache
+					void this.#ttlCache.setObj(this.#user.hex, this.#profiles[this.#user.hex])
 				}
 			}
 			if (+e.kind === EventKind.ContactList) {
 				// TODO do we still need this???
 				if (!userRelays && e.created_at > latestRelays) {
 					// TODO user relays should be updated (every day?)
-					const relays = parseUserRelays(e.content)
+					const relays = uniq([
+						'wss://purplepag.es',
+						...this.#user.relays.read,
+						...this.#user.relays.write,
+						...this.#userRelays,
+						...parseUserRelays(e.content)
+					])
 					latestRelays = e.created_at
 					void store.setObj(STORE_KEYS.relays, relays)
-					this.#userRelays = uniq([...relays, ...this.#userRelays])
+					this.#userRelays = relays
+					void this.#ttlCache.setObj('relays', relays)
 				}
 				if (e.created_at > this.#user.contacts.createdAt) {
-					// TODO set cache
 					this.#user.contacts.list = filterFollows(e.tags)
 					this.#user.contacts.createdAt = e.created_at
 					this.#onContactsChanged?.(this.#user.contacts)
-
-					// TODO refactor
-					this.#user.contacts.list
-						.filter(x => !Object.keys(this.#profiles).includes(x))
-						.forEach(x => {
-							void (async () => {
-								const p = await this.#ttlCache.getObj<{ profile: IProfileContent, createdAt: number }>(x)
-								if (p) { this.#profiles[x] = p }
-							})()
-						})
+					void this.#ttlCache.setObj('contacts', this.#user.contacts)
+					this.#loadCached()
 				}
 			}
 		})
@@ -168,7 +183,7 @@ export class NostrData {
 			return
 		}
 		l('cache miss')
-		let relays = uniq([...this.#user.relays.read, ...this.#user.relays.write, ...this.#userRelays])
+		let relays = uniq(['wss://purplepag.es', ...this.#user.relays.read, ...this.#user.relays.write, ...this.#userRelays])
 		if (!relays.length) { relays = defaultRelays }
 		const sub = relay.subscribePool({
 			relayUrls: relays,
@@ -177,19 +192,17 @@ export class NostrData {
 			skipVerification: Config.skipVerification,
 		})
 		sub?.on('event', (e: NostrEvent) => {
-			if (+e.kind === EventKind.Metadata) {
-				const p = this.#profiles[hex]
-				if (!p || e.created_at > p.createdAt) {
-					this.#profiles[hex] = {
-						profile: parseProfileContent(e),
-						createdAt: e.created_at,
-					}
-					void this.#ttlCache.setObj(hex, this.#profiles[hex])
-					this.#onProfilesChanged?.(this.#profiles)
-					if (hex === this.#user.hex) {
-						this.#onUserMetadataChanged?.(this.#profiles[hex])
-					}
-
+			if (+e.kind !== EventKind.Metadata) { return }
+			const p = this.#profiles[hex]
+			if (!p || e.created_at > p.createdAt) {
+				this.#profiles[hex] = {
+					profile: parseProfileContent(e),
+					createdAt: e.created_at,
+				}
+				void this.#ttlCache.setObj(hex, this.#profiles[hex])
+				this.#onProfilesChanged?.(this.#profiles)
+				if (hex === this.#user.hex) {
+					this.#onUserMetadataChanged?.(this.#profiles[hex])
 				}
 			}
 		})
