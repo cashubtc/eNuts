@@ -144,7 +144,7 @@ export class NostrData {
 		const cachedRelays = await this.#ttlCache.getObj<string[]>('relays')
 		if (cachedRelays) { this.#userRelays = this.mergeRelays(cachedRelays) }
 		let relays = this.mergeRelays([])
-		if (relays.length < 2) { relays = this.mergeRelays(this.mergeRelays(defaultRelays)) }
+		if (relays.length < 2) { relays = this.mergeRelays(defaultRelays) }
 		const sub = relay.subscribePool({
 			relayUrls: relays,
 			authors: [this.#user.hex],
@@ -199,7 +199,7 @@ export class NostrData {
 		}
 		l('cache miss')
 		let relays = this.mergeRelays([])
-		if (relays.length < 2) { relays = this.mergeRelays(this.mergeRelays(defaultRelays)) }
+		if (relays.length < 2) { relays = this.mergeRelays(defaultRelays) }
 		const sub = relay.subscribePool({
 			relayUrls: relays,
 			authors: [hex],

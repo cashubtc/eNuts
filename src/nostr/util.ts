@@ -53,7 +53,7 @@ export function parseUserRelays(relays: string) {
  * Truncates the npub of a user
  */
 export function truncateNpub(npub: string) {
-	return npub.substring(0, 8) + ':' + npub.substring(npub.length - 8, npub.length)
+	return npub.slice(0, 8) + ':' + npub.slice(-8)
 }
 
 /**

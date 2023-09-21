@@ -144,9 +144,9 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 		if (!isLnurl(address)) { throw new Error('invalid address') }
 		const [user, host] = address.split('@')
 		amount *= 1000
-		const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json<ILnUrl>() 
+		const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json<ILnUrl>()
 		if (tag === 'payRequest' && minSendable <= amount && amount <= maxSendable) {
-			const resp = await (await fetch(`${callback}?amount=${amount}`)).json<{ pr: string }>() 
+			const resp = await (await fetch(`${callback}?amount=${amount}`)).json<{ pr: string }>()
 			if (!resp?.pr) { l('[getInvoiceFromLnurl]', { resp }) }
 			return resp?.pr || ''
 		}
@@ -157,7 +157,13 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 export function isCashuToken(token: string) {
 	if (!token || !isStr(token)) { return }
 	token = token.trim()
-	const uriPrefixes = ['web+cashu://', 'cashu://', 'cashu:']
+	const uriPrefixes = [
+		'https://wallet.nutstash.app/#',
+		'https://wallet.cashu.me/?token=',
+		'web+cashu://',
+		'cashu://',
+		'cashu:'
+	]
 	uriPrefixes.forEach((prefix) => {
 		if (!token.startsWith(prefix)) { return }
 		token = token.slice(prefix.length).trim()
@@ -218,7 +224,7 @@ export function cleanUpNumericStr(str: string) {
 }
 
 export function openUrl(url: string) {
-	if (!url?.trim()) { return }
+	if (!url?.trim()||!isUrl(url)) { return }
 	return Linking.openURL(url)
 }
 
@@ -262,9 +268,7 @@ export function binaryInsert(arr: string[], newStr: string): void {
 // simpler and faster due to the reduced overhead. Only when you start to deal with larger datasets,
 // such as hundreds or thousands of elements, does binary search's efficiency start to shine.
 export function hasEventId(arr: string[], target: string) {
-	if (arr.length < 40) {
-		return arr.some(x => x === target)
-	}
+	if (arr.length < 40) { return arr.includes(target) }
 	return binarySearch(arr, target)
 }
 

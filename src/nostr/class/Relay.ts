@@ -1,22 +1,14 @@
 import { l } from '@log'
 import { isErr } from '@util'
-import { finishEvent, type Relay as NostrRelay, relayInit, SimplePool, type Sub, validateEvent } from 'nostr-tools'
+import { type Filter, finishEvent, SimplePool, type Sub, validateEvent } from 'nostr-tools'
 
 import { defaultRelays } from '../consts'
 
-// TODO use better typing for this 2 similar interfaces
-interface ISingleSubProps {
-	relayUrl?: string
-	skipVerification?: boolean
-	authors: string[]
-	kinds?: number[]
-}
-
-interface IPoolSubProps {
+interface IPoolSubProps<K extends number = number> extends Filter<K> {
 	relayUrls?: string[]
 	skipVerification?: boolean
-	authors: string[]
-	kinds?: number[]
+	authors?: string[]
+	kinds?: K[]
 }
 
 interface IEventDM {
@@ -26,50 +18,23 @@ interface IEventDM {
 	created_at: number
 }
 
-// dummy relay class
 class Relay {
 
 	#pool?: SimplePool
-	#sub?: Sub<number>
-	#poolSubs: number
-	#poolEventsReceived: number
-	#singleRelay?: NostrRelay
-	#singleSubs: number
-	#singleConnections: number
+	#sub? :Sub<number>
+	#poolSubs = 0
+	#poolEventsReceived: number = 0
+	#relays:string[]=[]
 
-	constructor() {
-		this.#poolSubs = 0
-		this.#poolEventsReceived = 0
-		this.#singleSubs = 0
-		this.#singleConnections = 0
-	}
-
-	async subscribeSingle({ relayUrl, authors, kinds, skipVerification }: ISingleSubProps) {
+	constructor() { }
+	subscribePool({ relayUrls, authors, kinds, skipVerification,...conf }: IPoolSubProps) {
 		try {
-			await this.#connectSingle(relayUrl)
-			// create subscription
-			const sub = this.#singleRelay?.sub([{ authors, kinds }], { skipVerification })
-			sub?.on('eose', () => {
-				sub.unsub()
-				this.#singleSubs--
-				this.#closeConnection()
-			})
-			return sub
-
-		} catch (e) {
-			l(`single Relay subscribe error: ${isErr(e) ? e.message : 'No error message'}`)
-		}
-	}
-
-	subscribePool({ relayUrls, authors, kinds, skipVerification }: IPoolSubProps) {
-		try {
-			if (!this.#pool) {
-				this.#connectPool()
-			}
+			if (!this.#pool) { this.#connectPool() }
 			const relays = relayUrls?.length ? relayUrls : defaultRelays
+			this.#relays=[...(this.#relays||[]),...(relayUrls||[]),...(defaultRelays||[])]
 			const sub = this.#pool?.sub(
 				relays,
-				[{ authors, kinds }],
+				[{ authors, kinds,...conf }],
 				{ skipVerification }
 			)
 			this.#sub = sub
@@ -87,26 +52,12 @@ class Relay {
 		}
 	}
 
-	async publishEventToSingleRelay(event: IEventDM, sk: string, relayUrl?: string) {
-		const validated = this.#validate(event, sk)
-		if (!validated) { return }
-		try {
-			await this.#connectSingle(relayUrl)
-			await this.#singleRelay?.publish(validated)
-			this.#closeConnection()
-			return true
-		} catch (e) {
-			l({ publishError: isErr(e) ? e.message : 'Publish error' })
-			return false
-		}
-	}
-
 	async publishEventToPool(event: IEventDM, sk: string, relayUrls?: string[]) {
 		const validated = this.#validate(event, sk)
 		if (!validated) { return }
 		try {
-			// eslint-disable-next-line @typescript-eslint/await-thenable
-			const res = await this.#pool?.publish([...relayUrls || [], ...defaultRelays], validated)
+			this.#relays=[...(this.#relays||[]),...(relayUrls||[]),...(defaultRelays||[])]
+			const res = await Promise.allSettled(this.#pool?.publish([...relayUrls || [], ...defaultRelays], validated)??[])
 			l({ res })
 			return true
 		} catch (e) {
@@ -114,36 +65,13 @@ class Relay {
 			return false
 		}
 	}
-
-	async #connectSingle(relayUrl?: string) {
-		// connect only if no connections available
-		if (!this.#singleRelay) {
-			this.#singleRelay = relayInit(relayUrl || defaultRelays[0])
-			await this.#singleRelay.connect()
-			this.#singleRelay.on('connect', () => {
-				this.#singleConnections++
-				l(`connected to ${this.#singleRelay?.url} - total connections: ${this.#singleConnections}`)
-			})
-			this.#singleRelay.on('error', () => {
-				l(`failed to connect to ${this.#singleRelay?.url}`)
-				this.#singleRelay = undefined
-			})
-		}
-	}
-
 	closePoolConnection(relayUrls: string[]) {
-		this.#pool?.close(relayUrls)
+		this.#pool?.close([...(this.#relays||[]),...(relayUrls||[]),...(defaultRelays||[])])
 	}
 
-	#closeConnection() {
-		this.#singleRelay?.close()
-		this.#singleConnections--
-		l(`closed connection to ${this.#singleRelay?.url} - remaining connections: ${this.#singleConnections}`)
-		this.#singleRelay = undefined
-	}
-
-	#connectPool() {
-		this.#pool = new SimplePool()
+	#connectPool(opts:ConstructorParameters<typeof SimplePool>[0]={}) {
+		if(this.#pool?.close){this.#pool.close([...(this.#relays||[]),...(defaultRelays||[])])}
+		this.#pool = new SimplePool(opts)
 	}
 
 	#validate(event: IEventDM, sk: string) {

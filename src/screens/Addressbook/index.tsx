@@ -70,18 +70,15 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	const merge = useCallback(
 		(current: TContact[], newItems: { [k: string]: { profile: IProfileContent, createdAt: number } }) =>
-			uniq([...current.map(x => x[0]), ...Object.keys(newItems)]).map(x => ([x, newItems[x]?.profile]) as TContact),
+			uniq([...current.map(x => x[0]), ...Object.keys(newItems)]).map<TContact>(x => ([x, newItems[x]?.profile])),
 		[]
 	)
 	const initNostr = useCallback((hex: string) => {
-		if (!hex) {
-			l('no hex')
-			return
-		}
+		if (!hex) { return l('no hex') }
 		if (!ref?.current?.hex || hex !== ref.current.hex) {
 			ref.current = new NostrData(hex, {
 				onUserMetadataChanged: p => setUserProfile(p.profile),
-				onContactsChanged: hexArr => setContacts(prev => uniq([...prev.map(x => x[0]), ...hexArr.list]).map(x => ([x, undefined])) ),
+				onContactsChanged: hexArr => setContacts(prev => uniq([...prev.map(x => x[0]), ...hexArr.list]).map(x => ([x, undefined]))),
 				onProfilesChanged: profiles => setContacts(prev => merge(prev, profiles)),
 				userRelays
 			})
@@ -113,13 +110,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
 		setAlreadySeen(prev => {
 			for (let i = 0; i < viewableItems.length; i++) {
-				const visible = viewableItems[i]
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				const seen = prev.some(itemSeen => visible.item[0] === itemSeen)
-				if (!seen) { void setMetadata(visible.item as TContact) }
+				const { item }: { item: TContact } = viewableItems[i]
+				if (!prev.includes(item[0])) { void setMetadata(item) }
 			}
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			return uniq([...prev, ...viewableItems.map(v => v.item[0] as string)])
+			return uniq([...prev, ...viewableItems.map((v: { item: TContact }) => v.item[0])])
 		})
 	}, [setMetadata])
 
@@ -204,7 +198,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		const sk = generatePrivateKey() // `sk` is a hex string
 		const pk = getPublicKey(sk)		// `pk` is a hex string
 		setNutPub(pk)
-		await Promise.all([
+		await Promise.allSettled([
 			store.set(STORE_KEYS.npub, pub.encoded), // save nostr encoded pubKey
 			store.set(STORE_KEYS.npubHex, pub.hex),	// save nostr hex pubKey
 			store.set(STORE_KEYS.nutpub, pk),			// save enuts hex pubKey
@@ -287,18 +281,15 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				store.get(STORE_KEYS.npubHex),
 				store.getObj<TUserRelays>(STORE_KEYS.relays),
 			])
+			if (!storedNPub) { setNewNpubModal(true) }
 			l({ storedPubKeyHex })
-			// TODO remove !
-			initNostr(storedPubKeyHex!)
 			if (!storedPubKeyHex) {
 				stopLoading()
 				return
 			}
-
+			initNostr(storedPubKeyHex)
 			setPubKey({ encoded: storedNPub || '', hex: storedPubKeyHex || '' })
-			setUserRelays(stroedUserRelays || [])
-			// initUserData({ hex: storedPubKeyHex || '', userRelays: stroedUserRelays|| [] })
-			if (!storedNPub) { setNewNpubModal(true) }
+			if(stroedUserRelays?.length){setUserRelays(stroedUserRelays)}
 			stopLoading()
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
