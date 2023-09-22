@@ -157,7 +157,13 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 export function isCashuToken(token: string) {
 	if (!token || !isStr(token)) { return }
 	token = token.trim()
-	const uriPrefixes = ['web+cashu://', 'cashu://', 'cashu:']
+	const uriPrefixes = [
+		'https://wallet.nutstash.app/#',
+		'https://wallet.cashu.me/?token=',
+		'web+cashu://',
+		'cashu://',
+		'cashu:'
+	]
 	uriPrefixes.forEach((prefix) => {
 		if (!token.startsWith(prefix)) { return }
 		token = token.slice(prefix.length).trim()
