@@ -90,7 +90,7 @@ export class NostrData {
 		this.#userRelays = this.mergeRelays([])
 		void this.#ttlCache.setObj('relays', this.#userRelays)
 	}
-	async #loadCached() {
+	/* async #loadCached() {
 		// TODO refactor
 		let hasChanged = false
 		const keys = Object.keys(this.#profiles)
@@ -107,7 +107,7 @@ export class NostrData {
 				})
 		)
 		if (hasChanged) { this.#onProfilesChanged?.(this.#profiles) }
-	}
+	} */
 	mergeRelays(relays: string[]) {
 		return uniq([
 			'wss://purplepag.es',
@@ -139,7 +139,7 @@ export class NostrData {
 			l('cache hit contacts', cachedContacts)
 			this.#user.contacts = cachedContacts
 			// this.#onContactsChanged?.(this.#user.contacts)
-			void this.#loadCached()
+			// void this.#loadCached()
 		}
 		const cachedRelays = await this.#ttlCache.getObj<string[]>('relays')
 		if (cachedRelays) { this.#userRelays = this.mergeRelays(cachedRelays) }
@@ -181,7 +181,7 @@ export class NostrData {
 					this.#user.contacts.createdAt = e.created_at
 					this.#onContactsChanged?.(this.#user.contacts)
 					void this.#ttlCache.setObj('contacts', this.#user.contacts)
-					void this.#loadCached()
+					// void this.#loadCached()
 				}
 			}
 		})
