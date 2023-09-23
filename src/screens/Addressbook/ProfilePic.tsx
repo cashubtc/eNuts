@@ -1,5 +1,8 @@
 import { PlusIcon, UserIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
+import { l } from '@src/logger'
+import { imgProxy } from '@src/nostr/consts'
+import { isStr } from '@src/util'
 import { highlight as hi } from '@styles'
 import { Image, StyleSheet, View } from 'react-native'
 
@@ -16,18 +19,20 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon }: IProfile
 	const circleStyle = {
 		width: size || defaultSize,
 		height: size || defaultSize,
-		borderRadius: size ? size / 2 : defaultSize / 2 }
+		borderRadius: size ? size / 2 : defaultSize / 2
+	}
 
 	return (
 		<>
-			{uri?.length && isUser ?
+			{isStr(uri) && uri?.length ?
 				<Image
+					onError={(err => { l({ uri, err }) })}
 					style={[
 						styles.circle,
 						styles.img,
 						circleStyle
 					]}
-					source={{ uri }}
+					source={{ uri: `${imgProxy(uri, circleStyle?.width ?? 40)}` }}
 				/>
 				:
 				<View style={[
