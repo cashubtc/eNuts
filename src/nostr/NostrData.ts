@@ -28,7 +28,7 @@ export interface INostrDataUser {
 }
 export class NostrData {
 	get hex(): Readonly<string> { return this.#user.hex }
-	get profile(): Readonly<{ profile: IProfileContent; createdAt: number; }> { return this.#profiles[this.#user.hex] }
+	public getOneProfile(hex:string): Readonly<IProfileContent|undefined > { return this.#profiles[hex]?.profile }
 	get profiles(): Readonly<{ [k: string]: { profile: IProfileContent; createdAt: number } }> { return this.#profiles }
 	get relays(): Readonly<{ read: string[]; write: string[]; createdAt: number }> { return this.#user.relays }
 	get user(): Readonly<INostrDataUser> { return this.#user }
@@ -126,25 +126,26 @@ export class NostrData {
 				this.#ttlCache.delete('relays'),
 				this.#ttlCache.set('userHex', this.#user.hex)
 			])
-		} else { void this.#ttlCache.set('userHex', this.#user.hex) } /* */
+		} else { void this.#ttlCache.set('userHex', this.#user.hex) }
 		const e = await this.#ttlCache.getObj<{ profile: IProfileContent; createdAt: number }>(this.#user.hex)
 		if (e) {
 			l('cache hit main user metadata in init')
 			this.#profiles[this.#user.hex] = e
-			this.#onProfilesChanged?.(this.#profiles)
+			// this.#onProfilesChanged?.(this.#profiles)
 			this.#onUserMetadataChanged?.(this.#profiles[this.#user.hex])
 		}
 		const cachedContacts = await this.#ttlCache.getObj<{ list: string[], createdAt: number }>('contacts')
 		if (cachedContacts) {
 			l('cache hit contacts', cachedContacts)
 			this.#user.contacts = cachedContacts
-			this.#onContactsChanged?.(this.#user.contacts)
+			// this.#onContactsChanged?.(this.#user.contacts)
 			void this.#loadCached()
 		}
 		const cachedRelays = await this.#ttlCache.getObj<string[]>('relays')
 		if (cachedRelays) { this.#userRelays = this.mergeRelays(cachedRelays) }
 		let relays = this.mergeRelays([])
 		if (relays.length < 2) { relays = this.mergeRelays(defaultRelays) }
+		if (cachedContacts && cachedUser) { return }
 		const sub = relay.subscribePool({
 			relayUrls: relays,
 			authors: [this.#user.hex],

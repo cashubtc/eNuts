@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
-import type { TContact } from '@model/nostr'
+import type { IProfileContent, TContact } from '@model/nostr'
 import { truncateNostrProfileInfo, truncateNpub } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -13,7 +13,7 @@ import ProfilePic from './ProfilePic'
 import Username from './Username'
 
 interface IContactPreviewProps {
-	contact: TContact
+	contact: TContact | [hex: string, Partial<IProfileContent>]
 	handleContactPress: () => void
 	handleSend: () => void
 	isFirst: boolean
@@ -55,7 +55,7 @@ export default function ContactPreview({ contact, handleContactPress, handleSend
 							npub={truncateNpub(nip19.npubEncode(contact[0]))}
 							fontSize={16}
 						/>
-						{contact[1].about?.length > 0 &&
+						{contact?.[1]?.about && contact?.[1]?.about?.length > 0 &&
 							<Txt
 								txt={truncateNostrProfileInfo(contact[1].about)}
 								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}
