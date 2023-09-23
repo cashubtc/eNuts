@@ -135,10 +135,10 @@ export class NostrData {
 			this.#onUserMetadataChanged?.(this.#profiles[this.#user.hex])
 		}
 		const cachedContacts = await this.#ttlCache.getObj<{ list: string[], createdAt: number }>('contacts')
-		if (cachedContacts) {
-			l('cache hit contacts', cachedContacts)
+		if (cachedContacts?.list?.length) {
+			l('cache hit contacts', cachedContacts.list.length)
 			this.#user.contacts = cachedContacts
-			// this.#onContactsChanged?.(this.#user.contacts)
+			this.#onContactsChanged?.(this.#user.contacts)
 			// void this.#loadCached()
 		}
 		const cachedRelays = await this.#ttlCache.getObj<string[]>('relays')

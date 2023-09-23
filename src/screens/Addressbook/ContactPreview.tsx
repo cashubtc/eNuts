@@ -13,7 +13,7 @@ import ProfilePic from './ProfilePic'
 import Username from './Username'
 
 interface IContactPreviewProps {
-	contact: TContact | [hex: string, Partial<IProfileContent>]
+	contact: TContact | [string, Partial<IProfileContent>]
 	handleContactPress: () => void
 	handleSend: () => void
 	isFirst: boolean

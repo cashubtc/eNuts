@@ -103,16 +103,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// Gets metadata from cache or relay for contact in viewport
 	const setMetadata = useCallback((item: TContact) => {
-		if (item[0] && item[1]) {
-			if (item[1]?.picture) { return }
-			const p = ref?.current?.getOneProfile(item[0])
-			if (!p?.picture) { return }
-			// item is in viewport so set the img url
-			return setContacts(prev => prev.map(x => x[0] === item[0] && x?.[1]?.picture
-				? [x[0], { ...x[1], picture: p.picture }]
-				: x
-			))
-		}
+		if (item[0] && item[1]) { return }
 		const hex = item[0]
 		l({ itemInSetMetadata: item })
 		void ref?.current?.setupMetadataSub(hex)
@@ -346,7 +337,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 								keyExtractor={item => item[0]}
 								renderItem={({ item, index }) => (
 									<ContactPreview
-										contact={[item[0], { ...item[1], picture: '' }]}
+										contact={item}
 										handleContactPress={() => handleContactPress({ contact: item[1], npub: nip19.npubEncode(item[0]) })}
 										handleSend={() => {
 											void handleSend({

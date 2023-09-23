@@ -4,6 +4,7 @@ import { l } from '@src/logger'
 import { imgProxy } from '@src/nostr/consts'
 import { isStr } from '@src/util'
 import { highlight as hi } from '@styles'
+import { useEffect, useState } from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 
 interface IProfilePicProps {
@@ -15,18 +16,27 @@ interface IProfilePicProps {
 
 export default function ProfilePic({ uri, size, isUser, withPlusIcon }: IProfilePicProps) {
 	const { color, highlight } = useThemeContext()
+	const [isErr, setIsErr] = useState(false)
 	const defaultSize = isUser ? 60 : 40
 	const circleStyle = {
 		width: size || defaultSize,
 		height: size || defaultSize,
 		borderRadius: size ? size / 2 : defaultSize / 2
 	}
-
+	useEffect(() => {
+		if (!isStr(uri) || !uri?.length) { return }
+		void Image.prefetch(`${imgProxy(uri, circleStyle?.width ?? 40)}`)
+			.catch(e => l('img preload', uri, e))
+	}, [circleStyle?.width, uri])
 	return (
 		<>
-			{isStr(uri) && uri?.length ?
+			{isStr(uri) && uri?.length && !isErr ?
 				<Image
-					onError={(err => { l({ uri, err }) })}
+					defaultSource={{ uri: '../../../assets/user_icon.svg'}}
+					onError={(err => {
+						l({ uri, err })
+						setIsErr(true)
+					})}
 					style={[
 						styles.circle,
 						styles.img,
