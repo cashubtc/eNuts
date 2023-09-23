@@ -110,6 +110,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
 		setAlreadySeen(prev => {
 			for (let i = 0; i < viewableItems.length; i++) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				const { item }: { item: TContact } = viewableItems[i]
 				if (!prev.includes(item[0])) { void setMetadata(item) }
 			}
