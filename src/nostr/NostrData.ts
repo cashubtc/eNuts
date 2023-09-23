@@ -11,15 +11,15 @@ import { relay } from './class/Relay'
 import { defaultRelays, EventKind } from './consts'
 import { filterFollows, parseProfileContent, parseUserRelays } from './util'
 
-export interface IOnProfilesChangedHandler {
-	(profiles: { [k: string]: { profile: IProfileContent; createdAt: number } }): void
+export interface IOnProfileChangedHandler {
+	(profile: [string, IProfileContent]): void
 }
 export interface IOnContactsChangedHandler {
-	(contacts: { list: string[]; createdAt: number }): void
+	(contacts: string[]): void
 }
 
 export interface IOnUserMetadataChangedHandler {
-	(profile: { profile: IProfileContent; createdAt: number }): void
+	(profile: IProfileContent): void
 }
 export interface INostrDataUser {
 	hex: string;
@@ -33,7 +33,7 @@ export class NostrData {
 	get relays(): Readonly<{ read: string[]; write: string[]; createdAt: number }> { return this.#user.relays }
 	get user(): Readonly<INostrDataUser> { return this.#user }
 	#ttlCache = new TTLCache('__ttlCacheProfiles__', 1000 * 60 * 60 * 24)
-	#onProfilesChanged?: IOnProfilesChangedHandler
+	#onProfileChanged?: IOnProfileChangedHandler
 	#onContactsChanged?: IOnContactsChangedHandler
 	#onUserMetadataChanged?: IOnUserMetadataChangedHandler
 	#profiles: { [k: string]: { profile: IProfileContent; createdAt: number } } = {}
@@ -42,12 +42,12 @@ export class NostrData {
 	constructor(
 		userHex: string,
 		{
-			onProfilesChanged,
+			onProfileChanged,
 			onContactsChanged,
 			onUserMetadataChanged,
 			userRelays
 		}: {
-			onProfilesChanged?: IOnProfilesChangedHandler,
+				onProfileChanged?: IOnProfileChangedHandler,
 			onContactsChanged?: IOnContactsChangedHandler,
 			onUserMetadataChanged?: IOnUserMetadataChangedHandler,
 			userRelays?: string[]
@@ -59,7 +59,7 @@ export class NostrData {
 			contacts: { list: [], createdAt: 0 },
 		}
 		this.#userRelays = this.#userRelays ?? []
-		this.#onProfilesChanged = onProfilesChanged
+		this.#onProfileChanged = onProfileChanged
 		this.#onContactsChanged = onContactsChanged
 		this.#onUserMetadataChanged = onUserMetadataChanged
 		void this.initUserData(userRelays)
@@ -128,17 +128,17 @@ export class NostrData {
 			])
 		} else { void this.#ttlCache.set('userHex', this.#user.hex) }
 		const e = await this.#ttlCache.getObj<{ profile: IProfileContent; createdAt: number }>(this.#user.hex)
-		if (e) {
+		if (e?.profile) {
 			l('cache hit main user metadata in init')
 			this.#profiles[this.#user.hex] = e
 			// this.#onProfilesChanged?.(this.#profiles)
-			this.#onUserMetadataChanged?.(this.#profiles[this.#user.hex])
+			this.#onUserMetadataChanged?.(e.profile)
 		}
 		const cachedContacts = await this.#ttlCache.getObj<{ list: string[], createdAt: number }>('contacts')
 		if (cachedContacts?.list?.length) {
 			l('cache hit contacts', cachedContacts.list.length)
 			this.#user.contacts = cachedContacts
-			this.#onContactsChanged?.(this.#user.contacts)
+			this.#onContactsChanged?.(cachedContacts.list)
 			// void this.#loadCached()
 		}
 		const cachedRelays = await this.#ttlCache.getObj<string[]>('relays')
@@ -162,7 +162,7 @@ export class NostrData {
 						profile: parseProfileContent(e),
 						createdAt: e.created_at,
 					}
-					this.#onUserMetadataChanged?.(this.#profiles[this.#user.hex])
+					this.#onUserMetadataChanged?.(this.#profiles[this.#user.hex].profile)
 					void this.#ttlCache.setObj(this.#user.hex, this.#profiles[this.#user.hex])
 				}
 			}
@@ -179,7 +179,7 @@ export class NostrData {
 				if (e.created_at > this.#user.contacts.createdAt) {
 					this.#user.contacts.list = filterFollows(e.tags)
 					this.#user.contacts.createdAt = e.created_at
-					this.#onContactsChanged?.(this.#user.contacts)
+					this.#onContactsChanged?.(this.#user.contacts.list)
 					void this.#ttlCache.setObj('contacts', this.#user.contacts)
 					// void this.#loadCached()
 				}
@@ -192,9 +192,9 @@ export class NostrData {
 		if (e) {
 			l('cache hit')
 			this.#profiles[hex] = e
-			this.#onProfilesChanged?.(this.#profiles)
+			this.#onProfileChanged?.([hex, this.#profiles[hex].profile])
 			if (hex === this.#user.hex) {
-				this.#onUserMetadataChanged?.(this.#profiles[hex])
+				this.#onUserMetadataChanged?.(this.#profiles[hex].profile)
 			}
 			return
 		}
@@ -216,9 +216,9 @@ export class NostrData {
 					createdAt: e.created_at,
 				}
 				void this.#ttlCache.setObj(hex, this.#profiles[hex])
-				this.#onProfilesChanged?.(this.#profiles)
+				this.#onProfileChanged?.([hex, this.#profiles[hex].profile])
 				if (hex === this.#user.hex) {
-					this.#onUserMetadataChanged?.(this.#profiles[hex])
+					this.#onUserMetadataChanged?.(this.#profiles[hex].profile)
 				}
 			}
 		})

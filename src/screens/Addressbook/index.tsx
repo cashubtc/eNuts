@@ -36,7 +36,6 @@ import UserProfile from './UserProfile'
 
 
 
-
 /****************************************************************************/
 /* State issues will occur while debugging Android and IOS at the same time */
 /****************************************************************************/
@@ -68,22 +67,17 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const isSending = route.params?.isMelt || route.params?.isSendEcash
 
 
-	const merge = useCallback(
-		(current: TContact[], newItems: { [k: string]: { profile: IProfileContent, createdAt: number } }) =>
-			uniq([...current.map(x => x[0]), ...Object.keys(newItems)]).map<TContact>(x => ([x, newItems[x]?.profile])),
-		[]
-	)
 	const initNostr = useCallback((hex: string) => {
 		if (!hex) { return l('no hex') }
 		if (!ref?.current?.hex || hex !== ref.current.hex) {
 			ref.current = new NostrData(hex, {
-				onUserMetadataChanged: p => setUserProfile(p.profile),
-				onContactsChanged: hexArr => {
+				onUserMetadataChanged: p => setUserProfile(p),
+				onContactsChanged: hexArr =>
 					setContacts(prev => prev?.length
 						? prev
-						: hexArr.list.map(x => ([x, undefined])))
-				},
-				onProfilesChanged: profiles => setContacts(prev => merge(prev, profiles)),
+						: hexArr.map(x => ([x, undefined]))),
+				onProfileChanged: profile => setContacts(prev => prev
+					.map(x => x[0] === profile?.[0] ? profile : x)),
 				userRelays
 			})
 		}
