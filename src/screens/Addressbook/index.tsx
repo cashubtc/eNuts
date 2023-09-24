@@ -322,7 +322,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						]}>
 							<FlashList
 								data={contacts}
-								estimatedItemSize={300}
+								estimatedItemSize={70}
 								viewabilityConfig={{
 									minimumViewTime: 250,
 									itemVisiblePercentThreshold: 10,

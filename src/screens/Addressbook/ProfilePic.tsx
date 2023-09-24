@@ -67,8 +67,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		// marginVertical: 5,
-		marginRight: 20,
+		marginRight: 10,
 		zIndex: 2,
 	},
 	img: {
