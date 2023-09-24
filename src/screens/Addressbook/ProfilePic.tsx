@@ -12,9 +12,10 @@ interface IProfilePicProps {
 	size?: number
 	isUser?: boolean
 	withPlusIcon?: boolean
+	overlayColor?: string
 }
 
-export default function ProfilePic({ uri, size, isUser, withPlusIcon }: IProfilePicProps) {
+export default function ProfilePic({ uri, size, isUser, withPlusIcon, overlayColor }: IProfilePicProps) {
 	const { color, highlight } = useThemeContext()
 	const [isErr, setIsErr] = useState(false)
 	const defaultSize = isUser ? 60 : 40
@@ -32,7 +33,7 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon }: IProfile
 		<>
 			{isStr(uri) && uri?.length && !isErr ?
 				<Image
-					defaultSource={{ uri: '../../../assets/user_icon.svg'}}
+					defaultSource={{ uri: '../../../assets/user_icon.svg' }}
 					onError={(err => {
 						l({ uri, err })
 						setIsErr(true)
@@ -40,6 +41,7 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon }: IProfile
 					style={[
 						styles.circle,
 						styles.img,
+						{ overlayColor },
 						circleStyle
 					]}
 					source={{ uri: `${imgProxy(uri, circleStyle?.width ?? 40)}` }}
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginVertical: 5,
+		// marginVertical: 5,
 		marginRight: 20,
 		zIndex: 2,
 	},

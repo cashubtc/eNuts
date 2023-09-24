@@ -82,7 +82,13 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			<View style={{ zIndex: 5 }}>
 				<ProfileBanner uri={contact?.banner} isUser={isUser} />
 				<View style={styles.profilePicContainer}>
-					<ProfilePic uri={contact?.picture} size={100} isUser={isUser} />
+					<View style={{ width: 100, height: 100, borderRadius: 50, overflow: 'hidden' }}>
+						<ProfilePic
+							uri={contact?.picture}
+							size={100}
+							isUser={isUser}
+						/>
+					</View>
 					{!isUser &&
 						<TouchableOpacity
 							style={[styles.sendEcash, { backgroundColor: hi[highlight] }]}

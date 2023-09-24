@@ -32,7 +32,12 @@ export default function UserProfile({ handlePress }: IUserProfileProps) {
 			onPress={() => handlePress({ isUser: true })}
 		>
 			<View style={styles.picNameWrap}>
-				<ProfilePic uri={userProfile.picture} withPlusIcon={!pubKey.hex} isUser />
+				<ProfilePic
+					uri={userProfile.picture}
+					withPlusIcon={!pubKey.hex}
+					overlayColor={color.INPUT_BG}
+					isUser
+				/>
 				<View>
 					<Username
 						displayName={userProfile.displayName}
