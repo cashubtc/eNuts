@@ -62,7 +62,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const ref = useRef<NostrData>()
 	const isSending = route.params?.isMelt || route.params?.isSendEcash
-
+	
 	const initNostr = useCallback((hex: string) => {
 		if (!hex) { return l('no hex') }
 		if (!ref?.current?.hex || hex !== ref.current.hex) {
