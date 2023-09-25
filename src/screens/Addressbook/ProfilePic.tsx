@@ -1,11 +1,12 @@
 import { PlusIcon, UserIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
-import { l } from '@src/logger'
+// import { l } from '@src/logger'
 import { imgProxy } from '@src/nostr/consts'
 import { isStr } from '@src/util'
 import { highlight as hi } from '@styles'
-import { useEffect, useState } from 'react'
-import { Image, StyleSheet, View } from 'react-native'
+import { Image } from 'expo-image'
+import { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
 
 interface IProfilePicProps {
 	uri?: string
@@ -24,27 +25,29 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon, overlayCol
 		height: size || defaultSize,
 		borderRadius: size ? size / 2 : defaultSize / 2
 	}
-	useEffect(() => {
-		if (!isStr(uri) || !uri?.length) { return }
-		void Image.prefetch(`${imgProxy(uri, circleStyle?.width ?? 40)}`)
-			.catch(e => l('img preload', uri, e))
-	}, [circleStyle?.width, uri])
+	// useEffect(() => {
+	// 	if (!isStr(uri) || !uri?.length) { return }
+	// 	void Image.prefetch(`${imgProxy(uri, circleStyle?.width ?? 40)}`)
+	// 		.catch(e => l('img preload', uri, e))
+	// }, [circleStyle?.width, uri])
 	return (
 		<>
 			{isStr(uri) && uri?.length && !isErr ?
 				<Image
-					defaultSource={{ uri: '../../../assets/user_icon.svg' }}
-					onError={(err => {
-						l({ uri, err })
+					// https://docs.expo.dev/versions/latest/sdk/image/
+					onError={(_e => {
+						// l({ uri, err })
 						setIsErr(true)
 					})}
+					source={`${imgProxy(uri, circleStyle?.width ?? 40)}`}
+					cachePolicy='memory-disk'
+					transition={200}
 					style={[
 						styles.circle,
 						styles.img,
 						{ overlayColor },
 						circleStyle
 					]}
-					source={{ uri: `${imgProxy(uri, circleStyle?.width ?? 40)}` }}
 				/>
 				:
 				<View style={[

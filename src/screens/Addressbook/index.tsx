@@ -31,10 +31,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
 import ContactPreview from './ContactPreview'
-import UserProfile from './UserProfile'
-
-
-
+// import UserProfile from './UserProfile'
 
 /****************************************************************************/
 /* State issues will occur while debugging Android and IOS at the same time */
@@ -49,7 +46,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
 	const {
-		nutPub,
+		// nutPub,
 		setNutPub,
 		pubKey,
 		setPubKey,
@@ -65,7 +62,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const ref = useRef<NostrData>()
 	const isSending = route.params?.isMelt || route.params?.isSendEcash
-
 
 	const initNostr = useCallback((hex: string) => {
 		if (!hex) { return l('no hex') }
@@ -84,6 +80,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		stopLoading()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
 	// gets user data from cache or relay
 	const initUserData = useCallback((hex: string) => {
 		if (!hex || (userProfile && contacts.length)) {
@@ -312,7 +309,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				:
 				<>
 					{/* user own profile */}
-					{nutPub && userProfile && <UserProfile handlePress={handleContactPress} />}
+					{/* {nutPub && userProfile && <UserProfile handlePress={handleContactPress} />} */}
 					{/* user contacts */}
 					{contacts.length > 0 ?
 						<View style={[
@@ -433,7 +430,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 0,
 	},
 	contactSeparator: {
-		marginLeft: 60,
+		marginLeft: 80,
 		marginVertical: 10,
 		marginRight: 20,
 	},
