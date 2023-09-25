@@ -296,7 +296,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
 				withBackBtn={isSending}
-				handlePress={() => isSending ? navigation.goBack() : navigation.navigate('qr scan', {})}
+				nostrProfile={userProfile?.picture}
+				handlePress={() => isSending ? navigation.goBack() : navigation.navigate('Contact', {
+					contact: userProfile,
+					npub: pubKey.encoded,
+					isUser: true
+				})}
 			/>
 			{/* Header */}
 			<View style={styles.bookHeader}>
@@ -418,7 +423,7 @@ const styles = StyleSheet.create({
 		marginTop: 100,
 	},
 	subHeader: {
-		fontSize: 16,
+		fontSize: 14,
 		fontWeight: '500',
 	},
 	cancel: {
