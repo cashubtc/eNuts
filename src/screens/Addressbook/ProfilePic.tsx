@@ -8,6 +8,17 @@ import { Image } from 'expo-image'
 import { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
+export type TNostrImg = INostrImgBanner & INostrImgPicture & { url: string }
+interface INostrImgBanner {
+	hex?: string
+	kind?: 'banner'
+	width?: 600 | 1200
+}
+interface INostrImgPicture {
+	hex?: string
+	kind?: 'picture'
+	width?: 64 | 192
+}
 interface IProfilePicProps {
 	uri?: string
 	size?: number
@@ -25,11 +36,7 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon, overlayCol
 		height: size || defaultSize,
 		borderRadius: size ? size / 2 : defaultSize / 2
 	}
-	// useEffect(() => {
-	// 	if (!isStr(uri) || !uri?.length) { return }
-	// 	void Image.prefetch(`${imgProxy(uri, circleStyle?.width ?? 40)}`)
-	// 		.catch(e => l('img preload', uri, e))
-	// }, [circleStyle?.width, uri])
+
 	return (
 		<>
 			{isStr(uri) && uri?.length && !isErr ?
@@ -39,6 +46,7 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon, overlayCol
 						// l({ uri, err })
 						setIsErr(true)
 					})}
+					// TODO FIXME
 					source={`${imgProxy(uri, circleStyle?.width ?? 40)}`}
 					cachePolicy='memory-disk'
 					transition={200}

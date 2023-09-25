@@ -1,3 +1,4 @@
+
 /**
  * Default bootstrap relays
  */
@@ -68,5 +69,25 @@ export const enutsPubkey = 'npub1dx5q2el8nd4eh3eg9t2e25fd7zuqg7zxz6ldkc3uzgh66ss
 // export const defaultConnectTimeout = 2000
 
 
-export const imgProxy = (url: string, width = 40) =>
-	`https://cf-worker-images.enuts.workers.dev/?_=${encodeURIComponent(url)}&s=${width ?? 40}`
+const PREFIX = 'https://cf-worker-images.enuts.workers.dev'
+export function imgProxy(
+	hex: string,
+	url: string,
+	width: number,
+	kind: 'picture',
+	size: 64 | 192): string
+export function imgProxy(
+	hex: string,
+	url: string,
+	width: number,
+	kind: 'banner',
+	size: 600 | 1200): string
+export function imgProxy(
+	hex: string,
+	url: string,
+	width = 40,
+	kind: 'picture' | 'banner' = 'picture',
+	size: 64 | 192 | 600 | 1200 = 64
+): string {
+	return `${PREFIX}/hex/${hex}/${kind}/${size}?_=${encodeURIComponent(url)}&s=${width ?? 40}`
+}
