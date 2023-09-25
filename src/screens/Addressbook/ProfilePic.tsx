@@ -1,7 +1,6 @@
 import { PlusIcon, UserIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
 // import { l } from '@src/logger'
-import { imgProxy } from '@src/nostr/consts'
 import { isStr } from '@src/util'
 import { highlight as hi } from '@styles'
 import { Image } from 'expo-image'
@@ -47,7 +46,7 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon, overlayCol
 						setIsErr(true)
 					})}
 					// TODO FIXME
-					source={`${imgProxy(uri, circleStyle?.width ?? 40)}`}
+					// source={`${imgProxy(uri, circleStyle?.width ?? 40)}`}
 					cachePolicy='memory-disk'
 					transition={200}
 					style={[
