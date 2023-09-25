@@ -33,6 +33,7 @@ export default function UserProfile({ handlePress }: IUserProfileProps) {
 		>
 			<View style={styles.picNameWrap}>
 				<ProfilePic
+					hex={pubKey.hex}
 					uri={userProfile.picture}
 					withPlusIcon={!pubKey.hex}
 					overlayColor={color.INPUT_BG}

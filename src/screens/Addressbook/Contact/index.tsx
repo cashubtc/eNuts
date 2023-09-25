@@ -84,6 +84,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				<View style={styles.profilePicContainer}>
 					<View style={{ width: 100, height: 100, borderRadius: 50, overflow: 'hidden' }}>
 						<ProfilePic
+							hex={npub}
 							uri={contact?.picture}
 							size={100}
 							isUser={isUser}

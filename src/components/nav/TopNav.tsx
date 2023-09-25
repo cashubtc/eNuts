@@ -1,5 +1,6 @@
 import { LeftArrow, ScanQRIcon } from '@comps/Icons'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
+import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi } from '@styles'
@@ -18,6 +19,7 @@ interface TTopNavProps {
 export default function TopNav({ screenName, withBackBtn, nostrProfile, cancel, handlePress, txt }: TTopNavProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
+	const { pubKey } = useNostrContext()
 	return (
 		<View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>
 			{/* Placeholder */}
@@ -47,6 +49,7 @@ export default function TopNav({ screenName, withBackBtn, nostrProfile, cancel, 
 				}
 				{!withBackBtn && nostrProfile &&
 					<ProfilePic
+						hex={pubKey.hex}
 						uri={nostrProfile}
 						size={30}
 						overlayColor={color.INPUT_BG}

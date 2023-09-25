@@ -32,7 +32,7 @@ export default function Sender({ contact, navigation }: ISenderProps) {
 			disabled={!contact?.[1]}
 		>
 			<View style={styles.picNameWrap}>
-				<ProfilePic uri={contact?.[1]?.picture} />
+				<ProfilePic hex={contact?.[0] ||''} uri={contact?.[1]?.picture} />
 				{contact?.[1] ?
 					<View>
 						<Username
@@ -43,7 +43,7 @@ export default function Sender({ contact, navigation }: ISenderProps) {
 							npub={truncateNpub(nip19.npubEncode(contact[0]))}
 							fontSize={16}
 						/>
-						{contact[1].about?.length > 0 &&
+						{contact[1].about && contact[1].about.length > 0 &&
 							<Txt
 								txt={truncateNostrProfileInfo(contact[1].about)}
 								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}

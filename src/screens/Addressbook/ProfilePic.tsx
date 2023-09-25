@@ -1,5 +1,6 @@
 import { PlusIcon, UserIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
+import { imgProxy } from '@src/nostr/consts'
 // import { l } from '@src/logger'
 import { isStr } from '@src/util'
 import { highlight as hi } from '@styles'
@@ -7,16 +8,10 @@ import { Image } from 'expo-image'
 import { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-export type TNostrImg = INostrImgBanner & INostrImgPicture & { url: string }
-interface INostrImgBanner {
-	hex?: string
-	kind?: 'banner'
-	width?: 600 | 1200
-}
-interface INostrImgPicture {
-	hex?: string
-	kind?: 'picture'
-	width?: 64 | 192
+interface INostrImg {
+	hex: string
+	kind?: 'banner' | 'picture'
+	width?: 64 | 192 | 600 | 1200
 }
 interface IProfilePicProps {
 	uri?: string
@@ -26,7 +21,7 @@ interface IProfilePicProps {
 	overlayColor?: string
 }
 
-export default function ProfilePic({ uri, size, isUser, withPlusIcon, overlayColor }: IProfilePicProps) {
+export default function ProfilePic({ uri, size, isUser, withPlusIcon, overlayColor, hex}: IProfilePicProps & INostrImg) {
 	const { color, highlight } = useThemeContext()
 	const [isErr, setIsErr] = useState(false)
 	const defaultSize = isUser ? 60 : 40
@@ -46,7 +41,7 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon, overlayCol
 						setIsErr(true)
 					})}
 					// TODO FIXME
-					// source={`${imgProxy(uri, circleStyle?.width ?? 40)}`}
+					source={`${imgProxy(hex, uri, size ?? 40, 'picture',64)}`}
 					cachePolicy='memory-disk'
 					transition={200}
 					style={[
