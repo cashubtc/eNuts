@@ -1,4 +1,5 @@
 import { LeftArrow, ScanQRIcon } from '@comps/Icons'
+import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi } from '@styles'
@@ -8,12 +9,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 interface TTopNavProps {
 	screenName?: string
 	withBackBtn?: boolean
+	nostrProfile?: string
 	cancel?: boolean
 	handlePress?: () => void
 	txt?: string
 }
 
-export default function TopNav({ screenName, withBackBtn, cancel, handlePress, txt }: TTopNavProps) {
+export default function TopNav({ screenName, withBackBtn, nostrProfile, cancel, handlePress, txt }: TTopNavProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	return (
@@ -41,7 +43,15 @@ export default function TopNav({ screenName, withBackBtn, cancel, handlePress, t
 						{txt || t('cancel')}
 					</Text>
 					:
-					!withBackBtn && <ScanQRIcon color={color.TEXT} />
+					!withBackBtn && !nostrProfile && <ScanQRIcon color={color.TEXT} />
+				}
+				{!withBackBtn && nostrProfile &&
+					<ProfilePic
+						uri={nostrProfile}
+						size={30}
+						overlayColor={color.INPUT_BG}
+						isUser
+					/>
 				}
 			</TouchableOpacity>
 		</View>

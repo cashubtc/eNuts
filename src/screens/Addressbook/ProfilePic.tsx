@@ -52,14 +52,19 @@ export default function ProfilePic({ uri, size, isUser, withPlusIcon, overlayCol
 					style={[
 						styles.circle,
 						styles.img,
-						{ overlayColor },
+						{ overlayColor, marginRight: isUser ? 0 : 10 },
 						circleStyle
 					]}
 				/>
 				:
 				<View style={[
 					styles.circle,
-					{ borderColor: color.BORDER, backgroundColor: color.INPUT_BG, ...circleStyle }
+					{
+						borderColor: color.BORDER,
+						backgroundColor: color.INPUT_BG,
+						marginRight: 10,
+						...circleStyle
+					}
 				]}>
 					{withPlusIcon ?
 						<PlusIcon color={hi[highlight]} />
@@ -77,7 +82,6 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginRight: 10,
 		zIndex: 2,
 	},
 	img: {
