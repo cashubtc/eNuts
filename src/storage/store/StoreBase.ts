@@ -65,6 +65,26 @@ export abstract class StoreBase {
 		)
 		return result
 	}
+
+	async #selectWhereKeysInArr(
+		{ order = 'ASC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {},
+		arr: string[]
+
+	): Promise<IKeyValuePair<string>[]> {
+		if (!this._isReady) {
+			await this._createStore()
+			if (!this._isReady) { return [] }
+		}
+		const result = await this._db.execSelect<{ key: string, value: string }>(
+			`select key,value
+			from ${this._name}
+			where key in (${arr.map(x => `'${x}'`).join(',')})
+			${this.#getOrderByPart({ order, orderBy })}
+			${this.#getSelectSuffix({ start, count })}`,
+			[]
+		)
+		return result._array
+	}
 	#getSelectSuffix({ start = 0, count = -1 }: ISelectParams) {
 		let sqlSuffix = `LIMIT ${count}`
 		if (start > 0) { sqlSuffix += ` OFFSET ${start}` }
@@ -94,6 +114,14 @@ export abstract class StoreBase {
 			)
 			this._isReady = true
 		} catch (e) { l('[_createStore][Error]', e) }
+	}
+
+	protected async getByKeys(keys: string[]): Promise<IKeyValuePair<string>[] | null | undefined> {
+		if (!this._isReady) {
+			await this._createStore()
+			if (!this._isReady) { return null }
+		}
+		return this.#selectWhereKeysInArr({}, keys)
 	}
 	protected async get(key: string): Promise<string | null | undefined> {
 		if (!this._isReady) {
@@ -232,6 +260,7 @@ export abstract class StoreBase {
 	}
 	protected async clear(): Promise<boolean> {
 		const result = await this._db.execTx({ sql: `delete from ${this._name}`, args: [] })
+		// await this._db.delete()
 		return !!(result?.insertId || result?.rowsAffected)
 	}
 	protected close(): void { return this._db.close() }

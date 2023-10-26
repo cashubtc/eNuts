@@ -9,7 +9,6 @@ import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { TNostrReceivePageProps } from '@model/nav'
 import type { INostrDm, TContact } from '@model/nostr'
-import { relay } from '@nostr/class/Relay'
 import { EventKind } from '@nostr/consts'
 import { decrypt } from '@nostr/crypto'
 import { parseProfileContent } from '@nostr/util'
@@ -17,10 +16,11 @@ import Config from '@src/config'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { pool } from '@src/nostr/class/Pool'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
 import { getNostrDmUsers } from '@store/nostrDms'
-import { hasEventId, isCashuToken } from '@util'
+import { isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -41,14 +41,14 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	const setDmsCB = useCallback((newDms: INostrDm[]) => setDms(newDms), [])
 
 	// decrypt dm, check for uniq cashu token and set dms state
-	const handleDm = async (sk: string, e: NostrEvent) => {
+	const handleDm = (sk: string, e: NostrEvent) => {
 		if (!sk.length) {
 			l('can not handle dms, empy key!')
 			return
 		}
 		const tokenMinLength = 25
 		// decrypt content
-		const decrypted = await decrypt(sk, e.pubkey, e.content)
+		const decrypted = decrypt(sk, e.pubkey, e.content)
 		// remove newlines (can be attached to the cashu token) and create an array of words
 		const words = decrypted.replace(/\n/g, ' ').split(' ')
 		// check each word of content
@@ -58,10 +58,10 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 			// set dm state
 			if (isCashuToken(word)) {
 				// dont set state if already claimed OR same created_at OR same token
-				setDms(prev => prev.some(entry => hasEventId(claimedEvtIds, entry.id) || entry.created_at === e.created_at || entry.token === word) ?
-					[...prev]
-					:
-					[...prev, { created_at: e.created_at, sender: e.pubkey, msg: decrypted, token: word, id: e.id }]
+				setDms(prev =>
+					prev.some(entry => claimedEvtIds[entry.id] || entry.created_at === e.created_at || entry.token === word)
+						? prev
+						: [...prev, { created_at: e.created_at, sender: e.pubkey, msg: decrypted, token: word, id: e.id }]
 				)
 			}
 		}
@@ -79,21 +79,23 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 				return
 			}
 			const sk = await secureStore.get(SECRET)
-			const sub = relay.subscribePool({
-				relayUrls: userRelays,
-				// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
-				authors: conversationsPubKeys, // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
-				kinds: [EventKind.DirectMessage, EventKind.SetMetadata],
-				skipVerification: Config.skipVerification
+			const sub = pool.subscribePool({
+				filter: {
+					relayUrls: userRelays,
+					// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
+					authors: conversationsPubKeys, // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
+					kinds: [EventKind.DirectMessage, EventKind.Metadata],
+					skipVerification: Config.skipVerification
+				}
 			})
-			sub?.on('event', async (e: NostrEvent) => {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-				if (+e.kind === EventKind.SetMetadata) {
+			sub?.on('event', (e: NostrEvent) => {
+
+				if (+e.kind === EventKind.Metadata) {
 					setDmProfiles(prev => prev.some(x => x[0] === e.pubkey) ? prev : [...prev, [e.pubkey, parseProfileContent(e)]])
 				}
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+
 				if (+e.kind === EventKind.DirectMessage) {
-					await handleDm(sk || '', e)
+					handleDm(sk || '', e)
 				}
 			})
 			sub?.on('eose', () => {
@@ -107,7 +109,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	// handle cancel
 	useEffect(() => {
 		if (!isCancel) { return }
-		relay.closePoolConnection(userRelays)
+		pool.closePoolConnection(userRelays)
 		navigation.navigate('dashboard')
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isCancel])

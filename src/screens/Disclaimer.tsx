@@ -23,36 +23,38 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 			<ScrollView style={styles.container}>
 				<Txt
 					txt={t('disclaimerHint', { ns: NS.common })}
+					bold
 					styles={[styles.subheader]}
 				/>
-				<View style={[globals(color).wrapContainer, { paddingVertical: 20 }]}>
+				<View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
 					<TouchableOpacity
 						onPress={() => navigation.navigate('About settings')}
 						style={styles.shareFeedback}
 					>
-						<Txt txt={t('shareOrReport', { ns: NS.common })} styles={[{ fontSize: 18, fontWeight: '500' }]} />
+						<Txt txt={t('shareOrReport', { ns: NS.common })} bold styles={[{ fontSize: 18 }]} />
 						<ChevronRightIcon color={color.TEXT} />
 					</TouchableOpacity>
-					<Separator style={[styles.separator]} />
+				</View>
+				<View style={{ marginHorizontal: 20 }}>
 					{/* beta */}
-					<Txt txt={t('enutsDisclaimer')} styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('disclaimer')} />
+					<Txt txt={t('enutsDisclaimer')} bold styles={[styles.header, { color: color.TEXT }]} />
+					<Txt txt={t('disclaimer')} styles={[{ color: color.TEXT_SECONDARY }]} />
 					<Separator style={[styles.separator]} />
 					{/* enuts mint */}
-					<Txt txt={t('enutsMint')} styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('mintDisclaimer')} />
+					<Txt txt={t('enutsMint')} bold styles={[styles.header, { color: color.TEXT }]} />
+					<Txt txt={t('mintDisclaimer')} styles={[{ color: color.TEXT_SECONDARY }]} />
 					<Separator style={[styles.separator]} />
 					{/* custodial */}
-					<Txt txt={t('custodialRisk')} styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('custodialRiskContent')} />
+					<Txt txt={t('custodialRisk')} bold styles={[styles.header, { color: color.TEXT }]} />
+					<Txt txt={t('custodialRiskContent')} styles={[{ color: color.TEXT_SECONDARY }]} />
 					<Separator style={[styles.separator]} />
 					{/* loss */}
-					<Txt txt={t('lossOfTokens')} styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('lossContent')} />
+					<Txt txt={t('lossOfTokens')} bold styles={[styles.header, { color: color.TEXT }]} />
+					<Txt txt={t('lossContent')} styles={[{ color: color.TEXT_SECONDARY }]} />
 					<Separator style={[styles.separator]} />
 					{/* cashu */}
-					<Txt txt={t('cashuExperiment')} styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('cashuContent')} />
+					<Txt txt={t('cashuExperiment')} bold styles={[styles.header, { color: color.TEXT }]} />
+					<Txt txt={t('cashuContent')} styles={[{ color: color.TEXT_SECONDARY }]} />
 				</View>
 			</ScrollView>
 		</View>
@@ -65,12 +67,10 @@ const styles = StyleSheet.create({
 		marginBottom: isIOS ? 25 : 0,
 	},
 	header: {
-		fontWeight: '500',
 		fontSize: 18,
 		marginBottom: 10,
 	},
 	subheader: {
-		fontWeight: '500',
 		paddingHorizontal: 20,
 		marginBottom: 20,
 	},
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
 	shareFeedback: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'space-between'
+		justifyContent: 'space-between',
+		paddingBottom: 20
 	}
 })

@@ -1,7 +1,6 @@
-import { ChevronRightIcon } from '@comps/Icons'
+import { GithubIcon, ReadmeIcon, TelegramIcon } from '@comps/Icons'
 import LeaveAppModal from '@comps/LeaveAppModal'
 import Screen from '@comps/Screen'
-import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { appVersion } from '@consts/env'
 import type { TAboutSettingsPageProps } from '@model/nav'
@@ -10,7 +9,9 @@ import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
+
+import MenuItem from './MenuItem'
 
 export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -28,76 +29,29 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<View style={[globals(color).wrapContainer, styles.wrap]}>
-				<AboutRow
-					txt={t('readme')}
-					handlePress={() => handlePress('https://github.com/cashubtc/eNuts#readme')}
-					hasSeparator
-				/>
-				<AboutRow
-					txt={t('githubIssues')}
-					handlePress={() => handlePress('https://github.com/cashubtc/eNuts/issues/new/choose')}
-					hasSeparator
-				/>
-				{/* <AboutRow
-					txt={t('cashuRandD')}
-					handlePress={() => handlePress('https://t.me/CashuBTC')}
-					hasSeparator
-				/> */}
-				<AboutRow
-					txt={t('enutsRandD')}
-					handlePress={() => handlePress('https://t.me/eNutsWallet')}
-				/>
-			</View>
-			<Txt txt={appVersion} styles={[styles.version]} />
+			<ScrollView>
+				<View style={globals(color).wrapContainer}>
+					<MenuItem
+						txt={t('readme')}
+						icon={<ReadmeIcon color={color.TEXT} />}
+						onPress={() => handlePress('https://github.com/cashubtc/eNuts#readme')}
+						hasSeparator
+					/>
+					<MenuItem
+						txt={t('githubIssues')}
+						icon={<GithubIcon color={color.TEXT} />}
+						onPress={() => handlePress('https://github.com/cashubtc/eNuts/issues/new/choose')}
+						hasSeparator
+					/>
+					<MenuItem
+						txt={t('enutsRandD')}
+						icon={<TelegramIcon color={color.TEXT} />}
+						onPress={() => handlePress('https://t.me/eNutsWallet')}
+					/>
+				</View>
+				<Txt txt={appVersion} bold center />
+			</ScrollView>
 			<LeaveAppModal url={url} visible={visible} closeModal={closeModal} />
 		</Screen>
 	)
 }
-
-interface IAboutRowProps {
-	txt: string
-	handlePress: () => void
-	hasSeparator?: boolean
-}
-
-function AboutRow({ txt, handlePress, hasSeparator }: IAboutRowProps) {
-	const { color } = useThemeContext()
-	return (
-		<>
-			<TouchableOpacity
-				style={styles.aboutRow}
-				onPress={handlePress}
-			>
-				<Text style={[styles.aboutTxt, { color: color.TEXT }]}>
-					{txt}
-				</Text>
-				<ChevronRightIcon color={color.TEXT} />
-			</TouchableOpacity>
-			{hasSeparator && <Separator style={[{ marginVertical: 10 }]} />}
-		</>
-	)
-}
-
-const styles = StyleSheet.create({
-	wrap: {
-		paddingVertical: 10,
-		marginBottom: 20,
-	},
-	aboutRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 10,
-	},
-	aboutTxt: {
-		fontSize: 16,
-	},
-	version: {
-		fontWeight: '500',
-		textAlign: 'center',
-	},
-	cancel: {
-		marginTop: 25,
-	},
-})

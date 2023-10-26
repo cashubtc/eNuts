@@ -1,15 +1,15 @@
 import ActionButtons from '@comps/ActionButtons'
 import Button, { IconBtn } from '@comps/Button'
 import Empty from '@comps/Empty'
-import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, ZapIcon } from '@comps/Icons'
-import InputAndLabel from '@comps/InputAndLabel'
+import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, QRIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
+import TxtInput from '@comps/TxtInput'
 import { _testmintUrl } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
-import { QuestionModal } from '@modal/Question'
+import { BottomModal } from '@modal/Question'
 import type { IMintBalWithName, IMintUrl } from '@model'
 import type { TMintsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -19,7 +19,7 @@ import { NS } from '@src/i18n'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
-import { formatInt, formatMintUrl, getStrFromClipboard, isErr, isUrl } from '@util'
+import { formatInt, formatMintUrl, isErr, normalizeMintUrl, sortMintsByDefault } from '@util'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -53,11 +53,10 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
 
 	// adds a mint via input
-	const handleMintInput = async (clipboard?: string) => {
+	const handleMintInput = async () => {
 		// Allow user to submit URL without "https://" and add it ourself if not available
-		const submitting = clipboard || input
-		const submitted = submitting.startsWith('https://') ? submitting : `https://${submitting}`
-		if (!isUrl(submitted)) {
+		const submitted = normalizeMintUrl(input)
+		if (!submitted?.length) {
 			openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
 			return
 		}
@@ -79,22 +78,6 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		openTopUpModal()
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
-	}
-
-	// navigates to mint-management page if mint available in db or shows the trust modal
-	const handleMintEntry = (selectedMintEntry: IMintUrl, amount: number, remainingMints: IMintUrl[]) => {
-		// navigate to mint management page
-		if (isTrustedMint(selectedMintEntry.mintUrl)) {
-			navigation.navigate('mintmanagement', {
-				mint: selectedMintEntry,
-				amount,
-				remainingMints
-			})
-			return
-		}
-		// else: add default mint to users mints
-		setSelectedMint(selectedMintEntry)
-		setTrustModalOpen(true)
 	}
 
 	// trust modal asks user for confirmation on adding a default mint to its trusted list
@@ -119,16 +102,6 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	const handleMintsState = async () => {
 		const mintsBal = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mintsBal))
-	}
-
-	const handleInputLabelPress = async () => {
-		if (input.length) {
-			setInput('')
-			return
-		}
-		const clipboard = await getStrFromClipboard()
-		setInput(clipboard ?? '')
-		await handleMintInput(clipboard || '')
 	}
 
 	const handleInitialRender = async () => {
@@ -181,63 +154,62 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			{usertMints.length > 0 ?
 				<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
 					{/* Mints list where test mint is always visible */}
-					<ScrollView style={[globals(color).wrapContainer]}>
-						{usertMints
-							.sort((a, b) => {
-								if (a.mintUrl === defaultMint) { return -1 }
-								if (b.mintUrl === defaultMint) { return 1 }
-								return 0
-							})
-							.map((m, i) => (
-								<View key={m.mintUrl}>
-									<TouchableOpacity
-										style={styles.mintUrlWrap}
-										onPress={() => {
-											const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
-											handleMintEntry(m, m.amount, remainingMints)
-										}}
-									>
-										<View style={styles.mintNameWrap}>
-											<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-												{defaultMint === m.mintUrl &&
-													<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-												}
-												<Txt
-													txt={m.customName || formatMintUrl(m.mintUrl)}
-													styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0, fontWeight: '500' }]}
-												/>
+					<ScrollView style={globals(color).wrapContainer}>
+						{sortMintsByDefault(usertMints, defaultMint).map((m, i) => (
+							<View key={m.mintUrl}>
+								<TouchableOpacity
+									style={globals().wrapRow}
+									onPress={() => {
+										const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
+										navigation.navigate('mintmanagement', {
+											mint: m,
+											amount: m.amount,
+											remainingMints
+										})
+									}}
+								>
+									<View style={styles.mintNameWrap}>
+										<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+											{defaultMint === m.mintUrl &&
+												<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+											}
+											<Txt
+												txt={m.customName || formatMintUrl(m.mintUrl)}
+												bold
+												styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0 }]}
+											/>
+										</View>
+										{isTrustedMint(m.mintUrl) &&
+											<View style={styles.mintBal}>
+												{m.amount > 0 && <ZapIcon color={hi[highlight]} />}
+												<Text
+													style={{
+														color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY,
+														marginLeft: m.amount > 0 ? 5 : 0,
+														marginBottom: 5
+													}}
+												>
+													{m.amount > 0 ?
+														formatInt(m.amount, 'compact', 'en') + ' Satoshi'
+														:
+														t('emptyMint')
+													}
+												</Text>
 											</View>
-											{isTrustedMint(m.mintUrl) &&
-												<View style={styles.mintBal}>
-													{m.amount > 0 && <ZapIcon color={hi[highlight]} />}
-													<Text
-														style={{
-															color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY,
-															marginLeft: m.amount > 0 ? 5 : 0,
-															marginBottom: 5
-														}}
-													>
-														{m.amount > 0 ?
-															formatInt(m.amount, 'compact', 'en') + ' Satoshi'
-															:
-															t('emptyMint')
-														}
-													</Text>
-												</View>
-											}
-										</View>
-										{/* Add mint icon or show balance */}
-										<View>
-											{isTrustedMint(m.mintUrl) ?
-												<ChevronRightIcon color={color.TEXT} />
-												:
-												<PlusIcon color={color.TEXT} />
-											}
-										</View>
-									</TouchableOpacity>
-									{i < usertMints.length - 1 && <Separator />}
-								</View>
-							))}
+										}
+									</View>
+									{/* Add mint icon or show balance */}
+									<View>
+										{isTrustedMint(m.mintUrl) ?
+											<ChevronRightIcon color={color.TEXT} />
+											:
+											<PlusIcon color={color.TEXT} />
+										}
+									</View>
+								</TouchableOpacity>
+								{i < usertMints.length - 1 && <Separator />}
+							</View>
+						))}
 					</ScrollView>
 				</View>
 				:
@@ -257,18 +229,33 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				<Text style={globals(color).modalHeader}>
 					{t('addNewMint', { ns: NS.mints })}
 				</Text>
-				<InputAndLabel
-					keyboardType='url'
-					placeholder='Mint URL'
-					setInput={text => setInput(text)}
-					handleInput={() => void handleMintInput()}
-					value={input}
-					handleLabel={() => void handleInputLabelPress()}
-					isEmptyInput={input.length < 1}
-				/>
+				<View style={styles.wrap}>
+					<TxtInput
+						keyboardType='url'
+						placeholder='Mint URL'
+						value={input}
+						onChangeText={setInput}
+						onSubmitEditing={() => void handleMintInput()}
+						style={[{ paddingRight: 60 }]}
+					/>
+					{/* scan icon */}
+					<TouchableOpacity
+						style={[styles.inputQR, { backgroundColor: color.INPUT_BG }]}
+						onPress={() => {
+							setNewMintModal(false)
+							const t = setTimeout(() => {
+								navigation.navigate('qr scan', {})
+								clearTimeout(t)
+							}, 200)
+						}}
+					>
+						<QRIcon color={hi[highlight]} />
+					</TouchableOpacity>
+				</View>
 				<Button
 					txt={t('addMintBtn', { ns: NS.mints })}
 					onPress={() => void handleMintInput()}
+					disabled={!input.length}
 				/>
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
 					<Txt txt={t('cancel')} styles={[globals(color, highlight).pressTxt]} />
@@ -310,7 +297,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					}}
 				/>
 			</MyModal>
-			<QuestionModal
+			<BottomModal
 				header={selectedMint?.mintUrl === _testmintUrl ?
 					t('testMintHint', { ns: NS.mints })
 					:
@@ -345,6 +332,16 @@ const styles = StyleSheet.create({
 		width: '100%',
 		marginTop: 110,
 	},
+	wrap: {
+		position: 'relative',
+		width: '100%'
+	},
+	inputQR: {
+		position: 'absolute',
+		right: 15,
+		top: 22,
+		paddingHorizontal: 10
+	},
 	newMint: {
 		position: 'absolute',
 		right: 20,
@@ -353,13 +350,6 @@ const styles = StyleSheet.create({
 	mintNameWrap: {
 		flexDirection: 'column',
 		alignItems: 'flex-start'
-	},
-	mintUrlWrap: {
-		flex: 1,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		paddingVertical: 20,
 	},
 	mintBal: {
 		flexDirection: 'row',

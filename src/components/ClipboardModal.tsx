@@ -4,9 +4,9 @@ import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { formatInt, formatMintUrl } from '@util'
 import { useTranslation } from 'react-i18next'
-import { Text, View } from 'react-native'
+import { Text } from 'react-native'
 
-import Button from './Button'
+import Button, { TxtButton } from './Button'
 import MyModal from './modal'
 import Txt from './Txt'
 
@@ -16,7 +16,7 @@ export default function ClipboardModal() {
 	const { tokenInfo, claimOpen, closeModal, handleRedeem } = useFocusClaimContext()
 	return (
 		tokenInfo &&
-		<MyModal type='question' visible={claimOpen} close={closeModal}>
+		<MyModal type='bottom' animation='slide' visible={claimOpen} close={closeModal}>
 			<Text style={globals(color, highlight).modalHeader}>
 				{t('foundCashuClipboard')}
 			</Text>
@@ -24,10 +24,7 @@ export default function ClipboardModal() {
 				{tokenInfo.decoded.memo && tokenInfo.decoded.memo.length > 0 &&
 					<>{t('memo', { ns: NS.history })}: {tokenInfo.decoded.memo}{'\n'}</>
 				}
-				<Txt
-					txt={formatInt(tokenInfo.value)}
-					styles={[{ fontWeight: '500' }]}
-				/>
+				<Txt txt={formatInt(tokenInfo.value)} bold />
 				{' '}Satoshi {t('fromMint')}:{'\n'}
 				{tokenInfo.mints.map(m => formatMintUrl(m)).join(', ')}
 			</Text>
@@ -35,10 +32,8 @@ export default function ClipboardModal() {
 				txt={t('accept')}
 				onPress={() => void handleRedeem()}
 			/>
-			<View style={{ marginVertical: 10 }} />
-			<Button
+			<TxtButton
 				txt={t('cancel')}
-				outlined
 				onPress={closeModal}
 			/>
 		</MyModal>

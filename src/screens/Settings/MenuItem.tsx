@@ -1,52 +1,46 @@
 import { ChevronRightIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import Txt from '@comps/Txt'
+import { useThemeContext } from '@src/context/Theme'
+import { globals } from '@styles'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 interface IMenuItemProps {
 	txt: string
-	txtColor: string
 	onPress: () => void
 	icon: React.ReactElement
 	hasSeparator?: boolean
 	hasChevron?: boolean
 }
 
-
-export default function SettingsMenuItem({ txt, txtColor, icon, onPress, hasSeparator, hasChevron }: IMenuItemProps) {
+export default function SettingsMenuItem({ txt, icon, onPress, hasSeparator, hasChevron }: IMenuItemProps) {
+	const { color } = useThemeContext()
 	return (
 		<>
 			<TouchableOpacity
-				style={styles.settingsRow}
+				style={globals().wrapRow}
 				onPress={onPress}
 			>
 				<View style={styles.setting}>
 					{icon}
-					<Text style={[styles.settingTxt, { color: txtColor }]}>
-						{txt}
-					</Text>
+					<Txt
+						txt={txt}
+						styles={[styles.settingTxt]}
+					/>
 				</View>
-				{hasChevron &&
-					<ChevronRightIcon color={txtColor} />
-				}
+				{hasChevron && <ChevronRightIcon color={color.TEXT} />}
 			</TouchableOpacity>
-			{hasSeparator && <Separator style={[{ marginVertical: 10 }]} />}
+			{hasSeparator && <Separator />}
 		</>
 	)
 }
 
 const styles = StyleSheet.create({
-	settingsRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 10,
-	},
 	setting: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	settingTxt: {
 		marginLeft: 15,
-		fontSize: 16,
 	},
 })

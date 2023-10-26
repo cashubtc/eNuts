@@ -1,4 +1,5 @@
 import { isIOS } from '@consts'
+import { useKeyboardCtx } from '@src/context/Keyboard'
 import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi, HighlightKey, mainColors, Theme } from '@styles'
 import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
@@ -25,6 +26,7 @@ export default function MyModal({
 }: IMyModalProps) {
 
 	const { color, highlight } = useThemeContext()
+	const { isKeyboardOpen} = useKeyboardCtx()
 	const insets = useSafeAreaInsets()
 
 	const getCorrectStyle = () => {
@@ -39,7 +41,7 @@ export default function MyModal({
 			return {
 				...styles(color, highlight).common,
 				...styles(color, highlight).modalView,
-				paddingBottom: 20 + insets.bottom
+				paddingBottom: 20 + (isKeyboardOpen ? 0 : insets.bottom)
 			}
 		}
 		if (type === 'question') { return { ...styles(color, highlight).common, ...styles(color, highlight).centeredModalView } }

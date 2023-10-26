@@ -46,7 +46,7 @@ export class Db {
 	}
 	public static async reset(db: Db, newDB: WebSQLDatabase) {
 		// eslint-disable-next-line @typescript-eslint/await-thenable
-		await db.close()
+		db.close()
 		await sleep(1000)
 		db.db = newDB
 	}
@@ -69,7 +69,26 @@ export class Db {
 		}
 	}
 	public close() { return Db.close(this.db) }
-
+	public static async delete(db: WebSQLDatabase) {
+		Db.close(db)
+		await sleep(1000)
+		if (typeof db?.delete === 'function') {
+			db.delete()
+			return
+		}
+		if (typeof db?.deleteAsync === 'function') {
+			await db.deleteAsync()
+			return
+		}
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+		if (typeof (db as any)?._db?._db?.delete === 'function') {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+			(db as any)._db._db.delete()
+		}
+	}
+	public delete() {
+		return Db.delete(this.db)
+	}
 	public static execSync<T>(
 		db: WebSQLDatabase,
 		cmd: Query,

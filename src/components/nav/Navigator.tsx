@@ -21,6 +21,7 @@ import InvoiceScreen from '@screens/Payment/Receive/Invoice'
 import NostrDMScreen from '@screens/Payment/Receive/nostrDM'
 import SelectAmountScreen from '@screens/Payment/SelectAmount'
 import SelectMintScreen from '@screens/Payment/SelectMint'
+import SelectNostrAmountScreen from '@screens/Payment/SelectNostrAmount'
 import CoinSelectionScreen from '@screens/Payment/Send/CoinSelection'
 import EncodedTokenPage from '@screens/Payment/Send/EncodedToken'
 import InputfieldScreen from '@screens/Payment/Send/Inputfield'
@@ -29,6 +30,10 @@ import SelectMintToSwapToScreen from '@screens/Payment/Send/SelectMintToSwapTo'
 import SelectTargetScreen from '@screens/Payment/Send/SelectTarget'
 import SuccessPage from '@screens/Payment/Success'
 import QRScanPage from '@screens/QRScan'
+import MintConfirmScreen from '@screens/QRScan/MintConfirm'
+import NpubConfirmScreen from '@screens/QRScan/NpubConfirm'
+import QRProcessingScreen from '@screens/QRScan/QRProcessing'
+import ScanSuccessScreen from '@screens/QRScan/ScanSuccess'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
 import BackupPage from '@screens/Settings/Backup'
@@ -36,6 +41,7 @@ import GeneralSettings from '@screens/Settings/General'
 import AdvancedFunctionScreen from '@screens/Settings/General/Advanced'
 import DisplaySettings from '@screens/Settings/General/Display'
 import LanguageSettings from '@screens/Settings/General/Language'
+import NostrSettings from '@screens/Settings/Nostr'
 import PrivacySettings from '@screens/Settings/Privacy'
 import SecuritySettings from '@screens/Settings/Security'
 import { useThemeContext } from '@src/context/Theme'
@@ -93,6 +99,7 @@ export default function Navigator({
 				<Stack.Screen name='selectMintToSwapTo' component={SelectMintToSwapToScreen} />
 				<Stack.Screen name='meltInputfield' component={InputfieldScreen} />
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
+				<Stack.Screen name='selectNostrAmount' component={SelectNostrAmountScreen} />
 				<Stack.Screen name='memoScreen' component={MemoScreen} />
 				<Stack.Screen name='coinSelection' component={CoinSelectionScreen} />
 				<Stack.Screen name='nostrReceive' component={NostrDMScreen} />
@@ -101,6 +108,14 @@ export default function Navigator({
 					component={ProcessingScreen}
 					options={{ gestureEnabled: false }}
 				/>
+				<Stack.Screen
+					name='qr processing'
+					component={QRProcessingScreen}
+					options={{ gestureEnabled: false }}
+				/>
+				<Stack.Screen name='mint confirm' component={MintConfirmScreen} />
+				<Stack.Screen name='scan success' component={ScanSuccessScreen} />
+				<Stack.Screen name='npub confirm' component={NpubConfirmScreen} />
 				<Stack.Screen name='processingError' component={ProcessingErrorScreen} />
 				<Stack.Screen name='mintInvoice' component={InvoiceScreen} />
 				<Stack.Screen
@@ -158,6 +173,7 @@ export default function Navigator({
 				<Stack.Screen name='Display settings' component={DisplaySettings} />
 				<Stack.Screen name='Security settings' component={SecuritySettings} />
 				<Stack.Screen name='Privacy settings' component={PrivacySettings} />
+				<Stack.Screen name='Nostr settings' component={NostrSettings} />
 				<Stack.Screen name='Language settings' component={LanguageSettings} />
 				<Stack.Screen name='Advanced settings' component={AdvancedFunctionScreen} />
 				<Stack.Screen name='About settings' component={AboutSettings} />

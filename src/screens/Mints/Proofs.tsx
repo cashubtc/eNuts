@@ -45,22 +45,21 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 				{proofs.length > 0 &&
 					<View
 						style={[
-							globals(color).wrapContainer,
-							{
-								flex: 1,
-								paddingHorizontal: 0,
-								height: Math.floor(proofs.length * (isIOS ? 51 : 56)),
-							}
+							globals(color).scrollContainer,
+							{ height: Math.floor(proofs.length * (isIOS ? 62 : 70)) }
 						]}
 					>
 						<FlashList
 							data={proofs}
-							estimatedItemSize={300}
-							contentContainerStyle={{ paddingHorizontal: 20 }}
+							estimatedItemSize={80}
+							keyExtractor={item => item.secret}
 							renderItem={data => (
-								<ProofRow key={data.item.secret} proof={data.item} isLatestKeysetId={data.item.id === mintKeysetId} />
+								<ProofRow
+									proof={data.item}
+									isLatestKeysetId={data.item.id === mintKeysetId}
+								/>
 							)}
-							ItemSeparatorComponent={() => <Separator />}
+							ItemSeparatorComponent={() => <Separator noMargin />}
 						/>
 					</View>
 				}

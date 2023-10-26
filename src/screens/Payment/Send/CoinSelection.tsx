@@ -1,21 +1,19 @@
-import Button from '@comps/Button'
 import Separator from '@comps/Separator'
+import SwipeButton from '@comps/SwipeButton'
+import Toggle from '@comps/Toggle'
 import Txt from '@comps/Txt'
 import { getProofsByMintUrl } from '@db'
 import type { IProofSelection } from '@model'
 import type { TCoinSelectionPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { truncateNpub } from '@nostr/util'
+import { isNpub, npubEncode, truncateNpub, truncateStr } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { highlight as hi } from '@styles/colors'
-import { formatInt, formatMintUrl, getSelectedAmount, isLnurl } from '@util'
-import { nip19 } from 'nostr-tools'
+import { formatInt, formatMintUrl, getSelectedAmount, isLnurl, isNum } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Switch, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { ScrollView, StyleSheet, View } from 'react-native'
 
 import { CoinSelectionModal, CoinSelectionResume, OverviewRow } from './ProofList'
 
@@ -31,11 +29,11 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		isSendEcash,
 		nostr,
 		isSwap,
-		targetMint
+		targetMint,
+		scanned
 	} = route.params
-	const insets = useSafeAreaInsets()
 	const { t } = useTranslation([NS.common])
-	const { color, highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	const [isEnabled, setIsEnabled] = useState(false)
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
@@ -55,9 +53,10 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 
 	const getRecipient = () => {
 		if (recipient) {
-			return recipient.length > 16 && !isLnurl(recipient) ? recipient.slice(0, 16) + '...' : recipient
+			return !isLnurl(recipient) ? truncateStr(recipient, 16) : recipient
 		}
-		return nostr && nostr.receiverName ? nostr.receiverName : truncateNpub(nip19.npubEncode(nostr?.receiverNpub || ''))
+		const npub = npubEncode(nostr?.receiverHex ?? '')
+		return nostr && nostr.receiverName ? nostr.receiverName : isNpub(npub) ? truncateNpub(npub) : t('n/a')
 	}
 
 	const submitPaymentReq = () => {
@@ -89,10 +88,13 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			<TopNav
 				screenName={t('paymentOverview', { ns: NS.mints })}
 				withBackBtn
-				handlePress={() => navigation.goBack()}
+				handlePress={() => {
+					if (scanned) { return navigation.navigate('qr scan', {}) }
+					navigation.goBack()
+				}}
 			/>
 			<ScrollView>
-				<View style={[globals(color).wrapContainer, styles.wrap]}>
+				<View style={globals(color).wrapContainer}>
 					<OverviewRow txt1={t('paymentType')} txt2={t(getPaymentType())} />
 					<OverviewRow txt1={t('mint')} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
 					{(recipient || nostr) &&
@@ -104,18 +106,18 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					{isSwap && targetMint &&
 						<OverviewRow txt1={t('recipient')} txt2={targetMint.customName || formatMintUrl(targetMint.mintUrl)} />
 					}
-					<OverviewRow txt1={t('amount')} txt2={`${formatInt(amount)} Satoshi`} />
-					{estFee > 0 &&
-						<OverviewRow txt1={t('estimatedFees')} txt2={`${estFee} Satoshi`} />
+					<OverviewRow txt1={t('amount')} txt2={`${formatInt(amount)} Sat`} />
+					{isNum(estFee) && !nostr && !isSendEcash &&
+						<OverviewRow txt1={t('estimatedFees')} txt2={`${estFee} Sat`} />
 					}
 					<OverviewRow
 						txt1={t('balanceAfterTX')}
-						txt2={estFee > 0 ? `${formatInt(balance - amount - estFee)} ${t('to')} ${formatInt(balance - amount)} Satoshi` : `${formatInt(balance - amount)} Satoshi`}
+						txt2={estFee > 0 ? `${formatInt(balance - amount - estFee)} ${t('to')} ${formatInt(balance - amount)} Sat` : `${formatInt(balance - amount)} Sat`}
 					/>
 					{memo && memo.length > 0 &&
 						<OverviewRow txt1={t('memo', { ns: NS.history })} txt2={memo} />
 					}
-					<View style={styles.csRow}>
+					<View style={globals().wrapRow}>
 						<View>
 							<Txt
 								txt={t('coinSelection')}
@@ -126,16 +128,11 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 								styles={[styles.coinSelectionHint, { color: color.TEXT_SECONDARY }]}
 							/>
 						</View>
-						<Switch
-							trackColor={{ false: color.BORDER, true: hi[highlight] }}
-							thumbColor={color.TEXT}
-							onValueChange={toggleSwitch}
-							value={isEnabled}
-						/>
+						<Toggle value={isEnabled} onChange={toggleSwitch} />
 					</View>
 					{isEnabled && proofs.some(p => p.selected) &&
 						<>
-							<Separator style={[styles.separator]} />
+							<Separator />
 							<CoinSelectionResume
 								withSeparator
 								lnAmount={amount + estFee}
@@ -145,12 +142,10 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					}
 				</View>
 			</ScrollView>
-			<View style={{ padding: 20, paddingBottom: insets.bottom + 20 }}>
-				<Button
-					txt={t(getBtnTxt())}
-					onPress={submitPaymentReq}
-				/>
-			</View>
+			<SwipeButton
+				txt={t(getBtnTxt())}
+				onToggle={submitPaymentReq}
+			/>
 			{/* coin selection page */}
 			{isEnabled &&
 				<CoinSelectionModal
@@ -170,20 +165,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 	},
-	wrap: {
-		padding: 20,
-	},
-	csRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		width: '100%',
-	},
 	coinSelectionHint: {
 		fontSize: 12,
 		maxWidth: '88%',
-	},
-	separator: {
-		marginVertical: 20,
 	},
 })

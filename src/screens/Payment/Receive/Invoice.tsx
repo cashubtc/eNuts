@@ -1,12 +1,12 @@
 import Button, { TxtButton } from '@comps/Button'
-import useCopy from '@comps/hooks/Copy'
-import { CheckmarkIcon, CopyIcon, ShareIcon, WalletIcon } from '@comps/Icons'
+import { ShareIcon, WalletIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { _testmintUrl } from '@src/consts'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -16,9 +16,9 @@ import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
 import { formatMintUrl, formatSeconds, isErr, openUrl, share } from '@util'
 import { requestToken } from '@wallet'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
@@ -26,11 +26,17 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const { openPromptAutoClose } = usePromptContext()
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation([NS.common])
-	const { color, highlight, theme } = useThemeContext()
+	const { color, highlight } = useThemeContext()
+	const intervalRef = useRef<NodeJS.Timeout | null>(null)
 	const [expire, setExpire] = useState(expiry)
 	const [expiryTime,] = useState(expire * 1000 + Date.now())
 	const [paid, setPaid] = useState('')
-	const { copied, copy } = useCopy()
+
+	const clearInvoiceInterval = () => {
+		if (intervalRef.current) {
+			clearInterval(intervalRef.current)
+		}
+	}
 
 	const handlePayment = async (isCancelling?: boolean) => {
 		const previousBalance = await getBalance()
@@ -46,14 +52,18 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					value: paymentRequest,
 					mints: [mintUrl],
 				})
-				setPaid('paid')
+				clearInvoiceInterval()
 				navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
 			}
 		} catch (e) {
-			l(e)
-			// TODO update this check
-			if (isErr(e) && e.message === 'Tokens already issued for this invoice.') {
-				setPaid('paid')
+			if (isErr(e) && e.message === 'tokens already issued for this invoice.') {
+				await addToHistory({
+					amount,
+					type: 2,
+					value: paymentRequest,
+					mints: [mintUrl],
+				})
+				clearInvoiceInterval
 				navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
 				return
 			}
@@ -79,14 +89,10 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 
 	// auto check payment in intervals
 	useEffect(() => {
-		const interval = setInterval(() => {
-			if (paid === 'paid') {
-				clearInterval(interval)
-				return
-			}
+		intervalRef.current = setInterval(() => {
 			void handlePayment()
 		}, 3000)
-		return () => clearInterval(interval)
+		return () => clearInvoiceInterval()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -97,36 +103,24 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				txt={t('backToDashboard')}
 				handlePress={() => void handlePayment(true)}
 			/>
-			<View style={styles.invoiceWrap}>
-				<View style={theme === 'Dark' ? styles.qrCodeWrap : undefined}>
-					<QR
-						size={275}
-						value={paymentRequest}
-						onError={() => l('Error while generating the LN QR code')}
-					/>
-				</View>
-				<TouchableOpacity
-					onPress={() => void copy(paymentRequest)}
-					style={styles.copyWrap}
-				>
-					{copied ?
-						<CheckmarkIcon color={mainColors.VALID} />
-						:
-						<CopyIcon color={color.TEXT} />
-					}
-					<Text style={[styles.invoiceStr, { color: color.TEXT }]}>
-						{paymentRequest.substring(0, 30) + '...' || t('smthWrong')}
-					</Text>
-				</TouchableOpacity>
-			</View>
+			<QR
+				size={300}
+				value={paymentRequest}
+				onError={() => l('Error while generating the LN QR code')}
+				isInvoice
+			/>
 			<View>
 				<Text style={[styles.lnExpiry, { color: expire < 1 ? mainColors.ERROR : hi[highlight], fontSize: 28 }]}>
 					{expire > 0 ?
 						formatSeconds(expire)
 						:
-						t('invoiceExpired') + '!'
+						mintUrl === _testmintUrl ?
+							t('processTestPay')
+							:
+							t('invoiceExpired') + '!'
 					}
 				</Text>
+				{mintUrl === _testmintUrl && <View style={{ marginTop: 20 }}><Loading /></View>}
 				{expire > 0 &&
 					<View style={styles.awaitingWrap}>
 						<Txt txt={t('paymentPending') + '...'} styles={[{ fontWeight: '500', marginRight: 10 }]} />
@@ -146,15 +140,17 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					/>
 					<TxtButton
 						txt={t('shareInvoice')}
-						icon={<ShareIcon width={24} height={24} color={hi[highlight]} />}
+						icon={<ShareIcon width={18} height={18} color={hi[highlight]} />}
 						onPress={() => void share(paymentRequest)}
 					/>
 				</View>
 				:
-				<Button
-					txt={t('backToDashboard')}
-					onPress={() => navigation.navigate('dashboard')}
-				/>
+				mintUrl !== _testmintUrl ?
+					<Button
+						txt={t('backToDashboard')}
+						onPress={() => navigation.navigate('dashboard')}
+					/>
+					: null
 			}
 		</View>
 	)
@@ -169,10 +165,6 @@ const styles = StyleSheet.create({
 	},
 	invoiceWrap: {
 		alignItems: 'center',
-	},
-	qrCodeWrap: {
-		borderWidth: 5,
-		borderColor: mainColors.WHITE
 	},
 	copyWrap: {
 		flexDirection: 'row',

@@ -2,12 +2,14 @@ import { ChevronRightIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { RootStackParamList } from '@model/nav'
 import type { TContact } from '@model/nostr'
-import { truncateNostrProfileInfo, truncateNpub } from '@nostr/util'
+import { truncateNpub,truncateStr } from '@nostr/util'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import Username from '@screens/Addressbook/Username'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { nip19 } from 'nostr-tools'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 interface ISenderProps {
@@ -16,12 +18,13 @@ interface ISenderProps {
 }
 
 export default function Sender({ contact, navigation }: ISenderProps) {
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 
 	const handleContactPress = () => {
 		navigation.navigate('Contact', {
 			contact: contact?.[1],
-			npub: contact?.[0] || ''
+			hex: contact?.[0] || ''
 		})
 	}
 
@@ -32,26 +35,25 @@ export default function Sender({ contact, navigation }: ISenderProps) {
 			disabled={!contact?.[1]}
 		>
 			<View style={styles.picNameWrap}>
-				<ProfilePic uri={contact?.[1]?.picture} />
+				<ProfilePic
+					hex={contact?.[0] || ''}
+					uri={contact?.[1]?.picture}
+				/>
 				{contact?.[1] ?
 					<View>
-						<Username
-							displayName={contact[1].displayName}
-							display_name={contact[1].display_name}
-							username={contact[1].username}
-							name={contact[1].name}
-							npub={truncateNpub(nip19.npubEncode(contact[0]))}
-							fontSize={16}
-						/>
-						{contact[1].about?.length > 0 &&
+						<Username contact={contact} fontSize={16} />
+						{contact[1].about && contact[1].about.length > 0 &&
 							<Txt
-								txt={truncateNostrProfileInfo(contact[1].about)}
+								txt={truncateStr(contact[1].about)}
 								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}
 							/>
 						}
 					</View>
 					:
-					<Txt txt={truncateNpub(nip19.npubEncode(contact?.[0] || ''))} styles={[{ fontWeight: '500' }]} />
+					<Txt
+						txt={contact && contact[0].length ? truncateNpub(nip19.npubEncode(contact[0])) : t('invalidPubKey')}
+						styles={[{ fontWeight: '500' }]}
+					/>
 				}
 			</View>
 			{contact?.[1] &&

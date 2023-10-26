@@ -11,10 +11,10 @@ import { FlashList } from '@shopify/flash-list'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { globals, mainColors } from '@styles'
+import { globals } from '@styles'
 import { formatInt, getSelectedAmount } from '@util'
 import { getMintCurrentKeySetId, } from '@wallet'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -36,24 +36,30 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 	const [visible, setVisible] = useState(true)
 	const [mintKeysetId, setMintKeysetId] = useState('')
 	const { loading, startLoading, stopLoading } = useLoading()
+
 	const cancelCoinSelection = () => {
 		setVisible(false)
 		disableCS()
 	}
-	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
-	useEffect(() => {
+
+	const handleKeySetId = useCallback(async () => {
 		if (!mint?.mintUrl) { return }
-		void (async () => {
-			startLoading()
-			try {
-				setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
-			} catch (e) {
-				openPromptAutoClose({ msg: 'Can not highlight the latest keyset IDs. Bad mint response.' })
-			}
-			stopLoading()
-		})()
+		startLoading()
+		try {
+			setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
+		} catch (e) {
+			openPromptAutoClose({ msg: 'Can not highlight the latest keyset IDs. Bad mint response.' })
+		}
+		stopLoading()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [mint?.mintUrl])
+
+	// get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
+	useEffect(() => {
+		void handleKeySetId()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [mint?.mintUrl])
+
 	return (
 		<MyModal type='invoiceAmount' animation='slide' visible={visible} close={cancelCoinSelection} hasNoPadding>
 			<SafeAreaView style={{ flex: 1, width: '100%' }}>
@@ -77,25 +83,20 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 					{!loading &&
 						<View
 							style={[
-								globals(color).wrapContainer,
+								globals(color).scrollContainer,
 								{
-									flex: 1,
-									paddingHorizontal: 0,
-									height: Math.floor(proofs.length * (isIOS ? 51 : 56)),
+									height: Math.floor(proofs.length * (isIOS ? 62 : 70)),
 									// adds a margin bottom if the "confirm" button is visible
-									marginBottom: getSelectedAmount(proofs) >= lnAmount ? 90 : 0
+									marginBottom: getSelectedAmount(proofs) >= lnAmount ? 80 : 0
 								},
 							]}
 						>
 							<FlashList
 								data={proofs}
-								estimatedItemSize={300}
-								showsVerticalScrollIndicator={false}
-								contentContainerStyle={{ paddingHorizontal: 20 }}
-								ItemSeparatorComponent={() => <Separator />}
+								estimatedItemSize={80}
+								keyExtractor={item => item.secret}
 								renderItem={data => (
 									<CoinSelectionRow
-										key={data.item.secret}
 										proof={data.item}
 										isLatestKeysetId={mintKeysetId === data.item.id}
 										setChecked={() => {
@@ -105,6 +106,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 										}}
 									/>
 								)}
+								ItemSeparatorComponent={() => <Separator noMargin />}
 							/>
 						</View>
 					}
@@ -136,28 +138,25 @@ interface IResume {
  */
 export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee, withSeparator }: IResume) {
 	const { t } = useTranslation([NS.common])
-	const { color } = useThemeContext()
 	const getChangeStr = () => {
 		const change = selectedAmount - lnAmount
-		if (estFee && estFee > 0) {
-			return `${change} ${t('to')} ${change + estFee} Satoshi`
-		}
-		return `${change} Satoshi`
+		return estFee ? `${change} ${t('to')} ${change + estFee} Satoshi` : `${change} Satoshi`
 	}
 	if (withSeparator) {
 		return (
 			<>
-				<View style={styles.resumeRow}>
-					<Txt txt={t('selected')} styles={[{ fontWeight: '500' }]} />
-					<Text style={globals(color).txt}>
-						<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? mainColors.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
-					</Text>
+				<View style={globals().wrapRow}>
+					<Txt txt={t('selected')} bold />
+					<Txt
+						txt={`${selectedAmount}/${lnAmount} Satoshi`}
+						error={selectedAmount < lnAmount}
+					/>
 				</View>
 				{selectedAmount > lnAmount &&
 					<>
-						<Separator style={[styles.separator]} />
-						<View style={styles.resumeRow}>
-							<Txt txt={t('change')} styles={[{ fontWeight: '500' }]} />
+						<Separator />
+						<View style={globals().wrapRow}>
+							<Txt txt={t('change')} bold />
 							<Txt txt={getChangeStr()} />
 						</View>
 
@@ -170,9 +169,10 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee,
 		<>
 			<View style={[styles.overview, { paddingHorizontal: padding ? 20 : 0 }]}>
 				<Txt txt={t('selected')} />
-				<Text style={globals(color).txt}>
-					<Txt txt={`${selectedAmount}`} styles={[{ color: selectedAmount < lnAmount ? mainColors.ERROR : color.TEXT }]} />/{lnAmount} Satoshi
-				</Text>
+				<Txt
+					txt={`${selectedAmount}/${lnAmount} Satoshi`}
+					error={selectedAmount < lnAmount}
+				/>
 			</View>
 			{selectedAmount > lnAmount &&
 				<View style={[styles.overview, { paddingHorizontal: padding ? 20 : 0 }]}>
@@ -191,18 +191,11 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee,
  */
 export function ProofListHeader() {
 	const { t } = useTranslation([NS.common])
-	const { color } = useThemeContext()
 	return (
-		<>
-			<View style={styles.tableHeader}>
-				<Text style={[styles.tableHead, { color: color.TEXT }]}>
-					{t('amount')}
-				</Text>
-				<Text style={[styles.tableHead, { color: color.TEXT }]}>
-					{t('keysetID')}
-				</Text>
-			</View>
-		</>
+		<View style={styles.tableHeader}>
+			<Txt txt={t('amount')} bold />
+			<Txt txt={t('keysetID')} bold />
+		</View>
 	)
 }
 
@@ -211,11 +204,11 @@ interface IOverviewRowProps { txt1: string, txt2: string }
 export function OverviewRow({ txt1, txt2 }: IOverviewRowProps) {
 	return (
 		<>
-			<View style={styles.overviewRow}>
-				<Txt txt={txt1} styles={[{ fontWeight: '500' }]} />
+			<View style={globals().wrapRow}>
+				<Txt txt={txt1} bold />
 				<Txt txt={txt2} />
 			</View>
-			<Separator style={[styles.separator]} />
+			<Separator />
 		</>
 	)
 }
@@ -225,7 +218,7 @@ export function OverviewRow({ txt1, txt2 }: IOverviewRowProps) {
  */
 export function ProofRow({ proof, isLatestKeysetId }: IProofRowProps) {
 	return (
-		<View style={styles.selectOverview}>
+		<View style={globals().scrollRow}>
 			<ProofRowContent proof={proof} isLatestKeysetId={isLatestKeysetId} />
 		</View>
 	)
@@ -244,24 +237,22 @@ interface ICoinSelectionRowProps extends IProofRowProps {
  */
 function CoinSelectionRow({ proof, isLatestKeysetId, setChecked }: ICoinSelectionRowProps) {
 	return (
-		<TouchableOpacity style={styles.selectOverview} onPress={setChecked}>
+		<TouchableOpacity style={globals().scrollRow} onPress={setChecked}>
 			<ProofRowContent proof={proof} isLatestKeysetId={isLatestKeysetId} />
 		</TouchableOpacity>
 	)
 }
 
 function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
-	const { color } = useThemeContext()
 	return (
 		<>
 			<Txt txt={`${formatInt(proof.amount)} Satoshi`} />
 			<View style={styles.keyWrap}>
-				<Text style={[
-					styles.keysetID,
-					{ color: isLatestKeysetId ? mainColors.VALID : color.TEXT_SECONDARY, marginRight: 'selected' in proof ? 20 : 0 }
-				]}>
-					{proof.id}
-				</Text>
+				<Txt
+					txt={proof.id}
+					success={isLatestKeysetId}
+					styles={[styles.keysetID, { marginRight: 'selected' in proof ? 20 : 0 }]}
+				/>
 				{'selected' in proof && <RadioBtn selected={proof.selected} />}
 			</View>
 		</>
@@ -285,19 +276,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		marginBottom: 20,
 	},
-	selectOverview: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 15,
-	},
-	resumeRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-	},
-	separator: {
-		marginVertical: 20,
-	},
 	tableHeader: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -307,16 +285,13 @@ const styles = StyleSheet.create({
 		marginHorizontal: -20,
 		paddingHorizontal: 20,
 	},
-	tableHead: {
-		fontSize: 16,
-		fontWeight: '500',
-	},
 	confirmWrap: {
 		position: 'absolute',
 		bottom: 0,
 		right: 0,
 		left: 0,
 		padding: 20,
+		paddingBottom: isIOS ? 20 : 0
 	},
 	keyWrap: {
 		flexDirection: 'row',
@@ -324,10 +299,5 @@ const styles = StyleSheet.create({
 	},
 	keysetID: {
 		fontSize: 14,
-	},
-	overviewRow: {
-		flexDirection: 'row',
-		alignItems: 'baseline',
-		justifyContent: 'space-between'
 	},
 })

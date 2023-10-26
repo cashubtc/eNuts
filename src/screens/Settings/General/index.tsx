@@ -6,9 +6,9 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 
-import SettingsMenuItem from '../MenuItem'
+import MenuItem from '../MenuItem'
 
 export default function GeneralSettings({ navigation, route }: TGeneralSettingsPageProps) {
 	const { t } = useTranslation([NS.topNav])
@@ -19,40 +19,24 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<View style={[globals(color).wrapContainer, styles.wrap]}>
-				<SettingsMenuItem
-					txt={t('display', { ns: NS.topNav })}
-					txtColor={color.TEXT}
-					icon={<PaletteIcon color={color.TEXT} />}
-					onPress={() => navigation.navigate('Display settings')}
-					hasSeparator
-					hasChevron
-				/>
-				<SettingsMenuItem
-					txt={t('language', { ns: NS.topNav })}
-					txtColor={color.TEXT}
-					icon={<LanguageIcon color={color.TEXT} />}
-					onPress={() => navigation.navigate('Language settings')}
-					// hasSeparator
-					hasChevron
-				/>
-				{/* // TODO consider cashu-ts removing axios to handle advanced request timeout settings */}
-				{/* <SettingsMenuItem
-					txt={t('advancedFunctions', { ns: NS.topNav })}
-					txtColor={color.TEXT}
-					icon={<HamburgerIcon color={color.TEXT} />}
-					onPress={() => navigation.navigate('Advanced settings')}
-					hasChevron
-				/> */}
-			</View>
+			<ScrollView>
+				<View style={globals(color).wrapContainer}>
+					<MenuItem
+						txt={t('display', { ns: NS.topNav })}
+						icon={<PaletteIcon color={color.TEXT} />}
+						onPress={() => navigation.navigate('Display settings')}
+						hasSeparator
+						hasChevron
+					/>
+					<MenuItem
+						txt={t('language', { ns: NS.topNav })}
+						icon={<LanguageIcon color={color.TEXT} />}
+						onPress={() => navigation.navigate('Language settings')}
+						hasChevron
+					/>
+				</View>
+			</ScrollView>
 			<BottomNav navigation={navigation} route={route} />
 		</Screen>
 	)
 }
-
-const styles = StyleSheet.create({
-	wrap: {
-		paddingVertical: 10,
-		marginBottom: 20,
-	},
-})

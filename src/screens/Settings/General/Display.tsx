@@ -1,19 +1,18 @@
 import RadioBtn from '@comps/RadioBtn'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
+import Toggle from '@comps/Toggle'
 import Txt from '@comps/Txt'
 import type { TDisplaySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { globals, highlight as hi, HighlightKey, themeColors } from '@styles'
+import { globals, HighlightKey, themeColors } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
 	const { t } = useTranslation([NS.common])
-	const insets = useSafeAreaInsets()
 	const { setTheme, theme, color, highlight } = useThemeContext()
 	return (
 		<Screen
@@ -21,23 +20,24 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView style={{ width: '100%', marginBottom: 60 + insets.bottom }} showsVerticalScrollIndicator={false}>
-				<Text style={[styles.subHeader, { color: color.TEXT }]}>
-					Theme
-				</Text>
-				<View style={[globals(color).wrapContainer, styles.wrap]}>
-					<Txt txt={t('darkMode')} styles={[{ marginVertical: 20 }]} />
-					<Switch
-						trackColor={{ false: color.BORDER, true: hi[highlight] }}
-						thumbColor={color.TEXT}
-						onValueChange={() => setTheme(theme === 'Light' ? 'Dark' : 'Light')}
-						value={theme === 'Dark'}
-					/>
+			<ScrollView style={{ marginBottom: 60 }}>
+				<Txt
+					txt='Theme'
+					bold
+					styles={[styles.subHeader]}
+				/>
+				<View style={globals(color).wrapContainer}>
+					<View style={[globals().wrapRow]}>
+						<Txt txt={t('darkMode')} />
+						<Toggle value={theme === 'Dark'} onChange={() => setTheme(theme === 'Light' ? 'Dark' : 'Light')} />
+					</View>
 				</View>
-				<Text style={[styles.subHeader, { color: color.TEXT }]}>
-					Highlight
-				</Text>
-				<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
+				<Txt
+					txt='Highlight'
+					bold
+					styles={[styles.subHeader]}
+				/>
+				<View style={globals(color).wrapContainer}>
 					{themeColors.map((t, i) => (
 						<ThemeSelection key={t} name={t} selected={t === highlight} hasSeparator={i !== themeColors.length - 1} />
 					))}
@@ -59,44 +59,20 @@ function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) 
 	const { setHighlight } = useThemeContext()
 	return (
 		<>
-			<TouchableOpacity style={styles.settingsRow}
+			<TouchableOpacity style={globals().wrapRow}
 				onPress={() => setHighlight(name)}
 			>
 				<Txt txt={name === 'Default' ? t('default') : name} />
 				<RadioBtn selected={selected} />
 			</TouchableOpacity>
-			{hasSeparator && <Separator style={[styles.separator]} />}
+			{hasSeparator && <Separator />}
 		</>
 	)
 }
 
 const styles = StyleSheet.create({
 	subHeader: {
-		fontSize: 16,
-		fontWeight: '500',
 		paddingHorizontal: 20,
 		marginBottom: 10,
 	},
-	highlightWrap: {
-		paddingHorizontal: 0,
-		paddingVertical: 10,
-		marginBottom: 20,
-	},
-	wrap: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		marginBottom: 20,
-	},
-	settingsRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 10,
-		paddingHorizontal: 20,
-	},
-	separator: {
-		marginHorizontal: 20,
-		marginVertical: 10
-	}
 })

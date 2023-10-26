@@ -5,16 +5,15 @@ import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
-import { l } from '@log'
 import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
-import { checkFees } from '@wallet'
+import { formatInt, formatMintUrl, isNum, sortMintsByDefault } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -29,7 +28,9 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		isSendEcash,
 		nostr,
 		invoice,
-		invoiceAmount
+		invoiceAmount,
+		estFee,
+		scanned
 	} = route.params
 	const { openPromptAutoClose } = usePromptContext()
 	const insets = useSafeAreaInsets()
@@ -52,15 +53,13 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		return 'chooseMintHint'
 	}
 	// press mint
-	const handlePressMint = async (mint: IMintBalWithName) => {
+	const handlePressMint = (mint: IMintBalWithName) => {
 		// pay scanned invoice
-		if (invoice && invoiceAmount) {
-			const estFee = await checkFees(mint.mintUrl, invoice)
+		if (invoice && invoiceAmount && isNum(estFee)) {
 			if (invoiceAmount + estFee > mint.amount) {
 				openPromptAutoClose({ msg: t('noFundsForFee', { ns: NS.common, fee: estFee }), ms: 4000 })
 				return
 			}
-			l('user has scanned an invoice, navigate to payment overview')
 			navigation.navigate('coinSelection', {
 				mint,
 				balance: mint.amount,
@@ -79,17 +78,17 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				.map(m => ({ mintUrl: m.mintUrl, customName: m.customName }))
 			// user has already selected a nostr target
 			if (nostr) {
-				l('user has already selected a nostr target, navigate to amount selection')
+				l({ nostr })
+				// l('user has already selected a nostr target, navigate to amount selection')
 				// select ecash amount to send
-				navigation.navigate('selectAmount', {
+				navigation.navigate('selectNostrAmount', {
 					mint,
 					nostr,
 					balance: mint.amount,
-					isSendEcash
 				})
 				return
 			}
-			l('user wants to send payment, navigate to target selection')
+			// l('user wants to send payment, navigate to target selection')
 			navigation.navigate('selectTarget', {
 				mint,
 				balance: mint.amount,
@@ -99,7 +98,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			})
 			return
 		}
-		l('[last condition] navigate to amount selection')
+		// l('[last condition] navigate to amount selection')
 		navigation.navigate('selectAmount', {
 			mint,
 			nostr,
@@ -126,7 +125,10 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		<Screen
 			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
-			handlePress={() => navigation.goBack()}
+			handlePress={() => {
+				if (scanned) { return navigation.navigate('qr scan', {}) }
+				navigation.goBack()
+			}}
 		>
 			{userMints.length > 0 && !allMintsEmpty &&
 				<Txt
@@ -134,40 +136,34 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 					txt={t(getScreenHint(), { ns: NS.mints })}
 				/>
 			}
-			{userMints.length && !allMintsEmpty ?
+			{userMints.length > 0 && !allMintsEmpty ?
 				<ScrollView>
 					<View style={globals(color).wrapContainer}>
-						{userMints
-							.sort((a, b) => {
-								if (a.mintUrl === defaultMint) { return -1 }
-								if (b.mintUrl === defaultMint) { return 1 }
-								return 0
-							})
-							.map((m, i) => (
-								<View key={m.mintUrl}>
-									<TouchableOpacity
-										style={styles.mintUrlWrap}
-										onPress={() => void handlePressMint(m)}
-									>
-										<View style={styles.mintNameWrap}>
-											{defaultMint === m.mintUrl &&
-												<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-											}
-											<Txt
-												txt={m.customName || formatMintUrl(m.mintUrl)}
-												styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0 }]}
-											/>
-										</View>
-										<View style={styles.mintBal}>
-											<Text style={[styles.mintAmount, { color: color.TEXT, paddingBottom: 3 }]}>
-												{formatInt(m.amount, 'compact', 'en')}
-											</Text>
-											<ZapIcon color={m.amount > 0 ? hi[highlight] : color.TEXT} />
-										</View>
-									</TouchableOpacity>
-									{i < userMints.length - 1 && <Separator />}
-								</View>
-							))}
+						{sortMintsByDefault(userMints, defaultMint).map((m, i) => (
+							<View key={m.mintUrl}>
+								<TouchableOpacity
+									style={globals().wrapRow}
+									onPress={() => handlePressMint(m)}
+								>
+									<View style={styles.mintNameWrap}>
+										{defaultMint === m.mintUrl &&
+											<MintBoardIcon width={18} height={18} color={hi[highlight]} />
+										}
+										<Txt
+											txt={m.customName || formatMintUrl(m.mintUrl)}
+											styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0 }]}
+										/>
+									</View>
+									<View style={styles.mintBal}>
+										<Text style={[styles.mintAmount, { color: color.TEXT, paddingBottom: 3 }]}>
+											{formatInt(m.amount, 'compact', 'en')}
+										</Text>
+										<ZapIcon color={m.amount > 0 ? hi[highlight] : color.TEXT} />
+									</View>
+								</TouchableOpacity>
+								{i < userMints.length - 1 && <Separator />}
+							</View>
+						))}
 					</View>
 				</ScrollView>
 				:
@@ -201,56 +197,11 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 	)
 }
 
-/* 
-
-<View style={[
-					globals(color).wrapContainer,
-					{ height: !userMints.length ? flashlistItemHeight : userMints.length * flashlistItemHeight }
-				]}>
-					<FlashList
-						data={userMints}
-						estimatedItemSize={300}
-						renderItem={data => (
-							<TouchableOpacity
-								key={data.item.mintUrl}
-								style={styles.mintUrlWrap}
-								onPress={() => void handlePressMint(data.item)}
-							>
-								<View style={styles.mintNameWrap}>
-									{defaultMint === data.item.mintUrl &&
-										<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-									}
-									<Txt
-										txt={data.item.customName || formatMintUrl(data.item.mintUrl)}
-										styles={[{ marginLeft: defaultMint === data.item.mintUrl ? 10 : 0 }]}
-									/>
-								</View>
-								<View style={styles.mintBal}>
-									<Text style={[styles.mintAmount, { color: color.TEXT }]}>
-										{formatInt(data.item.amount, 'compact', 'en')}
-									</Text>
-									<ZapIcon color={color.TEXT} />
-								</View>
-							</TouchableOpacity>
-						)}
-						ItemSeparatorComponent={() => <Separator />}
-					/>
-				</View>
-
-*/
-
 const styles = StyleSheet.create({
 	hint: {
 		paddingHorizontal: 20,
 		marginBottom: 20,
 		fontWeight: '500'
-	},
-	mintUrlWrap: {
-		flex: 1,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		paddingVertical: 20,
 	},
 	mintNameWrap: {
 		flexDirection: 'row',

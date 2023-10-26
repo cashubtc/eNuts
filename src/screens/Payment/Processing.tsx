@@ -1,16 +1,15 @@
 import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
-import { _testmintUrl } from '@consts'
 import { l } from '@log'
 import type { IMintUrl } from '@model'
 import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
-import { relay } from '@nostr/class/Relay'
 import { enutsPubkey, EventKind } from '@nostr/consts'
 import { encrypt } from '@nostr/crypto'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { pool } from '@src/nostr/class/Pool'
 import { updateNostrDmUsers } from '@src/storage/store/nostrDms'
 import { cTo } from '@src/storage/store/utils'
 import { secureStore, store } from '@store'
@@ -18,8 +17,8 @@ import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { globals } from '@styles'
-import { formatMintUrl, getInvoiceFromLnurl, isErr, isLnurl } from '@util'
-import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
+import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
+import { autoMintSwap, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -77,23 +76,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		try {
 			const resp = await requestMint(mint.mintUrl, amount)
 			const decoded = getDecodedLnInvoice(resp.pr)
-			// immediatly claim and navigate to success page for test-mint
-			if (mint.mintUrl === _testmintUrl) {
-				const { success, invoice } = await requestToken(mint.mintUrl, amount, resp.hash)
-				if (!success) {
-					handleError({})
-					return
-				}
-				// add as history entry (receive ecash via lightning)
-				await addToHistory({
-					amount,
-					type: 2,
-					value: invoice?.pr || '',
-					mints: [mint.mintUrl],
-				})
-				navigation.navigate('success', { amount, mint: mint.customName || formatMintUrl(mint.mintUrl) })
-				return
-			}
 			// navigate to invoice overview screen
 			navigation.navigate('mintInvoice', {
 				mintUrl: mint.mintUrl,
@@ -146,6 +128,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				mints: [mint.mintUrl],
 				timestamp: Math.ceil(Date.now() / 1000)
 			})
+			l({ realFee: res.realFee })
 			navigation.navigate('success', {
 				amount,
 				fee: res.realFee,
@@ -203,16 +186,16 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					return
 				}
 				const msg = `${userNostrNpub || nostr.senderName}  (sender not verified) just sent you ${amount} Sat in Ecash using ${enutsPubkey}!\n\n ${token}`
-				const cipherTxt = await encrypt(sk, nostr.receiverNpub, msg)
+				const cipherTxt = encrypt(sk, nostr.receiverHex, msg)
 				const event = {
 					kind: EventKind.DirectMessage,
-					tags: [['p', nostr.receiverNpub]],
+					tags: [['p', nostr.receiverHex]],
 					content: cipherTxt,
 					created_at: Math.ceil(Date.now() / 1000),
 				}
 				const userRelays = await store.get(STORE_KEYS.relays)
 				// TODO publish the event to the RECIPIENT relays AND our relays.
-				const published = await relay.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
+				const published = await pool.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
 				if (!published) {
 					l('Something went wrong while publishing the event.')
 					navigation.navigate(
@@ -221,8 +204,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					)
 					return
 				}
-				// save receipient pubkey to get the conversation later on
-				await updateNostrDmUsers(nostr.receiverNpub)
+				// save recipient hex to get the conversation later on
+				await updateNostrDmUsers(nostr.receiverHex)
 				navigation.navigate('success', { amount, nostr })
 				return
 			}
@@ -238,16 +221,13 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	// start payment process
 	useEffect(() => {
 		if (isMelt) {
-			void handleMeltingProcess()
-			return
+			return void handleMeltingProcess()
 		}
 		if (isSwap) {
-			void handleSwapProcess()
-			return
+			return void handleSwapProcess()
 		}
 		if (isSendEcash) {
-			void handleSendingEcashProcess()
-			return
+			return void handleSendingEcashProcess()
 		}
 		void handleMintingProcess()
 		// eslint-disable-next-line react-hooks/exhaustive-deps

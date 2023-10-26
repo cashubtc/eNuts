@@ -1,4 +1,5 @@
 import { Db } from '@db/Db'
+import { l } from '@src/logger'
 import * as SQLite from 'expo-sqlite'
 
 
@@ -19,10 +20,14 @@ export function getDb(name: string) {
 export function getBlankSQLResultSetRowList<T>() { return { length: 0, _array: [] as T[] } }
 
 export function cTo<T extends object>(s: string) {
+	try {
+		return JSON.parse(s) as T
+	} catch (error) {
+		l('cTo',error,s)
+	}
 	return JSON.parse(s) as T
 }
 
 export function toJson<T extends object>(o: T) {
 	return JSON.stringify(o)
 }
-

@@ -36,6 +36,8 @@ export default function Empty({ txt, hasOk, pressable, onPress, nav }: IEmptyPro
 				:
 				<Txt
 					txt={txt}
+					bold
+					center
 					styles={[styles.emptyTxt, { color: color.TEXT_SECONDARY, marginBottom: hasOk ? 10 : 0 }]}
 				/>
 			}
@@ -59,8 +61,6 @@ const styles = StyleSheet.create({
 	},
 	emptyTxt: {
 		fontSize: 20,
-		fontWeight: '500',
-		textAlign: 'center',
 		marginTop: 20,
 		opacity: .8,
 	}

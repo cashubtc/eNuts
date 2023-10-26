@@ -36,7 +36,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 			stopLoading()
 		})()
 		return () => setInfo(undefined)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [route.params.mintUrl])
 
 	return (
@@ -53,16 +53,22 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 								<MintBoardIcon width={30} height={28} color={hi[highlight]} />
 							</Text>
 						</View>
-						<Text style={[styles.mintName, { color: color.TEXT }]}>
-							{info.name}
-						</Text>
-						<Text style={[styles.mintVersion, { color: color.TEXT, }]}>
-							{t('version')}: {info.version}
-						</Text>
+						<Txt
+							txt={info.name}
+							bold
+							styles={[styles.mintName]}
+						/>
+						<Txt
+							txt={`${t('version')}: ${info.version}`}
+							bold
+							styles={[styles.mintVersion]}
+						/>
 						{info.description && info.description.length > 0 &&
-							<Text style={[styles.mintVersion, { color: color.TEXT, }]}>
-								{info.description}
-							</Text>
+							<Txt
+								txt={info.description}
+								bold
+								styles={[styles.mintVersion]}
+							/>
 						}
 					</View>
 					{/* Message of the day - important announcements */}
@@ -70,9 +76,11 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 						<View style={[globals(color).wrapContainer, styles.infoEntry]}>
 							<View style={styles.motd}>
 								<View>
-									<Text style={[styles.description, { color: color.TEXT }]}>
-										{t('importantNotice', { ns: NS.mints })}
-									</Text>
+									<Txt
+										txt={t('importantNotice', { ns: NS.mints })}
+										bold
+										styles={[styles.description]}
+									/>
 									<Txt txt={info.motd} />
 								</View>
 								<ExclamationIcon color={mainColors.ERROR} />
@@ -81,9 +89,11 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 					}
 					{/* Contact, Supported NUTs, Public Key */}
 					<View style={[globals(color).wrapContainer, styles.infoEntry]}>
-						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('contact', { count: 1 })}
-						</Text>
+						<Txt
+							txt={t('contact', { count: 1 })}
+							bold
+							styles={[styles.description]}
+						/>
 						{info.contact?.map((c, i) => (
 							<View key={i} style={styles.contactWrap}>
 								{c[0].length > 0 && c[1].length > 0 ?
@@ -97,21 +107,27 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 							</View>
 						))}
 						<Separator style={[{ marginVertical: 20 }]} />
-						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('supportedNuts', { ns: NS.mints })}
-						</Text>
+						<Txt
+							txt={t('supportedNuts', { ns: NS.mints })}
+							bold
+							styles={[styles.description]}
+						/>
 						{info.nuts?.map((n, i) => <Txt key={i} txt={n} />)}
 						<Separator style={[{ marginVertical: 20 }]} />
-						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('pubKey', { ns: NS.mints })}
-						</Text>
+						<Txt
+							txt={t('pubKey', { ns: NS.mints })}
+							bold
+							styles={[styles.description]}
+						/>
 						<Txt txt={info.pubkey} />
 					</View>
 					{/* Long description */}
 					<View style={[globals(color).wrapContainer, styles.infoEntry]}>
-						<Text style={[styles.description, { color: color.TEXT }]}>
-							{t('additionalInfo', { ns: NS.mints })}
-						</Text>
+						<Txt
+							txt={t('additionalInfo', { ns: NS.mints })}
+							bold
+							styles={[styles.description]}
+						/>
 						<Txt txt={info.description_long || t('noAdditional', { ns: NS.mints })} />
 					</View>
 				</ScrollView>
@@ -148,19 +164,15 @@ const styles = StyleSheet.create({
 	},
 	mintName: {
 		fontSize: 26,
-		fontWeight: '500'
 	},
 	mintVersion: {
-		fontSize: 16,
 		marginVertical: 10,
 	},
 	infoEntry: {
-		paddingVertical: 20,
-		marginBottom: 20,
+		paddingBottom: 20,
 	},
 	description: {
 		fontSize: 14,
-		fontWeight: '500',
 		marginBottom: 5,
 	},
 	contactWrap: {

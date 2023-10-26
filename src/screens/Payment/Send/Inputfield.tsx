@@ -10,6 +10,7 @@ import TopNav from '@nav/TopNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { globals } from '@styles'
 import { decodeLnInvoice, getStrFromClipboard, isErr, isLnurl, openUrl } from '@util'
 import { checkFees } from '@wallet'
@@ -53,7 +54,9 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			const decoded = decodeLnInvoice(clipboard)
 			setDecodedAmount(decoded.amount / 1000)
 			startLoading()
+			l({ mintUrl: mint.mintUrl })
 			const fee = await checkFees(mint.mintUrl, clipboard)
+			l({ estFee: fee })
 			setEstFee(fee)
 			stopLoading()
 			inputRef.current?.blur()
@@ -123,17 +126,8 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	// handle case if user pastes value using the device keyboard
-	useEffect(() => {
-		if (isLnurl(input)) { return }
-		// https://bitcoin.stackexchange.com/questions/107930/what-are-the-minimum-and-maximum-lengths-of-a-lightning-invoice-address
-		if (input.length < 100) { return }
-		void handleInvoicePaste(input)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [input])
-
 	return (
-		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={t('cashOut')}
 				withBackBtn
@@ -154,7 +148,6 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 								<View style={[globals(color).wrapContainer, styles.overviewWrap]}>
 									<MeltOverview
 										amount={decodedAmount}
-										balance={balance}
 										balTooLow={decodedAmount + estFee > balance}
 										fee={estFee}
 										isInvoice
@@ -211,7 +204,8 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		paddingBottom: 20,
+		paddingBottom: isIOS ? 50 : 20,
+		paddingTop: 110,
 	},
 	hint: {
 		paddingHorizontal: 20,
@@ -231,7 +225,9 @@ const styles = StyleSheet.create({
 	},
 	overviewWrap: {
 		width: '100%',
-		paddingVertical: 20
+		paddingVertical: 20,
+		paddingBottom: 20,
+		marginBottom: 0
 	},
 	paddingHorizontal: {
 		paddingHorizontal: 20

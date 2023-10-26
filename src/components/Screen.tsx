@@ -9,9 +9,19 @@ interface IContainerProps {
 	withBackBtn?: boolean
 	withCancelBtn?: boolean
 	handlePress?: () => void
+	mintBalance?: string
+	noIcons?: boolean
 }
 
-export default function Screen({ children, screenName, withBackBtn, withCancelBtn, handlePress }: IContainerProps) {
+export default function Screen({
+	children,
+	screenName,
+	withBackBtn,
+	withCancelBtn,
+	handlePress,
+	mintBalance,
+	noIcons
+}: IContainerProps) {
 	const { color } = useThemeContext()
 	return (
 		<View style={globals(color).container}>
@@ -20,6 +30,8 @@ export default function Screen({ children, screenName, withBackBtn, withCancelBt
 				withBackBtn={withBackBtn}
 				cancel={withCancelBtn}
 				handlePress={handlePress}
+				mintBalance={mintBalance}
+				noIcons={noIcons}
 			/>
 			{children}
 		</View>

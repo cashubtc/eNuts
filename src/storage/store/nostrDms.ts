@@ -1,4 +1,3 @@
-import { binaryInsert } from '@util'
 
 import { store } from '.'
 import { STORE_KEYS } from './consts'
@@ -31,7 +30,7 @@ export async function updateNostrDmUsers(newDm: string) {
  */
 export async function getRedeemdedSigs(){
 	const stored = await store.getObj<string[]>(STORE_KEYS.nostrRedeemed)
-	return !stored ? [] : stored
+	return !stored ? {} : Object.fromEntries(stored.map(x => [x, x]))
 }
 
 /**
@@ -43,7 +42,7 @@ export async function updateNostrRedeemed(newSig: string) {
 		await store.setObj(STORE_KEYS.nostrRedeemed, [newSig])
 		return
 	}
-	if (stored.includes(newSig)) { return }
-	binaryInsert(stored, newSig)
-	await store.setObj(STORE_KEYS.nostrRedeemed, stored)
+	const map=Object.fromEntries(stored.map(x=>[x,x]))
+	if (map[newSig]) { return }
+	await store.setObj(STORE_KEYS.nostrRedeemed, [...Object.values(map), newSig])
 }

@@ -1,7 +1,7 @@
 import { getDecodedLnInvoice, getDecodedToken } from '@cashu/cashu-ts'
 import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
-import type { ILnUrl, IProofSelection } from '@model'
+import type { ILnUrl, IMintBalWithName, IProofSelection } from '@model'
 import type { Buffer } from 'buffer/'
 import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
@@ -22,6 +22,15 @@ export function uniq<T extends string | number | bigint | boolean | symbol>(iter
 	return [...new Set(iter)]
 }
 
+export function uniqBy<T extends object, TK extends keyof T>(iter: Iterable<T>, key: TK) {
+	// l()
+	const o = [...iter].reduce<{ [k: string | number | symbol]: T }>((acc, cur) => {
+		acc[cur[key] as string] = cur
+		return acc
+	}, {})
+	// l({o})
+	return Object.values<T>(o)
+}
 export function clearArr<T extends U[], U>(array: T) { array.length = 0 }
 
 /**
@@ -144,11 +153,15 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 		if (!isLnurl(address)) { throw new Error('invalid address') }
 		const [user, host] = address.split('@')
 		amount *= 1000
-		const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json() as ILnUrl
+		const resp = await fetch(`https://${host}/.well-known/lnurlp/${user}`)
+		const { tag, callback, minSendable, maxSendable } = await resp.json<ILnUrl>()
+		// const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json<ILnUrl>()
 		if (tag === 'payRequest' && minSendable <= amount && amount <= maxSendable) {
-			const resp = await (await fetch(`${callback}?amount=${amount}`)).json() as { pr: string }
-			if (!resp?.pr) { l('[getInvoiceFromLnurl]', { resp }) }
-			return resp?.pr || ''
+			const resp = await fetch(`${callback}?amount=${amount}`)
+			const { pr } = await resp.json<{ pr: string }>()
+			// const resp = await (await fetch(`${callback}?amount=${amount}`)).json<{ pr: string }>()
+			if (!pr) { l('[getInvoiceFromLnurl]', { resp }) }
+			return pr || ''
 		}
 	} catch (err) { l('[getInvoiceFromLnurl]', err) }
 	return ''
@@ -157,6 +170,8 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 export function isCashuToken(token: string) {
 	if (!token || !isStr(token)) { return }
 	token = token.trim()
+	const idx = token.indexOf('cashuA')
+	if (idx !== -1) { token = token.slice(idx) }
 	const uriPrefixes = [
 		'https://wallet.nutstash.app/#',
 		'https://wallet.cashu.me/?token=',
@@ -224,56 +239,9 @@ export function cleanUpNumericStr(str: string) {
 }
 
 export function openUrl(url: string) {
-	if (!url?.trim()) { return }
+	if (!url?.trim() || !isUrl(url)) { return }
 	return Linking.openURL(url)
 }
-
-/**
- * Searches for a target value in a sorted array using binary search,
- * and optionally inserts the target value if not found.
- *
- * @param arr - The sorted array to search or insert into.
- * @param target - The value to search for or insert.
- * @param shouldInsert Optional, Specifies whether to insert the target if not found.
- * @returns If `shouldInsert` is false, returns `true` if target found, or `false` if not found.
- * If `shouldInsert` is true, returns the index where target is inserted, or `-1` if the target already exists.
- */
-export function binarySearchAndInsert(arr: string[], target: string, shouldInsert = false) {
-	let left = 0, right = arr.length - 1
-	while (left <= right) {
-		// bit-wise right shift operation
-		const mid = (left + right) >> 1
-		const midValue = arr[mid]
-		if (midValue === target) { return shouldInsert ? mid : true }
-		if (midValue < target) { left = mid + 1 }
-		else { right = mid - 1 }
-	}
-	return shouldInsert ? left : false
-}
-
-// helper without flag
-export function binarySearch(arr: string[], target: string) {
-	return binarySearchAndInsert(arr, target) as boolean
-}
-
-// helper with flag
-export function binaryInsert(arr: string[], newStr: string): void {
-	const insertionIndex = binarySearchAndInsert(arr, newStr, true)
-	if (isNum(insertionIndex)) {
-		arr.splice(insertionIndex, 0, newStr)
-	}
-}
-
-// For arrays smaller than 10 elements, a linear search is often
-// simpler and faster due to the reduced overhead. Only when you start to deal with larger datasets,
-// such as hundreds or thousands of elements, does binary search's efficiency start to shine.
-export function hasEventId(arr: string[], target: string) {
-	if (arr.length < 40) {
-		return arr.some(x => x === target)
-	}
-	return binarySearch(arr, target)
-}
-
 export async function copyStrToClipboard(str: string) {
 	await Clipboard.setStringAsync(str)
 }
@@ -293,16 +261,31 @@ export async function share(message: string, url?: string) {
 		if (res.action === Share.sharedAction) {
 			if (res.activityType) {
 				// shared with activity type of result.activityType
-				l('shared with activity type of result.activityType')
-			} else {
-				// shared
-				l('shared')
+				return l('shared with activity type of result.activityType')
 			}
-		} else if (res.action === Share.dismissedAction) {
+			// shared
+			return l('shared')
+		}
+		if (res.action === Share.dismissedAction) {
 			// dismissed
 			l('sharing dismissed')
 		}
 	} catch (e) {
 		l('[quick-share error] ', e)
 	}
+}
+
+export function normalizeMintUrl(url: string) {
+	const res = url.startsWith('https://') ? url : `https://${url}`
+	if (!isUrl(res)) { return }
+	return res
+}
+
+export function sortMintsByDefault(mints: IMintBalWithName[], defaultMint: string) {
+	return mints.sort((a, b) => {
+		if (a.mintUrl === defaultMint) { return -1 }
+		if (b.mintUrl === defaultMint) { return 1 }
+		// if neither 'a' nor 'b' is the default mint, sort by amount (descending)
+		return a.amount + b.amount
+	})
 }

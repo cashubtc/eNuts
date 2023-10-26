@@ -1,15 +1,13 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
-import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon, QRIcon, SandClockIcon, SearchIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
-import MyModal from '@comps/modal'
-import QR from '@comps/QR'
+import QRModal from '@comps/QRModal'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { truncateNostrProfileInfo } from '@nostr/util'
+import { truncateStr } from '@nostr/util'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -183,7 +181,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						<>
 							<View style={styles.entryInfo}>
 								<Txt txt={t('recipient')} />
-								<Txt txt={type === 3 ? formatMintUrl(recipient) : truncateNostrProfileInfo(recipient)} />
+								<Txt txt={type === 3 ? formatMintUrl(recipient) : truncateStr(recipient)} />
 							</View>
 							<Separator />
 						</>
@@ -193,7 +191,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						<>
 							<View style={styles.entryInfo}>
 								<Txt txt={t('sender')} />
-								<Txt txt={truncateNostrProfileInfo(sender)} />
+								<Txt txt={truncateStr(sender)} />
 							</View>
 							<Separator />
 						</>
@@ -339,25 +337,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					</TouchableOpacity>
 				</View>
 			</ScrollView>
-			<MyModal type='question' visible={qr.open} close={() => setQr({ open: false, error: false })}>
-				{qr.error ?
-					<Txt txt={t('bigQrMsg')} styles={[{ textAlign: 'center' }]} />
-					:
-					<QR
-						value={value}
-						size={300}
-						onError={() => {
-							setQr({ open: true, error: true })
-						}}
-					/>
-				}
-				<View style={{ marginVertical: 20 }} />
-				<Button
-					outlined
-					txt='OK'
-					onPress={() => setQr({ open: false, error: false })}
-				/>
-			</MyModal>
+			<QRModal
+				visible={qr.open}
+				value={value}
+				error={qr.error}
+				close={() => setQr({ open: false, error: false })}
+				onError={() => setQr({ open: true, error: true })}
+				isInvoice={isLn}
+				truncateNum={isLn ? 20 : 25}
+			/>
 		</View>
 	)
 }
@@ -400,7 +388,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingVertical: 20,
+		paddingBottom: 20,
 	},
 	copyWrap: {
 		flexDirection: 'row',

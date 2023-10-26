@@ -15,7 +15,7 @@ export function isNonNullable<T>(v: T): v is NonNullable<T> { return !isNull(v) 
 export function isArrOf<T>(elemGuard: (x: unknown) => x is T) {
 	return (arr: unknown[]): arr is T[] => arr.every(elemGuard)
 }
-export function isArrOfStr(arr: unknown[]): arr is string[]{ return arr.every(isStr) }
+export function isArrOfStr(arr: unknown): arr is string[] { return isArr(arr) && arr.every(isStr) }
 export function isArrOfNum(arr: unknown[]): arr is number[] { return arr.every(isNum) }
 export function isArrOfObj(arr: unknown[]): arr is object[] { return arr.every(isObj) }
 export function isArrOfNonNullable<T>(arr: unknown[]): arr is NonNullable<T>[] {

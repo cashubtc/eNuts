@@ -61,7 +61,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					<LottieView
 						imageAssetsFolder='lottie/success'
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-						source={require('../../../main/assets/lottie/success/success.json')}
+						source={require('../../../assets/lottie/success/success.json')}
 						autoPlay
 						loop={false}
 						style={{ width: 130 }}
@@ -89,7 +89,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					<>
 						<Button
 							outlined
-							txt='Scan again'
+							txt={t('scanAnother', { ns: NS.common })}
 							onPress={() => navigation.navigate('qr scan', { mint: undefined })}
 						/>
 						<View style={[{ marginVertical: 10 }]} />
@@ -115,7 +115,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 			<LottieView
 				imageAssetsFolder='lottie/confetti'
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				source={require('../../../main/assets/lottie/success/confetti.json')}
+				source={require('../../../assets/lottie/success/confetti.json')}
 				autoPlay
 				loop={false}
 				style={styles.confetti}
@@ -165,11 +165,6 @@ const styles = StyleSheet.create({
 		right: 0,
 		left: 0,
 		paddingHorizontal: 20,
-	},
-	rdy: {
-		textAlign: 'center',
-		marginTop: 20,
-		fontSize: 20
 	},
 	confetti: {
 		width: 400,

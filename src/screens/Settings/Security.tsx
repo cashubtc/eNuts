@@ -1,7 +1,7 @@
-import { ChevronRightIcon } from '@comps/Icons'
+import { FlagIcon, KeyIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
-import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
+import { appVersion } from '@consts/env'
 import { getProofs } from '@db'
 import { getBackUpToken } from '@db/backup'
 import type { TSecuritySettingsPageProps } from '@model/nav'
@@ -9,13 +9,15 @@ import BottomNav from '@nav/BottomNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { SECURESTORE_KEY } from '@src/storage/store/consts'
 import { secureStore } from '@store'
+import { SECURESTORE_KEY } from '@store/consts'
 import { globals } from '@styles'
 import { isNull } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
+
+import MenuItem from './MenuItem'
 
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -54,62 +56,40 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 			withBackBtn
 			handlePress={() => navigation.navigate('Settings')}
 		>
-			<View style={globals(color).wrapContainer}>
-				{pin ?
-					<>
-						<SecurityOption
-							txt={t('editPin', { ns: NS.auth })}
-							onPress={() => navigation.navigate('auth', { pinHash: pin, shouldEdit: true })}
-						/>
-						<Separator />
-						<SecurityOption
-							txt={t('removePin', { ns: NS.auth })}
-							onPress={() => navigation.navigate('auth', { pinHash: pin, shouldRemove: true })}
-						/>
-						<Separator />
-					</>
-					:
-					<>
-						<SecurityOption
+			<ScrollView>
+				<View style={globals(color).wrapContainer}>
+					{pin ?
+						<>
+							<MenuItem
+								txt={t('editPin', { ns: NS.auth })}
+								icon={<PenIcon width={22} height={22} color={color.TEXT} />}
+								onPress={() => navigation.navigate('auth', { pinHash: pin, shouldEdit: true })}
+								hasSeparator
+							/>
+							<MenuItem
+								txt={t('removePin', { ns: NS.auth })}
+								icon={<TrashbinIcon width={22} height={22} color={color.TEXT} />}
+								onPress={() => navigation.navigate('auth', { pinHash: pin, shouldRemove: true })}
+								hasSeparator
+							/>
+						</>
+						:
+						<MenuItem
 							txt={t('createPin', { ns: NS.auth })}
+							icon={<KeyIcon width={22} height={22} color={color.TEXT} />}
 							onPress={() => navigation.navigate('auth', { pinHash: '' })}
+							hasSeparator
 						/>
-						<Separator />
-					</>
-				}
-				<SecurityOption
-					txt={t('createBackup')}
-					onPress={() => void handleBackup()}
-				/>
-			</View>
+					}
+					<MenuItem
+						txt={t('createBackup')}
+						icon={<FlagIcon width={22} height={22} color={color.TEXT} />}
+						onPress={() => void handleBackup()}
+					/>
+				</View>
+				<Txt txt={appVersion} bold center />
+			</ScrollView>
 			<BottomNav navigation={navigation} route={route} />
 		</Screen>
 	)
 }
-
-interface ISecurityOptsProps {
-	txt: string
-	onPress: () => void
-}
-
-function SecurityOption({ txt, onPress }: ISecurityOptsProps) {
-	const { color } = useThemeContext()
-	return (
-		<TouchableOpacity
-			style={styles.settingsRow}
-			onPress={onPress}
-		>
-			<Txt txt={txt} />
-			<ChevronRightIcon color={color.TEXT} />
-		</TouchableOpacity>
-	)
-}
-
-const styles = StyleSheet.create({
-	settingsRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 20,
-	},
-})

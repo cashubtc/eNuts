@@ -3,6 +3,7 @@
 import { l } from '@log'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
+import * as SplashScreen from 'expo-splash-screen'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const usePrivacy = () => {
@@ -57,6 +58,7 @@ const usePrivacy = () => {
 				balance: !!isHiddenBal,
 				txs: !!isHiddenTxs
 			})
+			await SplashScreen.hideAsync()
 		})()
 	}, [])
 

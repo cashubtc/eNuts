@@ -1,4 +1,4 @@
-import { ChevronRightIcon, EcashIcon, HistoryIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
+import { EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
 import type { IHistoryEntry } from '@model'
 import type { RootStackParamList } from '@model/nav'
@@ -18,7 +18,6 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { TxtButton } from './Button'
 import Logo from './Logo'
-import Separator from './Separator'
 import Txt from './Txt'
 
 interface IBalanceProps {
@@ -78,7 +77,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			<TouchableOpacity
 				onPress={() => void handleLogoPress()}
 			>
-				<Logo size={hidden.balance ? 100 : 40} style={{ marginTop: hidden.balance ? 40 : 0, marginBottom: hidden.balance ? 40 : 10 }} />
+				<Logo size={hidden.balance ? 100 : 40} style={{ marginTop: hidden.balance ? 40 : 0, marginBottom: hidden.balance ? 40 : 20 }} />
 			</TouchableOpacity>
 			{/* balance */}
 			{!hidden.balance &&
@@ -98,15 +97,14 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					</View>
 				</TouchableOpacity>
 			}
-			<Separator style={[styles.separator, { borderColor: getColor(highlight, color) }]} />
 			{/* No transactions yet */}
-			{!history.length && !hidden.txs &&
-				<View style={{ padding: 10 }}>
+			{!history.length &&
+				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 					<Txt txt={t('noTX')} styles={[globals(color).pressTxt, { color: getColor(highlight, color) }]} />
 				</View>
 			}
 			{/* latest 3 history entries */}
-			{history.length > 0 && !hidden.txs ?
+			{history.length > 0 && !hidden.txs &&
 				history.map(h => (
 					<HistoryEntry
 						key={h.timestamp}
@@ -122,31 +120,13 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 						onPress={() => nav?.navigate('history entry details', { entry: h })}
 					/>
 				))
-				:
-				hidden.txs ?
-					<>
-						<TouchableOpacity
-							style={styles.boardEntry}
-							onPress={() => nav?.navigate('history')}
-						>
-							<View style={styles.hiddenTxtWrap}>
-								<View style={styles.iconWrap}>
-									<HistoryIcon color={getColor(highlight, color)} />
-								</View>
-								<Txt txt={t('hiddenTxs')} styles={[{ color: getColor(highlight, color) }]} />
-							</View>
-							<ChevronRightIcon color={getColor(highlight, color)} />
-						</TouchableOpacity>
-					</>
-					:
-					null
 			}
-			{history.length === 3 && !hidden.txs &&
+			{(history.length === 3 || (history.length > 0 && hidden.txs)) &&
 				<TxtButton
 					txt={t('seeFullHistory')}
 					onPress={() => nav?.navigate('history')}
 					txtColor={getColor(highlight, color)}
-					style={[{ paddingTop: 20, paddingBottom: 0 }]}
+					style={[{ paddingTop: 20, paddingBottom: hidden.txs ? 20 : 0 }]}
 				/>
 			}
 		</View>
@@ -172,25 +152,20 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHis
 	}
 
 	return (
-		<>
-			<TouchableOpacity
-				style={styles.entry}
-				onPress={onPress}
-			>
-				<View style={styles.wrap}>
-					<View style={styles.iconWrap}>
-						{icon}
-					</View>
-					<View>
-						<Txt txt={txType} styles={[{ color: getColor(highlight, color) }]} />
-						<Text style={{ color: getColor(highlight, color), paddingBottom: 3 }}>
-							<EntryTime from={timestamp * 1000} fallback={t('justNow')} />
-						</Text>
-					</View>
+		<TouchableOpacity style={styles.entry} onPress={onPress}>
+			<View style={styles.wrap}>
+				<View style={styles.iconWrap}>
+					{icon}
 				</View>
-				<Txt txt={getAmount()} styles={[{ color: getColor(highlight, color) }]} />
-			</TouchableOpacity>
-		</>
+				<View>
+					<Txt txt={txType} styles={[{ color: getColor(highlight, color) }]} />
+					<Text style={{ color: getColor(highlight, color), paddingBottom: 3 }}>
+						<EntryTime from={timestamp * 1000} fallback={t('justNow')} />
+					</Text>
+				</View>
+			</View>
+			<Txt txt={getAmount()} styles={[{ color: getColor(highlight, color) }]} />
+		</TouchableOpacity>
 	)
 }
 
@@ -201,10 +176,12 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 30,
 		paddingTop: 70,
 		paddingBottom: 60,
+		minHeight: '50%'
 	},
 	balanceWrap: {
 		alignItems: 'center',
 		marginHorizontal: -20,
+		marginBottom: 10,
 	},
 	balAmount: {
 		alignItems: 'center',
@@ -220,18 +197,9 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		marginRight: 5
 	},
-	separator: {
-		marginVertical: 10
-	},
 	iconWrap: {
-		minWidth: 45,
+		minWidth: 40,
 		paddingTop: 3,
-	},
-	boardEntry: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		marginVertical: 10,
 	},
 	entry: {
 		flexDirection: 'row',
@@ -240,10 +208,6 @@ const styles = StyleSheet.create({
 		paddingVertical: 5,
 	},
 	wrap: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	hiddenTxtWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},

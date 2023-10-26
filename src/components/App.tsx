@@ -26,7 +26,8 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AppState } from 'react-native'
+import { AppState, LogBox } from 'react-native'
+import { MenuProvider } from 'react-native-popup-menu'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
@@ -34,6 +35,8 @@ import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
 import Toaster from './Toaster'
 
+LogBox.ignoreLogs(['is deprecated'])
+// LogBox.ignoreLogs([/expo-image/gmi])
 interface ILockData {
 	mismatch: boolean
 	mismatchCount: number
@@ -42,6 +45,8 @@ interface ILockData {
 	lockedTime: number,
 	timestamp: number
 }
+
+l('[APP] Starting app...')
 
 void SplashScreen.preventAutoHideAsync()
 
@@ -191,32 +196,32 @@ function _App() {
 
 	if (!isRdy) { return <Blank /> }
 
-	// await SplashScreen.hideAsync() is done in the NostrProvider context provider
-	// to ensure all initial DB and store requests are done before displaying content
 	return (
 		<ThemeProvider>
 			<PinCtx.Provider value={pinData}>
-				<PrivacyProvider>
-					<NostrProvider>
-						<NavContainer>
-							<FocusClaimProvider >
-								<PromptProvider>
-									<KeyboardProvider>
-										<Navigator
-											shouldOnboard={shouldOnboard}
-											pinHash={auth.pinHash}
-											bgAuth={bgAuth}
-											setBgAuth={setBgAuth}
-										/>
-										<StatusBar style="auto" />
-										<ClipboardModal />
-										<Toaster />
-									</KeyboardProvider>
-								</PromptProvider>
-							</FocusClaimProvider>
-						</NavContainer>
-					</NostrProvider>
-				</PrivacyProvider>
+				<MenuProvider>
+					<PrivacyProvider>
+						<NostrProvider>
+							<NavContainer>
+								<FocusClaimProvider >
+									<PromptProvider>
+										<KeyboardProvider>
+											<Navigator
+												shouldOnboard={shouldOnboard}
+												pinHash={auth.pinHash}
+												bgAuth={bgAuth}
+												setBgAuth={setBgAuth}
+											/>
+											<StatusBar style="auto" />
+											<ClipboardModal />
+											<Toaster />
+										</KeyboardProvider>
+									</PromptProvider>
+								</FocusClaimProvider>
+							</NavContainer>
+						</NostrProvider>
+					</PrivacyProvider>
+				</MenuProvider>
 			</PinCtx.Provider>
 		</ThemeProvider>
 	)

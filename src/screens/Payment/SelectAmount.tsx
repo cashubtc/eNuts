@@ -29,7 +29,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	const [shouldEstimate, setShouldEstimate] = useState(false)
 	const [fee, setFee] = useState({ estimation: 0, isCalculating: false })
 
-	const balTooLow = isMelt && +amount + fee.estimation > balance
+	const balTooLow = (isMelt || isSwap) && +amount + fee.estimation > balance
 
 	const isSendingWholeMintBal = () => {
 		// includes fee
@@ -172,18 +172,19 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
+			mintBalance={isSendEcash || isMelt || isSwap ? formatInt(balance) : undefined}
 		>
 			{!isMelt && !isSwap &&
 				<Txt txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: NS.mints })} styles={[styles.headerHint]} />
 			}
-			<View style={[globals(color).wrapContainer, styles.overviewWrap]}>
+			<View style={styles.overviewWrap}>
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
 						keyboardType='numeric'
 						ref={inputRef}
 						placeholder='0'
 						placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
-						style={[styles.amount, { color: err ? mainColors.ERROR : hi[highlight] }]}
+						style={[globals().selectAmount, { color: err ? mainColors.ERROR : hi[highlight] }]}
 						cursorColor={hi[highlight]}
 						onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
 						onSubmitEditing={() => void handleAmountSubmit()}
@@ -192,28 +193,18 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					/>
 				</Animated.View>
 				<Txt txt='Satoshi' styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center' }]} />
-				{(isMelt || isSwap || isSendEcash) &&
+				{(isMelt || isSwap) &&
 					<Separator style={[{ marginVertical: 20 }]} />
 				}
 				{isMelt || isSwap ?
-					<MeltOverview
+					<MeltOverview 
 						amount={+amount}
-						balance={balance}
 						shouldEstimate={shouldEstimate}
 						balTooLow={balTooLow}
 						fee={fee.estimation}
 					/>
 					:
-					isSendEcash ?
-						<View style={styles.overview}>
-							<Txt
-								txt={t('balance', { ns: NS.common })}
-								styles={[{ fontWeight: '500' }]}
-							/>
-							<Txt txt={`${formatInt(balance)} Satoshi`} />
-						</View>
-						:
-						null
+					null
 				}
 			</View>
 			{(isMelt || isSwap) &&
@@ -247,39 +238,26 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 
 interface IMeltOverviewProps {
 	amount: number
-	balance: number
 	shouldEstimate?: boolean
 	balTooLow?: boolean
 	isInvoice?: boolean
 	fee: number
 }
 
-export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInvoice, fee }: IMeltOverviewProps) {
+export function MeltOverview({ amount, shouldEstimate, balTooLow, isInvoice, fee }: IMeltOverviewProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	l({ fee })
 	return (
-		<>
-			<View style={styles.overview}>
-				<Txt
-					txt={t('balance')}
-					styles={[{ fontWeight: '500' }]}
-
-				/>
-				<Txt txt={`${formatInt(balance)} Satoshi`} />
-			</View>
-			<Separator style={[{ marginVertical: 20 }]} />
-			<View style={styles.overview}>
-				<Txt
-					txt={t(isInvoice ? 'invoiceInclFee' : 'totalInclFee', { ns: NS.common }) + '*'}
-					styles={[{ fontWeight: '500' }]}
-				/>
-				<Txt
-					txt={`${shouldEstimate ? 0 : amount + fee} Satoshi`}
-					styles={[{ color: !shouldEstimate && balTooLow ? mainColors.ERROR : shouldEstimate ? color.TEXT : mainColors.VALID }]}
-				/>
-			</View>
-		</>
+		<View style={styles.overview}>
+			<Txt
+				txt={t(isInvoice ? 'invoiceInclFee' : 'totalInclFee', { ns: NS.common }) + '*'}
+				styles={[styles.bold]}
+			/>
+			<Txt
+				txt={`${shouldEstimate ? 0 : amount + fee} Satoshi`}
+				styles={[{ color: !shouldEstimate && balTooLow ? mainColors.ERROR : shouldEstimate ? color.TEXT : mainColors.VALID }]}
+			/>
+		</View>
 	)
 }
 
@@ -294,7 +272,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	amount: {
-		fontSize: 32,
+		fontSize: 46,
 		width: '100%',
 		textAlign: 'center',
 		marginBottom: 5,
@@ -308,7 +286,8 @@ const styles = StyleSheet.create({
 	},
 	overviewWrap: {
 		width: '100%',
-		paddingVertical: 20
+		marginTop: 20,
+		paddingHorizontal: 20,
 	},
 	overview: {
 		flexDirection: 'row',
@@ -324,5 +303,8 @@ const styles = StyleSheet.create({
 		padding: 20,
 		flexDirection: 'row',
 		alignItems: 'center',
+	},
+	bold: {
+		fontWeight: '500'
 	}
 })

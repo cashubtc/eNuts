@@ -5,7 +5,7 @@ import { NS } from '@src/i18n'
 import { mainColors } from '@src/styles'
 import { isErr, openUrl } from '@util'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export interface ErrorDetailsProps {
 	error: Error
@@ -19,13 +19,8 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 	const { openPromptAutoClose } = usePromptContext()
 	return (
 		<View style={styles.container}>
-			<Text style={styles.header}>
-				{t('header')}!
-			</Text>
-			<Txt
-				txt={t('msg')}
-				styles={[{ marginBottom: 20 }]}
-			/>
+			<Txt txt={t('header')} bold styles={[styles.header]} />
+			<Txt txt={t('msg')} styles={[{ marginBottom: 20 }]} />
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 				<Txt txt={props.error.message} styles={[{ color: mainColors.ERROR }]} />
 				<Txt txt={props?.componentStack || t('stackNA')} />
@@ -35,9 +30,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 					openPromptAutoClose({ msg: isErr(err) ? err.message : t('deepLinkErr', { ns: NS.common }) }))}
 				style={styles.bugReport}
 			>
-				<Text style={styles.bugTxt}>
-					{t('reportBug')}{'  '}🐛
-				</Text>
+				<Txt txt={`${t('reportBug')}  🐛`} center bold />
 			</TouchableOpacity>
 		</View>
 	)
@@ -52,7 +45,6 @@ const styles = StyleSheet.create({
 	},
 	header: {
 		fontSize: 24,
-		fontWeight: '500',
 		marginBottom: 30,
 		textAlign: 'center',
 	},
@@ -62,9 +54,4 @@ const styles = StyleSheet.create({
 	bugReport: {
 		padding: 20,
 	},
-	bugTxt: {
-		fontSize: 16,
-		fontWeight: '500',
-		textAlign: 'center',
-	}
 })
