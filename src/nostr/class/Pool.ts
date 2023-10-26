@@ -1,10 +1,12 @@
-import { l } from '@log'
-import { isErr } from '@util'
+// import { l } from '@log'
+import { isErr, uniq } from '@util'
 import type { EventTemplate, Filter, Sub, SubscriptionOptions } from 'nostr-tools'
 import { finishEvent, SimplePool, validateEvent } from 'nostr-tools'
 
 import { defaultRelays, EventKind } from '../consts'
+import { normalizeURL } from '../util'
 
+const l=console.log
 interface IPoolSubArgs {
 	filter: IPoolSubProps,
 	args?: SubscriptionOptions
@@ -18,9 +20,10 @@ interface IPoolSubProps<K extends number = number> extends Filter<K> {
 
 class Pool {
 	get isRunning() { return !!this.activSubs }
-	get activSubs(){return this.#subs.size}
+	get activSubs() { return this.#subs.size }
 	#ids = new Set<string>()
 	#metadataSubs: { [k: string]: 0 | 1 | 2 } = {}
+	get metadataSubsState(): Readonly<{ [k: string]: 0 | 1 | 2 }> { return this.#metadataSubs }
 	#pool?: SimplePool
 	#subs: Set<Sub<number>> = new Set()
 	#poolEventsReceived = 0
@@ -34,36 +37,61 @@ class Pool {
 	constructor(opts: ConstructorParameters<typeof SimplePool>[0] = {}) {
 		this.#opts = { ...this.#opts, ...opts }
 	}
+	#relaysClean(relayUrls?: string[]) {
+		const relays = uniq(relayUrls?.length ? relayUrls : this.#relays).map(normalizeURL)
+		this.#relays = uniq([
+			...(this.#relays || []),
+			...(relayUrls || []),
+			...(defaultRelays || [])
+		])
+			.map(normalizeURL)
+		return relays
+	}
 	#sub({ args, filter: { relayUrls, authors, kinds, skipVerification, ...conf } }: IPoolSubArgs) {
 		try {
 			if (!this.#pool) { this.#connectPool() }
 			if (!this.#pool) { return }
-			const relays = relayUrls?.length ? relayUrls : defaultRelays
-			this.#relays = [...(this.#relays || []), ...(relayUrls || []), ...(defaultRelays || [])]
-
-			// fetch the author details with batchedList method with key 'authors'
-			/* const author = this.#pool.batchedList('authors', relays, [{
-				kinds: [0],
-				limit: 1,
-				authors,
-			}]); */
-
+			const relays = this.#relaysClean(relayUrls)
 			const sub = this.#pool.sub(
 				relays,
 				[{ authors, kinds, ...conf }],
 				{
+					eoseSubTimeout: 1000 * 1,
 					// alreadyHaveEvent: (id, _relay) => this.#ids.has(id),
 					...args ?? {},
 					skipVerification,
 				}
 			)
+			let eoseHandlers: (() => (void | Promise<void>))[] = []
+			const _sub: Sub = {
+				...sub,
+				on: (e, f) => {
+					if (e === 'eose') {
+						const fn = f as (() => (void | Promise<void>))
+						eoseHandlers.push(fn)
+					}
+					sub?.on(e, f)
+				}
+			}
+			const handel = setTimeout(() => {
+				this.#onPoolEose(sub, relays)
+				sub?.unsub?.()
+				_sub?.unsub?.()
+				clearTimeout(handel)
+				eoseHandlers.forEach(fn => { void fn() })
+				eoseHandlers = []
+				console.error('###############################\n\n\nsub timeout\n\n\n#####################################')
+			}, 3000)
 			sub?.on('event', e => {
+				clearTimeout(handel)
 				this.#ids.add(e.id)
 				this.#onEvent()
 			})
-			sub?.on('eose', () => this.#onPoolEose(sub, relays))
+			sub?.on('eose', () => {
+				clearTimeout(handel)
+				this.#onPoolEose(sub, relays)
+			})
 			this.#subs.add(sub)
-			l(`active subs: ${this.#subs.size}`)
 			return sub
 		} catch (e) {
 			l(`RelayPool subscribe error: ${isErr(e) ? e.message : 'No error message'}`)
@@ -77,7 +105,7 @@ class Pool {
 			l(`RelayPool subscribe error: ${isErr(e) ? e.message : 'No error message'}`)
 		}
 	}
-	metadataSub({ args, filter: { relayUrls, authors, skipVerification, ...conf } }: IPoolSubArgs) {
+	metadataSub({ args, filter: { relayUrls, authors, ...conf } }: IPoolSubArgs) {
 		l('[metadataSub]', authors?.length)
 		try {
 			if (!authors?.length) { return }
@@ -97,14 +125,14 @@ class Pool {
 						kinds: [EventKind.Metadata],
 						...conf
 					},
-					args: {
-						eoseSubTimeout: 1000 * 3,
-						alreadyHaveEvent: (id, _relay) => this.#ids.has(id),
-						...args ?? {},
-						skipVerification,
-					},
+					args
 				}
 			)
+			if (!sub) {
+				l('[metadataSub] sub is null')
+				return
+			}
+			// this.#subs.add(sub)
 			sub?.on('eose', () => {
 				for (const h of hexArr) {
 					// this.#metadataSubs[h] = 0
@@ -123,8 +151,8 @@ class Pool {
 		const validated = this.#validate(event, sk)
 		if (!validated) { return }
 		try {
-			this.#relays = [...(this.#relays || []), ...(relayUrls || []), ...(defaultRelays || [])]
-			const res = await Promise.allSettled(this.#pool?.publish([...relayUrls || [], ...defaultRelays], validated) ?? [])
+			const relays = this.#relaysClean(relayUrls)
+			const res = await Promise.allSettled(this.#pool?.publish(relays, validated) ?? [])
 			l({ res })
 			return true
 		} catch (e) {
@@ -134,10 +162,10 @@ class Pool {
 	}
 	closePoolConnection(relayUrls: string[]) {
 		this.#subs.forEach(x => x?.unsub())
-		this.#pool?.close([...(this.#relays || []), ...(relayUrls || []), ...(defaultRelays || [])])
+		this.#pool?.close(this.#relaysClean(relayUrls))
 	}
 	#connectPool(opts: ConstructorParameters<typeof SimplePool>[0] = {}) {
-		if (this.#pool?.close) { this.#pool.close([...(this.#relays || []), ...(defaultRelays || [])]) }
+		if (this.#pool?.close) { this.#pool.close(this.#relaysClean([...(this.#relays || []), ...(defaultRelays || [])])) }
 		this.#pool = new SimplePool({ ...this.#opts, ...opts })
 	}
 	#validate(event: EventTemplate<4>, sk: string) {
@@ -160,5 +188,4 @@ class Pool {
 		// this.closePoolConnection(relayUrls)
 	}
 }
-
 export const pool = new Pool()

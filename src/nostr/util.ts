@@ -1,4 +1,5 @@
 import type { HexKey, IProfileContent, Npub } from '@model/nostr'
+import { l } from '@src/logger'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { cTo } from '@store/utils'
@@ -101,8 +102,9 @@ export function isNpubQR(str: string) {
 	if (isNpub(str)) { return str }
 	try {
 		const u = new URL(str)
-		if (!isNpub(u.pathname)) { return }
-		return u.pathname
+		l(u.protocol, u.host, u.toString())
+		if (!isNpub(u.hostname)) { return }
+		return u.hostname
 	} catch (_) {/* ignored */ }
 }
 
@@ -125,7 +127,7 @@ export async function handleNewNpub(npub: Npub, initSecret = false) {
 	}
 }
 
-export function npubEncode (hex: HexKey) {
+export function npubEncode(hex: HexKey) {
 	if (!isHex(hex)) { return '' }
 	let npub = ''
 	try {
@@ -134,4 +136,20 @@ export function npubEncode (hex: HexKey) {
 		return ''
 	}
 	return npub
+}
+export function normalizeURL(url: string): string {
+	const p = new URL(url)
+	p.pathname = p.pathname.replace(/\/+/g, '/')
+	if (p.pathname.endsWith('/')) { p.pathname = p.pathname.slice(0, -1) }
+	if ((p.port === '80' && p.protocol === 'ws:') || (p.port === '443' && p.protocol === 'wss:')) { p.port = '' }
+	p.searchParams.sort()
+	p.hash = ''
+	return p.toString()
+}
+export function shuffle<T>(a: T[]) {
+	for (let i = a.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[a[i], a[j]] = [a[j], a[i]]
+	}
+	return a
 }

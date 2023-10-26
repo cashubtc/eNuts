@@ -21,13 +21,13 @@ import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { NostrData } from '@src/nostr/NostrData'
+import { Nostr } from '@src/nostr/class/Nostr'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
-import { uniqBy } from '@util'
+import { isNum, uniq, uniqByIContacts } from '@util'
 import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
@@ -45,8 +45,17 @@ import SyncModal from './SyncModal'
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
 
+const loadCount = 20
+
+
+function filterContactArr(arr: IContact[]) {
+	return arr.filter(x => x && Object.keys(x).length > 1)
+}
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
+	// For FlastList
+	const ref = createRef<FlashList<IContact>>()
+
 	const { t } = useTranslation([NS.common])
 	const isFocused = useIsFocused()
 	const { isKeyboardOpen } = useKeyboardCtx()
@@ -61,60 +70,124 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		setUserProfile,
 		userRelays,
 		setUserRelays,
-		// recent,
 		favs,
 	} = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	const inputRef = createRef<TextInput>()
-	const NostrClassRef = useRef<NostrData>()
+	const nostrRef = useRef<Nostr>()
 	const contactsRef = useRef<IContact[]>([])
 	const recentsRef = useRef<IContact[]>([])
 	const contactsListLenRef = useRef(0)
+	// const [contactsList, setContactsList] = useState<string[]>([])
 	const [contacts, setContacts] = useState<IContact[]>([])
 	const [recents, setRecents] = useState<IContact[]>([])
 	const [isRefreshing, setIsRefreshing] = useState(false)
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const [showSearch, setShowSearch] = useState(false)
 	// indicates if user has already fully synced his contacts previously
-	const [hasFullySynced, setHasFullySynced] = useState(!!NostrClassRef.current?.isSync)
+	const [hasFullySynced, setHasFullySynced] = useState(!!nostrRef.current?.isSync)
 	// sync status
 	const abortControllerRef = useRef<AbortController>()
 	const [status, setStatus] = useState({ started: false, finished: false })
 	const [syncModal, setSyncModal] = useState(false)
 	const [progress, setProgress] = useState(0)
 	const [doneCount, setDoneCount] = useState(0)
-	// const [contactsListLen, setContactsListLen] = useState(-1)
-	const next = useCallback(() => NostrClassRef.current?.setupMetadataSubMany(contacts, 25), [contacts])
+	const [contactsView, setContactsView] = useState({ startIdx: -1, endIdx: -1 })
+
+	const next = useCallback(() => {
+		requestAnimationFrame(_time => {
+			if (nostrRef.current?.isSync) { return }
+			void nostrRef.current?.setupMetadataSubMany({
+				contactsView,
+				hasArr: filterContactArr(
+					contacts?.length ? contacts : contactsRef?.current ?? []
+				),
+				toDo: (() => {
+					const itemsInView = uniq([
+						...contacts
+							?.map?.(x => x.hex)
+							.slice(contactsView.startIdx, contactsView.endIdx + 1) ?? [],
+						...contactsRef?.current
+							?.map?.(x => x.hex)
+							.slice(contactsView.startIdx, contactsView.endIdx + 1) ?? []
+					])
+					return itemsInView
+					// const done = uniq([
+					// 	...contacts
+					// 		?.filter(x => x && Object.keys(x).length > 1)
+					// 		?.map?.(x => x.hex) ?? [],
+					// 	...contactsRef?.current
+					// 		?.filter(x => x && Object.keys(x).length > 1)
+					// 		?.map?.(x => x.hex) ?? [],
+					// ])
+					// return nostrRef.current?.getToDo(x => !done.includes(x) && !toExclude.includes(x)).slice(0, loadCount)
+				})(),
+				count: loadCount,
+				sig: abortControllerRef?.current?.signal,
+				emitOnProfileChanged: {
+					emitAsap: false,
+					emitOnEose: true
+				},
+				noCache: true,
+				onEose: (done, authors) => {
+					l('[onEose]', { done: done.length, authors: authors.length })
+					if (done.length === authors.length) {
+						// setHasFullySynced(true)
+						return
+					}
+					if (done.length < 2) {
+						// TODO Handle this case
+						// maybe ?
+						void next()
+					}
+				}
+			})
+		})
+	}, [contacts, contactsView])
+
+	useEffect(() => {
+		l({ ...contactsView, len: contactsView.endIdx - contactsView.startIdx })
+	}, [contactsView])
 
 	const isSending = route.params?.isMelt || route.params?.isSendEcash
 	const toggleSearch = useCallback(() => setShowSearch(prev => !prev), [])
 
-	// const sortFavs = useCallback((a: IContact, b: IContact) => {
-	// 	const aIsFav = favs.includes(a.hex)
-	// 	const bIsFav = favs.includes(b.hex)
-	// 	// a comes before b (a is a favorite)
-	// 	if (aIsFav && !bIsFav) { return -1 }
-	// 	// b comes before a (b is a favorite)
-	// 	if (!aIsFav && bIsFav) { return 1 }
-	// 	return 0
-	// }, [favs])
+	const sortFavs = useCallback((a: IContact, b: IContact) => {
+		const aIsFav = favs.includes(a.hex)
+		const bIsFav = favs.includes(b.hex)
+		// a comes before b (a is a favorite)
+		if (aIsFav && !bIsFav) { return -1 }
+		// b comes before a (b is a favorite)
+		if (!aIsFav && bIsFav) { return 1 }
+		return 0
+	}, [favs])
 
 	// gets nostr data from cache or relay // TODO issue with image loading while scrolling fast
-	const initContacts = (hex: string) => {
-		// l({ newHex: hex, refHex: NostrClassRef.current?.hex }, !NostrClassRef?.current?.hex || hex !== NostrClassRef.current.hex)
+	const initContacts = useCallback(async (hex: string) => {
+		stopLoading()
+		l({ newHex: hex, refHex: nostrRef.current?.hex }, !nostrRef?.current?.hex || hex !== nostrRef.current.hex)
 		// TODO issue with replacing npub
-		// if (!NostrClassRef?.current?.hex || hex !== NostrClassRef.current.hex) {
-		NostrClassRef.current = new NostrData(hex, {
-			onUserMetadataChanged: setUserProfile,
-			onContactsChanged: (allContacts: string[]) => {
-				l('onContactsChanged', NostrClassRef.current?.isRunning, allContacts?.length, !allContacts?.length || allContacts.length < 1)
-				// if (contactsListLenRef.current > 0) { return }
-				contactsListLenRef.current = allContacts.length
-				// setContactsListLen(allContacts.length)
-				// if (NostrClassRef.current?.isRunning) { return }
-				void next()
-			},
-			onProfileChanged: profiles => {
+		if (!nostrRef?.current?.hex || hex !== nostrRef.current.hex) {
+			nostrRef.current = new Nostr(hex, {
+				onUserMetadataChanged: p => setUserProfile(p),
+				onContactsChanged: allContacts => {
+					setContacts(prev => {
+						allContacts = allContacts?.filter(x => x !== hex)
+						if (!allContacts?.length) { return prev }
+						const old = contactsListLenRef.current > 0
+						contactsListLenRef.current = allContacts.length
+						if (!old) {
+							l('call next')
+							void next()
+						}
+						const x = uniqByIContacts([...prev, ...allContacts.map(x => ({ hex: x }))], 'hex')
+						contactsRef.current = x
+						l('contects  len', contactsRef.current.length)
+						return x
+					})
+				},
+				onProfileChanged: profiles => {
+				// TODO profiles are always length 1
 				// l({ profilesLengthInOnProfileChanged: profiles?.length })
 				// if (!profiles?.length) { return }
 				// setRecents(prev => {
@@ -124,45 +197,76 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				// 	recentsRef.current = _profiles
 				// 	return x
 				// })
-				setContacts(prev => {
-					profiles = profiles?.filter(x => x?.hex !== hex)
-					if (!profiles?.length) { return prev }
-					const x = uniqBy([...prev, ...profiles], 'hex')
-					contactsRef.current = x
-					return x
-				})
-			},
-			userRelays
-		})
-		stopLoading()
-		// void NostrClassRef.current?.setupMetadataSubMany(contacts, 50)
-	}
+					l({ onProfileChangeEventProfiles: profiles?.length, should: contactsRef.current.length + (profiles?.length ?? 0) })
+					setContacts(prev => {
+						profiles = profiles?.filter(x => x?.hex !== hex)
+						if (!profiles?.length) { return prev }
+						const x = uniqByIContacts([...prev, ...profiles], 'hex')
+						contactsRef.current = x
+						l('contects  len', contactsRef.current.length)
+						return x
+					})
+				},
+				userRelays
+			})
+			await nostrRef.current.initUserData(userRelays)
+			nostrRef.current.search('billigsteruser')
+		}
+	}, [next, setUserProfile, stopLoading, userRelays])
 
 	const onViewableItemsChanged = useCallback((
 		{ viewableItems }: { viewableItems: ViewToken[] }
 	) => {
-		l(contactsRef?.current?.length)
-		if (
-			!viewableItems?.length ||
-			viewableItems.length < 1 ||
-			!contactsRef?.current?.length ||
-			contactsListLenRef.current === contactsRef?.current?.length
-		) { return }
-		const viewableItemsCount = viewableItems.length
-		const renderedItemsCount = contactsRef?.current?.length
-		if (!viewableItemsCount || viewableItemsCount < 1) { return }
-		const idx = viewableItems[viewableItemsCount - 1].index ?? -1
-		if (idx >= renderedItemsCount - 50) {
-			void next()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+		const firstIdx = viewableItems?.[0]?.index
+		if (!isNum(firstIdx) || firstIdx < 0) { return }
+		setContactsView(prev => ({ ...prev, startIdx: firstIdx }))
+		const endIdx = viewableItems?.[viewableItems.length - 1]?.index
+		if (!isNum(endIdx) || endIdx < 0) { return }
+		setContactsView(prev => ({ ...prev, endIdx }))
+		l('### call next 3 ### ', { firstIdx, endIdx, len: contactsView.endIdx - contactsView.startIdx })
+		void next()
+		// l(contactsRef?.current?.length)
+		// if (
+		// 	!viewableItems?.length ||
+		// 	viewableItems.length < 1
+		// !contactsRef?.current?.length
+		// ||contactsListLenRef.current === contactsRef?.current?.length
+		// ) { return }
+		// const viewableItemsCount = viewableItems.length
+		// const renderedItemsCount = contactsRef?.current?.length
+		// if (!viewableItemsCount || viewableItemsCount < 1) { return }
+		// const idx = viewableItems[viewableItemsCount - 1].index ?? -1
+		// if (idx >= renderedItemsCount - 1) {
+		// if (MetadataRelay.activSubs /* || renderedItemsCount < loadCount */) { return }
+		// 	l('call next 2 ### ', renderedItemsCount)
+		// 	void next()
+		// }
+	}, [contactsView.endIdx, contactsView.startIdx, next])
+	// useEffect(() => {
+	// 	if (!NostrClassRef.current || !contactsListLen || contactsListLen < 1) { return }
+	// 	    l('myUseEffect', {
+	// 		firstIdx,
+	// 		lastIdx,
+	// 		contacts: contacts.length,
+	// 		contactsListLen,
+	// 		trigger: !(lastIdx < contacts.length - 2),
+	// 		isRunning: NostrClassRef.current?.isRunning
+	// 	})
+	// 	if (contactsListLen > 0 && contacts.length < 1) {
+	// 		l('call setupMetadataSubMany once')
+	// 		return void NostrClassRef.current?.setupMetadataSubMany(contacts, 20)
+	// 	}
+	// 	if (lastIdx === -1 || lastIdx < contacts.length - 2 || NostrClassRef.current?.isRunning /**/) { return }
+	// if (NostrClassRef.current?.isRunning) { return }
+	// 	l('call setupMetadataSubMany ', contacts.length)
+	// 	void NostrClassRef.current?.setupMetadataSubMany(contacts, 20)
+	// }, [contacts, firstIdx, lastIdx, contactsListLen])
 
 	// check if user has nostr data saved previously
 	useEffect(() => {
 		// l('isFocused', isFocused, pubKey.hex, NostrClassRef.current?.hex)
-		if (!isFocused || pubKey.hex === NostrClassRef.current?.hex) { return }
-		startLoading()
+		if (!isFocused || pubKey.hex === nostrRef.current?.hex) { return }
+		// startLoading()
 		void (async () => {
 			const [storedNPub, storedPubKeyHex, storedUserRelays, hasSynced] = await Promise.all([
 				store.get(STORE_KEYS.npub),
@@ -180,22 +284,18 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			setPubKey({ encoded: storedNPub || '', hex: storedPubKeyHex || '' })
 			setUserRelays(storedUserRelays || [])
 			setHasFullySynced(!!hasSynced)
-			initContacts(storedPubKeyHex)
+			await initContacts(storedPubKeyHex)
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isFocused])
 
 	const handleSync = async () => {
-		if (!NostrClassRef.current) { return }
+		if (!nostrRef.current) { return }
 		abortControllerRef.current = new AbortController()
 		setProgress(0)
 		setDoneCount(0)
 		setStatus(prev => ({ ...prev, started: true }))
-		await NostrClassRef.current.setupMetadataSubAll((_failed, done) => {
-			const p = +(done / contactsListLenRef.current).toFixed(2)
-			setProgress(p)
-			setDoneCount(done)
-		}, abortControllerRef.current.signal)
+		await nostrRef.current.setupMetadataSubAll({ sig: abortControllerRef.current.signal })
 		//setContacts(Object.entries(result?.result || {}).map(([hex, profile]) => ({ hex, profile })))
 		abortControllerRef.current = undefined
 	}
@@ -272,7 +372,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			store.set(STORE_KEYS.nutpub, pk),			// save enuts hex pubKey
 			secureStore.set(SECRET, sk)					// save nostr secret generated by enuts for nostr DM interactions
 		])
-		initContacts(pub.hex)
+		await initContacts(pub.hex)
 	}
 
 	// user presses the send ecash button
@@ -327,18 +427,17 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	const handleRefresh = async () => {
 		setIsRefreshing(true)
-		// TODO clear nostr class reference
 		setUserProfile(undefined)
 		setContacts([])
 		await Promise.allSettled([
-			NostrClassRef?.current?.cleanCache(),
+			nostrRef?.current?.cleanCache(),
 			Image.clearDiskCache(),
 			store.delete(STORE_KEYS.synced)
 		])
-		NostrClassRef.current = undefined
+		nostrRef.current = undefined
 		contactsListLenRef.current = -1
 		setHasFullySynced(false)
-		initContacts(pubKey.hex)
+		await initContacts(pubKey.hex)
 		setIsRefreshing(false)
 	}
 
@@ -352,6 +451,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		return () => clearTimeout(t)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [showSearch])
+
+	// l({ loading, nutPub, refLength: contactsRef.current.length })
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
@@ -378,6 +479,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				loading={loading}
 				noIcons
 			/>
+			<Text>
+				{filterContactArr(contactsRef.current)?.length}/{contactsListLenRef.current} -
+				{(filterContactArr(contactsRef.current)?.length * 100 / contactsListLenRef.current).toFixed(2)} %
+			</Text>
 			{loading || (nutPub && !contactsRef.current.length) ?
 				<View style={styles.loadingWrap}><Loading /></View>
 				:
@@ -389,7 +494,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							horizontal
 							estimatedItemSize={50}
 							keyExtractor={item => item.hex}
-							renderItem={({ item }) => (
+						renderItem={({ item }) => (
 								<TouchableOpacity onPress={() => void handleSend(item.hex, item)}>
 									<ProfilePic
 										hex={item.hex}
@@ -398,6 +503,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										overlayColor={color.INPUT_BG}
 										isVerified={!!item.nip05?.length}
 										isFav={favs.includes(item.hex)}
+										// isInView={isInView(index)}
 									/>
 								</TouchableOpacity>
 							)}
@@ -421,8 +527,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							{ marginBottom: isKeyboardOpen || route.params?.isMelt || route.params?.isSendEcash ? marginBottomPayment : marginBottom }
 						]}>
 							<FlashList
+								ref={ref}
+								// fRef={ref}
 								data={contacts}
-								estimatedItemSize={70}
+								viewabilityConfig={{
+									minimumViewTime: 500,
+									waitForInteraction: true,
+								}}
+								estimatedItemSize={100}
 								onViewableItemsChanged={onViewableItemsChanged}
 								refreshControl={
 									<RefreshControl
@@ -447,6 +559,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										isPayment={route.params?.isMelt || route.params?.isSendEcash}
 										isFav={favs.includes(item.hex)}
 										sortContacts={() => setContacts(prev => [...prev])}
+										// isInView={isInView(index)}
 									/>
 								)}
 								ListEmptyComponent={() => (

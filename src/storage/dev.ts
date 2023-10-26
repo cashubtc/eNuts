@@ -1,4 +1,4 @@
-import { NostrData } from '@nostr/NostrData'
+import { Nostr } from '@nostr/class/Nostr'
 import * as FileSystem from 'expo-file-system'
 
 import { dropAll } from './db'
@@ -13,7 +13,7 @@ export async function dropAllData() {
 		secureStore.delete(SECRET),
 		secureStore.delete(SECURESTORE_KEY),
 		historyStore.clear(),
-		NostrData.cleanCache(),
+		Nostr.cleanCache(),
 		ttlCache.clear(),
 		FileSystem.deleteLegacyDocumentDirectoryAndroid(),
 		FileSystem.deleteAsync(FileSystem.cacheDirectory!),

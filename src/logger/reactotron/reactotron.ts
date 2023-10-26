@@ -12,10 +12,8 @@
  *
  * @refresh reset
  */
-
-// import { goBack, navigate,resetRoot } from '../../navigators/navigationUtilities'
 import { isReactNativeDevMode } from '@consts'
-import { NativeModules } from 'react-native'
+import Config from '@src/config'
 import { openInEditor, trackGlobalErrors } from 'reactotron-react-native'
 
 import { Reactotron } from './reactotronClient'
@@ -61,7 +59,6 @@ const config = DEFAULT_REACTOTRON_CONFIG
 
 // Avoid setting up Reactotron multiple times with Fast Refresh
 let _reactotronIsSetUp = false
-
 /**
  * Configure reactotron based on the the config settings passed in, then connect if we need to.
  */
@@ -73,13 +70,18 @@ export function setupReactotron(customConfig: ReactotronConfig = {}) {
 
 		// merge the passed in config with our default config
 		Object.assign(config, customConfig)
-		if (config?.host) {// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-			config.host = NativeModules.SourceCode.scriptURL
+		if (config?.host) {
+			config.host = Config?.hostname
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+			/* config.host = NativeModules.SourceCode.scriptURL
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				.split('://')[1] // Remove the scheme
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				.split('/')[0] // Remove the path
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				.split(':')[0] // Remove the port 
+		} */
 		}
-
 		// configure reactotron
 		Reactotron.configure({
 			...config,

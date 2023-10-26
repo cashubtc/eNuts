@@ -1,6 +1,8 @@
 import { Npub } from '@src/model/nostr'
 import { isUrl } from '@src/util'
 
+import { normalizeURL } from './util'
+
 /**
  * Default bootstrap relays
  */
@@ -18,30 +20,30 @@ export const defaultRelays = [
 	'wss://nostr-pub.wellorder.net',
 	'wss://nostr-verified.wellorder.net',
 
-	/* 	'wss://bevo.nostr1.com',
-		'wss://bitcoiner.social',
-		'wss://booger.pro',
-		'wss://christpill.nostr1.com',
-		'wss://nostr-verif.slothy.win',
-		'wss://nostr.bitcoiner.social',
-		'wss://nostr.coinfundit.com',
-		'wss://nostr.einundzwanzig.space',
-		'wss://nostr.mutinywallet.com',
-		'wss://nostr.oxtr.dev',
-		'wss://nostr.thank.eu',
-		'wss://nostr21.com',
-		'wss://nostrue.com',
-		'wss://offchain.pub',
-		'wss://public.relaying.io',
-		'wss://relay.nostr.bg',
-		'wss://relay.nostr.jabber.ch',
-		'wss://relay.nostrich.de',
-		'wss://relay.nostrplebs.com',
-		'wss://relay.noswhere.com',
-		'wss://relay.stoner.com',
-		'wss://relayable.org',
-		'wss://verbiricha.nostr1.com', */
-]
+	'wss://bevo.nostr1.com',
+	'wss://bitcoiner.social',
+	'wss://booger.pro',
+	'wss://christpill.nostr1.com',
+	'wss://nostr-verif.slothy.win',
+	'wss://nostr.bitcoiner.social',
+	'wss://nostr.coinfundit.com',
+	'wss://nostr.einundzwanzig.space',
+	'wss://nostr.mutinywallet.com',
+	'wss://nostr.oxtr.dev',
+	'wss://nostr.thank.eu',
+	'wss://nostr21.com',
+	'wss://nostrue.com',
+	'wss://offchain.pub',
+	'wss://public.relaying.io',
+	'wss://relay.nostr.bg',
+	'wss://relay.nostr.jabber.ch',
+	'wss://relay.nostrich.de',
+	'wss://relay.nostrplebs.com',
+	'wss://relay.noswhere.com',
+	'wss://relay.stoner.com',
+	'wss://relayable.org',
+	'wss://verbiricha.nostr1.com'
+].map(normalizeURL)
 
 export const EventKind = {
 	Unknown: -1,

@@ -2,6 +2,7 @@ import { getDecodedLnInvoice, getDecodedToken } from '@cashu/cashu-ts'
 import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
 import type { ILnUrl, IMintBalWithName, IProofSelection } from '@model'
+import { IContact } from '@src/model/nostr'
 import type { Buffer } from 'buffer/'
 import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
@@ -22,15 +23,47 @@ export function uniq<T extends string | number | bigint | boolean | symbol>(iter
 	return [...new Set(iter)]
 }
 
+
 export function uniqBy<T extends object, TK extends keyof T>(iter: Iterable<T>, key: TK) {
 	// l()
 	const o = [...iter].reduce<{ [k: string | number | symbol]: T }>((acc, cur) => {
-		acc[cur[key] as string] = cur
+		acc[cur[key] as string | number | symbol] = cur
 		return acc
 	}, {})
 	// l({o})
 	return Object.values<T>(o)
 }
+
+export function uniqByIContacts(iter: Iterable<IContact>, key: keyof IContact) {
+	// l()
+	const o = [...iter].reduce<{ [k: string | number | symbol]: IContact }>((acc, cur) => {
+		const hex = cur?.[key]
+		if (!hex) { return acc }
+		if (!acc[hex] || Object.keys(cur).length > Object.keys(acc[hex]).length) {
+			// l({ cur, hex, accItem: acc[hex] })
+			acc[hex] = cur
+			return acc
+		}
+		return acc
+	}, {})
+	// l({o})
+	return Object.values(o)
+}
+/* export function uniqBy<T extends object, TK extends keyof T>(iter: T[], key: TK & TTK<T, TK>) {
+	const o = [...iter].reduce<{ [k: PropertyKey]: T }>((acc, cur) => {
+		const k = cur[key]
+		switch (typeof k) {
+			case 'string':
+			case 'number':
+			case 'symbol': {
+				acc[k] = cur
+				return acc
+			}
+			default: return acc
+		}
+	}, {})
+	return Object.values<T>(o)
+}  */
 export function clearArr<T extends U[], U>(array: T) { array.length = 0 }
 
 /**

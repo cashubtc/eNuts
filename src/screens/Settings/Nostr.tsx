@@ -9,7 +9,7 @@ import BottomNav from '@nav/BottomNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { NostrData } from '@src/nostr/NostrData'
+import { Nostr } from '@src/nostr/class/Nostr'
 import { globals } from '@styles'
 import { Image } from 'expo-image'
 import { useState } from 'react'
@@ -26,7 +26,7 @@ export default function NostrSettings({ navigation, route }: TNostrSettingsPageP
 	})
 
 	const handleNostrCache = async () => {
-		await NostrData.cleanCache()
+		await Nostr.cleanCache()
 		onCancel()
 		openPromptAutoClose({ msg: 'Metadata cache cleared', success: true })
 	}

@@ -3,6 +3,7 @@ import type { ConfigAPI, ConfigFunction, TransformOptions } from '@babel/core'
 const fn: ConfigFunction = (api: ConfigAPI): TransformOptions => {
 	api.cache.forever()
 	return {
+		sourceMaps:'both',
 		presets: ['babel-preset-expo'],
 		plugins: [
 			'@babel/plugin-syntax-jsx',
