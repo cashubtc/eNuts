@@ -47,6 +47,7 @@ const IS_PROD = _appVariant === 'prod'
 const cameraPermission = 'Allow eNuts to access camera.'
 
 const config: ExpoConfig = {
+	experiments: { tsconfigPaths: true },
 	name: `eNuts${!IS_PROD ? ` (${_appVariant})` : ''}`,
 	slug: 'enuts',
 	owner: 'enuts_wallet',
@@ -56,7 +57,7 @@ const config: ExpoConfig = {
 		'android',
 	],
 	version: `${version}${!IS_PROD ? `-${_appVariant}` : ''}`,
-	scheme: 'cashu',
+	scheme: ['cashu'],
 	orientation: 'portrait',
 	icon: './assets/app-icon-all.png',
 	userInterfaceStyle: 'automatic',

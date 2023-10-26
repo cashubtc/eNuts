@@ -494,7 +494,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							horizontal
 							estimatedItemSize={50}
 							keyExtractor={item => item.hex}
-						renderItem={({ item }) => (
+							renderItem={({ item }) => (
 								<TouchableOpacity onPress={() => void handleSend(item.hex, item)}>
 									<ProfilePic
 										hex={item.hex}

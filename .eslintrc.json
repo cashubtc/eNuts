@@ -101,8 +101,6 @@
 		"react",
 		"react-hooks",
 		"jest",
-		"es5",
-		"html",
 		"@typescript-eslint",
 		"simple-import-sort",
 		"promise",
@@ -110,9 +108,6 @@
 		"node",
 		"import",
 		"@getify/proper-arrows",
-		"eslint-plugin",
-		"eslint-plugin-tsdoc",
-		"@typescript-eslint/eslint-plugin",
 		"jsdoc"
 	],
 	"rules": {
