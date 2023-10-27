@@ -101,7 +101,7 @@ export class Nostr {
 	}
 	#isSync() {
 		if ((this.getToDo().length - [...this.#tryMap.values()].filter(x => x > 25).length) < 2) {
-			this.#synced = true
+			// this.#synced = true
 			return true
 		}
 		return false
@@ -217,6 +217,7 @@ export class Nostr {
 					this.#userRelays = relays
 					void this.#ttlCache.setObj('relays', relays)
 				}
+				l('event: ', filterFollows(e.tags).length)
 				if (e.created_at > this.#user.contacts.createdAt) {
 					this.#user.contacts.list = filterFollows(e.tags)
 					this.#user.contacts.createdAt = e.created_at
@@ -244,7 +245,8 @@ export class Nostr {
 
 	public setupMetadataSubMany(opts: ISubOpts = {}) {
 		l('[setupMetadataSubMany]'/* ,{opts} */)
-		const { hasArr = [], toDo = [], count = 15 } = opts
+		let{ hasArr = [], toDo = [], count =0 } = opts
+		if(count<2){count=15}
 		let authors: string[] = []
 		const old = hasArr?.map(x => x.hex) ?? []
 		if (!toDo?.length) {
@@ -302,7 +304,7 @@ export class Nostr {
 		authors.forEach(hex => this.#addTry(hex))
 		const sub = pool.metadataSub({
 			filter: {
-				relayUrls: /* relays?.length ? relays : */ this.#mergeRelays([...relays ?? []]),
+				relayUrls: /* */ relays?.length ? relays : this.#mergeRelays([...relays ?? []]),
 				authors,
 				skipVerification: Config.skipVerification,
 			},

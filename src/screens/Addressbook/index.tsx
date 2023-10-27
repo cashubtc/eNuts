@@ -45,7 +45,7 @@ import SyncModal from './SyncModal'
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
 
-const loadCount = 20
+
 
 
 function filterContactArr(arr: IContact[]) {
@@ -92,24 +92,26 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [syncModal, setSyncModal] = useState(false)
 	const [progress, setProgress] = useState(0)
 	const [doneCount, setDoneCount] = useState(0)
-	const [contactsView, setContactsView] = useState({ startIdx: -1, endIdx: -1 })
+	const contactsView = useRef({ startIdx: -1, endIdx: -1 })
 
 	const next = useCallback(() => {
 		requestAnimationFrame(_time => {
+			l('isSync: ', nostrRef.current?.isSync)
 			if (nostrRef.current?.isSync) { return }
 			void nostrRef.current?.setupMetadataSubMany({
-				contactsView,
+				contactsView: contactsView.current,
 				hasArr: filterContactArr(
 					contacts?.length ? contacts : contactsRef?.current ?? []
 				),
 				toDo: (() => {
+					l('contactsView', contactsView.current.endIdx - contactsView.current.startIdx)
 					const itemsInView = uniq([
 						...contacts
 							?.map?.(x => x.hex)
-							.slice(contactsView.startIdx, contactsView.endIdx + 1) ?? [],
+							.slice(contactsView.current.startIdx, contactsView.current.endIdx + 1) ?? [],
 						...contactsRef?.current
 							?.map?.(x => x.hex)
-							.slice(contactsView.startIdx, contactsView.endIdx + 1) ?? []
+							.slice(contactsView.current.startIdx, contactsView.current.endIdx + 1) ?? []
 					])
 					return itemsInView
 					// const done = uniq([
@@ -122,7 +124,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					// ])
 					// return nostrRef.current?.getToDo(x => !done.includes(x) && !toExclude.includes(x)).slice(0, loadCount)
 				})(),
-				count: loadCount,
+				count: contactsView.current.endIdx - contactsView.current.startIdx ? 15 : contactsView.current.endIdx - contactsView.current.startIdx,
 				sig: abortControllerRef?.current?.signal,
 				emitOnProfileChanged: {
 					emitAsap: false,
@@ -138,16 +140,16 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					if (done.length < 2) {
 						// TODO Handle this case
 						// maybe ?
-						void next()
+						// void next()
 					}
 				}
 			})
 		})
 	}, [contacts, contactsView])
 
-	useEffect(() => {
-		l({ ...contactsView, len: contactsView.endIdx - contactsView.startIdx })
-	}, [contactsView])
+	// useEffect(() => {
+	// 	l({ ...contactsView, len: contactsView.current.endIdx - contactsView.current.startIdx })
+	// }, [contactsView])
 
 	const isSending = route.params?.isMelt || route.params?.isSendEcash
 	const toggleSearch = useCallback(() => setShowSearch(prev => !prev), [])
@@ -171,6 +173,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			nostrRef.current = new Nostr(hex, {
 				onUserMetadataChanged: p => setUserProfile(p),
 				onContactsChanged: allContacts => {
+					l({ allContacts: allContacts.length })
 					setContacts(prev => {
 						allContacts = allContacts?.filter(x => x !== hex)
 						if (!allContacts?.length) { return prev }
@@ -187,16 +190,16 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					})
 				},
 				onProfileChanged: profiles => {
-				// TODO profiles are always length 1
-				// l({ profilesLengthInOnProfileChanged: profiles?.length })
-				// if (!profiles?.length) { return }
-				// setRecents(prev => {
-				// 	const _profiles = profiles?.filter(c => recent.includes(c.hex))
-				// 	if (!_profiles?.length || recent.length === recents.length) { return prev }
-				// 	const x = uniqBy([...prev, ..._profiles], 'hex')
-				// 	recentsRef.current = _profiles
-				// 	return x
-				// })
+					// TODO profiles are always length 1
+					// l({ profilesLengthInOnProfileChanged: profiles?.length })
+					// if (!profiles?.length) { return }
+					// setRecents(prev => {
+					// 	const _profiles = profiles?.filter(c => recent.includes(c.hex))
+					// 	if (!_profiles?.length || recent.length === recents.length) { return prev }
+					// 	const x = uniqBy([...prev, ..._profiles], 'hex')
+					// 	recentsRef.current = _profiles
+					// 	return x
+					// })
 					l({ onProfileChangeEventProfiles: profiles?.length, should: contactsRef.current.length + (profiles?.length ?? 0) })
 					setContacts(prev => {
 						profiles = profiles?.filter(x => x?.hex !== hex)
@@ -217,31 +220,45 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const onViewableItemsChanged = useCallback((
 		{ viewableItems }: { viewableItems: ViewToken[] }
 	) => {
-		const firstIdx = viewableItems?.[0]?.index
-		if (!isNum(firstIdx) || firstIdx < 0) { return }
-		setContactsView(prev => ({ ...prev, startIdx: firstIdx }))
-		const endIdx = viewableItems?.[viewableItems.length - 1]?.index
-		if (!isNum(endIdx) || endIdx < 0) { return }
-		setContactsView(prev => ({ ...prev, endIdx }))
-		l('### call next 3 ### ', { firstIdx, endIdx, len: contactsView.endIdx - contactsView.startIdx })
-		void next()
+		// l('onViewableItemsChanged')
+		// for (let i = 0; i < viewableItems.length; i++) {
+		// 	const item = viewableItems[i]
+		// 	l({ item: item.item as IContact })
+		// 	// item.item
+		// }
+		// l({ viewableItems })
+		// wenn ein item in view ist, das noch nicht geladen wurde
+		// && keine sub läuft
+		if (!nostrRef.current?.isRunning && viewableItems.some(i => Object.keys(i.item as IContact).length === 1)) {
+			l('call next now!')
+			const firstIdx = viewableItems?.[0]?.index
+			if (!isNum(firstIdx) || firstIdx < 0) { return }
+			contactsView.current = { ...contactsView.current, startIdx: firstIdx }
+			const endIdx = viewableItems?.[viewableItems.length - 1]?.index
+			if (!isNum(endIdx) || endIdx < 0) { return }
+			contactsView.current = { ...contactsView.current, endIdx }
+			void next()
+		}
+
+
+		// l('### call next 3 ### ', { firstIdx, endIdx, len: contactsView.current.endIdx - contactsView.current.startIdx })
 		// l(contactsRef?.current?.length)
 		// if (
 		// 	!viewableItems?.length ||
 		// 	viewableItems.length < 1
 		// !contactsRef?.current?.length
-		// ||contactsListLenRef.current === contactsRef?.current?.length
+		// 		|| contactsListLenRef.current === contactsRef?.current?.length
 		// ) { return }
+
 		// const viewableItemsCount = viewableItems.length
 		// const renderedItemsCount = contactsRef?.current?.length
 		// if (!viewableItemsCount || viewableItemsCount < 1) { return }
 		// const idx = viewableItems[viewableItemsCount - 1].index ?? -1
 		// if (idx >= renderedItemsCount - 1) {
-		// if (MetadataRelay.activSubs /* || renderedItemsCount < loadCount */) { return }
-		// 	l('call next 2 ### ', renderedItemsCount)
+		// 	l('call next 2 22### ', renderedItemsCount)
 		// 	void next()
 		// }
-	}, [contactsView.endIdx, contactsView.startIdx, next])
+	}, [next])
 	// useEffect(() => {
 	// 	if (!NostrClassRef.current || !contactsListLen || contactsListLen < 1) { return }
 	// 	    l('myUseEffect', {
@@ -503,7 +520,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										overlayColor={color.INPUT_BG}
 										isVerified={!!item.nip05?.length}
 										isFav={favs.includes(item.hex)}
-										// isInView={isInView(index)}
+									// isInView={isInView(index)}
 									/>
 								</TouchableOpacity>
 							)}
@@ -559,7 +576,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										isPayment={route.params?.isMelt || route.params?.isSendEcash}
 										isFav={favs.includes(item.hex)}
 										sortContacts={() => setContacts(prev => [...prev])}
-										// isInView={isInView(index)}
+									// isInView={isInView(index)}
 									/>
 								)}
 								ListEmptyComponent={() => (

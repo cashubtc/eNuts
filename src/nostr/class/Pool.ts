@@ -56,7 +56,7 @@ class Pool {
 				relays,
 				[{ authors, kinds, ...conf }],
 				{
-					eoseSubTimeout: 1000 * 1,
+					eoseSubTimeout: 3000 * 1,
 					// alreadyHaveEvent: (id, _relay) => this.#ids.has(id),
 					...args ?? {},
 					skipVerification,
