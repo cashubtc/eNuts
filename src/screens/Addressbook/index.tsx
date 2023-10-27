@@ -180,7 +180,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						const old = contactsListLenRef.current > 0
 						contactsListLenRef.current = allContacts.length
 						if (!old) {
-							l('call next')
+							l('[onContactsChanged] call next')
 							void next()
 						}
 						const x = uniqByIContacts([...prev, ...allContacts.map(x => ({ hex: x }))], 'hex')

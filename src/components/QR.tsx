@@ -1,6 +1,8 @@
 import { truncateStr } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { mainColors } from '@src/styles'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 
@@ -17,6 +19,7 @@ interface QRProps {
 }
 
 export default function QR({ size, value, isInvoice, truncateNum, onError }: QRProps) {
+	const { t } = useTranslation([NS.common])
 	const { color, theme } = useThemeContext()
 	const { copied, copy } = useCopy()
 	const str = isInvoice ? value.toUpperCase() : value
@@ -43,8 +46,8 @@ export default function QR({ size, value, isInvoice, truncateNum, onError }: QRP
 					}
 				</View>
 				<Txt
-					txt={truncateStr(str, truncateNum ?? 20)}
-					styles={[{ color: color.TEXT }]}
+					txt={copied ? t('copied') : truncateStr(str, truncateNum ?? 20)}
+					styles={[{ color: copied ? mainColors.VALID : color.TEXT }]}
 				/>
 			</View>
 		</TouchableOpacity>
