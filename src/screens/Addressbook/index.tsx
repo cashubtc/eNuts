@@ -27,7 +27,7 @@ import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
-import { isNum, uniq, uniqByIContacts } from '@util'
+import { uniq, uniqByIContacts } from '@util'
 import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
@@ -45,15 +45,29 @@ import SyncModal from './SyncModal'
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
 
+function debounce<T extends (...args: any[]) => void>(
+	func: T,
+	timeout = 300
+): (...args: Parameters<T>) => void {
+	let timer: NodeJS.Timeout
 
-
+	return function (this: ThisParameterType<T>, ...args: Parameters<T>): void {
+		clearTimeout(timer)
+		timer = setTimeout(() => {
+			func.apply(this, args)
+		}, timeout)
+	}
+}
 
 function filterContactArr(arr: IContact[]) {
 	return arr.filter(x => x && Object.keys(x).length > 1)
 }
+
+let onContactsChangedCount = 0
+
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
-	// For FlastList
+	// For FlashList
 	const ref = createRef<FlashList<IContact>>()
 
 	const { t } = useTranslation([NS.common])
@@ -77,13 +91,15 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const nostrRef = useRef<Nostr>()
 	const contactsRef = useRef<IContact[]>([])
 	const recentsRef = useRef<IContact[]>([])
-	const contactsListLenRef = useRef(0)
+	const contactsView = useRef({ startIdx: -1, endIdx: -1 })
+	// const contactsListLenRef = useRef(0)
 	// const [contactsList, setContactsList] = useState<string[]>([])
 	const [contacts, setContacts] = useState<IContact[]>([])
 	const [recents, setRecents] = useState<IContact[]>([])
 	const [isRefreshing, setIsRefreshing] = useState(false)
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const [showSearch, setShowSearch] = useState(false)
+	const toggleSearch = useCallback(() => setShowSearch(prev => !prev), [])
 	// indicates if user has already fully synced his contacts previously
 	const [hasFullySynced, setHasFullySynced] = useState(!!nostrRef.current?.isSync)
 	// sync status
@@ -92,11 +108,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [syncModal, setSyncModal] = useState(false)
 	const [progress, setProgress] = useState(0)
 	const [doneCount, setDoneCount] = useState(0)
-	const contactsView = useRef({ startIdx: -1, endIdx: -1 })
+
+	const isSending = route.params?.isMelt || route.params?.isSendEcash
 
 	const next = useCallback(() => {
 		requestAnimationFrame(_time => {
-			l('isSync: ', nostrRef.current?.isSync)
 			if (nostrRef.current?.isSync) { return }
 			void nostrRef.current?.setupMetadataSubMany({
 				contactsView: contactsView.current,
@@ -104,7 +120,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					contacts?.length ? contacts : contactsRef?.current ?? []
 				),
 				toDo: (() => {
-					l('contactsView', contactsView.current.endIdx - contactsView.current.startIdx)
 					const itemsInView = uniq([
 						...contacts
 							?.map?.(x => x.hex)
@@ -145,14 +160,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				}
 			})
 		})
-	}, [contacts, contactsView])
-
-	// useEffect(() => {
-	// 	l({ ...contactsView, len: contactsView.current.endIdx - contactsView.current.startIdx })
-	// }, [contactsView])
-
-	const isSending = route.params?.isMelt || route.params?.isSendEcash
-	const toggleSearch = useCallback(() => setShowSearch(prev => !prev), [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const sortFavs = useCallback((a: IContact, b: IContact) => {
 		const aIsFav = favs.includes(a.hex)
@@ -167,27 +176,36 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// gets nostr data from cache or relay // TODO issue with image loading while scrolling fast
 	const initContacts = useCallback(async (hex: string) => {
 		stopLoading()
-		l({ newHex: hex, refHex: nostrRef.current?.hex }, !nostrRef?.current?.hex || hex !== nostrRef.current.hex)
+		// l({ newHex: hex, refHex: nostrRef.current?.hex }, !nostrRef?.current?.hex || hex !== nostrRef.current.hex)
 		// TODO issue with replacing npub
 		if (!nostrRef?.current?.hex || hex !== nostrRef.current.hex) {
 			nostrRef.current = new Nostr(hex, {
 				onUserMetadataChanged: p => setUserProfile(p),
 				onContactsChanged: allContacts => {
-					l({ allContacts: allContacts.length })
-					setContacts(prev => {
-						allContacts = allContacts?.filter(x => x !== hex)
-						if (!allContacts?.length) { return prev }
-						const old = contactsListLenRef.current > 0
-						contactsListLenRef.current = allContacts.length
-						if (!old) {
-							l('[onContactsChanged] call next')
-							void next()
-						}
-						const x = uniqByIContacts([...prev, ...allContacts.map(x => ({ hex: x }))], 'hex')
-						contactsRef.current = x
-						l('contects  len', contactsRef.current.length)
-						return x
+					onContactsChangedCount++
+					l({
+						onContactsChangedEventCount: onContactsChangedCount,
+						allContacts: allContacts.length
 					})
+					// if (!contactsRef.current.length) {
+					// 	l('[onContactsChanged] call next')
+					// 	void next()
+					// }
+					// setContacts(prev => {
+					// 	// l('includesUserProfile: ', profiles?.some(p => p?.hex === hex))
+					// 	// allContacts = allContacts?.filter(x => x !== hex)
+					// 	if (!allContacts?.length) { return prev }
+					// 	const x = uniqByIContacts([...prev, ...allContacts.map(x => ({ hex: x }))], 'hex')
+					// 	contactsRef.current = x
+					// 	l('[onContactsChanged] contactsRef.current.length', contactsRef.current.length)
+					// 	return x
+					// })
+					const c = allContacts.map(x => ({ hex: x }))
+					contactsRef.current = c
+					setContacts(c)
+					// if (contactsRef.current.length) { return }
+					// first render of contacts metadata
+					void next()
 				},
 				onProfileChanged: profiles => {
 					// TODO profiles are always length 1
@@ -202,12 +220,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					// })
 					l({ onProfileChangeEventProfiles: profiles?.length, should: contactsRef.current.length + (profiles?.length ?? 0) })
 					setContacts(prev => {
-						profiles = profiles?.filter(x => x?.hex !== hex)
+						// l('includesUserProfile: ', profiles?.some(p => p?.hex === hex))
+						// profiles = profiles?.filter(x => x?.hex !== hex)
 						if (!profiles?.length) { return prev }
-						const x = uniqByIContacts([...prev, ...profiles], 'hex')
-						contactsRef.current = x
-						l('contects  len', contactsRef.current.length)
-						return x
+						const c = uniqByIContacts([...prev, ...profiles], 'hex')
+						contactsRef.current = c
+						// l('[onProfileChanged] contactsRef.current.length', contactsRef.current.length)
+						return c
 					})
 				},
 				userRelays
@@ -215,30 +234,45 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			await nostrRef.current.initUserData(userRelays)
 			nostrRef.current.search('billigsteruser')
 		}
-	}, [next, setUserProfile, stopLoading, userRelays])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [next, userRelays])
 
 	const onViewableItemsChanged = useCallback((
 		{ viewableItems }: { viewableItems: ViewToken[] }
 	) => {
-		// l('onViewableItemsChanged')
+		// TODO we can early return if all contacts in viewport have been viewed already
+		// TODO can we call next() if 5 items with metadata are remaining outside of viewport?
+		const firstIdx = viewableItems?.[0]?.index
+		const lastIdx = viewableItems?.[viewableItems.length - 1]?.index
+		const includesEntryWithoutMetadata = viewableItems.some(i => Object.keys(i.item as IContact).length === 1)
+		l('[onViewableItemsChanged] called', { firstIdx, lastIdx, includesEntryWithoutMetadata })
+		if (!firstIdx || !lastIdx || !includesEntryWithoutMetadata) { return }
+		contactsView.current = { startIdx: firstIdx, endIdx: lastIdx }
+		l('[onViewableItemsChanged]: call next() now! ')
+		void next()
 		// for (let i = 0; i < viewableItems.length; i++) {
 		// 	const item = viewableItems[i]
-		// 	l({ item: item.item as IContact })
-		// 	// item.item
+		// 	l({
+		// 		hasProfileMetadata: Object.keys(item.item as IContact).length > 1,
+		// 		itemIndex: item.index,
+		// 		isInView: item.isViewable,
+		// 	})
 		// }
+
+
 		// l({ viewableItems })
 		// wenn ein item in view ist, das noch nicht geladen wurde
 		// && keine sub läuft
-		if (!nostrRef.current?.isRunning && viewableItems.some(i => Object.keys(i.item as IContact).length === 1)) {
-			l('call next now!')
-			const firstIdx = viewableItems?.[0]?.index
-			if (!isNum(firstIdx) || firstIdx < 0) { return }
-			contactsView.current = { ...contactsView.current, startIdx: firstIdx }
-			const endIdx = viewableItems?.[viewableItems.length - 1]?.index
-			if (!isNum(endIdx) || endIdx < 0) { return }
-			contactsView.current = { ...contactsView.current, endIdx }
-			void next()
-		}
+		// if (!nostrRef.current?.isRunning && viewableItems.some(i => Object.keys(i.item as IContact).length === 1)) {
+		// 	l('call next now!')
+		// 	const firstIdx = viewableItems?.[0]?.index
+		// 	if (!isNum(firstIdx) || firstIdx < 0) { return }
+		// 	contactsView.current = { ...contactsView.current, startIdx: firstIdx }
+		// 	const endIdx = viewableItems?.[viewableItems.length - 1]?.index
+		// 	if (!isNum(endIdx) || endIdx < 0) { return }
+		// 	contactsView.current = { ...contactsView.current, endIdx }
+		// 	void next()
+		// }
 
 
 		// l('### call next 3 ### ', { firstIdx, endIdx, len: contactsView.current.endIdx - contactsView.current.startIdx })
@@ -259,54 +293,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// 	void next()
 		// }
 	}, [next])
-	// useEffect(() => {
-	// 	if (!NostrClassRef.current || !contactsListLen || contactsListLen < 1) { return }
-	// 	    l('myUseEffect', {
-	// 		firstIdx,
-	// 		lastIdx,
-	// 		contacts: contacts.length,
-	// 		contactsListLen,
-	// 		trigger: !(lastIdx < contacts.length - 2),
-	// 		isRunning: NostrClassRef.current?.isRunning
-	// 	})
-	// 	if (contactsListLen > 0 && contacts.length < 1) {
-	// 		l('call setupMetadataSubMany once')
-	// 		return void NostrClassRef.current?.setupMetadataSubMany(contacts, 20)
-	// 	}
-	// 	if (lastIdx === -1 || lastIdx < contacts.length - 2 || NostrClassRef.current?.isRunning /**/) { return }
-	// if (NostrClassRef.current?.isRunning) { return }
-	// 	l('call setupMetadataSubMany ', contacts.length)
-	// 	void NostrClassRef.current?.setupMetadataSubMany(contacts, 20)
-	// }, [contacts, firstIdx, lastIdx, contactsListLen])
-
-	// check if user has nostr data saved previously
-	useEffect(() => {
-		// l('isFocused', isFocused, pubKey.hex, NostrClassRef.current?.hex)
-		if (!isFocused || pubKey.hex === nostrRef.current?.hex) { return }
-		// startLoading()
-		void (async () => {
-			const [storedNPub, storedPubKeyHex, storedUserRelays, hasSynced] = await Promise.all([
-				store.get(STORE_KEYS.npub),
-				store.get(STORE_KEYS.npubHex),
-				store.getObj<TUserRelays>(STORE_KEYS.relays),
-				store.get(STORE_KEYS.synced)
-			])
-			// user has no nostr data yet
-			if (!storedNPub || !storedPubKeyHex) {
-				setNewNpubModal(true)
-				stopLoading()
-				return
-			}
-			// user has nostr data, set states
-			setPubKey({ encoded: storedNPub || '', hex: storedPubKeyHex || '' })
-			setUserRelays(storedUserRelays || [])
-			setHasFullySynced(!!hasSynced)
-			await initContacts(storedPubKeyHex)
-		})()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isFocused])
 
 	const handleSync = async () => {
+		l('call handleSync function')
 		if (!nostrRef.current) { return }
 		abortControllerRef.current = new AbortController()
 		setProgress(0)
@@ -318,12 +307,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}
 
 	const handleCancel = () => {
+		l('call hanbleCancel function')
 		abortControllerRef.current?.abort()
 		setStatus({ started: false, finished: true })
 		setSyncModal(false)
 	}
 
 	const handleSearch = (text: string) => {
+		l('call hanbleSearch function')
 		if (!text) {
 			setContacts(contactsRef.current)
 			return
@@ -339,19 +330,20 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// handle npub input field
 	const handleNpubInput = async () => {
+		l('call handleNpubInput function')
 		startLoading()
 		setNewNpubModal(false)
-		l('1')
+		// l('1')
 		if (!pubKey.encoded && !pubKey.hex) {
 			stopLoading()
 			openPromptAutoClose({ msg: t('invalidPubKey') })
 			return
 		}
-		l('2')
+		// l('2')
 		let pub = { encoded: '', hex: '' }
 		// check if is npub
 		if (isNpub(pubKey.encoded)) {
-			l('3')
+			l('input is npub')
 			pub = { encoded: pubKey.encoded, hex: nip19.decode(pubKey.encoded).data || '' }
 			l({ pub })
 			setPubKey(pub)
@@ -359,7 +351,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			await handleNewNpub(pub)
 			return
 		}
-		l('4')
+		// l('4')
 		try {
 			if (isHex(pubKey.hex)) {
 				pub = { encoded: nip19.npubEncode(pubKey.hex), hex: pubKey.hex }
@@ -371,14 +363,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			stopLoading()
 			return
 		}
-		l('6')
+		// l('6')
 		// start initialization of nostr data
 		await handleNewNpub(pub)
 	}
 
 	// handle new pasted npub and initialize nostr data
 	const handleNewNpub = async (pub: { encoded: string, hex: string }) => {
-		stopLoading()
+		l('call handleNewNpub function')
 		// generate new secret key
 		const sk = generatePrivateKey() // `sk` is a hex string
 		const pk = getPublicKey(sk)		// `pk` is a hex string
@@ -394,6 +386,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// user presses the send ecash button
 	const handleSend = async (hex: string, contact?: IProfileContent) => {
+		l('call handleSend function')
 		const nostr = {
 			senderName: getNostrUsername(userProfile),
 			receiverHex: hex,
@@ -443,6 +436,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}
 
 	const handleRefresh = async () => {
+		l('call handleRefresh function')
 		setIsRefreshing(true)
 		setUserProfile(undefined)
 		setContacts([])
@@ -452,14 +446,43 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			store.delete(STORE_KEYS.synced)
 		])
 		nostrRef.current = undefined
-		contactsListLenRef.current = -1
+		contactsRef.current = []
 		setHasFullySynced(false)
 		await initContacts(pubKey.hex)
 		setIsRefreshing(false)
 	}
 
+	// check if user has nostr data saved previously
+	useEffect(() => {
+		l('call useEffect with isFocused dependency')
+		// l('isFocused', isFocused, pubKey.hex, NostrClassRef.current?.hex)
+		if (!isFocused || pubKey.hex === nostrRef.current?.hex) { return }
+		// startLoading()
+		void (async () => {
+			const [storedNPub, storedPubKeyHex, storedUserRelays, hasSynced] = await Promise.all([
+				store.get(STORE_KEYS.npub),
+				store.get(STORE_KEYS.npubHex),
+				store.getObj<TUserRelays>(STORE_KEYS.relays),
+				store.get(STORE_KEYS.synced)
+			])
+			// user has no nostr data yet
+			if (!storedNPub || !storedPubKeyHex) {
+				setNewNpubModal(true)
+				stopLoading()
+				return
+			}
+			// user has nostr data, set states
+			setPubKey({ encoded: storedNPub || '', hex: storedPubKeyHex || '' })
+			setUserRelays(storedUserRelays || [])
+			setHasFullySynced(!!hasSynced)
+			await initContacts(storedPubKeyHex)
+		})()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isFocused])
+
 	// auto-focus search input
 	useEffect(() => {
+		l('call useEffect with showSearch dependency')
 		if (!showSearch) { return inputRef.current?.blur() }
 		const t = setTimeout(() => {
 			inputRef.current?.focus()
@@ -469,8 +492,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [showSearch])
 
-	// l({ loading, nutPub, refLength: contactsRef.current.length })
-
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
@@ -479,13 +500,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				nostrProfile={userProfile?.picture}
 				showSearch={pubKey.hex.length > 0}
 				toggleSearch={() => {
+					toggleSearch()
 					// if contacts have been fully synced
-					if (hasFullySynced || contactsRef.current.length === contactsListLenRef.current) {
-						setContacts(contactsRef.current)
-						return toggleSearch()
-					}
+					// if (hasFullySynced || contactsRef.current.length === contactsListLenRef.current) {
+					// 	setContacts(contactsRef.current)
+					// 	return toggleSearch()
+					// }
 					// ask for contacts sync to provide search functionality
-					setSyncModal(true)
+					// setSyncModal(true)
 				}}
 				handlePress={() => navigation.goBack()}
 				openProfile={() => navigation.navigate('Contact', {
@@ -496,9 +518,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				loading={loading}
 				noIcons
 			/>
-			<Text>
-				{filterContactArr(contactsRef.current)?.length}/{contactsListLenRef.current} -
-				{(filterContactArr(contactsRef.current)?.length * 100 / contactsListLenRef.current).toFixed(2)} %
+			<Text style={{ color: color.TEXT }}>
+				{filterContactArr(contacts)?.length}/{contactsRef.current.length}
+				{' ('}{(filterContactArr(contacts)?.length * 100 / contactsRef.current.length).toFixed(2)}%{') '}
 			</Text>
 			{loading || (nutPub && !contactsRef.current.length) ?
 				<View style={styles.loadingWrap}><Loading /></View>
@@ -545,7 +567,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						]}>
 							<FlashList
 								ref={ref}
-								// fRef={ref}
 								data={contacts}
 								viewabilityConfig={{
 									minimumViewTime: 500,
@@ -576,7 +597,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										isPayment={route.params?.isMelt || route.params?.isSendEcash}
 										isFav={favs.includes(item.hex)}
 										sortContacts={() => setContacts(prev => [...prev])}
-									// isInView={isInView(index)}
 									/>
 								)}
 								ListEmptyComponent={() => (
@@ -650,7 +670,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				handleSync={() => void handleSync()}
 				handleCancel={handleCancel}
 				progress={progress}
-				contactsCount={contactsListLenRef.current}
+				contactsCount={contactsRef.current.length}
 				doneCount={doneCount}
 			/>
 			{!isKeyboardOpen && !route.params?.isMelt && !route.params?.isSendEcash &&

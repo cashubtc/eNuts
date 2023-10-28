@@ -1,4 +1,3 @@
-import Config from '@src/config'
 import { l } from '@src/logger'
 import { IContact, IProfileContent } from '@src/model/nostr'
 import { store } from '@src/storage/store'
@@ -198,7 +197,6 @@ export class Nostr {
 				relayUrls: relays,
 				authors: [this.#user.hex],
 				kinds: [EventKind.Metadata, EventKind.ContactList, EventKind.Relays],
-				skipVerification: Config.skipVerification,
 			}
 		})
 		let latestRelays = 0 // createdAt
@@ -234,7 +232,6 @@ export class Nostr {
 				relayUrls: ['wss://relay.nostr.band/all'],
 				search: `${q} sort:popular sort:popular`,
 				kinds: [EventKind.Metadata],
-				skipVerification: Config.skipVerification,
 			}
 		})
 		sub?.on('event', (e: Event) => {
@@ -245,8 +242,9 @@ export class Nostr {
 
 	public setupMetadataSubMany(opts: ISubOpts = {}) {
 		l('[setupMetadataSubMany]'/* ,{opts} */)
-		let{ hasArr = [], toDo = [], count =0 } = opts
-		if(count<2){count=15}
+		let { count = 0 }  = opts
+		const { hasArr = [], toDo = [] } = opts
+		if (count < 2) { count = 15 }
 		let authors: string[] = []
 		const old = hasArr?.map(x => x.hex) ?? []
 		if (!toDo?.length) {
@@ -306,7 +304,6 @@ export class Nostr {
 			filter: {
 				relayUrls: /* */ relays?.length ? relays : this.#mergeRelays([...relays ?? []]),
 				authors,
-				skipVerification: Config.skipVerification,
 			},
 			args: opts
 		})

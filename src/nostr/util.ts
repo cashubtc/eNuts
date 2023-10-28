@@ -6,6 +6,8 @@ import { cTo } from '@store/utils'
 import { isStr, uniq } from '@util'
 import { Event as NostrEvent, generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 
+// TODO create a util class for this to improve DX
+
 /**
  * Get a huge list of available relays
  */
@@ -137,6 +139,7 @@ export function npubEncode(hex: HexKey) {
 	}
 	return npub
 }
+
 export function normalizeURL(url: string): string {
 	const p = new URL(url)
 	p.pathname = p.pathname.replace(/\/+/g, '/')
@@ -146,6 +149,7 @@ export function normalizeURL(url: string): string {
 	p.hash = ''
 	return p.toString()
 }
+
 export function shuffle<T>(a: T[]) {
 	for (let i = a.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));

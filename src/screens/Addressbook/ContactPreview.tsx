@@ -12,12 +12,13 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi, mainColors } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import ProfilePic from './ProfilePic'
 import Username from './Username'
+import { l } from '@src/logger'
 
 interface IContactPreviewProps {
 	contact: TContact | [string, Partial<IProfileContent>]
@@ -66,6 +67,10 @@ export default function ContactPreview({
 		await copy(contact[0])
 		openPromptAutoClose({ msg: t('npubCopied'), success: true })
 	}
+
+	useEffect(() => {
+		l('rendering contact entry')
+	})
 
 	return (
 		<TouchableOpacity onPress={handleSend} style={[styles.container]}>
