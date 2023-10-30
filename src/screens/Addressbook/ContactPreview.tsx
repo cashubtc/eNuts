@@ -12,13 +12,12 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi, mainColors } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import ProfilePic from './ProfilePic'
 import Username from './Username'
-import { l } from '@src/logger'
 
 interface IContactPreviewProps {
 	contact: TContact | [string, Partial<IProfileContent>]
@@ -26,7 +25,7 @@ interface IContactPreviewProps {
 	handleSend: () => void
 	isPayment?: boolean
 	isFav?: boolean
-	sortContacts?: () => void
+	// sortContacts?: () => void
 	recyclingKey?: string
 }
 
@@ -36,7 +35,7 @@ export default function ContactPreview({
 	handleSend,
 	isPayment,
 	isFav,
-	sortContacts,
+	// sortContacts,
 	recyclingKey
 }: IContactPreviewProps) {
 	const { t } = useTranslation([NS.addrBook])
@@ -59,18 +58,15 @@ export default function ContactPreview({
 			})
 		}
 		// re-render contacts list
-		sortContacts?.()
+		// sortContacts?.()
 		void store.setObj(STORE_KEYS.favs, newFavs)
-	}, [contact, favs, setFavs, sortContacts])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const handleCopy = async () => {
 		await copy(contact[0])
 		openPromptAutoClose({ msg: t('npubCopied'), success: true })
 	}
-
-	// useEffect(() => {
-	// 	l('rendering contact entry')
-	// })
 
 	return (
 		<TouchableOpacity onPress={handleSend} style={[styles.container]}>
@@ -80,7 +76,7 @@ export default function ContactPreview({
 					size={50}
 					uri={contact[1]?.picture}
 					overlayColor={color.INPUT_BG}
-					isVerified={!!contact[1]?.nip05?.length}
+					// isVerified={!!contact[1]?.nip05?.length}
 					isFav={isFav}
 					recyclingKey={recyclingKey}
 				/>

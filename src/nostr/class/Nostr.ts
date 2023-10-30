@@ -242,7 +242,7 @@ export class Nostr {
 
 	public setupMetadataSubMany(opts: ISubOpts = {}) {
 		l('[setupMetadataSubMany]'/* ,{opts} */)
-		let { count = 0 }  = opts
+		let { count = 0 } = opts
 		const { hasArr = [], toDo = [] } = opts
 		if (count < 2) { count = 15 }
 		let authors: string[] = []
@@ -250,7 +250,12 @@ export class Nostr {
 		if (!toDo?.length) {
 			authors = this.getToDo(x => !old.includes(x)).slice(0, count)
 		} else {
-			authors = this.getToDo(x => !old.includes(x) && toDo.includes(x)).slice(0, count)
+			authors = toDo.filter(x =>
+				isHex(x) &&
+				!this.#profiles.has(x) &&
+				!pool.metadataSubsState[x]
+			)
+			// authors = this.getToDo(x => !old.includes(x) && toDo.includes(x)).slice(0, count)
 		}
 		authors = authors.filter(x => this.#checkReTry(x))
 		if (authors.length < count) {

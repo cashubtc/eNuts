@@ -1,4 +1,4 @@
-import { ListFavIcon, ListVerifiedIcon, UserIcon } from '@comps/Icons'
+import { ListFavIcon, UserIcon } from '@comps/Icons'
 import { l } from '@log'
 import { imgProxy } from '@nostr/consts'
 import { useThemeContext } from '@src/context/Theme'
@@ -22,7 +22,7 @@ interface IProfilePicProps {
 	isUser?: boolean
 	overlayColor?: string
 	isFav?: boolean
-	isVerified?: boolean
+	// isVerified?: boolean
 	recyclingKey?: string
 }
 
@@ -33,7 +33,7 @@ export default function ProfilePic({
 	isUser,
 	overlayColor,
 	isFav,
-	isVerified,
+	// isVerified,
 	recyclingKey
 }: IProfilePicProps & INostrImg) {
 
@@ -81,11 +81,11 @@ export default function ProfilePic({
 					<UserIcon width={isUser ? 15 : 30} height={isUser ? 15 : 30} color={hi[highlight]} />
 				</View>
 			}
-			{!isUser && isVerified &&
+			{/* {!isUser && isVerified &&
 				<View style={[styles.imgIcon, styles.right]}>
 					<ListVerifiedIcon width={14} height={14} />
 				</View>
-			}
+			} */}
 			{!isUser && isFav &&
 				<View style={[styles.imgIcon, styles.left]}>
 					<ListFavIcon width={14} height={14} color={mainColors.STAR} />

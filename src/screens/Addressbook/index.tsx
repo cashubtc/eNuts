@@ -15,7 +15,7 @@ import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { getNostrUsername, isHex, isNpub } from '@nostr/util'
 import { useIsFocused } from '@react-navigation/native'
-import { FlashList, type ViewToken } from '@shopify/flash-list'
+import { FlashList } from '@shopify/flash-list'
 import { useKeyboardCtx } from '@src/context/Keyboard'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
@@ -27,12 +27,12 @@ import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
-import { isNum, uniq, uniqByIContacts } from '@util'
+import { debounce, isNum } from '@util'
 import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
-import { createRef, useCallback, useEffect, useRef, useState } from 'react'
+import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {RefreshControl, StyleSheet, Text, type TextInput, TouchableOpacity, View } from 'react-native'
+import { RefreshControl, StyleSheet, Text, type TextInput, TouchableOpacity, View } from 'react-native'
 
 import ContactPreview from './ContactPreview'
 import ProfilePic from './ProfilePic'
@@ -42,34 +42,31 @@ import SyncModal from './SyncModal'
 /* State issues will occur while debugging Android and IOS at the same time */
 /****************************************************************************/
 
+interface CustomViewToken {
+	item: IContact // Replace YourTypeHere with the actual type you want
+	key: string
+	index: number | null
+	isViewable: boolean
+	timestamp: number
+}
+
+interface IViewableItems { viewableItems: CustomViewToken[] }
+
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
-
-// function debounce<T extends (...args: any[]) => void>(
-// 	func: T,
-// 	timeout = 300
-// ): (...args: Parameters<T>) => void {
-// 	let timer: NodeJS.Timeout
-
-// 	return function (this: ThisParameterType<T>, ...args: Parameters<T>): void {
-// 		clearTimeout(timer)
-// 		timer = setTimeout(() => {
-// 			func.apply(this, args)
-// 		}, timeout)
-// 	}
-// }
 
 function filterContactArr(arr: IContact[]) {
 	return arr.filter(x => x && Object.keys(x).length > 1)
 }
 
-let onContactsChangedCount = 0
-
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
 	// For FlashList
 	const ref = createRef<FlashList<IContact>>()
-
+	const [isRefreshing, setIsRefreshing] = useState(false)
+	// Nostr class instance
+	const nostrRef = useRef<Nostr>()
+	// main context
 	const { t } = useTranslation([NS.common])
 	const isFocused = useIsFocused()
 	const { isKeyboardOpen } = useKeyboardCtx()
@@ -87,82 +84,131 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		favs,
 	} = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
+	// related to new npub
 	const inputRef = createRef<TextInput>()
-	const nostrRef = useRef<Nostr>()
-	const contactsRef = useRef<IContact[]>([])
-	const recentsRef = useRef<IContact[]>([])
-	const [contacts, setContacts] = useState<IContact[]>([])
-	const contactsView = useRef({ startIdx: -1, endIdx: -1 })
-	// const scrollIdx = use
-	const [recents, setRecents] = useState<IContact[]>([])
-	const [isRefreshing, setIsRefreshing] = useState(false)
 	const [newNpubModal, setNewNpubModal] = useState(false)
+	// search functionality
 	const [showSearch, setShowSearch] = useState(false)
 	const toggleSearch = useCallback(() => setShowSearch(prev => !prev), [])
-	// indicates if user has already fully synced his contacts previously
-	const [hasFullySynced, setHasFullySynced] = useState(!!nostrRef.current?.isSync)
+	// contact list
+	const [contacts, setContacts] = useState<IContact[]>([])
+	// TODO we have 3 copies of contacts, this is not good (the class instance, the state and the ref)
+	const contactsRef = useRef<IContact[]>([])
+	const recentsRef = useRef<IContact[]>([])
+	// last seen contact index
+	const last = useRef({ idx: -1 })
+	// contacts that have been recently used for sending ecash
+	const [recents, setRecents] = useState<IContact[]>([])
 	// sync status
+	const [hasFullySynced, setHasFullySynced] = useState(!!nostrRef.current?.isSync)
 	const abortControllerRef = useRef<AbortController>()
 	const [status, setStatus] = useState({ started: false, finished: false })
 	const [syncModal, setSyncModal] = useState(false)
 	const [progress, setProgress] = useState(0)
 	const [doneCount, setDoneCount] = useState(0)
+	const isSending = useMemo(() => route.params?.isMelt || route.params?.isSendEcash, [route.params?.isMelt, route.params?.isSendEcash])
 
-	const isSending = route.params?.isMelt || route.params?.isSendEcash
-
-	const next = useCallback(() => {
-		requestAnimationFrame(_time => {
-			if (nostrRef.current?.isSync) { return }
-			void nostrRef.current?.setupMetadataSubMany({
-				contactsView: contactsView.current,
-				hasArr: filterContactArr(
-					contacts?.length ? contacts : contactsRef?.current ?? []
-				),
-				toDo: (() => {
-					const itemsInView = uniq([
-						...contacts
-							?.map?.(x => x.hex)
-							.slice(contactsView.current.startIdx, contactsView.current.endIdx + 1) ?? [],
-						...contactsRef?.current
-							?.map?.(x => x.hex)
-							.slice(contactsView.current.startIdx, contactsView.current.endIdx + 1) ?? []
-					])
-					return itemsInView
-					// const done = uniq([
-					// 	...contacts
-					// 		?.filter(x => x && Object.keys(x).length > 1)
-					// 		?.map?.(x => x.hex) ?? [],
-					// 	...contactsRef?.current
-					// 		?.filter(x => x && Object.keys(x).length > 1)
-					// 		?.map?.(x => x.hex) ?? [],
-					// ])
-					// return nostrRef.current?.getToDo(x => !done.includes(x) && !toExclude.includes(x)).slice(0, loadCount)
-				})(),
-				count: contactsView.current.endIdx - contactsView.current.startIdx ? 15 : contactsView.current.endIdx - contactsView.current.startIdx,
-				sig: abortControllerRef?.current?.signal,
-				emitOnProfileChanged: {
-					emitAsap: false,
-					emitOnEose: true
-				},
-				noCache: true,
-				onEose: (done, authors) => {
-					l('[onEose]', { done: done.length, authors: authors.length })
-					if (done.length === authors.length) {
-						// setHasFullySynced(true)
-						return
-					}
-					if (done.length < 2) {
-						// TODO Handle this case
-						// maybe ?
-						// void next()
-					}
+	// gets nostr data from cache or relay while scrolling
+	const next = useCallback((contactsTodo: string[]) => {
+		if (nostrRef.current?.isSync) { return }
+		void nostrRef.current?.setupMetadataSubMany({
+			// contactsView,
+			hasArr: filterContactArr(
+				contacts?.length ? contacts : contactsRef?.current ?? []
+			),
+			toDo: contactsTodo,
+			count: 15,
+			sig: abortControllerRef?.current?.signal,
+			emitOnProfileChanged: {
+				emitAsap: false,
+				emitOnEose: true
+			},
+			noCache: true,
+			onEose: (done, authors) => {
+				l('[onEose]', { done: done.length, authors: authors.length })
+				if (done.length === authors.length) {
+					// setHasFullySynced(true)
+					return
 				}
-			})
+				if (done.length < 2) {
+					// TODO Handle this case
+					// maybe ?
+					// void next()
+				}
+			}
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const sortFavs = useCallback((a: IContact, b: IContact) => {
+	// gets initial nostr data from cache or relay // TODO issue with image loading while scrolling fast
+	const initContacts = useCallback(async (hex: string) => {
+		stopLoading()
+		if (!nostrRef?.current?.hex || hex !== nostrRef.current.hex) {
+			nostrRef.current = new Nostr(hex, {
+				onUserMetadataChanged: p => setUserProfile(p),
+				onContactsChanged: allContacts => {
+					if (!allContacts?.length) { return }
+					// we simply overwrite the previous state with the new one
+					const c = allContacts.map(x => ({ hex: x })).sort(sortFavs)
+					contactsRef.current = c
+					setContacts(c)
+					// first render of contacts metadata happens in flashlist event onViewableItemsChanged
+				},
+				onProfileChanged: profiles => {
+					l({ onProfileChangeEventProfiles: profiles?.length, should: contactsRef.current.length + (profiles?.length ?? 0) })
+					setContacts(prev => {
+						if (!profiles?.length) { return prev }
+						const c = prev.map(p => {
+							const idx = profiles?.findIndex(x => x?.hex === p?.hex)
+							return idx < 0 ? p : profiles[idx]
+						})
+						contactsRef.current = c
+						return c
+					})
+				},
+				userRelays
+			})
+			await nostrRef.current.initUserData(userRelays)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [next, userRelays])
+
+	// debounce flashlist viewability event to avoid too many calls of next()
+	const onViewableItemsChanged = debounce(useCallback(({ viewableItems }: IViewableItems) => {
+		const firstIdx = viewableItems?.[0]?.index
+		if (!isNum(firstIdx)) { return }
+		// initial render
+		if (last.current.idx === -1) {
+			last.current.idx = firstIdx
+			return next(viewableItems.map(i => i.item.hex))
+		}
+		// check all contacts in viewport already have metadata and store result in variable
+		const includesEntryWithoutMetadata = viewableItems.some(i => Object.keys(i.item).length === 1)
+		// get hexkeys of viewable items
+		const itemsTodo = viewableItems.map(i => i.item.hex)
+		// TODO trigger next() if the 6th contact outside viewport hasnt metadata and approches viewport
+		if (last.current.idx > firstIdx) { // scrolling up
+			last.current.idx = firstIdx
+			// we dont call next() if all contacts in viewport already have metadata
+			if (!includesEntryWithoutMetadata) { return }
+			// get hexkeys of items outside viewport
+			for (let i = firstIdx - 15; i < firstIdx; i++) {
+				if (i < 0) { break }
+				const contactHex = contactsRef.current?.[i].hex
+				if (!contactHex) { break }
+				itemsTodo.push(contactHex)
+			}
+			void next(itemsTodo)
+		} else if (last.current.idx < firstIdx) { // scrolling down
+			last.current.idx = firstIdx
+			// we dont call next() if all contacts in viewport already have metadata
+			if (!includesEntryWithoutMetadata) { return }
+			void next(itemsTodo)
+		}
+	}, [next]), 150)
+
+	// bring favs on top of the list
+	const sortFavs = (a: IContact, b: IContact) => {
 		const aIsFav = favs.includes(a.hex)
 		const bIsFav = favs.includes(b.hex)
 		// a comes before b (a is a favorite)
@@ -170,145 +216,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// b comes before a (b is a favorite)
 		if (!aIsFav && bIsFav) { return 1 }
 		return 0
-	}, [favs])
-
-	// gets nostr data from cache or relay // TODO issue with image loading while scrolling fast
-	const initContacts = useCallback(async (hex: string) => {
-		stopLoading()
-		// l({ newHex: hex, refHex: nostrRef.current?.hex }, !nostrRef?.current?.hex || hex !== nostrRef.current.hex)
-		// TODO issue with replacing npub
-		if (!nostrRef?.current?.hex || hex !== nostrRef.current.hex) {
-			nostrRef.current = new Nostr(hex, {
-				onUserMetadataChanged: p => setUserProfile(p),
-				onContactsChanged: allContacts => {
-					onContactsChangedCount++
-					l({
-						onContactsChangedEventCount: onContactsChangedCount,
-						allContacts: allContacts.length
-					})
-					// if (!contactsRef.current.length) {
-					// 	l('[onContactsChanged] call next')
-					// 	void next()
-					// }
-					// setContacts(prev => {
-					// 	// l('includesUserProfile: ', profiles?.some(p => p?.hex === hex))
-					// 	// allContacts = allContacts?.filter(x => x !== hex)
-					// 	if (!allContacts?.length) { return prev }
-					// 	const x = uniqByIContacts([...prev, ...allContacts.map(x => ({ hex: x }))], 'hex')
-					// 	contactsRef.current = x
-					// 	l('[onContactsChanged] contactsRef.current.length', contactsRef.current.length)
-					// 	return x
-					// })
-					const c = allContacts.map(x => ({ hex: x }))
-					contactsRef.current = c
-					setContacts(c)
-					// if (contactsRef.current.length) { return }
-					// first render of contacts metadata
-					void next()
-				},
-				onProfileChanged: profiles => {
-					// TODO profiles are always length 1
-					// l({ profilesLengthInOnProfileChanged: profiles?.length })
-					// if (!profiles?.length) { return }
-					// setRecents(prev => {
-					// 	const _profiles = profiles?.filter(c => recent.includes(c.hex))
-					// 	if (!_profiles?.length || recent.length === recents.length) { return prev }
-					// 	const x = uniqBy([...prev, ..._profiles], 'hex')
-					// 	recentsRef.current = _profiles
-					// 	return x
-					// })
-					l({ onProfileChangeEventProfiles: profiles?.length, should: contactsRef.current.length + (profiles?.length ?? 0) })
-					setContacts(prev => {
-						// l('includesUserProfile: ', profiles?.some(p => p?.hex === hex))
-						// profiles = profiles?.filter(x => x?.hex !== hex)
-						if (!profiles?.length) { return prev }
-						const c = uniqByIContacts([...prev, ...profiles], 'hex')
-						contactsRef.current = c
-						// l('[onProfileChanged] contactsRef.current.length', contactsRef.current.length)
-						return c
-					})
-				},
-				userRelays
-			})
-			await nostrRef.current.initUserData(userRelays)
-			nostrRef.current.search('billigsteruser')
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [next, userRelays])
-
-	const onViewableItemsChanged = useCallback((
-		{ viewableItems }: { viewableItems: ViewToken[] }
-	) => {
-		let firstIdx = viewableItems?.[0]?.index
-		let lastIdx = viewableItems?.[viewableItems.length - 1]?.index
-		l('[onViewableItemsChanged] called')
-		if (!isNum(firstIdx) || !isNum(lastIdx)) { return }
-		// check all contacts in viewport already have metadata
-		const includesEntryWithoutMetadata = viewableItems.some(i => Object.keys(i.item as IContact).length === 1)
-		let outsideViewport: IContact | undefined = undefined
-		let outsideViewportIdx: number | undefined = undefined
-		let scrollDirection = 0
-		// check scroll direction
-		if (contactsView.current.startIdx > firstIdx) {
-			l('scrolling up')
-			scrollDirection = 1
-			outsideViewportIdx = firstIdx - 5
-			outsideViewport = contactsRef.current?.[outsideViewportIdx]
-		} else if (contactsView.current.startIdx < firstIdx) {
-			l('scrolling down')
-			scrollDirection = 2
-			outsideViewportIdx = lastIdx + 5
-			outsideViewport = contactsRef.current?.[outsideViewportIdx]
-		}
-		// we return if all contacts in viewport already have metadata or if next/previous 5 contacts outside of viewport have metadata
-		l({ outsideViewportHasNoMetadata: Object.keys(outsideViewport || {}).length === 1 })
-		if (!includesEntryWithoutMetadata && outsideViewport && Object.keys(outsideViewport).length > 1) { return }
-		l('[onViewableItemsChanged] call next() now! ', { firstIdx, lastIdx })
-		contactsView.current = { startIdx: firstIdx, endIdx: lastIdx }
-		void next()
-		// for (let i = 0; i < viewableItems.length; i++) {
-		// 	const item = viewableItems[i]
-		// 	l({
-		// 		hasProfileMetadata: Object.keys(item.item as IContact).length > 1,
-		// 		itemIndex: item.index,
-		// 		isInView: item.isViewable,
-		// 	})
-		// }
-
-
-		// l({ viewableItems })
-		// wenn ein item in view ist, das noch nicht geladen wurde
-		// && keine sub läuft
-		// if (!nostrRef.current?.isRunning && viewableItems.some(i => Object.keys(i.item as IContact).length === 1)) {
-		// 	l('call next now!')
-		// 	const firstIdx = viewableItems?.[0]?.index
-		// 	if (!isNum(firstIdx) || firstIdx < 0) { return }
-		// 	contactsView.current = { ...contactsView.current, startIdx: firstIdx }
-		// 	const endIdx = viewableItems?.[viewableItems.length - 1]?.index
-		// 	if (!isNum(endIdx) || endIdx < 0) { return }
-		// 	contactsView.current = { ...contactsView.current, endIdx }
-		// 	void next()
-		// }
-
-
-		// l('### call next 3 ### ', { firstIdx, endIdx, len: contactsView.current.endIdx - contactsView.current.startIdx })
-		// l(contactsRef?.current?.length)
-		// if (
-		// 	!viewableItems?.length ||
-		// 	viewableItems.length < 1
-		// !contactsRef?.current?.length
-		// 		|| contactsListLenRef.current === contactsRef?.current?.length
-		// ) { return }
-
-		// const viewableItemsCount = viewableItems.length
-		// const renderedItemsCount = contactsRef?.current?.length
-		// if (!viewableItemsCount || viewableItemsCount < 1) { return }
-		// const idx = viewableItems[viewableItemsCount - 1].index ?? -1
-		// if (idx >= renderedItemsCount - 1) {
-		// 	l('call next 2 22### ', renderedItemsCount)
-		// 	void next()
-		// }
-	}, [next])
+	}
 
 	const handleSync = async () => {
 		l('call handleSync function')
@@ -330,18 +238,25 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}
 
 	const handleSearch = (text: string) => {
-		l('call hanbleSearch function')
+		// reset search results
 		if (!text) {
-			setContacts(contactsRef.current)
-			return
+			return setContacts(contactsRef.current)
 		}
+		// handle npub search
 		if (isNpub(text)) {
-			setShowSearch(false)
 			const hex = nip19.decode(text).data
-			return handleSend(hex)
+			const filtered = contactsRef.current.filter(c => c.hex === hex)
+			// TODO if npub is not in contact list, search for it in relay and display result
+			// nostrRef.current?.search(text)
+			return setContacts(filtered)
 		}
-		const filtered = contactsRef.current.filter(c => getNostrUsername(c).toLowerCase().includes(text.toLowerCase()))
-		setContacts(filtered)
+		// handle search by username if all contacts have been synced
+		if (hasFullySynced) {
+			const filtered = contactsRef.current.filter(c => getNostrUsername(c).toLowerCase().includes(text.toLowerCase()))
+			return setContacts(filtered)
+		}
+		// TODO handle nip50 search
+		nostrRef.current?.search('billigsteruser')
 	}
 
 	// handle npub input field
@@ -453,6 +368,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	const handleRefresh = async () => {
 		l('call handleRefresh function')
+		// TODO check if user has internet connection
+		// TODO refreshing doesnt render the metadata again
 		setIsRefreshing(true)
 		setUserProfile(undefined)
 		setContacts([])
@@ -470,8 +387,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// check if user has nostr data saved previously
 	useEffect(() => {
-		l('call useEffect with isFocused dependency')
-		// l('isFocused', isFocused, pubKey.hex, NostrClassRef.current?.hex)
 		if (!isFocused || pubKey.hex === nostrRef.current?.hex) { return }
 		// startLoading()
 		void (async () => {
@@ -498,7 +413,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// auto-focus search input
 	useEffect(() => {
-		l('call useEffect with showSearch dependency')
 		if (!showSearch) { return inputRef.current?.blur() }
 		const t = setTimeout(() => {
 			inputRef.current?.focus()
@@ -508,6 +422,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [showSearch])
 
+	useEffect(() => {
+		// TODO no need to sort and re-render if user removes a contact from favs
+		setContacts([...contacts].sort(sortFavs))
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [favs])
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
@@ -515,16 +435,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				withBackBtn={isSending}
 				nostrProfile={userProfile?.picture}
 				showSearch={pubKey.hex.length > 0}
-				toggleSearch={() => {
-					toggleSearch()
-					// if contacts have been fully synced
-					// if (hasFullySynced || contactsRef.current.length === contactsListLenRef.current) {
-					// 	setContacts(contactsRef.current)
-					// 	return toggleSearch()
-					// }
-					// ask for contacts sync to provide search functionality
-					// setSyncModal(true)
-				}}
+				toggleSearch={toggleSearch}
 				handlePress={() => navigation.goBack()}
 				openProfile={() => navigation.navigate('Contact', {
 					contact: userProfile,
@@ -556,7 +467,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										size={50}
 										uri={item.picture}
 										overlayColor={color.INPUT_BG}
-										isVerified={!!item.nip05?.length}
+										// isVerified={!!item.nip05?.length}
 										isFav={favs.includes(item.hex)}
 									// isInView={isInView(index)}
 									/>
@@ -586,9 +497,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 								data={contacts}
 								viewabilityConfig={{
 									minimumViewTime: 500,
-									waitForInteraction: true,
+									// waitForInteraction: true,
 								}}
-								estimatedItemSize={100}
+								estimatedItemSize={75}
 								onViewableItemsChanged={onViewableItemsChanged}
 								refreshControl={
 									<RefreshControl
@@ -602,6 +513,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 								keyExtractor={item => item.hex}
 								renderItem={({ item }) => (
 									<ContactPreview
+										// TODO fix this contact type
 										contact={[item.hex, item]}
 										openProfile={() => {
 											navigation.navigate('Contact', {
@@ -612,7 +524,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										handleSend={() => void handleSend(item.hex, item)}
 										isPayment={route.params?.isMelt || route.params?.isSendEcash}
 										isFav={favs.includes(item.hex)}
-										sortContacts={() => setContacts(prev => [...prev])}
+									// sortContacts={() => setContacts(prev => [...prev.sort(sortFavs)])}
 									/>
 								)}
 								ListEmptyComponent={() => (
