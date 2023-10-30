@@ -27,12 +27,12 @@ import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
-import { uniq, uniqByIContacts } from '@util'
+import { isNum, uniq, uniqByIContacts } from '@util'
 import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RefreshControl, StyleSheet, Text, type TextInput, TouchableOpacity, View } from 'react-native'
+import {RefreshControl, StyleSheet, Text, type TextInput, TouchableOpacity, View } from 'react-native'
 
 import ContactPreview from './ContactPreview'
 import ProfilePic from './ProfilePic'
@@ -45,19 +45,19 @@ import SyncModal from './SyncModal'
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
 
-function debounce<T extends (...args: any[]) => void>(
-	func: T,
-	timeout = 300
-): (...args: Parameters<T>) => void {
-	let timer: NodeJS.Timeout
+// function debounce<T extends (...args: any[]) => void>(
+// 	func: T,
+// 	timeout = 300
+// ): (...args: Parameters<T>) => void {
+// 	let timer: NodeJS.Timeout
 
-	return function (this: ThisParameterType<T>, ...args: Parameters<T>): void {
-		clearTimeout(timer)
-		timer = setTimeout(() => {
-			func.apply(this, args)
-		}, timeout)
-	}
-}
+// 	return function (this: ThisParameterType<T>, ...args: Parameters<T>): void {
+// 		clearTimeout(timer)
+// 		timer = setTimeout(() => {
+// 			func.apply(this, args)
+// 		}, timeout)
+// 	}
+// }
 
 function filterContactArr(arr: IContact[]) {
 	return arr.filter(x => x && Object.keys(x).length > 1)
@@ -91,10 +91,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const nostrRef = useRef<Nostr>()
 	const contactsRef = useRef<IContact[]>([])
 	const recentsRef = useRef<IContact[]>([])
-	const contactsView = useRef({ startIdx: -1, endIdx: -1 })
-	// const contactsListLenRef = useRef(0)
-	// const [contactsList, setContactsList] = useState<string[]>([])
 	const [contacts, setContacts] = useState<IContact[]>([])
+	const contactsView = useRef({ startIdx: -1, endIdx: -1 })
+	// const scrollIdx = use
 	const [recents, setRecents] = useState<IContact[]>([])
 	const [isRefreshing, setIsRefreshing] = useState(false)
 	const [newNpubModal, setNewNpubModal] = useState(false)
@@ -240,15 +239,32 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const onViewableItemsChanged = useCallback((
 		{ viewableItems }: { viewableItems: ViewToken[] }
 	) => {
-		// TODO we can early return if all contacts in viewport have been viewed already
-		// TODO can we call next() if 5 items with metadata are remaining outside of viewport?
-		const firstIdx = viewableItems?.[0]?.index
-		const lastIdx = viewableItems?.[viewableItems.length - 1]?.index
+		let firstIdx = viewableItems?.[0]?.index
+		let lastIdx = viewableItems?.[viewableItems.length - 1]?.index
+		l('[onViewableItemsChanged] called')
+		if (!isNum(firstIdx) || !isNum(lastIdx)) { return }
+		// check all contacts in viewport already have metadata
 		const includesEntryWithoutMetadata = viewableItems.some(i => Object.keys(i.item as IContact).length === 1)
-		l('[onViewableItemsChanged] called', { firstIdx, lastIdx, includesEntryWithoutMetadata })
-		if (!firstIdx || !lastIdx || !includesEntryWithoutMetadata) { return }
+		let outsideViewport: IContact | undefined = undefined
+		let outsideViewportIdx: number | undefined = undefined
+		let scrollDirection = 0
+		// check scroll direction
+		if (contactsView.current.startIdx > firstIdx) {
+			l('scrolling up')
+			scrollDirection = 1
+			outsideViewportIdx = firstIdx - 5
+			outsideViewport = contactsRef.current?.[outsideViewportIdx]
+		} else if (contactsView.current.startIdx < firstIdx) {
+			l('scrolling down')
+			scrollDirection = 2
+			outsideViewportIdx = lastIdx + 5
+			outsideViewport = contactsRef.current?.[outsideViewportIdx]
+		}
+		// we return if all contacts in viewport already have metadata or if next/previous 5 contacts outside of viewport have metadata
+		l({ outsideViewportHasNoMetadata: Object.keys(outsideViewport || {}).length === 1 })
+		if (!includesEntryWithoutMetadata && outsideViewport && Object.keys(outsideViewport).length > 1) { return }
+		l('[onViewableItemsChanged] call next() now! ', { firstIdx, lastIdx })
 		contactsView.current = { startIdx: firstIdx, endIdx: lastIdx }
-		l('[onViewableItemsChanged]: call next() now! ')
 		void next()
 		// for (let i = 0; i < viewableItems.length; i++) {
 		// 	const item = viewableItems[i]

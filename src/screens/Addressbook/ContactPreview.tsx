@@ -68,9 +68,9 @@ export default function ContactPreview({
 		openPromptAutoClose({ msg: t('npubCopied'), success: true })
 	}
 
-	useEffect(() => {
-		l('rendering contact entry')
-	})
+	// useEffect(() => {
+	// 	l('rendering contact entry')
+	// })
 
 	return (
 		<TouchableOpacity onPress={handleSend} style={[styles.container]}>
