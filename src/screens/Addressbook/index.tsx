@@ -50,6 +50,11 @@ interface CustomViewToken {
 	timestamp: number
 }
 
+interface IShouldCallNext {
+	shouldCall: boolean
+	todo: string[]
+}
+
 interface IViewableItems { viewableItems: CustomViewToken[] }
 
 const marginBottom = isIOS ? 100 : 75
@@ -140,7 +145,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	// gets initial nostr data from cache or relay // TODO issue with image loading while scrolling fast
+	// gets initial nostr data from cache or relay
 	const initContacts = useCallback(async (hex: string) => {
 		stopLoading()
 		if (!nostrRef?.current?.hex || hex !== nostrRef.current.hex) {
@@ -173,39 +178,71 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [next, userRelays])
 
+	const shouldCallNext = useCallback((firstIdx: number, lastIdx: number, isScrollingUp = false) => {
+		// I loop over items in viewport and 10 items before and after the viewport to check if there are items without metadata
+		// if there are items without metadata, I return true to call next()
+		// if there are no items without metadata, I return false to avoid calling next()
+		// first I check if there are items without metadata within the viewport regardless of scroll direction
+		// then I check the scroll direction and based on it,
+		// I check if there are items without metadata above or below the viewport
+		const resp: IShouldCallNext = { shouldCall: false, todo: [] }
+		for (let i = firstIdx - 10; i < lastIdx + 10; i++) {
+			// skip negative indices
+			if (i < 0) { continue }
+			// avoid access of items beyond the array length
+			if (i >= contactsRef.current.length - 1) { break }
+			const contact = contactsRef.current[i]
+			// avoid access of undefined items
+			if (!contact) { continue }
+			const hasNoMetadata = Object.keys(contact).length === 1
+			if (!hasNoMetadata) { continue }
+			resp.todo.push(contact.hex)
+			if (resp.shouldCall) { continue }
+			// found item without metadata above viewport
+			if (isScrollingUp) {
+				if (i < lastIdx && hasNoMetadata) {
+					l('[shouldCallNext] found item without metadata above viewport. index: ', i)
+					resp.shouldCall = true
+					continue
+				}
+			}
+			// found item without metadata within viewport
+			if (i <= firstIdx && i >= lastIdx && hasNoMetadata) {
+				l('[shouldCallNext] found item without metadata within viewport. index: ', i)
+				resp.shouldCall = true
+				continue
+			}
+			// found item without metadata below viewport
+			if (i > firstIdx && hasNoMetadata) {
+				l('[shouldCallNext] found item without metadata below viewport. index: ', i)
+				resp.shouldCall = true
+				continue
+			}
+		}
+		l('[shouldCallNext] all items have metadata')
+		return resp
+	}, [])
+
 	// debounce flashlist viewability event to avoid too many calls of next()
 	const onViewableItemsChanged = debounce(useCallback(({ viewableItems }: IViewableItems) => {
 		const firstIdx = viewableItems?.[0]?.index
-		if (!isNum(firstIdx)) { return }
+		const lastIdx = viewableItems?.[viewableItems.length - 1]?.index
+		if (!isNum(firstIdx) || !isNum(lastIdx)) { return }
 		// initial render
 		if (last.current.idx === -1) {
 			last.current.idx = firstIdx
 			return next(viewableItems.map(i => i.item.hex))
 		}
-		// check all contacts in viewport already have metadata and store result in variable
-		const includesEntryWithoutMetadata = viewableItems.some(i => Object.keys(i.item).length === 1)
-		// get hexkeys of viewable items
-		const itemsTodo = viewableItems.map(i => i.item.hex)
-		// TODO trigger next() if the 6th contact outside viewport hasnt metadata and approches viewport
+		const { shouldCall, todo } = shouldCallNext(firstIdx, lastIdx, last.current.idx > firstIdx)
+		if (!shouldCall) { return }
 		if (last.current.idx > firstIdx) { // scrolling up
 			last.current.idx = firstIdx
-			// we dont call next() if all contacts in viewport already have metadata
-			if (!includesEntryWithoutMetadata) { return }
-			// get hexkeys of items outside viewport
-			for (let i = firstIdx - 15; i < firstIdx; i++) {
-				if (i < 0) { break }
-				const contactHex = contactsRef.current?.[i].hex
-				if (!contactHex) { break }
-				itemsTodo.push(contactHex)
-			}
-			void next(itemsTodo)
+			void next(todo)
 		} else if (last.current.idx < firstIdx) { // scrolling down
 			last.current.idx = firstIdx
-			// we dont call next() if all contacts in viewport already have metadata
-			if (!includesEntryWithoutMetadata) { return }
-			void next(itemsTodo)
+			void next(todo)
 		}
-	}, [next]), 150)
+	}, [next, shouldCallNext]), 150)
 
 	// bring favs on top of the list
 	const sortFavs = (a: IContact, b: IContact) => {
