@@ -36,7 +36,7 @@ import { RefreshControl, StyleSheet, Text, type TextInput, TouchableOpacity, Vie
 
 import ContactPreview from './ContactPreview'
 import ProfilePic from './ProfilePic'
-import SyncModal from './SyncModal'
+// import SyncModal from './SyncModal'
 
 /****************************************************************************/
 /* State issues will occur while debugging Android and IOS at the same time */
@@ -107,10 +107,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// sync status
 	const [hasFullySynced, setHasFullySynced] = useState(!!nostrRef.current?.isSync)
 	const abortControllerRef = useRef<AbortController>()
-	const [status, setStatus] = useState({ started: false, finished: false })
-	const [syncModal, setSyncModal] = useState(false)
-	const [progress, setProgress] = useState(0)
-	const [doneCount, setDoneCount] = useState(0)
+	// const [status, setStatus] = useState({ started: false, finished: false })
+	// const [syncModal, setSyncModal] = useState(false)
+	// const [progress, setProgress] = useState(0)
+	// const [doneCount, setDoneCount] = useState(0)
 	const isSending = useMemo(() => route.params?.isMelt || route.params?.isSendEcash, [route.params?.isMelt, route.params?.isSendEcash])
 
 	// gets nostr data from cache or relay while scrolling
@@ -256,24 +256,24 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		return 0
 	}
 
-	const handleSync = async () => {
-		l('call handleSync function')
-		if (!nostrRef.current) { return }
-		abortControllerRef.current = new AbortController()
-		setProgress(0)
-		setDoneCount(0)
-		setStatus(prev => ({ ...prev, started: true }))
-		await nostrRef.current.setupMetadataSubAll({ sig: abortControllerRef.current.signal })
-		//setContacts(Object.entries(result?.result || {}).map(([hex, profile]) => ({ hex, profile })))
-		abortControllerRef.current = undefined
-	}
+	// const handleSync = async () => {
+	// 	l('call handleSync function')
+	// 	if (!nostrRef.current) { return }
+	// 	abortControllerRef.current = new AbortController()
+	// 	setProgress(0)
+	// 	setDoneCount(0)
+	// 	setStatus(prev => ({ ...prev, started: true }))
+	// 	await nostrRef.current.setupMetadataSubAll({ sig: abortControllerRef.current.signal })
+	// 	//setContacts(Object.entries(result?.result || {}).map(([hex, profile]) => ({ hex, profile })))
+	// 	abortControllerRef.current = undefined
+	// }
 
-	const handleCancel = () => {
-		l('call hanbleCancel function')
-		abortControllerRef.current?.abort()
-		setStatus({ started: false, finished: true })
-		setSyncModal(false)
-	}
+	// const handleCancel = () => {
+	// 	l('call hanbleCancel function')
+	// 	abortControllerRef.current?.abort()
+	// 	setStatus({ started: false, finished: true })
+	// 	setSyncModal(false)
+	// }
 
 	const handleSearch = (text: string) => {
 		// reset search results
@@ -624,7 +624,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					onPress={() => setNewNpubModal(false)}
 				/>
 			</MyModal>
-			<SyncModal
+			{/* <SyncModal
 				visible={syncModal}
 				close={() => setSyncModal(false)}
 				status={status}
@@ -633,7 +633,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				progress={progress}
 				contactsCount={contactsRef.current.length}
 				doneCount={doneCount}
-			/>
+			/> */}
 			{!isKeyboardOpen && !route.params?.isMelt && !route.params?.isSendEcash &&
 				<BottomNav navigation={navigation} route={route} />
 			}
