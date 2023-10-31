@@ -3,7 +3,7 @@ import { ChevronRightIcon, CopyIcon, ListFavIcon } from '@comps/Icons'
 import Popup from '@comps/Popup'
 import Txt from '@comps/Txt'
 import type { IProfileContent, TContact } from '@model/nostr'
-import { truncateNpub,truncateStr } from '@nostr/util'
+import { truncateNpub, truncateStr } from '@nostr/util'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
@@ -25,7 +25,6 @@ interface IContactPreviewProps {
 	handleSend: () => void
 	isPayment?: boolean
 	isFav?: boolean
-	// sortContacts?: () => void
 	recyclingKey?: string
 }
 
@@ -35,7 +34,6 @@ export default function ContactPreview({
 	handleSend,
 	isPayment,
 	isFav,
-	// sortContacts,
 	recyclingKey
 }: IContactPreviewProps) {
 	const { t } = useTranslation([NS.addrBook])
@@ -57,11 +55,9 @@ export default function ContactPreview({
 				return newFavs
 			})
 		}
-		// re-render contacts list
-		// sortContacts?.()
 		void store.setObj(STORE_KEYS.favs, newFavs)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [favs])
 
 	const handleCopy = async () => {
 		await copy(contact[0])

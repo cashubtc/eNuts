@@ -128,11 +128,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				emitAsap: false,
 				emitOnEose: true
 			},
-			noCache: true,
+			// noCache: true,
 			onEose: (done, authors) => {
 				l('[onEose]', { done: done.length, authors: authors.length })
 				if (done.length === authors.length) {
-					// setHasFullySynced(true)
+					setHasFullySynced(true)
+					// TODO also set this state if class instance logs [setupMetadataSubMany] no more to do
 					return
 				}
 				if (done.length < 2) {
@@ -276,7 +277,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	const handleSearch = (text: string) => {
 		// reset search results
-		if (!text) {
+		if (!text.length) {
 			return setContacts(contactsRef.current)
 		}
 		// handle npub search
@@ -293,7 +294,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			return setContacts(filtered)
 		}
 		// TODO handle nip50 search
-		nostrRef.current?.search('billigsteruser')
+		nostrRef.current?.search(text)
 	}
 
 	// handle npub input field
@@ -460,8 +461,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}, [showSearch])
 
 	useEffect(() => {
-		// TODO issue with favs not being updated
-		// TODO no need to sort and re-render if user removes a contact from favs
 		setContacts([...contacts].sort(sortFavs))
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [favs])
@@ -483,10 +482,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				loading={loading}
 				noIcons
 			/>
-			<Text style={{ color: color.TEXT }}>
+			{/* <Text style={{ color: color.TEXT }}>
 				{filterContactArr(contacts)?.length}/{contactsRef.current.length}
 				{' ('}{(filterContactArr(contacts)?.length * 100 / contactsRef.current.length).toFixed(2)}%{') '}
-			</Text>
+			</Text> */}
 			{loading || (nutPub && !contactsRef.current.length) ?
 				<View style={styles.loadingWrap}><Loading /></View>
 				:
@@ -532,10 +531,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							<FlashList
 								ref={ref}
 								data={contacts}
-								viewabilityConfig={{
-									minimumViewTime: 500,
-									// waitForInteraction: true,
-								}}
+								viewabilityConfig={{ minimumViewTime: 500 }}
 								estimatedItemSize={75}
 								onViewableItemsChanged={onViewableItemsChanged}
 								refreshControl={
