@@ -50,11 +50,6 @@ interface CustomViewToken {
 	timestamp: number
 }
 
-interface IShouldCallNext {
-	shouldCall: boolean
-	todo: string[]
-}
-
 interface IViewableItems { viewableItems: CustomViewToken[] }
 
 const marginBottom = isIOS ? 100 : 75
@@ -179,49 +174,32 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [next, userRelays])
 
-	const shouldCallNext = useCallback((firstIdx: number, lastIdx: number, isScrollingUp = false) => {
-		// I loop over items in viewport and 10 items before and after the viewport to check if there are items without metadata
-		// if there are items without metadata, I return true to call next()
-		// if there are no items without metadata, I return false to avoid calling next()
-		// first I check if there are items without metadata within the viewport regardless of scroll direction
-		// then I check the scroll direction and based on it,
-		// I check if there are items without metadata above or below the viewport
-		const resp: IShouldCallNext = { shouldCall: false, todo: [] }
-		for (let i = firstIdx - 10; i < lastIdx + 10; i++) {
-			// skip negative indices
-			if (i < 0) { continue }
-			// avoid access of items beyond the array length
-			if (i >= contactsRef.current.length - 1) { break }
+	const shouldCallNext = useCallback((firstIdx: number, lastIdx: number, isScrollingUp: boolean) => {
+		const startIdx = firstIdx - 10 < 0 ? 0 : firstIdx - 10
+		const lastContactIdx = contactsRef.current.length - 1
+		const endIdx = lastIdx + 10 > lastContactIdx ? lastContactIdx : lastIdx + 10
+		for (let i = startIdx; i < endIdx; i++) {
 			const contact = contactsRef.current[i]
 			// avoid access of undefined items
 			if (!contact) { continue }
 			const hasNoMetadata = Object.keys(contact).length === 1
 			if (!hasNoMetadata) { continue }
-			resp.todo.push(contact.hex)
-			if (resp.shouldCall) { continue }
 			// found item without metadata above viewport
 			if (isScrollingUp) {
 				if (i < lastIdx && hasNoMetadata) {
-					l('[shouldCallNext] found item without metadata above viewport. index: ', i)
-					resp.shouldCall = true
-					continue
+					return true
 				}
 			}
 			// found item without metadata within viewport
 			if (i <= firstIdx && i >= lastIdx && hasNoMetadata) {
-				l('[shouldCallNext] found item without metadata within viewport. index: ', i)
-				resp.shouldCall = true
-				continue
+				return true
 			}
 			// found item without metadata below viewport
 			if (i > firstIdx && hasNoMetadata) {
-				l('[shouldCallNext] found item without metadata below viewport. index: ', i)
-				resp.shouldCall = true
-				continue
+				return true
 			}
 		}
-		l('[shouldCallNext] all items have metadata')
-		return resp
+		return false
 	}, [])
 
 	// debounce flashlist viewability event to avoid too many calls of next()
@@ -234,8 +212,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			last.current.idx = firstIdx
 			return next(viewableItems.map(i => i.item.hex))
 		}
-		const { shouldCall, todo } = shouldCallNext(firstIdx, lastIdx, last.current.idx > firstIdx)
+		const shouldCall = shouldCallNext(firstIdx, lastIdx, last.current.idx > firstIdx)
 		if (!shouldCall) { return }
+		const startIdx = firstIdx - 10
+		const endIdx = lastIdx + 10
+		const todo = contactsRef.current.slice(
+			startIdx < 0 ? 0 : startIdx,
+			endIdx > contactsRef.current.length - 1 ? contactsRef.current.length - 1 : endIdx
+		).map(c => c.hex)
 		if (last.current.idx > firstIdx) { // scrolling up
 			last.current.idx = firstIdx
 			void next(todo)
