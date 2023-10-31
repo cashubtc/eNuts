@@ -368,8 +368,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	const handleRefresh = async () => {
 		l('call handleRefresh function')
-		// TODO check if user has internet connection
-		// TODO refreshing doesnt render the metadata again
+		// TODO check if user has internet connection, otherwise show error
 		setIsRefreshing(true)
 		setUserProfile(undefined)
 		setContacts([])
@@ -381,6 +380,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		nostrRef.current = undefined
 		contactsRef.current = []
 		setHasFullySynced(false)
+		last.current.idx = -1
 		await initContacts(pubKey.hex)
 		setIsRefreshing(false)
 	}
@@ -468,10 +468,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										size={50}
 										uri={item.picture}
 										overlayColor={color.INPUT_BG}
-										recyclingKey={item.hex}
-										// isVerified={!!item.nip05?.length}
 										isFav={favs.includes(item.hex)}
-									// isInView={isInView(index)}
+										recyclingKey={item.hex}
 									/>
 								</TouchableOpacity>
 							)}
@@ -527,7 +525,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										isPayment={route.params?.isMelt || route.params?.isSendEcash}
 										isFav={favs.includes(item.hex)}
 										recyclingKey={item.hex}
-									// sortContacts={() => setContacts(prev => [...prev.sort(sortFavs)])}
 									/>
 								)}
 								ListEmptyComponent={() => (
