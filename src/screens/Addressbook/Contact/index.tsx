@@ -120,6 +120,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						uri={contact?.picture}
 						size={100}
 						isUser={isUser}
+						recyclingKey={hex}
 					/>
 				</View>
 				{isUser ?

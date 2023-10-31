@@ -95,6 +95,7 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 								hex={nostr?.receiverHex ?? ''}
 								uri={nostr?.receiverPic}
 								size={100}
+								recyclingKey={nostr?.receiverHex ?? ''}
 							/>
 						</View>
 					</View>

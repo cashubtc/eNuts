@@ -423,6 +423,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}, [showSearch])
 
 	useEffect(() => {
+		// TODO issue with favs not being updated
 		// TODO no need to sort and re-render if user removes a contact from favs
 		setContacts([...contacts].sort(sortFavs))
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -467,6 +468,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										size={50}
 										uri={item.picture}
 										overlayColor={color.INPUT_BG}
+										recyclingKey={item.hex}
 										// isVerified={!!item.nip05?.length}
 										isFav={favs.includes(item.hex)}
 									// isInView={isInView(index)}
@@ -524,6 +526,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										handleSend={() => void handleSend(item.hex, item)}
 										isPayment={route.params?.isMelt || route.params?.isSendEcash}
 										isFav={favs.includes(item.hex)}
+										recyclingKey={item.hex}
 									// sortContacts={() => setContacts(prev => [...prev.sort(sortFavs)])}
 									/>
 								)}

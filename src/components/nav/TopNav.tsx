@@ -100,6 +100,7 @@ export default function TopNav({
 									uri={nostrProfile}
 									size={30}
 									overlayColor={color.INPUT_BG}
+									recyclingKey={pubKey.hex}
 									isUser
 								/>
 							:

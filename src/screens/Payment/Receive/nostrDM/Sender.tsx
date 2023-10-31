@@ -38,6 +38,7 @@ export default function Sender({ contact, navigation }: ISenderProps) {
 				<ProfilePic
 					hex={contact?.[0] || ''}
 					uri={contact?.[1]?.picture}
+					recyclingKey={contact?.[0]}
 				/>
 				{contact?.[1] ?
 					<View>

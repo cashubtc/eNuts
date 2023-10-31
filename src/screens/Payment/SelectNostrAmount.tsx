@@ -88,6 +88,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 						hex={nostr?.receiverHex ?? ''}
 						uri={nostr?.receiverPic}
 						size={100}
+						recyclingKey={nostr?.receiverHex ?? ''}
 					/>
 				</View>
 			</View>
