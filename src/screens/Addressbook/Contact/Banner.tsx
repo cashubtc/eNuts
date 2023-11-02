@@ -8,10 +8,10 @@ import { Dimensions, StyleSheet, View } from 'react-native'
 
 import { headers } from '../const'
 
-export default function ProfileBanner({ hex, uri, dimmed }: { hex: HexKey, uri?: string, dimmed?: boolean }) {
+export default function ProfileBanner({ hex, uri, dimmed }: { hex?: HexKey, uri?: string, dimmed?: boolean }) {
 
 	const [isErr, setIsErr] = useState(false)
-	const getUri = (uri: string) => `${imgProxy(hex, uri, Dimensions.get('window').width, 'banner', 600)}`
+	const getUri = (uri: string) => `${imgProxy(hex ?? '', uri, Dimensions.get('window').width, 'banner', 600)}`
 
 	return (
 		<View style={styles.imgWrap}>

@@ -10,7 +10,7 @@ import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
 import { l } from '@log'
 import type { TAddressBookPageProps } from '@model/nav'
-import type { IContact, IProfileContent, TUserRelays } from '@model/nostr'
+import type { IContact, TUserRelays } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { getNostrUsername, isHex, isNpub } from '@nostr/util'
@@ -26,7 +26,7 @@ import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
-import { highlight as hi, mainColors } from '@styles/colors'
+import { highlight as hi } from '@styles/colors'
 import { debounce, isNum, uniqByIContacts } from '@util'
 import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
@@ -83,6 +83,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		userRelays,
 		setUserRelays,
 		favs,
+		recent,
 	} = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// related to new npub
@@ -100,8 +101,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const recentsRef = useRef<IContact[]>([])
 	// last seen contact index
 	const last = useRef({ idx: -1 })
-	// contacts that have been recently used for sending ecash
-	const [recents, setRecents] = useState<IContact[]>([])
 	// sync status
 	const [hasFullySynced, setHasFullySynced] = useState(!!nostrRef.current?.isSync)
 	const abortControllerRef = useRef<AbortController>()
@@ -159,7 +158,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					// first render of contacts metadata happens in flashlist event onViewableItemsChanged
 				},
 				onProfileChanged: profiles => {
-					l({ onProfileChangeEventProfiles: profiles?.length, should: contactsRef.current.length + (profiles?.length ?? 0) })
+					// l({ onProfileChangeEventProfiles: profiles?.length, should: contactsRef.current.length + (profiles?.length ?? 0) })
 					setContacts(prev => {
 						if (!profiles?.length) { return prev }
 						const c = prev.map(p => {
@@ -285,7 +284,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		if (isNpub(text)) {
 			const hex = nip19.decode(text).data
 			const filtered = contactsRef.current.filter(c => c.hex === hex)
-			// TODO if npub is not in contact list, search for it in relay and display result
 			return setContacts(filtered)
 		}
 		const filtered = contactsRef.current.filter(c => getNostrUsername(c).toLowerCase().includes(text.toLowerCase()))
@@ -301,7 +299,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// handle npub input field
 	const handleNpubInput = async () => {
-		l('call handleNpubInput function')
 		startLoading()
 		setNewNpubModal(false)
 		if (!pubKey.encoded && !pubKey.hex) {
@@ -312,9 +309,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		let pub = { encoded: '', hex: '' }
 		// check if is npub
 		if (isNpub(pubKey.encoded)) {
-			l('input is npub')
 			pub = { encoded: pubKey.encoded, hex: nip19.decode(pubKey.encoded).data || '' }
-			l({ pub })
 			setPubKey(pub)
 			// start initialization of nostr data
 			await handleNewNpub(pub)
@@ -336,7 +331,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// handle new pasted npub and initialize nostr data
 	const handleNewNpub = async (pub: { encoded: string, hex: string }) => {
-		l('call handleNewNpub function')
 		// generate new secret key
 		const sk = generatePrivateKey() // `sk` is a hex string
 		const pk = getPublicKey(sk)		// `pk` is a hex string
@@ -351,14 +345,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}
 
 	// user presses the send ecash button
-	const handleSend = async (hex: string, contact?: IProfileContent) => {
-		l('call handleSend function')
-		const nostr = {
+	const handleSend = async (contact: IContact) => {
+		const nostr =  {
 			senderName: getNostrUsername(userProfile),
-			receiverHex: hex,
-			receiverName: getNostrUsername(contact),
-			receiverBanner: contact?.banner,
-			receiverPic: contact?.picture,
+			contact
 		}
 		// melt to a contact zap address
 		if (contact && route.params?.isMelt) {
@@ -402,7 +392,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}
 
 	const handleRefresh = async () => {
-		l('call handleRefresh function')
 		// TODO check if user has internet connection, otherwise show error
 		setIsRefreshing(true)
 		setUserProfile(undefined)
@@ -423,7 +412,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// check if user has nostr data saved previously
 	useEffect(() => {
 		if (!isFocused || pubKey.hex === nostrRef.current?.hex) { return }
-		// startLoading()
 		void (async () => {
 			const [storedNPub, storedPubKeyHex, storedUserRelays, hasSynced] = await Promise.all([
 				store.get(STORE_KEYS.npub),
@@ -476,7 +464,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				handlePress={() => navigation.goBack()}
 				openProfile={() => navigation.navigate('Contact', {
 					contact: userProfile,
-					hex: pubKey.hex,
 					isUser: true
 				})}
 				loading={loading}
@@ -493,12 +480,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					{/* user recently used */}
 					{recentsRef.current.length > 0 &&
 						<FlashList
-							data={recents}
+							data={recent}
 							horizontal
 							estimatedItemSize={50}
 							keyExtractor={item => item.hex}
 							renderItem={({ item }) => (
-								<TouchableOpacity onPress={() => void handleSend(item.hex, item)}>
+								<TouchableOpacity onPress={() => void handleSend(item)}>
 									<ProfilePic
 										hex={item.hex}
 										size={50}
@@ -546,15 +533,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 									keyExtractor={item => item.hex}
 									renderItem={({ item }) => (
 										<ContactPreview
-											// TODO fix this contact type
-											contact={[item.hex, item]}
+											contact={item}
 											openProfile={() => {
 												navigation.navigate('Contact', {
-													hex: item.hex,
 													contact: item,
 												})
 											}}
-											handleSend={() => void handleSend(item.hex, item)}
+											handleSend={() => void handleSend(item)}
+											isPayment={route.params?.isMelt || route.params?.isSendEcash}
 											recyclingKey={item.hex}
 											isSearchResult
 										/>
@@ -587,15 +573,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 									keyExtractor={item => item.hex}
 									renderItem={({ item }) => (
 										<ContactPreview
-											// TODO fix this contact type
-											contact={[item.hex, item]}
+											contact={item}
 											openProfile={() => {
 												navigation.navigate('Contact', {
-													hex: item.hex,
 													contact: item,
 												})
 											}}
-											handleSend={() => void handleSend(item.hex, item)}
+											handleSend={() => void handleSend(item)}
 											isPayment={route.params?.isMelt || route.params?.isSendEcash}
 											isFav={favs.includes(item.hex)}
 											recyclingKey={item.hex}

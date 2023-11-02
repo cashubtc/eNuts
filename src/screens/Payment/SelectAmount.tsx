@@ -197,7 +197,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					<Separator style={[{ marginVertical: 20 }]} />
 				}
 				{isMelt || isSwap ?
-					<MeltOverview 
+					<MeltOverview
 						amount={+amount}
 						shouldEstimate={shouldEstimate}
 						balTooLow={balTooLow}

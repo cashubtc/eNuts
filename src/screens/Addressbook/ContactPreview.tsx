@@ -2,7 +2,7 @@ import useCopy from '@comps/hooks/Copy'
 import { ChevronRightIcon, CopyIcon, ListFavIcon } from '@comps/Icons'
 import Popup from '@comps/Popup'
 import Txt from '@comps/Txt'
-import type { IProfileContent, TContact } from '@model/nostr'
+import type { IContact } from '@model/nostr'
 import { truncateNpub, truncateStr } from '@nostr/util'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
@@ -20,7 +20,7 @@ import ProfilePic from './ProfilePic'
 import Username from './Username'
 
 interface IContactPreviewProps {
-	contact: TContact | [string, Partial<IProfileContent>]
+	contact: IContact
 	openProfile: () => void
 	handleSend: () => void
 	isPayment?: boolean
@@ -46,14 +46,14 @@ export default function ContactPreview({
 
 	const handleFav = useCallback(() => {
 		let newFavs: string[] = []
-		if (favs.includes(contact[0])) {
+		if (favs.includes(contact?.hex)) {
 			setFavs(prev => {
-				newFavs = prev.filter(fav => fav !== contact[0])
+				newFavs = prev.filter(fav => fav !== contact.hex)
 				return newFavs
 			})
 		} else {
 			setFavs(prev => {
-				newFavs = [...prev, contact[0]]
+				newFavs = [...prev, contact.hex]
 				return newFavs
 			})
 		}
@@ -62,7 +62,7 @@ export default function ContactPreview({
 	}, [favs])
 
 	const handleCopy = async () => {
-		await copy(contact[0])
+		await copy(contact.hex)
 		openPromptAutoClose({ msg: t('npubCopied'), success: true })
 	}
 
@@ -91,32 +91,32 @@ export default function ContactPreview({
 		<TouchableOpacity onPress={handleSend} style={[styles.container]}>
 			<View style={styles.colWrap}>
 				<ProfilePic
-					hex={contact[0]}
+					hex={contact.hex}
 					size={50}
-					uri={contact[1]?.picture}
+					uri={contact.picture}
 					overlayColor={color.INPUT_BG}
 					// isVerified={!!contact[1]?.nip05?.length}
 					isFav={isFav}
 					recyclingKey={recyclingKey}
 				/>
-				{contact[1] ?
+				{Object.keys(contact).length > 1 ?
 					<View style={styles.nameWrap}>
 						<Username contact={contact} fontSize={16} />
-						{contact?.[1]?.nip05 &&
+						{contact?.nip05 &&
 							<Txt
-								txt={truncateStr(contact[1].nip05, 25)}
+								txt={truncateStr(contact.nip05, 25)}
 								styles={[{ color: hi[highlight], fontSize: 12 }]}
 							/>
 						}
 					</View>
 					:
 					<Txt
-						txt={contact[0].length ? truncateNpub(nip19.npubEncode(contact[0])) : t('n/a', { ns: NS.common })}
+						txt={contact.hex.length ? truncateNpub(nip19.npubEncode(contact.hex)) : t('n/a', { ns: NS.common })}
 						bold
 					/>
 				}
 			</View>
-			{contact[1] ?
+			{Object.keys(contact).length > 1 ?
 				isPayment ?
 					<ChevronRightIcon width={16} height={16} color={color.TEXT} />
 					:

@@ -8,7 +8,7 @@ import ProfileBanner from '@screens/Addressbook/Contact/Banner'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { truncateNpub } from '@src/nostr/util'
+import { getNostrUsername, truncateNpub } from '@src/nostr/util'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, vib } from '@util'
 import { nip19 } from 'nostr-tools'
@@ -78,22 +78,22 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 			</View>
 			{/* Contact pictures overview */}
 			<ProfileBanner
-				hex={nostr?.receiverHex ?? ''}
-				uri={nostr?.receiverBanner}
+				hex={nostr?.contact?.hex ?? ''}
+				uri={nostr?.contact?.banner}
 				dimmed
 			/>
-			<View style={[styles.profilePicContainer, { marginTop: nostr?.receiverBanner ? -50 : -90 }]}>
+			<View style={[styles.profilePicContainer, { marginTop: nostr?.contact?.banner ? -50 : -90 }]}>
 				<View style={styles.picWrap}>
 					<ProfilePic
-						hex={nostr?.receiverHex ?? ''}
-						uri={nostr?.receiverPic}
+						hex={nostr?.contact?.hex ?? ''}
+						uri={nostr?.contact?.picture}
 						size={100}
-						recyclingKey={nostr?.receiverHex ?? ''}
+						recyclingKey={nostr?.contact?.hex ?? ''}
 					/>
 				</View>
 			</View>
 			<Txt
-				txt={nostr?.receiverName || truncateNpub(nip19.npubEncode(nostr?.receiverHex ?? ''))}
+				txt={getNostrUsername(nostr?.contact) ?? truncateNpub(nip19.npubEncode(nostr?.contact?.hex ?? ''))}
 				styles={[styles.username]}
 			/>
 			<View style={styles.overviewWrap}>

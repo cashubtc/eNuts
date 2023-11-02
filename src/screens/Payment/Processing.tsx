@@ -10,6 +10,7 @@ import { encrypt } from '@nostr/crypto'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { pool } from '@src/nostr/class/Pool'
+import { getNostrUsername } from '@src/nostr/util'
 import { updateNostrDmUsers } from '@src/storage/store/nostrDms'
 import { cTo } from '@src/storage/store/utils'
 import { secureStore, store } from '@store'
@@ -172,13 +173,13 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				type: 1,
 				value: token,
 				mints: [mint.mintUrl],
-				recipient: nostr?.receiverName || ''
+				recipient: getNostrUsername(nostr?.contact)
 			})
 			// https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 			if (nostr) {
 				const sk = await secureStore.get(SECRET)
 				const userNostrNpub = await store.get(STORE_KEYS.npub)
-				if (!sk?.length) {
+				if (!sk?.length || !nostr?.contact) {
 					navigation.navigate(
 						'processingError',
 						getErrObj(mint, amount, t('createTokenErr', { ns: NS.common }))
@@ -186,16 +187,17 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					return
 				}
 				const msg = `${userNostrNpub || nostr.senderName}  (sender not verified) just sent you ${amount} Sat in Ecash using ${enutsPubkey}!\n\n ${token}`
-				const cipherTxt = encrypt(sk, nostr.receiverHex, msg)
+				const cipherTxt = encrypt(sk, nostr.contact.hex, msg)
 				const event = {
 					kind: EventKind.DirectMessage,
-					tags: [['p', nostr.receiverHex]],
+					tags: [['p', nostr.contact.hex]],
 					content: cipherTxt,
 					created_at: Math.ceil(Date.now() / 1000),
 				}
 				const userRelays = await store.get(STORE_KEYS.relays)
 				// TODO publish the event to the RECIPIENT relays AND our relays.
 				const published = await pool.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
+				l({ published })
 				if (!published) {
 					l('Something went wrong while publishing the event.')
 					navigation.navigate(
@@ -205,7 +207,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					return
 				}
 				// save recipient hex to get the conversation later on
-				await updateNostrDmUsers(nostr.receiverHex)
+				await updateNostrDmUsers(nostr.contact.hex)
 				navigation.navigate('success', { amount, nostr })
 				return
 			}

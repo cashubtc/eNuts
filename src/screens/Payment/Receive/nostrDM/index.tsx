@@ -8,11 +8,10 @@ import { isIOS } from '@consts'
 import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { TNostrReceivePageProps } from '@model/nav'
-import type { INostrDm, TContact } from '@model/nostr'
+import type { IContact, INostrDm } from '@model/nostr'
 import { EventKind } from '@nostr/consts'
 import { decrypt } from '@nostr/crypto'
 import { parseProfileContent } from '@nostr/util'
-import Config from '@src/config'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -36,7 +35,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	const { loading, startLoading, stopLoading } = useLoading()
 	// user mints is used in case user wants to send Ecash from the DMs screen
 	const [userMints, setUserMints] = useState<string[]>([])
-	const [dmProfiles, setDmProfiles] = useState<TContact[]>([])
+	const [dmProfiles, setDmProfiles] = useState<IContact[]>([])
 	const [dms, setDms] = useState<INostrDm[]>([])
 	const setDmsCB = useCallback((newDms: INostrDm[]) => setDms(newDms), [])
 
@@ -46,6 +45,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 			l('can not handle dms, empy key!')
 			return
 		}
+		if (claimedEvtIds[e.id]) { return }
 		const tokenMinLength = 25
 		// decrypt content
 		const decrypted = decrypt(sk, e.pubkey, e.content)
@@ -57,12 +57,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 			if (!word || word.length < tokenMinLength) { continue }
 			// set dm state
 			if (isCashuToken(word)) {
-				// dont set state if already claimed OR same created_at OR same token
-				setDms(prev =>
-					prev.some(entry => claimedEvtIds[entry.id] || entry.created_at === e.created_at || entry.token === word)
-						? prev
-						: [...prev, { created_at: e.created_at, sender: e.pubkey, msg: decrypted, token: word, id: e.id }]
-				)
+				setDms(prev => [...prev, { created_at: e.created_at, sender: e.pubkey, msg: decrypted, token: word, id: e.id }])
 			}
 		}
 	}
@@ -91,7 +86,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 			sub?.on('event', (e: NostrEvent) => {
 
 				if (+e.kind === EventKind.Metadata) {
-					setDmProfiles(prev => prev.some(x => x[0] === e.pubkey) ? prev : [...prev, [e.pubkey, parseProfileContent(e)]])
+					setDmProfiles(prev => prev.some(x => x.hex === e.pubkey) ? prev : [...prev, { hex: e.pubkey, ...parseProfileContent(e) }])
 				}
 
 				if (+e.kind === EventKind.DirectMessage) {
@@ -159,7 +154,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 								<NostrMessage
 									key={dm.id}
 									msgEntry={dm}
-									sender={dmProfiles.find(x => x[0] === dm.sender)}
+									sender={dmProfiles.find(x => x.hex === dm.sender)}
 									dms={dms}
 									setDms={setDmsCB}
 									mints={userMints}

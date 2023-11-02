@@ -7,7 +7,7 @@ import Txt from '@comps/Txt'
 import { addMint } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
-import type { INostrDm, TContact } from '@model/nostr'
+import type { IContact, INostrDm } from '@model/nostr'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 interface ITokenProps {
-	sender?: TContact
+	sender?: IContact
 	token: string
 	id: string
 	dms: INostrDm[]
@@ -93,7 +93,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 				type: 1,
 				value: token,
 				mints: info.mints,
-				sender: truncateStr(getNostrUsername(sender?.[1]) || '')
+				sender: truncateStr(getNostrUsername(sender) ?? '')
 			})
 			await handleStoreRedeemed()
 			openPromptAutoClose({

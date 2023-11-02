@@ -11,7 +11,7 @@ import { StyleSheet, View } from 'react-native'
 import { headers } from './const'
 
 interface INostrImg {
-	hex: string
+	hex?: string
 	kind?: 'picture' | 'banner'
 	width?: 64 | 192 | 600 | 1200
 }
@@ -45,7 +45,7 @@ export default function ProfilePic({
 		height: size || defaultSize,
 		borderRadius: size ? size / 2 : defaultSize / 2
 	}
-	const getUri = (uri: string) => `${imgProxy(hex, uri, circleStyle.width, 'picture', 64)}`
+	const getUri = (uri: string) => `${imgProxy(hex ?? '', uri, circleStyle.width, 'picture', 64)}`
 
 	return (
 		<View style={{ position: 'relative', marginRight: isUser ? 0 : 10 }}>

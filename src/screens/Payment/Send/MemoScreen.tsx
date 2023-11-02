@@ -85,17 +85,17 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 					</View>
 					{/* Contact pictures overview */}
 					<ProfileBanner
-						hex={nostr?.receiverHex ?? ''}
-						uri={nostr?.receiverBanner}
+						hex={nostr?.contact?.hex ?? ''}
+						uri={nostr?.contact?.banner}
 						dimmed
 					/>
 					<View style={styles.profilePicContainer}>
 						<View style={styles.picWrap}>
 							<ProfilePic
-								hex={nostr?.receiverHex ?? ''}
-								uri={nostr?.receiverPic}
+								hex={nostr?.contact?.hex ?? ''}
+								uri={nostr?.contact?.picture}
 								size={100}
-								recyclingKey={nostr?.receiverHex ?? ''}
+								recyclingKey={nostr?.contact?.hex ?? ''}
 							/>
 						</View>
 					</View>

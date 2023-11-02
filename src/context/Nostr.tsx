@@ -1,5 +1,5 @@
 import { l } from '@log'
-import type { HexKey, IProfileContent, Npub } from '@model/nostr'
+import type { IContact, Npub } from '@model/nostr'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getRedeemdedSigs } from '@store/nostrDms'
@@ -9,10 +9,10 @@ import { createContext, useContext, useEffect, useState } from 'react'
 const useNostr = () => {
 	const [nutPub, setNutPub] = useState('')
 	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
-	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
+	const [userProfile, setUserProfile] = useState<IContact | undefined>()
 	const [userRelays, setUserRelays] = useState<string[]>([])
 	const [favs, setFavs] = useState<string[]>([])
-	const [recent, setRecent] = useState<HexKey[]>([])
+	const [recent, setRecent] = useState<IContact[]>([])
 	const [claimedEvtIds, setClaimedEvtIds] = useState<{ [k: string]: string }>({})
 
 	const resetNostrData = async () => {
@@ -55,7 +55,7 @@ const useNostr = () => {
 					// already claimed ecash from DM: stored event signatures
 					getRedeemdedSigs(),
 					store.getObj<string[]>(STORE_KEYS.favs),
-					store.getObj<HexKey[]>(STORE_KEYS.nostrDms),
+					store.getObj<IContact[]>(STORE_KEYS.nostrDms),
 				])
 				setNutPub(nutpub || '')
 				setClaimedEvtIds(redeemed)
@@ -104,6 +104,7 @@ const NostrContext = createContext<useNostrType>({
 		picture: '',
 		username: '',
 		website: '',
+		hex: ''
 	},
 	setUserProfile: () => l(''),
 	userRelays: [],

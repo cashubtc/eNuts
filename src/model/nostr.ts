@@ -14,8 +14,6 @@ export interface IProfileContent {
 	website?: string
 }
 
-export type TContact = [HexKey, IProfileContent | undefined]
-
 export interface IContact extends IProfileContent {
 	hex: string
 }

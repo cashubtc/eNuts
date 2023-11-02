@@ -1,4 +1,4 @@
-import type { HexKey, IProfileContent, Npub } from '@model/nostr'
+import type { HexKey, IContact, IProfileContent, Npub } from '@model/nostr'
 import { l } from '@src/logger'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
@@ -86,7 +86,7 @@ export function truncateStr(str: string, maxLength = 20) {
  * @param contact - The profile contact object to extract the username from.
  * @returns The extracted username. Returns an empty string if no username is found.
  */
-export function getNostrUsername(contact?: IProfileContent) {
+export function getNostrUsername(contact?: IContact) {
 	return contact?.displayName || contact?.display_name || contact?.username || contact?.name || ''
 }
 

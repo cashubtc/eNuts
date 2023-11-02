@@ -54,7 +54,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 					:
 					<QR
 						size={320}
-						value={`cashu://${route.params.token}`}
+						value={route.params.token}
 						onError={() => setError({ msg: t('bigQrMsg'), open: true })}
 					/>
 				}

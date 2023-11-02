@@ -28,7 +28,7 @@ import NIP05Verified from './NIP05'
 import Website from './Website'
 
 export default function ContactPage({ navigation, route }: IContactPageProps) {
-	const { contact, hex, isUser, userProfile } = route.params
+	const { contact, isUser, userProfile } = route.params
 	const { t } = useTranslation([NS.addrBook])
 	const { pubKey, replaceNpub, resetNostrData } = useNostrContext()
 	const { color, highlight } = useThemeContext()
@@ -60,10 +60,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
 		const nostr = {
 			senderName: getNostrUsername(userProfile),
-			receiverHex: hex,
-			receiverName: getNostrUsername(contact),
-			receiverBanner: contact?.banner,
-			receiverPic: contact?.picture,
+			contact,
 		}
 		if (nonEmptyMints.length === 1) {
 			navigation.navigate('selectNostrAmount', {
@@ -112,15 +109,15 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				<LeftArrow color={hi[highlight]} />
 			</TouchableOpacity>
 			{/* Contact pictures overview */}
-			<ProfileBanner hex={hex} uri={contact?.banner} />
+			<ProfileBanner hex={contact?.hex} uri={contact?.banner} />
 			<View style={styles.profilePicContainer}>
 				<View style={styles.picWrap}>
 					<ProfilePic
-						hex={hex}
+						hex={contact?.hex}
 						uri={contact?.picture}
 						size={100}
 						isUser={isUser}
-						recyclingKey={hex}
+						recyclingKey={contact?.hex}
 					/>
 				</View>
 				{isUser ?
@@ -141,15 +138,17 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			</View>
 			<View style={styles.contentWrap}>
 				{/* username */}
-				<Username contact={[hex, contact]} fontSize={24} />
+				<Username contact={contact} fontSize={24} />
 				{/* npub */}
 				<View style={styles.npubWrap}>
 					<Txt
 						// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-						txt={`${isUser ? t('enutsPub', { ns: NS.common }) : ''}${truncateNpub(isUser ? pubKey.encoded : npubEncode(hex))}`}
+						txt={`${isUser ? t('enutsPub', { ns: NS.common }) : ''}${truncateNpub(isUser ? pubKey.encoded : npubEncode(contact?.hex ?? ''))}`}
 						styles={[styles.npub, { color: color.TEXT_SECONDARY }]}
 					/>
-					<Copy txt={isUser ? pubKey.encoded : npubEncode(hex)} />
+					{contact && contact.hex.length > 0 &&
+						<Copy txt={isUser ? pubKey.encoded : npubEncode(contact.hex)} />
+					}
 				</View>
 				{/* tags */}
 				<View style={styles.tagsWrap}>

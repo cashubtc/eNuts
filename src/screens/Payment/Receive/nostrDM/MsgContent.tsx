@@ -1,12 +1,12 @@
 
 import Txt from '@comps/Txt'
-import type { INostrDm, TContact } from '@model/nostr'
+import type { IContact, INostrDm } from '@model/nostr'
 import { View } from 'react-native'
 
 import Token from './Token'
 
 interface INostrMessageProps {
-	sender?: TContact
+	sender?: IContact
 	msgEntry: INostrDm
 	dms: INostrDm[]
 	setDms: (newDms: INostrDm[]) => void
@@ -23,7 +23,7 @@ export default function MsgContent({ sender, msgEntry, dms, setDms, mints }: INo
 	const lastPart = msg.slice(tokenEnd)
 
 	return (
-		<View style={{ marginBottom: 20 }}>
+		<View style={{ marginBottom: 10 }}>
 			{firstPart.length > 0 && <Txt txt={firstPart} />}
 			<Token sender={sender} token={tokenPart} id={id} dms={dms} setDms={setDms} mints={mints} />
 			{lastPart.length > 0 && <Txt txt={lastPart} />}

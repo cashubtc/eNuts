@@ -6,7 +6,7 @@ import { finishEvent, SimplePool, validateEvent } from 'nostr-tools'
 import { defaultRelays, EventKind } from '../consts'
 import { normalizeURL } from '../util'
 
-const l=console.log
+const l = console.log
 interface IPoolSubArgs {
 	filter: IPoolSubProps,
 	args?: SubscriptionOptions
@@ -149,7 +149,7 @@ class Pool {
 	}
 	async publishEventToPool(event: EventTemplate<4>, sk: string, relayUrls?: string[]) {
 		const validated = this.#validate(event, sk)
-		if (!validated) { return }
+		if (!validated) { return false }
 		try {
 			const relays = this.#relaysClean(relayUrls)
 			const res = await Promise.allSettled(this.#pool?.publish(relays, validated) ?? [])
