@@ -30,7 +30,7 @@ echo "$apk_checksum $apk_filename" >> "$verification_dir/hash_list.txt"
 # generate detached signature for the new APK file
 gpg --output "$latest_apk".sig --detach-sig --yes "$latest_apk"
 # Update detached signature for hash_list.txt
-gpg --armor --detach-sign --yes utils/verification/hash_list.txt
+gpg --output "$verification_dir/hash_list.txt.sig" --detach-sig --yes "$verification_dir/hash_list.txt"
 # delete the used APK file
 rm "$latest_apk"
 echo "Successfully updated the verification files."
