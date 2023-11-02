@@ -18,7 +18,6 @@ import { NS } from '@src/i18n'
 import { pool } from '@src/nostr/class/Pool'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
-import { getNostrDmUsers } from '@store/nostrDms'
 import { isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
@@ -31,7 +30,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const [isCancel, setIsCancel] = useState(false)
-	const { userRelays, claimedEvtIds } = useNostrContext()
+	const { userRelays, claimedEvtIds, recent } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// user mints is used in case user wants to send Ecash from the DMs screen
 	const [userMints, setUserMints] = useState<string[]>([])
@@ -68,8 +67,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	useEffect(() => {
 		void (async () => {
 			startLoading()
-			const conversationsPubKeys = await getNostrDmUsers()
-			if (!conversationsPubKeys.length) {
+			if (!recent.length) {
 				stopLoading()
 				return
 			}
@@ -78,7 +76,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 				filter: {
 					relayUrls: userRelays,
 					// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
-					authors: conversationsPubKeys, // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
+					authors: recent.map(x => x.hex), // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
 					kinds: [EventKind.DirectMessage, EventKind.Metadata],
 					skipVerification: false
 				}

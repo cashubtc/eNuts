@@ -7,6 +7,7 @@ import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import { enutsPubkey, EventKind } from '@nostr/consts'
 import { encrypt } from '@nostr/crypto'
+import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { pool } from '@src/nostr/class/Pool'
@@ -18,7 +19,7 @@ import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { globals } from '@styles'
-import { getInvoiceFromLnurl, isErr, isLnurl } from '@util'
+import { getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
 import { autoMintSwap, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -32,6 +33,7 @@ interface IErrorProps {
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
+	const { setRecent } = useNostrContext()
 	const {
 		mint,
 		amount,
@@ -197,7 +199,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				const userRelays = await store.get(STORE_KEYS.relays)
 				// TODO publish the event to the RECIPIENT relays AND our relays.
 				const published = await pool.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
-				l({ published })
 				if (!published) {
 					l('Something went wrong while publishing the event.')
 					navigation.navigate(
@@ -207,7 +208,11 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					return
 				}
 				// save recipient hex to get the conversation later on
-				await updateNostrDmUsers(nostr.contact.hex)
+				await updateNostrDmUsers(nostr.contact)
+				setRecent(prev => {
+					if (!nostr.contact) { return prev }
+					return uniqByIContacts([...prev, nostr.contact], 'hex')
+				})
 				navigation.navigate('success', { amount, nostr })
 				return
 			}

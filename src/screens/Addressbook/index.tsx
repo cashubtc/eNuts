@@ -98,7 +98,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [contacts, setContacts] = useState<IContact[]>([])
 	// TODO we have 3 copies of contacts, this is not good (the class instance, the state and the ref)
 	const contactsRef = useRef<IContact[]>([])
-	const recentsRef = useRef<IContact[]>([])
 	// last seen contact index
 	const last = useRef({ idx: -1 })
 	// sync status
@@ -346,7 +345,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// user presses the send ecash button
 	const handleSend = async (contact: IContact) => {
-		const nostr =  {
+		const nostr = {
 			senderName: getNostrUsername(userProfile),
 			contact
 		}
@@ -478,29 +477,32 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				:
 				<>
 					{/* user recently used */}
-					{recentsRef.current.length > 0 &&
-						<FlashList
-							data={recent}
-							horizontal
-							estimatedItemSize={50}
-							keyExtractor={item => item.hex}
-							renderItem={({ item }) => (
-								<TouchableOpacity onPress={() => void handleSend(item)}>
-									<ProfilePic
-										hex={item.hex}
-										size={50}
-										uri={item.picture}
-										overlayColor={color.INPUT_BG}
-										isFav={favs.includes(item.hex)}
-										recyclingKey={item.hex}
-									/>
-								</TouchableOpacity>
-							)}
-							contentContainerStyle={styles.recentList}
-						/>
+					{recent.length > 0 &&
+						<>
+							<FlashList
+								data={recent}
+								horizontal
+								estimatedItemSize={50}
+								keyExtractor={item => item.hex}
+								renderItem={({ item }) => (
+									<TouchableOpacity onPress={() => void handleSend(item)}>
+										<ProfilePic
+											hex={item.hex}
+											size={50}
+											uri={item.picture}
+											overlayColor={color.INPUT_BG}
+											isFav={favs.includes(item.hex)}
+											recyclingKey={item.hex}
+										/>
+									</TouchableOpacity>
+								)}
+								contentContainerStyle={styles.recentList}
+							/>
+							{!showSearch && <Separator style={[{ marginTop: 10, marginBottom: 0 }]} />}
+						</>
 					}
 					{showSearch &&
-						<View style={styles.inputWrap}>
+						<View style={[styles.inputWrap, { marginTop: recent.length ? 10 : 0 }]}>
 							<TxtInput
 								keyboardType='default'
 								placeholder={t('searchContacts')}
@@ -523,7 +525,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						<View style={[
 							styles.contactsWrap,
 							{ marginBottom: isKeyboardOpen || route.params?.isMelt || route.params?.isSendEcash ? marginBottomPayment : marginBottom },
-							{ paddingTop: showSearch ? 0 : 10 }
 						]}>
 							{searchResults.length > 0 ?
 								<FlashList
@@ -546,9 +547,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										/>
 									)}
 									ListEmptyComponent={() => (
-										<Empty
-											txt={t('noResults', { ns: NS.addrBook })}
-										/>
+										<Empty txt={t('noResults', { ns: NS.addrBook })} />
 									)}
 									ItemSeparatorComponent={() => (
 										<Separator style={[styles.contactSeparator]} />
@@ -682,8 +681,8 @@ const styles = StyleSheet.create({
 	},
 	contactSeparator: {
 		marginHorizontal: 20,
-		marginTop: 10,
-		marginBottom: 10,
+		marginTop: 0,
+		marginBottom: 0,
 	},
 	wrap: {
 		position: 'relative',
@@ -695,7 +694,7 @@ const styles = StyleSheet.create({
 	submitSearch: {
 		position: 'absolute',
 		right: 30,
-		top: 13,
+		top: 4,
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: 40,
@@ -709,14 +708,13 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10
 	},
 	searchInput: {
-		marginVertical: 10,
+		marginBottom: 20,
 		paddingLeft: 20,
 		paddingRight: 50,
 		paddingVertical: 10,
 	},
 	recentList: {
-		paddingTop: 10,
-		paddingBottom: 20,
+		paddingVertical: 10,
 		paddingLeft: 20,
 		paddingRight: 0,
 	}
