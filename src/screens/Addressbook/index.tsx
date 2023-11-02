@@ -1,7 +1,7 @@
 import Button, { TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
-import { QRIcon } from '@comps/Icons'
+import { QRIcon, SearchIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
@@ -26,8 +26,8 @@ import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
-import { highlight as hi } from '@styles/colors'
-import { debounce, isNum } from '@util'
+import { highlight as hi, mainColors } from '@styles/colors'
+import { debounce, isNum, uniqByIContacts } from '@util'
 import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -64,6 +64,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// For FlashList
 	const ref = createRef<FlashList<IContact>>()
 	const [isRefreshing, setIsRefreshing] = useState(false)
+	const searchListRef = createRef<FlashList<IContact>>()
 	// Nostr class instance
 	const nostrRef = useRef<Nostr>()
 	// main context
@@ -90,6 +91,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// search functionality
 	const [showSearch, setShowSearch] = useState(false)
 	const toggleSearch = useCallback(() => setShowSearch(prev => !prev), [])
+	const [searchInput, setSearchInput] = useState('')
+	const [searchResults, setSearchResults] = useState<IContact[]>([])
 	// contact list
 	const [contacts, setContacts] = useState<IContact[]>([])
 	// TODO we have 3 copies of contacts, this is not good (the class instance, the state and the ref)
@@ -127,8 +130,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			onEose: (done, authors) => {
 				l('[onEose]', { done: done.length, authors: authors.length })
 				if (done.length === authors.length) {
-					setHasFullySynced(true)
 					// TODO also set this state if class instance logs [setupMetadataSubMany] no more to do
+					// setHasFullySynced(true)
 					return
 				}
 				if (done.length < 2) {
@@ -166,6 +169,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						contactsRef.current = c
 						return c
 					})
+				},
+				onSearchChanged: profile => {
+					if (!profile) { return }
+					setSearchResults(prev => uniqByIContacts([...prev, profile], 'hex'))
 				},
 				userRelays
 			})
@@ -259,40 +266,49 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// 	setSyncModal(false)
 	// }
 
-	const handleSearch = (text: string) => {
+	const handleOnChangeSearch = (text: string) => {
+		setSearchInput(text)
+		// handle search by username if all contacts have been synced
+		if (!hasFullySynced) {
+			if (searchResults.length) {
+				setSearchResults([])
+			}
+			return
+		}
 		// reset search results
 		if (!text.length) {
-			return setContacts(contactsRef.current)
+			setContacts(contactsRef.current)
+			setSearchResults([])
+			return
 		}
 		// handle npub search
 		if (isNpub(text)) {
 			const hex = nip19.decode(text).data
 			const filtered = contactsRef.current.filter(c => c.hex === hex)
 			// TODO if npub is not in contact list, search for it in relay and display result
-			// nostrRef.current?.search(text)
 			return setContacts(filtered)
 		}
-		// handle search by username if all contacts have been synced
-		if (hasFullySynced) {
-			const filtered = contactsRef.current.filter(c => getNostrUsername(c).toLowerCase().includes(text.toLowerCase()))
-			return setContacts(filtered)
-		}
-		// TODO handle nip50 search
-		nostrRef.current?.search(text)
+		const filtered = contactsRef.current.filter(c => getNostrUsername(c).toLowerCase().includes(text.toLowerCase()))
+		return setContacts(filtered)
 	}
+
+	const handleNip50Search = useCallback((text: string) => {
+		if (!text.length) {
+			return setSearchResults([])
+		}
+		nostrRef.current?.search(text)
+	}, [])
 
 	// handle npub input field
 	const handleNpubInput = async () => {
 		l('call handleNpubInput function')
 		startLoading()
 		setNewNpubModal(false)
-		// l('1')
 		if (!pubKey.encoded && !pubKey.hex) {
 			stopLoading()
 			openPromptAutoClose({ msg: t('invalidPubKey') })
 			return
 		}
-		// l('2')
 		let pub = { encoded: '', hex: '' }
 		// check if is npub
 		if (isNpub(pubKey.encoded)) {
@@ -304,19 +320,16 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			await handleNewNpub(pub)
 			return
 		}
-		// l('4')
 		try {
 			if (isHex(pubKey.hex)) {
 				pub = { encoded: nip19.npubEncode(pubKey.hex), hex: pubKey.hex }
 				setPubKey(pub)
 			}
 		} catch (e) {
-			l('5')
 			openPromptAutoClose({ msg: t('invalidPubKey') })
 			stopLoading()
 			return
 		}
-		// l('6')
 		// start initialization of nostr data
 		await handleNewNpub(pub)
 	}
@@ -456,7 +469,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				withBackBtn={isSending}
 				nostrProfile={userProfile?.picture}
 				showSearch={pubKey.hex.length > 0}
-				toggleSearch={toggleSearch}
+				toggleSearch={() => {
+					toggleSearch()
+					setSearchResults([])
+				}}
 				handlePress={() => navigation.goBack()}
 				openProfile={() => navigation.navigate('Contact', {
 					contact: userProfile,
@@ -497,62 +513,104 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						/>
 					}
 					{showSearch &&
-						<View style={{ paddingHorizontal: 20 }}>
+						<View style={styles.inputWrap}>
 							<TxtInput
-								innerRef={inputRef}
+								keyboardType='default'
 								placeholder={t('searchContacts')}
-								onChangeText={text => void handleSearch(text)}
-								style={styles.searchInput}
+								value={searchInput}
+								onChangeText={text => void handleOnChangeSearch(text)}
+								onSubmitEditing={() => void handleNip50Search(searchInput)}
+								style={[styles.searchInput]}
 							/>
+							{/* Submit nip50 search */}
+							<TouchableOpacity
+								style={styles.submitSearch}
+								onPress={() => void handleNip50Search(searchInput)}
+							>
+								<SearchIcon color={color.TEXT} />
+							</TouchableOpacity>
 						</View>
 					}
 					{/* user contacts */}
 					{contactsRef.current.length > 0 ?
 						<View style={[
 							styles.contactsWrap,
-							{ marginBottom: isKeyboardOpen || route.params?.isMelt || route.params?.isSendEcash ? marginBottomPayment : marginBottom }
+							{ marginBottom: isKeyboardOpen || route.params?.isMelt || route.params?.isSendEcash ? marginBottomPayment : marginBottom },
+							{ paddingTop: showSearch ? 0 : 10 }
 						]}>
-							<FlashList
-								ref={ref}
-								data={contacts}
-								viewabilityConfig={{ minimumViewTime: 500 }}
-								estimatedItemSize={75}
-								onViewableItemsChanged={onViewableItemsChanged}
-								refreshControl={
-									<RefreshControl
-										refreshing={isRefreshing}
-										onRefresh={() => void handleRefresh()}
-										title={t('pullRefresh')}
-										tintColor={hi[highlight]}
-										titleColor={color.TEXT}
-									/>
-								}
-								keyExtractor={item => item.hex}
-								renderItem={({ item }) => (
-									<ContactPreview
-										// TODO fix this contact type
-										contact={[item.hex, item]}
-										openProfile={() => {
-											navigation.navigate('Contact', {
-												hex: item.hex,
-												contact: item,
-											})
-										}}
-										handleSend={() => void handleSend(item.hex, item)}
-										isPayment={route.params?.isMelt || route.params?.isSendEcash}
-										isFav={favs.includes(item.hex)}
-										recyclingKey={item.hex}
-									/>
-								)}
-								ListEmptyComponent={() => (
-									<Empty
-										txt={t('noResults', { ns: NS.addrBook })}
-									/>
-								)}
-								ItemSeparatorComponent={() => (
-									<Separator style={[styles.contactSeparator]} />
-								)}
-							/>
+							{searchResults.length > 0 ?
+								<FlashList
+									ref={searchListRef}
+									data={searchResults}
+									estimatedItemSize={75}
+									keyExtractor={item => item.hex}
+									renderItem={({ item }) => (
+										<ContactPreview
+											// TODO fix this contact type
+											contact={[item.hex, item]}
+											openProfile={() => {
+												navigation.navigate('Contact', {
+													hex: item.hex,
+													contact: item,
+												})
+											}}
+											handleSend={() => void handleSend(item.hex, item)}
+											recyclingKey={item.hex}
+											isSearchResult
+										/>
+									)}
+									ListEmptyComponent={() => (
+										<Empty
+											txt={t('noResults', { ns: NS.addrBook })}
+										/>
+									)}
+									ItemSeparatorComponent={() => (
+										<Separator style={[styles.contactSeparator]} />
+									)}
+								/>
+								:
+								<FlashList
+									ref={ref}
+									data={contacts}
+									viewabilityConfig={{ minimumViewTime: 500 }}
+									estimatedItemSize={75}
+									onViewableItemsChanged={onViewableItemsChanged}
+									refreshControl={
+										<RefreshControl
+											refreshing={isRefreshing}
+											onRefresh={() => void handleRefresh()}
+											title={t('pullRefresh')}
+											tintColor={hi[highlight]}
+											titleColor={color.TEXT}
+										/>
+									}
+									keyExtractor={item => item.hex}
+									renderItem={({ item }) => (
+										<ContactPreview
+											// TODO fix this contact type
+											contact={[item.hex, item]}
+											openProfile={() => {
+												navigation.navigate('Contact', {
+													hex: item.hex,
+													contact: item,
+												})
+											}}
+											handleSend={() => void handleSend(item.hex, item)}
+											isPayment={route.params?.isMelt || route.params?.isSendEcash}
+											isFav={favs.includes(item.hex)}
+											recyclingKey={item.hex}
+										/>
+									)}
+									ListEmptyComponent={() => (
+										<Empty
+											txt={t('noResults', { ns: NS.addrBook })}
+										/>
+									)}
+									ItemSeparatorComponent={() => (
+										<Separator style={[styles.contactSeparator]} />
+									)}
+								/>
+							}
 						</View>
 						:
 						<Empty
@@ -640,11 +698,25 @@ const styles = StyleSheet.create({
 	},
 	contactSeparator: {
 		marginHorizontal: 20,
-		marginVertical: -10,
+		marginTop: 10,
+		marginBottom: 10,
 	},
 	wrap: {
 		position: 'relative',
 		width: '100%'
+	},
+	inputWrap: {
+		paddingHorizontal: 20
+	},
+	submitSearch: {
+		position: 'absolute',
+		right: 30,
+		top: 13,
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: 40,
+		height: 40,
+		borderRadius: 20,
 	},
 	inputQR: {
 		position: 'absolute',
@@ -654,8 +726,9 @@ const styles = StyleSheet.create({
 	},
 	searchInput: {
 		marginVertical: 10,
+		paddingLeft: 20,
+		paddingRight: 50,
 		paddingVertical: 10,
-		paddingHorizontal: 20,
 	},
 	recentList: {
 		paddingTop: 10,

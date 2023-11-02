@@ -20,6 +20,9 @@ export interface IOnContactsChangedHandler {
 export interface IOnUserMetadataChangedHandler {
 	(profile: IContact): void
 }
+export interface IOnSearchChangedHandler {
+	(profile?: IContact): void
+}
 export interface INostrDataUser {
 	hex: string
 	relays: { read: string[], write: string[], createdAt: number }
@@ -68,6 +71,7 @@ export class Nostr {
 	#onProfileChanged?: IOnProfileChangedHandler
 	#onContactsChanged?: IOnContactsChangedHandler
 	#onUserMetadataChanged?: IOnUserMetadataChangedHandler
+	#onSearchChanged?: IOnSearchChangedHandler
 	#profiles = new ProfileData()
 	#userRelays: string[] = []
 	#user: INostrDataUser
@@ -78,11 +82,13 @@ export class Nostr {
 			onProfileChanged,
 			onContactsChanged,
 			onUserMetadataChanged,
+			onSearchChanged,
 			userRelays
 		}: {
 			onProfileChanged?: IOnProfileChangedHandler,
 			onContactsChanged?: IOnContactsChangedHandler,
 			onUserMetadataChanged?: IOnUserMetadataChangedHandler,
+			onSearchChanged?: IOnSearchChangedHandler,
 			userRelays?: string[]
 		},
 	) {
@@ -95,6 +101,7 @@ export class Nostr {
 		this.#onProfileChanged = onProfileChanged
 		this.#onContactsChanged = onContactsChanged
 		this.#onUserMetadataChanged = onUserMetadataChanged
+		this.#onSearchChanged = onSearchChanged
 
 		// void this.initUserData(userRelays)
 	}
@@ -235,7 +242,8 @@ export class Nostr {
 			}
 		})
 		sub?.on('event', (e: Event) => {
-			l('search event', e)
+			// l('search event', e)
+			this.#onSearchChanged?.(ProfileData.eventToIContact(e))
 		})
 		return sub
 	}

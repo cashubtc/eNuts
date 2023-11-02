@@ -65,7 +65,7 @@ function PopupOption({ txt, onSelect, icon, hasSeparator, disabled }: IPopupOpti
 					{icon}
 				</View>
 			</MenuOption>
-			{hasSeparator && <Separator />}
+			{hasSeparator && <Separator style={[{ marginBottom: 0 }]} />}
 		</>
 	)
 }
@@ -73,6 +73,7 @@ function PopupOption({ txt, onSelect, icon, hasSeparator, disabled }: IPopupOpti
 const styles = StyleSheet.create({
 	optWrap: {
 		flexDirection: 'row',
+		alignItems: 'center',
 		justifyContent: 'space-between',
 		padding: 10
 	},

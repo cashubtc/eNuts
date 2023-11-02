@@ -12,7 +12,7 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi, mainColors } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -25,6 +25,7 @@ interface IContactPreviewProps {
 	handleSend: () => void
 	isPayment?: boolean
 	isFav?: boolean
+	isSearchResult?: boolean
 	recyclingKey?: string
 }
 
@@ -34,6 +35,7 @@ export default function ContactPreview({
 	handleSend,
 	isPayment,
 	isFav,
+	isSearchResult,
 	recyclingKey
 }: IContactPreviewProps) {
 	const { t } = useTranslation([NS.addrBook])
@@ -63,6 +65,27 @@ export default function ContactPreview({
 		await copy(contact[0])
 		openPromptAutoClose({ msg: t('npubCopied'), success: true })
 	}
+
+	const opts = useMemo(() => [
+		{
+			txt: isFav ? t('removeFav') : t('favorite'),
+			onSelect: handleFav,
+			icon: <ListFavIcon width={20} height={20} color={isFav ? color.TEXT : mainColors.STAR} />,
+			hasSeparator: true
+		},
+		{
+			txt: t('showProfile'),
+			onSelect: openProfile,
+			icon: <ChevronRightIcon width={16} height={16} color={color.TEXT} />,
+			hasSeparator: true
+		},
+		{
+			txt: t('copyNpub'),
+			onSelect: () => void handleCopy(),
+			icon: <CopyIcon width={18} height={18} color={color.TEXT} />,
+		},
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	], [contact])
 
 	return (
 		<TouchableOpacity onPress={handleSend} style={[styles.container]}>
@@ -97,27 +120,7 @@ export default function ContactPreview({
 				isPayment ?
 					<ChevronRightIcon width={16} height={16} color={color.TEXT} />
 					:
-					<Popup
-						opts={[
-							{
-								txt: isFav ? t('removeFav') : t('favorite'),
-								onSelect: handleFav,
-								icon: <ListFavIcon width={20} height={20} color={isFav ? color.TEXT : mainColors.STAR} />,
-								hasSeparator: true
-							},
-							{
-								txt: t('showProfile'),
-								onSelect: openProfile,
-								icon: <ChevronRightIcon width={16} height={16} color={color.TEXT} />,
-								hasSeparator: true
-							},
-							{
-								txt: t('copyNpub'),
-								onSelect: () => void handleCopy(),
-								icon: <CopyIcon width={18} height={18} color={color.TEXT} />,
-							},
-						]}
-					/>
+					<Popup opts={isSearchResult ? opts.slice(1) : opts} />
 				:
 				null
 			}
@@ -131,7 +134,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		marginHorizontal: 20,
-		paddingBottom: 10,
 	},
 	colWrap: {
 		flexDirection: 'row',
