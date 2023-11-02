@@ -85,7 +85,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						txt={t('donateLn')}
 						icon={<HeartIcon color={color.TEXT} />}
 						onPress={() => setZapModal(true)}
-						hasSeparator
+						// hasSeparator
 					/>
 					{__DEV__ &&
 						<MenuItem
