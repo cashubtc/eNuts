@@ -4,6 +4,7 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TBeforeRemoveEvent, TSuccessPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
+import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { formatInt, vib } from '@util'
@@ -30,7 +31,18 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<Logo size={250} style={styles.img} success />
+			{nostr && nostr.contact && nostr.contact.picture ?
+				<View style={styles.nostrImg}>
+					<ProfilePic
+						size={100}
+						hex={nostr.contact.hex}
+						uri={nostr.contact.picture}
+						recyclingKey={nostr.contact.hex}
+					/>
+				</View>
+				:
+				<Logo size={250} style={styles.img} success />
+			}
 			<View style={{ width: '100%' }}>
 				<Text style={[styles.successTxt, { color: color.TEXT }]}>
 					{nostr &&
@@ -133,6 +145,12 @@ const styles = StyleSheet.create({
 		marginTop: 100,
 		height: 100,
 		opacity: .8
+	},
+	nostrImg: {
+		marginTop: 100,
+		justifyContent:
+		'center',
+		alignItems: 'center'
 	},
 	successTxt: {
 		fontSize: 30,
