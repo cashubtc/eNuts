@@ -1,7 +1,7 @@
 import Button, { TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
-import { QRIcon, SearchIcon } from '@comps/Icons'
+import { QRIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
@@ -35,7 +35,8 @@ import { useTranslation } from 'react-i18next'
 import { RefreshControl, StyleSheet, Text, type TextInput, TouchableOpacity, View } from 'react-native'
 
 import ContactPreview from './ContactPreview'
-import ProfilePic from './ProfilePic'
+import Recents from './Recents'
+import Search from './Search'
 // import SyncModal from './SyncModal'
 
 /****************************************************************************/
@@ -43,7 +44,7 @@ import ProfilePic from './ProfilePic'
 /****************************************************************************/
 
 interface CustomViewToken {
-	item: IContact // Replace YourTypeHere with the actual type you want
+	item: IContact
 	key: string
 	index: number | null
 	isViewable: boolean
@@ -92,7 +93,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// search functionality
 	const [showSearch, setShowSearch] = useState(false)
 	const toggleSearch = useCallback(() => setShowSearch(prev => !prev), [])
-	const [searchInput, setSearchInput] = useState('')
 	const [searchResults, setSearchResults] = useState<IContact[]>([])
 	// contact list
 	const [contacts, setContacts] = useState<IContact[]>([])
@@ -263,38 +263,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// 	setStatus({ started: false, finished: true })
 	// 	setSyncModal(false)
 	// }
-
-	const handleOnChangeSearch = (text: string) => {
-		setSearchInput(text)
-		// handle search by username if all contacts have been synced
-		if (!hasFullySynced) {
-			if (searchResults.length) {
-				setSearchResults([])
-			}
-			return
-		}
-		// reset search results
-		if (!text.length) {
-			setContacts(contactsRef.current)
-			setSearchResults([])
-			return
-		}
-		// handle npub search
-		if (isNpub(text)) {
-			const hex = nip19.decode(text).data
-			const filtered = contactsRef.current.filter(c => c.hex === hex)
-			return setContacts(filtered)
-		}
-		const filtered = contactsRef.current.filter(c => getNostrUsername(c).toLowerCase().includes(text.toLowerCase()))
-		return setContacts(filtered)
-	}
-
-	const handleNip50Search = useCallback((text: string) => {
-		if (!text.length) {
-			return setSearchResults([])
-		}
-		nostrRef.current?.search(text)
-	}, [])
 
 	// handle npub input field
 	const handleNpubInput = async () => {
@@ -478,47 +446,21 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				<>
 					{/* user recently used */}
 					{recent.length > 0 &&
-						<>
-							<FlashList
-								data={recent}
-								horizontal
-								estimatedItemSize={50}
-								keyExtractor={item => item.hex}
-								renderItem={({ item }) => (
-									<TouchableOpacity onPress={() => void handleSend(item)}>
-										<ProfilePic
-											hex={item.hex}
-											size={50}
-											uri={item.picture}
-											overlayColor={color.INPUT_BG}
-											isFav={favs.includes(item.hex)}
-											recyclingKey={item.hex}
-										/>
-									</TouchableOpacity>
-								)}
-								contentContainerStyle={styles.recentList}
-							/>
-							{!showSearch && <Separator style={[{ marginTop: 10, marginBottom: 0 }]} />}
-						</>
+						<Recents
+							showSearch={showSearch}
+							handleSend={handleSend}
+						/>
 					}
 					{showSearch &&
-						<View style={[styles.inputWrap, { marginTop: recent.length ? 10 : 0 }]}>
-							<TxtInput
-								keyboardType='default'
-								placeholder={t('searchContacts')}
-								value={searchInput}
-								onChangeText={text => void handleOnChangeSearch(text)}
-								onSubmitEditing={() => void handleNip50Search(searchInput)}
-								style={[styles.searchInput]}
-							/>
-							{/* Submit nip50 search */}
-							<TouchableOpacity
-								style={styles.submitSearch}
-								onPress={() => void handleNip50Search(searchInput)}
-							>
-								<SearchIcon color={color.TEXT} />
-							</TouchableOpacity>
-						</View>
+						<Search
+							recent={recent}
+							hasFullySynced={hasFullySynced}
+							contactsRef={contactsRef}
+							setContacts={setContacts}
+							searchResults={searchResults}
+							setSearchResults={setSearchResults}
+							nostrRef={nostrRef}
+						/>
 					}
 					{/* user contacts */}
 					{contactsRef.current.length > 0 ?
@@ -688,34 +630,10 @@ const styles = StyleSheet.create({
 		position: 'relative',
 		width: '100%'
 	},
-	inputWrap: {
-		paddingHorizontal: 20
-	},
-	submitSearch: {
-		position: 'absolute',
-		right: 30,
-		top: 4,
-		justifyContent: 'center',
-		alignItems: 'center',
-		width: 40,
-		height: 40,
-		borderRadius: 20,
-	},
 	inputQR: {
 		position: 'absolute',
 		right: 15,
 		top: 22,
 		paddingHorizontal: 10
 	},
-	searchInput: {
-		marginBottom: 20,
-		paddingLeft: 20,
-		paddingRight: 50,
-		paddingVertical: 10,
-	},
-	recentList: {
-		paddingVertical: 10,
-		paddingLeft: 20,
-		paddingRight: 0,
-	}
 })
