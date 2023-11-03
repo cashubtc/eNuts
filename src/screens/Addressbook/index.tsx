@@ -453,7 +453,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					}
 					{showSearch &&
 						<Search
-							recent={recent}
 							hasFullySynced={hasFullySynced}
 							contactsRef={contactsRef}
 							setContacts={setContacts}

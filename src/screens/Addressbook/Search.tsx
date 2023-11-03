@@ -5,13 +5,13 @@ import type { Nostr } from '@nostr/class/Nostr'
 import { getNostrUsername, isNpub } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { highlight as hi } from '@styles'
 import { nip19 } from 'nostr-tools'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 interface ISearchProps {
-	recent: IContact[]
 	hasFullySynced: boolean
 	contactsRef: React.MutableRefObject<IContact[]>
 	searchResults: IContact[]
@@ -21,7 +21,6 @@ interface ISearchProps {
 }
 
 export default function Search({
-	recent,
 	hasFullySynced,
 	contactsRef,
 	setContacts,
@@ -30,7 +29,7 @@ export default function Search({
 	nostrRef
 }: ISearchProps) {
 	const { t } = useTranslation([NS.common])
-	const { color } = useThemeContext()
+	const { highlight } = useThemeContext()
 	const [searchInput, setSearchInput] = useState('')
 
 	const handleOnChangeSearch = (text: string) => {
@@ -63,11 +62,11 @@ export default function Search({
 			return setSearchResults([])
 		}
 		nostrRef.current?.search(text)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return (
-		<View style={[styles.inputWrap, { marginTop: recent.length ? 10 : 0 }]}>
+		<View style={styles.inputWrap}>
 			<TxtInput
 				keyboardType='default'
 				placeholder={t('searchContacts')}
@@ -81,7 +80,7 @@ export default function Search({
 				style={styles.submitSearch}
 				onPress={() => void handleNip50Search(searchInput)}
 			>
-				<SearchIcon color={color.TEXT} />
+				<SearchIcon color={hi[highlight]} />
 			</TouchableOpacity>
 		</View>
 	)
@@ -89,7 +88,8 @@ export default function Search({
 
 const styles = StyleSheet.create({
 	inputWrap: {
-		paddingHorizontal: 20
+		paddingHorizontal: 20,
+		marginTop: 10
 	},
 	searchInput: {
 		marginBottom: 20,

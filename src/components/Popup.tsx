@@ -36,7 +36,7 @@ export default function Popup({ opts, optsWidth }: IPopupProps) {
 					optionsContainer: {
 						backgroundColor: color.INPUT_BG,
 						borderRadius: 10,
-						width: optsWidth ?? 180,
+						width: optsWidth ?? 210,
 					},
 				}}
 			>
