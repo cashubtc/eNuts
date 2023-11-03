@@ -129,7 +129,7 @@
 		"paste": "Paste",
 		"paymentPending": "Payment pending",
 		"paymentSuccess": "Payment successfull!",
-		"nostrPaymentSuccess": "sent via Nostr",
+		"nostrPaymentSuccess": "sent!",
 		"paymentType": "Payment type",
 		"payWithLn": "Pay with your LN wallet",
 		"readme": "Read me",

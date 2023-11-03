@@ -129,7 +129,7 @@
 		"paste": "Coller",
 		"paymentPending": "Paiement en attente",
 		"paymentSuccess": "Paiement réussi!",
-		"nostrPaymentSuccess": "envoyé via Nostr!",
+		"nostrPaymentSuccess": "envoyé!",
 		"paymentType": "Type de paiement",
 		"payWithLn": "Payer avec votre portefeuille LN",
 		"readme": "Lisez-moi",

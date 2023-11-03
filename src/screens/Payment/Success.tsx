@@ -46,9 +46,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 			<View style={{ width: '100%' }}>
 				<Text style={[styles.successTxt, { color: color.TEXT }]}>
 					{nostr &&
-						<>
-							{formatInt(amount || 0)} Satoshi {t('nostrPaymentSuccess')}!
-						</>
+						formatInt(amount || 0)} Satoshi {t('nostrPaymentSuccess')
 					}
 					{isMelt ?
 						t('paymentSuccess')

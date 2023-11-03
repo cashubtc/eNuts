@@ -129,7 +129,7 @@
 		"paste": "Einfügen",
 		"paymentPending": "Zahlung ausstehend",
 		"paymentSuccess": "Zahlung erfolgreich!",
-		"nostrPaymentSuccess": "via Nostr versendet!",
+		"nostrPaymentSuccess": "versendet!",
 		"paymentType": "Zahlungstyp",
 		"payWithLn": "Zahle mit deiner LN wallet",
 		"readme": "Lies mich",
