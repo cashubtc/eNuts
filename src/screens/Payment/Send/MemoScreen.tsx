@@ -5,14 +5,16 @@ import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import type { TMemoPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { getNostrUsername, truncateNpub } from '@nostr/util'
 import ProfileBanner from '@screens/Addressbook/Contact/Banner'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
+import { nip19 } from 'nostr-tools'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { KeyboardAvoidingView, StyleSheet, Text   , TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 
@@ -87,6 +89,7 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 					<ProfileBanner
 						hex={nostr?.contact?.hex ?? ''}
 						uri={nostr?.contact?.banner}
+						isSending
 						dimmed
 					/>
 					<View style={styles.profilePicContainer}>
@@ -94,11 +97,15 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 							<ProfilePic
 								hex={nostr?.contact?.hex ?? ''}
 								uri={nostr?.contact?.picture}
-								size={100}
+								size={80}
 								recyclingKey={nostr?.contact?.hex ?? ''}
 							/>
 						</View>
 					</View>
+					<Txt
+						txt={getNostrUsername(nostr?.contact) ?? truncateNpub(nip19.npubEncode(nostr?.contact?.hex ?? ''))}
+						styles={[styles.username]}
+					/>
 				</View>
 			}
 			<KeyboardAvoidingView
@@ -159,13 +166,19 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'flex-end',
 		justifyContent: 'space-between',
-		marginTop: -50,
+		marginTop: -40,
 		paddingHorizontal: 20,
 	},
 	picWrap: {
-		width: 100,
-		height: 100,
-		borderRadius: 50,
+		width: 80,
+		height: 80,
+		borderRadius: 40,
 		overflow: 'hidden',
+		marginBottom: 10
+	},
+	username: {
+		fontSize: 19,
+		fontWeight: '500',
+		marginHorizontal: 20,
 	},
 })

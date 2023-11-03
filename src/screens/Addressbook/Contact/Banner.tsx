@@ -8,7 +8,14 @@ import { Dimensions, StyleSheet, View } from 'react-native'
 
 import { headers } from '../const'
 
-export default function ProfileBanner({ hex, uri, dimmed }: { hex?: HexKey, uri?: string, dimmed?: boolean }) {
+interface IProfileBannerProps {
+	hex?: HexKey
+	uri?: string
+	dimmed?: boolean
+	isSending?: boolean
+}
+
+export default function ProfileBanner({ hex, uri, dimmed, isSending }: IProfileBannerProps) {
 
 	const [isErr, setIsErr] = useState(false)
 	const getUri = (uri: string) => `${imgProxy(hex ?? '', uri, Dimensions.get('window').width, 'banner', 600)}`
@@ -26,7 +33,7 @@ export default function ProfileBanner({ hex, uri, dimmed }: { hex?: HexKey, uri?
 						cachePolicy='disk'
 						transition={200}
 						contentFit='cover'
-						style={styles.banner}
+						style={[styles.banner, { height: isSending ? 150 : 200 }]}
 					/>
 					<View style={[styles.overlay, { backgroundColor: dimmed ? 'rgba(0, 0, 0, .5)' : 'transparent' }]} />
 				</>
@@ -50,7 +57,6 @@ const styles = StyleSheet.create({
 	},
 	banner: {
 		width: '100%',
-		height: 200,
 		opacity: 1,
 	},
 	defaultBanner: {

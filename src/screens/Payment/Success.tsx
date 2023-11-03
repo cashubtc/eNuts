@@ -7,6 +7,7 @@ import { preventBack } from '@nav/utils'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { formatInt, vib } from '@util'
 import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
@@ -29,6 +30,8 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		return () => navigation.removeListener('beforeRemove', backHandler)
 	}, [navigation])
 
+	l({ amount, memo, fee, mint, isClaim, isMelt, nostr, isScanned })
+
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			{nostr && nostr.contact && nostr.contact.picture ?
@@ -45,16 +48,16 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 			}
 			<View style={{ width: '100%' }}>
 				<Text style={[styles.successTxt, { color: color.TEXT }]}>
-					{nostr &&
-						formatInt(amount || 0)} Satoshi {t('nostrPaymentSuccess')
-					}
-					{isMelt ?
-						t('paymentSuccess')
+					{nostr ?
+						<>{formatInt(amount || 0)} Satoshi {t('nostrPaymentSuccess')}</>
 						:
-						!nostr ?
-							<>{formatInt(amount || 0)} Satoshi {isClaim ? t('claimed') : t('minted')}!</>
+						isMelt ?
+							t('paymentSuccess')
 							:
-							null
+							!nostr ?
+								<>{formatInt(amount || 0)} Satoshi {isClaim ? t('claimed') : t('minted')}!</>
+								:
+								null
 					}
 				</Text>
 				{memo &&
@@ -147,7 +150,7 @@ const styles = StyleSheet.create({
 	nostrImg: {
 		marginTop: 100,
 		justifyContent:
-		'center',
+			'center',
 		alignItems: 'center'
 	},
 	successTxt: {

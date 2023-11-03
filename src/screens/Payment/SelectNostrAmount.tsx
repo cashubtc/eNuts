@@ -80,14 +80,15 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 			<ProfileBanner
 				hex={nostr?.contact?.hex ?? ''}
 				uri={nostr?.contact?.banner}
+				isSending
 				dimmed
 			/>
-			<View style={[styles.profilePicContainer, { marginTop: nostr?.contact?.banner ? -50 : -90 }]}>
+			<View style={[styles.profilePicContainer, { marginTop: nostr?.contact?.banner ? -40 : -90 }]}>
 				<View style={styles.picWrap}>
 					<ProfilePic
 						hex={nostr?.contact?.hex ?? ''}
 						uri={nostr?.contact?.picture}
-						size={100}
+						size={80}
 						recyclingKey={nostr?.contact?.hex ?? ''}
 					/>
 				</View>
@@ -165,16 +166,16 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 	},
 	picWrap: {
-		width: 100,
-		height: 100,
-		borderRadius: 50,
+		width: 80,
+		height: 80,
+		borderRadius: 40,
 		overflow: 'hidden',
+		marginBottom: 10
 	},
 	username: {
 		fontSize: 19,
 		fontWeight: '500',
 		marginHorizontal: 20,
-		marginTop: 10
 	},
 	amountWrap: {
 		width: '100%',
