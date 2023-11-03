@@ -135,6 +135,7 @@ export type RootStackParamList = {
 	'scan success': {
 		mintUrl?: string
 		npub?: Npub
+		edited?: boolean
 	}
 	processingError: {
 		mint?: IMintUrl

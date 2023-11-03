@@ -94,7 +94,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			const npub = isHex(newNpub) ? nip19.npubEncode(newNpub) : newNpub
 			await replaceNpub(npub)
 			closeSheet()
-			navigation.navigate('scan success', { npub })
+			navigation.navigate('scan success', { npub, edited: true })
 		} catch (error) {
 			return openPromptAutoClose({ msg: t('invalidPubKey', { ns: NS.common }) })
 		}

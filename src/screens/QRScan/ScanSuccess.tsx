@@ -13,7 +13,7 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPageProps) {
 
-	const { mintUrl, npub } = route.params
+	const { mintUrl, npub, edited } = route.params
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
 
@@ -61,16 +61,18 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 				<Button
 					txt={mintUrl ? t('topUpNow', { ns: NS.common }) : t('showContacts', { ns: NS.common })}
 					onPress={() => {
-						if (mintUrl) { return handleTopUp()}
+						if (mintUrl) { return handleTopUp() }
 						handleContacts()
 					}}
 				/>
 				<View style={{ marginVertical: 10 }} />
-				<Button
-					txt={t('scanAnother', { ns: NS.common })}
-					outlined
-					onPress={() => navigation.navigate('qr scan', {})}
-				/>
+				{!edited &&
+					<Button
+						txt={t('scanAnother', { ns: NS.common })}
+						outlined
+						onPress={() => navigation.navigate('qr scan', {})}
+					/>
+				}
 				<TxtButton
 					txt={t('backToDashboard', { ns: NS.common })}
 					onPress={() => navigation.navigate('dashboard')}
