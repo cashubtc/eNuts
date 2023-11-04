@@ -384,6 +384,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	useEffect(() => {
 		if (!isFocused || pubKey.hex === nostrRef.current?.hex) { return }
 		void (async () => {
+			setContacts([]) // reset contacts in case user has edited his npub
 			const [storedNPub, storedPubKeyHex, storedUserRelays, hasSynced] = await Promise.all([
 				store.get(STORE_KEYS.npub),
 				store.get(STORE_KEYS.npubHex),

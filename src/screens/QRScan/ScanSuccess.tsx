@@ -76,6 +76,7 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 				<TxtButton
 					txt={t('backToDashboard', { ns: NS.common })}
 					onPress={() => navigation.navigate('dashboard')}
+					style={[{ marginTop: edited ? -20 : 0 }]}
 				/>
 			</SafeAreaView>
 		</View>
