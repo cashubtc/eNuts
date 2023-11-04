@@ -385,6 +385,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		if (!isFocused || pubKey.hex === nostrRef.current?.hex) { return }
 		void (async () => {
 			setContacts([]) // reset contacts in case user has edited his npub
+			last.current.idx = -1
 			const [storedNPub, storedPubKeyHex, storedUserRelays, hasSynced] = await Promise.all([
 				store.get(STORE_KEYS.npub),
 				store.get(STORE_KEYS.npubHex),
@@ -585,10 +586,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				</View>
 				<Button
 					txt={t('submit')}
-					onPress={() => {
-						l('pressr')
-						void handleNpubInput()
-					}}
+					onPress={() => void handleNpubInput()}
 				/>
 				<TxtButton
 					txt={t('cancel')}
