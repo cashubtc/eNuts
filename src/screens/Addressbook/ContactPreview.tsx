@@ -12,7 +12,6 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi, mainColors } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -44,9 +43,9 @@ export default function ContactPreview({
 	const { copy } = useCopy()
 	const { openPromptAutoClose } = usePromptContext()
 
-	const handleFav = useCallback(() => {
+	const handleFav = () => {
 		let newFavs: string[] = []
-		if (favs.includes(contact?.hex)) {
+		if (favs.includes(contact.hex)) {
 			setFavs(prev => {
 				newFavs = prev.filter(fav => fav !== contact.hex)
 				return newFavs
@@ -58,15 +57,14 @@ export default function ContactPreview({
 			})
 		}
 		void store.setObj(STORE_KEYS.favs, newFavs)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [favs])
+	}
 
 	const handleCopy = async () => {
 		await copy(contact.hex)
 		openPromptAutoClose({ msg: t('npubCopied'), success: true })
 	}
 
-	const opts = useMemo(() => [
+	const opts = [
 		{
 			txt: isFav ? t('removeFav') : t('favorite'),
 			onSelect: handleFav,
@@ -84,8 +82,7 @@ export default function ContactPreview({
 			onSelect: () => void handleCopy(),
 			icon: <CopyIcon width={18} height={18} color={color.TEXT} />,
 		},
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	], [contact])
+	]
 
 	return (
 		<TouchableOpacity onPress={handleSend} style={[styles.container]}>
