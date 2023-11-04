@@ -235,7 +235,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}, [next, shouldCallNext]), 150)
 
 	// bring favs on top of the list
-	const sortFavs = (a: IContact, b: IContact) => {
+	const sortFavs = useCallback((a: IContact, b: IContact) => {
 		const aIsFav = favs.includes(a.hex)
 		const bIsFav = favs.includes(b.hex)
 		// a comes before b (a is a favorite)
@@ -243,7 +243,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		// b comes before a (b is a favorite)
 		if (!aIsFav && bIsFav) { return 1 }
 		return 0
-	}
+	}, [favs])
 
 	// const handleSync = async () => {
 	// 	l('call handleSync function')
@@ -385,7 +385,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		if (!isFocused || pubKey.hex === nostrRef.current?.hex) { return }
 		void (async () => {
 			setContacts([]) // reset contacts in case user has edited his npub
+			setSearchResults([])
 			last.current.idx = -1
+			setShowSearch(false)
 			const [storedNPub, storedPubKeyHex, storedUserRelays, hasSynced] = await Promise.all([
 				store.get(STORE_KEYS.npub),
 				store.get(STORE_KEYS.npubHex),

@@ -60,7 +60,7 @@ const useNostr = () => {
 				setNutPub(nutpub || '')
 				setClaimedEvtIds(redeemed)
 				setFavs(nostrFavs || [])
-				setRecent(nostrRecent || [])
+				setRecent(nostrRecent?.reverse() || [])
 			} catch (e) {
 				l(e)
 			}

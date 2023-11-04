@@ -96,7 +96,7 @@ export default function ContactPreview({
 					overlayColor={color.INPUT_BG}
 					// isVerified={!!contact[1]?.nip05?.length}
 					isFav={isFav}
-					isInContacts={isSearchResult && isInContacts}
+					isInContacts={isInContacts}
 					recyclingKey={recyclingKey}
 				/>
 				{Object.keys(contact).length > 1 ?
