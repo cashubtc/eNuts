@@ -310,7 +310,7 @@
 		"trustMintSure": "Trust this mint?",
 		"updatedDefault": "Updated the default mint",
 		"newMintAdded": "Mint added!",
-		"newMintAddedQuestion": "Do you want to receive Ecash from it now?",
+		"newMintAddedQuestion": "Do you want to receive Ecash now?",
 		"selectSwapReceiver": "Select a mint as the payment receiver."
 	},
 	"topNav": {
