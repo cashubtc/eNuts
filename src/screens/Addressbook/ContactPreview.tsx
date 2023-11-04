@@ -25,6 +25,7 @@ interface IContactPreviewProps {
 	isPayment?: boolean
 	isFav?: boolean
 	isSearchResult?: boolean
+	isInContacts?: boolean
 	recyclingKey?: string
 }
 
@@ -35,6 +36,7 @@ export default function ContactPreview({
 	isPayment,
 	isFav,
 	isSearchResult,
+	isInContacts,
 	recyclingKey
 }: IContactPreviewProps) {
 	const { t } = useTranslation([NS.addrBook])
@@ -94,6 +96,7 @@ export default function ContactPreview({
 					overlayColor={color.INPUT_BG}
 					// isVerified={!!contact[1]?.nip05?.length}
 					isFav={isFav}
+					isInContacts={isSearchResult && isInContacts}
 					recyclingKey={recyclingKey}
 				/>
 				{Object.keys(contact).length > 1 ?
@@ -117,7 +120,7 @@ export default function ContactPreview({
 				isPayment ?
 					<ChevronRightIcon width={16} height={16} color={color.TEXT} />
 					:
-					<Popup opts={isSearchResult ? opts.slice(1) : opts} />
+					<Popup opts={isSearchResult && !isInContacts ? opts.slice(1) : opts} />
 				:
 				null
 			}

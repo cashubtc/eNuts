@@ -23,6 +23,7 @@ interface IProfilePicProps {
 	overlayColor?: string
 	isFav?: boolean
 	// isVerified?: boolean
+	isInContacts?: boolean
 	recyclingKey?: string
 }
 
@@ -34,6 +35,7 @@ export default function ProfilePic({
 	overlayColor,
 	isFav,
 	// isVerified,
+	isInContacts,
 	recyclingKey
 }: IProfilePicProps & INostrImg) {
 
@@ -81,11 +83,11 @@ export default function ProfilePic({
 					<UserIcon width={isUser ? 15 : 30} height={isUser ? 15 : 30} color={hi[highlight]} />
 				</View>
 			}
-			{/* {!isUser && isVerified &&
-				<View style={[styles.imgIcon, styles.right]}>
-					<ListVerifiedIcon width={14} height={14} />
+			{!isUser && isInContacts &&
+				<View style={[styles.imgIcon, styles.isContact, styles.right, { backgroundColor: hi[highlight],  }]}>
+					<UserIcon width={12} height={12} color={mainColors.WHITE} />
 				</View>
-			} */}
+			}
 			{!isUser && isFav &&
 				<View style={[styles.imgIcon, styles.left]}>
 					<ListFavIcon width={14} height={14} color={mainColors.STAR} />
@@ -115,5 +117,10 @@ const styles = StyleSheet.create({
 	},
 	left: {
 		left: 0,
+	},
+	isContact: {
+		borderRadius: 6,
+		justifyContent: 'center',
+		alignItems: 'center',
 	}
 })

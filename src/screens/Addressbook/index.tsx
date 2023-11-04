@@ -420,6 +420,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	useEffect(() => {
 		setContacts([...contacts].sort(sortFavs))
+		// re-render search results if favs change
+		if (showSearch) {
+			setSearchResults([...searchResults])
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [favs])
 
@@ -489,8 +493,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 											}}
 											handleSend={() => void handleSend(item)}
 											isPayment={route.params?.isMelt || route.params?.isSendEcash}
-											recyclingKey={item.hex}
+											isFav={favs.includes(item.hex)}
 											isSearchResult
+											isInContacts={contactsRef.current.some(c => c.hex === item.hex)}
+											recyclingKey={item.hex}
 										/>
 									)}
 									ListEmptyComponent={() => (
