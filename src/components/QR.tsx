@@ -20,12 +20,12 @@ interface QRProps {
 
 export default function QR({ size, value, isInvoice, truncateNum, onError }: QRProps) {
 	const { t } = useTranslation([NS.common])
-	const { color, theme } = useThemeContext()
+	const { color } = useThemeContext()
 	const { copied, copy } = useCopy()
 	const str = isInvoice ? value.toUpperCase() : value
 	return (
 		<TouchableOpacity onPress={() => void copy(str)}>
-			<View style={theme === 'Dark' ? styles.qrWrap : {}}>
+			<View style={styles.qrWrap}>
 				<QRCode
 					size={size}
 					value={str}
