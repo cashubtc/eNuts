@@ -276,7 +276,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			// otherwise, check mint with highest balance
 			const mintsBals = await getMintsBalances()
 			const mints = await getCustomMintNames(mintsBals.map(m => ({ mintUrl: m.mintUrl })))
-			const highestBalance = Math.max(...mintsBals.map(m => m.amount))
+			const highestBalance = Math.max(...mintsBals.filter(m => m.mintUrl !== _testmintUrl).map(m => m.amount))
 			const highestBalanceMint = mintsBals.find(m => m.amount === highestBalance)
 			// if highest balance + estFee is sufficient, use it
 			if (highestBalanceMint) {
@@ -291,29 +291,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 						recipient
 					})
 				}
-			}
-			// otherwise, check if any other mint has sufficient balance
-			const otherMints = mintsBals.filter(m => m.mintUrl !== _testmintUrl && m.amount > amount)
-			// show error if no other mint has sufficient balance
-			if (!otherMints.length) {
-				return navigation.navigate('processingError', {
-					mint,
-					amount,
-					errorMsg: t('noFunds', { ns: NS.common })
-				})
-			}
-			const mintToUse = otherMints[0]
-			const estFee = await checkFees(mintToUse.mintUrl, recipient)
-			// if other mint + estFee is sufficient, use it
-			if (mintToUse.amount + estFee >= amount) {
-				return navigation.navigate('coinSelection', {
-					mint: mints.find(m => m.mintUrl === mintToUse.mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
-					balance: mintToUse.amount,
-					amount: +amount,
-					estFee,
-					isZap,
-					recipient
-				})
 			}
 		} catch (e) {
 			return handleError({ e })
