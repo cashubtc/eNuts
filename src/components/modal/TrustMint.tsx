@@ -20,9 +20,12 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	return (
-		<MyModal type='question' animation='fade' visible close={closeModal}>
+		<MyModal type='bottom' animation='slide' visible close={closeModal}>
 			<Text style={globals(color, highlight).modalHeader}>
 				{t('trustMint')}?
+			</Text>
+			<Text style={[globals(color, highlight).modalTxt, { color: color.TEXT_SECONDARY }]}>
+				{t('notClaim')}.
 			</Text>
 			{/* token amount */}
 			<Text style={[styles.mintPrompt, { color: color.TEXT }]}>
@@ -32,9 +35,6 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			<View style={styles.tokenMintsView}>
 				{tokenInfo?.mints.map(m => <Text style={[styles.mintPrompt, { color: color.TEXT }]} key={m}>{formatMintUrl(m)}</Text>)}
 			</View>
-			<Text style={globals(color, highlight).modalTxt}>
-				{t('notClaim')}.
-			</Text>
 			<Button loading={loading} txt={loading ? t('claiming', { ns: NS.wallet }) : t('yes')} onPress={handleTrustModal} />
 			<View style={{ marginVertical: 10 }} />
 			<Button
