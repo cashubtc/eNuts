@@ -1,26 +1,30 @@
 import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
+import { _testmintUrl } from '@consts'
+import { getMintBalance, getMintsBalances } from '@db'
 import { l } from '@log'
 import type { IMintUrl } from '@model'
+import type { IDecodedLNInvoice } from '@model/ln'
 import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
+import { pool } from '@nostr/class/Pool'
 import { enutsPubkey, EventKind } from '@nostr/consts'
 import { encrypt } from '@nostr/crypto'
+import { getNostrUsername } from '@nostr/util'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { pool } from '@src/nostr/class/Pool'
-import { getNostrUsername } from '@src/nostr/util'
-import { updateNostrDmUsers } from '@src/storage/store/nostrDms'
-import { cTo } from '@src/storage/store/utils'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
+import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
+import { updateNostrDmUsers } from '@store/nostrDms'
+import { cTo } from '@store/utils'
 import { globals } from '@styles'
 import { getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
-import { autoMintSwap, payLnInvoice, requestMint, sendToken } from '@wallet'
+import { autoMintSwap, checkFees, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -43,6 +47,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		isSendEcash,
 		nostr,
 		isSwap,
+		isZap,
+		payZap,
 		targetMint,
 		proofs,
 		recipient
@@ -64,6 +70,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	})
 
 	const getProcessingtxt = () => {
+		if (isZap) { return 'prepairZapData' }
 		if (isMelt) { return 'processingPaymentByMint' }
 		if (isSwap) { return 'processingSwap' }
 		if (isSendEcash) {
@@ -131,11 +138,12 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				mints: [mint.mintUrl],
 				timestamp: Math.ceil(Date.now() / 1000)
 			})
-			l({ realFee: res.realFee })
+			// l({ realFee: res.realFee })
 			navigation.navigate('success', {
 				amount,
 				fee: res.realFee,
-				isMelt: true
+				isMelt: true,
+				isZap
 			})
 		} catch (e) {
 			handleError({ e })
@@ -170,7 +178,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
 			// add as history entry (send ecash)
-			const entry =  await addToHistory({
+			const entry = await addToHistory({
 				amount: -amount,
 				type: 1,
 				value: token,
@@ -225,8 +233,107 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 	}
 
+	const handleZapProcess = async () => {
+		if (!recipient) {
+			return navigation.navigate('processingError', {
+				mint,
+				amount,
+				errorMsg: ''
+			})
+		}
+		try {
+			const decoded: IDecodedLNInvoice = getDecodedLnInvoice(recipient)
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+			const amount = decoded.sections[2].value / 1000
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+			const timePassed = Math.ceil(Date.now() / 1000) - decoded.sections[4].value
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+			const timeLeft = decoded.sections[8].value - timePassed
+			if (timeLeft <= 0) {
+				return navigation.navigate('processingError', {
+					mint,
+					amount,
+					errorMsg: t('invoiceExpired', { ns: NS.common })
+				})
+			}
+			// user has default mint, check default mint balance
+			const defaultMint = await getDefaultMint()
+			if (defaultMint) {
+				const defaultBalance = await getMintBalance(defaultMint)
+				const estFee = await checkFees(defaultMint, recipient)
+				// if default mint balance + estFee is sufficient, use it
+				if (defaultBalance + estFee >= amount) {
+					return navigation.navigate('coinSelection', {
+						mint: { mintUrl: defaultMint, customName: '' },
+						balance: defaultBalance,
+						amount: +amount,
+						estFee,
+						isZap,
+						recipient
+					})
+				}
+			}
+			// otherwise, check mint with highest balance
+			const mintsBals = await getMintsBalances()
+			const mints = await getCustomMintNames(mintsBals.map(m => ({ mintUrl: m.mintUrl })))
+			const highestBalance = Math.max(...mintsBals.map(m => m.amount))
+			const highestBalanceMint = mintsBals.find(m => m.amount === highestBalance)
+			// if highest balance + estFee is sufficient, use it
+			if (highestBalanceMint) {
+				const estFee = await checkFees(highestBalanceMint.mintUrl, recipient)
+				if (highestBalance + estFee >= amount) {
+					return navigation.navigate('coinSelection', {
+						mint: mints.find(m => m.mintUrl === highestBalanceMint.mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
+						balance: highestBalanceMint.amount,
+						amount: +amount,
+						estFee,
+						isZap,
+						recipient
+					})
+				}
+			}
+			// otherwise, check if any other mint has sufficient balance
+			const otherMints = mintsBals.filter(m => m.mintUrl !== _testmintUrl && m.amount > amount)
+			// show error if no other mint has sufficient balance
+			if (!otherMints.length) {
+				return navigation.navigate('processingError', {
+					mint,
+					amount,
+					errorMsg: t('noFunds', { ns: NS.common })
+				})
+			}
+			const mintToUse = otherMints[0]
+			const estFee = await checkFees(mintToUse.mintUrl, recipient)
+			// if other mint + estFee is sufficient, use it
+			if (mintToUse.amount + estFee >= amount) {
+				return navigation.navigate('coinSelection', {
+					mint: mints.find(m => m.mintUrl === mintToUse.mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
+					balance: mintToUse.amount,
+					amount: +amount,
+					estFee,
+					isZap,
+					recipient
+				})
+			}
+		} catch (e) {
+			return handleError({ e })
+		}
+		// otherwise, show error
+		navigation.navigate('processingError', {
+			mint,
+			amount,
+			errorMsg: t('noFunds', { ns: NS.common })
+		})
+	}
+
 	// start payment process
 	useEffect(() => {
+		if (isZap) {
+			if (payZap) {
+				return void handleMeltingProcess()
+			}
+			return void handleZapProcess()
+		}
 		if (isMelt) {
 			return void handleMeltingProcess()
 		}

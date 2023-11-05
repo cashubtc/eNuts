@@ -2,6 +2,7 @@ import Separator from '@comps/Separator'
 import SwipeButton from '@comps/SwipeButton'
 import Toggle from '@comps/Toggle'
 import Txt from '@comps/Txt'
+import { _testmintUrl } from '@consts'
 import { getProofsByMintUrl } from '@db'
 import type { IProofSelection } from '@model'
 import type { TCoinSelectionPageProps } from '@model/nav'
@@ -10,7 +11,7 @@ import { getNostrUsername, isNpub, npubEncode, truncateNpub, truncateStr } from 
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt, formatMintUrl, getSelectedAmount, isLnurl, isNum } from '@util'
+import { formatInt, formatMintUrl, formatSatStr, getSelectedAmount, isLnurl, isNum } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, View } from 'react-native'
@@ -26,6 +27,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		estFee,
 		recipient,
 		isMelt,
+		isZap,
 		isSendEcash,
 		nostr,
 		isSwap,
@@ -39,12 +41,14 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
 
 	const getPaymentType = () => {
+		if (isZap) { return 'zap' }
 		if (isMelt) { return 'cashOutFromMint' }
 		if (isSwap) { return 'multimintSwap' }
 		return 'sendEcash'
 	}
 
 	const getBtnTxt = () => {
+		if (isZap) { return 'zapNow' }
 		if (isMelt) { return 'submitPaymentReq' }
 		if (isSwap) { return 'swapNow' }
 		if (nostr) { return 'sendEcash' }
@@ -61,6 +65,11 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	}
 
 	const submitPaymentReq = () => {
+		if (isZap && mint.mintUrl === _testmintUrl) {
+			return navigation.navigate('processingError', {
+				mint, amount, errorMsg: t('zapNotAllowed', { ns: NS.mints })
+			})
+		}
 		navigation.navigate('processing', {
 			mint,
 			amount,
@@ -70,6 +79,8 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			isSendEcash,
 			nostr,
 			isSwap,
+			isZap,
+			payZap: true,
 			targetMint,
 			proofs: proofs.filter(p => p.selected),
 			recipient
@@ -91,6 +102,14 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 				withBackBtn
 				handlePress={() => {
 					if (scanned) { return navigation.navigate('qr scan', {}) }
+					const routes = navigation.getState()?.routes
+					const prevRoute = routes[routes.length - 2]
+					// if user comes from processing screen, navigate back to dashboard
+					// @ts-expect-error navigation type is not complete
+					if (prevRoute?.name === 'processing' && prevRoute.params?.isZap) {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						return navigation.navigate('dashboard')
+					}
 					navigation.goBack()
 				}}
 			/>
@@ -107,13 +126,13 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					{isSwap && targetMint &&
 						<OverviewRow txt1={t('recipient')} txt2={targetMint.customName || formatMintUrl(targetMint.mintUrl)} />
 					}
-					<OverviewRow txt1={t('amount')} txt2={`${formatInt(amount)} Sat`} />
+					<OverviewRow txt1={t('amount')} txt2={formatSatStr(amount)} />
 					{isNum(estFee) && !nostr && !isSendEcash &&
-						<OverviewRow txt1={t('estimatedFees')} txt2={`${estFee} Sat`} />
+						<OverviewRow txt1={t('estimatedFees')} txt2={formatSatStr(estFee)} />
 					}
 					<OverviewRow
 						txt1={t('balanceAfterTX')}
-						txt2={estFee > 0 ? `${formatInt(balance - amount - estFee)} ${t('to')} ${formatInt(balance - amount)} Sat` : `${formatInt(balance - amount)} Sat`}
+						txt2={estFee > 0 ? `${formatInt(balance - amount - estFee)} ${t('to')} ${formatSatStr(balance - amount)}` : `${formatSatStr(balance - amount)}`}
 					/>
 					{memo && memo.length > 0 &&
 						<OverviewRow txt1={t('memo', { ns: NS.history })} txt2={memo} />

@@ -268,8 +268,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			return void handleTokenSubmit(url)
 		}
 		if (isLnInvoice(url)) {
-			// TODO handle ln invoice
-			l('lightning invoice!: ', { url })
+			navigation.navigate('processing', {
+				mint: { mintUrl: '', customName: '' },
+				amount: 0,
+				isZap: true,
+				recipient: url.includes(':') ? url.split(':')[1] : url
+			})
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])

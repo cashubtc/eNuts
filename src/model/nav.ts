@@ -97,6 +97,7 @@ export type RootStackParamList = {
 		isSendEcash?: boolean
 		nostr?: INostrSendData
 		isSwap?: boolean
+		isZap?: boolean
 		targetMint?: IMintUrl
 		recipient?: string
 		memo?: string
@@ -111,6 +112,8 @@ export type RootStackParamList = {
 		isSendEcash?: boolean
 		nostr?: INostrSendData
 		isSwap?: boolean
+		isZap?: boolean
+		payZap?: boolean
 		targetMint?: IMintUrl
 		proofs?: IProofSelection[]
 		recipient?: string
@@ -160,6 +163,7 @@ export type RootStackParamList = {
 		memo?: string
 		isClaim?: boolean
 		isMelt?: boolean
+		isZap?: boolean
 		nostr?: INostrSendData
 		isScanned?: boolean
 	}

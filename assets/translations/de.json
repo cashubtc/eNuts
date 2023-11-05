@@ -214,7 +214,9 @@
 		"deleteNpub": "NPUB löschen?",
 		"delNpubHint": "Alle Kontakte und zugehörigen Daten werden gelöscht.",
 		"addNewNpub": "Neuen NPUB hinzufügen?",
-		"addNpubHint": "Dadurch werden alle Daten, die mit Ihrem aktuellen NPUB verbunden sind, gelöscht."
+		"addNpubHint": "Dadurch werden alle Daten, die mit Ihrem aktuellen NPUB verbunden sind, gelöscht.",
+		"zap": "Zap",
+		"zapNow": "Zap"
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
@@ -306,12 +308,14 @@
 		"setDefault": "Als Standard-Mint festlegen",
 		"supportedNuts": "Unterstütze NUTs",
 		"swapNotAllowed": "Multimint-Tausch von einer Test-Mint ist nicht möglich.",
+		"zapNotAllowed": "Zap von einer Test-Mint ist nicht möglich.",
 		"testMintHint": "Dies ist eine Test-Mint für Simulationszwecke. Trotzdem hinzufügen?",
 		"trustMintSure": "Mint vertrauen?",
 		"updatedDefault": "Änderungen gespeichert",
 		"newMintAdded": "Mint hinzugefügt!",
 		"newMintAddedQuestion": "Möchten Sie jetzt Ecash empfangen?",
-		"selectSwapReceiver": "Wählen Sie eine Mint als Zahlungsempfänger aus."
+		"selectSwapReceiver": "Wählen Sie eine Mint als Zahlungsempfänger aus.",
+		"prepairZapData": "Transaktionsdaten werden vorbereitet..."
 	},
 	"topNav": {
 		"about": "Über uns",

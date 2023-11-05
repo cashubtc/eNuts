@@ -16,7 +16,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
-	const { amount, memo, fee, mint, isClaim, isMelt, nostr, isScanned } = route.params
+	const { amount, memo, fee, mint, isClaim, isMelt, isZap, nostr, isScanned } = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const insets = useSafeAreaInsets()
@@ -51,7 +51,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					{nostr ?
 						<>{formatSatStr(amount || 0)} {t('nostrPaymentSuccess')}</>
 						:
-						isMelt ?
+						isMelt || isZap ?
 							t('paymentSuccess')
 							:
 							!nostr ?

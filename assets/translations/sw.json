@@ -214,7 +214,9 @@
 		"deleteNpub": "Futa NPUB?",
 		"delNpubHint": "Mawasiliano yote na data zinazohusiana zitafutwa.",
 		"addNewNpub": "Ongeza NPUB mpya?",
-		"addNpubHint": "Hii itafuta data yote inayohusiana na NPUB yako ya sasa."
+		"addNpubHint": "Hii itafuta data yote inayohusiana na NPUB yako ya sasa.",
+		"zap": "Zap",
+		"zapNow": "Zap"
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",
@@ -306,12 +308,14 @@
 		"setDefault": "Weka kama sarafu chaguo-msingi",
 		"supportedNuts": "NUTs zinazoungwa mkono",
 		"swapNotAllowed": "Kubadilishana kutoka kwa sarafu ya majaribio sio kawaida.",
+		"zapNotAllowed": "Zap kutoka kwa sarafu ya majaribio sio kawaida.",
 		"testMintHint": "Hii ni sarafu ya majaribio kucheza nayo. Je, uiongeze kwa njia yoyote?",
 		"trustMintSure": "Una uhakika kwamba unataka kuamini sarafu hii?",
 		"updatedDefault": "Imesasishwa kama sarafu chaguo-msingi",
 		"newMintAdded": "Sarafu imeongezwa!",
 		"newMintAddedQuestion": "Unataka kupokea Ecash kutoka kwake sasa?",
-		"selectSwapReceiver": "Chagua sarafu kama mpokeaji wa malipo."
+		"selectSwapReceiver": "Chagua sarafu kama mpokeaji wa malipo.",
+		"prepairZapData": "Kuandaa data ya shughuli..."
 	},
 	"topNav": {
 		"about": "Kuhusu sisi",
