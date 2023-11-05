@@ -70,8 +70,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	})
 
 	const getProcessingtxt = () => {
-		if (isZap) { return 'prepairZapData' }
-		if (isMelt) { return 'processingPaymentByMint' }
+		if (isZap && !payZap) { return 'prepairZapData' }
+		if (isMelt || (isZap && payZap)) { return 'processingPaymentByMint' }
 		if (isSwap) { return 'processingSwap' }
 		if (isSendEcash) {
 			if (nostr) {
