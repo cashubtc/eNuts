@@ -151,8 +151,7 @@ export type RootStackParamList = {
 		paymentRequest: string
 	}
 	encodedToken: {
-		token: string
-		amount: number
+		entry: IHistoryEntry
 	}
 	success: {
 		amount?: number

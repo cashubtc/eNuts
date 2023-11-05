@@ -170,7 +170,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
 			// add as history entry (send ecash)
-			await addToHistory({
+			const entry =  await addToHistory({
 				amount: -amount,
 				type: 1,
 				value: token,
@@ -216,7 +216,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				navigation.navigate('success', { amount, nostr })
 				return
 			}
-			navigation.navigate('encodedToken', { token, amount })
+			navigation.navigate('encodedToken', { entry })
 		} catch (e) {
 			navigation.navigate(
 				'processingError',

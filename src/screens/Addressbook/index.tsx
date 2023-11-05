@@ -312,7 +312,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			store.set(STORE_KEYS.npub, pub.encoded), 	// save nostr encoded pubKey
 			store.set(STORE_KEYS.npubHex, pub.hex),		// save nostr hex pubKey
 		])
-		await initContacts(pub.hex)
+		void initContacts(pub.hex)
 	}
 
 	// user presses the send ecash button
@@ -376,8 +376,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		contactsRef.current = []
 		setHasFullySynced(false)
 		last.current.idx = -1
-		await initContacts(pubKey.hex)
 		setIsRefreshing(false)
+		void initContacts(pubKey.hex)
 	}
 
 	// check if user has nostr data saved previously
@@ -404,7 +404,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			setPubKey({ encoded: storedNPub || '', hex: storedPubKeyHex || '' })
 			setUserRelays(storedUserRelays || [])
 			setHasFullySynced(!!hasSynced)
-			await initContacts(storedPubKeyHex)
+			void initContacts(storedPubKeyHex)
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isFocused])

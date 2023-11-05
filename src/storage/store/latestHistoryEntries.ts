@@ -31,4 +31,5 @@ export async function addToHistory(entry: Omit<IHistoryEntry, 'timestamp'>) {
 	await historyStore.add(item)
 	// latest 3 history entries // TODO provide a historyStore method to retreive the 3 latest entries
 	await updateLatestHistory(item)
+	return item
 }
