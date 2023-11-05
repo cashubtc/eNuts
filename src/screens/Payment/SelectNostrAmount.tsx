@@ -10,7 +10,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getNostrUsername, truncateNpub } from '@src/nostr/util'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { cleanUpNumericStr, vib } from '@util'
+import { cleanUpNumericStr, formatSatStr, vib } from '@util'
 import { nip19 } from 'nostr-tools'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -113,7 +113,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 					/>
 				</Animated.View>
 				<Txt
-					txt='Satoshi'
+					txt={formatSatStr(+amount, 'standard', false)}
 					styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center' }]}
 				/>
 			</View>

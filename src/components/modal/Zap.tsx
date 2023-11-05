@@ -8,7 +8,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt, getInvoiceFromLnurl, isErr, openUrl } from '@util'
+import { formatSatStr, getInvoiceFromLnurl, isErr, openUrl } from '@util'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -93,7 +93,7 @@ function Selection({ zap, onPress }: ISelectionProps) {
 				<View style={styles.amountWrap}>
 					<Text>{zap.emoji}</Text>
 					<Txt
-						txt={`${formatInt(zap.amount, 'compact')} Satoshi`}
+						txt={formatSatStr(zap.amount, 'compact')}
 						styles={[{ marginLeft: 10 }]}
 					/>
 				</View>

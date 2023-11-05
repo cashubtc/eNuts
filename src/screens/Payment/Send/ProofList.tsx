@@ -12,7 +12,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt, getSelectedAmount } from '@util'
+import { formatSatStr, getSelectedAmount } from '@util'
 import { getMintCurrentKeySetId, } from '@wallet'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -140,7 +140,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee,
 	const { t } = useTranslation([NS.common])
 	const getChangeStr = () => {
 		const change = selectedAmount - lnAmount
-		return estFee ? `${change} ${t('to')} ${change + estFee} Satoshi` : `${change} Satoshi`
+		return estFee ? `${change} ${t('to')} ${change + estFee} Sats` : formatSatStr(change, 'standard', false)
 	}
 	if (withSeparator) {
 		return (
@@ -148,7 +148,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee,
 				<View style={globals().wrapRow}>
 					<Txt txt={t('selected')} bold />
 					<Txt
-						txt={`${selectedAmount}/${lnAmount} Satoshi`}
+						txt={`${selectedAmount}/${lnAmount} ${formatSatStr(lnAmount, 'standard', false)}`}
 						error={selectedAmount < lnAmount}
 					/>
 				</View>
@@ -170,7 +170,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee,
 			<View style={[styles.overview, { paddingHorizontal: padding ? 20 : 0 }]}>
 				<Txt txt={t('selected')} />
 				<Txt
-					txt={`${selectedAmount}/${lnAmount} Satoshi`}
+					txt={`${selectedAmount}/${lnAmount} ${formatSatStr(lnAmount, 'standard', false)}`}
 					error={selectedAmount < lnAmount}
 				/>
 			</View>
@@ -246,7 +246,7 @@ function CoinSelectionRow({ proof, isLatestKeysetId, setChecked }: ICoinSelectio
 function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 	return (
 		<>
-			<Txt txt={`${formatInt(proof.amount)} Satoshi`} />
+			<Txt txt={formatSatStr(proof.amount)} />
 			<View style={styles.keyWrap}>
 				<Txt
 					txt={proof.id}

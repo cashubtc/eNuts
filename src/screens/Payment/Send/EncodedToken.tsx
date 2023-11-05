@@ -11,7 +11,7 @@ import { NS } from '@src/i18n'
 import { historyStore, store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi } from '@styles'
-import { formatInt, share, vib } from '@util'
+import { formatInt, formatSatStr, share, vib } from '@util'
 import { isTokenSpendable } from '@wallet'
 import LottieView from 'lottie-react-native'
 import { useEffect, useRef, useState } from 'react'
@@ -104,7 +104,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 					{/* The amount of the created token */}
 					<View style={styles.qrWrap}>
 						<Txt txt={formatInt(amount < 0 ? Math.abs(amount) : amount)} styles={[styles.tokenAmount, { color: hi[highlight] }]} />
-						<Txt txt='Satoshi' styles={[styles.tokenFormat]} />
+						<Txt txt={formatSatStr(amount, 'standard', false)} styles={[styles.tokenFormat]} />
 						{/* The QR code */}
 						{error.open ?
 							<Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />

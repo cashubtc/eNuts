@@ -336,3 +336,11 @@ export function debounce<T extends (...args: any[]) => void>(
 		}, timeout)
 	}
 }
+
+export function formatSatStr(
+	amount: number,
+	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard',
+	showAmount = true
+) {
+	return `${showAmount ? `${formatInt(amount, notation, 'en' )} ` : ' '}${amount < 2 && amount > -2 ? 'Sat' : 'Sats'}`
+}

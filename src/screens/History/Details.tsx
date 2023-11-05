@@ -14,7 +14,7 @@ import { NS } from '@src/i18n'
 import { addToHistory } from '@src/storage/store/latestHistoryEntries'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
-import { copyStrToClipboard, formatInt, formatMintUrl, getLnInvoiceInfo, isNum, isUndef } from '@util'
+import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, getLnInvoiceInfo, isNum, isUndef } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -165,7 +165,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						{getAmount()}
 					</Text>
 					<Txt
-						txt='Satoshi'
+						txt={formatSatStr(amount, 'standard', false)}
 						styles={[{ color: color.TEXT_SECONDARY }]}
 					/>
 				</View>
@@ -322,7 +322,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							{/* LN payment fees */}
 							<View style={styles.entryInfo}>
 								<Txt txt={t('fee')} />
-								<Txt txt={isNum(fee) ? `${fee} Satoshi` : t('n/a')} />
+								<Txt txt={isNum(fee) ? formatSatStr(fee) : t('n/a')} />
 							</View>
 							<Separator />
 						</>

@@ -19,7 +19,7 @@ import { NS } from '@src/i18n'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
-import { formatInt, formatMintUrl, isErr, normalizeMintUrl, sortMintsByDefault } from '@util'
+import { formatMintUrl, formatSatStr, isErr, normalizeMintUrl, sortMintsByDefault } from '@util'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -189,11 +189,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 														marginBottom: 5
 													}}
 												>
-													{m.amount > 0 ?
-														formatInt(m.amount, 'compact', 'en') + ' Satoshi'
-														:
-														t('emptyMint')
-													}
+													{m.amount > 0 ? formatSatStr(m.amount, 'compact') : t('emptyMint')}
 												</Text>
 											</View>
 										}

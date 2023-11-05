@@ -5,7 +5,7 @@ import type { THistoryPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
-import { formatInt } from '@util'
+import { formatInt, formatSatStr } from '@util'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -65,7 +65,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 					styles={[{ color: getTxColor() }]}
 				/>
 				<Txt
-					txt=' Sat.'
+					txt={formatSatStr(item.amount, 'standard', false)}
 					styles={[{ color: getTxColor() }]}
 				/>
 			</View>

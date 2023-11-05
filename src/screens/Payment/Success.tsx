@@ -8,7 +8,7 @@ import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { l } from '@src/logger'
-import { formatInt, vib } from '@util'
+import { formatSatStr, vib } from '@util'
 import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -49,13 +49,13 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 			<View style={{ width: '100%' }}>
 				<Text style={[styles.successTxt, { color: color.TEXT }]}>
 					{nostr ?
-						<>{formatInt(amount || 0)} Satoshi {t('nostrPaymentSuccess')}</>
+						<>{formatSatStr(amount || 0)} {t('nostrPaymentSuccess')}</>
 						:
 						isMelt ?
 							t('paymentSuccess')
 							:
 							!nostr ?
-								<>{formatInt(amount || 0)} Satoshi {isClaim ? t('claimed') : t('minted')}!</>
+								<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
 								:
 								null
 					}
@@ -84,15 +84,15 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					<View style={styles.meltWrap}>
 						<View style={styles.meltOverview}>
 							<Txt txt={t('paidOut', { ns: NS.wallet })} styles={[styles.meltTxt]} />
-							<Txt txt={`${amount} Satoshi`} styles={[styles.meltTxt]} />
+							<Txt txt={formatSatStr(amount)} styles={[styles.meltTxt]} />
 						</View>
 						<View style={styles.meltOverview}>
 							<Txt txt={t('fee')} styles={[styles.meltTxt]} />
-							<Txt txt={`${fee} Satoshi`} styles={[styles.meltTxt]} />
+							<Txt txt={formatSatStr(fee || 0)} styles={[styles.meltTxt]} />
 						</View>
 						<View style={styles.meltOverview}>
 							<Txt txt={t('totalInclFee')} styles={[styles.meltTxt]} />
-							<Txt txt={`${amount + (fee || 0)} Satoshi`} styles={[styles.meltTxt]} />
+							<Txt txt={formatSatStr(amount + (fee || 0))} styles={[styles.meltTxt]} />
 						</View>
 					</View>
 				}

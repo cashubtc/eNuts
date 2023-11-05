@@ -16,7 +16,7 @@ import { getNostrUsername, truncateStr } from '@src/nostr/util'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { updateNostrRedeemed } from '@store/nostrDms'
 import { highlight as hi, mainColors } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
+import { formatMintUrl, formatSatStr } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
@@ -124,7 +124,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 		<View style={[styles.tokenWrap, { borderColor: color.BORDER }]}>
 			<View>
 				<Txt
-					txt={`${formatInt(info?.value || 0)} Satoshi`}
+					txt={formatSatStr(info?.value || 0)}
 					styles={[styles.amount]}
 				/>
 				<Txt

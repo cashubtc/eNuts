@@ -2,7 +2,7 @@ import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
+import { formatInt, formatMintUrl, formatSatStr } from '@util'
 import { useTranslation } from 'react-i18next'
 import { Text } from 'react-native'
 
@@ -25,7 +25,7 @@ export default function ClipboardModal() {
 					<>{t('memo', { ns: NS.history })}: {tokenInfo.decoded.memo}{'\n'}</>
 				}
 				<Txt txt={formatInt(tokenInfo.value)} bold />
-				{' '}Satoshi {t('fromMint')}:{'\n'}
+				{' '}{formatSatStr(tokenInfo.value, 'compact', false)}{' '}{t('fromMint')}:{'\n'}
 				{tokenInfo.mints.map(m => formatMintUrl(m)).join(', ')}
 			</Text>
 			<Button

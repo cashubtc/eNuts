@@ -10,7 +10,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { cleanUpNumericStr, formatInt, getInvoiceFromLnurl, vib } from '@util'
+import { cleanUpNumericStr, formatInt, formatSatStr, getInvoiceFromLnurl, vib } from '@util'
 import { checkFees, requestMint } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -192,7 +192,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 						maxLength={8}
 					/>
 				</Animated.View>
-				<Txt txt='Satoshi' styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center' }]} />
+				<Txt txt={formatSatStr(+amount, 'standard', false)} styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center' }]} />
 				{(isMelt || isSwap) &&
 					<Separator style={[{ marginVertical: 20 }]} />
 				}
@@ -254,7 +254,7 @@ export function MeltOverview({ amount, shouldEstimate, balTooLow, isInvoice, fee
 				styles={[styles.bold]}
 			/>
 			<Txt
-				txt={`${shouldEstimate ? 0 : amount + fee} Satoshi`}
+				txt={formatSatStr(shouldEstimate ? 0 : amount + fee)}
 				styles={[{ color: !shouldEstimate && balTooLow ? mainColors.ERROR : shouldEstimate ? color.TEXT : mainColors.VALID }]}
 			/>
 		</View>

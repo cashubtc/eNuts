@@ -11,7 +11,7 @@ import { NS } from '@src/i18n'
 import { getLatestHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi } from '@styles'
 import { getColor } from '@styles/colors'
-import { formatBalance, formatInt, isBool } from '@util'
+import { formatBalance, formatInt, formatSatStr, isBool } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -91,7 +91,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					</Text>
 					<View style={styles.balAssetNameWrap}>
 						<Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
-							{formatSats ? 'BTC' : 'Satoshi'}
+							{formatSats ? 'BTC' : formatSatStr(balance, 'compact', false)}
 						</Text>
 						<SwapCurrencyIcon width={20} height={20} color={getColor(highlight, color)} />
 					</View>
@@ -147,8 +147,8 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHis
 	const { color, highlight } = useThemeContext()
 
 	const getAmount = () => {
-		if (isSwap) { return `${formatInt(Math.abs(amount))} Satoshi` }
-		return `${amount > 0 ? '+' : ''}${formatInt(amount)} Satoshi`
+		if (isSwap) { return formatSatStr(Math.abs(amount)) }
+		return `${amount > 0 ? '+' : ''}${formatSatStr(amount)}`
 	}
 
 	return (

@@ -3,7 +3,7 @@ import type { ITokenInfo } from '@model'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
+import { formatMintUrl, formatSatStr } from '@util'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
@@ -28,9 +28,11 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 				{t('notClaim')}.
 			</Text>
 			{/* token amount */}
-			<Text style={[styles.mintPrompt, { color: color.TEXT }]}>
-				{formatInt(tokenInfo?.value || 0)} Satoshi {t('from')}:
-			</Text>
+			{tokenInfo &&
+				<Text style={[styles.mintPrompt, { color: color.TEXT }]}>
+					{formatSatStr(tokenInfo.value)}{' '}{t('from')}:
+				</Text>
+			}
 			{/* Show in which mint(s) the tokens are */}
 			<View style={styles.tokenMintsView}>
 				{tokenInfo?.mints.map(m => <Text style={[styles.mintPrompt, { color: color.TEXT }]} key={m}>{formatMintUrl(m)}</Text>)}

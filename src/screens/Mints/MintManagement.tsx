@@ -18,7 +18,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
+import { formatMintUrl, formatSatStr } from '@util'
 import { checkProofsSpent } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -163,7 +163,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							</View>
 							<Txt txt={t('balance')} />
 						</View>
-						<Txt txt={formatInt(route.params?.amount) + ' Satoshi'} />
+						<Txt txt={formatSatStr(route.params.amount)} />
 					</View>
 					<Separator />
 					{/* Mint url */}
