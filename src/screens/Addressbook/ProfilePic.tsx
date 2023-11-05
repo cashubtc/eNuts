@@ -85,7 +85,7 @@ export default function ProfilePic({
 			}
 			{!isUser && isInContacts &&
 				<View style={[styles.imgIcon, styles.isContact, styles.right, { backgroundColor: hi[highlight],  }]}>
-					<UserIcon width={12} height={12} color={mainColors.WHITE} />
+					<UserIcon width={10} height={10} color={mainColors.WHITE} />
 				</View>
 			}
 			{!isUser && isFav &&
@@ -119,7 +119,9 @@ const styles = StyleSheet.create({
 		left: 0,
 	},
 	isContact: {
-		borderRadius: 6,
+		width: 14,
+		height: 14,
+		borderRadius: 7,
 		justifyContent: 'center',
 		alignItems: 'center',
 	}
