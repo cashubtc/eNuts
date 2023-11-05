@@ -57,7 +57,7 @@ const config: ExpoConfig = {
 		'android',
 	],
 	version: `${version}${!IS_PROD ? `-${_appVariant}` : ''}`,
-	scheme: ['cashu'],
+	scheme: ['cashu', 'lightning'],
 	orientation: 'portrait',
 	icon: './assets/app-icon-all.png',
 	userInterfaceStyle: 'automatic',
@@ -77,7 +77,7 @@ const config: ExpoConfig = {
 	ios: {
 		supportsTablet: false,
 		infoPlist: {
-			LSApplicationQueriesSchemes: ['cashu']
+			LSApplicationQueriesSchemes: ['cashu', 'lightning']
 		},
 		config: {
 			usesNonExemptEncryption: false
