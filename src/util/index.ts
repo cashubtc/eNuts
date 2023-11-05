@@ -315,11 +315,12 @@ export function normalizeMintUrl(url: string) {
 }
 
 export function sortMintsByDefault(mints: IMintBalWithName[], defaultMint: string) {
+	l({mints})
 	return mints.sort((a, b) => {
 		if (a.mintUrl === defaultMint) { return -1 }
 		if (b.mintUrl === defaultMint) { return 1 }
 		// if neither 'a' nor 'b' is the default mint, sort by amount (descending)
-		return a.amount + b.amount
+		return b.amount - a.amount
 	})
 }
 
