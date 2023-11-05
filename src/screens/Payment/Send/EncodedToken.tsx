@@ -116,6 +116,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 							/>
 						}
 					</View>
+					{/* TODO in case amount of data is too big for a QR code, provide copy button in all qr components */}
 					<Button
 						outlined
 						txt={t('share')}
