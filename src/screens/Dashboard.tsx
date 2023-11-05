@@ -24,7 +24,7 @@ import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames, saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
-import { getStrFromClipboard, hasTrustedMint, isCashuToken, isErr } from '@util'
+import { getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
@@ -263,11 +263,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	// handle initial URL passed on by clicking on a cashu link
 	useEffect(() => {
-		void (async () => {
-			if (!url) { return }
-			// alert(`URL in dashboard useEffect: ${url}`)
-			await handleTokenSubmit(url)
-		})()
+		if (!url) { return }
+		if (isCashuToken(url)) {
+			return void handleTokenSubmit(url)
+		}
+		if (isLnInvoice(url)) {
+			// TODO handle ln invoice
+			l('lightning invoice!: ', { url })
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
 

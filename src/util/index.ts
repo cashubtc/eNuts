@@ -221,6 +221,29 @@ export function isCashuToken(token: string) {
 	return token.trim()
 }
 
+export function isLnInvoice(str: string) {
+	if (!str || !isStr(str)) { return }
+	str = str.trim()
+	const uriPrefixes = [
+		'lightning:',
+		'lightning=',
+		'lightning://',
+		'lnurlp://',
+		'lnurlp=',
+		'lnurlp:',
+		'lnurl:',
+		'lnurl=',
+		'lnurl://'
+	]
+	uriPrefixes.forEach((prefix) => {
+		if (!str.startsWith(prefix)) { return }
+		str = str.slice(prefix.length).trim()
+	})
+	if (!str) { return }
+	try { getDecodedLnInvoice(str.trim()) } catch (_) { return }
+	return str.trim()
+}
+
 export function* arrToChunks<T extends T[number][]>(arr: T, n: number) {
 	for (let i = 0; i < arr.length; i += n) {
 		yield arr.slice(i, i + n)
