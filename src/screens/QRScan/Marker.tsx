@@ -6,8 +6,8 @@ export default function QRMarker({ size, color }: { size: number, color: string 
 	const [animatedSize] = useState(new Animated.Value(size))
 
 	const animationConfig = useMemo(() => ({
-		toValue: size * 1.05,
-		duration: 750,
+		toValue: size * 1.1,
+		duration: 1000,
 		easing: Easing.inOut(Easing.ease),
 		useNativeDriver: false,
 	}), [size])
@@ -32,7 +32,7 @@ export default function QRMarker({ size, color }: { size: number, color: string 
 }
 
 const pos = 0
-const markerWidth = 5
+const markerWidth = 8
 const radius = 30
 const size = 50
 
