@@ -99,12 +99,12 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		setUserMints(await getCustomMintNames(mints))
 	}
 
-	const handleMintsState = async () => {
+	const handleMintsState = useCallback(async () => {
 		const mintsBal = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mintsBal))
-	}
+	}, [])
 
-	const handleInitialRender = async () => {
+	const handleInitialRender = useCallback(async () => {
 		// user comes from dashboard and wants to add his own mint url, open prompt
 		if (route.params?.newMint) {
 			// timeout is needed on IOS only when different prompts are called synchronously
@@ -122,7 +122,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			// ask to mint new token
 			openTopUpModal()
 		}
-	}
+	}, [openTopUpModal, handleMintsState, route.params?.defaultMint, route.params?.newMint])
 
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
