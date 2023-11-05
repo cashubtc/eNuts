@@ -323,7 +323,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 		void handleMintingProcess()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isMelt, isSwap, isSendEcash])
+	}, [isMelt, isSwap, isZap, payZap, isSendEcash])
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
 	useEffect(() => {
