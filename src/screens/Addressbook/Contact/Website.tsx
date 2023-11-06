@@ -7,7 +7,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Website({ website, onPress }: { website?: string, onPress: (url: string) => void }) {
 	const { highlight } = useThemeContext()
-	const site = extractStrFromURL(website) ?? website
+	const site = extractStrFromURL(website) || website
 	const navSite = website?.includes('://') ? website : `https://${website}`
 	return (
 		site?.length ?

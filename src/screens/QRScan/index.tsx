@@ -4,7 +4,7 @@ import useCashuToken from '@comps/hooks/Token'
 import { CloseIcon, FlashlightOffIcon } from '@comps/Icons'
 import { isIOS, QRType } from '@consts'
 import { addMint, getMintsUrls } from '@db'
-import { l } from '@log'
+// import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
 import type { TQRScanPageProps } from '@model/nav'
 import { isNpubQR } from '@nostr/util'
@@ -92,7 +92,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		}
 		// handle cashu token claim
 		if (isCashuToken(data)) {
-			l('is cashu token', data)
+			// l('is cashu token', data)
 			setToken(data)
 			void handleCashuToken(data)
 			return
@@ -111,7 +111,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		}
 		// handle LN invoice
 		try {
-			const invoice = extractStrFromURL(data) ?? data
+			const invoice = extractStrFromURL(data) || data
 			const { amount, timeLeft } = decodeLnInvoice(invoice)
 			if (timeLeft <= 0) {
 				openPromptAutoClose({ msg: t('invoiceExpired') })

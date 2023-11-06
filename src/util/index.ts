@@ -244,9 +244,13 @@ export function isLnInvoice(str: string) {
 	return str.trim()
 }
 
-export function extractStrFromURL(url?: string): string | null {
-	const match = url?.match(/:(\/\/|:|=)(.+)/)
-	return match ? match[2] : null
+export function extractStrFromURL(url?: string) {
+	try {
+		const u = new URL(url || '')
+		return u.hostname || u.pathname
+	} catch (e) {
+		return url
+	}
 }
 
 export function* arrToChunks<T extends T[number][]>(arr: T, n: number) {

@@ -272,7 +272,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				mint: { mintUrl: '', customName: '' },
 				amount: 0,
 				isZap: true,
-				recipient: extractStrFromURL(url) ?? url
+				recipient: extractStrFromURL(url) || url
 			})
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

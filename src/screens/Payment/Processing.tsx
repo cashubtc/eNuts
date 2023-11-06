@@ -268,7 +268,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			// otherwise, check mint with highest balance
 			const mintsBals = await getMintsBalances()
 			const mints = await getCustomMintNames(mintsBals.map(m => ({ mintUrl: m.mintUrl })))
-			const highestBalance = Math.max(...mintsBals.filter(m => m.mintUrl !== _testmintUrl).map(m => m.amount))
+			const filtered = mintsBals.filter(m => m.mintUrl !== _testmintUrl)
+			const highestBalance = Math.max(...filtered.map(m => m.amount))
 			const highestBalanceMint = mintsBals.find(m => m.amount === highestBalance)
 			// if highest balance + estFee is sufficient, use it
 			if (highestBalanceMint) {

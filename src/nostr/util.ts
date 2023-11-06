@@ -1,5 +1,5 @@
 import type { HexKey, IContact, IProfileContent, Npub } from '@model/nostr'
-import { l } from '@src/logger'
+// import { l } from '@src/logger'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { cTo } from '@store/utils'
@@ -104,7 +104,7 @@ export function isNpubQR(str: string) {
 	if (isNpub(str)) { return str }
 	try {
 		const u = new URL(str)
-		l(u.protocol, u.host, u.toString())
+		// l(u.protocol, u.host, u.toString())
 		if (!isNpub(u.hostname)) { return }
 		return u.hostname
 	} catch (_) {/* ignored */ }
