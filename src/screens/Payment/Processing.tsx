@@ -2,7 +2,7 @@ import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import { getMintBalance, getMintsBalances } from '@db'
-import { l } from '@log'
+// import { l } from '@log'
 import type { IMintUrl } from '@model'
 import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
@@ -206,7 +206,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				// TODO publish the event to the RECIPIENT relays AND our relays.
 				const published = await pool.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
 				if (!published) {
-					l('Something went wrong while publishing the event.')
 					navigation.navigate(
 						'processingError',
 						getErrObj(mint, amount, t('eventError', { ns: NS.common }))

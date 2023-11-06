@@ -1,5 +1,6 @@
 import Button from '@comps/Button'
-import { ShareIcon } from '@comps/Icons'
+import useCopy from '@comps/hooks/Copy'
+import { CopyIcon, ShareIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
 import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from '@model/nav'
@@ -10,7 +11,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { historyStore, store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { globals, highlight as hi } from '@styles'
+import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatSatStr, share, vib } from '@util'
 import { isTokenSpendable } from '@wallet'
 import LottieView from 'lottie-react-native'
@@ -27,6 +28,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	const { color, highlight } = useThemeContext()
 	const [error, setError] = useState({ msg: '', open: false })
 	const [spent, setSpent] = useState(false)
+	const { copied, copy } = useCopy()
 	const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
 	const clearTokenInterval = () => {
@@ -116,13 +118,24 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 							/>
 						}
 					</View>
-					{/* TODO in case amount of data is too big for a QR code, provide copy button in all qr components */}
-					<Button
-						outlined
-						txt={t('share')}
-						onPress={() => void share(value, `cashu://${value}`)}
-						icon={<ShareIcon width={18} height={18} color={hi[highlight]} />}
-					/>
+					<View style={styles.fullWidth}>
+						{error.open &&
+							<>
+								<Button
+									txt={t(copied ? 'copied' : 'copyToken')}
+									onPress={() => void copy(value)}
+									icon={<CopyIcon width={18} height={18} color={mainColors.WHITE} />}
+								/>
+								<View style={{ marginVertical: 10 }} />
+							</>
+						}
+						<Button
+							outlined
+							txt={t('share')}
+							onPress={() => void share(value, `cashu://${value}`)}
+							icon={<ShareIcon width={18} height={18} color={hi[highlight]} />}
+						/>
+					</View>
 				</>
 			}
 		</View>
@@ -163,5 +176,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginTop: 20
+	},
+	fullWidth: {
+		width: '100%',
 	}
 })
