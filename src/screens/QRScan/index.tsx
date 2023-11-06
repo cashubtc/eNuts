@@ -13,7 +13,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
-import { decodeLnInvoice, hasTrustedMint, isCashuToken, isUrl } from '@util'
+import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isUrl } from '@util'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
@@ -111,7 +111,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		}
 		// handle LN invoice
 		try {
-			const invoice = data.includes(':') ? data.split(':')[1] : data
+			const invoice = extractStrFromURL(data) ?? data
 			const { amount, timeLeft } = decodeLnInvoice(invoice)
 			if (timeLeft <= 0) {
 				openPromptAutoClose({ msg: t('invoiceExpired') })

@@ -24,7 +24,7 @@ import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames, saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
-import { getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice } from '@util'
+import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
@@ -272,7 +272,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				mint: { mintUrl: '', customName: '' },
 				amount: 0,
 				isZap: true,
-				recipient: url.includes(':') ? url.split(':')[1] : url
+				recipient: extractStrFromURL(url) ?? url
 			})
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

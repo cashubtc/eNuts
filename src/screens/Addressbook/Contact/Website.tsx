@@ -1,12 +1,13 @@
 import { LinkIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { useThemeContext } from '@src/context/Theme'
+import { extractStrFromURL } from '@src/util'
 import { highlight as hi } from '@styles'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Website({ website, onPress }: { website?: string, onPress: (url: string) => void }) {
 	const { highlight } = useThemeContext()
-	const site = website?.includes('://') ? website.split('://')[1] : website
+	const site = extractStrFromURL(website) ?? website
 	const navSite = website?.includes('://') ? website : `https://${website}`
 	return (
 		site?.length ?

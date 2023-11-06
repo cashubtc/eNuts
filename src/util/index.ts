@@ -244,6 +244,11 @@ export function isLnInvoice(str: string) {
 	return str.trim()
 }
 
+export function extractStrFromURL(url?: string): string | null {
+	const match = url?.match(/:(\/\/|:|=)(.+)/)
+	return match ? match[2] : null
+}
+
 export function* arrToChunks<T extends T[number][]>(arr: T, n: number) {
 	for (let i = 0; i < arr.length; i += n) {
 		yield arr.slice(i, i + n)
@@ -368,5 +373,5 @@ export function formatSatStr(
 	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard',
 	showAmount = true
 ) {
-	return `${showAmount ? `${formatInt(amount, notation, 'en' )} ` : ' '}${amount < 2 && amount > -2 ? 'Sat' : 'Sats'}`
+	return `${showAmount ? `${formatInt(amount, notation, 'en')} ` : ' '}${amount < 2 && amount > -2 ? 'Sat' : 'Sats'}`
 }
