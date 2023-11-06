@@ -279,11 +279,14 @@ export function decodeLnInvoice(invoice: string) {
 	const memo = getFromSection<string>(x.sections, 'description', isStr) || ''
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const paymentHash = getFromSection<Buffer>(x.sections, 'payment_hash', isBuf)?.toString('hex') || ''
+	const timePassed = Math.ceil(Date.now() / 1000) - timestamp
+	const timeLeft = expiry - timePassed
 	return {
 		decoded: x,
-		amount,
+		amount: amount / 1000,
 		timestamp,
 		expiry,
+		timeLeft,
 		memo,
 		paymentHash
 	}

@@ -1,6 +1,6 @@
 import {
 	CashuMint, CashuWallet, deriveKeysetId,
-	getDecodedLnInvoice, getDecodedToken,
+	getDecodedToken,
 	getEncodedToken,
 	type GetInfoResponse, type MintKeys,
 	type PayLnInvoiceResponse, type Proof,
@@ -13,7 +13,7 @@ import {
 } from '@db'
 import { l } from '@log'
 import type { IInvoice } from '@src/model'
-import { isCashuToken, isNum, isStr } from '@util'
+import { decodeLnInvoice, isCashuToken, isNum } from '@util'
 
 import { sumProofsValue } from './proofs'
 import { getProofsToUse } from './util'
@@ -139,17 +139,8 @@ export async function requestToken(mintUrl: string, amount: number, hash: string
 
 export async function payLnInvoice(mintUrl: string, invoice: string, fee: number, proofs: Proof[] = []): Promise<{ result?: PayLnInvoiceResponse, fee?: number, realFee?: number, error?: unknown }> {
 	const wallet = await getWallet(mintUrl)
-	const decoded = getDecodedLnInvoice(invoice)
-	const invoiceAmount = decoded.sections[2].value
-	let amount = 0
-	if (isStr(invoiceAmount)) {
-		amount = parseInt(invoiceAmount)
-	} else if (isNum(invoiceAmount)) {
-		amount = invoiceAmount
-	}
-	// if amount is still 0, throw (wasn't either a string or a number)
+	const { amount } = decodeLnInvoice(invoice)
 	if (!amount) { throw new Error('bad invoice amount') }
-	amount = amount / 1000
 	const amountToPay = amount + fee
 	if (!proofs?.length) {
 		const { proofsToUse } = await getProofsToUse(mintUrl, amountToPay)
@@ -255,9 +246,10 @@ async function requestTokenLoop(): Promise<void> {
 		try {
 			// eslint-disable-next-line no-await-in-loop
 			await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
+			// TODO notify user and add history entry
 		} catch (_) {/* ignore */ }
-		const decoded = getDecodedLnInvoice(invoice.pr)
-		const date = new Date((invoice.time * 1000) + (decoded.expiry * 1000)).getTime()
+		const { expiry } = decodeLnInvoice(invoice.pr)
+		const date = new Date((invoice.time * 1000) + (expiry * 1000)).getTime()
 		// eslint-disable-next-line no-await-in-loop
 		if (Date.now() > date) { await delInvoice(invoice.hash) }
 	}

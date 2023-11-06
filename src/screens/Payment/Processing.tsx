@@ -1,11 +1,9 @@
-import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import { getMintBalance, getMintsBalances } from '@db'
 import { l } from '@log'
 import type { IMintUrl } from '@model'
-import type { IDecodedLNInvoice } from '@model/ln'
 import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import { pool } from '@nostr/class/Pool'
@@ -23,7 +21,7 @@ import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { updateNostrDmUsers } from '@store/nostrDms'
 import { cTo } from '@store/utils'
 import { globals } from '@styles'
-import { getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
+import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
 import { autoMintSwap, checkFees, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -85,14 +83,14 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const handleMintingProcess = async () => {
 		try {
 			const resp = await requestMint(mint.mintUrl, amount)
-			const decoded = getDecodedLnInvoice(resp.pr)
+			const decoded = decodeLnInvoice(resp.pr)
 			// navigate to invoice overview screen
 			navigation.navigate('mintInvoice', {
 				mintUrl: mint.mintUrl,
 				amount,
 				hash: resp.hash,
 				expiry: decoded.expiry,
-				paymentRequest: decoded.paymentRequest
+				paymentRequest: decoded.decoded.paymentRequest
 			})
 		} catch (e) {
 			handleError({ e })
@@ -242,13 +240,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			})
 		}
 		try {
-			const decoded: IDecodedLNInvoice = getDecodedLnInvoice(recipient)
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			const amount = decoded.sections[2].value / 1000
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			const timePassed = Math.ceil(Date.now() / 1000) - decoded.sections[4].value
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			const timeLeft = decoded.sections[8].value - timePassed
+			const { amount, timeLeft } = decodeLnInvoice(recipient)
 			if (timeLeft <= 0) {
 				return navigation.navigate('processingError', {
 					mint,

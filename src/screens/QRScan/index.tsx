@@ -1,4 +1,3 @@
-import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
@@ -7,7 +6,6 @@ import { isIOS, QRType } from '@consts'
 import { addMint, getMintsUrls } from '@db'
 import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
-import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
 import { isNpubQR } from '@nostr/util'
 import { useIsFocused } from '@react-navigation/core'
@@ -15,7 +13,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
-import { hasTrustedMint, isCashuToken, isUrl } from '@util'
+import { decodeLnInvoice, hasTrustedMint, isCashuToken, isUrl } from '@util'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
@@ -104,24 +102,17 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		if (npub) {
 			return navigation.navigate('npub confirm', { npub })
 		}
-		l({ data })
-		l({ dataProtocol: new URL(data).protocol })
+		// l({ data })
+		// l({ dataProtocol: new URL(data).protocol })
 		// handle urls
 		if (isUrl(data) && new URL(data).protocol === 'https:') {
-			l('is url', data)
+			// l('is url', data)
 			return navigation.navigate('mint confirm', { mintUrl: data })
 		}
 		// handle LN invoice
 		try {
 			const invoice = data.includes(':') ? data.split(':')[1] : data
-			const decoded: IDecodedLNInvoice = getDecodedLnInvoice(invoice)
-			l('is invoice', data)
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			const amount = decoded.sections[2].value / 1000
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			const timePassed = Math.ceil(Date.now() / 1000) - decoded.sections[4].value
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			const timeLeft = decoded.sections[8].value - timePassed
+			const { amount, timeLeft } = decodeLnInvoice(invoice)
 			if (timeLeft <= 0) {
 				openPromptAutoClose({ msg: t('invoiceExpired') })
 				return

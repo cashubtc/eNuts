@@ -1,4 +1,3 @@
-import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import Loading from '@comps/Loading'
@@ -10,7 +9,6 @@ import TopNav from '@nav/TopNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
 import { globals } from '@styles'
 import { decodeLnInvoice, getStrFromClipboard, isErr, isLnurl, openUrl } from '@util'
 import { checkFees } from '@wallet'
@@ -51,12 +49,12 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 
 	const handleInvoicePaste = async (clipboard: string) => {
 		try {
-			const decoded = decodeLnInvoice(clipboard)
-			setDecodedAmount(decoded.amount / 1000)
+			const { amount } = decodeLnInvoice(clipboard)
+			setDecodedAmount(amount / 1000)
 			startLoading()
-			l({ mintUrl: mint.mintUrl })
+			// l({ mintUrl: mint.mintUrl })
 			const fee = await checkFees(mint.mintUrl, clipboard)
-			l({ estFee: fee })
+			// l({ estFee: fee })
 			setEstFee(fee)
 			stopLoading()
 			inputRef.current?.blur()
@@ -90,13 +88,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		// user pasted a LN invoice before submitting
 		try {
 			// decode again in case the user changes the input after pasting it
-			const ln = getDecodedLnInvoice(input)
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const createdTime = ln.sections[4]!.value as number
-			const timePassed = Math.ceil(Date.now() / 1000) - createdTime
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const invoiceExpiryTime = ln.sections[8]!.value as number
-			const timeLeft = invoiceExpiryTime - timePassed
+			const { timeLeft } = decodeLnInvoice(input)
 			// Invoice expired
 			if (timeLeft <= 0) {
 				openPromptAutoClose({ msg: t('expired') + '!' })
