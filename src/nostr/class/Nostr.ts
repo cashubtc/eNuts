@@ -238,6 +238,7 @@ export class Nostr {
 			filter: {
 				relayUrls: ['wss://relay.nostr.band/all'],
 				search: `${q} sort:popular sort:popular`,
+				limit: 8, // the events are always twice as much as the limit... 🙈
 				kinds: [EventKind.Metadata],
 			}
 		})
