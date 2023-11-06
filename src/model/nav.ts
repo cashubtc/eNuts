@@ -139,6 +139,7 @@ export type RootStackParamList = {
 		mintUrl?: string
 		npub?: Npub
 		edited?: boolean
+		userProfile?: IContact
 	}
 	processingError: {
 		mint?: IMintUrl

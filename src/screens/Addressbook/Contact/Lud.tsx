@@ -6,7 +6,6 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Lud({ lud16, lud06, onPress }: { lud16?: string, lud06?: string, onPress: (url: string) => void }) {
 	const { highlight } = useThemeContext()
-	// TODO add zaps: `lightning:${paymentRequest}`
 	return (
 		<>
 			{lud16 || lud06 ?

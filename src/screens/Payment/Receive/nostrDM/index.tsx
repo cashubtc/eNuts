@@ -78,7 +78,6 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 					// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
 					authors: recent.map(x => x.hex), // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
 					kinds: [EventKind.DirectMessage, EventKind.Metadata],
-					skipVerification: false
 				}
 			})
 			sub?.on('event', (e: NostrEvent) => {

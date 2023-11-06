@@ -202,7 +202,6 @@
 		"processTestPay": "Testzahlung wird ausgeführt...",
 		"confirmMint": "Mint bestätigen",
 		"confirmMintHint": "Sind Sie sicher, dass Sie diese Mint hinzufügen möchten?",
-		"confirmNpub": "NPUB bestätigen",
 		"confirmNpubHint": "Sind Sie sicher, dass Sie den NPUB benutzen möchten?",
 		"npubAlreadyAdded": "NPUB bereits hinzugefügt",
 		"replaceNpub": "NPUB ersetzen",

@@ -1,36 +1,60 @@
 import ActionButtons from '@comps/ActionButtons'
+import useLoading from '@comps/hooks/Loading'
 import { NostrIcon } from '@comps/Icons'
+import Loading from '@comps/Loading'
 import { BottomModal } from '@comps/modal/Question'
 import Txt from '@comps/Txt'
 import type { TNpubConfirmPageProps } from '@model/nav'
-import { handleNewNpub } from '@nostr/util'
+import { IContact } from '@model/nostr'
+import { pool } from '@nostr/class/Pool'
+import { defaultRelays, EventKind } from '@nostr/consts'
+import { getNostrUsername, handleNewNpub, parseProfileContent } from '@nostr/util'
+import NIP05Verified from '@screens/Addressbook/Contact/NIP05'
+import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { globals } from '@styles'
+import { globals, highlight as hi } from '@styles'
 import { isStr } from '@util'
-import { useState } from 'react'
+import { Event as NostrEvent, nip19 } from 'nostr-tools'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
 export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPageProps) {
 
-	// TODO we could fetch relay to get npub metadata and display it here and pass it to scan success screen
-
 	const { npub } = route.params
 	const { t } = useTranslation([NS.common])
-	const { color } = useThemeContext()
+	const { color, highlight } = useThemeContext()
 	const { replaceNpub } = useNostrContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const [modal, setModal] = useState(false)
+	const [userProfile, setUserProfile] = useState<IContact | undefined>()
+	const { loading, startLoading, stopLoading } = useLoading()
+
+	const handleMetadata = (npub: string) => {
+		const hex = nip19.decode(npub)?.data
+		if (!hex || !isStr(hex)) { return }
+		const sub = pool.subscribePool({
+			filter: {
+				relayUrls: defaultRelays,
+				authors: [hex],
+				kinds: [EventKind.Metadata],
+			}
+		})
+		stopLoading()
+		sub?.on('event', (e: NostrEvent) => {
+			if (+e.kind === EventKind.Metadata) {
+				setUserProfile(prev => ({ ...prev, ...parseProfileContent(e), hex }))
+			}
+		})
+	}
 
 	const handleNpub = async () => {
 		const currentNpub = await store.get(STORE_KEYS.npub)
-		l({ currentNpub })
 		if (currentNpub === npub) {
 			openPromptAutoClose({ msg: t('npubAlreadyAdded') })
 			return
@@ -44,34 +68,54 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 			await handleNewNpub(npub, !isStr(didInit)).catch(() =>
 				openPromptAutoClose({ msg: t('invalidPubKey') })
 			)
-			navigation.navigate('scan success', { npub })
+			navigation.navigate('scan success', { npub, userProfile })
 		}
 	}
 
 	const handleNpubReplace = async () => {
-		l({ npub })
 		await replaceNpub(npub).catch(() =>
 			openPromptAutoClose({ msg: t('invalidPubKey') })
 		)
 		setModal(false)
-		navigation.navigate('scan success', { npub })
+		navigation.navigate('scan success', { npub, userProfile })
 	}
+
+	useEffect(() => {
+		startLoading()
+		handleMetadata(npub)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<View />
 			<View style={styles.infoWrap}>
-				<NostrIcon width={60} height={60} />
-				<Text style={globals(color).modalHeader}>
-					{t('confirmNpub')}
-				</Text>
+				{loading ?
+					<Loading color={hi[highlight]} size={50} />
+					: userProfile?.picture ?
+						<>
+							<ProfilePic
+								hex={userProfile.hex}
+								uri={userProfile.picture}
+								size={100}
+							/>
+							<Text style={[styles.name, { color: color.TEXT }]}>
+								{getNostrUsername(userProfile)}
+							</Text>
+							{userProfile?.nip05 &&
+								<NIP05Verified nip05={userProfile.nip05} onPress={() => {/* ignore */ }} />
+							}
+							<Txt
+								txt={npub}
+								styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+							/>
+						</>
+						:
+						<NostrIcon width={60} height={60} />
+				}
 				<Txt
 					txt={t('confirmNpubHint')}
 					styles={[styles.descText]}
-				/>
-				<Txt
-					txt={npub}
-					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
 				/>
 			</View>
 			<ActionButtons
@@ -106,8 +150,15 @@ const styles = StyleSheet.create({
 	hint: {
 		fontSize: 14,
 		textAlign: 'center',
+		marginVertical: 20,
 	},
 	infoWrap: {
 		alignItems: 'center',
+	},
+	name: {
+		fontSize: 22,
+		fontWeight: '500',
+		marginTop: 20,
+		marginBottom: 5,
 	}
 })

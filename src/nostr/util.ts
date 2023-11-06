@@ -105,8 +105,9 @@ export function isNpubQR(str: string) {
 	try {
 		const u = new URL(str)
 		// l(u.protocol, u.host, u.toString())
-		if (!isNpub(u.hostname)) { return }
-		return u.hostname
+		const clean = u.hostname || u.pathname
+		if (!isNpub(clean)) { return }
+		return clean
 	} catch (_) {/* ignored */ }
 }
 

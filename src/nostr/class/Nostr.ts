@@ -276,6 +276,7 @@ export class Nostr {
 			).slice(0, count)
 		}
 		if (authors.length < count) {
+			// TODO any user that has less follows than {count} will never get contacts metadata?
 			l('[setupMetadataSubMany] no more to do', {
 				internp: this.len,
 				len: this.#user.contacts.list.length,

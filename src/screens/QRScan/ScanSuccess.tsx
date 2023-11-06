@@ -2,6 +2,7 @@ import Button, { TxtButton } from '@comps/Button'
 import Logo from '@comps/Logo'
 import type { TBeforeRemoveEvent, TScanSuccessPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
+import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
@@ -13,7 +14,7 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPageProps) {
 
-	const { mintUrl, npub, edited } = route.params
+	const { mintUrl, npub, edited, userProfile } = route.params
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
 
@@ -41,7 +42,15 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 		<View style={[globals(color).container, styles.container]}>
 			<View />
 			<View style={styles.infoWrap}>
-				<Logo size={100} success />
+				{userProfile ?
+					<ProfilePic
+						hex={userProfile.hex}
+						uri={userProfile.picture}
+						size={100}
+					/>
+					:
+					<Logo size={100} success />
+				}
 				<Text style={[styles.successTxt, { color: color.TEXT }]}>
 					{mintUrl ? t('newMintAdded') : t('npubAdded', { ns: NS.common })}
 				</Text>

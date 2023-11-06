@@ -4,7 +4,6 @@ import useCashuToken from '@comps/hooks/Token'
 import { CloseIcon, FlashlightOffIcon } from '@comps/Icons'
 import { isIOS, QRType } from '@consts'
 import { addMint, getMintsUrls } from '@db'
-// import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
 import type { TQRScanPageProps } from '@model/nav'
 import { isNpubQR } from '@nostr/util'
@@ -97,7 +96,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			void handleCashuToken(data)
 			return
 		}
-		// handle npubs
+		// handle npubs // TODO handle nprofile notation?
 		const npub = isNpubQR(data)
 		if (npub) {
 			return navigation.navigate('npub confirm', { npub })

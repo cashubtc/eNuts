@@ -31,7 +31,6 @@ const useNostr = () => {
 			store.delete(STORE_KEYS.favs),
 			store.delete(STORE_KEYS.relays),
 			store.delete(STORE_KEYS.synced),
-			// TODO clear metadata cache
 		])
 	}
 

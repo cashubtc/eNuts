@@ -109,9 +109,6 @@ function _App() {
 	const initData = async () => {
 		try {
 			const [lang, balances, balance] = await Promise.all([
-				// DEPRECATED // TODO consider cashu-ts removing axios
-				// preferred time in ms for request timeout
-				// store.get(STORE_KEYS.reqTimeout),
 				// preferred language
 				store.get(STORE_KEYS.lang),
 				// balances

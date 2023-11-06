@@ -199,7 +199,6 @@
 		"processTestPay": "Traitement du paiement de test...",
 		"confirmMint": "Confirmer la mint",
 		"confirmMintHint": "Êtes-vous sûr(e) de vouloir faire confiance à cette mint?",
-		"confirmNpub": "Confirmer NPUB",
 		"confirmNpubHint": "Êtes-vous sûr(e) de vouloir usé cette NPUB?",
 		"npubAlreadyAdded": "NPUB déjà ajoutée",
 		"replaceNpub": "Remplacer NPUB",
