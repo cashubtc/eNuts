@@ -99,7 +99,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			}
 			{/* No transactions yet */}
 			{!history.length &&
-				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+				<View style={styles.txOverview}>
 					<Txt txt={t('noTX')} styles={[globals(color).pressTxt, { color: getColor(highlight, color) }]} />
 				</View>
 			}
@@ -185,8 +185,8 @@ const styles = StyleSheet.create({
 	},
 	balAmount: {
 		alignItems: 'center',
-		fontSize: 46,
-		fontWeight: '500',
+		fontSize: 48,
+		fontWeight: '600',
 	},
 	balAssetNameWrap: {
 		flexDirection: 'row',
@@ -211,4 +211,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
+	txOverview: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center'
+	}
 })

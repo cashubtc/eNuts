@@ -39,7 +39,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		mints,
 		sender,
 		recipient,
-		preImage,
+		// preImage,
 		fee,
 		isSpent
 	} = route.params.entry
@@ -91,12 +91,12 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		handleTimeout()
 	}
 
-	const copyPreimage = async () => {
-		if (!preImage) { return }
-		await copyStrToClipboard(preImage)
-		setCopy({ ...copy, preimage: true })
-		handleTimeout()
-	}
+	// const copyPreimage = async () => {
+	// 	if (!preImage) { return }
+	// 	await copyStrToClipboard(preImage)
+	// 	setCopy({ ...copy, preimage: true })
+	// 	handleTimeout()
+	// }
 
 	const handleTimeout = () => {
 		const t = setTimeout(() => {
@@ -303,7 +303,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							</TouchableOpacity>
 							<Separator />
 							{/* LN payment preImage */}
-							<TouchableOpacity
+							{/* <TouchableOpacity
 								style={styles.entryInfo}
 								onPress={() => {
 									if (!preImage || copy.preimage) { return }
@@ -327,7 +327,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 									}
 								</View>
 							</TouchableOpacity>
-							<Separator />
+							<Separator /> */}
 							{/* LN payment fees */}
 							<View style={styles.entryInfo}>
 								<Txt txt={t('fee')} />
@@ -391,7 +391,8 @@ const styles = StyleSheet.create({
 		maxWidth: 200,
 	},
 	amount: {
-		fontSize: 50,
+		fontSize: 52,
+		fontWeight: '600',
 	},
 	entryInfo: {
 		flexDirection: 'row',
