@@ -14,11 +14,12 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 interface TTopNavProps {
 	screenName?: string
 	withBackBtn?: boolean
+	handlePress?: () => void
 	nostrProfile?: string
 	showSearch?: boolean
 	toggleSearch?: () => void
 	cancel?: boolean
-	handlePress?: () => void
+	handleCancel?: () => void
 	openProfile?: () => void
 	txt?: string
 	mintBalance?: string
@@ -30,11 +31,12 @@ interface TTopNavProps {
 export default function TopNav({
 	screenName,
 	withBackBtn,
+	handlePress,
 	nostrProfile,
 	showSearch,
 	toggleSearch,
 	cancel,
-	handlePress,
+	handleCancel,
 	openProfile,
 	txt,
 	mintBalance,
@@ -50,7 +52,7 @@ export default function TopNav({
 			{/* Placeholder */}
 			{!screenName && !withBackBtn && <View />}
 			<View style={styles.wrap}>
-				{withBackBtn && !cancel && !txt?.length &&
+				{withBackBtn && !txt?.length &&
 					<TouchableOpacity
 						onPress={handlePress}
 						style={styles.backiconWrap}
@@ -73,6 +75,16 @@ export default function TopNav({
 						<SearchIcon color={color.TEXT} />
 					</TouchableOpacity>
 				}
+				{(cancel || (txt && txt.length > 0)) &&
+					<TouchableOpacity style={[styles.right, styles.cancel]} onPress={() => {
+						if (txt?.length) { return handlePress?.() }
+						handleCancel?.()
+					}}>
+						<Text style={globals(color, highlight).pressTxt}>
+							{txt || t('cancel')}
+						</Text>
+					</TouchableOpacity>
+				}
 				{mintBalance ?
 					<MintBalance balance={mintBalance} txtColor={color.TEXT} />
 					:
@@ -80,17 +92,6 @@ export default function TopNav({
 						if (nostrProfile) { return openProfile?.() }
 						handlePress?.()
 					}}>
-						{(cancel || txt?.length) ?
-							<Text style={globals(color, highlight).pressTxt}>
-								{txt || t('cancel')}
-							</Text>
-							:
-							!withBackBtn &&
-							!nostrProfile &&
-							!loading &&
-							!noIcons &&
-							<ScanQRIcon color={color.TEXT} />
-						}
 						{nostrProfile ?
 							loading ?
 								<Loading size={22} />
@@ -104,7 +105,11 @@ export default function TopNav({
 									isUser
 								/>
 							:
-							null
+							!withBackBtn &&
+							!nostrProfile &&
+							!loading &&
+							!noIcons &&
+							<ScanQRIcon color={color.TEXT} />
 						}
 						{historyOpts && historyOpts.length > 0 &&
 							<Popup opts={historyOpts} optsWidth={250} />
@@ -142,4 +147,7 @@ const styles = StyleSheet.create({
 	right: {
 		paddingLeft: 20,
 	},
+	cancel: {
+		marginRight: -20
+	}
 })

@@ -99,6 +99,8 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={t('paymentOverview', { ns: NS.mints })}
+				cancel
+				handleCancel={() => navigation.navigate('dashboard')}
 				withBackBtn
 				handlePress={() => {
 					if (scanned) { return navigation.navigate('qr scan', {}) }
