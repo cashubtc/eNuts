@@ -10,6 +10,7 @@ const useNostr = () => {
 	const [nutPub, setNutPub] = useState('')
 	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
 	const [userProfile, setUserProfile] = useState<IContact | undefined>()
+	const [lud16, setLud16] = useState('')
 	const [userRelays, setUserRelays] = useState<string[]>([])
 	const [favs, setFavs] = useState<string[]>([])
 	const [recent, setRecent] = useState<IContact[]>([])
@@ -31,6 +32,7 @@ const useNostr = () => {
 			store.delete(STORE_KEYS.favs),
 			store.delete(STORE_KEYS.relays),
 			store.delete(STORE_KEYS.synced),
+			store.delete(STORE_KEYS.lud16)
 		])
 	}
 
@@ -48,18 +50,20 @@ const useNostr = () => {
 	useEffect(() => {
 		void (async () => {
 			try {
-				const [nutpub, redeemed, nostrFavs, nostrRecent] = await Promise.all([
+				const [nutpub, redeemed, nostrFavs, nostrRecent, lud16] = await Promise.all([
 					// user enuts pubKey
 					store.get(STORE_KEYS.nutpub),
 					// already claimed ecash from DM: stored event signatures
 					getRedeemdedSigs(),
 					store.getObj<string[]>(STORE_KEYS.favs),
 					store.getObj<IContact[]>(STORE_KEYS.nostrDms),
+					store.get(STORE_KEYS.lud16)
 				])
 				setNutPub(nutpub || '')
 				setClaimedEvtIds(redeemed)
 				setFavs(nostrFavs || [])
 				setRecent(nostrRecent?.reverse() || [])
+				setLud16(lud16 || '')
 			} catch (e) {
 				l(e)
 			}
@@ -73,6 +77,7 @@ const useNostr = () => {
 		setPubKey,
 		userProfile,
 		setUserProfile,
+		lud16,
 		userRelays,
 		setUserRelays,
 		recent,
@@ -106,6 +111,7 @@ const NostrContext = createContext<useNostrType>({
 		hex: ''
 	},
 	setUserProfile: () => l(''),
+	lud16: '',
 	userRelays: [],
 	setUserRelays: () => l(''),
 	recent: [],

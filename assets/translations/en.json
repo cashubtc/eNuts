@@ -215,7 +215,8 @@
 		"addNewNpub": "Add a new NPUB?",
 		"addNpubHint": "This will delete all the data associated with your current NPUB.",
 		"zap": "Zap",
-		"zapNow": "Zap now"
+		"zapNow": "Zap now",
+		"meltNostrProfileHint": "Transfer funds to the LN address associated with your Nostr profile."
 	},
 	"error": {
 		"checkSpendableErr": "Error while checking if token is spendable",

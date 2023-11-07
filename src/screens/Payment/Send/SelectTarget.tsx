@@ -1,4 +1,4 @@
-import { BookIcon, NostrIcon, ScanQRIcon, ShareIcon, SwapIcon, ZapIcon } from '@comps/Icons'
+import { BookIcon, NostrIcon, ScanQRIcon, ShareIcon, SwapIcon, UserIcon, ZapIcon } from '@comps/Icons'
 import Option from '@comps/Option'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
@@ -18,7 +18,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { t } = useTranslation([NS.mints])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
-	const { nutPub } = useNostrContext()
+	const { nutPub, lud16 } = useNostrContext()
 	return (
 		<Screen
 			screenName={t(isSendEcash ? 'sendEcash' : 'cashOut', { ns: NS.common })}
@@ -47,19 +47,37 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 						:
 						<>
 							{nutPub.length > 0 &&
-								<Option
-									icon={<BookIcon color={highlight['Nostr']} />}
-									txt={t('addressBook', { ns: NS.topNav })}
-									hint={t('meltAddressbookHint')}
-									onPress={() => {
-										navigation.navigate('Address book', {
-											isMelt: true,
-											mint,
-											balance: isNum(balance) ? balance : 0
-										})
-									}}
-									hasSeparator
-								/>
+								<>
+									{lud16.length > 0 &&
+										<Option
+											icon={<UserIcon color={highlight['Default']} />}
+											txt={lud16}
+											hint={t('meltNostrProfileHint', { ns: NS.common })}
+											onPress={() => {
+												navigation.navigate('selectAmount', {
+													mint,
+													balance,
+													isMelt: true,
+													lnurl: lud16
+												})
+											}}
+											hasSeparator
+										/>
+									}
+									<Option
+										icon={<BookIcon color={highlight['Nostr']} />}
+										txt={t('addressBook', { ns: NS.topNav })}
+										hint={t('meltAddressbookHint')}
+										onPress={() => {
+											navigation.navigate('Address book', {
+												isMelt: true,
+												mint,
+												balance: isNum(balance) ? balance : 0
+											})
+										}}
+										hasSeparator
+									/>
+								</>
 							}
 							<Option
 								icon={<ZapIcon width={28} height={28} color={mainColors.WARN} />}

@@ -22,6 +22,7 @@ export const STORE_KEYS = {
 	createdToken: 'createdToken',
 	favs: 'nostr_favs',
 	synced: 'nostr_synced',
+	lud16: 'nostr_lud16',
 }
 
 export const SECURESTORE_KEY = 'auth_pin'

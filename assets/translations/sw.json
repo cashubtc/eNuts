@@ -215,7 +215,8 @@
 		"addNewNpub": "Ongeza NPUB mpya?",
 		"addNpubHint": "Hii itafuta data yote inayohusiana na NPUB yako ya sasa.",
 		"zap": "Zap",
-		"zapNow": "Zap"
+		"zapNow": "Zap",
+		"meltNostrProfileHint": "Hamishia fedha kwa anwani ya Mtandao wa Lightning (LN) inayohusishwa na wasifu wako wa Nostr."
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

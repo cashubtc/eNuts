@@ -147,7 +147,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		stopLoading()
 		if (!nostrRef?.current?.hex || hex !== nostrRef.current.hex) {
 			nostrRef.current = new Nostr(hex, {
-				onUserMetadataChanged: p => setUserProfile(p),
+				onUserMetadataChanged: p => {
+					setUserProfile(p)
+					if (p?.lud16) {
+						void store.set(STORE_KEYS.lud16, p.lud16)
+					}
+				},
 				onContactsChanged: allContacts => {
 					if (!allContacts?.length) { return }
 					// we simply overwrite the previous state with the new one
@@ -370,7 +375,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		await Promise.allSettled([
 			nostrRef?.current?.cleanCache(),
 			Image.clearDiskCache(),
-			store.delete(STORE_KEYS.synced)
+			store.delete(STORE_KEYS.synced),
+			store.delete(STORE_KEYS.lud16)
 		])
 		nostrRef.current = undefined
 		contactsRef.current = []
@@ -388,11 +394,16 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			setSearchResults([])
 			last.current.idx = -1
 			setShowSearch(false)
-			const [storedNPub, storedPubKeyHex, storedUserRelays, hasSynced] = await Promise.all([
+			const [
+				storedNPub,
+				storedPubKeyHex,
+				storedUserRelays,
+				hasSynced
+			] = await Promise.all([
 				store.get(STORE_KEYS.npub),
 				store.get(STORE_KEYS.npubHex),
 				store.getObj<TUserRelays>(STORE_KEYS.relays),
-				store.get(STORE_KEYS.synced)
+				store.get(STORE_KEYS.synced),
 			])
 			// user has no nostr data yet
 			if (!storedNPub || !storedPubKeyHex) {

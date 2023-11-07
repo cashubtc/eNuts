@@ -76,7 +76,6 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		}
 		// user pasted a LNURL, we need to get the amount by the user
 		if (isLnurl(input)) {
-			// we could check if the provided lnurl is in the contact-list of user and if not, provide the possibility to save it.
 			navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: input })
 			return
 		}
