@@ -2,7 +2,7 @@ import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt, formatMintUrl, formatSatStr } from '@util'
+import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr } from '@util'
 import { useTranslation } from 'react-i18next'
 import { Text } from 'react-native'
 
@@ -34,7 +34,11 @@ export default function ClipboardModal() {
 			/>
 			<TxtButton
 				txt={t('cancel')}
-				onPress={closeModal}
+				onPress={() => {
+					// empty the clipboard to avoid re-triggering this modal
+					void copyStrToClipboard('')
+					closeModal()
+				}}
 			/>
 		</MyModal>
 	)
