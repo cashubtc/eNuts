@@ -1,5 +1,5 @@
 import { l } from '@log'
-import type { IContact, Npub } from '@model/nostr'
+import type { IContact, Npub, TUserRelays } from '@model/nostr'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getRedeemdedSigs } from '@store/nostrDms'
@@ -7,6 +7,7 @@ import { nip19 } from 'nostr-tools'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const useNostr = () => {
+	// TODO this could be summarized in 1 object and 1 useState
 	const [nutPub, setNutPub] = useState('')
 	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
 	const [userProfile, setUserProfile] = useState<IContact | undefined>()
@@ -50,20 +51,34 @@ const useNostr = () => {
 	useEffect(() => {
 		void (async () => {
 			try {
-				const [nutpub, redeemed, nostrFavs, nostrRecent, lud16] = await Promise.all([
+				const [
+					nutpub,
+					redeemed,
+					nostrFavs,
+					nostrRecent,
+					lud16,
+					storedNPub,
+					storedPubKeyHex,
+					storedUserRelays,
+				] = await Promise.all([
 					// user enuts pubKey
 					store.get(STORE_KEYS.nutpub),
 					// already claimed ecash from DM: stored event signatures
 					getRedeemdedSigs(),
 					store.getObj<string[]>(STORE_KEYS.favs),
 					store.getObj<IContact[]>(STORE_KEYS.nostrDms),
-					store.get(STORE_KEYS.lud16)
+					store.get(STORE_KEYS.lud16),
+					store.get(STORE_KEYS.npub),
+					store.get(STORE_KEYS.npubHex),
+					store.getObj<TUserRelays>(STORE_KEYS.relays),
 				])
 				setNutPub(nutpub || '')
 				setClaimedEvtIds(redeemed)
 				setFavs(nostrFavs || [])
 				setRecent(nostrRecent?.reverse() || [])
 				setLud16(lud16 || '')
+				setPubKey({ encoded: storedNPub || '', hex: storedPubKeyHex || '' })
+				setUserRelays(storedUserRelays || [])
 			} catch (e) {
 				l(e)
 			}
@@ -78,6 +93,7 @@ const useNostr = () => {
 		userProfile,
 		setUserProfile,
 		lud16,
+		setLud16,
 		userRelays,
 		setUserRelays,
 		recent,
@@ -112,6 +128,7 @@ const NostrContext = createContext<useNostrType>({
 	},
 	setUserProfile: () => l(''),
 	lud16: '',
+	setLud16: () => l(''),
 	userRelays: [],
 	setUserRelays: () => l(''),
 	recent: [],

@@ -10,7 +10,7 @@ import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
 import { l } from '@log'
 import type { TAddressBookPageProps } from '@model/nav'
-import type { IContact, TUserRelays } from '@model/nostr'
+import type { IContact } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
 import { getNostrUsername, isHex, isNpub } from '@nostr/util'
@@ -82,9 +82,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		userProfile,
 		setUserProfile,
 		userRelays,
-		setUserRelays,
 		favs,
 		recent,
+		setLud16
 	} = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// related to new npub
@@ -150,6 +150,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				onUserMetadataChanged: p => {
 					setUserProfile(p)
 					if (p?.lud16) {
+						setLud16(p.lud16)
 						void store.set(STORE_KEYS.lud16, p.lud16)
 					}
 				},
@@ -376,7 +377,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			nostrRef?.current?.cleanCache(),
 			Image.clearDiskCache(),
 			store.delete(STORE_KEYS.synced),
-			store.delete(STORE_KEYS.lud16)
 		])
 		nostrRef.current = undefined
 		contactsRef.current = []
@@ -389,34 +389,24 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// check if user has nostr data saved previously
 	useEffect(() => {
 		if (!isFocused || pubKey.hex === nostrRef.current?.hex) { return }
-		void (async () => {
-			setContacts([]) // reset contacts in case user has edited his npub
-			setSearchResults([])
-			last.current.idx = -1
-			setShowSearch(false)
-			const [
-				storedNPub,
-				storedPubKeyHex,
-				storedUserRelays,
-				hasSynced
-			] = await Promise.all([
-				store.get(STORE_KEYS.npub),
-				store.get(STORE_KEYS.npubHex),
-				store.getObj<TUserRelays>(STORE_KEYS.relays),
-				store.get(STORE_KEYS.synced),
-			])
-			// user has no nostr data yet
-			if (!storedNPub || !storedPubKeyHex) {
-				setNewNpubModal(true)
-				stopLoading()
-				return
-			}
-			// user has nostr data, set states
-			setPubKey({ encoded: storedNPub || '', hex: storedPubKeyHex || '' })
-			setUserRelays(storedUserRelays || [])
-			setHasFullySynced(!!hasSynced)
-			void initContacts(storedPubKeyHex)
-		})()
+		setContacts([]) // reset contacts in case user has edited his npub
+		setSearchResults([])
+		last.current.idx = -1
+		setShowSearch(false)
+		// const [
+		// 	hasSynced
+		// ] = await Promise.all([
+		// 	store.get(STORE_KEYS.synced),
+		// ])
+		// user has no nostr data yet
+		if (!pubKey.encoded || !pubKey.hex) {
+			setNewNpubModal(true)
+			stopLoading()
+			return
+		}
+		// user has nostr data, set states
+		// setHasFullySynced(!!hasSynced)
+		void initContacts(pubKey.hex)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isFocused])
 
