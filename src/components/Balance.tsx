@@ -77,7 +77,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			<TouchableOpacity
 				onPress={() => void handleLogoPress()}
 			>
-				<Logo size={hidden.balance ? 100 : 40} style={{ marginTop: hidden.balance ? 40 : 0, marginBottom: hidden.balance ? 40 : 20 }} />
+				<Logo size={hidden.balance ? 100 : 40} style={{ marginTop: hidden.balance ? 40 : 0, marginBottom: hidden.balance ? 40 : 10 }} />
 			</TouchableOpacity>
 			{/* balance */}
 			{!hidden.balance &&
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 50,
 		borderBottomRightRadius: 50,
 		paddingHorizontal: 30,
-		paddingTop: 70,
+		paddingTop: 60,
 		paddingBottom: 60,
 		minHeight: '50%'
 	},
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingVertical: 5,
+		paddingBottom: 5,
 	},
 	wrap: {
 		flexDirection: 'row',
