@@ -140,6 +140,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 								<TouchableOpacity
 									style={globals().wrapRow}
 									onPress={() => handlePressMint(m)}
+									disabled={m.amount === 0}
 								>
 									<View style={styles.mintNameWrap}>
 										{defaultMint === m.mintUrl &&
@@ -147,14 +148,20 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 										}
 										<Txt
 											txt={m.customName || formatMintUrl(m.mintUrl)}
-											styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0 }]}
+											styles={[{
+												marginLeft: defaultMint === m.mintUrl ? 10 : 0,
+												color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY
+											}]}
 										/>
 									</View>
 									<View style={styles.mintBal}>
-										<Text style={[styles.mintAmount, { color: color.TEXT, paddingBottom: 3 }]}>
+										<Text style={[
+											styles.mintAmount,
+											{ color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY, paddingBottom: 3 }
+										]}>
 											{formatInt(m.amount, 'compact', 'en')}
 										</Text>
-										<ZapIcon color={m.amount > 0 ? hi[highlight] : color.TEXT} />
+										<ZapIcon color={m.amount > 0 ? hi[highlight] : color.TEXT_SECONDARY} />
 									</View>
 								</TouchableOpacity>
 								{i < userMints.length - 1 && <Separator />}
