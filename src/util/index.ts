@@ -379,3 +379,9 @@ export function formatSatStr(
 ) {
 	return `${showAmount ? `${formatInt(amount, notation, 'en')} ` : ' '}${amount < 2 && amount > -2 ? 'Sat' : 'Sats'}`
 }
+
+export function getTimestampFromDaysAgo(days: number) {
+	const date = new Date()
+	date.setDate(date.getDate() - days)
+	return Math.floor(date.getTime())
+}

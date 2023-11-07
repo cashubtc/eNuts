@@ -18,7 +18,7 @@ import { NS } from '@src/i18n'
 import { pool } from '@src/nostr/class/Pool'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
-import { isCashuToken } from '@util'
+import { getTimestampFromDaysAgo, isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -65,6 +65,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 
 	// get dms for conversationsPubKeys from relays
 	useEffect(() => {
+		const timestamp = getTimestampFromDaysAgo(14)
 		void (async () => {
 			startLoading()
 			if (!recent.length) {
@@ -78,14 +79,13 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 					// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
 					authors: recent.map(x => x.hex), // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
 					kinds: [EventKind.DirectMessage, EventKind.Metadata],
+					since: timestamp,
 				}
 			})
 			sub?.on('event', (e: NostrEvent) => {
-
 				if (+e.kind === EventKind.Metadata) {
 					setDmProfiles(prev => prev.some(x => x.hex === e.pubkey) ? prev : [...prev, { hex: e.pubkey, ...parseProfileContent(e) }])
 				}
-
 				if (+e.kind === EventKind.DirectMessage) {
 					handleDm(sk || '', e)
 				}
