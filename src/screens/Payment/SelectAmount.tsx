@@ -186,14 +186,18 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 						placeholder='0'
 						placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
 						style={[globals().selectAmount, { color: err ? mainColors.ERROR : hi[highlight] }]}
-						cursorColor={hi[highlight]}
+						// cursorColor={hi[highlight]}
+						caretHidden
 						onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
 						onSubmitEditing={() => void handleAmountSubmit()}
 						value={amount}
 						maxLength={8}
 					/>
 				</Animated.View>
-				<Txt txt={formatSatStr(+amount, 'standard', false)} styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center' }]} />
+				<Txt
+					txt={formatSatStr(+amount, 'standard', false)}
+					styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center', marginLeft: -4 }]}
+				/>
 				{(isMelt || isSwap) &&
 					<Separator style={[{ marginVertical: 20 }]} />
 				}

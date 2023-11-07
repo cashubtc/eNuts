@@ -91,8 +91,11 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => StyleSheet.crea
 		fontWeight: '500'
 	},
 	selectAmount: {
+		width: '100%',
 		fontSize: 52,
 		marginBottom: 5,
 		fontWeight: '600',
+		padding: 0,
+		textAlign: 'center',
 	}
 })
