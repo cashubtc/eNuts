@@ -23,7 +23,6 @@ export function uniq<T extends string | number | bigint | boolean | symbol>(iter
 	return [...new Set(iter)]
 }
 
-
 export function uniqBy<T extends object, TK extends keyof T>(iter: Iterable<T>, key: TK) {
 	// l()
 	const o = [...iter].reduce<{ [k: string | number | symbol]: T }>((acc, cur) => {
@@ -310,6 +309,7 @@ export function openUrl(url: string) {
 	if (!url?.trim() || !isUrl(url)) { return }
 	return Linking.openURL(url)
 }
+
 export async function copyStrToClipboard(str: string) {
 	await Clipboard.setStringAsync(str)
 }
@@ -380,8 +380,8 @@ export function formatSatStr(
 	return `${showAmount ? `${formatInt(amount, notation, 'en')} ` : ' '}${amount < 2 && amount > -2 ? 'Sat' : 'Sats'}`
 }
 
-export function getTimestampFromDaysAgo(days: number) {
+export function getUnixTimestampFromDaysAgo(days: number) {
 	const date = new Date()
 	date.setDate(date.getDate() - days)
-	return Math.floor(date.getTime())
+	return Math.floor(date.getTime() / 1000)
 }

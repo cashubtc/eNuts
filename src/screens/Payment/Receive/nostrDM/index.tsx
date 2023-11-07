@@ -1,4 +1,3 @@
-import { TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import Loading from '@comps/Loading'
@@ -18,7 +17,7 @@ import { NS } from '@src/i18n'
 import { pool } from '@src/nostr/class/Pool'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
-import { getTimestampFromDaysAgo, isCashuToken } from '@util'
+import { getUnixTimestampFromDaysAgo, isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -29,7 +28,6 @@ import NostrMessage from './NostrMessage'
 export default function NostrDMScreen({ navigation, route }: TNostrReceivePageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const [isCancel, setIsCancel] = useState(false)
 	const { userRelays, claimedEvtIds, recent } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// user mints is used in case user wants to send Ecash from the DMs screen
@@ -61,11 +59,10 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 		}
 	}
 
-	const handleCancel = () => setIsCancel(true)
-
 	// get dms for conversationsPubKeys from relays
 	useEffect(() => {
-		const timestamp = getTimestampFromDaysAgo(14)
+		// TODO add an option for the user to choose how many days ago to check for dms
+		const since = getUnixTimestampFromDaysAgo(14)
 		void (async () => {
 			startLoading()
 			if (!recent.length) {
@@ -77,9 +74,9 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 				filter: {
 					relayUrls: userRelays,
 					// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
-					authors: recent.map(x => x.hex), // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
+					authors: recent.map(x => x.hex),
 					kinds: [EventKind.DirectMessage, EventKind.Metadata],
-					since: timestamp,
+					since,
 				}
 			})
 			sub?.on('event', (e: NostrEvent) => {
@@ -90,21 +87,10 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 					handleDm(sk || '', e)
 				}
 			})
-			sub?.on('eose', () => {
-				stopLoading()
-				setIsCancel(false)
-			})
+			sub?.on('eose', () => stopLoading())
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userRelays])
-
-	// handle cancel
-	useEffect(() => {
-		if (!isCancel) { return }
-		pool.closePoolConnection(userRelays)
-		navigation.navigate('dashboard')
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isCancel])
 
 	useEffect(() => {
 		void (async () => {
@@ -116,7 +102,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	return (
 		<Screen
 			screenName={t('receiveEcashNostr')}
-			withCancelBtn
+			withBackBtn
 			handlePress={() => navigation.navigate('dashboard')}
 		>
 			{/* checking DMs */}
@@ -130,11 +116,6 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 					<Txt
 						txt={t('invoiceHint', { ns: NS.mints })}
 						styles={[{ color: color.TEXT_SECONDARY }, styles.hint]}
-					/>
-					<TxtButton
-						txt={t('cancel')}
-						onPress={handleCancel}
-						style={[{ paddingTop: 20, paddingBottom: 10 }]}
 					/>
 				</View>
 				:
