@@ -10,7 +10,6 @@ import type { TSelectMintPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi } from '@styles'
 import { formatInt, formatMintUrl, isNum, sortMintsByDefault } from '@util'
@@ -78,8 +77,6 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				.map(m => ({ mintUrl: m.mintUrl, customName: m.customName }))
 			// user has already selected a nostr target
 			if (nostr) {
-				l({ nostr })
-				// l('user has already selected a nostr target, navigate to amount selection')
 				// select ecash amount to send
 				navigation.navigate('selectNostrAmount', {
 					mint,
@@ -98,7 +95,6 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			})
 			return
 		}
-		// l('[last condition] navigate to amount selection')
 		navigation.navigate('selectAmount', {
 			mint,
 			nostr,

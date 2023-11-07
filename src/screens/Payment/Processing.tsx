@@ -205,6 +205,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				const userRelays = await store.get(STORE_KEYS.relays)
 				// TODO publish the event to the RECIPIENT relays AND our relays.
 				const published = await pool.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
+				// TODO published sometimes is false even though the event is published
+				// TODO publishEventToPool sometimes does not return at all
 				if (!published) {
 					navigation.navigate(
 						'processingError',
