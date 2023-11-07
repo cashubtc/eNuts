@@ -177,6 +177,17 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				onSearchChanged: profile => {
 					if (!profile) { return }
 					setSearchResults(prev => uniqByIContacts([...prev, profile], 'hex'))
+					// we set the contact state of a search result that is already in the contacts list
+					// so that the contact list can render the profile if user favorites it
+					// TODO cache it
+					const idx = contactsRef.current.findIndex(c => c.hex === profile.hex)
+					if (idx > -1 && Object.keys(contactsRef.current[idx]).length === 1) {
+						setContacts(prev => {
+							prev[idx] = profile
+							contactsRef.current = prev
+							return [...prev]
+						})
+					}
 				},
 				userRelays
 			})
