@@ -11,9 +11,9 @@ import { truncateStr } from '@nostr/util'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { addToHistory } from '@src/storage/store/latestHistoryEntries'
-import { getCustomMintNames } from '@src/storage/store/mintStore'
 import { historyStore } from '@store'
+import { addToHistory } from '@store/latestHistoryEntries'
+import { getCustomMintNames } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, getLnInvoiceInfo, isNum, isUndef } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
@@ -59,7 +59,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 
 	useEffect(() => {
 		void (async () => {
-			const customName = await getCustomMintNames([{ mintUrl: mints[0] }])
+			const customName = await getCustomMintNames(mints.map(m => ({ mintUrl: m })))
 			setCustomMints(customName)
 		})()
 	}, [mints])
