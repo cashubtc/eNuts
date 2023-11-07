@@ -172,7 +172,8 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
-			mintBalance={isSendEcash || isMelt || isSwap ? formatInt(balance) : undefined}
+			mintBalance={isSendEcash ? formatInt(balance) : undefined}
+			handleMintBalancePress={() => setAmount(`${balance}`)}
 		>
 			{!isMelt && !isSwap &&
 				<Txt txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: NS.mints })} styles={[styles.headerHint]} />

@@ -10,6 +10,7 @@ interface IContainerProps {
 	withCancelBtn?: boolean
 	handlePress?: () => void
 	mintBalance?: string
+	handleMintBalancePress?: () => void
 	noIcons?: boolean
 }
 
@@ -20,6 +21,7 @@ export default function Screen({
 	withCancelBtn,
 	handlePress,
 	mintBalance,
+	handleMintBalancePress,
 	noIcons
 }: IContainerProps) {
 	const { color } = useThemeContext()
@@ -31,6 +33,7 @@ export default function Screen({
 				cancel={withCancelBtn}
 				handlePress={handlePress}
 				mintBalance={mintBalance}
+				handleMintBalancePress={handleMintBalancePress}
 				noIcons={noIcons}
 			/>
 			{children}

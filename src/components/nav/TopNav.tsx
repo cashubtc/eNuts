@@ -21,6 +21,7 @@ interface TTopNavProps {
 	cancel?: boolean
 	handleCancel?: () => void
 	openProfile?: () => void
+	handleMintBalancePress?: () => void
 	txt?: string
 	mintBalance?: string
 	loading?: boolean
@@ -40,6 +41,7 @@ export default function TopNav({
 	openProfile,
 	txt,
 	mintBalance,
+	handleMintBalancePress,
 	loading,
 	noIcons,
 	historyOpts
@@ -86,7 +88,9 @@ export default function TopNav({
 					</TouchableOpacity>
 				}
 				{mintBalance ?
-					<MintBalance balance={mintBalance} txtColor={color.TEXT} />
+					<TouchableOpacity style={styles.right} onPress={handleMintBalancePress}>
+						<MintBalance balance={mintBalance} txtColor={color.TEXT} />
+					</TouchableOpacity>
 					:
 					<TouchableOpacity style={styles.right} onPress={() => {
 						if (nostrProfile) { return openProfile?.() }
