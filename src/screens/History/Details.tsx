@@ -12,11 +12,12 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { addToHistory } from '@src/storage/store/latestHistoryEntries'
+import { getCustomMintNames } from '@src/storage/store/mintStore'
 import { historyStore } from '@store'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, getLnInvoiceInfo, isNum, isUndef } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -47,13 +48,21 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const [spent, setSpent] = useState(isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [qr, setQr] = useState({ open: false, error: false })
-	const isPayment = amount < 0
-	const isLn = type === 2 || type === 3
-	const LNstr = t(isPayment ? 'lnPayment' : 'lnInvoice')
-	const Ecash = t('ecashPayment')
-	const { hash, memo } = isLn ? getLnInvoiceInfo(value) : { hash: '', memo: '' }
-	const tokenMemo = !isLn ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history })
+	const isPayment = useRef(amount < 0)
+	const isLn = useRef(type === 2 || type === 3)
+	const LNstr = useRef(t(isPayment.current ? 'lnPayment' : 'lnInvoice'))
+	const Ecash = useRef(t('ecashPayment'))
+	const { hash, memo } = useMemo(() => isLn.current ? getLnInvoiceInfo(value) : { hash: '', memo: '' }, [value])
+	const tokenMemo = useMemo(() => !isLn.current ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history }), [t, value])
 	const { openPromptAutoClose } = usePromptContext()
+	const [customMints, setCustomMints] = useState([{ mintUrl: '', customName: '' }])
+
+	useEffect(() => {
+		void (async () => {
+			const customName = await getCustomMintNames([{ mintUrl: mints[0] }])
+			setCustomMints(customName)
+		})()
+	}, [mints])
 
 	const getTxColor = () => {
 		if (type === 3) { return color.TEXT }
@@ -62,7 +71,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 
 	const getScreenName = () => {
 		if (type === 3) { return t('multimintSwap') }
-		return isLn ? LNstr : Ecash
+		return isLn.current ? LNstr.current : Ecash.current
 	}
 
 	const getAmount = () => {
@@ -144,7 +153,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}
 
 	const getMemo = () => {
-		if (isLn) {
+		if (isLn.current) {
 			if (memo === 'enuts') { return 'Cashu deposit' }
 			return memo
 		}
@@ -207,8 +216,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					<Separator />
 					{/* Mints */}
 					<View style={styles.entryInfo}>
-						<Txt txt={isLn ? 'Mint' : 'Mints'} />
-						<Txt txt={mints.map(m => formatMintUrl(m)).join(', ')} />
+						<Txt txt={isLn.current ? 'Mint' : 'Mints'} />
+						<Txt txt={customMints.map(m => m.customName.length ? m.customName : formatMintUrl(m.mintUrl)).join(', ')} />
 					</View>
 					<Separator />
 					{/* cashu token or ln invoice */}
@@ -219,7 +228,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							void copyValue()
 						}}
 					>
-						<Txt txt={isLn ? t('invoice') : 'Token'} />
+						<Txt txt={isLn.current ? t('invoice') : 'Token'} />
 						<View style={styles.copyWrap}>
 							<Txt
 								txt={value.length ? `${value.slice(0, 16)}...` : t('n/a')}
@@ -238,7 +247,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					</TouchableOpacity>
 					<Separator />
 					{/* check is token spendable */}
-					{isPayment && !isLn &&
+					{isPayment.current && !isLn.current &&
 						<>
 							<IsSpentContainer
 								isSpent={spent}
@@ -265,7 +274,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						</>
 					}
 					{/* Lightning related */}
-					{isLn &&
+					{isLn.current &&
 						<>
 							{/* LN payment hash */}
 							<TouchableOpacity
@@ -343,8 +352,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				error={qr.error}
 				close={() => setQr({ open: false, error: false })}
 				onError={() => setQr({ open: true, error: true })}
-				isInvoice={isLn}
-				truncateNum={isLn ? 20 : 25}
+				isInvoice={isLn.current}
+				truncateNum={isLn.current ? 20 : 25}
 			/>
 		</View>
 	)
