@@ -11,6 +11,7 @@ interface IContainerProps {
 	handlePress?: () => void
 	mintBalance?: string
 	handleMintBalancePress?: () => void
+	disableMintBalance?: boolean
 	noIcons?: boolean
 }
 
@@ -22,6 +23,7 @@ export default function Screen({
 	handlePress,
 	mintBalance,
 	handleMintBalancePress,
+	disableMintBalance,
 	noIcons
 }: IContainerProps) {
 	const { color } = useThemeContext()
@@ -34,6 +36,7 @@ export default function Screen({
 				handlePress={handlePress}
 				mintBalance={mintBalance}
 				handleMintBalancePress={handleMintBalancePress}
+				disableMintBalance={disableMintBalance}
 				noIcons={noIcons}
 			/>
 			{children}

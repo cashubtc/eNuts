@@ -1,4 +1,5 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
+import Button from '@comps/Button'
 import Loading from '@comps/Loading'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
@@ -14,7 +15,7 @@ import { cleanUpNumericStr, formatInt, formatSatStr, getInvoiceFromLnurl, vib } 
 import { checkFees, requestMint } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, View } from 'react-native'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
 	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
@@ -172,8 +173,11 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
-			mintBalance={isSendEcash ? formatInt(balance) : undefined}
-			handleMintBalancePress={() => setAmount(`${balance}`)}
+			mintBalance={formatInt(balance)}
+			disableMintBalance={isMelt || isSwap}
+			handleMintBalancePress={() => {
+				if (isSendEcash) { setAmount(`${balance}`) }
+			}}
 		>
 			{!isMelt && !isSwap &&
 				<Txt
@@ -181,7 +185,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					styles={[styles.headerHint]}
 				/>
 			}
-			<View style={styles.overviewWrap}>
+			<View style={[styles.overviewWrap, { marginTop: isMelt || isSwap ? 0 : 20 }]}>
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
 						keyboardType='numeric'
@@ -218,25 +222,15 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			</View>
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={[styles.continue, { bottom: isIOS ? 20 : 0 }]}
+				style={styles.continue}
 			>
-				<TouchableOpacity
-					style={styles.actionBtn}
+				<Button
+					txt={getActionBtnTxt()}
+					outlined={shouldEstimate}
 					onPress={() => void handleAmountSubmit()}
 					disabled={balTooLow}
-				>
-					<Txt
-						txt={getActionBtnTxt()}
-						styles={[
-							globals(color, highlight).pressTxt,
-							{
-								color: balTooLow ? mainColors.ERROR : fee.isCalculating ? mainColors.WARN : hi[highlight],
-								marginRight: fee.isCalculating ? 10 : 0
-							}
-						]}
-					/>
-					{fee.isCalculating && <Loading color={mainColors.WARN} />}
-				</TouchableOpacity>
+					icon={fee.isCalculating ? <Loading color={hi[highlight]} /> : undefined}
+				/>
 			</KeyboardAvoidingView>
 		</Screen>
 	)
@@ -288,11 +282,11 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		right: 20,
 		left: 20,
+		bottom: 20,
 		alignItems: 'center'
 	},
 	overviewWrap: {
 		width: '100%',
-		marginTop: 20,
 		paddingHorizontal: 20,
 	},
 	overview: {
@@ -304,11 +298,11 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		marginTop: 10,
 	},
-	actionBtn: {
+	/* actionBtn: {
 		padding: 20,
 		flexDirection: 'row',
 		alignItems: 'center',
-	},
+	}, */
 	bold: {
 		fontWeight: '500'
 	}

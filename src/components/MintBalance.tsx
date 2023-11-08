@@ -1,16 +1,23 @@
 import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
+import { formatSatStr } from '@util'
 import { StyleSheet, View } from 'react-native'
 
 import { MintBoardIcon } from './Icons'
 import Txt from './Txt'
 
-export default function MintBalance({ balance, txtColor }: { balance: string, txtColor: string }) {
-	const { highlight } = useThemeContext()
+interface IMintBalanceProps {
+	balance: string
+	txtColor: string
+	disabled?: boolean
+}
+
+export default function MintBalance({ balance, txtColor, disabled }: IMintBalanceProps) {
+	const { color, highlight } = useThemeContext()
 	return (
-		<View style={[styles.wrap, { borderColor: hi[highlight] }]}>
-			<MintBoardIcon width={18} height={20} color={hi[highlight]} />
-			<Txt txt={`${balance} Sat`} styles={[{ fontSize: 12, color: txtColor, marginLeft: 5 }]} />
+		<View style={[styles.wrap, { borderColor: disabled ? color.TEXT_SECONDARY : hi[highlight] }]}>
+			<MintBoardIcon width={18} height={20} color={disabled ? color.TEXT_SECONDARY : hi[highlight]} />
+			<Txt txt={formatSatStr(+balance)} styles={[{ fontSize: 12, color: txtColor, marginLeft: 5 }]} />
 		</View>
 	)
 }
