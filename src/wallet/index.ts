@@ -1,6 +1,6 @@
 import {
 	CashuMint, CashuWallet, deriveKeysetId,
-	getDecodedLnInvoice, getDecodedToken,
+	getDecodedToken,
 	getEncodedToken,
 	type GetInfoResponse, type MintKeys,
 	type PayLnInvoiceResponse, type Proof,
@@ -13,7 +13,7 @@ import {
 } from '@db'
 import { l } from '@log'
 import type { IInvoice } from '@src/model'
-import { isCashuToken, isNum, isStr } from '@util'
+import { decodeLnInvoice, isCashuToken, isNum } from '@util'
 
 import { sumProofsValue } from './proofs'
 import { getProofsToUse } from './util'
@@ -90,7 +90,6 @@ export async function checkFees(mintUrl: string, invoice: string): Promise<numbe
 	const { fee } = await CashuMint.checkFees(mintUrl, { pr: invoice })
 	return fee
 }
-
 export async function claimToken(encodedToken: string): Promise<boolean> {
 	encodedToken = isCashuToken(encodedToken) || ''
 	if (!encodedToken?.trim()) { return false }
@@ -119,7 +118,6 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
 	if (!token?.token?.length) { return false }
 	return true
 }
-
 export async function requestMint(mintUrl: string, amount: number): Promise<RequestMintResponse> {
 	const wallet = await getWallet(mintUrl)
 	const result = await wallet.requestMint(amount)
@@ -128,7 +126,6 @@ export async function requestMint(mintUrl: string, amount: number): Promise<Requ
 	l('[requestMint]', { result, mintUrl, amount })
 	return result
 }
-
 export async function requestToken(mintUrl: string, amount: number, hash: string): Promise<{ success: boolean; invoice: IInvoice | null | undefined }> {
 	const invoice = await getInvoice(hash)
 	const wallet = await getWallet(mintUrl)
@@ -142,38 +139,35 @@ export async function requestToken(mintUrl: string, amount: number, hash: string
 
 export async function payLnInvoice(mintUrl: string, invoice: string, fee: number, proofs: Proof[] = []): Promise<{ result?: PayLnInvoiceResponse, fee?: number, realFee?: number, error?: unknown }> {
 	const wallet = await getWallet(mintUrl)
-	const decoded = getDecodedLnInvoice(invoice)
-	const invoiceAmount = decoded.sections[2].value
-	// TODO create a function to get the amount from the invoice
-	let amount = 0
-	if (isStr(invoiceAmount)) {
-		amount = parseInt(invoiceAmount)
-	} else if (isNum(invoiceAmount)) {
-		amount = invoiceAmount
-	}
-	// if amount is still 0, throw (wasn't either a string or a number)
+	const { amount } = decodeLnInvoice(invoice)
 	if (!amount) { throw new Error('bad invoice amount') }
-	amount = amount / 1000
 	const amountToPay = amount + fee
 	if (!proofs?.length) {
 		const { proofsToUse } = await getProofsToUse(mintUrl, amountToPay)
 		proofs = proofsToUse
 	}
-	const { send, returnChange, newKeys } = await wallet.send(amountToPay, proofs)
-	if (newKeys) { _setKeys(mintUrl, newKeys) }
-	if (returnChange?.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
-	if (send?.length) { await deleteProofs(proofs) }
+	if (sumProofsValue(proofs) > amountToPay) {
+		l('[payLnInvoce] use send ', { amountToPay, amount, fee, proofs: sumProofsValue(proofs) })
+		const { send, returnChange, newKeys } = await wallet.send(amountToPay, proofs)
+		if (newKeys) { _setKeys(mintUrl, newKeys) }
+		if (returnChange?.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
+		if (send?.length) { await deleteProofs(proofs) }
+		proofs = send
+	}
 	try {
-		const result = await wallet.payLnInvoice(invoice, send, fee)
+		l({ fee, sum: sumProofsValue(proofs) })
+		const result = await wallet.payLnInvoice(invoice, proofs, fee)
 		if (result?.newKeys) { _setKeys(mintUrl, result.newKeys) }
 		if (result?.change?.length) { await addToken({ token: [{ mint: mintUrl, proofs: result.change }] }) }
-		if (result.isPaid) { await deleteProofs(send) }
-		/* l({ fee, change: result.change, sum: sumProofsValue(result.change) })
-		l({ sumProofsValue: sumProofsValue(result.change) })
-		l({ resultChange: result.change }) */
-		return { result, fee, realFee: fee - sumProofsValue(returnChange.concat(result.change)) }
+		if (result.isPaid) { await deleteProofs(proofs) }
+		const realFee = fee - sumProofsValue(result.change)
+		if (realFee < 0) {
+			l('######################################## ERROR ####################################')
+			l({ result, fee, realFee, amountToPay, amount, proofs: sumProofsValue(proofs) })
+		}
+		return { result, fee, realFee }
 	} catch (error) {
-		await addToken({ token: [{ mint: mintUrl, proofs: send }] })
+		await addToken({ token: [{ mint: mintUrl, proofs }] })
 		return { result: undefined, error }
 	}
 }
@@ -253,9 +247,10 @@ async function requestTokenLoop(): Promise<void> {
 		try {
 			// eslint-disable-next-line no-await-in-loop
 			await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
+			// TODO notify user and add history entry
 		} catch (_) {/* ignore */ }
-		const decoded = getDecodedLnInvoice(invoice.pr)
-		const date = new Date((invoice.time * 1000) + (decoded.expiry * 1000)).getTime()
+		const { expiry } = decodeLnInvoice(invoice.pr)
+		const date = new Date((invoice.time * 1000) + (expiry * 1000)).getTime()
 		// eslint-disable-next-line no-await-in-loop
 		if (Date.now() > date) { await delInvoice(invoice.hash) }
 	}
