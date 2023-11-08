@@ -7,11 +7,12 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { useCallback, useState } from 'react'
+import { createRef, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, type TextInput, TouchableOpacity, View } from 'react-native'
 
 interface ISearchProps {
+	showSearch: boolean
 	hasFullySynced: boolean
 	contactsRef: React.MutableRefObject<IContact[]>
 	searchResults: IContact[]
@@ -21,6 +22,7 @@ interface ISearchProps {
 }
 
 export default function Search({
+	showSearch,
 	hasFullySynced,
 	contactsRef,
 	setContacts,
@@ -31,6 +33,7 @@ export default function Search({
 	const { t } = useTranslation([NS.common])
 	const { highlight } = useThemeContext()
 	const [searchInput, setSearchInput] = useState('')
+	const inputRef = createRef<TextInput>()
 
 	const handleOnChangeSearch = (text: string) => {
 		setSearchInput(text)
@@ -65,9 +68,21 @@ export default function Search({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
+	// auto-focus search input
+	useEffect(() => {
+		if (!showSearch) { return inputRef.current?.blur() }
+		const t = setTimeout(() => {
+			inputRef.current?.focus()
+			clearTimeout(t)
+		}, 150)
+		return () => clearTimeout(t)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [showSearch])
+
 	return (
 		<View style={styles.inputWrap}>
 			<TxtInput
+				innerRef={inputRef}
 				keyboardType='default'
 				placeholder={t('searchContacts')}
 				value={searchInput}

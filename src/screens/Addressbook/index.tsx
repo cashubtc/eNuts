@@ -32,7 +32,7 @@ import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RefreshControl, StyleSheet, Text, type TextInput, TouchableOpacity, View } from 'react-native'
+import { RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import ContactPreview from './ContactPreview'
 import Recents from './Recents'
@@ -88,7 +88,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	} = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	// related to new npub
-	const inputRef = createRef<TextInput>()
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	// search functionality
 	const [showSearch, setShowSearch] = useState(false)
@@ -404,11 +403,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		setSearchResults([])
 		last.current.idx = -1
 		setShowSearch(false)
-		// const [
-		// 	hasSynced
-		// ] = await Promise.all([
-		// 	store.get(STORE_KEYS.synced),
-		// ])
 		// user has no nostr data yet
 		if (!pubKey.encoded || !pubKey.hex) {
 			setNewNpubModal(true)
@@ -416,21 +410,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			return
 		}
 		// user has nostr data, set states
-		// setHasFullySynced(!!hasSynced)
 		void initContacts(pubKey.hex)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isFocused])
-
-	// auto-focus search input
-	useEffect(() => {
-		if (!showSearch) { return inputRef.current?.blur() }
-		const t = setTimeout(() => {
-			inputRef.current?.focus()
-			clearTimeout(t)
-		}, 200)
-		return () => clearTimeout(t)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [showSearch])
 
 	useEffect(() => {
 		setContacts([...contacts].sort(sortFavs))
@@ -477,6 +459,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					}
 					{showSearch &&
 						<Search
+							showSearch={showSearch}
 							hasFullySynced={hasFullySynced}
 							contactsRef={contactsRef}
 							setContacts={setContacts}
