@@ -202,7 +202,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				</Animated.View>
 				<Txt
 					txt={formatSatStr(+amount, 'standard', false)}
-					styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center', marginLeft: -4 }]}
+					styles={[styles.sats, { color: color.TEXT_SECONDARY }]}
 				/>
 				{(isMelt || isSwap) &&
 					<>
@@ -251,7 +251,7 @@ export function MeltOverview({ amount, shouldEstimate, balTooLow, isInvoice, fee
 		<View style={styles.overview}>
 			<Txt
 				txt={t(isInvoice ? 'invoiceInclFee' : 'totalInclFee', { ns: NS.common }) + '*'}
-				styles={[styles.bold]}
+				bold
 			/>
 			<Txt
 				txt={formatSatStr(shouldEstimate ? 0 : amount + fee)}
@@ -271,12 +271,6 @@ const styles = StyleSheet.create({
 		width: '100%',
 		alignItems: 'center',
 	},
-	amount: {
-		fontSize: 46,
-		width: '100%',
-		textAlign: 'center',
-		marginBottom: 5,
-	},
 	continue: {
 		flex: 1,
 		position: 'absolute',
@@ -294,16 +288,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 	},
+	sats: {
+		fontSize: 14,
+		textAlign: 'center',
+		marginLeft: -4,
+		marginTop: -5
+	},
 	feeHint: {
 		fontSize: 12,
 		marginTop: 10,
 	},
-	/* actionBtn: {
-		padding: 20,
-		flexDirection: 'row',
-		alignItems: 'center',
-	}, */
-	bold: {
-		fontWeight: '500'
-	}
 })
