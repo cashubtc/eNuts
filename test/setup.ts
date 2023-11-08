@@ -38,7 +38,6 @@ jest.mock('expo-localization', () => ({
 		return arr
 	}
 }))
-jest.mock('reactotron-react-native', () => ({}))
 // jest.mock('react-native', () => ({}))
 // jest.mock('@consts', () => ({}))
 jest.mock('expo/config', () => ({}))

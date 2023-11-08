@@ -1,7 +1,5 @@
 import { env, isTestMode } from '@consts'
 
-import { isReactotronRunnig } from './reactotron'
-
 /* function _log(
 	withTime: boolean,
 	withCallerName: boolean,
@@ -29,29 +27,12 @@ export function l(msg?: unknown, ...optionalParams: unknown[]) {
 	let fnName = callerInfo()?.name
 	if (!fnName || fnName === '?anon_0_') { fnName = '' }
 	if (fnName) { fnName = `[${fnName}]` }
-
-	/* (isReactotronRunnig
-		// eslint-disable-next-line no-console
-		? console?.tron?.log || console.log
-		// eslint-disable-next-line no-console
-		: console.log
-	) */
 	// eslint-disable-next-line no-console
 	console.log(`[${new Date().toLocaleTimeString()}]${fnName}`,
 		msg,
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		...optionalParams
 	)
-	if (isReactotronRunnig) {
-		// eslint-disable-next-line no-console
-		console.tron?.log?.(`[${new Date().toLocaleTimeString()}]${fnName}`,
-			msg,
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-			...optionalParams
-		)
-		// eslint-disable-next-line no-console
-		// console?.tron?.error?.([msg, optionalParams], '[ERROR]')
-	}
 }
 
 function debug(msg?: unknown, ...optionalParams: unknown[]) {

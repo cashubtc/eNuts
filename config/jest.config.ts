@@ -57,7 +57,6 @@ export default (): JestConfigWithTsJest => ({
 		'!**/src/shim.ts',
 		// '!**/src/storage/store/AsyncStore.ts',
 		'!**/src/storage/store/SecureStore.ts',
-		'!**/src/logger/reactotron/**',
 		'!**/src/util/crashReporting.ts',
 		'!**/src/storage/db/fs.ts',
 		//'!**/src/logger/*'

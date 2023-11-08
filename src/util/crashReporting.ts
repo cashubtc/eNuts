@@ -33,7 +33,7 @@ export enum ErrorType {
 	 */
 	FATAL = 'Fatal',
 	/**
-	 * An error caught by try/catch where defined using Reactotron.tron.error.
+	 * An error caught by try/catch
 	 */
 	HANDLED = 'Handled',
 }
@@ -43,13 +43,11 @@ export enum ErrorType {
  */
 export function reportCrash(error: Error, errInfo: ErrorInfo, type: ErrorType = ErrorType.FATAL) {
 	if (isReactNativeDevMode) {
-		// Log to console and Reactotron in development
+		// Log to console
 		const message = error.message || 'Unknown'
 		// eslint-disable-next-line no-console
 		console.error(error, errInfo)
 		// eslint-disable-next-line no-console
 		console.log(message, type)
-		// eslint-disable-next-line no-console
-		console?.tron?.error?.({ error, errInfo }, error.stack)
 	} else if (env.SENTRY_DSN) { Sentry.Native.captureException(error) }
 }
