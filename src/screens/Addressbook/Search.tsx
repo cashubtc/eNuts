@@ -70,7 +70,7 @@ export default function Search({
 
 	// auto-focus search input
 	useEffect(() => {
-		if (!showSearch) { return inputRef.current?.blur() }
+		if (!showSearch) { return }
 		const t = setTimeout(() => {
 			inputRef.current?.focus()
 			clearTimeout(t)
