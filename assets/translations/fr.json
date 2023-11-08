@@ -216,7 +216,8 @@
 		"addNpubHint": "Cela supprimera toutes les données associées à votre NPUB actuel.",
 		"zap": "Zap",
 		"zapNow": "Zap",
-		"meltNostrProfileHint": "Transférez des fonds vers l'adresse du LN associée à votre profil Nostr."
+		"meltNostrProfileHint": "Transférez des fonds vers l'adresse du LN associée à votre profil Nostr.",
+		"nostrDmHint": "eNuts ne peut pas accéder aux DM de votre compte Nostr en raison de son manque d'accès à votre clé privée. À la place, il génère une nouvelle clé pour l'envoi d'Ecash. Lorsque vous envoyez de l'Ecash via Nostr, le destinataire le reçoit en utilisant votre nouvelle clé publique eNuts. Si le destinataire répond au DM avec un jeton Ecash, vous pouvez le voir ici. Nous travaillons activement sur une solution sécurisée pour les clés privées."
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

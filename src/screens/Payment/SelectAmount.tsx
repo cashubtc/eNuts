@@ -175,9 +175,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			handlePress={() => navigation.goBack()}
 			mintBalance={formatInt(balance)}
 			disableMintBalance={isMelt || isSwap}
-			handleMintBalancePress={() => {
-				if (isSendEcash) { setAmount(`${balance}`) }
-			}}
+			handleMintBalancePress={() => setAmount(`${balance}`)}
 		>
 			{!isMelt && !isSwap &&
 				<Txt

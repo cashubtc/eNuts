@@ -142,6 +142,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 							:
 							<Empty
 								txt={t('clearOverHere')}
+								hint={t('nostrDmHint')}
 								hasOk
 								nav={navigation}
 							/>

@@ -216,7 +216,8 @@
 		"addNpubHint": "Dadurch werden alle Daten, die mit Ihrem aktuellen NPUB verbunden sind, gelöscht.",
 		"zap": "Zap",
 		"zapNow": "Zap",
-		"meltNostrProfileHint": "Senden Sie Ihr Guthaben zu der LN-Adresse, die mit Ihrem Nostr-Profil verknüpft ist."
+		"meltNostrProfileHint": "Senden Sie Ihr Guthaben zu der LN-Adresse, die mit Ihrem Nostr-Profil verknüpft ist.",
+		"nostrDmHint": "eNuts kann nicht auf Ihre Nostr-Nachrichten zugreifen, da es keinen Zugriff auf Ihren privaten Schlüssel hat. Stattdessen generiert es einen neuen Schlüssel zum Senden von Ecash. Wenn Sie Ecash über Nostr senden, erhält der Empfänger es mit Ihrem neuen öffentlichen eNuts-Schlüssel. Wenn der Empfänger auf die Nachricht mit einem Ecash-Token antwortet, wird es hier angezeigt. Wir arbeiten aktiv an einer sicheren Lösung für private Schlüssel."
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
