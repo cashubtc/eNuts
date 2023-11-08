@@ -176,7 +176,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			handleMintBalancePress={() => setAmount(`${balance}`)}
 		>
 			{!isMelt && !isSwap &&
-				<Txt txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: NS.mints })} styles={[styles.headerHint]} />
+				<Txt
+					txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: NS.mints })}
+					styles={[styles.headerHint]}
+				/>
 			}
 			<View style={styles.overviewWrap}>
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
@@ -186,7 +189,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 						placeholder='0'
 						placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
 						style={[globals().selectAmount, { color: err ? mainColors.ERROR : hi[highlight] }]}
-						// cursorColor={hi[highlight]}
 						caretHidden
 						onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
 						onSubmitEditing={() => void handleAmountSubmit()}
@@ -199,22 +201,21 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center', marginLeft: -4 }]}
 				/>
 				{(isMelt || isSwap) &&
-					<Separator style={[{ marginVertical: 20 }]} />
-				}
-				{isMelt || isSwap ?
-					<MeltOverview
-						amount={+amount}
-						shouldEstimate={shouldEstimate}
-						balTooLow={balTooLow}
-						fee={fee.estimation}
-					/>
-					:
-					null
+					<>
+						<Separator style={[{ marginVertical: 20 }]} />
+						<MeltOverview
+							amount={+amount}
+							shouldEstimate={shouldEstimate}
+							balTooLow={balTooLow}
+							fee={fee.estimation}
+						/>
+						<Txt
+							txt={'* ' + t('cashOutAmountHint', { ns: NS.mints })}
+							styles={[styles.feeHint, { color: color.TEXT_SECONDARY }]}
+						/>
+					</>
 				}
 			</View>
-			{(isMelt || isSwap) &&
-				<Txt txt={'* ' + t('cashOutAmountHint', { ns: NS.mints })} styles={[styles.feeHint, { color: color.TEXT_SECONDARY }]} />
-			}
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
 				style={[styles.continue, { bottom: isIOS ? 20 : 0 }]}
@@ -301,7 +302,6 @@ const styles = StyleSheet.create({
 	},
 	feeHint: {
 		fontSize: 12,
-		paddingHorizontal: 20,
 		marginTop: 10,
 	},
 	actionBtn: {

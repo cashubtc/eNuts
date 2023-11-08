@@ -92,7 +92,7 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => StyleSheet.crea
 	},
 	selectAmount: {
 		width: '100%',
-		fontSize: 48,
+		fontSize: 52,
 		marginBottom: 5,
 		fontWeight: '600',
 		padding: 0,
