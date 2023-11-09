@@ -22,7 +22,6 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import QRMarker from './Marker'
-import { l } from '@src/logger'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const { mint, balance } = route.params

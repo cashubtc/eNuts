@@ -15,7 +15,6 @@ import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi } from '@styles'
@@ -37,7 +36,6 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 	const { loading, startLoading, stopLoading } = useLoading()
 
 	const handleMetadata = () => {
-		l({hex})
 		if (!hex || !isStr(hex)) { return }
 		const sub = pool.subscribePool({
 			filter: {

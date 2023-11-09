@@ -1,5 +1,4 @@
 import type { HexKey, IContact, IProfileContent, Nprofile, Npub } from '@model/nostr'
-import { l } from '@src/logger'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { cTo } from '@store/utils'
