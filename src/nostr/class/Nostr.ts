@@ -6,7 +6,7 @@ import { TTLCache } from '@src/storage/store/ttl'
 import { isArr, uniq } from '@src/util'
 import { Event, SubscriptionOptions } from 'nostr-tools'
 
-import { defaultRelays, EventKind } from '../consts'
+import { defaultRelays, defaultSearchRelays, EventKind } from '../consts'
 import { filterFollows, isHex, normalizeURL, parseUserRelays, shuffle } from '../util'
 import { pool } from './Pool'
 import { ProfileData } from './ProfileData'
@@ -238,7 +238,7 @@ export class Nostr {
 	public search(q: string) {
 		const sub = pool.subscribePool({
 			filter: {
-				relayUrls: ['wss://relay.nostr.band/all'],
+				relayUrls: defaultSearchRelays,
 				search: `${q} sort:popular sort:popular`,
 				limit: 8, // the events are always twice as much as the limit... 🙈
 				kinds: [EventKind.Metadata],

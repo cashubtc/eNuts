@@ -3,6 +3,23 @@ import { isUrl } from '@src/util'
 
 import { normalizeURL } from './util'
 
+export const defaultSearchRelays = [
+	'wss://relay.nostr.band/all',
+	'wss://relay.roli.social',
+	'wss://deschooling.us',
+	'wss://relay-verified.deschooling.us',
+	'wss://feeds.nostr.band/nostrhispano',
+	'wss://search.nos.today',
+	'wss://nostr-relay.app',
+	'wss://nb.relay.center',
+	'wss://nostrja-kari-nip50.heguro.com',
+	'wss://nfdn.betanet.dotalgo.io',
+	'wss://saltivka.org',
+	'wss://filter.stealth.wine?broadcast=true',
+	'wss://nostr.novacisko.cz',
+	'wss://relay.noswhere.com'
+]
+
 /**
  * Default bootstrap relays
  */

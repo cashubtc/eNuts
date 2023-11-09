@@ -7,7 +7,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { createRef, useCallback, useEffect, useState } from 'react'
+import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, type TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -34,8 +34,10 @@ export default function Search({
 	const { highlight } = useThemeContext()
 	const [searchInput, setSearchInput] = useState('')
 	const inputRef = createRef<TextInput>()
+	const lastSearchQuery = useRef('')
 
 	const handleOnChangeSearch = (text: string) => {
+		lastSearchQuery.current = ''
 		setSearchInput(text)
 		// handle search by username if all contacts have been synced
 		if (!hasFullySynced) {
@@ -61,9 +63,11 @@ export default function Search({
 	}
 
 	const handleNip50Search = useCallback((text: string) => {
+		if (text === lastSearchQuery.current) { return }
 		if (!text.length) {
 			return setSearchResults([])
 		}
+		lastSearchQuery.current = text
 		nostrRef.current?.search(text)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -93,7 +97,10 @@ export default function Search({
 			{/* Submit nip50 search */}
 			<TouchableOpacity
 				style={styles.submitSearch}
-				onPress={() => void handleNip50Search(searchInput)}
+				onPress={() => {
+					inputRef.current?.blur()
+					void handleNip50Search(searchInput)
+				}}
 			>
 				<SearchIcon color={hi[highlight]} />
 			</TouchableOpacity>
