@@ -18,7 +18,7 @@ export const defaultSearchRelays = [
 	'wss://filter.stealth.wine?broadcast=true',
 	'wss://nostr.novacisko.cz',
 	'wss://relay.noswhere.com'
-]
+].map(normalizeURL)
 
 /**
  * Default bootstrap relays
@@ -30,12 +30,12 @@ export const defaultRelays = [
 	'wss://relay.damus.io',
 	'wss://relay.primal.net',
 	'wss://relay.snort.social',
-	// 'wss://relay.wellorder.net',
-	// 'wss://nostr.mom',
-	// 'wss://eden.nostr.land',
-	// 'wss://nos.lol',
-	// 'wss://nostr-pub.wellorder.net',
-	// 'wss://nostr-verified.wellorder.net',
+	'wss://relay.wellorder.net',
+	'wss://nostr.mom',
+	'wss://eden.nostr.land',
+	'wss://nos.lol',
+	'wss://nostr-pub.wellorder.net',
+	'wss://nostr-verified.wellorder.net',
 
 	// 'wss://bevo.nostr1.com',
 	// 'wss://bitcoiner.social',
@@ -88,7 +88,6 @@ export const EventKind = {
 	ZapReceipt: 9735, 			// NIP 57
 	HttpAuthentication: 27235, // NIP XX - HTTP Authentication
 } as const
-
 
 export const enutsPubkey: Npub = 'npub1dx5q2el8nd4eh3eg9t2e25fd7zuqg7zxz6ldkc3uzgh66ss2yc6st288sj'
 
