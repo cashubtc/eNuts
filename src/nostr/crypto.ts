@@ -7,7 +7,7 @@ import { AES, enc, lib, mode } from 'crypto-js'
 
 function getEncKey(privkey: string, pubkey: string) {
 	const key = secp256k1.getSharedSecret(privkey, '02' + pubkey)
-	return getNormalizedX(key)
+	return key.slice(1, 33)
 }
 export function encrypt(privkey: string, pubkey: string, text: string) {
 	const iv = randomBytes(16)
@@ -37,9 +37,6 @@ export function decrypt(privkey: string, pubkey: string, data: string) {
 		l(isErr(e) ? e.message : e)
 		return ''
 	}
-}
-function getNormalizedX(key: Uint8Array): Uint8Array {
-	return key.slice(1, 33)
 }
 function bytesToWordArr(ba: Uint8Array) {
 	const wa: number[] = []

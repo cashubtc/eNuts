@@ -160,11 +160,12 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 		if (result?.newKeys) { _setKeys(mintUrl, result.newKeys) }
 		if (result?.change?.length) { await addToken({ token: [{ mint: mintUrl, proofs: result.change }] }) }
 		if (result.isPaid) { await deleteProofs(proofs) }
-		if (fee - sumProofsValue((result.change)) < 0) {
+		const realFee = fee - sumProofsValue(result.change)
+		if (realFee < 0) {
 			l('######################################## ERROR ####################################')
-			l({ result, fee, realFee: fee - sumProofsValue((result.change)), amountToPay, amount, proofs: sumProofsValue(proofs) })
+			l({ result, fee, realFee, amountToPay, amount, proofs: sumProofsValue(proofs) })
 		}
-		return { result, fee, realFee: fee - sumProofsValue(result.change) }
+		return { result, fee, realFee }
 	} catch (error) {
 		await addToken({ token: [{ mint: mintUrl, proofs }] })
 		return { result: undefined, error }
