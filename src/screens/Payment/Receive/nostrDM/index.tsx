@@ -41,14 +41,14 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	const setDmsCB = useCallback((newDms: INostrDm[]) => setDms(newDms), [])
 
 	// decrypt dm, check for uniq cashu token and set dms state
-	const handleDm = async (sk: string, e: NostrEvent) => {
+	const handleDm = (sk: string, e: NostrEvent) => {
 		if (!sk.length) {
 			l('can not handle dms, empy key!')
 			return
 		}
 		const tokenMinLength = 25
 		// decrypt content
-		const decrypted = await decrypt(sk, e.pubkey, e.content)
+		const decrypted = decrypt(sk, e.pubkey, e.content)
 		// remove newlines (can be attached to the cashu token) and create an array of words
 		const words = decrypted.replace(/\n/g, ' ').split(' ')
 		// check each word of content
@@ -86,14 +86,14 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 				kinds: [EventKind.DirectMessage, EventKind.SetMetadata],
 				skipVerification: Config.skipVerification
 			})
-			sub?.on('event', async (e: NostrEvent) => {
+			sub?.on('event', (e: NostrEvent) => {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 				if (+e.kind === EventKind.SetMetadata) {
 					setDmProfiles(prev => prev.some(x => x[0] === e.pubkey) ? prev : [...prev, [e.pubkey, parseProfileContent(e)]])
 				}
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 				if (+e.kind === EventKind.DirectMessage) {
-					await handleDm(sk || '', e)
+					handleDm(sk || '', e)
 				}
 			})
 			sub?.on('eose', () => {
