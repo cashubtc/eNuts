@@ -1,5 +1,5 @@
 import useCopy from '@comps/hooks/Copy'
-import { ChevronRightIcon, CopyIcon, ListFavIcon } from '@comps/Icons'
+import { ChevronRightIcon, CopyIcon, ListFavIcon, OutlinedFavIcon } from '@comps/Icons'
 import Popup from '@comps/Popup'
 import Txt from '@comps/Txt'
 import type { IContact } from '@model/nostr'
@@ -70,7 +70,7 @@ export default function ContactPreview({
 		{
 			txt: isFav ? t('removeFav') : t('favorite'),
 			onSelect: handleFav,
-			icon: <ListFavIcon width={20} height={20} color={isFav ? color.TEXT : mainColors.STAR} />,
+			icon: isFav ? <ListFavIcon width={20} height={20} color={mainColors.STAR} /> : <OutlinedFavIcon width={20} height={20} color={color.TEXT} />,
 			hasSeparator: true
 		},
 		{
