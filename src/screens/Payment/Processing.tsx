@@ -203,7 +203,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 					return
 				}
 				const msg = `${userNostrNpub || nostr.senderName}  (sender not verified) just sent you ${amount} Sat in Ecash using ${enutsPubkey}!\n\n ${token}`
-				const cipherTxt = await encrypt(sk, nostr.receiverNpub, msg)
+				const cipherTxt = encrypt(sk, nostr.receiverNpub, msg)
 				const event = {
 					kind: EventKind.DirectMessage,
 					tags: [['p', nostr.receiverNpub]],
