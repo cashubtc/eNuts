@@ -93,7 +93,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 		}
 		try {
 			const hex = isHex(newNpub) ? newNpub : nip19.decode(newNpub)?.data
-			if(!isStr(hex)) {
+			if (!isStr(hex)) {
 				return openPromptAutoClose({ msg: t('invalidPubKey', { ns: NS.common }) })
 			}
 			await replaceNpub(hex)
@@ -124,7 +124,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						recyclingKey={contact?.hex}
 					/>
 				</View>
-				{isUser ?
+				{isUser &&
 					<View style={styles.smallBtnWrap}>
 						<SmallBtn onPress={openEditSheet}>
 							<PenIcon color={mainColors.WHITE} />
@@ -134,10 +134,6 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 							<TrashbinIcon color={mainColors.WHITE} />
 						</SmallBtn>
 					</View>
-					:
-					<SmallBtn onPress={() => void handleSend()}>
-						<Txt txt={t('sendEcash', { ns: NS.common })} bold />
-					</SmallBtn>
 				}
 			</View>
 			<View style={styles.contentWrap}>
@@ -166,6 +162,12 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						<Txt txt={contact.about} styles={[styles.about]} />
 					}
 				</ScrollView>
+			</View>
+			<View style={styles.sendBtn}>
+				<Button
+					txt={t('sendEcash', { ns: NS.common })}
+					onPress={() => void handleSend()}
+				/>
 			</View>
 			<LeaveAppModal url={url} visible={visible} closeModal={closeModal} />
 			<BottomModal
@@ -309,5 +311,11 @@ const styles = StyleSheet.create({
 	},
 	newNpubHintTxt: {
 		color: mainColors.WARN
+	},
+	sendBtn: {
+		position: 'absolute',
+		bottom: 20,
+		left: 20,
+		right: 20,
 	}
 })
