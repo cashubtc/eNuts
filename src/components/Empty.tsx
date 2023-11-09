@@ -55,7 +55,6 @@ export default function Empty({ txt, hint, hasOk, pressable, onPress, nav }: IEm
 				<TxtButton
 					txt={t('backToDashboard')}
 					onPress={() => nav?.navigate('dashboard')}
-				// style={[{ paddingVertical: 10 }]}
 				/>
 			}
 		</View>

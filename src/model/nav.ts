@@ -2,7 +2,7 @@ import type { EventArg } from '@react-navigation/core'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection, ITokenInfo } from '.'
-import { IContact, Npub } from './nostr'
+import { HexKey, IContact } from './nostr'
 
 interface INostrSendData {
 	senderName: string
@@ -133,11 +133,11 @@ export type RootStackParamList = {
 		mintUrl: string
 	}
 	'npub confirm': {
-		npub: Npub
+		hex: HexKey
 	}
 	'scan success': {
 		mintUrl?: string
-		npub?: Npub
+		hex?: HexKey
 		edited?: boolean
 		userProfile?: IContact
 	}

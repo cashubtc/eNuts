@@ -1,5 +1,6 @@
 export type HexKey = string
 export type Npub = `npub1${string}`
+export type Nprofile = `nprofile1${string}`
 export interface IProfileContent {
 	about?: string
 	banner?: string

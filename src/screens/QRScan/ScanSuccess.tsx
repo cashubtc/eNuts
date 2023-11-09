@@ -6,15 +6,16 @@ import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatMintUrl } from '@util'
+import { formatMintUrl, isStr } from '@util'
 import AnimatedLottieView from 'lottie-react-native'
+import { nip19 } from 'nostr-tools'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPageProps) {
 
-	const { mintUrl, npub, edited, userProfile } = route.params
+	const { mintUrl, hex, edited, userProfile } = route.params
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
 
@@ -27,7 +28,7 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 	}
 
 	const handleContacts = () => {
-		if (!npub) { return }
+		if (!hex) { return }
 		navigation.navigate('Address book')
 	}
 
@@ -55,7 +56,7 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 					{mintUrl ? t('newMintAdded') : t('npubAdded', { ns: NS.common })}
 				</Text>
 				<Text style={[styles.mint, { color: color.TEXT_SECONDARY }]}>
-					{mintUrl ? formatMintUrl(mintUrl) : npub}
+					{mintUrl ? formatMintUrl(mintUrl) : isStr(hex) ? nip19.npubEncode(hex) : 'N/A'}
 				</Text>
 				<AnimatedLottieView
 					imageAssetsFolder='lottie/success'

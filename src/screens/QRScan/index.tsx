@@ -6,7 +6,7 @@ import { isIOS, QRType } from '@consts'
 import { addMint, getMintsUrls } from '@db'
 import TrustMintModal from '@modal/TrustMint'
 import type { TQRScanPageProps } from '@model/nav'
-import { isNpubQR } from '@nostr/util'
+import { isNProfile, isNpubQR } from '@nostr/util'
 import { useIsFocused } from '@react-navigation/core'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
@@ -16,11 +16,13 @@ import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isUrl
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
+import { nip19 } from 'nostr-tools'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import QRMarker from './Marker'
+import { l } from '@src/logger'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const { mint, balance } = route.params
@@ -91,21 +93,26 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		}
 		// handle cashu token claim
 		if (isCashuToken(data)) {
-			// l('is cashu token', data)
 			setToken(data)
 			void handleCashuToken(data)
 			return
 		}
-		// handle npubs // TODO handle nprofile notation?
+		// handle nostr
+		if (isNProfile(data)) {
+			try {
+				const res = nip19.decode(data)?.data
+				return navigation.navigate('npub confirm', { hex: res.pubkey })
+			} catch (e) {
+				return openPromptAutoClose({ msg: t('unknownType') + ` "${data}"` })
+			}
+		}
 		const npub = isNpubQR(data)
 		if (npub) {
-			return navigation.navigate('npub confirm', { npub })
+			const hex = nip19.decode(npub)?.data
+			return navigation.navigate('npub confirm', { hex })
 		}
-		// l({ data })
-		// l({ dataProtocol: new URL(data).protocol })
-		// handle urls
+		// handle mint urls
 		if (isUrl(data) && new URL(data).protocol === 'https:') {
-			// l('is url', data)
 			return navigation.navigate('mint confirm', { mintUrl: data })
 		}
 		// handle LN invoice

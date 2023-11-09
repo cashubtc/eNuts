@@ -15,6 +15,7 @@ import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi } from '@styles'
@@ -26,7 +27,7 @@ import { StyleSheet, Text, View } from 'react-native'
 
 export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPageProps) {
 
-	const { npub } = route.params
+	const { hex } = route.params
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const { replaceNpub } = useNostrContext()
@@ -35,8 +36,8 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 	const [userProfile, setUserProfile] = useState<IContact | undefined>()
 	const { loading, startLoading, stopLoading } = useLoading()
 
-	const handleMetadata = (npub: string) => {
-		const hex = nip19.decode(npub)?.data
+	const handleMetadata = () => {
+		l({hex})
 		if (!hex || !isStr(hex)) { return }
 		const sub = pool.subscribePool({
 			filter: {
@@ -54,35 +55,35 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 	}
 
 	const handleNpub = async () => {
-		const currentNpub = await store.get(STORE_KEYS.npub)
-		if (currentNpub === npub) {
+		const currentHex = await store.get(STORE_KEYS.npubHex)
+		if (currentHex === hex) {
 			openPromptAutoClose({ msg: t('npubAlreadyAdded') })
 			return
 		}
-		if (isStr(currentNpub) && npub !== currentNpub) {
+		if (isStr(currentHex) && hex !== currentHex) {
 			setModal(true)
 			return
 		}
 		const didInit = await store.get(STORE_KEYS.nutpub)
-		if (!currentNpub) {
-			await handleNewNpub(npub, !isStr(didInit)).catch(() =>
+		if (!currentHex) {
+			await handleNewNpub(hex, !isStr(didInit)).catch(() =>
 				openPromptAutoClose({ msg: t('invalidPubKey') })
 			)
-			navigation.navigate('scan success', { npub, userProfile })
+			navigation.navigate('scan success', { hex, userProfile })
 		}
 	}
 
 	const handleNpubReplace = async () => {
-		await replaceNpub(npub).catch(() =>
+		await replaceNpub(hex).catch(() =>
 			openPromptAutoClose({ msg: t('invalidPubKey') })
 		)
 		setModal(false)
-		navigation.navigate('scan success', { npub, userProfile })
+		navigation.navigate('scan success', { hex, userProfile })
 	}
 
 	useEffect(() => {
 		startLoading()
-		handleMetadata(npub)
+		handleMetadata()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -106,7 +107,7 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 								<NIP05Verified nip05={userProfile.nip05} onPress={() => {/* ignore */ }} />
 							}
 							<Txt
-								txt={npub}
+								txt={nip19.npubEncode(hex)}
 								styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
 							/>
 						</>

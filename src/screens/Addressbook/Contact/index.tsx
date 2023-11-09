@@ -15,6 +15,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
+import { isStr } from '@util'
 import { nip19 } from 'nostr-tools'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -91,10 +92,13 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			return openPromptAutoClose({ msg: t('invalidPubKey', { ns: NS.common }) })
 		}
 		try {
-			const npub = isHex(newNpub) ? nip19.npubEncode(newNpub) : newNpub
-			await replaceNpub(npub)
+			const hex = isHex(newNpub) ? newNpub : nip19.decode(newNpub)?.data
+			if(!isStr(hex)) {
+				return openPromptAutoClose({ msg: t('invalidPubKey', { ns: NS.common }) })
+			}
+			await replaceNpub(hex)
 			closeSheet()
-			navigation.navigate('scan success', { npub, edited: true })
+			navigation.navigate('scan success', { hex, edited: true })
 		} catch (error) {
 			return openPromptAutoClose({ msg: t('invalidPubKey', { ns: NS.common }) })
 		}

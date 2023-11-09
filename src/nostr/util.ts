@@ -1,12 +1,10 @@
-import type { HexKey, IContact, IProfileContent, Npub } from '@model/nostr'
-// import { l } from '@src/logger'
+import type { HexKey, IContact, IProfileContent, Nprofile, Npub } from '@model/nostr'
+import { l } from '@src/logger'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { cTo } from '@store/utils'
 import { isStr, uniq } from '@util'
 import { Event as NostrEvent, generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
-
-// TODO create a util class for this to improve DX
 
 /**
  * Get a huge list of available relays
@@ -98,6 +96,10 @@ export function isNpub(s: unknown): s is Npub {
 	return isStr(s) && s.length === 63 && /npub1[023456789acdefghjklmnpqrstuvwxyz]{58}/.test(s)
 }
 
+export function isNProfile(s: unknown): s is Nprofile {
+	return isStr(s) && s.length === 70 && /nprofile1[023456789acdefghjklmnpqrstuvwxyz]{58}/.test(s)
+}
+
 export function isNpubQR(str: string) {
 	if (!str || !isStr(str)) { return }
 	str = str.trim()
@@ -111,10 +113,10 @@ export function isNpubQR(str: string) {
 	} catch (_) {/* ignored */ }
 }
 
-export async function handleNewNpub(npub: Npub, initSecret = false) {
+export async function handleNewNpub(hex: HexKey, initSecret = false) {
 	const pub = {
-		encoded: npub,
-		hex: nip19.decode(npub).data
+		encoded: nip19.npubEncode(hex),
+		hex
 	}
 	await Promise.allSettled([
 		store.set(STORE_KEYS.npub, pub.encoded), 	// save nostr encoded pubKey

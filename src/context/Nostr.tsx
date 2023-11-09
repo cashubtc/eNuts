@@ -1,5 +1,5 @@
 import { l } from '@log'
-import type { IContact, Npub, TUserRelays } from '@model/nostr'
+import type { HexKey, IContact, TUserRelays } from '@model/nostr'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getRedeemdedSigs } from '@store/nostrDms'
@@ -37,8 +37,8 @@ const useNostr = () => {
 		])
 	}
 
-	const replaceNpub = async (npub: Npub) => {
-		const hex = nip19.decode(npub).data
+	const replaceNpub = async (hex: HexKey) => {
+		const npub = nip19.npubEncode(hex)
 		await Promise.allSettled([
 			resetNostrData(),
 			store.set(STORE_KEYS.npub, npub),
@@ -140,7 +140,7 @@ const NostrContext = createContext<useNostrType>({
 	// eslint-disable-next-line @typescript-eslint/await-thenable, no-return-await
 	resetNostrData: async () => await l(''),
 	// eslint-disable-next-line @typescript-eslint/await-thenable, no-return-await
-	replaceNpub: async (npub: Npub) => await l(npub),
+	replaceNpub: async (hex: HexKey) => await l(hex),
 })
 
 export const useNostrContext = () => useContext(NostrContext)

@@ -42,6 +42,7 @@ export interface IOnMetadataSubsProgressHandler {
 
 export class Nostr {
 	#synced = false
+	#tryCount = 5
 	getToDo(filterFn?: (c: string) => boolean, rnd = false) {
 		const x = uniq(this.#user.contacts.list)
 			.filter(x =>
@@ -106,7 +107,8 @@ export class Nostr {
 		// void this.initUserData(userRelays)
 	}
 	#isSync() {
-		if ((this.getToDo().length - [...this.#tryMap.values()].filter(x => x > 25).length) < 2) {
+		// TODO this is a very expensive operation
+		if ((this.getToDo().length - [...this.#tryMap.values()].filter(x => x > this.#tryCount).length) < 2) {
 			// this.#synced = true
 			return true
 		}
@@ -259,12 +261,7 @@ export class Nostr {
 		if (!toDo?.length) {
 			authors = this.getToDo(x => !old.includes(x)).slice(0, count)
 		} else {
-			authors = toDo.filter(x =>
-				isHex(x) &&
-				!this.#profiles.has(x) &&
-				!pool.metadataSubsState[x]
-			)
-			// authors = this.getToDo(x => !old.includes(x) && toDo.includes(x)).slice(0, count)
+			authors = this.getToDo(x => !old.includes(x) && toDo.includes(x)).slice(0, count)
 		}
 		authors = authors.filter(x => this.#checkReTry(x))
 		if (authors.length < count) {
@@ -275,8 +272,7 @@ export class Nostr {
 				]
 			).slice(0, count)
 		}
-		if (authors.length < count) {
-			// TODO any user that has less follows than {count} will never get contacts metadata?
+		if (this.isSync) {
 			l('[setupMetadataSubMany] no more to do', {
 				internp: this.len,
 				len: this.#user.contacts.list.length,

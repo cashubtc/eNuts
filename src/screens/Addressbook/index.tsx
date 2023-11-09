@@ -56,9 +56,9 @@ interface IViewableItems { viewableItems: CustomViewToken[] }
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
 
-function filterContactArr(arr: IContact[]) {
-	return arr.filter(x => x && Object.keys(x).length > 1)
-}
+// function filterContactArr(arr: IContact[]) {
+// 	return arr.filter(x => x && Object.keys(x).length > 1)
+// }
 
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
@@ -113,9 +113,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		if (nostrRef.current?.isSync) { return }
 		void nostrRef.current?.setupMetadataSubMany({
 			// contactsView,
-			hasArr: filterContactArr(
-				contacts?.length ? contacts : contactsRef?.current ?? []
-			),
+			// hasArr: filterContactArr(
+			// 	contacts?.length ? contacts : contactsRef?.current ?? []
+			// ),
 			toDo: contactsTodo,
 			count: 15,
 			sig: abortControllerRef?.current?.signal,
@@ -126,16 +126,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			// noCache: true,
 			onEose: (done, authors) => {
 				l('[onEose]', { done: done.length, authors: authors.length })
-				if (done.length === authors.length) {
-					// TODO also set this state if class instance logs [setupMetadataSubMany] no more to do
-					// setHasFullySynced(true)
-					return
-				}
-				if (done.length < 2) {
-					// TODO Handle this case
-					// maybe ?
-					// void next()
-				}
+				// TODO use this statement
+				// if (nostrRef.current?.isSync) {
+				// 	// setHasFullySynced(true)
+				// 	// return
+				// }
 			}
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
