@@ -74,8 +74,8 @@ export default function ContactPreview({
 			hasSeparator: true
 		},
 		{
-			txt: t('showProfile'),
-			onSelect: openProfile,
+			txt: t('sendEcash', { ns: NS.common }),
+			onSelect: handleSend,
 			icon: <ChevronRightIcon width={16} height={16} color={color.TEXT} />,
 			hasSeparator: true
 		},
@@ -87,7 +87,7 @@ export default function ContactPreview({
 	]
 
 	return (
-		<TouchableOpacity onPress={handleSend} style={[styles.container]}>
+		<TouchableOpacity onPress={openProfile} style={[styles.container]}>
 			<View style={styles.colWrap}>
 				<ProfilePic
 					hex={contact.hex}
