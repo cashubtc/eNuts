@@ -123,6 +123,8 @@ export default function TopNav({
 							!nostrProfile &&
 							!loading &&
 							!noIcons &&
+							!cancel &&
+							!txt?.length &&
 							<ScanQRIcon color={color.TEXT} />
 						}
 						{historyOpts && historyOpts.length > 0 &&
