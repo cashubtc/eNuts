@@ -183,7 +183,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						})
 					}
 				},
-				userRelays
+				userRelays,
 			})
 			await nostrRef.current.initUserData(userRelays)
 		}
@@ -400,6 +400,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		setShowSearch(false)
 		// user has no nostr data yet
 		if (!pubKey.encoded || !pubKey.hex) {
+			l({pubKey})
 			setNewNpubModal(true)
 			stopLoading()
 			return

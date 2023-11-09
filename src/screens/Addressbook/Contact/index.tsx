@@ -163,12 +163,14 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					}
 				</ScrollView>
 			</View>
-			<View style={styles.sendBtn}>
-				<Button
-					txt={t('sendEcash', { ns: NS.common })}
-					onPress={() => void handleSend()}
-				/>
-			</View>
+			{!isUser &&
+				<View style={styles.sendBtn}>
+					<Button
+						txt={t('sendEcash', { ns: NS.common })}
+						onPress={() => void handleSend()}
+					/>
+				</View>
+			}
 			<LeaveAppModal url={url} visible={visible} closeModal={closeModal} />
 			<BottomModal
 				visible={sheet.delete}
