@@ -1,12 +1,17 @@
-// import { l } from '@log'
+import { l } from '@log'
+import { INostrSendData } from '@model/nav'
+import { secureStore, store } from '@store'
+import { SECRET, STORE_KEYS } from '@store/consts'
+import { updateNostrDmUsers } from '@store/nostrDms'
+import { cTo } from '@store/utils'
 import { isErr, uniq } from '@util'
 import type { EventTemplate, Filter, Sub, SubscriptionOptions } from 'nostr-tools'
 import { finishEvent, SimplePool, validateEvent } from 'nostr-tools'
 
-import { defaultRelays, EventKind } from '../consts'
+import { defaultRelays, enutsPubkey, EventKind } from '../consts'
+import { encrypt } from '../crypto'
 import { normalizeURL } from '../util'
 
-const l = console.log
 interface IPoolSubArgs {
 	filter: IPoolSubProps,
 	args?: SubscriptionOptions
@@ -16,6 +21,11 @@ interface IPoolSubProps<K extends number = number> extends Filter<K> {
 	skipVerification?: boolean
 	authors?: string[]
 	kinds?: K[]
+}
+interface IPublishEventProps {
+	nostr: INostrSendData
+	amount: number
+	token: string
 }
 
 class Pool {
@@ -80,7 +90,7 @@ class Pool {
 				clearTimeout(handel)
 				eoseHandlers.forEach(fn => { void fn() })
 				eoseHandlers = []
-				console.error('###############################\n\n\nsub timeout\n\n\n#####################################')
+				l('###############################\n\n\nsub timeout\n\n\n#####################################')
 			}, 3000)
 			sub?.on('event', e => {
 				clearTimeout(handel)
@@ -147,18 +157,45 @@ class Pool {
 			l(`RelayPool subscribe error: ${isErr(e) ? e.message : 'No error message'}`)
 		}
 	}
-	async publishEventToPool(event: EventTemplate<4>, sk: string, relayUrls?: string[]) {
+	#publishEventToPool(event: EventTemplate<4>, sk: string, relayUrls?: string[]) {
 		const validated = this.#validate(event, sk)
 		if (!validated) { return false }
 		try {
 			const relays = this.#relaysClean(relayUrls)
-			const res = await Promise.allSettled(this.#pool?.publish(relays, validated) ?? [])
-			l({ res })
+			// TODO Promise.allSettled sometimes is false even though the event is published
+			// TODO Promise.allSettled sometimes does not return at all
+			// await Promise.allSettled(this.#pool?.publish(relays, validated) ?? [])
+			// TODO update the pool to return a promise
+			this.#pool?.publish(relays, validated)
 			return true
 		} catch (e) {
 			l({ publishError: isErr(e) ? e.message : 'Publish error' })
 			return false
 		}
+	}
+	async publishEvent({ nostr, amount, token }: IPublishEventProps) {
+		const sk = await secureStore.get(SECRET)
+		const userNostrNpub = await store.get(STORE_KEYS.npub)
+		if (!sk?.length || !nostr?.contact) {
+			return false
+		}
+		const msg = `${userNostrNpub || nostr.senderName}  (sender not verified) just sent you ${amount} Sat in Ecash using ${enutsPubkey}!\n\n ${token}`
+		const cipherTxt = encrypt(sk, nostr.contact.hex, msg)
+		const event = {
+			kind: EventKind.DirectMessage,
+			tags: [['p', nostr.contact.hex]],
+			content: cipherTxt,
+			created_at: Math.ceil(Date.now() / 1000),
+		}
+		const userRelays = await store.get(STORE_KEYS.relays)
+		// TODO publish the event to the RECIPIENT relays AND our relays.
+		const published = this.#publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
+		if (!published) {
+			return false
+		}
+		// save recipient hex to get the conversation later on
+		await updateNostrDmUsers(nostr.contact)
+		return true
 	}
 	closePoolConnection(relayUrls: string[]) {
 		this.#subs.forEach(x => x?.unsub())

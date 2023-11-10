@@ -4,7 +4,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection, ITokenInfo } from '.'
 import { HexKey, IContact } from './nostr'
 
-interface INostrSendData {
+export interface INostrSendData {
 	senderName: string
 	contact?: IContact
 }

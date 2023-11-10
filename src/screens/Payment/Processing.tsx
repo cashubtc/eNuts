@@ -2,24 +2,17 @@ import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import { getMintBalance, getMintsBalances } from '@db'
-// import { l } from '@log'
 import type { IMintUrl } from '@model'
 import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import { pool } from '@nostr/class/Pool'
-import { enutsPubkey, EventKind } from '@nostr/consts'
-import { encrypt } from '@nostr/crypto'
 import { getNostrUsername } from '@nostr/util'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { secureStore, store } from '@store'
-import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
-import { updateNostrDmUsers } from '@store/nostrDms'
-import { cTo } from '@store/utils'
 import { globals } from '@styles'
 import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
 import { autoMintSwap, checkFees, payLnInvoice, requestMint, sendToken } from '@wallet'
@@ -185,43 +178,21 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			})
 			// https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 			if (nostr) {
-				const sk = await secureStore.get(SECRET)
-				const userNostrNpub = await store.get(STORE_KEYS.npub)
-				if (!sk?.length || !nostr?.contact) {
-					navigation.navigate(
-						'processingError',
-						getErrObj(mint, amount, t('createTokenErr', { ns: NS.common }))
-					)
-					return
-				}
-				const msg = `${userNostrNpub || nostr.senderName}  (sender not verified) just sent you ${amount} Sat in Ecash using ${enutsPubkey}!\n\n ${token}`
-				const cipherTxt = encrypt(sk, nostr.contact.hex, msg)
-				const event = {
-					kind: EventKind.DirectMessage,
-					tags: [['p', nostr.contact.hex]],
-					content: cipherTxt,
-					created_at: Math.ceil(Date.now() / 1000),
-				}
-				const userRelays = await store.get(STORE_KEYS.relays)
 				// TODO publish the event to the RECIPIENT relays AND our relays.
-				const published = await pool.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
+				const published = await pool.publishEvent({ nostr, amount, token })
 				// TODO published sometimes is false even though the event is published
 				// TODO publishEventToPool sometimes does not return at all
 				if (!published) {
-					navigation.navigate(
+					return navigation.navigate(
 						'processingError',
 						getErrObj(mint, amount, t('eventError', { ns: NS.common }))
 					)
-					return
 				}
-				// save recipient hex to get the conversation later on
-				await updateNostrDmUsers(nostr.contact)
 				setRecent(prev => {
 					if (!nostr.contact) { return prev }
 					return uniqByIContacts([...prev, nostr.contact], 'hex')
 				})
-				navigation.navigate('success', { amount, nostr })
-				return
+				return navigation.navigate('success', { amount, nostr })
 			}
 			navigation.navigate('encodedToken', { entry })
 		} catch (e) {
