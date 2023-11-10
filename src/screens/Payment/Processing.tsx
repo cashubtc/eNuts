@@ -1,7 +1,6 @@
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
-import { _testmintUrl } from '@consts'
-import { getMintBalance, getMintsBalances } from '@db'
+import { getMintBalance } from '@db'
 import type { IMintUrl } from '@model'
 import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
@@ -12,11 +11,11 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
-import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
+import { getDefaultMint } from '@store/mintStore'
 import { globals } from '@styles'
 import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
-import { autoMintSwap, checkFees, payLnInvoice, requestMint, sendToken } from '@wallet'
-import { useEffect } from 'react'
+import { autoMintSwap, checkFees, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
@@ -60,7 +59,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		errorMsg: isErr(e) ? e.message : fallbackMsg
 	})
 
-	const getProcessingtxt = () => {
+	const processingTxt = useMemo(() => {
 		if (isZap && !payZap) { return 'prepairZapData' }
 		if (isMelt || (isZap && payZap)) { return 'processingPaymentByMint' }
 		if (isSwap) { return 'processingSwap' }
@@ -71,7 +70,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			return 'creatingEcashToken'
 		}
 		return 'awaitingInvoice'
-	}
+	}, [isMelt, isSwap, isZap, payZap, isSendEcash, nostr])
 
 	const handleMintingProcess = async () => {
 		try {
@@ -92,7 +91,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 	const handleMeltingProcess = async () => {
 		let invoice = ''
-		// recipient can be a LNURL or a LN invoice
+		// recipient can be a LNURL (address) or a LN invoice
 		if (recipient?.length && isLnurl(recipient)) {
 			try {
 				invoice = await getInvoiceFromLnurl(recipient, +amount)
@@ -129,7 +128,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				mints: [mint.mintUrl],
 				timestamp: Math.ceil(Date.now() / 1000)
 			})
-			// l({ realFee: res.realFee })
 			navigation.navigate('success', {
 				amount,
 				fee: res.realFee,
@@ -142,7 +140,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	}
 
 	const handleSwapProcess = async () => {
-		if (!targetMint?.mintUrl?.trim()) { return handleError({ e: `targetMint: ${targetMint?.mintUrl} is invalid` }) }
+		if (!targetMint?.mintUrl?.trim()) {
+			return handleError({ e: `targetMint: ${targetMint?.mintUrl} is invalid` })
+		}
 		// simple way
 		try {
 			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0)
@@ -238,11 +238,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				}
 			}
 			// otherwise, check mint with highest balance
-			const mintsBals = await getMintsBalances()
-			const mints = await getCustomMintNames(mintsBals.map(m => ({ mintUrl: m.mintUrl })))
-			const filtered = mintsBals.filter(m => m.mintUrl !== _testmintUrl)
-			const highestBalance = Math.max(...filtered.map(m => m.amount))
-			const highestBalanceMint = mintsBals.find(m => m.amount === highestBalance)
+			const { mints, highestBalance, highestBalanceMint } = await getHighestBalMint()
 			// if highest balance + estFee is sufficient, use it
 			if (highestBalanceMint) {
 				// TODO need to handle the case where the highest balance mint is not reachable?
@@ -302,7 +298,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			<Loading size={40} nostr={!!nostr} />
 			<Txt
 				styles={[styles.descText]}
-				txt={t(getProcessingtxt())}
+				txt={t(processingTxt)}
 			/>
 			<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
 		</View>

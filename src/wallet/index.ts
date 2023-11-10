@@ -6,13 +6,15 @@ import {
 	type PayLnInvoiceResponse, type Proof,
 	type RequestMintResponse
 } from '@cashu/cashu-ts'
+import { _testmintUrl } from '@consts'
 import {
 	addInvoice, addMint, addToken, deleteProofs,
 	delInvoice, getAllInvoices, getInvoice,
-	getMintBalance, getMintsUrls
+	getMintBalance, getMintsBalances, getMintsUrls
 } from '@db'
 import { l } from '@log'
 import type { IInvoice } from '@src/model'
+import { getCustomMintNames } from '@store/mintStore'
 import { decodeLnInvoice, isCashuToken, isNum } from '@util'
 
 import { sumProofsValue } from './proofs'
@@ -227,6 +229,21 @@ export async function fullAutoMintSwap(srcMintUrl: string, destMintUrl: string, 
 		l('[fullAutoMintSwap][round: 2]', result)
 	} catch (error) { return { result, error } }
 	return { result }
+}
+
+// get mints for send/receive process
+export async function getMintsForPayment() {
+	const mintsBals = await getMintsBalances()
+	const mints = await getCustomMintNames(mintsBals.map(m => ({ mintUrl: m.mintUrl })))
+	return { mintsBals, mints }
+}
+
+export async function getHighestBalMint() {
+	const { mintsBals, mints } = await getMintsForPayment()
+	const filtered = mintsBals.filter(m => m.mintUrl !== _testmintUrl)
+	const highestBalance = Math.max(...filtered.map(m => m.amount))
+	const highestBalanceMint = mintsBals.find(m => m.amount === highestBalance)
+	return { mints, highestBalance, highestBalanceMint }
 }
 
 let isRequestTokenLoopRunning = false

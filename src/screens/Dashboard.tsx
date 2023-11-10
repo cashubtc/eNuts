@@ -7,7 +7,7 @@ import { AboutIcon, ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIco
 import InitialModal from '@comps/InitialModal'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
-import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
+import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import OptsModal from '@modal/OptsModal'
 import TrustMintModal from '@modal/TrustMint'
@@ -22,10 +22,10 @@ import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
-import { getCustomMintNames, saveDefaultOnInit } from '@store/mintStore'
+import { saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
 import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice } from '@util'
-import { claimToken } from '@wallet'
+import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -156,13 +156,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			memo: info?.decoded.memo,
 			isClaim: true
 		})
-	}
-
-	// get mints for send/receive process
-	const getMintsForPayment = async () => {
-		const mintsBals = await getMintsBalances()
-		const mints = await getCustomMintNames(mintsBals.map(m => ({ mintUrl: m.mintUrl })))
-		return { mintsBals, mints }
 	}
 
 	// receive ecash button
