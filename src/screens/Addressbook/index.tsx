@@ -9,7 +9,7 @@ import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
 import { l } from '@log'
-import type { TAddressBookPageProps } from '@model/nav'
+import type { INostrSendData, TAddressBookPageProps } from '@model/nav'
 import type { IContact } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
@@ -42,6 +42,11 @@ import Search from './Search'
 /****************************************************************************/
 /* State issues will occur while debugging Android and IOS at the same time */
 /****************************************************************************/
+
+// TODO get recipient relays for sending
+// TODO update nip50 search
+// TODO update search input behavior
+// TODO discuss changes in data structure of dms claimed Event Ids (previously string array -> now array of objects)
 
 interface CustomViewToken {
 	item: IContact
@@ -274,7 +279,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// 	setSyncModal(false)
 	// }
 
-	// handle npub input field
+	// handle npub/hex input field
 	const handleNpubInput = async () => {
 		startLoading()
 		setNewNpubModal(false)
@@ -319,9 +324,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 	// user presses the send ecash button
 	const handleSend = async (contact: IContact) => {
-		const nostr = {
+		const nostr: INostrSendData = {
 			senderName: getNostrUsername(userProfile),
-			contact
+			contact,
 		}
 		// melt to a contact zap address
 		if (contact && route.params?.isMelt) {
@@ -335,25 +340,24 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			navigation.navigate('selectAmount', { isMelt, lnurl: contact.lud16, mint, balance })
 			return
 		}
+		if (!nostrRef.current) { return }
 		// mint has already been selected
 		if (route.params?.mint) {
-			navigation.navigate('selectNostrAmount', {
+			return navigation.navigate('selectNostrAmount', {
 				mint: route.params.mint,
 				balance: route.params.balance,
 				nostr,
 			})
-			return
 		}
 		const mintsWithBal = await getMintsBalances()
 		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
 		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
 		if (nonEmptyMints.length === 1) {
-			navigation.navigate('selectNostrAmount', {
+			return navigation.navigate('selectNostrAmount', {
 				mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
 				balance: nonEmptyMints[0].amount,
 				nostr,
 			})
-			return
 		}
 		navigation.navigate('selectMint', {
 			mints,
@@ -415,11 +419,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
 				withBackBtn={isSending}
 				nostrProfile={userProfile?.picture}
-				// showSearch={pubKey.hex.length > 0}
-				// toggleSearch={() => {
-				// 	toggleSearch()
-				// 	setSearchResults([])
-				// }}
 				handlePress={() => navigation.goBack()}
 				openProfile={() => navigation.navigate('Contact', {
 					contact: userProfile,
@@ -428,10 +427,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				loading={loading}
 				noIcons
 			/>
-			{/* <Text style={{ color: color.TEXT }}>
-				{filterContactArr(contacts)?.length}/{contactsRef.current.length}
-				{' ('}{(filterContactArr(contacts)?.length * 100 / contactsRef.current.length).toFixed(2)}%{') '}
-			</Text> */}
 			{loading || (pubKey.hex.length && !contactsRef.current.length) ?
 				<View style={styles.loadingWrap}><Loading /></View>
 				:

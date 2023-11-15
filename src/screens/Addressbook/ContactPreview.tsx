@@ -86,7 +86,7 @@ export default function ContactPreview({
 			icon: <CopyIcon width={18} height={18} color={color.TEXT} />,
 		},
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	], [isFav])
+	], [isFav, contact])
 
 	return (
 		<TouchableOpacity onPress={openProfile} style={[styles.container]}>

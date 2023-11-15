@@ -25,6 +25,8 @@ import { ScrollView, StyleSheet, View } from 'react-native'
 
 import NostrMessage from './NostrMessage'
 
+const tokenMinLength = 25
+
 export default function NostrDMScreen({ navigation, route }: TNostrReceivePageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
@@ -43,7 +45,6 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 			return
 		}
 		if (claimedEvtIds[e.id]) { return }
-		const tokenMinLength = 25
 		// decrypt content
 		const decrypted = decrypt(sk, e.pubkey, e.content)
 		// remove newlines (can be attached to the cashu token) and create an array of words
@@ -54,7 +55,16 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 			if (!word || word.length < tokenMinLength) { continue }
 			// set dm state
 			if (isCashuToken(word)) {
-				setDms(prev => [...prev, { created_at: e.created_at, sender: e.pubkey, msg: decrypted, token: word, id: e.id }])
+				setDms(prev => [
+					...prev,
+					{
+						created_at: e.created_at,
+						sender: e.pubkey,
+						msg: decrypted,
+						token: word,
+						id: e.id
+					}
+				])
 			}
 		}
 	}

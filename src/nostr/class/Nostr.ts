@@ -245,7 +245,6 @@ export class Nostr {
 			}
 		})
 		sub?.on('event', (e: Event) => {
-			// l('search event', e)
 			this.#onSearchChanged?.(ProfileData.eventToIContact(e))
 		})
 		return sub

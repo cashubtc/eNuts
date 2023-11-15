@@ -10,7 +10,7 @@ import { finishEvent, SimplePool, validateEvent } from 'nostr-tools'
 
 import { defaultRelays, enutsPubkey, EventKind } from '../consts'
 import { encrypt } from '../crypto'
-import { normalizeURL } from '../util'
+import { normalizeURL, parseUserRelays } from '../util'
 
 interface IPoolSubArgs {
 	filter: IPoolSubProps,
@@ -176,9 +176,7 @@ class Pool {
 	async publishEvent({ nostr, amount, token }: IPublishEventProps) {
 		const sk = await secureStore.get(SECRET)
 		const userNostrNpub = await store.get(STORE_KEYS.npub)
-		if (!sk?.length || !nostr?.contact) {
-			return false
-		}
+		if (!sk?.length || !nostr?.contact) { return false }
 		const msg = `${userNostrNpub || nostr.senderName}  (sender not verified) just sent you ${amount} Sat in Ecash using ${enutsPubkey}!\n\n ${token}`
 		const cipherTxt = encrypt(sk, nostr.contact.hex, msg)
 		const event = {
@@ -187,15 +185,28 @@ class Pool {
 			content: cipherTxt,
 			created_at: Math.ceil(Date.now() / 1000),
 		}
-		const userRelays = await store.get(STORE_KEYS.relays)
-		// TODO publish the event to the RECIPIENT relays AND our relays.
-		const published = this.#publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
-		if (!published) {
-			return false
-		}
+		const storedRelays = await store.get(STORE_KEYS.relays)
+		const userRelays = cTo<string[]>(storedRelays || '[]')
+		const relaysToPublish = [...userRelays, ...defaultRelays]
+		const recipientRelays = await this.#getRelaysByHex(nostr.contact.hex, relaysToPublish)
+		const published = this.#publishEventToPool(event, sk, [...recipientRelays, ...relaysToPublish])
+		if (!published) { return false }
 		// save recipient hex to get the conversation later on
 		await updateNostrDmUsers(nostr.contact)
 		return true
+	}
+	async #getRelaysByHex(hex: string, relays: string[]) {
+		if (!this.#pool) { this.#connectPool() }
+		const resp = await this.#pool?.get(
+			relays,
+			{
+				authors: [hex],
+				kinds: [EventKind.ContactList],
+				limit: 1,
+			}
+		)
+		if (!resp) { return [] }
+		return parseUserRelays(resp?.content)
 	}
 	closePoolConnection(relayUrls: string[]) {
 		this.#subs.forEach(x => x?.unsub())

@@ -72,7 +72,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		return 'awaitingInvoice'
 	}, [isMelt, isSwap, isZap, payZap, isSendEcash, nostr])
 
-	const handleMintingProcess = async () => {
+	const handleMinting = async () => {
 		try {
 			const resp = await requestMint(mint.mintUrl, amount)
 			const decoded = decodeLnInvoice(resp.pr)
@@ -89,7 +89,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 	}
 
-	const handleMeltingProcess = async () => {
+	const handleMelting = async () => {
 		let invoice = ''
 		// recipient can be a LNURL (address) or a LN invoice
 		if (recipient?.length && isLnurl(recipient)) {
@@ -139,7 +139,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 	}
 
-	const handleSwapProcess = async () => {
+	const handleSwap = async () => {
 		if (!targetMint?.mintUrl?.trim()) {
 			return handleError({ e: `targetMint: ${targetMint?.mintUrl} is invalid` })
 		}
@@ -165,7 +165,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 	}
 
-	const handleSendingEcashProcess = async () => {
+	const handleSendingEcash = async () => {
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
 			// add as history entry (send ecash)
@@ -178,10 +178,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			})
 			// https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 			if (nostr) {
-				// TODO publish the event to the RECIPIENT relays AND our relays.
 				const published = await pool.publishEvent({ nostr, amount, token })
-				// TODO published sometimes is false even though the event is published
-				// TODO publishEventToPool sometimes does not return at all
 				if (!published) {
 					return navigation.navigate(
 						'processingError',
@@ -203,7 +200,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 	}
 
-	const handleZapProcess = async () => {
+	const handleZap = async () => {
 		if (!recipient) {
 			return navigation.navigate('processingError', {
 				mint,
@@ -269,20 +266,20 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	useEffect(() => {
 		if (isZap) {
 			if (payZap) {
-				return void handleMeltingProcess()
+				return void handleMelting()
 			}
-			return void handleZapProcess()
+			return void handleZap()
 		}
 		if (isMelt) {
-			return void handleMeltingProcess()
+			return void handleMelting()
 		}
 		if (isSwap) {
-			return void handleSwapProcess()
+			return void handleSwap()
 		}
 		if (isSendEcash) {
-			return void handleSendingEcashProcess()
+			return void handleSendingEcash()
 		}
-		void handleMintingProcess()
+		void handleMinting()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMelt, isSwap, isZap, payZap, isSendEcash])
 
