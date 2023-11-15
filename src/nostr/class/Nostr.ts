@@ -249,7 +249,6 @@ export class Nostr {
 		})
 		return sub
 	}
-
 	public setupMetadataSubMany(opts: ISubOpts = {}) {
 		l('[setupMetadataSubMany]'/* ,{opts} */)
 		let { count = 0 } = opts

@@ -8,7 +8,6 @@ import Separator from '@comps/Separator'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
-import { l } from '@log'
 import type { INostrSendData, TAddressBookPageProps } from '@model/nav'
 import type { IContact } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
@@ -37,13 +36,11 @@ import { RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-
 import ContactPreview from './ContactPreview'
 import Recents from './Recents'
 import Search from './Search'
-// import SyncModal from './SyncModal'
 
 /****************************************************************************/
 /* State issues will occur while debugging Android and IOS at the same time */
 /****************************************************************************/
 
-// TODO get recipient relays for sending
 // TODO update nip50 search
 // TODO update search input behavior
 // TODO discuss changes in data structure of dms claimed Event Ids (previously string array -> now array of objects)
@@ -60,10 +57,6 @@ interface IViewableItems { viewableItems: CustomViewToken[] }
 
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
-
-// function filterContactArr(arr: IContact[]) {
-// 	return arr.filter(x => x && Object.keys(x).length > 1)
-// }
 
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
@@ -106,21 +99,14 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// sync status
 	const [hasFullySynced, setHasFullySynced] = useState(!!nostrRef.current?.isSync)
 	const abortControllerRef = useRef<AbortController>()
-	// const [status, setStatus] = useState({ started: false, finished: false })
-	// const [syncModal, setSyncModal] = useState(false)
-	// const [progress, setProgress] = useState(0)
-	// const [doneCount, setDoneCount] = useState(0)
+
 	const isSending = useMemo(() => route.params?.isMelt || route.params?.isSendEcash, [route.params?.isMelt, route.params?.isSendEcash])
 
 	// gets nostr data from cache or relay while scrolling
-	const next = useCallback((contactsTodo: string[]) => {
+	const next = useCallback((toDo: string[]) => {
 		if (nostrRef.current?.isSync) { return }
 		void nostrRef.current?.setupMetadataSubMany({
-			// contactsView,
-			// hasArr: filterContactArr(
-			// 	contacts?.length ? contacts : contactsRef?.current ?? []
-			// ),
-			toDo: contactsTodo,
+			toDo,
 			count: 15,
 			sig: abortControllerRef?.current?.signal,
 			emitOnProfileChanged: {
@@ -128,14 +114,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				emitOnEose: true
 			},
 			// noCache: true,
-			onEose: (done, authors) => {
-				l('[onEose]', { done: done.length, authors: authors.length })
-				// TODO use this statement
-				// if (nostrRef.current?.isSync) {
-				// 	// setHasFullySynced(true)
-				// 	// return
-				// }
-			}
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -260,25 +238,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		return 0
 	}, [favs])
 
-	// const handleSync = async () => {
-	// 	l('call handleSync function')
-	// 	if (!nostrRef.current) { return }
-	// 	abortControllerRef.current = new AbortController()
-	// 	setProgress(0)
-	// 	setDoneCount(0)
-	// 	setStatus(prev => ({ ...prev, started: true }))
-	// 	await nostrRef.current.setupMetadataSubAll({ sig: abortControllerRef.current.signal })
-	// 	//setContacts(Object.entries(result?.result || {}).map(([hex, profile]) => ({ hex, profile })))
-	// 	abortControllerRef.current = undefined
-	// }
-
-	// const handleCancel = () => {
-	// 	l('call hanbleCancel function')
-	// 	abortControllerRef.current?.abort()
-	// 	setStatus({ started: false, finished: true })
-	// 	setSyncModal(false)
-	// }
-
 	// handle npub/hex input field
 	const handleNpubInput = async () => {
 		startLoading()
@@ -394,7 +353,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		last.current.idx = -1
 		// user has no nostr data yet
 		if (!pubKey.encoded || !pubKey.hex) {
-			l({ pubKey })
 			setNewNpubModal(true)
 			stopLoading()
 			return
@@ -573,16 +531,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					onPress={() => setNewNpubModal(false)}
 				/>
 			</MyModal>
-			{/* <SyncModal
-				visible={syncModal}
-				close={() => setSyncModal(false)}
-				status={status}
-				handleSync={() => void handleSync()}
-				handleCancel={handleCancel}
-				progress={progress}
-				contactsCount={contactsRef.current.length}
-				doneCount={doneCount}
-			/> */}
 			{!isKeyboardOpen && !route.params?.isMelt && !route.params?.isSendEcash &&
 				<BottomNav navigation={navigation} route={route} />
 			}
