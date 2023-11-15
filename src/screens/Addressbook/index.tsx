@@ -41,8 +41,6 @@ import Search from './Search'
 /* State issues will occur while debugging Android and IOS at the same time */
 /****************************************************************************/
 
-// TODO update nip50 search
-// TODO update search input behavior
 // TODO discuss changes in data structure of dms claimed Event Ids (previously string array -> now array of objects)
 
 interface CustomViewToken {
@@ -66,6 +64,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const searchListRef = createRef<FlashList<IContact>>()
 	// Nostr class instance
 	const nostrRef = useRef<Nostr>()
+	const abortControllerRef = useRef<AbortController>()
 	// main context
 	const { t } = useTranslation([NS.common])
 	const isFocused = useIsFocused()
@@ -96,9 +95,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const contactsRef = useRef<IContact[]>([])
 	// last seen contact index
 	const last = useRef({ idx: -1 })
-	// sync status
-	const [hasFullySynced, setHasFullySynced] = useState(!!nostrRef.current?.isSync)
-	const abortControllerRef = useRef<AbortController>()
 
 	const isSending = useMemo(() => route.params?.isMelt || route.params?.isSendEcash, [route.params?.isMelt, route.params?.isSendEcash])
 
@@ -339,7 +335,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		])
 		nostrRef.current = undefined
 		contactsRef.current = []
-		setHasFullySynced(false)
 		last.current.idx = -1
 		setIsRefreshing(false)
 		void initContacts(pubKey.hex)
@@ -396,7 +391,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						/>
 					}
 					<Search
-						hasFullySynced={hasFullySynced}
 						contactsRef={contactsRef}
 						setContacts={setContacts}
 						searchResults={searchResults}

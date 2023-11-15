@@ -1,18 +1,15 @@
-import { SearchIcon } from '@comps/Icons'
+import { CloseIcon, SearchIcon } from '@comps/Icons'
 import TxtInput from '@comps/TxtInput'
 import type { IContact } from '@model/nostr'
 import type { Nostr } from '@nostr/class/Nostr'
-import { getNostrUsername, isNpub } from '@nostr/util'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
-import { nip19 } from 'nostr-tools'
 import { createRef, useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, type TextInput, TouchableOpacity, View } from 'react-native'
 
 interface ISearchProps {
-	hasFullySynced: boolean
 	contactsRef: React.MutableRefObject<IContact[]>
 	searchResults: IContact[]
 	setSearchResults: (contacts: IContact[]) => void
@@ -21,7 +18,6 @@ interface ISearchProps {
 }
 
 export default function Search({
-	hasFullySynced,
 	contactsRef,
 	setContacts,
 	searchResults,
@@ -38,26 +34,15 @@ export default function Search({
 		lastSearchQuery.current = ''
 		setSearchInput(text)
 		// handle search by username if all contacts have been synced
-		if (!hasFullySynced) {
-			if (searchResults.length) {
-				setSearchResults([])
-			}
-			return
+		if (searchResults.length) {
+			setContacts(contactsRef.current)
+			return setSearchResults([])
 		}
 		// reset search results
 		if (!text.length) {
 			setContacts(contactsRef.current)
-			setSearchResults([])
-			return
+			return setSearchResults([])
 		}
-		// handle npub search
-		if (isNpub(text)) {
-			const hex = nip19.decode(text).data
-			const filtered = contactsRef.current.filter(c => c.hex === hex)
-			return setContacts(filtered)
-		}
-		const filtered = contactsRef.current.filter(c => getNostrUsername(c).toLowerCase().includes(text.toLowerCase()))
-		return setContacts(filtered)
 	}
 
 	const handleNip50Search = useCallback((text: string) => {
@@ -86,10 +71,18 @@ export default function Search({
 				style={styles.submitSearch}
 				onPress={() => {
 					inputRef.current?.blur()
+					if (searchResults.length) {
+						setSearchResults([])
+						return setSearchInput('')
+					}
 					void handleNip50Search(searchInput)
 				}}
 			>
-				<SearchIcon color={hi[highlight]} />
+				{searchResults.length ?
+					<CloseIcon color={hi[highlight]} />
+					:
+					<SearchIcon color={hi[highlight]} />
+				}
 			</TouchableOpacity>
 		</View>
 	)
