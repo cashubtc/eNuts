@@ -89,6 +89,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const { loading, startLoading, stopLoading } = useLoading()
 	// related to new npub
 	const [newNpubModal, setNewNpubModal] = useState(false)
+	const [input, setInput] = useState('')
 	// search functionality
 	const [searchResults, setSearchResults] = useState<IContact[]>([])
 	// contact list
@@ -277,32 +278,25 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const handleNpubInput = async () => {
 		startLoading()
 		setNewNpubModal(false)
-		if (!pubKey.encoded && !pubKey.hex) {
-			stopLoading()
-			openPromptAutoClose({ msg: t('invalidPubKey') })
-			return
-		}
+		l({input: input.length})
 		let pub = { encoded: '', hex: '' }
-		// check if is npub
-		if (isNpub(pubKey.encoded)) {
-			pub = { encoded: pubKey.encoded, hex: nip19.decode(pubKey.encoded).data || '' }
+		if (isNpub(input)) {
+			pub = { encoded: input, hex: nip19.decode(input).data || '' }
 			setPubKey(pub)
 			// start initialization of nostr data
 			await handleNewNpub(pub)
 			return
 		}
-		try {
-			if (isHex(pubKey.hex)) {
-				pub = { encoded: nip19.npubEncode(pubKey.hex), hex: pubKey.hex }
-				setPubKey(pub)
-			}
-		} catch (e) {
-			openPromptAutoClose({ msg: t('invalidPubKey') })
-			stopLoading()
+		if (isHex(input)) {
+			pub = { encoded: nip19.npubEncode(input), hex: input }
+			setPubKey(pub)
+			// start initialization of nostr data
+			await handleNewNpub(pub)
 			return
 		}
-		// start initialization of nostr data
-		await handleNewNpub(pub)
+		// not npub nor hex
+		openPromptAutoClose({ msg: t('invalidPubKey') })
+		stopLoading()
 	}
 
 	// handle new pasted npub and initialize nostr data
@@ -557,8 +551,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					<TxtInput
 						keyboardType='default'
 						placeholder='NPUB/HEX'
-						onChangeText={text => setPubKey(prev => ({ ...prev, encoded: text }))}
-						value={pubKey.encoded}
+						onChangeText={text => setInput(text)}
+						value={input}
 						onSubmitEditing={() => void handleNpubInput()}
 						style={[{ paddingRight: 60 }]}
 					/>
