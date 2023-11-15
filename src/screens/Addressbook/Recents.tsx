@@ -1,4 +1,3 @@
-import Separator from '@comps/Separator'
 import type { IContact } from '@model/nostr'
 import { FlashList } from '@shopify/flash-list'
 import { useNostrContext } from '@src/context/Nostr'
@@ -8,11 +7,10 @@ import { StyleSheet, TouchableOpacity } from 'react-native'
 import ProfilePic from './ProfilePic'
 
 interface IRecentsProps {
-	showSearch?: boolean
 	handleSend: (item: IContact) => Promise<void>
 }
 
-export default function Recents({ showSearch, handleSend }: IRecentsProps) {
+export default function Recents({ handleSend }: IRecentsProps) {
 	const { color } = useThemeContext()
 	const { favs, recent } = useNostrContext()
 	return (
@@ -36,7 +34,6 @@ export default function Recents({ showSearch, handleSend }: IRecentsProps) {
 				)}
 				contentContainerStyle={styles.recentList}
 			/>
-			{!showSearch && <Separator style={[{ marginTop: 10, marginBottom: 0 }]} />}
 		</>
 	)
 }

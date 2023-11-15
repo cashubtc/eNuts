@@ -90,8 +90,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// related to new npub
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	// search functionality
-	const [showSearch, setShowSearch] = useState(false)
-	const toggleSearch = useCallback(() => setShowSearch(prev => !prev), [])
 	const [searchResults, setSearchResults] = useState<IContact[]>([])
 	// contact list
 	const [contacts, setContacts] = useState<IContact[]>([])
@@ -397,10 +395,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		setContacts([]) // reset contacts in case user has edited his npub
 		setSearchResults([])
 		last.current.idx = -1
-		setShowSearch(false)
 		// user has no nostr data yet
 		if (!pubKey.encoded || !pubKey.hex) {
-			l({pubKey})
+			l({ pubKey })
 			setNewNpubModal(true)
 			stopLoading()
 			return
@@ -413,7 +410,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	useEffect(() => {
 		setContacts([...contacts].sort(sortFavs))
 		// re-render search results if favs change
-		if (showSearch) {
+		if (searchResults.length) {
 			setSearchResults([...searchResults])
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -425,11 +422,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
 				withBackBtn={isSending}
 				nostrProfile={userProfile?.picture}
-				showSearch={pubKey.hex.length > 0}
-				toggleSearch={() => {
-					toggleSearch()
-					setSearchResults([])
-				}}
+				// showSearch={pubKey.hex.length > 0}
+				// toggleSearch={() => {
+				// 	toggleSearch()
+				// 	setSearchResults([])
+				// }}
 				handlePress={() => navigation.goBack()}
 				openProfile={() => navigation.navigate('Contact', {
 					contact: userProfile,
@@ -449,21 +446,17 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					{/* user recently used */}
 					{recent.length > 0 &&
 						<Recents
-							showSearch={showSearch}
 							handleSend={handleSend}
 						/>
 					}
-					{showSearch &&
-						<Search
-							showSearch={showSearch}
-							hasFullySynced={hasFullySynced}
-							contactsRef={contactsRef}
-							setContacts={setContacts}
-							searchResults={searchResults}
-							setSearchResults={setSearchResults}
-							nostrRef={nostrRef}
-						/>
-					}
+					<Search
+						hasFullySynced={hasFullySynced}
+						contactsRef={contactsRef}
+						setContacts={setContacts}
+						searchResults={searchResults}
+						setSearchResults={setSearchResults}
+						nostrRef={nostrRef}
+					/>
 					{/* user contacts */}
 					{contactsRef.current.length > 0 ?
 						<View style={[
