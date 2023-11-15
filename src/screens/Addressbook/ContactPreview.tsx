@@ -63,7 +63,7 @@ export default function ContactPreview({
 	}
 
 	const handleCopy = async () => {
-		await copy(contact.hex)
+		await copy(nip19.npubEncode(contact.hex))
 		openPromptAutoClose({ msg: t('npubCopied'), success: true })
 	}
 
