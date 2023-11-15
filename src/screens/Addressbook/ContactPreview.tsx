@@ -12,6 +12,7 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi, mainColors } from '@styles'
 import { nip19 } from 'nostr-tools'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -66,11 +67,11 @@ export default function ContactPreview({
 		openPromptAutoClose({ msg: t('npubCopied'), success: true })
 	}
 
-	const opts = [
+	const opts = useMemo(() => [
 		{
 			txt: isFav ? t('removeFav') : t('favorite'),
 			onSelect: handleFav,
-			icon: isFav ? <ListFavIcon width={20} height={20} color={mainColors.STAR} /> : <OutlinedFavIcon width={20} height={20} color={color.TEXT} />,
+			icon: isFav ? <OutlinedFavIcon width={20} height={20} color={color.TEXT} /> : <ListFavIcon width={20} height={20} color={mainColors.STAR} />,
 			hasSeparator: true
 		},
 		{
@@ -84,7 +85,8 @@ export default function ContactPreview({
 			onSelect: () => void handleCopy(),
 			icon: <CopyIcon width={18} height={18} color={color.TEXT} />,
 		},
-	]
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	], [isFav])
 
 	return (
 		<TouchableOpacity onPress={openProfile} style={[styles.container]}>

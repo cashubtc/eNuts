@@ -1,8 +1,8 @@
 {
 	"addrBook": {
 		"addOwnNpub": "Füge dein NPUB hinzu",
-		"favorite": "Favorit",
-		"removeFav": "Favorite entfernen",
+		"favorite": "Favorisieren",
+		"removeFav": "Favorit entfernen",
 		"copyNpub": "NPUB kopieren",
 		"npubCopied": "NPUB kopiert!",
 		"syncContacts": "Kontakte synchronisieren",
