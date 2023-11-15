@@ -278,7 +278,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const handleNpubInput = async () => {
 		startLoading()
 		setNewNpubModal(false)
-		l({input: input.length})
 		let pub = { encoded: '', hex: '' }
 		if (isNpub(input)) {
 			pub = { encoded: input, hex: nip19.decode(input).data || '' }
