@@ -5,7 +5,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
 import { isStr } from '@util'
 import { Image } from 'expo-image'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { headers } from './const'
@@ -41,7 +41,7 @@ export default function ProfilePic({
 
 	const { color, highlight } = useThemeContext()
 	const [isErr, setIsErr] = useState(false)
-	const defaultSize = isUser ? 60 : 40
+	const defaultSize = useMemo(() => isUser ? 60 : 40, [isUser])
 	const circleStyle = {
 		width: size || defaultSize,
 		height: size || defaultSize,
