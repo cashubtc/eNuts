@@ -69,7 +69,7 @@
 		"lottie-react-native": "5.1.6",
 		"nostr-tools": "^1.17.0",
 		"react": "^18.2.0",
-		"react-i18next": "^13.4.1",
+		"react-i18next": "^13.5.0",
 		"react-native": "0.72.6",
 		"react-native-gesture-handler": "~2.12.0",
 		"react-native-onboarding-swiper": "^1.2.0",
