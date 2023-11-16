@@ -1,11 +1,12 @@
 import { CloseIcon, SearchIcon } from '@comps/Icons'
+import Loading from '@comps/Loading'
 import TxtInput from '@comps/TxtInput'
 import type { IContact } from '@model/nostr'
 import type { Nostr } from '@nostr/class/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
-import { createRef, useCallback, useRef, useState } from 'react'
+import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, type TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -29,6 +30,7 @@ export default function Search({
 	const [searchInput, setSearchInput] = useState('')
 	const inputRef = createRef<TextInput>()
 	const lastSearchQuery = useRef('')
+	const [isSearching, setIsSearching] = useState(false)
 
 	const handleOnChangeSearch = (text: string) => {
 		lastSearchQuery.current = ''
@@ -50,10 +52,16 @@ export default function Search({
 		if (!text.length) {
 			return setSearchResults([])
 		}
+		setIsSearching(true)
 		lastSearchQuery.current = text
 		nostrRef.current?.search(text)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
+	useEffect(() => {
+		if (isSearching) { setIsSearching(false) }
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchResults])
 
 	return (
 		<View style={styles.inputWrap}>
@@ -78,10 +86,13 @@ export default function Search({
 					void handleNip50Search(searchInput)
 				}}
 			>
-				{searchResults.length ?
-					<CloseIcon color={hi[highlight]} />
+				{isSearching ?
+					<Loading color={hi[highlight]} />
 					:
-					<SearchIcon color={hi[highlight]} />
+					searchResults.length ?
+						<CloseIcon color={hi[highlight]} />
+						:
+						<SearchIcon color={hi[highlight]} />
 				}
 			</TouchableOpacity>
 		</View>

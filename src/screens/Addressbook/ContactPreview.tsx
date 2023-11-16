@@ -85,18 +85,23 @@ export default function ContactPreview({
 			onSelect: () => void handleCopy(),
 			icon: <CopyIcon width={18} height={18} color={color.TEXT} />,
 		},
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	], [isFav, contact])
 
 	return (
-		<TouchableOpacity onPress={openProfile} style={[styles.container]}>
+		<TouchableOpacity
+			onPress={() => {
+				if (isPayment) { return handleSend() }
+				openProfile()
+			}}
+			style={[styles.container]}
+		>
 			<View style={styles.colWrap}>
 				<ProfilePic
 					hex={contact.hex}
 					size={50}
 					uri={contact.picture}
 					overlayColor={color.INPUT_BG}
-					// isVerified={!!contact[1]?.nip05?.length}
 					isFav={isFav}
 					isInContacts={isInContacts}
 					recyclingKey={recyclingKey}

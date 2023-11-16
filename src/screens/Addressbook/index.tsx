@@ -41,8 +41,6 @@ import Search from './Search'
 /* State issues will occur while debugging Android and IOS at the same time */
 /****************************************************************************/
 
-// TODO discuss changes in data structure of dms claimed Event Ids (previously string array -> now array of objects)
-
 interface CustomViewToken {
 	item: IContact
 	key: string
@@ -96,7 +94,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	// last seen contact index
 	const last = useRef({ idx: -1 })
 
-	const isSending = useMemo(() => route.params?.isMelt || route.params?.isSendEcash, [route.params?.isMelt, route.params?.isSendEcash])
+	const isPayment = useMemo(() => route.params?.isMelt || route.params?.isSendEcash, [route.params?.isMelt, route.params?.isSendEcash])
 
 	// gets nostr data from cache or relay while scrolling
 	const next = useCallback((toDo: string[]) => {
@@ -370,7 +368,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
-				withBackBtn={isSending}
+				withBackBtn={isPayment}
 				nostrProfile={userProfile?.picture}
 				handlePress={() => navigation.goBack()}
 				openProfile={() => navigation.navigate('Contact', {
@@ -401,7 +399,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					{contactsRef.current.length > 0 ?
 						<View style={[
 							styles.contactsWrap,
-							{ marginBottom: isKeyboardOpen || route.params?.isMelt || route.params?.isSendEcash ? marginBottomPayment : marginBottom },
+							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : marginBottom },
 						]}>
 							{searchResults.length > 0 ?
 								<FlashList
@@ -413,12 +411,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										<ContactPreview
 											contact={item}
 											openProfile={() => {
-												navigation.navigate('Contact', {
-													contact: item,
-												})
+												navigation.navigate('Contact', { contact: item })
 											}}
 											handleSend={() => void handleSend(item)}
-											isPayment={route.params?.isMelt || route.params?.isSendEcash}
+											isPayment={isPayment}
 											isFav={favs.includes(item.hex)}
 											isSearchResult
 											isInContacts={contactsRef.current.some(c => c.hex === item.hex)}
@@ -458,7 +454,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 												})
 											}}
 											handleSend={() => void handleSend(item)}
-											isPayment={route.params?.isMelt || route.params?.isSendEcash}
+											isPayment={isPayment}
 											isFav={favs.includes(item.hex)}
 											recyclingKey={item.hex}
 										/>
