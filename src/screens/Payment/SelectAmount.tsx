@@ -11,7 +11,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { cleanUpNumericStr, formatInt, formatSatStr, getInvoiceFromLnurl, vib } from '@util'
+import { cleanUpNumericStr, formatSatStr, getInvoiceFromLnurl, vib } from '@util'
 import { checkFees, requestMint } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -173,7 +173,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
-			mintBalance={formatInt(balance)}
+			mintBalance={balance}
 			disableMintBalance={isMelt || isSwap}
 			handleMintBalancePress={() => setAmount(`${balance}`)}
 		>

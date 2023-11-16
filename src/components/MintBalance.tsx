@@ -7,7 +7,7 @@ import { MintBoardIcon } from './Icons'
 import Txt from './Txt'
 
 interface IMintBalanceProps {
-	balance: string
+	balance: number
 	txtColor: string
 	disabled?: boolean
 }
@@ -17,7 +17,7 @@ export default function MintBalance({ balance, txtColor, disabled }: IMintBalanc
 	return (
 		<View style={[styles.wrap, { borderColor: disabled ? color.TEXT_SECONDARY : hi[highlight] }]}>
 			<MintBoardIcon width={18} height={20} color={disabled ? color.TEXT_SECONDARY : hi[highlight]} />
-			<Txt txt={formatSatStr(+balance)} styles={[{ fontSize: 12, color: txtColor, marginLeft: 5 }]} />
+			<Txt txt={formatSatStr(balance)} styles={[{ fontSize: 12, color: txtColor, marginLeft: 5 }]} />
 		</View>
 	)
 }

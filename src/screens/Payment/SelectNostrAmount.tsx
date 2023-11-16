@@ -4,6 +4,7 @@ import { LeftArrow } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSelectNostrAmountPageProps } from '@model/nav'
+import MintBalanceBtn from '@nav/MintBalanceBtn'
 import ProfileBanner from '@screens/Addressbook/Contact/Banner'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
@@ -68,13 +69,12 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 						<Text style={[globals(color).navTxt, styles.navTxt]}>
 							{t('sendEcash', { ns: NS.common })}
 						</Text>
-						{/* <Txt
-							txt={nostr?.receiverName || truncateNpub(nip19.npubEncode(nostr?.receiverHex ?? ''))}
-							styles={[styles.username]}
-						/> */}
 					</View>
 				</View>
-				{/* <MintBalance balance={formatInt(balance)} txtColor={err ? mainColors.ERROR : mainColors.WHITE} /> */}
+				<MintBalanceBtn
+					handleMintBalancePress={() => setAmount(`${balance}`)}
+					mintBalance={balance}
+				/>
 			</View>
 			{/* Contact pictures overview */}
 			<ProfileBanner

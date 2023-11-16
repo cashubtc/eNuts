@@ -9,7 +9,7 @@ interface IContainerProps {
 	withBackBtn?: boolean
 	withCancelBtn?: boolean
 	handlePress?: () => void
-	mintBalance?: string
+	mintBalance?: number
 	handleMintBalancePress?: () => void
 	disableMintBalance?: boolean
 	noIcons?: boolean

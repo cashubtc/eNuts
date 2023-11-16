@@ -1,6 +1,5 @@
 import { LeftArrow, ScanQRIcon, SearchIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
-import MintBalance from '@comps/MintBalance'
 import type { IPopupOptionProps } from '@comps/Popup'
 import Popup from '@comps/Popup'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
@@ -10,6 +9,8 @@ import { NS } from '@src/i18n'
 import { globals, highlight as hi } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+
+import MintBalanceBtn from './MintBalanceBtn'
 
 interface TTopNavProps {
 	screenName?: string
@@ -24,7 +25,7 @@ interface TTopNavProps {
 	handleMintBalancePress?: () => void
 	disableMintBalance?: boolean
 	txt?: string
-	mintBalance?: string
+	mintBalance?: number
 	loading?: boolean
 	noIcons?: boolean,
 	historyOpts?: IPopupOptionProps[]
@@ -90,17 +91,11 @@ export default function TopNav({
 					</TouchableOpacity>
 				}
 				{mintBalance ?
-					<TouchableOpacity
-						style={styles.right}
-						onPress={handleMintBalancePress}
-						disabled={disableMintBalance}
-					>
-						<MintBalance
-							balance={mintBalance}
-							txtColor={disableMintBalance ? color.TEXT_SECONDARY : color.TEXT}
-							disabled={disableMintBalance}
-						/>
-					</TouchableOpacity>
+					<MintBalanceBtn
+						handleMintBalancePress={handleMintBalancePress}
+						disableMintBalance={disableMintBalance}
+						mintBalance={mintBalance}
+					/>
 					:
 					<TouchableOpacity style={styles.right} onPress={() => {
 						if (nostrProfile) { return openProfile?.() }
