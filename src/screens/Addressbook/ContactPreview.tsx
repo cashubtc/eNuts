@@ -12,7 +12,7 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi, mainColors } from '@styles'
 import { nip19 } from 'nostr-tools'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -30,7 +30,7 @@ interface IContactPreviewProps {
 	recyclingKey?: string
 }
 
-export default function ContactPreview({
+const ContactPreview = React.memo(({
 	contact,
 	openProfile,
 	handleSend,
@@ -39,7 +39,7 @@ export default function ContactPreview({
 	isSearchResult,
 	isInContacts,
 	recyclingKey
-}: IContactPreviewProps) {
+}: IContactPreviewProps) => {
 	const { t } = useTranslation([NS.addrBook])
 	const { color, highlight } = useThemeContext()
 	const { favs, setFavs } = useNostrContext()
@@ -133,7 +133,11 @@ export default function ContactPreview({
 			}
 		</TouchableOpacity>
 	)
-}
+})
+
+ContactPreview.displayName = 'ContactPreview'
+
+export default ContactPreview
 
 const styles = StyleSheet.create({
 	container: {
