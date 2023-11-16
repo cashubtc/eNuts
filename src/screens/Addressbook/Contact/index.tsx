@@ -142,10 +142,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				<View style={styles.npubWrap}>
 					<Txt
 						// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-						txt={
-							`${isUser ? t('enutsPub', { ns: NS.common }) : ''}
-							${truncateNpub(isUser ? nostr.pubKey.encoded : npubEncode(contact?.hex ?? ''))}`
-						}
+						txt={`${isUser ? t('enutsPub', { ns: NS.common }) : ''}${truncateNpub(isUser ? nostr.pubKey.encoded : npubEncode(contact?.hex ?? ''))}`}
 						styles={[styles.npub, { color: color.TEXT_SECONDARY }]}
 					/>
 					{contact && contact.hex.length > 0 &&
