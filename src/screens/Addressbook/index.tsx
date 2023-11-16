@@ -418,7 +418,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 											isFav={favs.includes(item.hex)}
 											isSearchResult
 											isInContacts={contactsRef.current.some(c => c.hex === item.hex)}
-											recyclingKey={item.hex}
 										/>
 									)}
 									ListEmptyComponent={() => (
@@ -456,7 +455,6 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 											handleSend={() => void handleSend(item)}
 											isPayment={isPayment}
 											isFav={favs.includes(item.hex)}
-											recyclingKey={item.hex}
 										/>
 									)}
 									ListEmptyComponent={() => (

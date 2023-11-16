@@ -40,7 +40,6 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						size={100}
 						hex={nostr.contact.hex}
 						uri={nostr.contact.picture}
-						recyclingKey={nostr.contact.hex}
 					/>
 				</View>
 				:

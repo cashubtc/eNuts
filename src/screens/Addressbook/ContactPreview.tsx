@@ -27,7 +27,6 @@ interface IContactPreviewProps {
 	isFav?: boolean
 	isSearchResult?: boolean
 	isInContacts?: boolean
-	recyclingKey?: string
 }
 
 const ContactPreview = React.memo(({
@@ -38,7 +37,6 @@ const ContactPreview = React.memo(({
 	isFav,
 	isSearchResult,
 	isInContacts,
-	recyclingKey
 }: IContactPreviewProps) => {
 	const { t } = useTranslation([NS.addrBook])
 	const { color, highlight } = useThemeContext()
@@ -104,7 +102,6 @@ const ContactPreview = React.memo(({
 					overlayColor={color.INPUT_BG}
 					isFav={isFav}
 					isInContacts={isInContacts}
-					recyclingKey={recyclingKey}
 				/>
 				{Object.keys(contact).length > 1 ?
 					<View style={styles.nameWrap}>

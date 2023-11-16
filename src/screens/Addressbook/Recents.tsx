@@ -28,7 +28,6 @@ export default function Recents({ handleSend }: IRecentsProps) {
 							uri={item.picture}
 							overlayColor={color.INPUT_BG}
 							isFav={favs.includes(item.hex)}
-							recyclingKey={item.hex}
 						/>
 					</TouchableOpacity>
 				)}

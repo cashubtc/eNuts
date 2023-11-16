@@ -5,7 +5,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
 import { isStr } from '@util'
 import { Image } from 'expo-image'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { headers } from './const'
@@ -22,9 +22,7 @@ interface IProfilePicProps {
 	isUser?: boolean
 	overlayColor?: string
 	isFav?: boolean
-	// isVerified?: boolean
 	isInContacts?: boolean
-	recyclingKey?: string
 }
 
 export default function ProfilePic({
@@ -34,9 +32,7 @@ export default function ProfilePic({
 	isUser,
 	overlayColor,
 	isFav,
-	// isVerified,
 	isInContacts,
-	recyclingKey
 }: IProfilePicProps & INostrImg) {
 
 	const { color, highlight } = useThemeContext()
@@ -51,7 +47,7 @@ export default function ProfilePic({
 
 	return (
 		<View style={{ position: 'relative', marginRight: isUser ? 0 : 10 }}>
-			{isStr(uri) && uri?.length > 0 && !isErr ?
+			{isStr(proxyUri) && proxyUri.length > 0 && !isErr ?
 				<Image
 					// https://docs.expo.dev/versions/latest/sdk/image/
 					// https://docs.expo.dev/versions/latest/sdk/image/#recyclingkey
@@ -61,7 +57,7 @@ export default function ProfilePic({
 						setIsErr(true)
 					})}
 					cachePolicy='disk'
-					recyclingKey={recyclingKey}
+					recyclingKey={hex}
 					transition={200}
 					contentFit='cover'
 					style={[

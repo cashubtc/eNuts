@@ -98,7 +98,6 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 								hex={nostr?.contact?.hex ?? ''}
 								uri={nostr?.contact?.picture}
 								size={80}
-								recyclingKey={nostr?.contact?.hex ?? ''}
 							/>
 						</View>
 					</View>
