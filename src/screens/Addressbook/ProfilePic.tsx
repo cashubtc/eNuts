@@ -5,7 +5,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi, mainColors } from '@styles'
 import { isStr } from '@util'
 import { Image } from 'expo-image'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { headers } from './const'
@@ -47,7 +47,7 @@ export default function ProfilePic({
 		height: size || defaultSize,
 		borderRadius: size ? size / 2 : defaultSize / 2
 	}
-	const getUri = (uri: string) => `${imgProxy(hex ?? '', uri, circleStyle.width, 'picture', 64)}`
+	const proxyUri = useMemo(() => `${imgProxy(hex ?? '', uri ?? '', circleStyle.width, 'picture', 64)}`, [circleStyle.width, hex, uri])
 
 	return (
 		<View style={{ position: 'relative', marginRight: isUser ? 0 : 10 }}>
@@ -55,9 +55,9 @@ export default function ProfilePic({
 				<Image
 					// https://docs.expo.dev/versions/latest/sdk/image/
 					// https://docs.expo.dev/versions/latest/sdk/image/#recyclingkey
-					source={{ uri: getUri(uri), headers }}
+					source={{ uri: proxyUri, headers }}
 					onError={(e => {
-						l('img err for url: ', uri, e, getUri(uri))
+						l('img err for url: ', uri, e, proxyUri)
 						setIsErr(true)
 					})}
 					cachePolicy='disk'
