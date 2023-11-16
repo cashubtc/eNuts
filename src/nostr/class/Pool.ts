@@ -162,9 +162,6 @@ class Pool {
 		if (!validated) { return false }
 		try {
 			const relays = this.#relaysClean(relayUrls)
-			// TODO Promise.allSettled sometimes is false even though the event is published
-			// TODO Promise.allSettled sometimes does not return at all
-			// await Promise.allSettled(this.#pool?.publish(relays, validated) ?? [])
 			// TODO update the pool to return a promise
 			this.#pool?.publish(relays, validated)
 			return true
