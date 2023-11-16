@@ -29,7 +29,7 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 	const { hex } = route.params
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
-	const { replaceNpub, setPubKey } = useNostrContext()
+	const { replaceNpub, setNostr } = useNostrContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const [modal, setModal] = useState(false)
 	const [userProfile, setUserProfile] = useState<IContact | undefined>()
@@ -64,7 +64,10 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 		}
 		const didInit = await store.get(STORE_KEYS.nutpub)
 		if (!currentHex) {
-			setPubKey({ encoded: nip19.npubEncode(hex), hex })
+			setNostr(prev => ({
+				...prev,
+				pubKey: { encoded: nip19.npubEncode(hex), hex }
+			}))
 			await handleNewNpub(hex, !isStr(didInit)).catch(() =>
 				openPromptAutoClose({ msg: t('invalidPubKey') })
 			)

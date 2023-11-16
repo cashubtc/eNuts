@@ -36,7 +36,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
-	const { setClaimedEvtIds } = useNostrContext()
+	const { setNostr } = useNostrContext()
 	const [info, setInfo] = useState<ITokenInfo | undefined>()
 	const { trustModal, setTrustModal } = useCashuToken()
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -44,8 +44,8 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 	const handleStoreRedeemed = async () => {
 		await updateNostrRedeemed(id)
 		// update claimed state
-		setClaimedEvtIds(prev => {
-			prev[id] = id
+		setNostr(prev => {
+			prev.claimedEvtIds[id] = id
 			return { ...prev }
 		})
 		// update dms state

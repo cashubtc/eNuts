@@ -31,7 +31,7 @@ import Website from './Website'
 export default function ContactPage({ navigation, route }: IContactPageProps) {
 	const { contact, isUser, userProfile } = route.params
 	const { t } = useTranslation([NS.addrBook])
-	const { pubKey, replaceNpub, resetNostrData } = useNostrContext()
+	const { nostr, replaceNpub, resetNostrData } = useNostrContext()
 	const { color, highlight } = useThemeContext()
 	const [visible, setVisible] = useState(false)
 	const closeModal = useCallback(() => setVisible(false), [])
@@ -142,11 +142,14 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				<View style={styles.npubWrap}>
 					<Txt
 						// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-						txt={`${isUser ? t('enutsPub', { ns: NS.common }) : ''}${truncateNpub(isUser ? pubKey.encoded : npubEncode(contact?.hex ?? ''))}`}
+						txt={
+							`${isUser ? t('enutsPub', { ns: NS.common }) : ''}
+							${truncateNpub(isUser ? nostr.pubKey.encoded : npubEncode(contact?.hex ?? ''))}`
+						}
 						styles={[styles.npub, { color: color.TEXT_SECONDARY }]}
 					/>
 					{contact && contact.hex.length > 0 &&
-						<Copy txt={isUser ? pubKey.encoded : npubEncode(contact.hex)} />
+						<Copy txt={isUser ? nostr.pubKey.encoded : npubEncode(contact.hex)} />
 					}
 				</View>
 				{/* tags */}

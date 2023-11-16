@@ -12,28 +12,26 @@ interface IRecentsProps {
 
 export default function Recents({ handleSend }: IRecentsProps) {
 	const { color } = useThemeContext()
-	const { favs, recent } = useNostrContext()
+	const { favs, recent } = useNostrContext().nostr
 	return (
-		<>
-			<FlashList
-				data={recent}
-				horizontal
-				estimatedItemSize={50}
-				keyExtractor={item => item.hex}
-				renderItem={({ item }) => (
-					<TouchableOpacity onPress={() => void handleSend(item)}>
-						<ProfilePic
-							hex={item.hex}
-							size={50}
-							uri={item.picture}
-							overlayColor={color.INPUT_BG}
-							isFav={favs.includes(item.hex)}
-						/>
-					</TouchableOpacity>
-				)}
-				contentContainerStyle={styles.recentList}
-			/>
-		</>
+		<FlashList
+			data={recent}
+			horizontal
+			estimatedItemSize={50}
+			keyExtractor={item => item.hex}
+			renderItem={({ item }) => (
+				<TouchableOpacity onPress={() => void handleSend(item)}>
+					<ProfilePic
+						hex={item.hex}
+						size={50}
+						uri={item.picture}
+						overlayColor={color.INPUT_BG}
+						isFav={favs.includes(item.hex)}
+					/>
+				</TouchableOpacity>
+			)}
+			contentContainerStyle={styles.recentList}
+		/>
 	)
 }
 

@@ -36,7 +36,7 @@ export default function OptsModal({
 }: IOptsModal) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const { nutPub } = useNostrContext()
+	const { nutPub } = useNostrContext().nostr
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
 			<Txt

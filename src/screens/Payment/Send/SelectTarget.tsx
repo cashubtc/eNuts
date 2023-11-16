@@ -18,7 +18,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	const { t } = useTranslation([NS.mints])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
-	const { nutPub, lud16 } = useNostrContext()
+	const { nutPub, lud16 } = useNostrContext().nostr
 	return (
 		<Screen
 			screenName={t(isSendEcash ? 'sendEcash' : 'cashOut', { ns: NS.common })}

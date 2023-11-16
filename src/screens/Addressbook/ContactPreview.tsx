@@ -24,7 +24,6 @@ interface IContactPreviewProps {
 	openProfile: () => void
 	handleSend: () => void
 	isPayment?: boolean
-	isFav?: boolean
 	isSearchResult?: boolean
 	isInContacts?: boolean
 }
@@ -34,30 +33,30 @@ const ContactPreview = React.memo(({
 	openProfile,
 	handleSend,
 	isPayment,
-	isFav,
 	isSearchResult,
 	isInContacts,
 }: IContactPreviewProps) => {
 	const { t } = useTranslation([NS.addrBook])
 	const { color, highlight } = useThemeContext()
-	const { favs, setFavs } = useNostrContext()
+	const { nostr, setNostr } = useNostrContext()
 	const { copy } = useCopy()
 	const { openPromptAutoClose } = usePromptContext()
+	const isFav = useMemo(() => nostr.favs.includes(contact.hex), [contact.hex, nostr.favs])
 
 	const handleFav = () => {
-		let newFavs: string[] = []
-		if (favs.includes(contact.hex)) {
-			setFavs(prev => {
-				newFavs = prev.filter(fav => fav !== contact.hex)
-				return newFavs
+		let favs: string[] = []
+		if (nostr.favs.includes(contact.hex)) {
+			setNostr(prev => {
+				favs = prev.favs.filter(fav => fav !== contact.hex)
+				return { ...prev, favs }
 			})
 		} else {
-			setFavs(prev => {
-				newFavs = [...prev, contact.hex]
-				return newFavs
+			setNostr(prev => {
+				favs = [...prev.favs, contact.hex]
+				return { ...prev, favs }
 			})
 		}
-		void store.setObj(STORE_KEYS.favs, newFavs)
+		void store.setObj(STORE_KEYS.favs, favs)
 	}
 
 	const handleCopy = async () => {

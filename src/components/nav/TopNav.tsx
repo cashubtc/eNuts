@@ -50,7 +50,7 @@ export default function TopNav({
 }: TTopNavProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
-	const { pubKey } = useNostrContext()
+	const { pubKey } = useNostrContext().nostr
 	return (
 		<View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>
 			{/* Placeholder */}

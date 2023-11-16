@@ -40,7 +40,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
 	// Nostr
-	const { nutPub } = useNostrContext()
+	const { nutPub } = useNostrContext().nostr
 	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
 	const { openPromptAutoClose } = usePromptContext()

@@ -27,7 +27,7 @@ interface IErrorProps {
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
-	const { setRecent } = useNostrContext()
+	const { setNostr } = useNostrContext()
 	const {
 		mint,
 		amount,
@@ -185,9 +185,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 						getErrObj(mint, amount, t('eventError', { ns: NS.common }))
 					)
 				}
-				setRecent(prev => {
+				setNostr(prev => {
 					if (!nostr.contact) { return prev }
-					return uniqByIContacts([...prev, nostr.contact], 'hex')
+					return { ...prev, recent: uniqByIContacts([...prev.recent, nostr.contact], 'hex') }
 				})
 				return navigation.navigate('success', { amount, nostr })
 			}

@@ -30,7 +30,7 @@ const tokenMinLength = 25
 export default function NostrDMScreen({ navigation, route }: TNostrReceivePageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const { userRelays, claimedEvtIds, recent } = useNostrContext()
+	const { userRelays, claimedEvtIds, recent } = useNostrContext().nostr
 	const { loading, startLoading, stopLoading } = useLoading()
 	// user mints is used in case user wants to send Ecash from the DMs screen
 	const [userMints, setUserMints] = useState<string[]>([])
