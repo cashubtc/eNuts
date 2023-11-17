@@ -41,21 +41,20 @@ const useNostr = () => {
 			recent: [],
 			claimedEvtIds: {}
 		}))
-		// clear stored data
-		await Promise.allSettled([
+		// clear stored data //
+		await Promise.all([
 			store.delete(STORE_KEYS.npub),
 			store.delete(STORE_KEYS.npubHex),
 			store.delete(STORE_KEYS.nostrDms),
 			store.delete(STORE_KEYS.favs),
 			store.delete(STORE_KEYS.relays),
-			store.delete(STORE_KEYS.synced),
 			store.delete(STORE_KEYS.lud16)
 		])
 	}
 
 	const replaceNpub = async (hex: HexKey) => {
 		const npub = nip19.npubEncode(hex)
-		await Promise.allSettled([
+		await Promise.all([
 			resetNostrData(),
 			store.set(STORE_KEYS.npub, npub),
 			store.set(STORE_KEYS.npubHex, hex),

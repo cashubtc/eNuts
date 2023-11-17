@@ -21,7 +21,6 @@ export const STORE_KEYS = {
 	latestHistory: 'history_latest',
 	createdToken: 'createdToken',
 	favs: 'nostr_favs',
-	synced: 'nostr_synced',
 	lud16: 'nostr_lud16',
 }
 

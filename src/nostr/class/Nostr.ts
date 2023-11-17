@@ -169,7 +169,7 @@ export class Nostr {
 		const cachedUser = await this.#ttlCache.get('userHex')
 		l('[initUserData]', cachedUser, this.#user.hex, cachedUser !== this.#user.hex)
 		if (cachedUser && cachedUser !== this.#user.hex) {
-			await Promise.allSettled([
+			await Promise.all([
 				this.#ttlCache.delete('contacts'),
 				this.#ttlCache.delete('relays'),
 				this.#ttlCache.set('userHex', this.#user.hex)

@@ -7,7 +7,7 @@ import { SECRET, SECURESTORE_KEY } from './store/consts'
 import { ttlCache } from './store/ttl'
 
 export async function dropAllData() {
-	await Promise.allSettled([
+	await Promise.all([
 		dropAll(),
 		store.clear(),
 		secureStore.delete(SECRET),
