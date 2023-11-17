@@ -90,7 +90,7 @@
 		"@types/babel__core": "^7.20.4",
 		"@types/crypto-js": "^4.2.1",
 		"@types/jest": "^29.5.8",
-		"@types/node": "^20.9.0",
+		"@types/node": "^20.9.1",
 		"@types/react": "~18.2.37",
 		"@types/react-native-onboarding-swiper": "^1.1.7",
 		"@types/sqlite3": "^3.1.11",
