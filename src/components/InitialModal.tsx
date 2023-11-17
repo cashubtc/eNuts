@@ -26,7 +26,7 @@ export default function InitialModal({ visible, onConfirm, onCancel }: IInitialM
 			</Text>
 			<Button txt={t('addEnutsMint')} onPress={onConfirm} />
 			<TxtButton
-				txt={t('addOwn')}
+				txt={t('addMintUrl')}
 				onPress={onCancel}
 				style={[{ paddingTop: 25, paddingBottom: 10, }]}
 			/>

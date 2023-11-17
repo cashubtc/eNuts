@@ -39,9 +39,10 @@ const useFocusClaim = () => {
 		const fn = async () => {
 			const selfCreated = await store.get(STORE_KEYS.createdToken)
 			const clipboard = await getStrFromClipboard()
-			if (!clipboard?.length || !isCashuToken(clipboard)) { return false }
-			if (selfCreated === clipboard) { return false }
-			const info = getTokenInfo(clipboard)
+			const cleanedClipboard = isCashuToken(clipboard ?? '')
+			if (!cleanedClipboard?.length) { return false }
+			if (selfCreated === cleanedClipboard) { return false }
+			const info = getTokenInfo(cleanedClipboard)
 			if (!info) { return false }
 			// check if mint is a trusted one
 			const userMints = await getMintsUrls()
@@ -49,7 +50,7 @@ const useFocusClaim = () => {
 			if (!hasTrustedMint(userMints, info.mints)) { return false }
 			// check if token is spendable
 			try {
-				const isSpendable = await isTokenSpendable(clipboard)
+				const isSpendable = await isTokenSpendable(cleanedClipboard)
 				isSpent = !isSpendable
 				if (!isSpendable) { return false }
 			} catch (e) {
@@ -121,7 +122,7 @@ const useFocusClaim = () => {
 			appState.current = nextAppState
 		})
 		return () => subscription.remove()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return {

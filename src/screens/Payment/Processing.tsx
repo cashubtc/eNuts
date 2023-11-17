@@ -1,26 +1,21 @@
-import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
-import { _testmintUrl } from '@consts'
-import { l } from '@log'
+import { getMintBalance } from '@db'
 import type { IMintUrl } from '@model'
 import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
-import { relay } from '@nostr/class/Relay'
-import { enutsPubkey, EventKind } from '@nostr/consts'
-import { encrypt } from '@nostr/crypto'
+import { pool } from '@nostr/class/Pool'
+import { getNostrUsername } from '@nostr/util'
+import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { updateNostrDmUsers } from '@src/storage/store/nostrDms'
-import { cTo } from '@src/storage/store/utils'
-import { secureStore, store } from '@store'
-import { SECRET, STORE_KEYS } from '@store/consts'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
+import { getDefaultMint } from '@store/mintStore'
 import { globals } from '@styles'
-import { formatMintUrl, getInvoiceFromLnurl, isErr, isLnurl } from '@util'
-import { autoMintSwap, payLnInvoice, requestMint, requestToken, sendToken } from '@wallet'
-import { useEffect } from 'react'
+import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
+import { autoMintSwap, checkFees, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
@@ -32,6 +27,7 @@ interface IErrorProps {
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
+	const { setNostr } = useNostrContext()
 	const {
 		mint,
 		amount,
@@ -41,6 +37,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		isSendEcash,
 		nostr,
 		isSwap,
+		isZap,
+		payZap,
 		targetMint,
 		proofs,
 		recipient
@@ -61,8 +59,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		errorMsg: isErr(e) ? e.message : fallbackMsg
 	})
 
-	const getProcessingtxt = () => {
-		if (isMelt) { return 'processingPaymentByMint' }
+	const processingTxt = useMemo(() => {
+		if (isZap && !payZap) { return 'prepairZapData' }
+		if (isMelt || (isZap && payZap)) { return 'processingPaymentByMint' }
 		if (isSwap) { return 'processingSwap' }
 		if (isSendEcash) {
 			if (nostr) {
@@ -71,45 +70,28 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			return 'creatingEcashToken'
 		}
 		return 'awaitingInvoice'
-	}
+	}, [isMelt, isSwap, isZap, payZap, isSendEcash, nostr])
 
-	const handleMintingProcess = async () => {
+	const handleMinting = async () => {
 		try {
 			const resp = await requestMint(mint.mintUrl, amount)
-			const decoded = getDecodedLnInvoice(resp.pr)
-			// immediatly claim and navigate to success page for test-mint
-			if (mint.mintUrl === _testmintUrl) {
-				const { success, invoice } = await requestToken(mint.mintUrl, amount, resp.hash)
-				if (!success) {
-					handleError({})
-					return
-				}
-				// add as history entry (receive ecash via lightning)
-				await addToHistory({
-					amount,
-					type: 2,
-					value: invoice?.pr || '',
-					mints: [mint.mintUrl],
-				})
-				navigation.navigate('success', { amount, mint: mint.customName || formatMintUrl(mint.mintUrl) })
-				return
-			}
+			const decoded = decodeLnInvoice(resp.pr)
 			// navigate to invoice overview screen
 			navigation.navigate('mintInvoice', {
 				mintUrl: mint.mintUrl,
 				amount,
 				hash: resp.hash,
 				expiry: decoded.expiry,
-				paymentRequest: decoded.paymentRequest
+				paymentRequest: decoded.decoded.paymentRequest
 			})
 		} catch (e) {
 			handleError({ e })
 		}
 	}
 
-	const handleMeltingProcess = async () => {
+	const handleMelting = async () => {
 		let invoice = ''
-		// recipient can be a LNURL or a LN invoice
+		// recipient can be a LNURL (address) or a LN invoice
 		if (recipient?.length && isLnurl(recipient)) {
 			try {
 				invoice = await getInvoiceFromLnurl(recipient, +amount)
@@ -149,15 +131,18 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			navigation.navigate('success', {
 				amount,
 				fee: res.realFee,
-				isMelt: true
+				isMelt: true,
+				isZap
 			})
 		} catch (e) {
 			handleError({ e })
 		}
 	}
 
-	const handleSwapProcess = async () => {
-		if (!targetMint?.mintUrl?.trim()) { return handleError({ e: `targetMint: ${targetMint?.mintUrl} is invalid` }) }
+	const handleSwap = async () => {
+		if (!targetMint?.mintUrl?.trim()) {
+			return handleError({ e: `targetMint: ${targetMint?.mintUrl} is invalid` })
+		}
 		// simple way
 		try {
 			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0)
@@ -180,53 +165,33 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 	}
 
-	const handleSendingEcashProcess = async () => {
+	const handleSendingEcash = async () => {
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
 			// add as history entry (send ecash)
-			await addToHistory({
+			const entry = await addToHistory({
 				amount: -amount,
 				type: 1,
 				value: token,
 				mints: [mint.mintUrl],
-				recipient: nostr?.receiverName || ''
+				recipient: getNostrUsername(nostr?.contact)
 			})
 			// https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 			if (nostr) {
-				const sk = await secureStore.get(SECRET)
-				const userNostrNpub = await store.get(STORE_KEYS.npub)
-				if (!sk?.length) {
-					navigation.navigate(
-						'processingError',
-						getErrObj(mint, amount, t('createTokenErr', { ns: NS.common }))
-					)
-					return
-				}
-				const msg = `${userNostrNpub || nostr.senderName}  (sender not verified) just sent you ${amount} Sat in Ecash using ${enutsPubkey}!\n\n ${token}`
-				const cipherTxt = encrypt(sk, nostr.receiverNpub, msg)
-				const event = {
-					kind: EventKind.DirectMessage,
-					tags: [['p', nostr.receiverNpub]],
-					content: cipherTxt,
-					created_at: Math.ceil(Date.now() / 1000),
-				}
-				const userRelays = await store.get(STORE_KEYS.relays)
-				// TODO publish the event to the RECIPIENT relays AND our relays.
-				const published = await relay.publishEventToPool(event, sk, cTo<string[]>(userRelays || '[]'))
+				const published = await pool.publishEvent({ nostr, amount, token })
 				if (!published) {
-					l('Something went wrong while publishing the event.')
-					navigation.navigate(
+					return navigation.navigate(
 						'processingError',
 						getErrObj(mint, amount, t('eventError', { ns: NS.common }))
 					)
-					return
 				}
-				// save receipient pubkey to get the conversation later on
-				await updateNostrDmUsers(nostr.receiverNpub)
-				navigation.navigate('success', { amount, nostr })
-				return
+				setNostr(prev => {
+					if (!nostr.contact) { return prev }
+					return { ...prev, recent: uniqByIContacts([...prev.recent, nostr.contact], 'hex') }
+				})
+				return navigation.navigate('success', { amount, nostr })
 			}
-			navigation.navigate('encodedToken', { token, amount })
+			navigation.navigate('encodedToken', { entry })
 		} catch (e) {
 			navigation.navigate(
 				'processingError',
@@ -235,23 +200,88 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 	}
 
+	const handleZap = async () => {
+		if (!recipient) {
+			return navigation.navigate('processingError', {
+				mint,
+				amount,
+				errorMsg: ''
+			})
+		}
+		try {
+			const { amount, timeLeft } = decodeLnInvoice(recipient)
+			if (timeLeft <= 0) {
+				return navigation.navigate('processingError', {
+					mint,
+					amount,
+					errorMsg: t('invoiceExpired', { ns: NS.common })
+				})
+			}
+			// user has default mint, check default mint balance
+			const defaultMint = await getDefaultMint()
+			if (defaultMint) {
+				const defaultBalance = await getMintBalance(defaultMint)
+				const estFee = await checkFees(defaultMint, recipient)
+				// if default mint balance + estFee is sufficient, use it
+				if (defaultBalance + estFee >= amount) {
+					return navigation.navigate('coinSelection', {
+						mint: { mintUrl: defaultMint, customName: '' },
+						balance: defaultBalance,
+						amount: +amount,
+						estFee,
+						isZap,
+						recipient
+					})
+				}
+			}
+			// otherwise, check mint with highest balance
+			const { mints, highestBalance, highestBalanceMint } = await getHighestBalMint()
+			// if highest balance + estFee is sufficient, use it
+			if (highestBalanceMint) {
+				// TODO need to handle the case where the highest balance mint is not reachable?
+				const estFee = await checkFees(highestBalanceMint.mintUrl, recipient)
+				if (highestBalance + estFee >= amount) {
+					return navigation.navigate('coinSelection', {
+						mint: mints.find(m => m.mintUrl === highestBalanceMint.mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
+						balance: highestBalanceMint.amount,
+						amount: +amount,
+						estFee,
+						isZap,
+						recipient
+					})
+				}
+			}
+		} catch (e) {
+			return handleError({ e })
+		}
+		// otherwise, show error
+		navigation.navigate('processingError', {
+			mint,
+			amount,
+			errorMsg: t('noFunds', { ns: NS.common })
+		})
+	}
+
 	// start payment process
 	useEffect(() => {
+		if (isZap) {
+			if (payZap) {
+				return void handleMelting()
+			}
+			return void handleZap()
+		}
 		if (isMelt) {
-			void handleMeltingProcess()
-			return
+			return void handleMelting()
 		}
 		if (isSwap) {
-			void handleSwapProcess()
-			return
+			return void handleSwap()
 		}
 		if (isSendEcash) {
-			void handleSendingEcashProcess()
-			return
+			return void handleSendingEcash()
 		}
-		void handleMintingProcess()
+		void handleMinting()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isMelt, isSwap, isSendEcash])
+	}, [isMelt, isSwap, isZap, payZap, isSendEcash])
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
 	useEffect(() => {
@@ -265,7 +295,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			<Loading size={40} nostr={!!nostr} />
 			<Txt
 				styles={[styles.descText]}
-				txt={t(getProcessingtxt())}
+				txt={t(processingTxt)}
 			/>
 			<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
 		</View>

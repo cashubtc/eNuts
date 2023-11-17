@@ -28,20 +28,19 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 			setDefaultM(await getDefaultMint() ?? '')
 		})()
 	}, [])
+
 	return (
 		<Screen
 			screenName={t('multimintSwap', { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<Txt txt='Select a mint as the payment receiver.' styles={[styles.hint]} />
+			<Txt txt={t('selectSwapReceiver')} styles={[styles.hint]} />
 			{remainingMints && remainingMints.length > 0 &&
 				<ScrollView>
 					<View style={globals(color).wrapContainer}>
-						{remainingMints.reverse().map((m, i) => (
-							<View
-								key={m.mintUrl}
-							>
+						{remainingMints.map((m, i) => (
+							<View key={m.mintUrl}>
 								<TouchableOpacity
 									key={m.mintUrl}
 									style={styles.mintUrlWrap}
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingVertical: 20,
+		paddingBottom: 20,
 	},
 	mintNameWrap: {
 		flexDirection: 'row',

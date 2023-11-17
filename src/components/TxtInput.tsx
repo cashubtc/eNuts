@@ -1,7 +1,7 @@
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { createRef, type LegacyRef, useEffect } from 'react'
-import { type KeyboardTypeOptions, type NativeSyntheticEvent, TextInput, type TextInputSubmitEditingEventData } from 'react-native'
+import { type KeyboardTypeOptions, type NativeSyntheticEvent, type StyleProp, TextInput, type TextInputSubmitEditingEventData, type TextStyle } from 'react-native'
 
 interface ITxtInputProps {
 	keyboardType?: KeyboardTypeOptions
@@ -13,6 +13,7 @@ interface ITxtInputProps {
 	ms?: number
 	maxLength?: number
 	value?: string
+	style?: StyleProp<TextStyle>
 }
 
 export default function TxtInput({
@@ -24,7 +25,8 @@ export default function TxtInput({
 	autoFocus,
 	ms,
 	maxLength,
-	value
+	value,
+	style
 }: ITxtInputProps) {
 	const { color, highlight } = useThemeContext()
 	const inputRef = createRef<TextInput>()
@@ -49,7 +51,7 @@ export default function TxtInput({
 			onSubmitEditing={onSubmitEditing}
 			maxLength={maxLength}
 			value={value}
-			style={[globals(color).input, { marginBottom: 20 }]}
+			style={[globals(color).input, { marginBottom: 20 }, style]}
 		/>
 	)
 }

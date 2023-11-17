@@ -1,66 +1,78 @@
+import { EyeClosedIcon, EyeIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
+import Toggle from '@comps/Toggle'
 import Txt from '@comps/Txt'
-import { isIOS } from '@consts'
 import type { TPrivacySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { globals, highlight as hi } from '@styles'
+import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Switch, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 
 export default function PrivacySettings({ navigation, route }: TPrivacySettingsPageProps) {
-	const { t } = useTranslation([NS.topNav])
-	const { color, highlight } = useThemeContext()
+	const { t } = useTranslation([NS.common])
+	const { color } = useThemeContext()
 	const { hidden, handleHiddenBalance, handleHiddenTxs } = usePrivacyContext()
 
 	return (
 		<Screen
-			screenName={t('privacy')}
+			screenName={t('privacy', { ns: NS.topNav })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<Text style={[styles.subHeader, { color: color.TEXT }]}>
-				{t('general')}
-			</Text>
-			<View style={[globals(color).wrapContainer, { paddingVertical: isIOS ? 18 : 10 }]}>
-				<View style={styles.wrap}>
-					<Txt txt={t('hideNuts', { ns: NS.common })} />
-					<Switch
-						trackColor={{ false: color.BORDER, true: hi[highlight] }}
-						thumbColor={color.TEXT}
-						onValueChange={handleHiddenBalance}
-						value={hidden.balance}
-					/>
+			<Txt
+				txt={t('general', { ns: NS.topNav })}
+				bold
+				styles={[styles.subHeader]}
+			/>
+			<ScrollView>
+				<View style={globals(color).wrapContainer}>
+					<View style={globals().wrapRow}>
+						<View style={styles.iconWrap}>
+							<Icon hidden={hidden.balance} />
+							<Txt txt={t('hideNuts')} styles={[styles.optTxt]} />
+						</View>
+						<Toggle
+							value={hidden.balance}
+							onChange={() => void handleHiddenBalance()}
+						/>
+					</View>
+					<Separator />
+					<View style={globals().wrapRow}>
+						<View style={styles.iconWrap}>
+							<Icon hidden={hidden.txs} />
+							<Txt txt={t('hideLatestTxs')} styles={[styles.optTxt]} />
+						</View>
+						<Toggle
+							value={hidden.txs}
+							onChange={() => void handleHiddenTxs()}
+						/>
+					</View>
 				</View>
-				<Separator style={[{ marginVertical: isIOS ? 18 : 10 }]} />
-				<View style={styles.wrap}>
-					<Txt txt={t('hideLatestTxs', { ns: NS.common })} />
-					<Switch
-						trackColor={{ false: color.BORDER, true: hi[highlight] }}
-						thumbColor={color.TEXT}
-						onValueChange={handleHiddenTxs}
-						value={hidden.txs}
-					/>
-				</View>
-			</View>
+			</ScrollView>
 			<BottomNav navigation={navigation} route={route} />
 		</Screen >
 	)
 }
 
+function Icon({ hidden }: { hidden?: boolean }) {
+	const { color } = useThemeContext()
+	return hidden ? <EyeClosedIcon color={color.TEXT} /> : <EyeIcon color={color.TEXT} />
+}
+
 const styles = StyleSheet.create({
 	subHeader: {
-		fontSize: 16,
-		fontWeight: '500',
 		paddingHorizontal: 20,
 		marginBottom: 10,
 	},
-	wrap: {
+	iconWrap: {
 		flexDirection: 'row',
-		justifyContent: 'space-between',
 		alignItems: 'center',
 	},
+	optTxt: {
+		marginLeft: 15,
+	}
 })

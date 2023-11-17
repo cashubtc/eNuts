@@ -1,7 +1,7 @@
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
-import { SafeAreaView, type StyleProp, StyleSheet, Text, type TextStyle, TouchableOpacity } from 'react-native'
+import { SafeAreaView, type StyleProp, StyleSheet, type TextStyle, TouchableOpacity } from 'react-native'
 
 import Loading from './Loading'
 import Txt from './Txt'
@@ -35,14 +35,11 @@ export default function Button({ txt, onPress, border, outlined, filled, disable
 				]}
 				onPress={onPress}
 			>
-				<Text style={[
-					styles.btnTxt,
+				<Txt txt={txt} bold center styles={[
 					{ color: getColor(highlight, color) },
 					filled || outlined ? { color: hi[highlight] } : {},
 					loading || icon ? { marginRight: 10 } : {}
-				]}>
-					{txt}
-				</Text>
+				]} />
 				{loading && <Loading color={getColor(highlight, color)} />}
 				{!loading ? icon : null}
 			</TouchableOpacity>
@@ -122,11 +119,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		borderRadius: 50,
-	},
-	btnTxt: {
-		textAlign: 'center',
-		fontSize: 16,
-		fontWeight: '500'
 	},
 	// icon button
 	iconBtn: {

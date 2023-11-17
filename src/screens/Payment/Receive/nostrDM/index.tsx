@@ -1,4 +1,3 @@
-import { TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import Loading from '@comps/Loading'
@@ -8,19 +7,17 @@ import { isIOS } from '@consts'
 import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { TNostrReceivePageProps } from '@model/nav'
-import type { INostrDm, TContact } from '@model/nostr'
-import { relay } from '@nostr/class/Relay'
+import type { IContact, INostrDm } from '@model/nostr'
 import { EventKind } from '@nostr/consts'
 import { decrypt } from '@nostr/crypto'
 import { parseProfileContent } from '@nostr/util'
-import Config from '@src/config'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { pool } from '@src/nostr/class/Pool'
 import { secureStore } from '@store'
 import { SECRET } from '@store/consts'
-import { getNostrDmUsers } from '@store/nostrDms'
-import { hasEventId, isCashuToken } from '@util'
+import { getUnixTimestampFromDaysAgo, isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,15 +25,16 @@ import { ScrollView, StyleSheet, View } from 'react-native'
 
 import NostrMessage from './NostrMessage'
 
+const tokenMinLength = 25
+
 export default function NostrDMScreen({ navigation, route }: TNostrReceivePageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const [isCancel, setIsCancel] = useState(false)
-	const { userRelays, claimedEvtIds } = useNostrContext()
+	const { userRelays, claimedEvtIds, recent } = useNostrContext().nostr
 	const { loading, startLoading, stopLoading } = useLoading()
 	// user mints is used in case user wants to send Ecash from the DMs screen
 	const [userMints, setUserMints] = useState<string[]>([])
-	const [dmProfiles, setDmProfiles] = useState<TContact[]>([])
+	const [dmProfiles, setDmProfiles] = useState<IContact[]>([])
 	const [dms, setDms] = useState<INostrDm[]>([])
 	const setDmsCB = useCallback((newDms: INostrDm[]) => setDms(newDms), [])
 
@@ -46,7 +44,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 			l('can not handle dms, empy key!')
 			return
 		}
-		const tokenMinLength = 25
+		if (claimedEvtIds[e.id]) { return }
 		// decrypt content
 		const decrypted = decrypt(sk, e.pubkey, e.content)
 		// remove newlines (can be attached to the cashu token) and create an array of words
@@ -57,60 +55,52 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 			if (!word || word.length < tokenMinLength) { continue }
 			// set dm state
 			if (isCashuToken(word)) {
-				// dont set state if already claimed OR same created_at OR same token
-				setDms(prev => prev.some(entry => hasEventId(claimedEvtIds, entry.id) || entry.created_at === e.created_at || entry.token === word) ?
-					[...prev]
-					:
-					[...prev, { created_at: e.created_at, sender: e.pubkey, msg: decrypted, token: word, id: e.id }]
-				)
+				setDms(prev => [
+					...prev,
+					{
+						created_at: e.created_at,
+						sender: e.pubkey,
+						msg: decrypted,
+						token: word,
+						id: e.id
+					}
+				])
 			}
 		}
 	}
 
-	const handleCancel = () => setIsCancel(true)
-
 	// get dms for conversationsPubKeys from relays
 	useEffect(() => {
+		// TODO add an option for the user to choose how many days ago to check for dms
+		const since = getUnixTimestampFromDaysAgo(14)
 		void (async () => {
 			startLoading()
-			const conversationsPubKeys = await getNostrDmUsers()
-			if (!conversationsPubKeys.length) {
+			if (!recent.length) {
 				stopLoading()
 				return
 			}
 			const sk = await secureStore.get(SECRET)
-			const sub = relay.subscribePool({
-				relayUrls: userRelays,
-				// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
-				authors: conversationsPubKeys, // ['69a80567e79b6b9bc7282ad595512df0b804784616bedb623c122fad420a2635']
-				kinds: [EventKind.DirectMessage, EventKind.SetMetadata],
-				skipVerification: Config.skipVerification
+			const sub = pool.subscribePool({
+				filter: {
+					relayUrls: userRelays,
+					// TODO how to check incoming DMs from ppl you did not have a conversation with yet? (new dm request)
+					authors: recent.map(x => x.hex),
+					kinds: [EventKind.DirectMessage, EventKind.Metadata],
+					since,
+				}
 			})
 			sub?.on('event', (e: NostrEvent) => {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-				if (+e.kind === EventKind.SetMetadata) {
-					setDmProfiles(prev => prev.some(x => x[0] === e.pubkey) ? prev : [...prev, [e.pubkey, parseProfileContent(e)]])
+				if (+e.kind === EventKind.Metadata) {
+					setDmProfiles(prev => prev.some(x => x.hex === e.pubkey) ? prev : [...prev, { hex: e.pubkey, ...parseProfileContent(e) }])
 				}
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 				if (+e.kind === EventKind.DirectMessage) {
 					handleDm(sk || '', e)
 				}
 			})
-			sub?.on('eose', () => {
-				stopLoading()
-				setIsCancel(false)
-			})
+			sub?.on('eose', () => stopLoading())
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userRelays])
-
-	// handle cancel
-	useEffect(() => {
-		if (!isCancel) { return }
-		relay.closePoolConnection(userRelays)
-		navigation.navigate('dashboard')
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isCancel])
 
 	useEffect(() => {
 		void (async () => {
@@ -122,7 +112,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	return (
 		<Screen
 			screenName={t('receiveEcashNostr')}
-			withCancelBtn
+			withBackBtn
 			handlePress={() => navigation.navigate('dashboard')}
 		>
 			{/* checking DMs */}
@@ -136,11 +126,6 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 					<Txt
 						txt={t('invoiceHint', { ns: NS.mints })}
 						styles={[{ color: color.TEXT_SECONDARY }, styles.hint]}
-					/>
-					<TxtButton
-						txt={t('cancel')}
-						onPress={handleCancel}
-						style={[{ paddingTop: 20, paddingBottom: 10 }]}
 					/>
 				</View>
 				:
@@ -157,7 +142,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 								<NostrMessage
 									key={dm.id}
 									msgEntry={dm}
-									sender={dmProfiles.find(x => x[0] === dm.sender)}
+									sender={dmProfiles.find(x => x.hex === dm.sender)}
 									dms={dms}
 									setDms={setDmsCB}
 									mints={userMints}
@@ -167,6 +152,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 							:
 							<Empty
 								txt={t('clearOverHere')}
+								hint={t('nostrDmHint')}
 								hasOk
 								nav={navigation}
 							/>

@@ -1,6 +1,6 @@
 import Separator from '@comps/Separator'
 import type { TNostrReceivePageProps } from '@model/nav'
-import type { INostrDm, TContact } from '@model/nostr'
+import type { IContact, INostrDm } from '@model/nostr'
 import EntryTime from '@screens/History/entryTime'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -13,7 +13,7 @@ import Sender from './Sender'
 
 interface INostrMessageProps {
 	msgEntry: INostrDm
-	sender?: TContact
+	sender?: IContact
 	dms: INostrDm[]
 	setDms: (newDms: INostrDm[]) => void
 	mints: string[]
@@ -28,7 +28,7 @@ export default function NostrMessage({ msgEntry, sender, dms, setDms, mints, nav
 			<Sender contact={sender} navigation={nav.navigation} />
 			<Separator style={[styles.separator]} />
 			<MsgContent sender={sender} msgEntry={msgEntry} dms={dms} setDms={setDms} mints={mints} />
-			<Text style={{ color: color.TEXT_SECONDARY }}>
+			<Text style={{ marginBottom: 10, color: color.TEXT_SECONDARY }}>
 				<EntryTime from={msgEntry.created_at * 1000} fallback={t('justNow')} />
 			</Text>
 		</View>

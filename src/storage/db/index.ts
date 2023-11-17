@@ -185,13 +185,11 @@ export async function getProofs(): Promise<Proof[]> {
 export async function getProofsByIds(ids: string[]): Promise<Proof[]> {
 	const toGet = ids.map(id => `"${id}"`).join(',')
 	const proofs = await db.all<Proof>(`SELECT * FROM proofs WHERE id in (${toGet})`, [])
-	l('[getProofsByIds]', proofs)
 	return proofs
 }
 export async function getProofsByMintUrl(mintUrl: string): Promise<Proof[]> {
 	const mintsIds = (await getMintIdsByUrl(mintUrl)).map(x => x.id)
 	const proofs = await getProofsByIds(mintsIds)
-	l('[getProofsByMintUrl]', proofs)
 	return proofs
 }
 export async function deleteProofs(proofs: Proof[]): Promise<boolean | undefined> {

@@ -245,7 +245,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 							<LockIcon width={40} height={40} color={mainColors.WHITE} />
 						</Animated.View>
 						{!shouldEdit && !shouldRemove && auth.length > 0 &&
-							<Txt txt={t('walletLocked')} styles={[styles.lockTxt]} />
+							<Txt txt={t('walletLocked')} bold styles={[styles.lockTxt]} />
 						}
 						{attempts.locked && !isConfirm &&
 							<Text style={styles.lockedTime}>
@@ -258,9 +258,12 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 						:
 						<View style={styles.bottomSection}>
 							{attempts.mismatch &&
-								<Text style={[styles.mismatch, { color: mainColors.ERROR }]}>
-									{t('pinMismatch', { ns: NS.auth })}
-								</Text>
+							<Txt
+								txt={t('pinMismatch', { ns: NS.auth })}
+								bold
+								error
+								styles={[styles.mismatch]}
+							/>
 							}
 							{shouldShowPinSection() ?
 								<Animated.View style={{ transform: [{ translateX: anim.current }] }}>
@@ -313,11 +316,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 }
 
 const styles = StyleSheet.create({
-	loadingContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
 	container: {
 		flex: 1,
 		alignItems: 'center',
@@ -331,7 +329,6 @@ const styles = StyleSheet.create({
 	lockTxt: {
 		marginTop: 10,
 		marginBottom: 20,
-		fontWeight: '500',
 		color: mainColors.WHITE
 	},
 	bottomSection: {
@@ -340,8 +337,6 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	mismatch: {
-		fontSize: 16,
-		fontWeight: '500',
 		marginVertical: 10,
 	},
 	skip: {

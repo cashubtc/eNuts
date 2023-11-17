@@ -8,7 +8,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt, getInvoiceFromLnurl, isErr, openUrl } from '@util'
+import { formatSatStr, getInvoiceFromLnurl, isErr, openUrl } from '@util'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -36,9 +36,8 @@ export function ZapModal({ visible, close }: IQuestionModalProps) {
 		{ amount: 840000, emoji: '😱', selected: false },
 	])
 
-	const handleSelect = (zap: IZap) => {
+	const handleSelect = (zap: IZap) =>
 		setZaps(zaps.map(z => ({ ...z, selected: z.amount === zap.amount })))
-	}
 
 	const handleDonation = async () => {
 		startLoading()
@@ -48,7 +47,6 @@ export function ZapModal({ visible, close }: IQuestionModalProps) {
 				openPromptAutoClose({ msg: 'Zap error' })
 				return
 			}
-			// TODO store invoice and check if it has been payed
 			const invoice = await getInvoiceFromLnurl(DONATION_ADDR, zap.amount)
 			stopLoading()
 			close()
@@ -62,10 +60,11 @@ export function ZapModal({ visible, close }: IQuestionModalProps) {
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={close} >
 			<Txt
-				txt={`⚡ ${t('supportDev')}`}
+				txt={t('donateLn')}
+				bold
 				styles={[styles.modalHeader]}
 			/>
-			<Text style={globals(color).modalTxt}>
+			<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
 				{t('supportHint')}
 			</Text>
 			<View style={{ width: '100%', marginBottom: 20 }}>
@@ -94,7 +93,7 @@ function Selection({ zap, onPress }: ISelectionProps) {
 				<View style={styles.amountWrap}>
 					<Text>{zap.emoji}</Text>
 					<Txt
-						txt={`${formatInt(zap.amount, 'compact')} Satoshi`}
+						txt={formatSatStr(zap.amount, 'compact')}
 						styles={[{ marginLeft: 10 }]}
 					/>
 				</View>
@@ -108,14 +107,13 @@ function Selection({ zap, onPress }: ISelectionProps) {
 const styles = StyleSheet.create({
 	modalHeader: {
 		fontSize: 24,
-		fontWeight: '500',
 		marginBottom: 20
 	},
 	zapRow: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingVertical: 15
+		paddingBottom: 15
 	},
 	amountWrap: {
 		flexDirection: 'row',

@@ -7,16 +7,16 @@ import Txt from '@comps/Txt'
 import { addMint } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
-import type { INostrDm, TContact } from '@model/nostr'
+import type { IContact, INostrDm } from '@model/nostr'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { getNostrUsername, truncateNostrProfileInfo } from '@src/nostr/util'
+import { getNostrUsername, truncateStr } from '@src/nostr/util'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { updateNostrRedeemed } from '@store/nostrDms'
 import { highlight as hi, mainColors } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
+import { formatMintUrl, formatSatStr } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 interface ITokenProps {
-	sender?: TContact
+	sender?: IContact
 	token: string
 	id: string
 	dms: INostrDm[]
@@ -36,7 +36,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
-	const { claimedEvtIds, setClaimedEvtIds } = useNostrContext()
+	const { setNostr } = useNostrContext()
 	const [info, setInfo] = useState<ITokenInfo | undefined>()
 	const { trustModal, setTrustModal } = useCashuToken()
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -44,7 +44,10 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 	const handleStoreRedeemed = async () => {
 		await updateNostrRedeemed(id)
 		// update claimed state
-		setClaimedEvtIds([...claimedEvtIds, id])
+		setNostr(prev => {
+			prev.claimedEvtIds[id] = id
+			return { ...prev }
+		})
 		// update dms state
 		setDms([...dms.filter(dm => dm.id !== id)])
 	}
@@ -90,7 +93,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 				type: 1,
 				value: token,
 				mints: info.mints,
-				sender: truncateNostrProfileInfo(getNostrUsername(sender?.[1]) || '')
+				sender: truncateStr(getNostrUsername(sender) ?? '')
 			})
 			await handleStoreRedeemed()
 			openPromptAutoClose({
@@ -121,7 +124,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 		<View style={[styles.tokenWrap, { borderColor: color.BORDER }]}>
 			<View>
 				<Txt
-					txt={`${formatInt(info?.value || 0)} Satoshi`}
+					txt={formatSatStr(info?.value || 0)}
 					styles={[styles.amount]}
 				/>
 				<Txt

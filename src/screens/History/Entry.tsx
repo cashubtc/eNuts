@@ -5,7 +5,7 @@ import type { THistoryPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
-import { formatInt } from '@util'
+import { formatInt, formatSatStr } from '@util'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -23,7 +23,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	const getTxTypeStr = () => {
 		if (item.type === 1) { return 'Ecash' }
 		if (item.type === 2) { return 'Lightning' }
-		return t('swap', { ns: NS.common})
+		return t('swap', { ns: NS.common })
 	}
 
 	const getTxColor = () => {
@@ -49,7 +49,9 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			style={styles.listItem}
 			onPress={() => nav.navigation.navigate('history entry details', { entry: item })}
 		>
-			{getIcon()}
+			<View style={{ paddingBottom: 10 }}>
+				{getIcon()}
+			</View>
 			<View style={styles.infoWrap}>
 				<Txt txt={getTxTypeStr()} />
 				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: 14 }]}>
@@ -63,7 +65,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 					styles={[{ color: getTxColor() }]}
 				/>
 				<Txt
-					txt=' Sat.'
+					txt={formatSatStr(item.amount, 'standard', false)}
 					styles={[{ color: getTxColor() }]}
 				/>
 			</View>
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
 	},
 	infoWrap: {
 		alignItems: 'center',
-		marginVertical: 12,
+		paddingBottom: 10
 	},
 	placeholder: {
 		width: 30,
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		position: 'absolute',
+		top: 10,
 		right: 0,
 	},
 })

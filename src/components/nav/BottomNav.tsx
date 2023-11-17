@@ -33,7 +33,8 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		route.name === 'Display settings' ||
 		route.name === 'Security settings' ||
 		route.name === 'BackupPage' ||
-		route.name === 'Privacy settings'
+		route.name === 'Privacy settings' ||
+		route.name === 'Nostr settings'
 
 	return (
 		<View style={[styles.bottomNav, { backgroundColor: color.BACKGROUND, paddingBottom: isIOS ? 40 : 10 }]}>

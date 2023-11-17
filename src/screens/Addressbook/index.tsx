@@ -1,379 +1,460 @@
-import { TxtButton } from '@comps/Button'
+import Button, { TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
-import InputAndLabel from '@comps/InputAndLabel'
+import { QRIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
+import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
-import { l } from '@log'
-import type { TAddressBookPageProps } from '@model/nav'
-import type { IProfileContent, TContact, TUserRelays } from '@model/nostr'
+import type { INostrSendData, TAddressBookPageProps } from '@model/nav'
+import type { IContact } from '@model/nostr'
 import BottomNav from '@nav/BottomNav'
 import TopNav from '@nav/TopNav'
-import { relay } from '@nostr/class/Relay'
-import { defaultRelays, EventKind } from '@nostr/consts'
-import { filterFollows, getNostrUsername, parseProfileContent, parseUserRelays } from '@nostr/util'
-import { FlashList, type ViewToken } from '@shopify/flash-list'
-import Config from '@src/config'
+import { getNostrUsername, isHex, isNpub } from '@nostr/util'
+import { useIsFocused } from '@react-navigation/native'
+import { FlashList } from '@shopify/flash-list'
+import { useKeyboardCtx } from '@src/context/Keyboard'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { Nostr } from '@src/nostr/class/Nostr'
 import { secureStore, store } from '@store'
 import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
-import { getStrFromClipboard, openUrl } from '@util'
-import { type Event as NostrEvent, generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
-import { useCallback, useEffect, useState } from 'react'
+import { highlight as hi } from '@styles/colors'
+import { debounce, isNum, uniqByIContacts } from '@util'
+import { Image } from 'expo-image'
+import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
+import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import ContactPreview from './ContactPreview'
-import UserProfile from './UserProfile'
+import Recents from './Recents'
+import Search from './Search'
 
 /****************************************************************************/
 /* State issues will occur while debugging Android and IOS at the same time */
 /****************************************************************************/
+
+interface CustomViewToken {
+	item: IContact
+	key: string
+	index: number | null
+	isViewable: boolean
+	timestamp: number
+}
+
+interface IViewableItems { viewableItems: CustomViewToken[] }
 
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
 
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
+	// For FlashList
+	const ref = createRef<FlashList<IContact>>()
+	const [isRefreshing, setIsRefreshing] = useState(false)
+	const searchListRef = createRef<FlashList<IContact>>()
+	// Nostr class instance
+	const nostrRef = useRef<Nostr>()
+	const abortControllerRef = useRef<AbortController>()
+	// main context
 	const { t } = useTranslation([NS.common])
+	const isFocused = useIsFocused()
+	const { isKeyboardOpen } = useKeyboardCtx()
 	const { openPromptAutoClose } = usePromptContext()
-	const { color } = useThemeContext()
-	const {
-		nutPub,
-		setNutPub,
-		pubKey,
-		setPubKey,
-		userProfile,
-		setUserProfile,
-		userRelays,
-		setUserRelays,
-		contacts,
-		setContacts
-	} = useNostrContext()
+	const { color, highlight } = useThemeContext()
+	const { nostr, setNostr } = useNostrContext()
 	const { loading, startLoading, stopLoading } = useLoading()
-	const [, setAlreadySeen] = useState<string[]>([])
+	// related to new npub
 	const [newNpubModal, setNewNpubModal] = useState(false)
+	const [input, setInput] = useState('')
+	// search functionality
+	const [searchResults, setSearchResults] = useState<IContact[]>([])
+	// contact list
+	const [contacts, setContacts] = useState<IContact[]>([])
+	// TODO we have 3 copies of contacts, this is not good (the class instance, the state and the ref)
+	const contactsRef = useRef<IContact[]>([])
+	// last seen contact index
+	const last = useRef({ idx: -1 })
 
-	const isSending = route.params?.isMelt || route.params?.isSendEcash
+	const isPayment = useMemo(() => route.params?.isMelt || route.params?.isSendEcash, [route.params?.isMelt, route.params?.isSendEcash])
 
-	// gets user data from cache or relay
-	const initUserData = useCallback(({ hex, userRelays }: { hex: string, userRelays?: TUserRelays }) => {
-		if (!hex || (userProfile && contacts.length)) {
-			l('no pubKey or user data already available')
-			stopLoading()
+	// gets nostr data from cache or relay while scrolling
+	const next = useCallback((toDo: string[]) => {
+		if (nostrRef.current?.isSync) { return }
+		void nostrRef.current?.setupMetadataSubMany({
+			toDo,
+			count: 15,
+			sig: abortControllerRef?.current?.signal,
+			emitOnProfileChanged: {
+				emitAsap: false,
+				emitOnEose: true
+			},
+			// noCache: true,
+		})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	// gets initial nostr data from cache or relay
+	const initContacts = useCallback(async (hex: string) => {
+		stopLoading()
+		if (!nostrRef?.current?.hex || hex !== nostrRef.current.hex) {
+			const { userRelays } = nostr
+			nostrRef.current = new Nostr(hex, {
+				onUserMetadataChanged: p => {
+					setNostr(prev => ({ ...prev, userProfile: p, lud16: p?.lud16 ?? '' }))
+					void store.set(STORE_KEYS.lud16, p?.lud16 ?? '')
+				},
+				onContactsChanged: allContacts => {
+					if (!allContacts?.length) { return }
+					// we simply overwrite the previous state with the new one
+					const c = allContacts.map(x => ({ hex: x })).sort(sortFavs)
+					contactsRef.current = c
+					setContacts(c)
+					// first render of contacts metadata happens in flashlist event onViewableItemsChanged
+				},
+				onProfileChanged: profiles => {
+					// l({ onProfileChangeEventProfiles: profiles?.length, should: contactsRef.current.length + (profiles?.length ?? 0) })
+					setContacts(prev => {
+						if (!profiles?.length) { return prev }
+						const c = prev.map(p => {
+							const idx = profiles?.findIndex(x => x?.hex === p?.hex)
+							return idx < 0 ? p : profiles[idx]
+						})
+						contactsRef.current = c
+						return c
+					})
+				},
+				onSearchChanged: profile => {
+					if (!profile) { return }
+					setSearchResults(prev => uniqByIContacts([...prev, profile], 'hex'))
+					// we set the contact state of a search result that is already in the contacts list
+					// so that the contact list can render the profile if user favorites it
+					// TODO cache it
+					const idx = contactsRef.current.findIndex(c => c.hex === profile.hex)
+					if (idx > -1 && Object.keys(contactsRef.current[idx]).length === 1) {
+						setContacts(prev => {
+							prev[idx] = profile
+							contactsRef.current = prev
+							return [...prev]
+						})
+					}
+				},
+				userRelays,
+			})
+			await nostrRef.current.initUserData(nostr.userRelays)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [next, nostr.userRelays])
+
+	const shouldCallNext = useCallback((firstIdx: number, lastIdx: number, isScrollingUp: boolean) => {
+		const startIdx = firstIdx - 10 < 0 ? 0 : firstIdx - 10
+		const lastContactIdx = contactsRef.current.length - 1
+		const endIdx = lastIdx + 10 > lastContactIdx ? lastContactIdx : lastIdx + 10
+		for (let i = startIdx; i < endIdx; i++) {
+			const contact = contactsRef.current[i]
+			// avoid access of undefined items
+			if (!contact) { continue }
+			const hasNoMetadata = Object.keys(contact).length === 1
+			if (!hasNoMetadata) { continue }
+			// found item without metadata above viewport
+			if (isScrollingUp) {
+				if (i < lastIdx && hasNoMetadata) {
+					return true
+				}
+			}
+			// found item without metadata within viewport
+			if (i <= firstIdx && i >= lastIdx && hasNoMetadata) {
+				return true
+			}
+			// found item without metadata below viewport
+			if (i > firstIdx && hasNoMetadata) {
+				return true
+			}
+		}
+		return false
+	}, [])
+
+	// debounce flashlist viewability event to avoid too many calls of next()
+	const onViewableItemsChanged = debounce(useCallback(({ viewableItems }: IViewableItems) => {
+		const firstIdx = viewableItems?.[0]?.index
+		const lastIdx = viewableItems?.[viewableItems.length - 1]?.index
+		if (!isNum(firstIdx) || !isNum(lastIdx)) { return }
+		// initial render
+		if (last.current.idx === -1) {
+			last.current.idx = firstIdx
+			return next(viewableItems.map(i => i.item.hex))
+		}
+		const shouldCall = shouldCallNext(firstIdx, lastIdx, last.current.idx > firstIdx)
+		if (!shouldCall) { return }
+		const startIdx = firstIdx - 10
+		const endIdx = lastIdx + 10
+		const todo = contactsRef.current.slice(
+			startIdx < 0 ? 0 : startIdx,
+			endIdx > contactsRef.current.length - 1 ? contactsRef.current.length - 1 : endIdx
+		).map(c => c.hex)
+		if (last.current.idx > firstIdx) { // scrolling up
+			last.current.idx = firstIdx
+			void next(todo)
+		} else if (last.current.idx < firstIdx) { // scrolling down
+			last.current.idx = firstIdx
+			void next(todo)
+		}
+	}, [next, shouldCallNext]), 150)
+
+	// bring favs on top of the list
+	const sortFavs = useCallback((a: IContact, b: IContact) => {
+		const aIsFav = nostr.favs.includes(a.hex)
+		const bIsFav = nostr.favs.includes(b.hex)
+		// a comes before b (a is a favorite)
+		if (aIsFav && !bIsFav) { return -1 }
+		// b comes before a (b is a favorite)
+		if (!aIsFav && bIsFav) { return 1 }
+		return 0
+	}, [nostr.favs])
+
+	// handle npub/hex input field
+	const handleNpubInput = async () => {
+		startLoading()
+		setNewNpubModal(false)
+		let pub = { encoded: '', hex: '' }
+		if (isNpub(input)) {
+			pub = { encoded: input, hex: nip19.decode(input).data || '' }
+			setNostr(prev => ({ ...prev, pubKey: pub }))
+			// start initialization of nostr data
+			await handleNewNpub(pub)
 			return
 		}
-		// TODO use cache if available
-		const sub = relay.subscribePool({
-			relayUrls: userRelays,
-			authors: [hex],
-			kinds: [EventKind.SetMetadata, EventKind.ContactList],
-			skipVerification: Config.skipVerification
-		})
-		let latestRelays = 0 	// createdAt
-		let latestProfile = 0	// createdAt
-		let latestContacts = 0 	// createdAt
+		if (isHex(input)) {
+			pub = { encoded: nip19.npubEncode(input), hex: input }
+			setNostr(prev => ({ ...prev, pubKey: pub }))
+			// start initialization of nostr data
+			await handleNewNpub(pub)
+			return
+		}
+		// not npub nor hex
+		openPromptAutoClose({ msg: t('invalidPubKey') })
 		stopLoading()
-		sub?.on('event', async (e: NostrEvent) => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-			if (+e.kind === EventKind.SetMetadata) {
-				// TODO save user metadata in cache
-				if (e.created_at > latestProfile) {
-					latestProfile = e.created_at
-					setUserProfile(parseProfileContent(e))
-				}
-			}
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-			if (+e.kind === EventKind.ContactList) {
-				// save user relays
-				if (!userRelays && e.created_at > latestRelays) {
-					// TODO user relays should be updated (every day?)
-					const relays = parseUserRelays<TUserRelays>(e.content)
-					latestRelays = e.created_at
-					await store.setObj(STORE_KEYS.relays, relays)
-				}
-				if (e.created_at > latestContacts) {
-					// TODO save contacts in cache
-					latestContacts = e.created_at
-					setContacts(prev => (filterFollows(e.tags).map(f => [f, prev[1]])).reverse() as unknown as TContact[])
-				}
-			}
-		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}
 
-	// Gets metadata from cache or relay for contact in viewport
-	const setMetadata = useCallback((item: string) => {
-		if (item[1]) { return }
-		const hex = item[0]
-		// TODO use cache if available
-		const sub = relay.subscribePool({
-			relayUrls: userRelays,
-			authors: [hex],
-			kinds: [EventKind.SetMetadata],
-			skipVerification: Config.skipVerification
-		})
-		sub?.on('event', (e: NostrEvent) => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-			if (+e.kind === EventKind.SetMetadata) {
-				// TODO save contacts in cache
-				setContacts(prev => prev.map(c => c[0] === hex ? [c[0], parseProfileContent<IProfileContent>(e)] : c))
-			}
-		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	// handle new pasted npub and initialize nostr data
+	const handleNewNpub = async (pub: { encoded: string, hex: string }) => {
+		// generate new secret key if there is none
+		if (!nostr.nutPub) {
+			const sk = generatePrivateKey() // `sk` is a hex string
+			const pk = getPublicKey(sk)		// `pk` is a hex string
+			await Promise.all([
+				store.set(STORE_KEYS.nutpub, pk),		// save enuts hex pubKey
+				secureStore.set(SECRET, sk)				// save nostr secret generated by enuts for nostr DM interactions
+			])
+			setNostr(prev => ({ ...prev, nutPub: pk }))
+		}
+		await Promise.all([
+			store.set(STORE_KEYS.npub, pub.encoded), 	// save nostr encoded pubKey
+			store.set(STORE_KEYS.npubHex, pub.hex),		// save nostr hex pubKey
+		])
+		void initContacts(pub.hex)
+	}
 
-	// checks and saves already seen items to avoid multiple data fetch. Otherwise gets metadata from cache or relay
-	const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-		setAlreadySeen(prev => {
-			for (let i = 0; i < viewableItems.length; i++) {
-				const visible = viewableItems[i]
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				const seen = prev.some(itemSeen => visible.item[0] === itemSeen)
-				if (!seen) { setMetadata(visible.item as string) }
-			}
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			return [...prev, ...viewableItems.map(v => v.item[0] as string)]
-		})
-	}, [setMetadata])
-
-	// User is in payment process
-	const handleMelt = (contact?: IProfileContent) => {
-		if (!route.params) { return }
-		const { isMelt, mint, balance } = route.params
-		// user wants to melt to a contact address
-		if (contact) {
+	// user presses the send ecash button
+	const handleSend = async (contact: IContact) => {
+		const nostrData: INostrSendData = {
+			senderName: getNostrUsername(nostr.userProfile),
+			contact,
+		}
+		// melt to a contact zap address
+		if (contact && route.params?.isMelt) {
+			if (!route.params) { return }
+			const { isMelt, mint, balance } = route.params
 			if (!contact.lud16) {
 				// melting target contact has no lnurl
-				openPromptAutoClose({ msg: 'Receiver has no LNURL' })
+				openPromptAutoClose({ msg: t('receiverNoLnurl', { ns: NS.addrBook }) })
 				return
 			}
 			navigation.navigate('selectAmount', { isMelt, lnurl: contact.lud16, mint, balance })
 			return
 		}
-		// user wants to melt to his own lnurl
-		if (!userProfile?.lud16) {
-			openPromptAutoClose({ msg: t('FoundNoLnurl') })
-			return
-		}
-		navigation.navigate('selectAmount', { isMelt, lnurl: userProfile?.lud16, mint, balance })
-	}
-
-	const handleEcash = (receiverNpub?: string, receiverName?: string) => {
-		if (!route.params) { return }
-		const { mint, balance, isSendEcash } = route.params
-		navigation.navigate(
-			'selectAmount',
-			{
-				mint,
-				balance,
-				isSendEcash,
-				nostr: {
-					senderName: getNostrUsername(userProfile),
-					receiverNpub: (nip19.decode(receiverNpub || '').data || '') as string,
-					receiverName,
-				},
-			}
-		)
-	}
-
-	// Paste/Clear input for LNURL/LN invoice
-	const handleInputLabelPress = async () => {
-		// clear input
-		if (pubKey.encoded.length) {
-			setPubKey({ encoded: '', hex: '' })
-			return
-		}
-		startLoading()
-		setNewNpubModal(false)
-		// paste from clipboard
-		const clipboard = await getStrFromClipboard()
-		if (!clipboard) {
-			stopLoading()
-			return
-		}
-		let pub = { encoded: '', hex: '' }
-		// check if is npub
-		if (clipboard.startsWith('npub')) {
-			pub = { encoded: clipboard, hex: nip19.decode(clipboard).data as string || '' }
-			setPubKey(pub)
-			await handleNewNpub(pub)
-			return
-		}
-		try {
-			const encoded = nip19.npubEncode(clipboard)
-			pub = { encoded, hex: clipboard }
-			setPubKey(pub)
-		} catch (e) {
-			openPromptAutoClose({ msg: t('invalidPubKey') })
-			stopLoading()
-			return
-		}
-		// close modal
-		await handleNewNpub(pub)
-	}
-
-	const handleNewNpub = async (pub: { encoded: string, hex: string }) => {
-		// generate new secret key
-		const sk = generatePrivateKey() // `sk` is a hex string
-		const pk = getPublicKey(sk)		// `pk` is a hex string
-		setNutPub(pk)
-		await Promise.all([
-			store.set(STORE_KEYS.npub, pub.encoded), // save nostr encoded pubKey
-			store.set(STORE_KEYS.npubHex, pub.hex),	// save nostr hex pubKey
-			store.set(STORE_KEYS.nutpub, pk),			// save enuts hex pubKey
-			secureStore.set(SECRET, sk)					// save nostr secret generated by enuts for nostr DM interactions
-		])
-		initUserData({ hex: pub.hex })
-	}
-
-	const handleContactPress = ({ contact, npub, isUser }: { contact?: IProfileContent, npub?: string, isUser?: boolean }) => {
-		// add new npub
-		if (!pubKey.encoded || !contacts.length) {
-			setNewNpubModal(true)
-			return
-		}
-		// navigate to contact screen
-		if (contact && !isUser && !route.params?.isSendEcash && !route.params?.isMelt) {
-			navigation.navigate('Contact', {
-				contact,
-				npub: npub || '',
-				isUser,
-				userProfile
+		if (!nostrRef.current) { return }
+		// mint has already been selected
+		if (route.params?.mint) {
+			return navigation.navigate('selectNostrAmount', {
+				mint: route.params.mint,
+				balance: route.params.balance,
+				nostr: nostrData,
 			})
-			return
 		}
-		// user is in payment process
-		// user wants to melt
-		if (route.params?.isMelt) {
-			handleMelt(contact)
-			return
-		}
-		// user wants to send ecash
-		if (!isUser && route.params?.isSendEcash) {
-			handleEcash(npub, getNostrUsername(contact))
-			return
-		}
-		if (!userProfile) { return }
-		// navigate to user profile
-		navigation.navigate('Contact', {
-			contact: userProfile,
-			npub: pubKey.encoded,
-			isUser
-		})
-	}
-
-	// start sending ecash via nostr or melting to a LNURL from a nostr contact
-	const handleSend = async ({ npub, name }: { npub: string, name?: string }) => {
 		const mintsWithBal = await getMintsBalances()
 		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
 		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
-		const nostr = {
-			senderName: getNostrUsername(userProfile),
-			receiverNpub: npub,
-			receiverName: name,
-		}
-		// TODO this could potentially written in shorter form
 		if (nonEmptyMints.length === 1) {
-			navigation.navigate('selectAmount', {
+			return navigation.navigate('selectNostrAmount', {
 				mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
-				isSendEcash: true,
 				balance: nonEmptyMints[0].amount,
-				nostr,
+				nostr: nostrData,
 			})
-			return
 		}
 		navigation.navigate('selectMint', {
 			mints,
 			mintsWithBal,
 			allMintsEmpty: !nonEmptyMints.length,
 			isSendEcash: true,
-			nostr,
+			nostr: nostrData,
 		})
+	}
+
+	const handleRefresh = async () => {
+		// TODO check if user has internet connection, otherwise show error
+		setIsRefreshing(true)
+		setNostr(prev => ({ ...prev, userProfile: undefined }))
+		setContacts([])
+		await Promise.all([
+			nostrRef.current?.cleanCache(),
+			Image.clearDiskCache(),
+		])
+		nostrRef.current = undefined
+		contactsRef.current = []
+		last.current.idx = -1
+		setIsRefreshing(false)
+		void initContacts(nostr.pubKey.hex)
 	}
 
 	// check if user has nostr data saved previously
 	useEffect(() => {
-		void (async () => {
-			startLoading()
-			const data = await Promise.all([
-				store.get(STORE_KEYS.npub),
-				store.get(STORE_KEYS.npubHex),
-				store.getObj<TUserRelays>(STORE_KEYS.relays),
-			])
-			setPubKey({ encoded: data[0] || '', hex: data[1] || '' })
-			setUserRelays(data[2] || [])
-			initUserData({ hex: data[1] || '', userRelays: data[2] || [] })
-			if (!data[0]) { setNewNpubModal(true) }
+		if (!isFocused || nostr.pubKey.hex === nostrRef.current?.hex) { return }
+		setContacts([]) // reset contacts in case user has edited his npub
+		setSearchResults([])
+		last.current.idx = -1
+		// user has no nostr data yet
+		if (!nostr.pubKey.encoded || !nostr.pubKey.hex) {
+			setNewNpubModal(true)
 			stopLoading()
-		})()
+			return
+		}
+		// user has nostr data, set states
+		void initContacts(nostr.pubKey.hex)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [isFocused])
+
+	useEffect(() => {
+		setContacts([...contacts].sort(sortFavs))
+		// re-render search results if favs change
+		if (searchResults.length) {
+			setSearchResults([...searchResults])
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [nostr.favs])
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
-				withBackBtn={isSending}
-				handlePress={() => isSending ? navigation.goBack() : navigation.navigate('qr scan', {})}
+				withBackBtn={isPayment}
+				nostrProfile={nostr.userProfile?.picture}
+				handlePress={() => navigation.goBack()}
+				openProfile={() => navigation.navigate('Contact', {
+					contact: nostr.userProfile,
+					isUser: true
+				})}
+				loading={loading}
+				noIcons
 			/>
-			{/* Header */}
-			<View style={styles.bookHeader}>
-				<ContactsCount />
-			</View>
-			{loading ?
-				<View style={styles.loadingWrap}>
-					<Loading />
-				</View>
+			{loading || (nostr.pubKey.hex.length && !contactsRef.current.length) ?
+				<View style={styles.loadingWrap}><Loading /></View>
 				:
 				<>
-					{/* user own profile */}
-					{nutPub && userProfile && <UserProfile handlePress={handleContactPress} />}
+					{/* user recently used */}
+					{nostr.recent.length > 0 &&
+						<Recents
+							handleSend={handleSend}
+						/>
+					}
+					<Search
+						contactsRef={contactsRef}
+						setContacts={setContacts}
+						searchResults={searchResults}
+						setSearchResults={setSearchResults}
+						nostrRef={nostrRef}
+					/>
 					{/* user contacts */}
-					{contacts.length > 0 ?
+					{contactsRef.current.length > 0 ?
 						<View style={[
-							globals(color).wrapContainer,
 							styles.contactsWrap,
-							{ marginBottom: route.params?.isMelt || route.params?.isSendEcash ? marginBottomPayment : marginBottom }
+							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : marginBottom },
 						]}>
-							<FlashList
-								data={contacts}
-								estimatedItemSize={300}
-								viewabilityConfig={{
-									minimumViewTime: 250,
-									itemVisiblePercentThreshold: 10,
-								}}
-								onViewableItemsChanged={onViewableItemsChanged}
-								keyExtractor={item => item[0]}
-								renderItem={({ item, index }) => (
-									<ContactPreview
-										contact={item}
-										handleContactPress={() => handleContactPress({ contact: item[1], npub: nip19.npubEncode(item[0]) })}
-										handleSend={() => {
-											void handleSend({
-												npub: item[0],
-												name: getNostrUsername(item[1])
-											})
-										}}
-										isFirst={index === 0}
-										isLast={index === contacts.length - 1}
-										isPayment={route.params?.isMelt || route.params?.isSendEcash}
-									/>
-								)}
-								ItemSeparatorComponent={() => <Separator style={[styles.contactSeparator]} />}
-							/>
+							{searchResults.length > 0 ?
+								<FlashList
+									ref={searchListRef}
+									data={searchResults}
+									estimatedItemSize={75}
+									keyExtractor={item => item.hex}
+									renderItem={({ item }) => (
+										<ContactPreview
+											contact={item}
+											openProfile={() => {
+												navigation.navigate('Contact', { contact: item })
+											}}
+											handleSend={() => void handleSend(item)}
+											isPayment={isPayment}
+											isInContacts={contactsRef.current.some(c => c.hex === item.hex)}
+											isSearchResult
+										/>
+									)}
+									ListEmptyComponent={() => (
+										<Empty txt={t('noResults', { ns: NS.addrBook })} />
+									)}
+									ItemSeparatorComponent={() => (
+										<Separator style={[styles.contactSeparator]} />
+									)}
+								/>
+								:
+								<FlashList
+									ref={ref}
+									data={contacts}
+									viewabilityConfig={{ minimumViewTime: 500 }}
+									estimatedItemSize={75}
+									onViewableItemsChanged={onViewableItemsChanged}
+									refreshControl={
+										<RefreshControl
+											refreshing={isRefreshing}
+											onRefresh={() => void handleRefresh()}
+											title={t('pullRefresh')}
+											tintColor={hi[highlight]}
+											titleColor={color.TEXT}
+										/>
+									}
+									keyExtractor={item => item.hex}
+									renderItem={({ item }) => (
+										<ContactPreview
+											contact={item}
+											openProfile={() => {
+												navigation.navigate('Contact', {
+													contact: item,
+												})
+											}}
+											handleSend={() => void handleSend(item)}
+											isPayment={isPayment}
+										/>
+									)}
+									ListEmptyComponent={() => (
+										<Empty
+											txt={t('noResults', { ns: NS.addrBook })}
+										/>
+									)}
+									ItemSeparatorComponent={() => (
+										<Separator style={[styles.contactSeparator]} />
+									)}
+								/>
+							}
 						</View>
 						:
 						<Empty
-							txt={newNpubModal ? '' : t('addOwnLnurl', { ns: NS.addrBook })}
+							txt={newNpubModal ? '' : t('addOwnNpub', { ns: NS.addrBook })}
 							pressable={!newNpubModal}
 							onPress={() => setNewNpubModal(true)}
 						/>
@@ -388,50 +469,50 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				close={() => setNewNpubModal(false)}
 			>
 				<Text style={globals(color).modalHeader}>
-					{t('addOwnLnurl', { ns: NS.addrBook })}
+					{t('addOwnNpub', { ns: NS.addrBook })}
 				</Text>
-				<InputAndLabel
-					placeholder='NPUB/HEX'
-					setInput={text => setPubKey(prev => ({ ...prev, encoded: text }))}
-					value={pubKey.encoded}
-					handleLabel={() => void handleInputLabelPress()}
-					isEmptyInput={pubKey.encoded.length < 1}
-				/>
-				<TxtButton
-					txt={t('whatsNostr')}
-					onPress={() => void openUrl('https://nostr-resources.com/')}
-					txtColor={color.TEXT}
-					style={[{ paddingTop: 25 }]}
+				<View style={styles.wrap}>
+					<TxtInput
+						keyboardType='default'
+						placeholder='NPUB/HEX'
+						onChangeText={text => setInput(text)}
+						value={input}
+						onSubmitEditing={() => void handleNpubInput()}
+						style={[{ paddingRight: 60 }]}
+					/>
+					{/* scan icon */}
+					<TouchableOpacity
+						style={[styles.inputQR, { backgroundColor: color.INPUT_BG }]}
+						onPress={() => {
+							setNewNpubModal(false)
+							const t = setTimeout(() => {
+								navigation.navigate('qr scan', {})
+								clearTimeout(t)
+							}, 200)
+						}}
+					>
+						<QRIcon color={hi[highlight]} />
+					</TouchableOpacity>
+				</View>
+				<Button
+					txt={t('submit')}
+					onPress={() => void handleNpubInput()}
 				/>
 				<TxtButton
 					txt={t('cancel')}
 					onPress={() => setNewNpubModal(false)}
-					style={[{ paddingTop: 25, paddingBottom: 10, }]}
 				/>
 			</MyModal>
-			{!route.params?.isMelt && !route.params?.isSendEcash && <BottomNav navigation={navigation} route={route} />}
-		</View>
-	)
-}
-
-function ContactsCount() {
-	const { t } = useTranslation([NS.common])
-	const { color } = useThemeContext()
-	const { contacts, userRelays } = useNostrContext()
-	return (
-		<Text style={[styles.subHeader, { color: color.TEXT_SECONDARY }]}>
-			{!contacts.length ?
-				''
-				:
-				`${contacts.length > 1 ? t('contact_other', { count: contacts.length }) : t('contact_one', { count: contacts.length })} - ${userRelays.length || defaultRelays.length} Relays`
+			{!isKeyboardOpen && !route.params?.isMelt && !route.params?.isSendEcash &&
+				<BottomNav navigation={navigation} route={route} />
 			}
-		</Text>
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
-		paddingTop: 0
+		paddingTop: 100
 	},
 	loadingWrap: {
 		flex: 1,
@@ -439,26 +520,22 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		marginBottom: 100,
 	},
-	bookHeader: {
-		paddingHorizontal: 20,
-		marginBottom: 20,
-		marginTop: 100,
-	},
-	subHeader: {
-		fontSize: 16,
-		fontWeight: '500',
-	},
-	cancel: {
-		marginTop: 25,
-		marginBottom: 10
-	},
 	contactsWrap: {
 		flex: 1,
-		paddingHorizontal: 0,
 	},
 	contactSeparator: {
-		marginLeft: 60,
-		marginVertical: 10,
-		marginRight: 20,
+		marginHorizontal: 20,
+		marginTop: 0,
+		marginBottom: 0,
+	},
+	wrap: {
+		position: 'relative',
+		width: '100%'
+	},
+	inputQR: {
+		position: 'absolute',
+		right: 15,
+		top: 22,
+		paddingHorizontal: 10
 	},
 })

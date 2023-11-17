@@ -1,5 +1,5 @@
 import { TxtButton } from '@comps/Button'
-import { CopyIcon, NostrIcon, ReceiveIcon, SendIcon, ZapIcon } from '@comps/Icons'
+import { CopyIcon, NostrIcon, ReceiveIcon, SendMsgIcon, ZapIcon } from '@comps/Icons'
 import Option from '@comps/Option'
 import Txt from '@comps/Txt'
 import { useNostrContext } from '@src/context/Nostr'
@@ -7,7 +7,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { mainColors } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
 
 import MyModal from '.'
 
@@ -36,22 +36,24 @@ export default function OptsModal({
 }: IOptsModal) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const { nutPub } = useNostrContext()
+	const { nutPub } = useNostrContext().nostr
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onPressCancel}>
 			<Txt
 				txt={isSend ? t('send', { ns: NS.wallet }) : t('receive', { ns: NS.wallet })}
-				styles={[styles.hint, { color: color.TEXT }]}
+				bold
+				center
+				styles={[styles.hint]}
 			/>
-			<View style={styles.optionWrap}>
+			<ScrollView style={styles.optionWrap}>
 				<Option
-					icon={isSend ? <SendIcon color={mainColors.VALID} /> : <CopyIcon color={mainColors.VALID} />}
+					icon={isSend ? <SendMsgIcon width={16} height={16} color={mainColors.VALID} /> : <CopyIcon color={mainColors.VALID} />}
 					txt={button1Txt}
 					hint={isSend ? t('sendEcashDashboard') : t('receiveEcashDashboard')}
 					onPress={onPressFirstBtn}
 					hasSeparator
 					loading={loading}
-					secondIcon={!isSend && <ReceiveIcon width={26} height={26} color={color.TEXT} /> }
+					secondIcon={!isSend && <ReceiveIcon width={26} height={26} color={color.TEXT} />}
 				/>
 				{!isSend && nutPub.length > 0 &&
 					<Option
@@ -71,30 +73,20 @@ export default function OptsModal({
 				<TxtButton
 					txt={t('cancel')}
 					onPress={onPressCancel}
-					style={[{ paddingBottom: 15 }]}
+					style={[{ paddingBottom: 15, paddingTop: 15 }]}
 				/>
-			</View>
+			</ScrollView>
 		</MyModal>
 	)
 }
 
 const styles = StyleSheet.create({
-	header: {
-		fontSize: 18,
-		fontWeight: '500'
-	},
 	optionWrap: {
 		width: '100%',
 		paddingHorizontal: 10
 	},
 	hint: {
 		fontSize: 20,
-		textAlign: 'center',
-		fontWeight: '500',
 		marginBottom: 30,
-	},
-	no: {
-		marginTop: 20,
-		padding: 10,
 	},
 })

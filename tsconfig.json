@@ -4,6 +4,7 @@
 		"target": "ESNext",
 		"sourceMap": true,
 		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
 		"declarationMap": true,
 		"declaration": true,
 		"allowJs": true,

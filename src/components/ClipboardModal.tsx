@@ -2,11 +2,11 @@ import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
+import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr } from '@util'
 import { useTranslation } from 'react-i18next'
-import { Text, View } from 'react-native'
+import { Text } from 'react-native'
 
-import Button from './Button'
+import Button, { TxtButton } from './Button'
 import MyModal from './modal'
 import Txt from './Txt'
 
@@ -16,7 +16,7 @@ export default function ClipboardModal() {
 	const { tokenInfo, claimOpen, closeModal, handleRedeem } = useFocusClaimContext()
 	return (
 		tokenInfo &&
-		<MyModal type='question' visible={claimOpen} close={closeModal}>
+		<MyModal type='bottom' animation='slide' visible={claimOpen} close={closeModal}>
 			<Text style={globals(color, highlight).modalHeader}>
 				{t('foundCashuClipboard')}
 			</Text>
@@ -24,22 +24,21 @@ export default function ClipboardModal() {
 				{tokenInfo.decoded.memo && tokenInfo.decoded.memo.length > 0 &&
 					<>{t('memo', { ns: NS.history })}: {tokenInfo.decoded.memo}{'\n'}</>
 				}
-				<Txt
-					txt={formatInt(tokenInfo.value)}
-					styles={[{ fontWeight: '500' }]}
-				/>
-				{' '}Satoshi {t('fromMint')}:{'\n'}
+				<Txt txt={formatInt(tokenInfo.value)} bold />
+				{' '}{formatSatStr(tokenInfo.value, 'compact', false)}{' '}{t('fromMint')}:{'\n'}
 				{tokenInfo.mints.map(m => formatMintUrl(m)).join(', ')}
 			</Text>
 			<Button
 				txt={t('accept')}
 				onPress={() => void handleRedeem()}
 			/>
-			<View style={{ marginVertical: 10 }} />
-			<Button
+			<TxtButton
 				txt={t('cancel')}
-				outlined
-				onPress={closeModal}
+				onPress={() => {
+					// empty the clipboard to avoid re-triggering this modal
+					void copyStrToClipboard('')
+					closeModal()
+				}}
 			/>
 		</MyModal>
 	)

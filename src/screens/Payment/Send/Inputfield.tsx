@@ -1,4 +1,3 @@
-import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import Loading from '@comps/Loading'
@@ -50,10 +49,12 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 
 	const handleInvoicePaste = async (clipboard: string) => {
 		try {
-			const decoded = decodeLnInvoice(clipboard)
-			setDecodedAmount(decoded.amount / 1000)
+			const { amount } = decodeLnInvoice(clipboard)
+			setDecodedAmount(amount / 1000)
 			startLoading()
+			// l({ mintUrl: mint.mintUrl })
 			const fee = await checkFees(mint.mintUrl, clipboard)
+			// l({ estFee: fee })
 			setEstFee(fee)
 			stopLoading()
 			inputRef.current?.blur()
@@ -75,7 +76,6 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		}
 		// user pasted a LNURL, we need to get the amount by the user
 		if (isLnurl(input)) {
-			// we could check if the provided lnurl is in the contact-list of user and if not, provide the possibility to save it.
 			navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: input })
 			return
 		}
@@ -87,13 +87,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		// user pasted a LN invoice before submitting
 		try {
 			// decode again in case the user changes the input after pasting it
-			const ln = getDecodedLnInvoice(input)
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const createdTime = ln.sections[4]!.value as number
-			const timePassed = Math.ceil(Date.now() / 1000) - createdTime
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const invoiceExpiryTime = ln.sections[8]!.value as number
-			const timeLeft = invoiceExpiryTime - timePassed
+			const { timeLeft } = decodeLnInvoice(input)
 			// Invoice expired
 			if (timeLeft <= 0) {
 				openPromptAutoClose({ msg: t('expired') + '!' })
@@ -123,17 +117,8 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	// handle case if user pastes value using the device keyboard
-	useEffect(() => {
-		if (isLnurl(input)) { return }
-		// https://bitcoin.stackexchange.com/questions/107930/what-are-the-minimum-and-maximum-lengths-of-a-lightning-invoice-address
-		if (input.length < 100) { return }
-		void handleInvoicePaste(input)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [input])
-
 	return (
-		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={t('cashOut')}
 				withBackBtn
@@ -154,7 +139,6 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 								<View style={[globals(color).wrapContainer, styles.overviewWrap]}>
 									<MeltOverview
 										amount={decodedAmount}
-										balance={balance}
 										balTooLow={decodedAmount + estFee > balance}
 										fee={estFee}
 										isInvoice
@@ -211,7 +195,8 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		paddingBottom: 20,
+		paddingBottom: isIOS ? 50 : 20,
+		paddingTop: 110,
 	},
 	hint: {
 		paddingHorizontal: 20,
@@ -231,7 +216,9 @@ const styles = StyleSheet.create({
 	},
 	overviewWrap: {
 		width: '100%',
-		paddingVertical: 20
+		paddingVertical: 20,
+		paddingBottom: 20,
+		marginBottom: 0
 	},
 	paddingHorizontal: {
 		paddingHorizontal: 20

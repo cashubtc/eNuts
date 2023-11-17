@@ -4,9 +4,11 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TBeforeRemoveEvent, TSuccessPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
+import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { formatInt, vib } from '@util'
+import { l } from '@src/logger'
+import { formatSatStr, vib } from '@util'
 import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,7 +16,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
-	const { amount, memo, fee, mint, isClaim, isMelt, nostr, isScanned } = route.params
+	const { amount, memo, fee, mint, isClaim, isMelt, isZap, nostr, isScanned } = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const insets = useSafeAreaInsets()
@@ -28,23 +30,33 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		return () => navigation.removeListener('beforeRemove', backHandler)
 	}, [navigation])
 
+	l({ amount, memo, fee, mint, isClaim, isMelt, nostr, isScanned })
+
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-			<Logo size={250} style={styles.img} success />
+			{nostr && nostr.contact && nostr.contact.picture ?
+				<View style={styles.nostrImg}>
+					<ProfilePic
+						size={100}
+						hex={nostr.contact.hex}
+						uri={nostr.contact.picture}
+					/>
+				</View>
+				:
+				<Logo size={250} style={styles.img} success />
+			}
 			<View style={{ width: '100%' }}>
 				<Text style={[styles.successTxt, { color: color.TEXT }]}>
-					{nostr &&
-						<>
-							{formatInt(amount || 0)} Satoshi {t('nostrPaymentSuccess')}!
-						</>
-					}
-					{isMelt ?
-						t('paymentSuccess')
+					{nostr ?
+						<>{formatSatStr(amount || 0)} {t('nostrPaymentSuccess')}</>
 						:
-						!nostr ?
-							<>{formatInt(amount || 0)} Satoshi {isClaim ? t('claimed') : t('minted')}!</>
+						isMelt || isZap ?
+							t('paymentSuccess')
 							:
-							null
+							!nostr ?
+								<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
+								:
+								null
 					}
 				</Text>
 				{memo &&
@@ -61,7 +73,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					<LottieView
 						imageAssetsFolder='lottie/success'
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-						source={require('../../../main/assets/lottie/success/success.json')}
+						source={require('../../../assets/lottie/success/success.json')}
 						autoPlay
 						loop={false}
 						style={{ width: 130 }}
@@ -71,15 +83,15 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					<View style={styles.meltWrap}>
 						<View style={styles.meltOverview}>
 							<Txt txt={t('paidOut', { ns: NS.wallet })} styles={[styles.meltTxt]} />
-							<Txt txt={`${amount} Satoshi`} styles={[styles.meltTxt]} />
+							<Txt txt={formatSatStr(amount)} styles={[styles.meltTxt]} />
 						</View>
 						<View style={styles.meltOverview}>
 							<Txt txt={t('fee')} styles={[styles.meltTxt]} />
-							<Txt txt={`${fee} Satoshi`} styles={[styles.meltTxt]} />
+							<Txt txt={formatSatStr(fee || 0)} styles={[styles.meltTxt]} />
 						</View>
 						<View style={styles.meltOverview}>
 							<Txt txt={t('totalInclFee')} styles={[styles.meltTxt]} />
-							<Txt txt={`${amount + (fee || 0)} Satoshi`} styles={[styles.meltTxt]} />
+							<Txt txt={formatSatStr(amount + (fee || 0))} styles={[styles.meltTxt]} />
 						</View>
 					</View>
 				}
@@ -89,7 +101,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					<>
 						<Button
 							outlined
-							txt='Scan again'
+							txt={t('scanAnother', { ns: NS.common })}
 							onPress={() => navigation.navigate('qr scan', { mint: undefined })}
 						/>
 						<View style={[{ marginVertical: 10 }]} />
@@ -115,7 +127,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 			<LottieView
 				imageAssetsFolder='lottie/confetti'
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				source={require('../../../main/assets/lottie/success/confetti.json')}
+				source={require('../../../assets/lottie/success/confetti.json')}
 				autoPlay
 				loop={false}
 				style={styles.confetti}
@@ -133,6 +145,12 @@ const styles = StyleSheet.create({
 		marginTop: 100,
 		height: 100,
 		opacity: .8
+	},
+	nostrImg: {
+		marginTop: 100,
+		justifyContent:
+			'center',
+		alignItems: 'center'
 	},
 	successTxt: {
 		fontSize: 30,
@@ -165,11 +183,6 @@ const styles = StyleSheet.create({
 		right: 0,
 		left: 0,
 		paddingHorizontal: 20,
-	},
-	rdy: {
-		textAlign: 'center',
-		marginTop: 20,
-		fontSize: 20
 	},
 	confetti: {
 		width: 400,

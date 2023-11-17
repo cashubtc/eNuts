@@ -1,24 +1,23 @@
 import { getDecodedToken } from '@cashu/cashu-ts'
-import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import { BackupIcon, CheckCircleIcon, CheckmarkIcon, CopyIcon, QRIcon, SandClockIcon, SearchIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
-import MyModal from '@comps/modal'
-import QR from '@comps/QR'
+import QRModal from '@comps/QRModal'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { truncateNostrProfileInfo } from '@nostr/util'
+import { truncateStr } from '@nostr/util'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { addToHistory } from '@src/storage/store/latestHistoryEntries'
 import { historyStore } from '@store'
+import { addToHistory } from '@store/latestHistoryEntries'
+import { getCustomMintNames } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
-import { copyStrToClipboard, formatInt, formatMintUrl, getLnInvoiceInfo, isNum, isUndef } from '@util'
+import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, getLnInvoiceInfo, isNum, isUndef } from '@util'
 import { claimToken, isTokenSpendable } from '@wallet'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -40,7 +39,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		mints,
 		sender,
 		recipient,
-		preImage,
+		// preImage,
 		fee,
 		isSpent
 	} = route.params.entry
@@ -49,13 +48,21 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const [spent, setSpent] = useState(isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [qr, setQr] = useState({ open: false, error: false })
-	const isPayment = amount < 0
-	const isLn = type === 2 || type === 3
-	const LNstr = t(isPayment ? 'lnPayment' : 'lnInvoice')
-	const Ecash = t('ecashPayment')
-	const { hash, memo } = isLn ? getLnInvoiceInfo(value) : { hash: '', memo: '' }
-	const tokenMemo = !isLn ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history })
+	const isPayment = useRef(amount < 0)
+	const isLn = useRef(type === 2 || type === 3)
+	const LNstr = useRef(t(isPayment.current ? 'lnPayment' : 'lnInvoice'))
+	const Ecash = useRef(t('ecashPayment'))
+	const { hash, memo } = useMemo(() => isLn.current ? getLnInvoiceInfo(value) : { hash: '', memo: '' }, [value])
+	const tokenMemo = useMemo(() => !isLn.current ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history }), [t, value])
 	const { openPromptAutoClose } = usePromptContext()
+	const [customMints, setCustomMints] = useState([{ mintUrl: '', customName: '' }])
+
+	useEffect(() => {
+		void (async () => {
+			const customName = await getCustomMintNames(mints.map(m => ({ mintUrl: m })))
+			setCustomMints(customName)
+		})()
+	}, [mints])
 
 	const getTxColor = () => {
 		if (type === 3) { return color.TEXT }
@@ -64,7 +71,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 
 	const getScreenName = () => {
 		if (type === 3) { return t('multimintSwap') }
-		return isLn ? LNstr : Ecash
+		return isLn.current ? LNstr.current : Ecash.current
 	}
 
 	const getAmount = () => {
@@ -84,12 +91,12 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		handleTimeout()
 	}
 
-	const copyPreimage = async () => {
-		if (!preImage) { return }
-		await copyStrToClipboard(preImage)
-		setCopy({ ...copy, preimage: true })
-		handleTimeout()
-	}
+	// const copyPreimage = async () => {
+	// 	if (!preImage) { return }
+	// 	await copyStrToClipboard(preImage)
+	// 	setCopy({ ...copy, preimage: true })
+	// 	handleTimeout()
+	// }
 
 	const handleTimeout = () => {
 		const t = setTimeout(() => {
@@ -146,7 +153,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}
 
 	const getMemo = () => {
-		if (isLn) {
+		if (isLn.current) {
 			if (memo === 'enuts') { return 'Cashu deposit' }
 			return memo
 		}
@@ -167,7 +174,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						{getAmount()}
 					</Text>
 					<Txt
-						txt='Satoshi'
+						txt={formatSatStr(amount, 'standard', false)}
 						styles={[{ color: color.TEXT_SECONDARY }]}
 					/>
 				</View>
@@ -183,7 +190,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						<>
 							<View style={styles.entryInfo}>
 								<Txt txt={t('recipient')} />
-								<Txt txt={type === 3 ? formatMintUrl(recipient) : truncateNostrProfileInfo(recipient)} />
+								<Txt txt={type === 3 ? formatMintUrl(recipient) : truncateStr(recipient)} />
 							</View>
 							<Separator />
 						</>
@@ -193,7 +200,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						<>
 							<View style={styles.entryInfo}>
 								<Txt txt={t('sender')} />
-								<Txt txt={truncateNostrProfileInfo(sender)} />
+								<Txt txt={truncateStr(sender)} />
 							</View>
 							<Separator />
 						</>
@@ -209,8 +216,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					<Separator />
 					{/* Mints */}
 					<View style={styles.entryInfo}>
-						<Txt txt={isLn ? 'Mint' : 'Mints'} />
-						<Txt txt={mints.map(m => formatMintUrl(m)).join(', ')} />
+						<Txt txt={isLn.current ? 'Mint' : 'Mints'} />
+						<Txt txt={customMints.map(m => m.customName.length ? m.customName : formatMintUrl(m.mintUrl)).join(', ')} />
 					</View>
 					<Separator />
 					{/* cashu token or ln invoice */}
@@ -221,7 +228,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							void copyValue()
 						}}
 					>
-						<Txt txt={isLn ? t('invoice') : 'Token'} />
+						<Txt txt={isLn.current ? t('invoice') : 'Token'} />
 						<View style={styles.copyWrap}>
 							<Txt
 								txt={value.length ? `${value.slice(0, 16)}...` : t('n/a')}
@@ -240,7 +247,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					</TouchableOpacity>
 					<Separator />
 					{/* check is token spendable */}
-					{isPayment && !isLn &&
+					{isPayment.current && !isLn.current &&
 						<>
 							<IsSpentContainer
 								isSpent={spent}
@@ -267,7 +274,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						</>
 					}
 					{/* Lightning related */}
-					{isLn &&
+					{isLn.current &&
 						<>
 							{/* LN payment hash */}
 							<TouchableOpacity
@@ -296,7 +303,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							</TouchableOpacity>
 							<Separator />
 							{/* LN payment preImage */}
-							<TouchableOpacity
+							{/* <TouchableOpacity
 								style={styles.entryInfo}
 								onPress={() => {
 									if (!preImage || copy.preimage) { return }
@@ -320,11 +327,11 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 									}
 								</View>
 							</TouchableOpacity>
-							<Separator />
+							<Separator /> */}
 							{/* LN payment fees */}
 							<View style={styles.entryInfo}>
 								<Txt txt={t('fee')} />
-								<Txt txt={isNum(fee) ? `${fee} Satoshi` : t('n/a')} />
+								<Txt txt={isNum(fee) ? formatSatStr(fee) : t('n/a')} />
 							</View>
 							<Separator />
 						</>
@@ -339,25 +346,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 					</TouchableOpacity>
 				</View>
 			</ScrollView>
-			<MyModal type='question' visible={qr.open} close={() => setQr({ open: false, error: false })}>
-				{qr.error ?
-					<Txt txt={t('bigQrMsg')} styles={[{ textAlign: 'center' }]} />
-					:
-					<QR
-						value={value}
-						size={300}
-						onError={() => {
-							setQr({ open: true, error: true })
-						}}
-					/>
-				}
-				<View style={{ marginVertical: 20 }} />
-				<Button
-					outlined
-					txt='OK'
-					onPress={() => setQr({ open: false, error: false })}
-				/>
-			</MyModal>
+			<QRModal
+				visible={qr.open}
+				value={value}
+				error={qr.error}
+				close={() => setQr({ open: false, error: false })}
+				onError={() => setQr({ open: true, error: true })}
+				isInvoice={isLn.current}
+				truncateNum={isLn.current ? 20 : 25}
+			/>
 		</View>
 	)
 }
@@ -394,13 +391,14 @@ const styles = StyleSheet.create({
 		maxWidth: 200,
 	},
 	amount: {
-		fontSize: 50,
+		fontSize: 52,
+		fontWeight: '600',
 	},
 	entryInfo: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingVertical: 20,
+		paddingBottom: 20,
 	},
 	copyWrap: {
 		flexDirection: 'row',

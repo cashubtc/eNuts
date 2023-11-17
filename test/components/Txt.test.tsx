@@ -22,6 +22,6 @@ describe('Basic test of the Txt.tsx component', () => {
 			<Txt txt='Hello World!' styles={[{ marginTop: 10 }]} />
 		)
 		const textElement = screen.getByText('Hello World!')
-		expect(textElement.props.style[1].marginTop).toBe(10)
+		expect(textElement.props.style[2].marginTop).toBe(10)
 	})
 })

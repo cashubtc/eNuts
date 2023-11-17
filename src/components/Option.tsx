@@ -1,4 +1,5 @@
 import { useThemeContext } from '@src/context/Theme'
+import { globals } from '@styles'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import { ChevronRightIcon } from './Icons'
@@ -20,7 +21,7 @@ export default function Option({ icon, txt, hint, onPress, hasSeparator, loading
 	const { color } = useThemeContext()
 	return (
 		<>
-			<TouchableOpacity style={styles.target} onPress={onPress}>
+			<TouchableOpacity style={globals().wrapRow} onPress={onPress}>
 				<View style={styles.txtWrap}>
 					{icon ?
 						<View style={{ minWidth: 40 }}>
@@ -30,7 +31,7 @@ export default function Option({ icon, txt, hint, onPress, hasSeparator, loading
 						null
 					}
 					<View>
-						<Txt styles={[{ fontWeight: '500' }]} txt={txt} />
+						<Txt txt={txt} bold />
 						<Txt styles={[styles.targetHint, { color: color.TEXT_SECONDARY }]} txt={hint} />
 					</View>
 				</View>
@@ -40,17 +41,12 @@ export default function Option({ icon, txt, hint, onPress, hasSeparator, loading
 					secondIcon ? <View style={styles.iconWrap}>{secondIcon}</View> : <ChevronRightIcon color={color.TEXT} />
 				}
 			</TouchableOpacity>
-			{hasSeparator && <Separator style={[styles.separator]} />}
+			{hasSeparator && <Separator />}
 		</>
 	)
 }
 
 const styles = StyleSheet.create({
-	target: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
 	targetHint: {
 		fontSize: 12,
 	},
@@ -58,9 +54,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		maxWidth: '80%'
-	},
-	separator: {
-		marginVertical: 20,
 	},
 	iconWrap: {
 		marginRight: -5,

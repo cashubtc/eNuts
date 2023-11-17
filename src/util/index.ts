@@ -1,7 +1,8 @@
 import { getDecodedLnInvoice, getDecodedToken } from '@cashu/cashu-ts'
 import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
-import type { ILnUrl, IProofSelection } from '@model'
+import type { ILnUrl, IMintBalWithName, IProofSelection } from '@model'
+import { IContact } from '@src/model/nostr'
 import type { Buffer } from 'buffer/'
 import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
@@ -22,6 +23,46 @@ export function uniq<T extends string | number | bigint | boolean | symbol>(iter
 	return [...new Set(iter)]
 }
 
+export function uniqBy<T extends object, TK extends keyof T>(iter: Iterable<T>, key: TK) {
+	// l()
+	const o = [...iter].reduce<{ [k: string | number | symbol]: T }>((acc, cur) => {
+		acc[cur[key] as string | number | symbol] = cur
+		return acc
+	}, {})
+	// l({o})
+	return Object.values<T>(o)
+}
+
+export function uniqByIContacts(iter: Iterable<IContact>, key: keyof IContact) {
+	// l()
+	const o = [...iter].reduce<{ [k: string | number | symbol]: IContact }>((acc, cur) => {
+		const hex = cur?.[key]
+		if (!hex) { return acc }
+		if (!acc[hex] || Object.keys(cur).length > Object.keys(acc[hex]).length) {
+			// l({ cur, hex, accItem: acc[hex] })
+			acc[hex] = cur
+			return acc
+		}
+		return acc
+	}, {})
+	// l({o})
+	return Object.values(o)
+}
+/* export function uniqBy<T extends object, TK extends keyof T>(iter: T[], key: TK & TTK<T, TK>) {
+	const o = [...iter].reduce<{ [k: PropertyKey]: T }>((acc, cur) => {
+		const k = cur[key]
+		switch (typeof k) {
+			case 'string':
+			case 'number':
+			case 'symbol': {
+				acc[k] = cur
+				return acc
+			}
+			default: return acc
+		}
+	}, {})
+	return Object.values<T>(o)
+}  */
 export function clearArr<T extends U[], U>(array: T) { array.length = 0 }
 
 /**
@@ -144,11 +185,15 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 		if (!isLnurl(address)) { throw new Error('invalid address') }
 		const [user, host] = address.split('@')
 		amount *= 1000
-		const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json() as ILnUrl
+		const resp = await fetch(`https://${host}/.well-known/lnurlp/${user}`)
+		const { tag, callback, minSendable, maxSendable } = await resp.json<ILnUrl>()
+		// const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json<ILnUrl>()
 		if (tag === 'payRequest' && minSendable <= amount && amount <= maxSendable) {
-			const resp = await (await fetch(`${callback}?amount=${amount}`)).json() as { pr: string }
-			if (!resp?.pr) { l('[getInvoiceFromLnurl]', { resp }) }
-			return resp?.pr || ''
+			const resp = await fetch(`${callback}?amount=${amount}`)
+			const { pr } = await resp.json<{ pr: string }>()
+			// const resp = await (await fetch(`${callback}?amount=${amount}`)).json<{ pr: string }>()
+			if (!pr) { l('[getInvoiceFromLnurl]', { resp }) }
+			return pr || ''
 		}
 	} catch (err) { l('[getInvoiceFromLnurl]', err) }
 	return ''
@@ -157,6 +202,8 @@ export async function getInvoiceFromLnurl(address: string, amount: number) {
 export function isCashuToken(token: string) {
 	if (!token || !isStr(token)) { return }
 	token = token.trim()
+	const idx = token.indexOf('cashuA')
+	if (idx !== -1) { token = token.slice(idx) }
 	const uriPrefixes = [
 		'https://wallet.nutstash.app/#',
 		'https://wallet.cashu.me/?token=',
@@ -171,6 +218,38 @@ export function isCashuToken(token: string) {
 	if (!token) { return }
 	try { getDecodedToken(token.trim()) } catch (_) { return }
 	return token.trim()
+}
+
+export function isLnInvoice(str: string) {
+	if (!str || !isStr(str)) { return }
+	str = str.trim()
+	const uriPrefixes = [
+		'lightning:',
+		'lightning=',
+		'lightning://',
+		'lnurlp://',
+		'lnurlp=',
+		'lnurlp:',
+		'lnurl:',
+		'lnurl=',
+		'lnurl://'
+	]
+	uriPrefixes.forEach((prefix) => {
+		if (!str.startsWith(prefix)) { return }
+		str = str.slice(prefix.length).trim()
+	})
+	if (!str) { return }
+	try { getDecodedLnInvoice(str.trim()) } catch (_) { return }
+	return str.trim()
+}
+
+export function extractStrFromURL(url?: string) {
+	try {
+		const u = new URL(url || '')
+		return u.hostname || u.pathname
+	} catch (e) {
+		return url
+	}
 }
 
 export function* arrToChunks<T extends T[number][]>(arr: T, n: number) {
@@ -208,11 +287,14 @@ export function decodeLnInvoice(invoice: string) {
 	const memo = getFromSection<string>(x.sections, 'description', isStr) || ''
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const paymentHash = getFromSection<Buffer>(x.sections, 'payment_hash', isBuf)?.toString('hex') || ''
+	const timePassed = Math.ceil(Date.now() / 1000) - timestamp
+	const timeLeft = expiry - timePassed
 	return {
 		decoded: x,
-		amount,
+		amount: amount / 1000,
 		timestamp,
 		expiry,
+		timeLeft,
 		memo,
 		paymentHash
 	}
@@ -224,54 +306,8 @@ export function cleanUpNumericStr(str: string) {
 }
 
 export function openUrl(url: string) {
-	if (!url?.trim()) { return }
+	if (!url?.trim() || !isUrl(url)) { return }
 	return Linking.openURL(url)
-}
-
-/**
- * Searches for a target value in a sorted array using binary search,
- * and optionally inserts the target value if not found.
- *
- * @param arr - The sorted array to search or insert into.
- * @param target - The value to search for or insert.
- * @param shouldInsert Optional, Specifies whether to insert the target if not found.
- * @returns If `shouldInsert` is false, returns `true` if target found, or `false` if not found.
- * If `shouldInsert` is true, returns the index where target is inserted, or `-1` if the target already exists.
- */
-export function binarySearchAndInsert(arr: string[], target: string, shouldInsert = false) {
-	let left = 0, right = arr.length - 1
-	while (left <= right) {
-		// bit-wise right shift operation
-		const mid = (left + right) >> 1
-		const midValue = arr[mid]
-		if (midValue === target) { return shouldInsert ? mid : true }
-		if (midValue < target) { left = mid + 1 }
-		else { right = mid - 1 }
-	}
-	return shouldInsert ? left : false
-}
-
-// helper without flag
-export function binarySearch(arr: string[], target: string) {
-	return binarySearchAndInsert(arr, target) as boolean
-}
-
-// helper with flag
-export function binaryInsert(arr: string[], newStr: string): void {
-	const insertionIndex = binarySearchAndInsert(arr, newStr, true)
-	if (isNum(insertionIndex)) {
-		arr.splice(insertionIndex, 0, newStr)
-	}
-}
-
-// For arrays smaller than 10 elements, a linear search is often
-// simpler and faster due to the reduced overhead. Only when you start to deal with larger datasets,
-// such as hundreds or thousands of elements, does binary search's efficiency start to shine.
-export function hasEventId(arr: string[], target: string) {
-	if (arr.length < 40) {
-		return arr.some(x => x === target)
-	}
-	return binarySearch(arr, target)
 }
 
 export async function copyStrToClipboard(str: string) {
@@ -293,16 +329,59 @@ export async function share(message: string, url?: string) {
 		if (res.action === Share.sharedAction) {
 			if (res.activityType) {
 				// shared with activity type of result.activityType
-				l('shared with activity type of result.activityType')
-			} else {
-				// shared
-				l('shared')
+				return l('shared with activity type of result.activityType')
 			}
-		} else if (res.action === Share.dismissedAction) {
+			// shared
+			return l('shared')
+		}
+		if (res.action === Share.dismissedAction) {
 			// dismissed
 			l('sharing dismissed')
 		}
 	} catch (e) {
 		l('[quick-share error] ', e)
 	}
+}
+
+export function normalizeMintUrl(url: string) {
+	const res = url.startsWith('https://') ? url : `https://${url}`
+	if (!isUrl(res)) { return }
+	return res
+}
+
+export function sortMintsByDefault(mints: IMintBalWithName[], defaultMint: string) {
+	return mints.sort((a, b) => {
+		if (a.mintUrl === defaultMint) { return -1 }
+		if (b.mintUrl === defaultMint) { return 1 }
+		// if neither 'a' nor 'b' is the default mint, sort by amount (descending)
+		return b.amount - a.amount
+	})
+}
+
+export function debounce<T extends (...args: any[]) => void>(
+	func: T,
+	timeout = 300
+): (...args: Parameters<T>) => void {
+	let timer: NodeJS.Timeout
+
+	return function (this: ThisParameterType<T>, ...args: Parameters<T>): void {
+		clearTimeout(timer)
+		timer = setTimeout(() => {
+			func.apply(this, args)
+		}, timeout)
+	}
+}
+
+export function formatSatStr(
+	amount: number,
+	notation: 'standard' | 'engineering' | 'scientific' | 'compact' = 'standard',
+	showAmount = true
+) {
+	return `${showAmount ? `${formatInt(amount, notation, 'en')} ` : ' '}${amount < 2 && amount > -2 ? 'Sat' : 'Sats'}`
+}
+
+export function getUnixTimestampFromDaysAgo(days: number) {
+	const date = new Date()
+	date.setDate(date.getDate() - days)
+	return Math.floor(date.getTime() / 1000)
 }

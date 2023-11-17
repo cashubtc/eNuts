@@ -1,6 +1,8 @@
 import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
-import { AboutIcon, BitcoinIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, FlagIcon, MintBoardIcon, PenIcon, PlusIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
+import { AboutIcon, BitcoinIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, FlagIcon, MintBoardIcon, PenIcon, PlusIcon, QRIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
+import QRModal from '@comps/QRModal'
+import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { _testmintUrl, isIOS } from '@consts'
@@ -8,7 +10,7 @@ import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
 import { getBackUpTokenForMint } from '@db/backup'
 import { l } from '@log'
 import MyModal from '@modal'
-import { QuestionModal } from '@modal/Question'
+import { BottomModal } from '@modal/Question'
 import type { TMintManagementPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { usePromptContext } from '@src/context/Prompt'
@@ -16,7 +18,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { _setMintName, getCustomMintNames, getDefaultMint, getMintName, setDefaultMint } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
-import { formatInt, formatMintUrl } from '@util'
+import { formatMintUrl, formatSatStr } from '@util'
 import { checkProofsSpent } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -39,6 +41,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	// delete mint prompt
 	const [delMintModalOpen, setDelMintModalOpen] = useState(false)
 	const { copied, copy } = useCopy()
+	const [qr, setQr] = useState({ open: false, error: false })
 
 	// check if it is a default mint
 	useEffect(() => {
@@ -152,6 +155,17 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 				{/* General */}
 				<Txt txt={t('general', { ns: NS.mints })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
+					{/* Balance */}
+					<View style={globals().wrapRow}>
+						<View style={styles.mintOption}>
+							<View style={{ minWidth: 30 }}>
+								<BitcoinIcon color={color.TEXT} />
+							</View>
+							<Txt txt={t('balance')} />
+						</View>
+						<Txt txt={formatSatStr(route.params.amount)} />
+					</View>
+					<Separator />
 					{/* Mint url */}
 					<MintOption
 						txt={formatMintUrl(route.params.mint?.mintUrl)}
@@ -164,17 +178,14 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							<CopyIcon color={color.TEXT} />
 						}
 					/>
-					{/* Balance */}
-					<View style={styles.mintOpts}>
-						<View style={styles.mintOption}>
-							<View style={{ minWidth: 30 }}>
-								<BitcoinIcon color={color.TEXT} />
-							</View>
-							<Txt txt={t('balance')} />
-						</View>
-						<Txt txt={formatInt(route.params?.amount) + ' Satoshi'} />
-					</View>
-					<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
+					{/* scan url */}
+					<MintOption
+						txt={t('showQr', { ns: NS.history })}
+						hasSeparator
+						noChevron
+						onPress={() => setQr({ open: true, error: false })}
+						icon={<QRIcon width={16} height={16} color={color.TEXT} />}
+					/>
 					{/* Add custom name */}
 					<MintOption
 						txt={t('customName', { ns: NS.mints })}
@@ -287,7 +298,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			</ScrollView>
 			{/* modal for deleting a mint */}
 			{delMintModalOpen &&
-				<QuestionModal
+				<BottomModal
 					header={t('delMintSure', { ns: NS.mints })}
 					txt={route.params.mint.mintUrl}
 					visible={delMintModalOpen}
@@ -297,7 +308,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 			}
 			{/* Check proofs modal */}
 			{checkProofsOpen &&
-				<QuestionModal
+				<BottomModal
 					header={t('checkProofsQ', { ns: NS.mints })}
 					txt={t('checkProofsTxt', { ns: NS.mints })}
 					visible={checkProofsOpen}
@@ -325,9 +336,18 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<TxtButton
 						txt={t('cancel')}
 						onPress={() => setCustomNameOpen(false)}
-						style={[{ paddingTop: 15, paddingBottom: 15 }]}
+						style={[{ paddingTop: 30, paddingBottom: 15 }]}
 					/>
-				</MyModal>}
+				</MyModal>
+			}
+			<QRModal
+				visible={qr.open}
+				value={route.params.mint?.mintUrl}
+				error={qr.error}
+				close={() => setQr({ open: false, error: false })}
+				onError={() => setQr({ open: true, error: true })}
+				truncateNum={30}
+			/>
 		</View>
 	)
 }
@@ -345,7 +365,7 @@ function MintOption({ txt, onPress, icon, rowColor, hasSeparator, noChevron }: I
 	const { color } = useThemeContext()
 	return (
 		<>
-			<TouchableOpacity onPress={onPress} style={styles.mintOpts}>
+			<TouchableOpacity onPress={onPress} style={globals().wrapRow}>
 				<View style={styles.mintOption}>
 					<View style={{ minWidth: 30 }}>
 						{icon}
@@ -354,9 +374,7 @@ function MintOption({ txt, onPress, icon, rowColor, hasSeparator, noChevron }: I
 				</View>
 				{!noChevron ? <ChevronRightIcon color={color.TEXT} /> : <View />}
 			</TouchableOpacity>
-			{hasSeparator &&
-				<View style={[styles.line, { borderBottomColor: color.BORDER }]} />
-			}
+			{hasSeparator && <Separator />}
 		</>
 	)
 }
@@ -375,20 +393,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		marginTop: 20,
 		marginBottom: 10
-	},
-	mintOpts: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 20,
-	},
-	line: {
-		borderBottomWidth: 1,
-	},
-
-	cancelDel: {
-		fontSize: 16,
-		fontWeight: '500',
 	},
 	mintOption: {
 		flexDirection: 'row',

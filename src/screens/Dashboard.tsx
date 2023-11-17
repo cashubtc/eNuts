@@ -7,13 +7,12 @@ import { AboutIcon, ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIco
 import InitialModal from '@comps/InitialModal'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
-import { addMint, getBalance, getMintsBalances, getMintsUrls, hasMints } from '@db'
+import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import OptsModal from '@modal/OptsModal'
 import TrustMintModal from '@modal/TrustMint'
-import type { TBeforeRemoveEvent, TDashboardPageProps } from '@model/nav'
+import type { TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { preventBack } from '@nav/utils'
 import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
@@ -23,14 +22,14 @@ import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
-import { getCustomMintNames, saveDefaultOnInit } from '@store/mintStore'
+import { saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
-import { getStrFromClipboard, hasTrustedMint, isCashuToken, isErr } from '@util'
-import { claimToken } from '@wallet'
+import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice } from '@util'
+import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -41,7 +40,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
 	// Nostr
-	const { nutPub } = useNostrContext()
+	const { nutPub } = useNostrContext().nostr
 	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
 	const { openPromptAutoClose } = usePromptContext()
@@ -93,6 +92,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		try {
 			await saveDefaultOnInit()
 		} catch (e) {
+			// TODO update error message: Mint could not be added, please add a different one or try again later.
 			openPromptAutoClose({ msg: isErr(e) ? e.message : t('smthWrong') })
 			await handleMintModal(false)
 			return
@@ -156,13 +156,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			memo: info?.decoded.memo,
 			isClaim: true
 		})
-	}
-
-	// get mints for send/receive process
-	const getMintsForPayment = async () => {
-		const mintsBals = await getMintsBalances()
-		const mints = await getCustomMintNames(mintsBals.map(m => ({ mintUrl: m.mintUrl })))
-		return { mintsBals, mints }
 	}
 
 	// receive ecash button
@@ -263,11 +256,18 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	// handle initial URL passed on by clicking on a cashu link
 	useEffect(() => {
-		void (async () => {
-			if (!url) { return }
-			// alert(`URL in dashboard useEffect: ${url}`)
-			await handleTokenSubmit(url)
-		})()
+		if (!url) { return }
+		if (isCashuToken(url)) {
+			return void handleTokenSubmit(url)
+		}
+		if (isLnInvoice(url)) {
+			navigation.navigate('processing', {
+				mint: { mintUrl: '', customName: '' },
+				amount: 0,
+				isZap: true,
+				recipient: extractStrFromURL(url) || url
+			})
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
 
@@ -286,7 +286,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
 	useEffect(() => {
-		const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch)
+		const backHandler = () => BackHandler.exitApp()
 		navigation.addListener('beforeRemove', backHandler)
 		return () => navigation.removeListener('beforeRemove', backHandler)
 	}, [navigation])
@@ -379,7 +379,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				visible={modal.receiveOpts}
 				button1Txt={loading ? t('claiming', { ns: NS.wallet }) : t('pasteToken', { ns: NS.wallet })}
 				onPressFirstBtn={() => void handleClaimBtnPress()}
-				button2Txt={t('createLnInvoice', { ns: NS.wallet })}
+				button2Txt={t('mintNewTokens', { ns: NS.mints })}
 				onPressSecondBtn={() => void handleMintBtnPress()}
 				handleNostrReceive={() => {
 					closeOptsModal()
@@ -412,6 +412,7 @@ function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 			/>
 			<Txt
 				txt={txt}
+				bold
 				styles={[styles.btnTxt, { color, opacity: disabled ? .5 : 1 }]}
 			/>
 		</View>
@@ -433,7 +434,6 @@ const styles = StyleSheet.create({
 		minWidth: 100
 	},
 	btnTxt: {
-		fontWeight: '500',
 		marginTop: 10,
 	},
 	hintWrap: {

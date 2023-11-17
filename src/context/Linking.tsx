@@ -1,7 +1,6 @@
-import { getDecodedToken } from '@cashu/cashu-ts'
-import { isCashuToken } from '@util'
-import { useEffect,useState } from 'react'
-import type { EmitterSubscription} from 'react-native'
+import { isCashuToken, isLnInvoice } from '@util'
+import { useEffect, useState } from 'react'
+import type { EmitterSubscription } from 'react-native'
 import { Linking } from 'react-native'
 
 export interface EventType {
@@ -29,8 +28,11 @@ export const useInitialURL = () => {
 	const [processing, setProcessing] = useState(true)
 
 	function onChange(event: { url: string }) {
-		const u = isCashuToken(event?.url || '') || ''
-		setUrl(u)
+		if (!event?.url) { return setUrl('') }
+		if (isCashuToken(event.url) || isLnInvoice(event.url)) {
+			return setUrl(event.url)
+		}
+		setUrl('')
 	}
 
 	useEffect(() => {
@@ -38,14 +40,9 @@ export const useInitialURL = () => {
 			// Get the deep link used to open the app
 			let initialUrl = await Linking.getInitialURL() || ''
 			if (!initialUrl) { return }
-			initialUrl = isCashuToken(initialUrl) || ''
-			if (!initialUrl) { return }
-			try { getDecodedToken(initialUrl) } catch (_) { return }
-			// The setTimeout is just for testing purpose
-			setTimeout(() => {
-				setUrl(initialUrl || '')
-				setProcessing(false)
-			}, 1000)
+			initialUrl = isCashuToken(initialUrl) || isLnInvoice(initialUrl) || ''
+			setProcessing(false)
+			return setUrl(initialUrl)
 		}
 		void getUrlAsync()
 		const subscription = addEventListener('url', onChange)

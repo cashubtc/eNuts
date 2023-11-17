@@ -1,4 +1,5 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
+import Button from '@comps/Button'
 import Loading from '@comps/Loading'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
@@ -10,11 +11,11 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { cleanUpNumericStr, formatInt, getInvoiceFromLnurl, vib } from '@util'
+import { cleanUpNumericStr, formatSatStr, getInvoiceFromLnurl, vib } from '@util'
 import { checkFees, requestMint } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, View } from 'react-native'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
 	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
@@ -29,7 +30,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	const [shouldEstimate, setShouldEstimate] = useState(false)
 	const [fee, setFee] = useState({ estimation: 0, isCalculating: false })
 
-	const balTooLow = isMelt && +amount + fee.estimation > balance
+	const balTooLow = (isMelt || isSwap) && +amount + fee.estimation > balance
 
 	const isSendingWholeMintBal = () => {
 		// includes fee
@@ -172,74 +173,62 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
+			mintBalance={balance}
+			disableMintBalance={isMelt || isSwap}
+			handleMintBalancePress={() => setAmount(`${balance}`)}
 		>
 			{!isMelt && !isSwap &&
-				<Txt txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: NS.mints })} styles={[styles.headerHint]} />
+				<Txt
+					txt={t(isSendEcash ? 'ecashAmountHint' : 'invoiceAmountHint', { ns: NS.mints })}
+					styles={[styles.headerHint]}
+				/>
 			}
-			<View style={[globals(color).wrapContainer, styles.overviewWrap]}>
+			<View style={[styles.overviewWrap, { marginTop: isMelt || isSwap ? 0 : 20 }]}>
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
 						keyboardType='numeric'
 						ref={inputRef}
 						placeholder='0'
 						placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
-						style={[styles.amount, { color: err ? mainColors.ERROR : hi[highlight] }]}
-						cursorColor={hi[highlight]}
+						style={[globals().selectAmount, { color: err ? mainColors.ERROR : hi[highlight] }]}
+						caretHidden
 						onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
 						onSubmitEditing={() => void handleAmountSubmit()}
 						value={amount}
 						maxLength={8}
 					/>
 				</Animated.View>
-				<Txt txt='Satoshi' styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center' }]} />
-				{(isMelt || isSwap || isSendEcash) &&
-					<Separator style={[{ marginVertical: 20 }]} />
-				}
-				{isMelt || isSwap ?
-					<MeltOverview
-						amount={+amount}
-						balance={balance}
-						shouldEstimate={shouldEstimate}
-						balTooLow={balTooLow}
-						fee={fee.estimation}
-					/>
-					:
-					isSendEcash ?
-						<View style={styles.overview}>
-							<Txt
-								txt={t('balance', { ns: NS.common })}
-								styles={[{ fontWeight: '500' }]}
-							/>
-							<Txt txt={`${formatInt(balance)} Satoshi`} />
-						</View>
-						:
-						null
+				<Txt
+					txt={formatSatStr(+amount, 'standard', false)}
+					styles={[styles.sats, { color: color.TEXT_SECONDARY }]}
+				/>
+				{(isMelt || isSwap) &&
+					<>
+						<Separator style={[{ marginVertical: 20 }]} />
+						<MeltOverview
+							amount={+amount}
+							shouldEstimate={shouldEstimate}
+							balTooLow={balTooLow}
+							fee={fee.estimation}
+						/>
+						<Txt
+							txt={'* ' + t('cashOutAmountHint', { ns: NS.mints })}
+							styles={[styles.feeHint, { color: color.TEXT_SECONDARY }]}
+						/>
+					</>
 				}
 			</View>
-			{(isMelt || isSwap) &&
-				<Txt txt={'* ' + t('cashOutAmountHint', { ns: NS.mints })} styles={[styles.feeHint, { color: color.TEXT_SECONDARY }]} />
-			}
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={[styles.continue, { bottom: isIOS ? 20 : 0 }]}
+				style={styles.continue}
 			>
-				<TouchableOpacity
-					style={styles.actionBtn}
+				<Button
+					txt={getActionBtnTxt()}
+					outlined={shouldEstimate}
 					onPress={() => void handleAmountSubmit()}
 					disabled={balTooLow}
-				>
-					<Txt
-						txt={getActionBtnTxt()}
-						styles={[
-							globals(color, highlight).pressTxt,
-							{
-								color: balTooLow ? mainColors.ERROR : fee.isCalculating ? mainColors.WARN : hi[highlight],
-								marginRight: fee.isCalculating ? 10 : 0
-							}
-						]}
-					/>
-					{fee.isCalculating && <Loading color={mainColors.WARN} />}
-				</TouchableOpacity>
+					icon={fee.isCalculating ? <Loading color={hi[highlight]} /> : undefined}
+				/>
 			</KeyboardAvoidingView>
 		</Screen>
 	)
@@ -247,39 +236,26 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 
 interface IMeltOverviewProps {
 	amount: number
-	balance: number
 	shouldEstimate?: boolean
 	balTooLow?: boolean
 	isInvoice?: boolean
 	fee: number
 }
 
-export function MeltOverview({ amount, balance, shouldEstimate, balTooLow, isInvoice, fee }: IMeltOverviewProps) {
+export function MeltOverview({ amount, shouldEstimate, balTooLow, isInvoice, fee }: IMeltOverviewProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	l({ fee })
 	return (
-		<>
-			<View style={styles.overview}>
-				<Txt
-					txt={t('balance')}
-					styles={[{ fontWeight: '500' }]}
-
-				/>
-				<Txt txt={`${formatInt(balance)} Satoshi`} />
-			</View>
-			<Separator style={[{ marginVertical: 20 }]} />
-			<View style={styles.overview}>
-				<Txt
-					txt={t(isInvoice ? 'invoiceInclFee' : 'totalInclFee', { ns: NS.common }) + '*'}
-					styles={[{ fontWeight: '500' }]}
-				/>
-				<Txt
-					txt={`${shouldEstimate ? 0 : amount + fee} Satoshi`}
-					styles={[{ color: !shouldEstimate && balTooLow ? mainColors.ERROR : shouldEstimate ? color.TEXT : mainColors.VALID }]}
-				/>
-			</View>
-		</>
+		<View style={styles.overview}>
+			<Txt
+				txt={t(isInvoice ? 'invoiceInclFee' : 'totalInclFee', { ns: NS.common }) + '*'}
+				bold
+			/>
+			<Txt
+				txt={formatSatStr(shouldEstimate ? 0 : amount + fee)}
+				styles={[{ color: !shouldEstimate && balTooLow ? mainColors.ERROR : shouldEstimate ? color.TEXT : mainColors.VALID }]}
+			/>
+		</View>
 	)
 }
 
@@ -293,36 +269,31 @@ const styles = StyleSheet.create({
 		width: '100%',
 		alignItems: 'center',
 	},
-	amount: {
-		fontSize: 32,
-		width: '100%',
-		textAlign: 'center',
-		marginBottom: 5,
-	},
 	continue: {
 		flex: 1,
 		position: 'absolute',
 		right: 20,
 		left: 20,
+		bottom: 20,
 		alignItems: 'center'
 	},
 	overviewWrap: {
 		width: '100%',
-		paddingVertical: 20
+		paddingHorizontal: 20,
 	},
 	overview: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
 	},
+	sats: {
+		fontSize: 14,
+		textAlign: 'center',
+		marginLeft: -4,
+		marginTop: -5
+	},
 	feeHint: {
 		fontSize: 12,
-		paddingHorizontal: 20,
 		marginTop: 10,
 	},
-	actionBtn: {
-		padding: 20,
-		flexDirection: 'row',
-		alignItems: 'center',
-	}
 })

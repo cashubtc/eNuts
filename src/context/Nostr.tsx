@@ -1,77 +1,129 @@
 import { l } from '@log'
-import type { IProfileContent, TContact } from '@model/nostr'
+import type { HexKey, IContact, TUserRelays } from '@model/nostr'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getRedeemdedSigs } from '@store/nostrDms'
+import { nip19 } from 'nostr-tools'
 import { createContext, useContext, useEffect, useState } from 'react'
 
+interface INostrState {
+	nutPub: string
+	pubKey: {
+		encoded: string
+		hex: string
+	}
+	userProfile?: IContact
+	lud16: string
+	userRelays: string[]
+	favs: string[]
+	recent: IContact[]
+	claimedEvtIds: { [k: string]: string }
+}
+
 const useNostr = () => {
-	const [nutPub, setNutPub] = useState('')
-	const [pubKey, setPubKey] = useState({ encoded: '', hex: '' })
-	const [userProfile, setUserProfile] = useState<IProfileContent | undefined>()
-	const [userRelays, setUserRelays] = useState<string[]>([])
-	const [contacts, setContacts] = useState<TContact[]>([])
-	const [claimedEvtIds, setClaimedEvtIds] = useState<string[]>([])
+	const [nostr, setNostr] = useState<INostrState>({
+		nutPub: '',
+		pubKey: { encoded: '', hex: '' },
+		lud16: '',
+		userRelays: [],
+		favs: [],
+		recent: [],
+		claimedEvtIds: {},
+	})
+
+	const resetNostrData = async () => {
+		// clear data in context
+		setNostr(prev => ({
+			...prev,
+			pubKey: { encoded: '', hex: '' },
+			userRelays: [],
+			favs: [],
+			recent: [],
+			claimedEvtIds: {}
+		}))
+		// clear stored data //
+		await Promise.all([
+			store.delete(STORE_KEYS.npub),
+			store.delete(STORE_KEYS.npubHex),
+			store.delete(STORE_KEYS.nostrDms),
+			store.delete(STORE_KEYS.favs),
+			store.delete(STORE_KEYS.relays),
+			store.delete(STORE_KEYS.lud16)
+		])
+	}
+
+	const replaceNpub = async (hex: HexKey) => {
+		const npub = nip19.npubEncode(hex)
+		await Promise.all([
+			resetNostrData(),
+			store.set(STORE_KEYS.npub, npub),
+			store.set(STORE_KEYS.npubHex, hex),
+		])
+		setNostr(prev => ({ ...prev, pubKey: { encoded: npub, hex } }))
+	}
 
 	// init
 	useEffect(() => {
 		void (async () => {
 			try {
-				const [nutpub, redeemed] = await Promise.all([
+				const [
+					nutpub,
+					claimedEvtIds,
+					favs,
+					recent,
+					lud16,
+					npub,
+					hex,
+					userRelays,
+				] = await Promise.all([
 					// user enuts pubKey
 					store.get(STORE_KEYS.nutpub),
 					// already claimed ecash from DM: stored event signatures
 					getRedeemdedSigs(),
+					store.getObj<string[]>(STORE_KEYS.favs),
+					store.getObj<IContact[]>(STORE_KEYS.nostrDms),
+					store.get(STORE_KEYS.lud16),
+					store.get(STORE_KEYS.npub),
+					store.get(STORE_KEYS.npubHex),
+					store.getObj<TUserRelays>(STORE_KEYS.relays),
 				])
-				setNutPub(nutpub || '')
-				setClaimedEvtIds(redeemed)
-			} catch (e) {
-				l(e)
-			}
+				setNostr(prev => ({
+					...prev,
+					nutPub: nutpub ?? '',
+					favs: favs ?? [],
+					recent: recent ?? [],
+					lud16: lud16 ?? '',
+					pubKey: { encoded: npub ?? '', hex: hex ?? '' },
+					userRelays: userRelays ?? [],
+					claimedEvtIds,
+				}))
+			} catch (e) {/* ignore */ }
 		})()
 	}, [])
 
 	return {
-		nutPub,
-		setNutPub,
-		pubKey,
-		setPubKey,
-		userProfile,
-		setUserProfile,
-		userRelays,
-		setUserRelays,
-		contacts,
-		setContacts,
-		claimedEvtIds,
-		setClaimedEvtIds
+		nostr,
+		setNostr,
+		resetNostrData,
+		replaceNpub
 	}
 }
 type useNostrType = ReturnType<typeof useNostr>
 const NostrContext = createContext<useNostrType>({
-	nutPub: '',
-	setNutPub: () => l(''),
-	pubKey: { encoded: '', hex: '' },
-	setPubKey: () => l(''),
-	userProfile: {
-		about: '',
-		banner: '',
-		displayName: '',
-		display_name: '',
-		lud06: '',
+	nostr: {
+		nutPub: '',
+		pubKey: { encoded: '', hex: '' },
 		lud16: '',
-		name: '',
-		nip05: '',
-		picture: '',
-		username: '',
-		website: '',
+		userRelays: [],
+		favs: [],
+		recent: [],
+		claimedEvtIds: {},
 	},
-	setUserProfile: () => l(''),
-	userRelays: [],
-	setUserRelays: () => l(''),
-	contacts: [],
-	setContacts: () => l(''),
-	claimedEvtIds: [],
-	setClaimedEvtIds: () => l(''),
+	setNostr: () => l(''),
+	// eslint-disable-next-line @typescript-eslint/await-thenable, no-return-await
+	resetNostrData: async () => await l(''),
+	// eslint-disable-next-line @typescript-eslint/await-thenable, no-return-await
+	replaceNpub: async (hex: HexKey) => await l(hex),
 })
 
 export const useNostrContext = () => useContext(NostrContext)

@@ -1,26 +1,22 @@
-import { getDecodedLnInvoice } from '@cashu/cashu-ts'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
 import { CloseIcon, FlashlightOffIcon } from '@comps/Icons'
 import { isIOS, QRType } from '@consts'
-import { addMint, getMintsBalances, getMintsUrls } from '@db'
-import { l } from '@log'
+import { addMint, getMintsUrls } from '@db'
 import TrustMintModal from '@modal/TrustMint'
-import type { IDecodedLNInvoice } from '@model/ln'
 import type { TQRScanPageProps } from '@model/nav'
+import { isNProfile, isNpubQR } from '@nostr/util'
 import { useIsFocused } from '@react-navigation/core'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { addToHistory } from '@store/latestHistoryEntries'
-import { getCustomMintNames } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
-import { hasTrustedMint, isCashuToken } from '@util'
-import { checkFees, claimToken } from '@wallet'
+import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isUrl } from '@util'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
+import { nip19 } from 'nostr-tools'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -63,7 +59,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			setTrustModal(true)
 			return
 		}
-		await receiveToken(data)
+		navigation.navigate('qr processing', { tokenInfo: info, token: data })
 	}
 
 	const handleTrustModal = async () => {
@@ -80,41 +76,13 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			// eslint-disable-next-line no-await-in-loop
 			await addMint(mint)
 		}
-		// add token to db
-		await receiveToken(token)
-	}
-
-	const receiveToken = async (data: string) => {
-		const success = await claimToken(data).catch(l)
 		stopLoading()
 		// close modal
 		setTrustModal(false)
-		if (!success) {
-			openPromptAutoClose({ msg: t('invalidOrSpent') })
-			return
-		}
-		const info = getTokenInfo(data)
-		if (!info) {
-			openPromptAutoClose({ msg: t('tokenInfoErr') })
-			return
-		}
-		// success prompt
-		navigation.navigate('success', {
-			amount: info?.value,
-			memo: info?.decoded.memo,
-			isClaim: true,
-			isScanned: true
-		})
-		// add as history entry (receive ecash)
-		await addToHistory({
-			amount: info.value,
-			type: 1,
-			value: data,
-			mints: info.mints,
-		})
+		navigation.navigate('qr processing', { tokenInfo, token })
 	}
 
-	const handleBarCodeScanned = async ({ type, data }: { type: string, data: string }) => {
+	const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {
 		setScanned(true)
 		const bcType = isIOS ? 'org.iso.QRCode' : +QRType
 		// early return if barcode is not a QR
@@ -128,88 +96,33 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			void handleCashuToken(data)
 			return
 		}
+		// handle nostr
+		if (isNProfile(data)) {
+			try {
+				const res = nip19.decode(data)?.data
+				return navigation.navigate('npub confirm', { hex: res.pubkey })
+			} catch (e) {
+				return openPromptAutoClose({ msg: t('unknownType') + ` "${data}"` })
+			}
+		}
+		const npub = isNpubQR(data)
+		if (npub) {
+			const hex = nip19.decode(npub)?.data
+			return navigation.navigate('npub confirm', { hex })
+		}
+		// handle mint urls
+		if (isUrl(data) && new URL(data).protocol === 'https:') {
+			return navigation.navigate('mint confirm', { mintUrl: data })
+		}
 		// handle LN invoice
 		try {
-			const invoice = data.includes(':') ? data.split(':')[1] : data
-			const decoded: IDecodedLNInvoice = getDecodedLnInvoice(invoice)
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			const amount = decoded.sections[2].value / 1000
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			const timePassed = Math.ceil(Date.now() / 1000) - decoded.sections[4].value
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			const timeLeft = decoded.sections[8].value - timePassed
+			const invoice = extractStrFromURL(data) || data
+			const { amount, timeLeft } = decodeLnInvoice(invoice)
 			if (timeLeft <= 0) {
 				openPromptAutoClose({ msg: t('invoiceExpired') })
 				return
 			}
-			// user already has selected the mint in the previous screens
-			if (mint && balance) {
-				// check if invoice amount is higher than the selected mint balance to avoid navigating
-				const estFee = await checkFees(mint.mintUrl, invoice)
-				if (amount + estFee > balance) {
-					openPromptAutoClose({ msg: t('noFundsForFee', { fee: estFee }), ms: 4000 })
-					return
-				}
-				navigation.navigate('coinSelection', {
-					mint,
-					balance,
-					amount,
-					estFee,
-					isMelt: true
-				})
-				return
-			}
-			// user has not selected the mint yet (Pressed scan QR and scanned a Lightning invoice)
-			const mintsWithBal = await getMintsBalances()
-			const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
-			const nonEmptyMint = mintsWithBal.filter(m => m.amount > 0)
-			// user has no funds
-			if (!nonEmptyMint.length) {
-				// user is redirected to the mint selection screen where he gets an appropriate message
-				navigation.navigate('selectMint', {
-					mints,
-					mintsWithBal,
-					isMelt: true,
-					allMintsEmpty: true
-				})
-				return
-			}
-			// user has funds, select his first mint for the case that he has only one
-			const mintUsing = mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' }
-			const estFee = await checkFees(mintUsing.mintUrl, invoice)
-			if (nonEmptyMint.length === 1 && amount + estFee > nonEmptyMint[0].amount) {
-				openPromptAutoClose({ msg: t('noFundsForFee', { fee: estFee }), ms: 4000 })
-				return
-			}
-			// user has only 1 mint with enough balance, he can directly navigate to the payment overview page
-			if (nonEmptyMint.length === 1) {
-				if (nonEmptyMint[0].amount < amount + estFee) {
-					openPromptAutoClose({ msg: t('noFunds') })
-					return
-				}
-				navigation.navigate('coinSelection', {
-					mint: mintUsing,
-					balance: nonEmptyMint[0].amount,
-					amount,
-					estFee,
-					isMelt: true,
-					recipient: invoice
-				})
-				return
-			}
-			if (mintsWithBal.some(m => m.amount >= amount + estFee)) {
-				// user needs to select mint from which he wants to pay the invoice
-				navigation.navigate('selectMint', {
-					mints,
-					mintsWithBal,
-					allMintsEmpty: !nonEmptyMint.length,
-					invoiceAmount: amount,
-					invoice,
-				})
-			} else {
-				openPromptAutoClose({ msg: t('noFunds') })
-			}
-
+			navigation.navigate('qr processing', { ln: { invoice, mint, balance, amount } })
 		} catch (e) {
 			openPromptAutoClose({ msg: t('unknownType') + ` "${data}"` })
 		}
@@ -244,12 +157,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 						ratio={'16:9'}
 						onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
 					/>
-					<QRMarker size={300} />
-					<View style={styles.hint}>
-						<Text style={styles.hintTxt}>
-							{mint ? t('scanLn') : t('scanTokenOrLn')}
-						</Text>
-					</View>
+					<QRMarker size={300} color={scanned ? mainColors.GREY : mainColors.WHITE} />
 					{scanned &&
 						<TouchableOpacity
 							style={styles.scanAgain}
@@ -282,7 +190,10 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					loading={loading}
 					tokenInfo={tokenInfo}
 					handleTrustModal={() => void handleTrustModal()}
-					closeModal={() => setTrustModal(false)}
+					closeModal={() => {
+						setTrustModal(false)
+						setScanned(false)
+					}}
 				/>
 			}
 		</View>
@@ -294,20 +205,11 @@ const styles = StyleSheet.create({
 		paddingTop: 0,
 		alignItems: 'center',
 	},
-	flashOn: {
-		position: 'absolute',
-		bottom: 40,
-		padding: 20,
-		backgroundColor: mainColors.BLACK,
-		opacity: .8,
-		borderRadius: 40,
-	},
 	scanAgain: {
 		position: 'absolute',
 		bottom: 150,
 		padding: 20,
-		backgroundColor: mainColors.BLACK,
-		opacity: .5,
+		backgroundColor: 'rgba(0,0,0,.5)',
 		borderRadius: 40,
 	},
 	scanAgainTxt: {
@@ -316,26 +218,11 @@ const styles = StyleSheet.create({
 		color: mainColors.WHITE,
 		textAlign: 'center',
 	},
-	hint: {
-		position: 'absolute',
-		top: 75,
-		backgroundColor: mainColors.BLACK,
-		opacity: .5,
-		padding: 20,
-		borderRadius: 40,
-	},
-	hintTxt: {
-		textAlign: 'center',
-		fontSize: 16,
-		fontWeight: '500',
-		color: mainColors.WHITE
-	},
 	actionLeft: {
 		position: 'absolute',
 		bottom: 40,
 		left: 40,
-		backgroundColor: mainColors.BLACK,
-		opacity: .5,
+		backgroundColor: 'rgba(0,0,0,.5)',
 		padding: 20,
 		borderRadius: 40,
 	},
@@ -343,8 +230,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		bottom: 40,
 		right: 40,
-		backgroundColor: mainColors.BLACK,
-		opacity: .5,
+		backgroundColor: 'rgba(0,0,0,.5)',
 		padding: 20,
 		borderRadius: 40,
 	},

@@ -10,12 +10,13 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, TouchableOpacity, View } from 'react-native'
 
 const langs: ILangsOpt[] = [
 	{ name: 'english', code: 'en' },
 	{ name: 'german', code: 'de' },
 	{ name: 'french', code: 'fr' },
+	{ name: 'swahili', code: 'sw' },
 ]
 
 export default function LanguageSettings({ navigation }: TLanguageSettingsPageProps) {
@@ -27,11 +28,13 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<View style={[globals(color).wrapContainer, styles.highlightWrap]}>
-				{langs.map((l, i) => (
-					<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />
-				))}
-			</View>
+			<ScrollView>
+				<View style={globals(color).wrapContainer}>
+					{langs.map((l, i) => (
+						<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />
+					))}
+				</View>
+			</ScrollView>
 		</Screen>
 	)
 }
@@ -51,32 +54,13 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 	}
 	return (
 		<>
-			<TouchableOpacity style={styles.langRow}
+			<TouchableOpacity style={globals().wrapRow}
 				onPress={() => void handleLangChange()}
 			>
 				<Txt txt={t(name)} />
 				<RadioBtn selected={selected} />
 			</TouchableOpacity>
-			{hasSeparator && <Separator style={[styles.separator]} />}
+			{hasSeparator && <Separator />}
 		</>
 	)
 }
-
-const styles = StyleSheet.create({
-	highlightWrap: {
-		paddingHorizontal: 0,
-		paddingVertical: 10,
-		marginBottom: 20,
-	},
-	langRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 10,
-		paddingHorizontal: 20,
-	},
-	separator: {
-		marginHorizontal: 20,
-		marginVertical: 10
-	}
-})

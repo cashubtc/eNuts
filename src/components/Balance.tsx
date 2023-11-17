@@ -1,4 +1,4 @@
-import { ChevronRightIcon, EcashIcon, HistoryIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
+import { EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
 import type { IHistoryEntry } from '@model'
 import type { RootStackParamList } from '@model/nav'
@@ -11,14 +11,13 @@ import { NS } from '@src/i18n'
 import { getLatestHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi } from '@styles'
 import { getColor } from '@styles/colors'
-import { formatBalance, formatInt, isBool } from '@util'
+import { formatBalance, formatInt, formatSatStr, isBool } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { TxtButton } from './Button'
 import Logo from './Logo'
-import Separator from './Separator'
 import Txt from './Txt'
 
 interface IBalanceProps {
@@ -92,21 +91,20 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					</Text>
 					<View style={styles.balAssetNameWrap}>
 						<Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
-							{formatSats ? 'BTC' : 'Satoshi'}
+							{formatSats ? 'BTC' : formatSatStr(balance, 'compact', false)}
 						</Text>
 						<SwapCurrencyIcon width={20} height={20} color={getColor(highlight, color)} />
 					</View>
 				</TouchableOpacity>
 			}
-			<Separator style={[styles.separator, { borderColor: getColor(highlight, color) }]} />
 			{/* No transactions yet */}
-			{!history.length && !hidden.txs &&
-				<View style={{ padding: 10 }}>
+			{!history.length &&
+				<View style={styles.txOverview}>
 					<Txt txt={t('noTX')} styles={[globals(color).pressTxt, { color: getColor(highlight, color) }]} />
 				</View>
 			}
 			{/* latest 3 history entries */}
-			{history.length > 0 && !hidden.txs ?
+			{history.length > 0 && !hidden.txs &&
 				history.map(h => (
 					<HistoryEntry
 						key={h.timestamp}
@@ -122,31 +120,13 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 						onPress={() => nav?.navigate('history entry details', { entry: h })}
 					/>
 				))
-				:
-				hidden.txs ?
-					<>
-						<TouchableOpacity
-							style={styles.boardEntry}
-							onPress={() => nav?.navigate('history')}
-						>
-							<View style={styles.hiddenTxtWrap}>
-								<View style={styles.iconWrap}>
-									<HistoryIcon color={getColor(highlight, color)} />
-								</View>
-								<Txt txt={t('hiddenTxs')} styles={[{ color: getColor(highlight, color) }]} />
-							</View>
-							<ChevronRightIcon color={getColor(highlight, color)} />
-						</TouchableOpacity>
-					</>
-					:
-					null
 			}
-			{history.length === 3 && !hidden.txs &&
+			{(history.length === 3 || (history.length > 0 && hidden.txs)) &&
 				<TxtButton
 					txt={t('seeFullHistory')}
 					onPress={() => nav?.navigate('history')}
 					txtColor={getColor(highlight, color)}
-					style={[{ paddingTop: 20, paddingBottom: 0 }]}
+					style={[{ paddingTop: 20, paddingBottom: hidden.txs ? 20 : 0 }]}
 				/>
 			}
 		</View>
@@ -167,30 +147,25 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHis
 	const { color, highlight } = useThemeContext()
 
 	const getAmount = () => {
-		if (isSwap) { return `${formatInt(Math.abs(amount))} Satoshi` }
-		return `${amount > 0 ? '+' : ''}${formatInt(amount)} Satoshi`
+		if (isSwap) { return formatSatStr(Math.abs(amount)) }
+		return `${amount > 0 ? '+' : ''}${formatSatStr(amount)}`
 	}
 
 	return (
-		<>
-			<TouchableOpacity
-				style={styles.entry}
-				onPress={onPress}
-			>
-				<View style={styles.wrap}>
-					<View style={styles.iconWrap}>
-						{icon}
-					</View>
-					<View>
-						<Txt txt={txType} styles={[{ color: getColor(highlight, color) }]} />
-						<Text style={{ color: getColor(highlight, color), paddingBottom: 3 }}>
-							<EntryTime from={timestamp * 1000} fallback={t('justNow')} />
-						</Text>
-					</View>
+		<TouchableOpacity style={styles.entry} onPress={onPress}>
+			<View style={styles.wrap}>
+				<View style={styles.iconWrap}>
+					{icon}
 				</View>
-				<Txt txt={getAmount()} styles={[{ color: getColor(highlight, color) }]} />
-			</TouchableOpacity>
-		</>
+				<View>
+					<Txt txt={txType} styles={[{ color: getColor(highlight, color) }]} />
+					<Text style={{ color: getColor(highlight, color), paddingBottom: 3 }}>
+						<EntryTime from={timestamp * 1000} fallback={t('justNow')} />
+					</Text>
+				</View>
+			</View>
+			<Txt txt={getAmount()} styles={[{ color: getColor(highlight, color) }]} />
+		</TouchableOpacity>
 	)
 }
 
@@ -199,17 +174,19 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 50,
 		borderBottomRightRadius: 50,
 		paddingHorizontal: 30,
-		paddingTop: 70,
+		paddingTop: 60,
 		paddingBottom: 60,
+		minHeight: '50%'
 	},
 	balanceWrap: {
 		alignItems: 'center',
 		marginHorizontal: -20,
+		marginBottom: 10,
 	},
 	balAmount: {
 		alignItems: 'center',
-		fontSize: 46,
-		fontWeight: '500',
+		fontSize: 48,
+		fontWeight: '600',
 	},
 	balAssetNameWrap: {
 		flexDirection: 'row',
@@ -220,31 +197,23 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		marginRight: 5
 	},
-	separator: {
-		marginVertical: 10
-	},
 	iconWrap: {
-		minWidth: 45,
+		minWidth: 40,
 		paddingTop: 3,
-	},
-	boardEntry: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		marginVertical: 10,
 	},
 	entry: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingVertical: 5,
+		paddingBottom: 5,
 	},
 	wrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
-	hiddenTxtWrap: {
-		flexDirection: 'row',
+	txOverview: {
+		flex: 1,
 		alignItems: 'center',
-	},
+		justifyContent: 'center'
+	}
 })

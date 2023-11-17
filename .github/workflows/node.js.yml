@@ -31,13 +31,6 @@ jobs:
                   cache: "npm"
             - run: npm install
             - run: npm run lint
-            - run: |
-                  npx -y metro build \
-                  -c metro.config.js \
-                  -p android -g \
-                  --reset-cache \
-                  -O build \
-                  src/AppEntry.ts
 
             # - run: npx tsc
 

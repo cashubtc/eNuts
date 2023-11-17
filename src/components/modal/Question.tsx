@@ -17,11 +17,11 @@ interface IQuestionModalProps {
 	cancelFn: () => void
 }
 
-export function QuestionModal({ header, txt, visible, confirmTxt, confirmFn, cancelTxt, cancelFn }: IQuestionModalProps) {
+export function BottomModal({ header, txt, visible, confirmTxt, confirmFn, cancelTxt, cancelFn }: IQuestionModalProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	return (
-		<MyModal type='question' animation='fade' visible={visible} close={cancelFn} >
+		<MyModal type='bottom' animation='slide' visible={visible} close={cancelFn} >
 			<Text style={[globals(color).modalHeader, !txt?.length ? { marginBottom: 0 } : {}]}>
 				{header}
 			</Text>
@@ -32,7 +32,7 @@ export function QuestionModal({ header, txt, visible, confirmTxt, confirmFn, can
 			<TxtButton
 				txt={cancelTxt || t('no')}
 				onPress={cancelFn}
-				style={[{ paddingBottom: 0 }]}
+				style={[{ paddingBottom: 20 }]}
 			/>
 		</MyModal>
 	)

@@ -1,13 +1,12 @@
 import type { EventArg } from '@react-navigation/core'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection } from '.'
-import { IProfileContent } from './nostr'
+import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection, ITokenInfo } from '.'
+import { HexKey, IContact } from './nostr'
 
-interface INostrProps {
+export interface INostrSendData {
 	senderName: string
-	receiverNpub: string
-	receiverName?: string
+	contact?: IContact
 }
 /**
  * Stack Navigator
@@ -30,6 +29,7 @@ export type RootStackParamList = {
 	'Display settings': undefined
 	'Language settings': undefined
 	'Advanced settings': undefined
+	'Nostr settings': undefined
 	'About settings': undefined
 	auth: {
 		pinHash: string
@@ -41,18 +41,20 @@ export type RootStackParamList = {
 		mintsWithBal: IMintWithBalance[]
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: INostrProps
+		nostr?: INostrSendData
 		balance?: number
 		allMintsEmpty?: boolean
 		invoice?: string
 		invoiceAmount?: number
+		estFee?: number
+		scanned?: boolean
 	},
 	selectTarget: {
 		mint: IMintUrl
 		balance: number
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: INostrProps
+		nostr?: INostrSendData
 		remainingMints?: IMintUrl[]
 	}
 	meltInputfield: {
@@ -68,18 +70,23 @@ export type RootStackParamList = {
 		mint: IMintUrl
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: INostrProps
+		nostr?: INostrSendData
 		isSwap?: boolean
 		balance: number
 		lnurl?: string
 		targetMint?: IMintUrl
 	}
+	selectNostrAmount: {
+		mint: IMintUrl
+		nostr?: INostrSendData
+		balance: number
+	}
 	memoScreen: {
 		mint: IMintUrl
 		balance: number
 		amount: number
-		isSendingWholeMintBal: boolean,
-		nostr?: INostrProps
+		isSendingWholeMintBal?: boolean,
+		nostr?: INostrSendData
 	}
 	coinSelection: {
 		mint: IMintUrl
@@ -88,11 +95,13 @@ export type RootStackParamList = {
 		estFee: number
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: INostrProps
+		nostr?: INostrSendData
 		isSwap?: boolean
+		isZap?: boolean
 		targetMint?: IMintUrl
 		recipient?: string
 		memo?: string
+		scanned?: boolean
 	}
 	nostrReceive: undefined
 	processing: {
@@ -101,16 +110,41 @@ export type RootStackParamList = {
 		estFee?: number
 		isMelt?: boolean
 		isSendEcash?: boolean
-		nostr?: INostrProps
+		nostr?: INostrSendData
 		isSwap?: boolean
+		isZap?: boolean
+		payZap?: boolean
 		targetMint?: IMintUrl
 		proofs?: IProofSelection[]
 		recipient?: string
 		memo?: string
 	}
+	'qr processing': {
+		tokenInfo?: ITokenInfo
+		token?: string
+		ln?: {
+			invoice: string
+			mint?: IMintUrl
+			balance?: number
+			amount: number
+		}
+	}
+	'mint confirm': {
+		mintUrl: string
+	}
+	'npub confirm': {
+		hex: HexKey
+	}
+	'scan success': {
+		mintUrl?: string
+		hex?: HexKey
+		edited?: boolean
+		userProfile?: IContact
+	}
 	processingError: {
-		mint: IMintUrl
-		amount: number
+		mint?: IMintUrl
+		amount?: number
+		scan?: boolean
 		errorMsg: string
 	},
 	mintInvoice: {
@@ -121,8 +155,7 @@ export type RootStackParamList = {
 		paymentRequest: string
 	}
 	encodedToken: {
-		token: string
-		amount: number
+		entry: IHistoryEntry
 	}
 	success: {
 		amount?: number
@@ -131,7 +164,8 @@ export type RootStackParamList = {
 		memo?: string
 		isClaim?: boolean
 		isMelt?: boolean
-		nostr?: INostrProps
+		isZap?: boolean
+		nostr?: INostrSendData
 		isScanned?: boolean
 	}
 	mintmanagement: {
@@ -166,10 +200,9 @@ export type RootStackParamList = {
 		isSendEcash?: boolean
 	}
 	Contact: {
-		contact?: IProfileContent
-		npub: string
+		contact?: IContact // the contact in users contact list
 		isUser?: boolean
-		userProfile?: IProfileContent
+		userProfile?: IContact // the user profile
 	}
 }
 
@@ -181,10 +214,15 @@ export type TSelectTargetPageProps = NativeStackScreenProps<RootStackParamList, 
 export type TSelectMintToSwapToPageProps = NativeStackScreenProps<RootStackParamList, 'selectMintToSwapTo', 'MyStack'>
 export type TMeltInputfieldPageProps = NativeStackScreenProps<RootStackParamList, 'meltInputfield', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
+export type TSelectNostrAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectNostrAmount', 'MyStack'>
 export type TMemoPageProps = NativeStackScreenProps<RootStackParamList, 'memoScreen', 'MyStack'>
 export type TCoinSelectionPageProps = NativeStackScreenProps<RootStackParamList, 'coinSelection', 'MyStack'>
 export type TNostrReceivePageProps = NativeStackScreenProps<RootStackParamList, 'nostrReceive', 'MyStack'>
 export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>
+export type TQRProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'qr processing', 'MyStack'>
+export type TMintConfirmPageProps = NativeStackScreenProps<RootStackParamList, 'mint confirm', 'MyStack'>
+export type TNpubConfirmPageProps = NativeStackScreenProps<RootStackParamList, 'npub confirm', 'MyStack'>
+export type TScanSuccessPageProps = NativeStackScreenProps<RootStackParamList, 'scan success', 'MyStack'>
 export type TProcessingErrorPageProps = NativeStackScreenProps<RootStackParamList, 'processingError', 'MyStack'>
 export type TMintInvoicePageProps = NativeStackScreenProps<RootStackParamList, 'mintInvoice', 'MyStack'>
 export type TDashboardPageProps = NativeStackScreenProps<RootStackParamList, 'dashboard', 'MyStack'>
@@ -205,6 +243,7 @@ export type TGeneralSettingsPageProps = NativeStackScreenProps<RootStackParamLis
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
 export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>
 export type TPrivacySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Privacy settings'>
+export type TNostrSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Nostr settings'>
 export type TLanguageSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Language settings'>
 export type TAdvancedSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Advanced settings'>
 export type TAboutSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'About settings'>
@@ -226,6 +265,7 @@ export type TBottomNavProps =
 	TSecuritySettingsPageProps |
 	TDisplaySettingsPageProps |
 	TPrivacySettingsPageProps |
+	TNostrSettingsPageProps |
 	IContactPageProps
 export interface INavigatorProps {
 	pinHash: string
