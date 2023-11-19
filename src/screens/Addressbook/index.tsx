@@ -114,7 +114,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				onContactsChanged: allContacts => {
 					if (!allContacts?.length) { return }
 					// we simply overwrite the previous state with the new one
-					const c = allContacts.map(x => ({ hex: x })).sort(sortFavs)
+					const c = uniqByIContacts(allContacts.map(x => ({ hex: x })), 'hex').sort(sortFavs)
 					contactsRef.current = c
 					setContacts(c)
 					// first render of contacts metadata happens in flashlist event onViewableItemsChanged
