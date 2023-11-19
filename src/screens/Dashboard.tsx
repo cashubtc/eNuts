@@ -29,7 +29,7 @@ import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -282,13 +282,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			setHasMint(data[1])
 		})
 		return focusHandler
-	}, [navigation])
-
-	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
-	useEffect(() => {
-		const backHandler = () => BackHandler.exitApp()
-		navigation.addListener('beforeRemove', backHandler)
-		return () => navigation.removeListener('beforeRemove', backHandler)
 	}, [navigation])
 
 	return (

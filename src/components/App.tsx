@@ -140,6 +140,9 @@ function _App() {
 	}
 
 	const handlePinForeground = async () => {
+		// check if app has pw
+		const pw = await secureStore.get(SECURESTORE_KEY)
+		if (isNull(pw)) { return }
 		// check if app is locked
 		const now = Math.ceil(Date.now() / 1000)
 		const lockData = await store.getObj<ILockData>(STORE_KEYS.lock)
