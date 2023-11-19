@@ -53,7 +53,7 @@ export default (): JestConfigWithTsJest => ({
 		// '!**/src/styles/**',
 		'!**/src/consts/**',
 		// '!**/src/components/**',
-		'!**/src/AppEntry.ts',
+		'!**/src/App.ts',
 		'!**/src/shim.ts',
 		// '!**/src/storage/store/AsyncStore.ts',
 		'!**/src/storage/store/SecureStore.ts',

@@ -124,7 +124,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				return
 			}
 			setSuccess(true)
-			// navigate to dashboard
 			navigation.navigate(shouldRemove ? 'Security settings' : 'dashboard')
 			return
 		}
@@ -183,7 +182,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		}
 		// skip pin setup
 		await store.set(STORE_KEYS.pinSkipped, '1')
-		// check if initial explainer has been viewed
 		navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
 
 	}

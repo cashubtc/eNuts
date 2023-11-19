@@ -1,31 +1,18 @@
-import { getEncodedToken } from '@cashu/cashu-ts'
 import { isIOS } from '@consts'
 import { getMintsUrls } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
-import type { RootStackParamList } from '@model/nav'
-import { type NavigationProp, useNavigation } from '@react-navigation/core'
-import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { addToHistory } from '@store/latestHistoryEntries'
-import { getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, sleep } from '@util'
-import { claimToken, isTokenSpendable } from '@wallet'
+import { getStrFromClipboard, hasTrustedMint, isCashuToken, sleep } from '@util'
+import { isTokenSpendable } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { AppState } from 'react-native'
 
-import { usePromptContext } from './Prompt'
-
-type StackNavigation = NavigationProp<RootStackParamList>
-
 const useFocusClaim = () => {
-	const { t } = useTranslation([NS.error])
 	// back-foreground state reference
 	const appState = useRef(AppState.currentState)
-	const nav = useNavigation<StackNavigation>()
-	const { openPromptAutoClose } = usePromptContext()
 	const [claimed, setClaimed] = useState(false)
 	// modal
 	const [claimOpen, setClaimOpen] = useState(false)
@@ -69,40 +56,6 @@ const useFocusClaim = () => {
 		}
 	}
 
-	const handleRedeem = async () => {
-		if (!tokenInfo) { return }
-		setClaimOpen(false)
-		const encoded = getEncodedToken(tokenInfo.decoded)
-		try {
-			const success = await claimToken(encoded).catch(l)
-			if (!success) {
-				openPromptAutoClose({ msg: t('invalidOrSpent', { ns: NS.common }) })
-				return
-			}
-		} catch (e) {
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('claimTokenErr') })
-			return
-		}
-		const info = getTokenInfo(encoded)
-		if (!info) {
-			openPromptAutoClose({ msg: t('tokenInfoErr', { ns: NS.common }) })
-			return
-		}
-		// add as history entry (receive ecash)
-		await addToHistory({
-			amount: info.value,
-			type: 1,
-			value: encoded,
-			mints: info.mints,
-		})
-		nav.navigate('success', {
-			amount: info?.value,
-			memo: info?.decoded.memo,
-			isClaim: true
-		})
-		setClaimed(true)
-	}
-
 	useEffect(() => {
 		// disable foreground claim on iOS
 		if (isIOS) { return }
@@ -129,9 +82,9 @@ const useFocusClaim = () => {
 		claimed,
 		setClaimed,
 		claimOpen,
+		setClaimOpen,
 		closeModal,
 		tokenInfo,
-		handleRedeem
 	}
 }
 type useFocusClaimType = ReturnType<typeof useFocusClaim>
@@ -144,10 +97,9 @@ const FocusClaimCtx = createContext<useFocusClaimType>({
 	claimed: false,
 	setClaimed: () => l(''),
 	claimOpen: false,
+	setClaimOpen: () => l(''),
 	closeModal: () => l(''),
 	tokenInfo: undefined,
-	// eslint-disable-next-line @typescript-eslint/await-thenable, no-return-await
-	handleRedeem: async () => await l('')
 })
 
 export const useFocusClaimContext = () => useContext(FocusClaimCtx)
