@@ -1,6 +1,7 @@
 import { CloseIcon, SearchIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import TxtInput from '@comps/TxtInput'
+import { isIOS } from '@consts'
 import type { IContact } from '@model/nostr'
 import type { Nostr } from '@nostr/class/Nostr'
 import { useThemeContext } from '@src/context/Theme'
@@ -26,7 +27,7 @@ export default function Search({
 	nostrRef
 }: ISearchProps) {
 	const { t } = useTranslation([NS.common])
-	const { highlight } = useThemeContext()
+	const { color, highlight } = useThemeContext()
 	const [searchInput, setSearchInput] = useState('')
 	const inputRef = createRef<TextInput>()
 	const lastSearchQuery = useRef('')
@@ -90,9 +91,9 @@ export default function Search({
 					<Loading color={hi[highlight]} />
 					:
 					searchResults.length ?
-						<CloseIcon color={hi[highlight]} />
+						<CloseIcon color={color.INPUT_PH} />
 						:
-						<SearchIcon color={hi[highlight]} />
+						<SearchIcon color={color.INPUT_PH} />
 				}
 			</TouchableOpacity>
 		</View>
@@ -108,12 +109,12 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		paddingLeft: 20,
 		paddingRight: 50,
-		paddingVertical: 10,
+		paddingVertical: '4%',
 	},
 	submitSearch: {
 		position: 'absolute',
-		right: 30,
-		top: 4,
+		right: '7%',
+		top: isIOS ? '3%' : '10%',
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: 40,

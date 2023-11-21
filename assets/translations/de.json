@@ -214,7 +214,8 @@
 		"nostrIssueHeader": "Nostr-Kontaktproblem",
 		"nostrIssueHint": "Wenn Sie Schwierigkeiten haben, Ihre Nostr-Kontakte zu öffnen, klicken Sie auf die Schaltfläche unten oder setzen Sie die Nostr-Daten in \"Optionen > Kontakte > Daten zurücksetzen\" zurück, um das Problem zu lösen.",
 		"submitNostrIssue": "Daten zurücksetzen",
-		"nostrIssueSuccess": "Nostr-Daten erfolgreich zurückgesetzt!"
+		"nostrIssueSuccess": "Nostr-Daten erfolgreich zurückgesetzt!",
+		"createLnInvoice": "Lightning Rechnung erstellen"
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
@@ -290,7 +291,7 @@
 		"meltToken": "Auszahlen",
 		"mintConnectionFail": "Verbindung zu Mint fehlgeschlagen",
 		"mintInfo": "Mint Info",
-		"mintNewTokens": "Aufladen",
+		"mintNewTokens": "Erhalte Ecash",
 		"mintNoContact": "Diese Mint verfügt über keine Kontakt Informationen",
 		"mntAlreadyAdded": "Mint bereits vorhanden",
 		"noAdditional": "Diese Mint verfügt über keine zusätzlichen Informationen",

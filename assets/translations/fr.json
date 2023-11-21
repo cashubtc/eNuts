@@ -164,7 +164,7 @@
 		"send": "Envoyer",
 		"sendEcashDashboard": "Créez un Cashu token et envoyez-le à n'importe qui.",
 		"payInvoiceDashboard": "Envoyez vos fonds depuis une mint vers une adresse Lightning.",
-		"receiveEcashDashboard": "Collez et utilisez un Cashu token depuis votre presse-papiers.",
+		"receiveEcashDashboard": "Collez et recevez un Cashu token depuis votre presse-papiers.",
 		"receiveEcashNostr": "Nostr messages",
 		"receiveEcashNostrHint": "Vérifiez vos messages sur Nostr pour les Cashu token entrants.",
 		"createInvoiceDashboard": "Recevez l'Ecash depuis une mint en payant une facture Lightning.",
@@ -214,7 +214,8 @@
 		"nostrIssueHeader": "Problème de contacts Nostr",
 		"nostrIssueHint": "Si vous rencontrez des problèmes pour ouvrir vos contacts Nostr, cliquez sur le bouton ci-dessous ou réinitialisez les données Nostr dans \"options > contacts > Réinitialiser maintenant\" pour résoudre le problème.",
 		"submitNostrIssue": "Réinitialiser maintenant",
-		"nostrIssueSuccess": "Réinitialisation des données Nostr réussie!"
+		"nostrIssueSuccess": "Réinitialisation des données Nostr réussie!",
+		"createLnInvoice": "Créer une facture Lightning."
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",
@@ -290,7 +291,7 @@
 		"meltToken": "Retirer votre argent",
 		"mintConnectionFail": "Échec de la connexion à la mint",
 		"mintInfo": "Informations sur la mint",
-		"mintNewTokens": "Recharger",
+		"mintNewTokens": "Recevoir Ecash",
 		"mintNoContact": "La mint n'a aucune information de contact",
 		"mntAlreadyAdded": "Mint déjà ajoutée",
 		"noAdditional": "Cette mint n'a aucune information supplémentaire",

@@ -1,8 +1,9 @@
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useThemeContext } from '@src/context/Theme'
+import { Image } from 'expo-image'
 import { useTranslation } from 'react-i18next'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 import { TxtButton } from './Button'
 import Txt from './Txt'
@@ -26,14 +27,13 @@ export default function Empty({ txt, hint, hasOk, pressable, onPress, nav }: IEm
 				style={styles.img}
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				source={require('@assets/mixed_forest.png')}
+				contentFit='contain'
 			/>
 			{pressable && onPress ?
-				<TouchableOpacity>
-					<TxtButton
-						txt={txt}
-						onPress={onPress}
-					/>
-				</TouchableOpacity>
+				<TxtButton
+					txt={txt}
+					onPress={onPress}
+				/>
 				:
 				<>
 					<Txt
@@ -66,9 +66,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 	},
 	img: {
-		width: '100%',
+		width: 350,
 		height: 350,
-		resizeMode: 'contain',
 		opacity: .4,
 	},
 	emptyTxt: {

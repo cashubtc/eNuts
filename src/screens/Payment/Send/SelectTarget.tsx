@@ -80,7 +80,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 								</>
 							}
 							<Option
-								icon={<ZapIcon width={28} height={28} color={mainColors.WARN} />}
+								icon={<ZapIcon width={28} height={28} color={mainColors.ZAP} />}
 								txt={t('inputField')}
 								hint={t('meltInputHint')}
 								onPress={() => navigation.navigate('meltInputfield', { mint, balance })}

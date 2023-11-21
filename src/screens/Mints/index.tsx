@@ -5,7 +5,7 @@ import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, QRIcon, Zap
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
-import { _testmintUrl } from '@consts'
+import { _testmintUrl, isIOS } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -245,7 +245,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 							}, 200)
 						}}
 					>
-						<QRIcon color={hi[highlight]} />
+						<QRIcon color={color.INPUT_PH} />
 					</TouchableOpacity>
 				</View>
 				<Button
@@ -334,8 +334,8 @@ const styles = StyleSheet.create({
 	},
 	inputQR: {
 		position: 'absolute',
-		right: 15,
-		top: 22,
+		right: isIOS ? 12 : 15,
+		top: isIOS ? 18 : 22,
 		paddingHorizontal: 10
 	},
 	newMint: {

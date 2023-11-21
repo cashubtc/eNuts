@@ -491,7 +491,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							}, 200)
 						}}
 					>
-						<QRIcon color={hi[highlight]} />
+						<QRIcon color={color.INPUT_PH} />
 					</TouchableOpacity>
 				</View>
 				<Button
@@ -534,8 +534,8 @@ const styles = StyleSheet.create({
 	},
 	inputQR: {
 		position: 'absolute',
-		right: 15,
-		top: 22,
+		right: isIOS ? 12 : 15,
+		top: isIOS ? 18 : 22,
 		paddingHorizontal: 10
 	},
 })
