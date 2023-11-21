@@ -1,13 +1,12 @@
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useThemeContext } from '@src/context/Theme'
+import { Image } from 'expo-image'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
-import { Image } from 'expo-image'
 
 import { TxtButton } from './Button'
 import Txt from './Txt'
-import { l } from '@src/logger'
 
 interface IEmptyProps {
 	txt: string
