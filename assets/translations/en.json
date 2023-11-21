@@ -213,7 +213,7 @@
 		"meltNostrProfileHint": "Transfer funds to the LN address associated with your Nostr profile.",
 		"nostrDmHint": "eNuts can't access your Nostr account DMs due to its lack of access to your private key. Instead, it generates a new key for sending Ecash. When you send Ecash via Nostr, the recipient gets it using your new eNuts public key. If the recipient replies to the DM with an Ecash token, you can view it here. We're actively working on a secure private key solution.",
 		"nostrIssueHeader": "Nostr contacts issue",
-		"nostrIssueHint": "If you're having trouble opening your Nostr contacts, click the button below or reset the Nostr data in settings to resolve the issue.",
+		"nostrIssueHint": "If you're having trouble opening your Nostr contacts, click the button below or reset the Nostr data in \"options > contacts > reset data now\" data to resolve the issue.",
 		"submitNostrIssue": "Reset data now",
 		"nostrIssueSuccess": "Nostr data reset successfully!"
 	},

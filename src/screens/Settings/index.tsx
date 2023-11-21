@@ -1,4 +1,4 @@
-import { AboutIcon, EyeClosedIcon, HeartIcon, LockIcon, MintBoardIcon, OptionsIcon } from '@comps/Icons'
+import { AboutIcon, BookIcon, EyeClosedIcon, HeartIcon, LockIcon, MintBoardIcon, OptionsIcon } from '@comps/Icons'
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
@@ -6,6 +6,7 @@ import { appVersion } from '@consts/env'
 import { BottomModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
+import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { dropAllData } from '@src/storage/dev'
@@ -22,11 +23,12 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { color } = useThemeContext()
 	const [confirmReset, setConfirmReset] = useState(false)
 	const [zapModal, setZapModal] = useState(false)
+	const { nostr } = useNostrContext()
 
 	const handleReset = async () => {
 		try {
 			await dropAllData()
-		} catch (e) {/* ignore */}
+		} catch (e) {/* ignore */ }
 		setConfirmReset(false)
 		void Updates.reloadAsync()
 	}
@@ -66,13 +68,15 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						hasSeparator
 						hasChevron
 					/>
-					{/* <MenuItem
-						txt='Nostr'
-						icon={<NostrIcon width={25} height={25} />}
-						onPress={() => navigation.navigate('Nostr settings')}
-						hasSeparator
-						hasChevron
-					/> */}
+					{nostr.nutPub.length > 0 &&
+						<MenuItem
+							txt={t('contacts', { ns: NS.bottomNav })}
+							icon={<BookIcon color={color.TEXT} />}
+							onPress={() => navigation.navigate('Contacts settings')}
+							hasSeparator
+							hasChevron
+						/>
+					}
 					<MenuItem
 						txt={t('about', { ns: NS.topNav })}
 						icon={<AboutIcon color={color.TEXT} />}
