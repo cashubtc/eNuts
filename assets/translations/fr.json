@@ -214,7 +214,8 @@
 		"nostrIssueHeader": "Problème de contacts Nostr",
 		"nostrIssueHint": "Si vous rencontrez des problèmes pour ouvrir vos contacts Nostr, cliquez sur le bouton ci-dessous ou réinitialisez les données Nostr dans \"options > contacts > Réinitialiser maintenant\" pour résoudre le problème.",
 		"submitNostrIssue": "Réinitialiser maintenant",
-		"nostrIssueSuccess": "Réinitialisation des données Nostr réussie!"
+		"nostrIssueSuccess": "Réinitialisation des données Nostr réussie!",
+		"createLnInvoice": "Créer une facture Lightning."
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

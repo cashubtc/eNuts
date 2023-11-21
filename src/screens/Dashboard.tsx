@@ -392,7 +392,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				visible={modal.receiveOpts}
 				button1Txt={loading ? t('claiming', { ns: NS.wallet }) : t('pasteToken', { ns: NS.wallet })}
 				onPressFirstBtn={() => void handleClaimBtnPress()}
-				button2Txt='Lightning'
+				button2Txt={t('createLnInvoice')}
 				onPressSecondBtn={() => void handleMintBtnPress()}
 				handleNostrReceive={() => {
 					closeOptsModal()
