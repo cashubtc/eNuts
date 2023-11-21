@@ -26,7 +26,7 @@ import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
-import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice } from '@util'
+import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice, isStr } from '@util'
 import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
@@ -65,7 +65,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		sendOpts: false,
 		resetNostr: false,
 	})
-	const { nostr, resetNostrData } = useNostrContext()
+	const { resetNostrData } = useNostrContext()
 
 	// This function is only called if the mints of the received token are not in the user DB
 	const handleTrustModal = async () => {
@@ -238,14 +238,16 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	useEffect(() => {
 		void (async () => {
-			const [userHasMints, seenNostrIssue] = await Promise.all([
+			const [userHasMints, nutPub, seenNostrIssue] = await Promise.all([
 				hasMints(),
+				store.get(STORE_KEYS.nutpub),
 				store.get(STORE_KEYS.nostrReseted),
 			])
 			setHasMint(userHasMints)
+			l({ nutPub, seenNostrIssue })
 			setModal(prev => ({
 				...prev,
-				resetNostr: nostr.nutPub.length > 0 && seenNostrIssue !== '1'
+				resetNostr: isStr(nutPub) && nutPub.length > 0 && seenNostrIssue !== '1'
 			}))
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
