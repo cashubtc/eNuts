@@ -26,7 +26,7 @@ import { SECRET, STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
 import { highlight as hi } from '@styles/colors'
-import { debounce, isNum, uniqByIContacts } from '@util'
+import { debounce, isNum, uniq, uniqByIContacts } from '@util'
 import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -114,7 +114,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				onContactsChanged: allContacts => {
 					if (!allContacts?.length) { return }
 					// we simply overwrite the previous state with the new one
-					const c = allContacts.map(x => ({ hex: x })).sort(sortFavs)
+					const c = uniq(allContacts).map(hex => ({ hex })).sort(sortFavs)
 					contactsRef.current = c
 					setContacts(c)
 					// first render of contacts metadata happens in flashlist event onViewableItemsChanged

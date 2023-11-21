@@ -1,28 +1,31 @@
 import Button, { TxtButton } from '@comps/Button'
-import { TrashbinIcon } from '@comps/Icons'
+import { DatabaseIcon, ImageIcon, TrashbinIcon } from '@comps/Icons'
 import MyModal from '@comps/modal'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TNostrSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
+import { Nostr } from '@nostr/class/Nostr'
+import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { Nostr } from '@src/nostr/class/Nostr'
-import { globals } from '@styles'
+import { globals, mainColors } from '@styles'
 import { Image } from 'expo-image'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-export default function NostrSettings({ navigation, route }: TNostrSettingsPageProps) {
+export default function ContactsSettings({ navigation, route }: TNostrSettingsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const { openPromptAutoClose } = usePromptContext()
+	const { resetNostrData } = useNostrContext()
 	const [visible, setVisible] = useState({
 		metadata: false,
 		image: false,
+		reset: false
 	})
 
 	const handleNostrCache = async () => {
@@ -37,13 +40,19 @@ export default function NostrSettings({ navigation, route }: TNostrSettingsPageP
 		openPromptAutoClose({ msg: success ? 'Image cache cleared' : 'Everything is clear!', success })
 	}
 
+	const handleResetData = async () => {
+		await resetNostrData()
+		onCancel()
+		openPromptAutoClose({ msg: t('nostrIssueSuccess'), success: true })
+	}
+
 	const onCancel = () => {
-		setVisible({ metadata: false, image: false })
+		setVisible({ metadata: false, image: false, reset: false })
 	}
 
 	return (
 		<Screen
-			screenName='Nostr'
+			screenName={t('contacts', { ns: NS.bottomNav })}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
@@ -51,15 +60,22 @@ export default function NostrSettings({ navigation, route }: TNostrSettingsPageP
 				<View style={globals(color).wrapContainer}>
 					<TouchableOpacity style={globals().wrapRow} onPress={() => setVisible(prev => ({ ...prev, metadata: true }))}>
 						<View style={styles.iconWrap}>
-							<TrashbinIcon color={color.TEXT} />
+							<DatabaseIcon color={color.TEXT} />
 							<Txt txt={t('clearMetadataCache')} styles={[styles.optTxt]} />
 						</View>
 					</TouchableOpacity>
 					<Separator />
 					<TouchableOpacity style={globals().wrapRow} onPress={() => setVisible(prev => ({ ...prev, image: true }))}>
 						<View style={styles.iconWrap}>
-							<TrashbinIcon color={color.TEXT} />
+							<ImageIcon color={color.TEXT} />
 							<Txt txt={t('clearImageCache')} styles={[styles.optTxt]} />
+						</View>
+					</TouchableOpacity>
+					<Separator />
+					<TouchableOpacity style={globals().wrapRow} onPress={() => setVisible(prev => ({ ...prev, reset: true }))}>
+						<View style={styles.iconWrap}>
+							<TrashbinIcon color={mainColors.ERROR} />
+							<Txt txt={t('submitNostrIssue')} styles={[styles.optTxt, { color: mainColors.ERROR }]} />
 						</View>
 					</TouchableOpacity>
 				</View>
@@ -89,6 +105,21 @@ export default function NostrSettings({ navigation, route }: TNostrSettingsPageP
 					{t('clearImageCacheHint')}
 				</Text>
 				<Button txt={t('yes')} onPress={() => void handleImageCache()} />
+				<TxtButton
+					txt={t('no')}
+					onPress={onCancel}
+					style={[styles.cancelBtn]}
+				/>
+			</MyModal>
+			{/* reset data */}
+			<MyModal type='bottom' animation='slide' visible={visible.reset} close={onCancel}>
+				<Text style={globals(color, highlight).modalHeader}>
+					{t('submitNostrIssue')}
+				</Text>
+				<Text style={globals(color, highlight).modalTxt}>
+					{t('delNpubHint')}
+				</Text>
+				<Button txt={t('yes')} onPress={() => void handleResetData()} />
 				<TxtButton
 					txt={t('no')}
 					onPress={onCancel}

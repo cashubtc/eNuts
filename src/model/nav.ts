@@ -29,7 +29,7 @@ export type RootStackParamList = {
 	'Display settings': undefined
 	'Language settings': undefined
 	'Advanced settings': undefined
-	'Nostr settings': undefined
+	'Contacts settings': undefined
 	'About settings': undefined
 	auth: {
 		pinHash: string
@@ -243,7 +243,7 @@ export type TGeneralSettingsPageProps = NativeStackScreenProps<RootStackParamLis
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
 export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>
 export type TPrivacySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Privacy settings'>
-export type TNostrSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Nostr settings'>
+export type TNostrSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Contacts settings'>
 export type TLanguageSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Language settings'>
 export type TAdvancedSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Advanced settings'>
 export type TAboutSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'About settings'>

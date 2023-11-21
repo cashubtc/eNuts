@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 interface IMyModalProps {
 	type: 'bottom' | 'question' | 'success' | 'error' | 'invoiceAmount'
 	animation?: 'slide' | 'fade' | 'none'
-	visible: boolean
+	visible?: boolean
 	success?: boolean
 	hasNoPadding?: boolean
 	close?: () => void
