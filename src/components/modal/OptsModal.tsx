@@ -65,7 +65,7 @@ export default function OptsModal({
 					/>
 				}
 				<Option
-					icon={<ZapIcon width={26} height={26} color={mainColors.WARN} />}
+					icon={<ZapIcon width={26} height={26} color={mainColors.ZAP} />}
 					txt={button2Txt}
 					hint={isSend ? t('payInvoiceDashboard') : t('createInvoiceDashboard')}
 					onPress={onPressSecondBtn}

@@ -340,8 +340,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					onPress={() => {
 						if (!hasMint) {
 							// try to claim from clipboard to avoid receive-options-modal to popup and having to press again
-							void handleClaimBtnPress()
-							return
+							return handleClaimBtnPress()
 						}
 						setModal(prev => ({ ...prev, receiveOpts: true }))
 					}}
@@ -393,7 +392,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				visible={modal.receiveOpts}
 				button1Txt={loading ? t('claiming', { ns: NS.wallet }) : t('pasteToken', { ns: NS.wallet })}
 				onPressFirstBtn={() => void handleClaimBtnPress()}
-				button2Txt={t('mintNewTokens', { ns: NS.mints })}
+				button2Txt='Lightning'
 				onPressSecondBtn={() => void handleMintBtnPress()}
 				handleNostrReceive={() => {
 					closeOptsModal()
