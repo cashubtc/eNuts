@@ -5,6 +5,7 @@ import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
 import { AboutIcon, ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
+import { PromptModal } from '@comps/modal/Prompt'
 import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
@@ -61,8 +62,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const [modal, setModal] = useState({
 		mint: false,
 		receiveOpts: false,
-		sendOpts: false
+		sendOpts: false,
+		resetNostr: false,
 	})
+	const { nostr, resetNostrData } = useNostrContext()
 
 	// This function is only called if the mints of the received token are not in the user DB
 	const handleTrustModal = async () => {
@@ -84,7 +87,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	// navigates to the mint list page
 	const handleMintModal = async (forEnutsMint = false) => {
-		setModal({ ...modal, mint: false })
+		setModal(prev => ({ ...prev, mint: false }))
 		await store.set(STORE_KEYS.explainer, '1')
 		navigation.navigate('mints', { defaultMint: forEnutsMint, newMint: !forEnutsMint })
 	}
@@ -235,7 +238,15 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
 	useEffect(() => {
 		void (async () => {
-			setHasMint(await hasMints())
+			const [userHasMints, seenNostrIssue] = await Promise.all([
+				hasMints(),
+				store.get(STORE_KEYS.nostrReseted),
+			])
+			setHasMint(userHasMints)
+			setModal(prev => ({
+				...prev,
+				resetNostr: nostr.nutPub.length > 0 && seenNostrIssue !== '1'
+			}))
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -249,7 +260,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				getBalance(),
 			])
 			setHasMint(userHasMints)
-			setModal({ ...modal, mint: !userHasMints && explainerSeen !== '1' })
+			setModal(prev => ({ ...prev, mint: !userHasMints && explainerSeen !== '1' }))
 			setBalance(balance)
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -304,14 +315,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
 						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
-						onPress={() => setModal({ ...modal, sendOpts: true })}
+						onPress={() => setModal(prev => ({ ...prev, sendOpts: true }))}
 					/>
 					:
 					<ActionBtn
 						icon={<PlusIcon width={36} height={36} color={hi[highlight]} />}
 						txt='Mint'
 						color={hi[highlight]}
-						onPress={() => setModal({ ...modal, mint: true })}
+						onPress={() => setModal(prev => ({ ...prev, mint: true }))}
 					/>
 				}
 				<ActionBtn
@@ -330,7 +341,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 							void handleClaimBtnPress()
 							return
 						}
-						setModal({ ...modal, receiveOpts: true })
+						setModal(prev => ({ ...prev, receiveOpts: true }))
 					}}
 				/>
 			</View>
@@ -388,6 +399,23 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				}}
 				onPressCancel={closeOptsModal}
 				loading={loading}
+			/>
+			<PromptModal
+				header={t('nostrIssueHeader')}
+				txt={t('nostrIssueHint')}
+				visible={modal.resetNostr}
+				hideIcon
+				submitTxt={t('submitNostrIssue')}
+				submit={() => {
+					setModal(prev => ({ ...prev, resetNostr: false }))
+					void resetNostrData()
+					void store.set(STORE_KEYS.nostrReseted, '1')
+					openPromptAutoClose({ msg: t('nostrIssueSuccess'), success: true })
+				}}
+				close={() => {
+					setModal(prev => ({ ...prev, resetNostr: false }))
+					void store.set(STORE_KEYS.nostrReseted, '1')
+				}}
 			/>
 		</View>
 	)

@@ -48,7 +48,7 @@ const useNostr = () => {
 			store.delete(STORE_KEYS.nostrDms),
 			store.delete(STORE_KEYS.favs),
 			store.delete(STORE_KEYS.relays),
-			store.delete(STORE_KEYS.lud16)
+			store.delete(STORE_KEYS.lud16),
 		])
 	}
 

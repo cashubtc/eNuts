@@ -211,7 +211,11 @@
 		"zap": "Zap",
 		"zapNow": "Zap",
 		"meltNostrProfileHint": "Hamishia fedha kwa anwani ya Mtandao wa Lightning (LN) inayohusishwa na wasifu wako wa Nostr.",
-		"nostrDmHint": "eNuts hawezi kupata ujumbe wako wa Nostr kutokana na kutokuwa na ufikiaji wa ufunguo wako wa faragha. Badala yake, inazalisha ufunguo mpya kwa ajili ya kutuma Ecash. Ukipeleka Ecash kupitia Nostr, mpokeaji atapokea kwa kutumia ufunguo wa umma mpya wa eNuts. Ikiwa mpokeaji atajibu ujumbe huo na alama ya Ecash, unaweza kuiona hapa. Tunafanya kazi kwa bidii kwenye suluhisho salama la ufunguo wa faragha."
+		"nostrDmHint": "eNuts hawezi kupata ujumbe wako wa Nostr kutokana na kutokuwa na ufikiaji wa ufunguo wako wa faragha. Badala yake, inazalisha ufunguo mpya kwa ajili ya kutuma Ecash. Ukipeleka Ecash kupitia Nostr, mpokeaji atapokea kwa kutumia ufunguo wa umma mpya wa eNuts. Ikiwa mpokeaji atajibu ujumbe huo na alama ya Ecash, unaweza kuiona hapa. Tunafanya kazi kwa bidii kwenye suluhisho salama la ufunguo wa faragha.",
+		"nostrIssueHeader": "Tatizo la Mawasiliano ya Nostr",
+		"nostrIssueHint": "Kama una matatizo kufungua mawasiliano yako ya Nostr, bonyeza kitufe hapa chini au rudisha data ya Nostr kwenye mipangilio kusuluhisha tatizo.",
+		"submitNostrIssue": "Rudisha data sasa",
+		"nostrIssueSuccess": "Urejeshaji wa data ya Nostr umefanikiwa!"
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",
