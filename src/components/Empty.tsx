@@ -28,9 +28,7 @@ export default function Empty({ txt, hint, hasOk, pressable, onPress, nav }: IEm
 				style={styles.img}
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				source={require('@assets/mixed_forest.png')}
-				onError={() => {
-					l('error loading image')
-				}}
+				contentFit='contain'
 			/>
 			{pressable && onPress ?
 				<TxtButton
@@ -71,7 +69,6 @@ const styles = StyleSheet.create({
 	img: {
 		width: 350,
 		height: 350,
-		resizeMode: 'contain',
 		opacity: .4,
 	},
 	emptyTxt: {
