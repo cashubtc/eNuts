@@ -244,11 +244,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				store.get(STORE_KEYS.nostrReseted),
 			])
 			setHasMint(userHasMints)
-			l({ nutPub, seenNostrIssue })
-			setModal(prev => ({
-				...prev,
-				resetNostr: isStr(nutPub) && nutPub.length > 0 && seenNostrIssue !== '1'
-			}))
+			const t = setTimeout(() => {
+				setModal(prev => ({
+					...prev,
+					resetNostr: isStr(nutPub) && nutPub.length > 0 && seenNostrIssue !== '1'
+				}))
+				clearTimeout(t)
+			}, 1000)
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
