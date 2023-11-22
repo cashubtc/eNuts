@@ -87,14 +87,13 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		const bcType = isIOS ? 'org.iso.QRCode' : +QRType
 		// early return if barcode is not a QR
 		if (type !== bcType) {
-			openPromptAutoClose({ msg: t('notQrCode') })
-			return
+			return openPromptAutoClose({ msg: t('notQrCode') })
 		}
 		// handle cashu token claim
-		if (isCashuToken(data)) {
-			setToken(data)
-			void handleCashuToken(data)
-			return
+		const cashuToken = isCashuToken(data)
+		if (cashuToken) {
+			setToken(cashuToken)
+			return handleCashuToken(cashuToken)
 		}
 		// handle nostr
 		if (isNProfile(data)) {
@@ -119,8 +118,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			const invoice = extractStrFromURL(data) || data
 			const { amount, timeLeft } = decodeLnInvoice(invoice)
 			if (timeLeft <= 0) {
-				openPromptAutoClose({ msg: t('invoiceExpired') })
-				return
+				return openPromptAutoClose({ msg: t('invoiceExpired') })
 			}
 			navigation.navigate('qr processing', { ln: { invoice, mint, balance, amount } })
 		} catch (e) {
