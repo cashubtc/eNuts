@@ -156,7 +156,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					<Lud lud16={contact?.lud16} lud06={contact?.lud06} onPress={handlePress} />
 				</View>
 				{/* about */}
-				<ScrollView>
+				<ScrollView alwaysBounceVertical={false}>
 					{contact?.about && contact.about.length > 0 &&
 						<Txt txt={contact.about} styles={[styles.about]} />
 					}
