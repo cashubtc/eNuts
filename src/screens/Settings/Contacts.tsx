@@ -31,13 +31,13 @@ export default function ContactsSettings({ navigation, route }: TNostrSettingsPa
 	const handleNostrCache = async () => {
 		await Nostr.cleanCache()
 		onCancel()
-		openPromptAutoClose({ msg: 'Metadata cache cleared', success: true })
+		openPromptAutoClose({ msg: t('metadataCacheCleared'), success: true })
 	}
 
 	const handleImageCache = async () => {
 		const success = await Image.clearDiskCache()
 		onCancel()
-		openPromptAutoClose({ msg: success ? 'Image cache cleared' : 'Everything is clear!', success })
+		openPromptAutoClose({ msg: success ? t('imageCacheCleared') : t('clearOverHere'), success })
 	}
 
 	const handleResetData = async () => {

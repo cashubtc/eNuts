@@ -216,7 +216,9 @@
 		"nostrIssueHint": "If you're having trouble opening your Nostr contacts, click the button below or reset the Nostr data in \"options > contacts > reset data now\" data to resolve the issue.",
 		"submitNostrIssue": "Reset data now",
 		"nostrIssueSuccess": "Nostr data reset successfully!",
-		"createLnInvoice": "Create Lightning invoice"
+		"createLnInvoice": "Create Lightning invoice",
+		"metadataCacheCleared": "Metadata cache cleared!",
+		"imageCacheCleared": "Image cache cleared!"
 	},
 	"error": {
 		"checkSpendableErr": "Error while checking if token is spendable",

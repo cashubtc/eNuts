@@ -216,7 +216,9 @@
 		"nostrIssueHint": "Si estás teniendo problemas al abrir tus contactos de Nostr, haz click en el botón de abajo o restablece los datos de Noster en \"opciones > contactos > restablecer datos ahora\" para resolver el problema.",
 		"submitNostrIssue": "Restablecer datos ahora",
 		"nostrIssueSuccess": "¡Exito al  restablecer los datos de Nostr!",
-		"createLnInvoice": "Crear un recibo Lightning"
+		"createLnInvoice": "Crear un recibo Lightning",
+		"metadataCacheCleared": "Caché de metadatos limpiada",
+		"imageCacheCleared": "Caché de imagenes limpiada"
 	},
 	"error": {
 		"checkSpendableErr": "Error al comprobar si el token puede ser gastado",

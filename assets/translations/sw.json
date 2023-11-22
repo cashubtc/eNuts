@@ -216,7 +216,9 @@
 		"nostrIssueHint": "Kama unakumbana na shida kufungua mawasiliano yako ya Nostr, bonyeza kitufe hapa chini au rudisha data ya Nostr katika \"chaguo > mawasiliano > rudisha data sasa\" ili kutatua tatizo.",
 		"submitNostrIssue": "Rudisha data sasa",
 		"nostrIssueSuccess": "Urejeshaji wa data ya Nostr umefanikiwa!",
-		"createLnInvoice": "Unda ankara ya Lightning"
+		"createLnInvoice": "Unda ankara ya Lightning",
+		"metadataCacheCleared": "Metadata imeondolewa",
+		"imageCacheCleared": "Picha imeondolewa"
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

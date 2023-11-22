@@ -216,7 +216,9 @@
 		"nostrIssueHint": "Wenn Sie Schwierigkeiten haben, Ihre Nostr-Kontakte zu öffnen, klicken Sie auf die Schaltfläche unten oder setzen Sie die Nostr-Daten in \"Optionen > Kontakte > Daten zurücksetzen\" zurück, um das Problem zu lösen.",
 		"submitNostrIssue": "Daten zurücksetzen",
 		"nostrIssueSuccess": "Nostr-Daten erfolgreich zurückgesetzt!",
-		"createLnInvoice": "Lightning Rechnung erstellen"
+		"createLnInvoice": "Lightning Rechnung erstellen",
+		"metadataCacheCleared": "Metadatencache gelöscht!",
+		"imageCacheCleared": "Bildercache gelöscht!"
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
