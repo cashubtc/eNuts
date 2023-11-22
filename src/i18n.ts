@@ -1,6 +1,7 @@
 
 import de from '@assets/translations/de.json'
 import en from '@assets/translations/en.json'
+import es from '@assets/translations/es.json'
 import fr from '@assets/translations/fr.json'
 import sw from '@assets/translations/sw.json'
 import { l } from '@log'
@@ -27,7 +28,7 @@ export enum NS {
 
 export const defaultNS = NS.common
 export const resources = {
-	en, de, fr, sw
+	en, de, fr, sw, es
 } as const
 
 /**
