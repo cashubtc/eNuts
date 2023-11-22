@@ -17,6 +17,7 @@ const langs: ILangsOpt[] = [
 	{ name: 'german', code: 'de' },
 	{ name: 'french', code: 'fr' },
 	{ name: 'swahili', code: 'sw' },
+	{ name: 'spanish', code: 'es' },
 ]
 
 export default function LanguageSettings({ navigation }: TLanguageSettingsPageProps) {
