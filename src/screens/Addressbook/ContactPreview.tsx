@@ -1,5 +1,5 @@
 import useCopy from '@comps/hooks/Copy'
-import { ChevronRightIcon, CopyIcon, ListFavIcon, OutlinedFavIcon } from '@comps/Icons'
+import { ChevronRightIcon, CopyIcon, OutlinedFavIcon } from '@comps/Icons'
 import Popup from '@comps/Popup'
 import Txt from '@comps/Txt'
 import type { IContact } from '@model/nostr'
@@ -10,7 +10,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { highlight as hi, mainColors } from '@styles'
+import { highlight as hi } from '@styles'
 import { nip19 } from 'nostr-tools'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -64,11 +64,11 @@ const ContactPreview = React.memo(({
 		openPromptAutoClose({ msg: t('npubCopied'), success: true })
 	}
 
-	const opts = useMemo(() => [
+	const opts = [
 		{
 			txt: isFav ? t('removeFav') : t('favorite'),
 			onSelect: handleFav,
-			icon: isFav ? <OutlinedFavIcon width={20} height={20} color={color.TEXT} /> : <ListFavIcon width={20} height={20} color={mainColors.STAR} />,
+			icon: <OutlinedFavIcon width={20} height={20} color={color.TEXT} />,
 			hasSeparator: true
 		},
 		{
@@ -83,7 +83,7 @@ const ContactPreview = React.memo(({
 			icon: <CopyIcon width={18} height={18} color={color.TEXT} />,
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	], [isFav, contact])
+	]
 
 	return (
 		<TouchableOpacity
