@@ -44,7 +44,7 @@
     "@react-navigation/core": "^6.4.10",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
-    "@sentry/react-native": "^5.5.0",
+    "@sentry/react-native": "5.10.0",
     "@shopify/flash-list": "1.4.3",
     "crypto-js": "4.2.0",
     "expo": "^49.0.18",
@@ -81,7 +81,7 @@
     "react-native-size-matters": "^0.4.2",
     "react-native-svg": "13.9.0",
     "react-native-url-polyfill": "^2.0.0",
-    "sentry-expo": "~7.0.0",
+    "sentry-expo": "~7.1.0",
     "text-encoding-polyfill": "^0.6.7"
   },
   "devDependencies": {
