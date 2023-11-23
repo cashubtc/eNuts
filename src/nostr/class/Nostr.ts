@@ -244,8 +244,15 @@ export class Nostr {
 				kinds: [EventKind.Metadata],
 			}
 		})
+		let resultCount = 0
 		sub?.on('event', (e: Event) => {
+			resultCount++
 			this.#onSearchChanged?.(ProfileData.eventToIContact(e))
+		})
+		sub?.on('eose', () => {
+			// fire the onSearchChanged event if no results to allow frontend to show "no results"
+			if (!resultCount) { this.#onSearchChanged?.() }
+			// sub?.unsub?.()
 		})
 		return sub
 	}

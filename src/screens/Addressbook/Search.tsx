@@ -7,42 +7,46 @@ import type { Nostr } from '@nostr/class/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
-import { createRef, useCallback, useEffect, useRef, useState } from 'react'
+import { createRef, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, type TextInput, TouchableOpacity, View } from 'react-native'
 
 interface ISearchProps {
 	contactsRef: React.MutableRefObject<IContact[]>
+	searchInput: string
+	setSearchInput: (text: string) => void
+	isSearching?: boolean
+	setIsSearching: (isSearching: boolean) => void
 	searchResults: IContact[]
 	setSearchResults: (contacts: IContact[]) => void
 	setContacts: (contacts: IContact[]) => void
+	setHasResults: (hasResults: boolean) => void
 	nostrRef: React.MutableRefObject<Nostr | undefined>
 }
 
 export default function Search({
 	contactsRef,
+	searchInput,
+	setSearchInput,
+	isSearching,
+	setIsSearching,
 	setContacts,
 	searchResults,
 	setSearchResults,
+	setHasResults,
 	nostrRef
 }: ISearchProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
-	const [searchInput, setSearchInput] = useState('')
 	const inputRef = createRef<TextInput>()
 	const lastSearchQuery = useRef('')
-	const [isSearching, setIsSearching] = useState(false)
 
 	const handleOnChangeSearch = (text: string) => {
 		lastSearchQuery.current = ''
 		setSearchInput(text)
-		// handle search by username if all contacts have been synced
-		if (searchResults.length) {
-			setContacts(contactsRef.current)
-			return setSearchResults([])
-		}
-		// reset search results
-		if (!text.length) {
+		setHasResults(true)
+		setIsSearching(false)
+		if (searchResults.length || !text.length) {
 			setContacts(contactsRef.current)
 			return setSearchResults([])
 		}
@@ -58,11 +62,6 @@ export default function Search({
 		nostrRef.current?.search(text)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
-
-	useEffect(() => {
-		if (isSearching) { setIsSearching(false) }
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchResults])
 
 	return (
 		<View style={styles.inputWrap}>
@@ -87,7 +86,7 @@ export default function Search({
 					void handleNip50Search(searchInput)
 				}}
 			>
-				{isSearching ?
+				{isSearching && !searchResults.length ?
 					<Loading color={hi[highlight]} />
 					:
 					searchResults.length ?
