@@ -140,7 +140,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 								<TouchableOpacity
 									style={globals().wrapRow}
 									onPress={() => handlePressMint(m)}
-									disabled={m.amount === 0}
+									disabled={(isSendEcash || isMelt) && m.amount === 0}
 								>
 									<View style={styles.mintNameWrap}>
 										{defaultMint === m.mintUrl &&
@@ -150,18 +150,18 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 											txt={m.customName || formatMintUrl(m.mintUrl)}
 											styles={[{
 												marginLeft: defaultMint === m.mintUrl ? 10 : 0,
-												color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY
+												color: (isSendEcash || isMelt) && !m.amount ? color.TEXT_SECONDARY : color.TEXT
 											}]}
 										/>
 									</View>
 									<View style={styles.mintBal}>
 										<Text style={[
 											styles.mintAmount,
-											{ color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY, paddingBottom: 3 }
+											{ color: (isSendEcash || isMelt) && !m.amount ? color.TEXT_SECONDARY : color.TEXT, paddingBottom: 3 }
 										]}>
 											{formatInt(m.amount, 'compact', 'en')}
 										</Text>
-										<ZapIcon color={m.amount > 0 ? hi[highlight] : color.TEXT_SECONDARY} />
+										<ZapIcon color={(isSendEcash || isMelt) && !m.amount ? color.TEXT_SECONDARY : hi[highlight]} />
 									</View>
 								</TouchableOpacity>
 								{i < userMints.length - 1 && <Separator />}
