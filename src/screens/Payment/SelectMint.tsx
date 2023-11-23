@@ -56,10 +56,9 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		// pay scanned invoice
 		if (invoice && invoiceAmount && isNum(estFee)) {
 			if (invoiceAmount + estFee > mint.amount) {
-				openPromptAutoClose({ msg: t('noFundsForFee', { ns: NS.common, fee: estFee }), ms: 4000 })
-				return
+				return openPromptAutoClose({ msg: t('noFundsForFee', { ns: NS.common, fee: estFee }), ms: 4000 })
 			}
-			navigation.navigate('coinSelection', {
+			return navigation.navigate('coinSelection', {
 				mint,
 				balance: mint.amount,
 				amount: invoiceAmount,
@@ -67,7 +66,6 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				isMelt: true,
 				recipient: invoice
 			})
-			return
 		}
 		// choose a target for a payment
 		if (isMelt || isSendEcash) {
@@ -78,22 +76,20 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 			// user has already selected a nostr target
 			if (nostr) {
 				// select ecash amount to send
-				navigation.navigate('selectNostrAmount', {
+				return navigation.navigate('selectNostrAmount', {
 					mint,
 					nostr,
 					balance: mint.amount,
 				})
-				return
 			}
 			// l('user wants to send payment, navigate to target selection')
-			navigation.navigate('selectTarget', {
+			return navigation.navigate('selectTarget', {
 				mint,
 				balance: mint.amount,
 				remainingMints,
 				isSendEcash,
 				isMelt
 			})
-			return
 		}
 		navigation.navigate('selectAmount', {
 			mint,
