@@ -5,7 +5,7 @@ import type { THistoryPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
-import { formatInt, formatSatStr } from '@util'
+import { formatSatStr, isNum } from '@util'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
@@ -29,11 +29,6 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	const getTxColor = () => {
 		if (item.type === 3) { return color.TEXT }
 		return item.amount < 0 ? mainColors.ERROR : mainColors.VALID
-	}
-
-	const getAmount = () => {
-		if (item.type === 3) { return `${formatInt(Math.abs(item.amount), 'compact', 'en')}` }
-		return `${item.amount > 0 ? '+' : ''}${formatInt(item.amount, 'compact', 'en')}`
 	}
 
 	const getIcon = () => {
@@ -61,13 +56,12 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			<View style={styles.placeholder} />
 			<View style={styles.amount}>
 				<Txt
-					txt={getAmount()}
+					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.amount, 'standard')}`}
 					styles={[{ color: getTxColor() }]}
 				/>
-				<Txt
-					txt={formatSatStr(item.amount, 'standard', false)}
-					styles={[{ color: getTxColor() }]}
-				/>
+				<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right' }}>
+					{t('fee', { ns: NS.common })}: {isNum(item.fee) ? item.fee : 0}
+				</Text>
 			</View>
 		</TouchableOpacity>
 	)
@@ -88,10 +82,8 @@ const styles = StyleSheet.create({
 		width: 30,
 	},
 	amount: {
-		flexDirection: 'row',
-		alignItems: 'center',
 		position: 'absolute',
-		top: 10,
+		top: 0,
 		right: 0,
 	},
 })

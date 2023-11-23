@@ -96,32 +96,29 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			try {
 				invoice = await getInvoiceFromLnurl(recipient, +amount)
 				if (!invoice?.length) {
-					handleError({ customMsg: 'invoiceFromLnurlError' })
-					return
+					return handleError({ customMsg: 'invoiceFromLnurlError' })
 				}
 			} catch (e) {
-				handleError({ e })
-				return
+				return handleError({ e })
 			}
 		}
 		try {
 			const target = invoice || recipient || ''
 			const res = await payLnInvoice(mint.mintUrl, target, estFee || 0, proofs || [])
-			if (!res?.result?.isPaid) {
+			if (!res.result?.isPaid) {
 				// here it could be a routing path finding issue
-				handleError({ e: isErr(res.error) ? res.error : undefined })
-				return
+				return handleError({ e: isErr(res.error) ? res.error : undefined })
 			}
 			// payment success, add as history entry
 			await addLnPaymentToHistory(
 				res,
 				[mint.mintUrl],
-				-amount - (res?.realFee ?? 0),
+				-amount,
 				target
 			)
 			// update latest 3 history entries
 			await updateLatestHistory({
-				amount: -amount - (res?.realFee ?? 0),
+				amount: -amount,
 				fee: res.realFee,
 				type: 2,
 				value: target,
@@ -148,7 +145,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0)
 			// add as history entry (multimint swap)
 			await addToHistory({
-				amount: -amount - (res?.payResult?.realFee ?? 0),
+				amount: -amount,
 				fee: res.payResult.realFee,
 				type: 3,
 				value: res.requestTokenResult.invoice?.pr || '',

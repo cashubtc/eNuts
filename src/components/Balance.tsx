@@ -11,7 +11,7 @@ import { NS } from '@src/i18n'
 import { getLatestHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi } from '@styles'
 import { getColor } from '@styles/colors'
-import { formatBalance, formatInt, formatSatStr, isBool } from '@util'
+import { formatBalance, formatInt, formatSatStr, isBool, isNum } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -117,6 +117,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 						txType={getTxTypeStr(h.type)}
 						timestamp={h.timestamp}
 						amount={h.amount}
+						fee={h.fee}
 						onPress={() => nav?.navigate('history entry details', { entry: h })}
 					/>
 				))
@@ -139,10 +140,11 @@ interface IHistoryEntryProps {
 	isSwap?: boolean
 	timestamp: number
 	amount: number
+	fee?: number
 	onPress: () => void
 }
 
-function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHistoryEntryProps) {
+function HistoryEntry({ icon, txType, isSwap, timestamp, amount, fee, onPress }: IHistoryEntryProps) {
 	const { t } = useTranslation([NS.history])
 	const { color, highlight } = useThemeContext()
 
@@ -164,7 +166,12 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHis
 					</Text>
 				</View>
 			</View>
-			<Txt txt={getAmount()} styles={[{ color: getColor(highlight, color) }]} />
+			<View>
+				<Txt txt={getAmount()} styles={[{ color: getColor(highlight, color) }]} />
+				<Text style={{ color: getColor(highlight, color), paddingBottom: 3, textAlign: 'right' }}>
+					{t('fee', { ns: NS.common })}: {isNum(fee) ? fee : 0}
+				</Text>
+			</View>
 		</TouchableOpacity>
 	)
 }
