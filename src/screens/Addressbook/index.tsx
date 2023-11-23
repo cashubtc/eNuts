@@ -5,6 +5,7 @@ import { QRIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
+import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
@@ -36,8 +37,6 @@ import { RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-
 import ContactPreview from './ContactPreview'
 import Recents from './Recents'
 import Search from './Search'
-import Txt from '@comps/Txt'
-import { l } from '@src/logger'
 
 /****************************************************************************/
 /* State issues will occur while debugging Android and IOS at the same time */
@@ -52,6 +51,13 @@ interface CustomViewToken {
 }
 
 interface IViewableItems { viewableItems: CustomViewToken[] }
+
+export interface ISearchStates {
+	input: string
+	isSearching: boolean
+	results: IContact[]
+	hasResults: boolean
+}
 
 const marginBottom = isIOS ? 100 : 75
 const marginBottomPayment = isIOS ? 25 : 0
@@ -77,10 +83,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const [input, setInput] = useState('')
 	// search functionality
-	const [searchInput, setSearchInput] = useState('')
-	const [searchResults, setSearchResults] = useState<IContact[]>([])
-	const [isSearching, setIsSearching] = useState(false)
-	const [hasResults, setHasResults] = useState(false)
+	const [search, setSearch] = useState<ISearchStates>({
+		input: '',
+		isSearching: false,
+		results: [],
+		hasResults: true,
+	})
 	// contact list
 	const [contacts, setContacts] = useState<IContact[]>([])
 	// TODO we have 3 copies of contacts, this is not good (the class instance, the state and the ref)
@@ -138,12 +146,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				},
 				onSearchChanged: profile => {
 					if (!profile) {
-						setHasResults(false)
-						return setIsSearching(false)
+						return setSearch(prev => ({ ...prev, isSearching: false, hasResults: false }))
 					}
-					if (isSearching) { setIsSearching(false) }
-					if (!hasResults) { setHasResults(true) }
-					setSearchResults(prev => uniqByIContacts([...prev, profile], 'hex'))
+					if (search.isSearching) { setSearch(prev => ({ ...prev, isSearching: false })) }
+					if (!search.hasResults) { setSearch(prev => ({ ...prev, hasResults: true })) }
+					setSearch(prev => ({ ...prev, results: uniqByIContacts([...prev.results, profile], 'hex') }))
 					// we set the contact state of a search result that is already in the contacts list
 					// so that the contact list can render the profile if user favorites it
 					// TODO cache it
@@ -338,7 +345,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	useEffect(() => {
 		if (!isFocused || nostr.pubKey.hex === nostrRef.current?.hex) { return }
 		setContacts([]) // reset contacts in case user has edited his npub
-		setSearchResults([])
+		setSearch(prev => ({ ...prev, results: [] }))
 		last.current.idx = -1
 		// user has no nostr data yet
 		if (!nostr.pubKey.encoded || !nostr.pubKey.hex) {
@@ -353,8 +360,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	useEffect(() => {
 		setContacts([...contacts].sort(sortFavs))
 		// re-render search results if favs change
-		if (searchResults.length) {
-			setSearchResults([...searchResults])
+		if (search.results.length) {
+			setSearch(prev => ({ ...prev, results: [...prev.results.sort(sortFavs)] }))
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [nostr.favs])
@@ -386,13 +393,8 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					<Search
 						contactsRef={contactsRef}
 						setContacts={setContacts}
-						searchInput={searchInput}
-						setSearchInput={setSearchInput}
-						isSearching={isSearching}
-						setIsSearching={setIsSearching}
-						searchResults={searchResults}
-						setSearchResults={setSearchResults}
-						setHasResults={setHasResults}
+						search={search}
+						setSearch={setSearch}
 						nostrRef={nostrRef}
 					/>
 					{/* user contacts */}
@@ -401,10 +403,10 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							styles.contactsWrap,
 							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : marginBottom },
 						]}>
-							{searchInput.length > 0 && searchResults.length > 0 && hasResults ?
+							{search.input.length > 0 && search.results.length > 0 && search.hasResults ?
 								<FlashList
 									ref={searchListRef}
-									data={searchResults}
+									data={search.results}
 									estimatedItemSize={75}
 									keyExtractor={item => item.hex}
 									renderItem={({ item }) => (
@@ -426,7 +428,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										<Separator style={[styles.contactSeparator]} />
 									)}
 								/>
-								: searchInput.length > 0 && !searchResults.length && !hasResults ?
+								: search.input.length > 0 && !search.results.length && !search.hasResults ?
 									<Txt txt='No results' bold center />
 									:
 									<FlashList

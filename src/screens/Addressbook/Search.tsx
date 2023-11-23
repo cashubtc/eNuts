@@ -7,33 +7,25 @@ import type { Nostr } from '@nostr/class/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
-import { createRef, useCallback, useRef } from 'react'
+import { createRef, type Dispatch, type SetStateAction, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, type TextInput, TouchableOpacity, View } from 'react-native'
 
+import type { ISearchStates } from '.'
+
 interface ISearchProps {
 	contactsRef: React.MutableRefObject<IContact[]>
-	searchInput: string
-	setSearchInput: (text: string) => void
-	isSearching?: boolean
-	setIsSearching: (isSearching: boolean) => void
-	searchResults: IContact[]
-	setSearchResults: (contacts: IContact[]) => void
 	setContacts: (contacts: IContact[]) => void
-	setHasResults: (hasResults: boolean) => void
+	search: ISearchStates
+	setSearch: Dispatch<SetStateAction<ISearchStates>>
 	nostrRef: React.MutableRefObject<Nostr | undefined>
 }
 
 export default function Search({
 	contactsRef,
-	searchInput,
-	setSearchInput,
-	isSearching,
-	setIsSearching,
 	setContacts,
-	searchResults,
-	setSearchResults,
-	setHasResults,
+	search,
+	setSearch,
 	nostrRef
 }: ISearchProps) {
 	const { t } = useTranslation([NS.common])
@@ -43,21 +35,19 @@ export default function Search({
 
 	const handleOnChangeSearch = (text: string) => {
 		lastSearchQuery.current = ''
-		setSearchInput(text)
-		setHasResults(true)
-		setIsSearching(false)
-		if (searchResults.length || !text.length) {
+		setSearch(prev => ({ ...prev, input: text, hasResults: true, isSearching: false }))
+		if (search.results.length || !text.length) {
 			setContacts(contactsRef.current)
-			return setSearchResults([])
+			return setSearch(prev => ({ ...prev, results: [] }))
 		}
 	}
 
 	const handleNip50Search = useCallback((text: string) => {
 		if (text === lastSearchQuery.current) { return }
 		if (!text.length) {
-			return setSearchResults([])
+			return setSearch(prev => ({ ...prev, results: [] }))
 		}
-		setIsSearching(true)
+		setSearch(prev => ({ ...prev, isSearching: true }))
 		lastSearchQuery.current = text
 		nostrRef.current?.search(text)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,9 +59,9 @@ export default function Search({
 				innerRef={inputRef}
 				keyboardType='default'
 				placeholder={t('searchContacts')}
-				value={searchInput}
+				value={search.input}
 				onChangeText={text => void handleOnChangeSearch(text)}
-				onSubmitEditing={() => void handleNip50Search(searchInput)}
+				onSubmitEditing={() => void handleNip50Search(search.input)}
 				style={[styles.searchInput]}
 			/>
 			{/* Submit nip50 search */}
@@ -79,17 +69,16 @@ export default function Search({
 				style={styles.submitSearch}
 				onPress={() => {
 					inputRef.current?.blur()
-					if (searchResults.length) {
-						setSearchResults([])
-						return setSearchInput('')
+					if (search.results.length) {
+						return setSearch(prev => ({ ...prev, input: '', results: [] }))
 					}
-					void handleNip50Search(searchInput)
+					void handleNip50Search(search.input)
 				}}
 			>
-				{isSearching && !searchResults.length ?
+				{search.isSearching && !search.results.length && search.input.length > 0 ?
 					<Loading color={hi[highlight]} />
 					:
-					searchResults.length ?
+					search.results.length ?
 						<CloseIcon color={color.INPUT_PH} />
 						:
 						<SearchIcon color={color.INPUT_PH} />
