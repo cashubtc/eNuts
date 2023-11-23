@@ -358,10 +358,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}, [isFocused])
 
 	useEffect(() => {
-		setContacts([...contacts].sort(sortFavs))
+		setContacts([...contacts.sort(sortFavs)])
 		// re-render search results if favs change
 		if (search.results.length) {
-			setSearch(prev => ({ ...prev, results: [...prev.results.sort(sortFavs)] }))
+			setSearch(prev => ({
+				...prev,
+				results: uniqByIContacts(prev.results.sort(sortFavs), 'hex')
+			}))
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [nostr.favs])
