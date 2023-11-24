@@ -20,6 +20,7 @@ import { nip19 } from 'nostr-tools'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import QRMarker from './Marker'
 
@@ -170,13 +171,13 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 						style={styles.actionLeft}
 						onPress={() => setFlash(prev => !prev)}
 					>
-						<FlashlightOffIcon width={30} height={30} color={flash ? mainColors.WARN : mainColors.WHITE} />
+						<FlashlightOffIcon width={s(30)} height={s(30)} color={flash ? mainColors.WARN : mainColors.WHITE} />
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={styles.actionRight}
 						onPress={() => navigation.goBack()}
 					>
-						<CloseIcon width={30} height={30} color={mainColors.WHITE} />
+						<CloseIcon width={s(30)} height={s(30)} color={mainColors.WHITE} />
 					</TouchableOpacity>
 				</>
 				:
@@ -198,38 +199,38 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',
 	},
 	scanAgain: {
 		position: 'absolute',
-		bottom: 150,
-		padding: 20,
+		bottom: '150@vs',
+		padding: '20@s',
 		backgroundColor: 'rgba(0,0,0,.5)',
 		borderRadius: 40,
 	},
 	scanAgainTxt: {
-		fontSize: 16,
+		fontSize: '14@vs',
 		fontWeight: '500',
 		color: mainColors.WHITE,
 		textAlign: 'center',
 	},
 	actionLeft: {
 		position: 'absolute',
-		bottom: 40,
-		left: 40,
+		bottom: '40@vs',
+		left: '40@s',
 		backgroundColor: 'rgba(0,0,0,.5)',
-		padding: 20,
-		borderRadius: 40,
+		padding: '20@s',
+		borderRadius: '40@s',
 	},
 	actionRight: {
 		position: 'absolute',
-		bottom: 40,
-		right: 40,
+		bottom: '40@vs',
+		right: '40@s',
 		backgroundColor: 'rgba(0,0,0,.5)',
-		padding: 20,
-		borderRadius: 40,
+		padding: '20@s',
+		borderRadius: '40@s',
 	},
 })

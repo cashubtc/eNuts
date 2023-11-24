@@ -9,7 +9,8 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, HighlightKey, themeColors } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, TouchableOpacity, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function DisplaySettings({ navigation, route }: TDisplaySettingsPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -20,7 +21,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView style={{ marginBottom: 60 }}>
+			<ScrollView style={{ marginBottom: vs(60) }}>
 				<Txt
 					txt='Theme'
 					bold
@@ -59,20 +60,20 @@ function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) 
 	const { setHighlight } = useThemeContext()
 	return (
 		<>
-			<TouchableOpacity style={globals().wrapRow}
+			<TouchableOpacity style={[globals().wrapRow, { paddingBottom: vs(15) }]}
 				onPress={() => setHighlight(name)}
 			>
 				<Txt txt={name === 'Default' ? t('default') : name} />
 				<RadioBtn selected={selected} />
 			</TouchableOpacity>
-			{hasSeparator && <Separator />}
+			{hasSeparator && <Separator style={[{ marginBottom: vs(15) }]} />}
 		</>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	subHeader: {
-		paddingHorizontal: 20,
-		marginBottom: 10,
+		paddingHorizontal: '20@s',
+		marginBottom: '10@vs',
 	},
 })

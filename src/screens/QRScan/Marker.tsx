@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Animated, Easing, StyleSheet, View } from 'react-native'
+import { Animated, Easing, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function QRMarker({ size, color }: { size: number, color: string }) {
 
@@ -34,9 +35,9 @@ export default function QRMarker({ size, color }: { size: number, color: string 
 const pos = 0
 const markerWidth = 8
 const radius = 30
-const size = 50
+const size = s(50)
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	main: {
 		position: 'absolute',
 		height: size,

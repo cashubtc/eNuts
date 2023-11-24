@@ -11,7 +11,8 @@ import AnimatedLottieView from 'lottie-react-native'
 import { nip19 } from 'nostr-tools'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, Text, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPageProps) {
 
@@ -64,7 +65,7 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 					source={require('../../../assets/lottie/success/success.json')}
 					autoPlay
 					loop={false}
-					style={{ width: 130 }}
+					style={{ width: s(120) }}
 				/>
 			</View>
 			<SafeAreaView style={styles.actionWrap}>
@@ -75,7 +76,7 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 						handleContacts()
 					}}
 				/>
-				<View style={{ marginVertical: 10 }} />
+				<View style={{ marginVertical: vs(10) }} />
 				{!edited &&
 					<Button
 						txt={t('scanAnother', { ns: NS.common })}
@@ -86,18 +87,18 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 				<TxtButton
 					txt={t('backToDashboard', { ns: NS.common })}
 					onPress={() => navigation.navigate('dashboard')}
-					style={[{ marginTop: edited ? -20 : 0 }]}
+					style={[{ marginTop: edited ? s(-20) : 0 }]}
 				/>
 			</SafeAreaView>
 		</View>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: 20
+		padding: '20@s',
 	},
 	infoWrap: {
 		alignItems: 'center',
@@ -106,14 +107,14 @@ const styles = StyleSheet.create({
 		width: '100%',
 	},
 	successTxt: {
-		fontSize: 30,
+		fontSize: '28@vs',
 		fontWeight: '800',
 		textAlign: 'center',
-		marginTop: 30,
+		marginTop: '30@vs',
 	},
 	mint: {
-		marginVertical: 20,
-		fontSize: 16,
+		marginVertical: '20@vs',
+		fontSize: '14@vs',
 		textAlign: 'center',
 		fontWeight: '500',
 	},

@@ -11,7 +11,8 @@ import { globals, highlight as hi } from '@styles'
 import { formatMintUrl } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function SelectMintToSwapToScreen({ navigation, route }: TSelectMintToSwapToPageProps) {
 	const { mint, balance, remainingMints } = route.params
@@ -52,7 +53,7 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 										}
 										<Txt
 											txt={m.customName || formatMintUrl(m.mintUrl)}
-											styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0 }]}
+											styles={[{ marginLeft: defaultMint === m.mintUrl ? s(10) : 0 }]}
 										/>
 									</View>
 									<ChevronRightIcon color={color.TEXT} />
@@ -68,10 +69,10 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	hint: {
-		paddingHorizontal: 20,
-		marginBottom: 20,
+		paddingHorizontal: '20@s',
+		marginBottom: '20@vs',
 		fontWeight: '500'
 	},
 	mintUrlWrap: {
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: 20,
+		paddingBottom: '20@vs',
 	},
 	mintNameWrap: {
 		flexDirection: 'row',

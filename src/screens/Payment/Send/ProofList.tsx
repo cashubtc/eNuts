@@ -16,7 +16,8 @@ import { formatSatStr, getSelectedAmount } from '@util'
 import { getMintCurrentKeySetId, } from '@wallet'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 interface ICoinSelectionProps {
 	mint?: IMintUrl
@@ -167,7 +168,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee,
 	}
 	return (
 		<>
-			<View style={[styles.overview, { paddingHorizontal: padding ? 20 : 0 }]}>
+			<View style={[styles.overview, { paddingHorizontal: padding ? s(20) : 0 }]}>
 				<Txt txt={t('selected')} />
 				<Txt
 					txt={`${selectedAmount}/${lnAmount} ${formatSatStr(lnAmount, 'standard', false)}`}
@@ -175,7 +176,7 @@ export function CoinSelectionResume({ lnAmount, selectedAmount, padding, estFee,
 				/>
 			</View>
 			{selectedAmount > lnAmount &&
-				<View style={[styles.overview, { paddingHorizontal: padding ? 20 : 0 }]}>
+				<View style={[styles.overview, { paddingHorizontal: padding ? s(20) : 0 }]}>
 					<Txt txt={t('change')} />
 					<Txt txt={getChangeStr()} />
 				</View>
@@ -251,7 +252,7 @@ function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 				<Txt
 					txt={proof.id}
 					success={isLatestKeysetId}
-					styles={[styles.keysetID, { marginRight: 'selected' in proof ? 20 : 0 }]}
+					styles={[styles.keysetID, { marginRight: 'selected' in proof ? s(20) : 0 }]}
 				/>
 				{'selected' in proof && <RadioBtn selected={proof.selected} />}
 			</View>
@@ -259,7 +260,7 @@ function ProofRowContent({ proof, isLatestKeysetId }: IProofRowProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	proofContainer: {
 		flex: 1,
 		width: '100%',
@@ -268,36 +269,36 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingHorizontal: 20,
-		marginBottom: 20,
+		paddingHorizontal: '20@s',
+		marginBottom: '20@vs',
 	},
 	overview: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		marginBottom: 20,
+		marginBottom: '20@vs',
 	},
 	tableHeader: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingTop: 10,
-		paddingBottom: 20,
-		marginHorizontal: -20,
-		paddingHorizontal: 20,
+		paddingTop: '10@vs',
+		paddingBottom: '20@vs',
+		marginHorizontal: '-20@s',
+		paddingHorizontal: '20@s',
 	},
 	confirmWrap: {
 		position: 'absolute',
 		bottom: 0,
 		right: 0,
 		left: 0,
-		padding: 20,
-		paddingBottom: isIOS ? 20 : 0
+		padding: '20@s',
+		paddingBottom: isIOS ? '20@vs' : '0@vs'
 	},
 	keyWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	keysetID: {
-		fontSize: 14,
+		fontSize: '12@vs',
 	},
 })

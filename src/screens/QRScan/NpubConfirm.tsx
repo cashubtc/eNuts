@@ -22,7 +22,8 @@ import { isStr } from '@util'
 import { Event as NostrEvent, nip19 } from 'nostr-tools'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPageProps) {
 
@@ -94,7 +95,7 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 			<View />
 			<View style={styles.infoWrap}>
 				{loading ?
-					<Loading color={hi[highlight]} size={50} />
+					<Loading color={hi[highlight]} size={s(50)} />
 					: userProfile?.picture ?
 						<>
 							<ProfilePic
@@ -114,7 +115,7 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 							/>
 						</>
 						:
-						<NostrIcon width={60} height={60} />
+						<NostrIcon width={s(50)} height={s(50)} />
 				}
 				<Txt
 					txt={t('confirmNpubHint')}
@@ -140,28 +141,28 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: 20
+		padding: '20@s',
 	},
 	descText: {
-		marginBottom: 10,
+		marginBottom: '10@vs',
 		textAlign: 'center',
 	},
 	hint: {
-		fontSize: 14,
+		fontSize: '12@vs',
 		textAlign: 'center',
-		marginVertical: 20,
+		marginVertical: '20@vs',
 	},
 	infoWrap: {
 		alignItems: 'center',
 	},
 	name: {
-		fontSize: 22,
+		fontSize: '20@vs',
 		fontWeight: '500',
-		marginTop: 20,
-		marginBottom: 5,
+		marginTop: '20@vs',
+		marginBottom: '5@vs',
 	}
 })

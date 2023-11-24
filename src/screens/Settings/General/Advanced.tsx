@@ -10,8 +10,9 @@ import { STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 const reqTimeouts = [5, 10, 20, 30]
 
@@ -36,7 +37,7 @@ export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettings
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView style={{ width: '100%', marginBottom: 60 + insets.bottom }} showsVerticalScrollIndicator={false}>
+			<ScrollView style={{ width: '100%', marginBottom: vs(60) + insets.bottom }} showsVerticalScrollIndicator={false}>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					{t('reqTimeout', { ns: NS.common })}
 				</Text>
@@ -82,27 +83,27 @@ function SelectionRow({ value, selected, handleChange, withSeparator }: ISelecti
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	subHeader: {
-		fontSize: 16,
+		fontSize: '14@vs',
 		fontWeight: '500',
-		paddingHorizontal: 20,
-		marginBottom: 10,
+		paddingHorizontal: '20@s',
+		marginBottom: '10@s',
 	},
 	highlightWrap: {
 		paddingHorizontal: 0,
-		paddingVertical: 10,
-		marginBottom: 20,
+		paddingVertical: '10@vs',
+		marginBottom: '20@vs',
 	},
 	row: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingVertical: 10,
-		paddingHorizontal: 20,
+		paddingVertical: '10@vs',
+		paddingHorizontal: '20@s',
 	},
 	separator: {
-		marginHorizontal: 20,
-		marginVertical: 10
+		marginHorizontal: '20@s',
+		marginVertical: '5@vs'
 	}
 })
