@@ -3,8 +3,9 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { mainColors } from '@src/styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import useCopy from './hooks/Copy'
 import { CheckmarkIcon, CopyIcon } from './Icons'
@@ -33,7 +34,7 @@ export default function QR({ size, value, isInvoice, truncateNum, onError }: QRP
 					logo={require('@assets/app-qr-icon.png')}
 					logoBorderRadius={10}
 					logoBackgroundColor={mainColors.WHITE}
-					logoMargin={3}
+					logoMargin={s(6)}
 					onError={onError}
 				/>
 			</View>
@@ -54,9 +55,9 @@ export default function QR({ size, value, isInvoice, truncateNum, onError }: QRP
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	qrWrap: {
-		borderWidth: 10,
+		borderWidth: '10@s',
 		borderColor: mainColors.WHITE,
 		borderTopLeftRadius: 10,
 		borderTopRightRadius: 10,
@@ -65,12 +66,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
-		padding: 15,
+		padding: '15@s',
 		borderWidth: 1,
 		borderBottomLeftRadius: 10,
 		borderBottomRightRadius: 10,
 	},
 	iconCon: {
-		minWidth: 30
+		minWidth: '30@s'
 	}
 })

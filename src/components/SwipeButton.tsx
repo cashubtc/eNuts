@@ -2,7 +2,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { mainColors } from '@src/styles'
 import { highlight as hi } from '@styles/colors'
 import { useState } from 'react'
-import { Dimensions, StyleSheet, View } from 'react-native'
+import { Dimensions, View } from 'react-native'
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler'
 import Animated, {
 	Extrapolate,
@@ -15,6 +15,7 @@ import Animated, {
 	withSpring
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import { ChevronRightIcon } from './Icons'
 
@@ -122,7 +123,7 @@ export default function SwipeButton({ txt, onToggle }: ISwipeButtonProps) {
 	}
 
 	return (
-		<View style={{ padding: 20, paddingBottom: insets.bottom + 20 }}>
+		<View style={{ padding: s(20), paddingBottom: insets.bottom + s(20) }}>
 			<GestureHandlerRootView>
 				<Animated.View style={[styles.swipeCont, AnimatedStyles.swipeCont, { backgroundColor: color.INPUT_BG }]}>
 					<AnimatedView style={[AnimatedStyles.colorWave, styles.colorWave, { backgroundColor: hi[highlight] }]} />
@@ -140,7 +141,7 @@ export default function SwipeButton({ txt, onToggle }: ISwipeButtonProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	swipeCont: {
 		height: BUTTON_HEIGHT,
 		width: BUTTON_WIDTH,
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
 	},
 	swipeText: {
 		alignSelf: 'center',
-		fontSize: 16,
+		fontSize: '14@vs',
 		fontWeight: '500',
 		zIndex: 2,
 	},

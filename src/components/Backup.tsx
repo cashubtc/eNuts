@@ -3,7 +3,8 @@ import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { formatMintUrl, share } from '@util'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text } from 'react-native'
+import { Text } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 import ActionButtons from './ActionButtons'
 import useCopy from './hooks/Copy'
@@ -42,14 +43,14 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	subTxt: {
-		marginTop: 20,
-		paddingHorizontal: 20,
+		marginTop: '20@vs',
+		paddingHorizontal: '20@s',
 	},
 	token: {
-		marginTop: 20,
-		fontSize: 16,
-		paddingHorizontal: 20,
+		marginTop: '20@vs',
+		fontSize: '14@vs',
+		paddingHorizontal: '20@s',
 	},
 })

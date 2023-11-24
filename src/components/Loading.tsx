@@ -1,6 +1,7 @@
 import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { ActivityIndicator, Image, StyleSheet } from 'react-native'
+import { ActivityIndicator, Image } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 interface ILoadingProps {
 	color?: string
@@ -23,9 +24,9 @@ function NostrIndicator() {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	nostrGif: {
-		width: 100,
-		height: 100,
+		width: '100@s',
+		height: '100@s',
 	}
 })

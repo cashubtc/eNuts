@@ -5,7 +5,8 @@ import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { formatMintUrl, formatSatStr } from '@util'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 import MyModal from '.'
 
@@ -38,7 +39,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 				{tokenInfo?.mints.map(m => <Text style={[styles.mintPrompt, { color: color.TEXT }]} key={m}>{formatMintUrl(m)}</Text>)}
 			</View>
 			<Button loading={loading} txt={loading ? t('claiming', { ns: NS.wallet }) : t('yes')} onPress={handleTrustModal} />
-			<View style={{ marginVertical: 10 }} />
+			<View style={{ marginVertical: vs(10) }} />
 			<Button
 				outlined
 				txt={t('no')}
@@ -48,12 +49,12 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	mintPrompt: {
-		fontSize: 14,
-		marginBottom: 5,
+		fontSize: '12@vs',
+		marginBottom: '5@vs',
 	},
 	tokenMintsView: {
-		marginBottom: 20
+		marginBottom: '20@vs'
 	},
 })

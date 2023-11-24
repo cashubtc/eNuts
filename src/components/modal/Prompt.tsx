@@ -4,7 +4,8 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import MyModal from '.'
 
@@ -33,7 +34,7 @@ export function PromptModal({
 		<MyModal type='error' animation='fade' visible={visible}>
 			{!hideIcon &&
 				<View style={styles.promptIcon}>
-					<ExclamationIcon width={60} height={60} color={color.TEXT} />
+					<ExclamationIcon width={s(50)} height={s(50)} color={color.TEXT} />
 				</View>
 			}
 			<Text style={globals(color).modalHeader}>
@@ -45,7 +46,7 @@ export function PromptModal({
 				</Text>
 			}
 			<Button txt={submitTxt} onPress={submit} />
-			<View style={{ marginVertical: 10 }} />
+			<View style={{ marginVertical: vs(10) }} />
 			<Button
 				txt={t('cancel')}
 				onPress={close}
@@ -55,8 +56,8 @@ export function PromptModal({
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	promptIcon: {
-		marginBottom: 20,
+		marginBottom: '20@vs',
 	},
 })

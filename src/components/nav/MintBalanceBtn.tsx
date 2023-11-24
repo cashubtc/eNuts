@@ -1,6 +1,7 @@
 import MintBalance from '@comps/MintBalance'
 import { useThemeContext } from '@src/context/Theme'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { TouchableOpacity } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 interface IMintBalanceBtnProps {
 	handleMintBalancePress?: () => void
@@ -25,8 +26,8 @@ export default function MintBalanceBtn({handleMintBalancePress, disableMintBalan
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	right: {
-		paddingLeft: 20,
+		paddingLeft: '20@s',
 	},
 })
