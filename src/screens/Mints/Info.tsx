@@ -43,6 +43,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 	return (
 		<Screen
 			withBackBtn
+			screenName={t('mintInfo', { ns: NS.mints })}
 			handlePress={() => navigation.goBack()}
 		>
 			{info ?

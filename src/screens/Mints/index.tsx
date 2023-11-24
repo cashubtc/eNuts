@@ -24,7 +24,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -159,7 +159,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 						{sortMintsByDefault(usertMints, defaultMint).map((m, i) => (
 							<View key={m.mintUrl}>
 								<TouchableOpacity
-									style={globals().wrapRow}
+									style={[globals().wrapRow, { paddingBottom: vs(15) }]}
 									onPress={() => {
 										const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
 										navigation.navigate('mintmanagement', {
@@ -204,7 +204,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 										}
 									</View>
 								</TouchableOpacity>
-								{i < usertMints.length - 1 && <Separator />}
+								{i < usertMints.length - 1 && <Separator style={[{ marginBottom: vs(15) }]} />}
 							</View>
 						))}
 					</ScrollView>
