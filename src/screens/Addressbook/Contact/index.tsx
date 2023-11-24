@@ -20,7 +20,7 @@ import { nip19 } from 'nostr-tools'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import ProfilePic from '../ProfilePic'
 import Username from '../Username'
@@ -120,7 +120,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					<ProfilePic
 						hex={contact?.hex}
 						uri={contact?.picture}
-						size={100}
+						size={s(70)}
 						isUser={isUser}
 					/>
 				</View>
@@ -129,7 +129,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						<SmallBtn onPress={openEditSheet}>
 							<PenIcon color={mainColors.WHITE} />
 						</SmallBtn>
-						<View style={{ marginHorizontal: 5 }} />
+						<View style={{ marginHorizontal: s(5) }} />
 						<SmallBtn onPress={openDeleteSheet}>
 							<TrashbinIcon color={mainColors.WHITE} />
 						</SmallBtn>
@@ -138,7 +138,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			</View>
 			<View style={styles.contentWrap}>
 				{/* username */}
-				<Username contact={contact} fontSize={24} />
+				<Username contact={contact} fontSize={vs(22)} />
 				{/* npub */}
 				<View style={styles.npubWrap}>
 					<Txt
@@ -248,11 +248,11 @@ const styles = ScaledSheet.create({
 	backBtn: {
 		backgroundColor: 'rgba(0, 0, 0, .4)',
 		position: 'absolute',
-		top: 50,
-		left: 20,
+		top: '50@vs',
+		left: '20@s',
 		zIndex: 1,
-		width: 40,
-		height: 40,
+		width: '40@vs',
+		height: '40@vs',
 		borderRadius: 20,
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -276,51 +276,51 @@ const styles = ScaledSheet.create({
 		paddingHorizontal: '10@s',
 	},
 	picWrap: {
-		width: 100,
-		height: 100,
-		borderRadius: 50,
+		width: '70@s',
+		height: '70@s',
+		borderRadius: 35,
 		overflow: 'hidden'
 	},
 	profilePicContainer: {
 		flexDirection: 'row',
 		alignItems: 'flex-end',
 		justifyContent: 'space-between',
-		marginTop: -50,
-		paddingHorizontal: 20,
+		marginTop: '-35@s',
+		paddingHorizontal: '20@s',
 	},
 	sendEcash: {
-		paddingHorizontal: 10,
-		paddingVertical: 5,
+		paddingHorizontal: '10@s',
+		paddingVertical: '5@vs',
 		borderRadius: 50,
-		marginBottom: 5,
+		marginBottom: '-5@vs',
 	},
 	sendTxt: {
 		color: mainColors.WHITE,
 	},
 	contentWrap: {
-		paddingTop: 10,
-		paddingHorizontal: 20,
+		paddingTop: '10@vs',
+		paddingHorizontal: '20@s',
 	},
 	npubWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	npub: {
-		fontSize: 14,
+		fontSize: '12@vs',
 	},
 	tagsWrap: {
-		marginTop: 20,
+		marginTop: '20@vs',
 	},
 	about: {
-		marginTop: 20,
+		marginTop: '20@vs',
 	},
 	newNpubHintTxt: {
 		color: mainColors.WARN
 	},
 	sendBtn: {
 		position: 'absolute',
-		bottom: 20,
-		left: 20,
-		right: 20,
+		bottom: '20@vs',
+		left: '20@s',
+		right: '20@s',
 	}
 })

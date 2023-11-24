@@ -318,7 +318,8 @@
 		"newMintAdded": "Sarafu imeongezwa!",
 		"newMintAddedQuestion": "Unataka kupokea Ecash kutoka kwake sasa?",
 		"selectSwapReceiver": "Chagua sarafu kama mpokeaji wa malipo.",
-		"prepairZapData": "Kuandaa data ya shughuli..."
+		"prepairZapData": "Kuandaa data ya shughuli...",
+		"leaveGithubStar": "Usaidie na nyota kwenye Github"
 	},
 	"topNav": {
 		"about": "Kuhusu sisi",

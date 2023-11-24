@@ -219,7 +219,8 @@
 		"nostrIssueSuccess": "Nostr-Daten erfolgreich zurückgesetzt!",
 		"createLnInvoice": "Lightning Rechnung erstellen",
 		"metadataCacheCleared": "Metadatencache gelöscht!",
-		"imageCacheCleared": "Bildercache gelöscht!"
+		"imageCacheCleared": "Bildercache gelöscht!",
+		"leaveGithubStar": "Unterstützen Sie uns mit einem Github-Stern"
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",

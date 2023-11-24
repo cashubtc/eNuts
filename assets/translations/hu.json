@@ -219,7 +219,8 @@
 		"nostrIssueSuccess": "Nostr adatok sikeresen helyreállítva!",
 		"createLnInvoice": "Lightning számla létrehozása",
 		"metadataCacheCleared": "Metadata tárat tisztítva!",
-		"imageCacheCleared": "Képtár tisztítva!"
+		"imageCacheCleared": "Képtár tisztítva!",
+		"leaveGithubStar": "Támogass minket egy Github csillaggal"
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",

@@ -219,7 +219,8 @@
 		"nostrIssueSuccess": "¡Exito al  restablecer los datos de Nostr!",
 		"createLnInvoice": "Crear un recibo Lightning",
 		"metadataCacheCleared": "Caché de metadatos limpiada",
-		"imageCacheCleared": "Caché de imagenes limpiada"
+		"imageCacheCleared": "Caché de imagenes limpiada",
+		"leaveGithubStar": "Apóyenos con una estrella en Github"
 	},
 	"error": {
 		"checkSpendableErr": "Error al comprobar si el token puede ser gastado",

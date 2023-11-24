@@ -1,7 +1,8 @@
 import { BackspaceIcon, CheckmarkIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
 import { getPinpadBg, mainColors } from '@styles'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 // the number pad data where 10 is "backspace" and 11 is "submit"
 const pad = [
@@ -50,8 +51,8 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, ha
 							style={[styles.numWrap, pad.n < 10 ? { backgroundColor: getPinpadBg(highlight) } : {}]}
 							disabled={shouldDisablePad(pad.n)}
 						>
-							{pad.n === 10 ? <BackspaceIcon width={32} height={32} color={mainColors.WHITE} /> // backspace
-								: pad.n === 11 ? <CheckmarkIcon width={32} height={32} color={shouldDisableSubmit() ? mainColors.GREY : mainColors.WHITE} /> // submit
+							{pad.n === 10 ? <BackspaceIcon width={s(32)} height={s(32)} color={mainColors.WHITE} /> // backspace
+								: pad.n === 11 ? <CheckmarkIcon width={s(32)} height={s(32)} color={shouldDisableSubmit() ? mainColors.GREY : mainColors.WHITE} /> // submit
 									: // number pads
 									<>
 										<Text style={styles.num}>
@@ -72,29 +73,28 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, ha
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	numberRow: {
 		width: '100%',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-evenly',
-		marginVertical: 10,
+		marginVertical: '10@vs',
 	},
 	numWrap: {
-		width: 70,
-		height: 70,
+		width: '60@s',
+		height: '60@s',
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 35,
+		borderRadius: '30@s',
 	},
 	num: {
-		fontSize: 28,
+		fontSize: '24@vs',
 		fontWeight: '300',
 		color: mainColors.WHITE,
 	},
 	char: {
-		fontSize: 8,
+		fontSize: '8@vs',
 		color: mainColors.WHITE,
-		marginTop: -5,
 	},
 })

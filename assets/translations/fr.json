@@ -219,7 +219,8 @@
 		"nostrIssueSuccess": "Réinitialisation des données Nostr réussie!",
 		"createLnInvoice": "Créer une facture Lightning.",
 		"metadataCacheCleared": "Cache des métadonnées vidé!",
-		"imageCacheCleared": "Cache des images vidé!"
+		"imageCacheCleared": "Cache des images vidé!",
+		"leaveGithubStar": "Soutenez-nous avec une étoile sur Github"
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

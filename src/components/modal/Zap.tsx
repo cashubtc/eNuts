@@ -11,7 +11,8 @@ import { globals } from '@styles'
 import { formatSatStr, getInvoiceFromLnurl, isErr, openUrl } from '@util'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import MyModal from '.'
 
@@ -67,7 +68,7 @@ export function ZapModal({ visible, close }: IQuestionModalProps) {
 			<Text style={[globals(color).modalTxt, { color: color.TEXT_SECONDARY }]}>
 				{t('supportHint')}
 			</Text>
-			<View style={{ width: '100%', marginBottom: 20 }}>
+			<View style={{ width: '100%', marginBottom: vs(18) }}>
 				{zaps.map(z => <Selection key={z.amount} zap={z} onPress={handleSelect} />)}
 			</View>
 			<Button
@@ -94,26 +95,26 @@ function Selection({ zap, onPress }: ISelectionProps) {
 					<Text>{zap.emoji}</Text>
 					<Txt
 						txt={formatSatStr(zap.amount, 'compact')}
-						styles={[{ marginLeft: 10 }]}
+						styles={[{ marginLeft: s(10) }]}
 					/>
 				</View>
 				<RadioBtn selected={zap.selected} />
 			</TouchableOpacity>
-			{zap.amount < 840000 && <Separator />}
+			{zap.amount < 840000 && <Separator style={[{ marginBottom: vs(10) }]} />}
 		</>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	modalHeader: {
-		fontSize: 24,
-		marginBottom: 20
+		fontSize: '22@vs',
+		marginBottom: '18@vs'
 	},
 	zapRow: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: 15
+		paddingBottom: '15@vs',
 	},
 	amountWrap: {
 		flexDirection: 'row',

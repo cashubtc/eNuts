@@ -15,7 +15,8 @@ import { globals, mainColors } from '@styles'
 import { Image } from 'expo-image'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function ContactsSettings({ navigation, route }: TNostrSettingsPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -58,21 +59,21 @@ export default function ContactsSettings({ navigation, route }: TNostrSettingsPa
 		>
 			<ScrollView>
 				<View style={globals(color).wrapContainer}>
-					<TouchableOpacity style={globals().wrapRow} onPress={() => setVisible(prev => ({ ...prev, metadata: true }))}>
+					<TouchableOpacity style={[globals().wrapRow, {paddingBottom: vs(15)}]} onPress={() => setVisible(prev => ({ ...prev, metadata: true }))}>
 						<View style={styles.iconWrap}>
 							<DatabaseIcon color={color.TEXT} />
 							<Txt txt={t('clearMetadataCache')} styles={[styles.optTxt]} />
 						</View>
 					</TouchableOpacity>
-					<Separator />
-					<TouchableOpacity style={globals().wrapRow} onPress={() => setVisible(prev => ({ ...prev, image: true }))}>
+					<Separator style={[styles.separator]} />
+					<TouchableOpacity style={[globals().wrapRow, {paddingBottom: vs(15)}]} onPress={() => setVisible(prev => ({ ...prev, image: true }))}>
 						<View style={styles.iconWrap}>
 							<ImageIcon color={color.TEXT} />
 							<Txt txt={t('clearImageCache')} styles={[styles.optTxt]} />
 						</View>
 					</TouchableOpacity>
-					<Separator />
-					<TouchableOpacity style={globals().wrapRow} onPress={() => setVisible(prev => ({ ...prev, reset: true }))}>
+					<Separator style={[styles.separator]} />
+					<TouchableOpacity style={[globals().wrapRow, {paddingBottom: vs(15)}]} onPress={() => setVisible(prev => ({ ...prev, reset: true }))}>
 						<View style={styles.iconWrap}>
 							<TrashbinIcon color={mainColors.ERROR} />
 							<Txt txt={t('submitNostrIssue')} styles={[styles.optTxt, { color: mainColors.ERROR }]} />
@@ -130,16 +131,19 @@ export default function ContactsSettings({ navigation, route }: TNostrSettingsPa
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	cancelBtn: {
-		paddingTop: 25,
-		paddingBottom: 10,
+		paddingTop: '25@vs',
+		paddingBottom: '10@vs',
 	},
 	iconWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	optTxt: {
-		marginLeft: 15
+		marginLeft: '15@s'
+	},
+	separator: {
+		marginBottom: '15@vs'
 	}
 })

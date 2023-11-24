@@ -33,7 +33,7 @@ import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RefreshControl, Text, TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import ContactPreview from './ContactPreview'
 import Recents from './Recents'
@@ -60,8 +60,8 @@ export interface ISearchStates {
 	hasResults: boolean
 }
 
-const marginBottom = isIOS ? 100 : 75
-const marginBottomPayment = isIOS ? 25 : 0
+const marginBottom = vs(70)
+const marginBottomPayment = isIOS ? vs(20) : 0
 
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {

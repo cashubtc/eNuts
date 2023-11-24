@@ -219,7 +219,8 @@
 		"nostrIssueSuccess": "Nostr data reset successfully!",
 		"createLnInvoice": "Create Lightning invoice",
 		"metadataCacheCleared": "Metadata cache cleared!",
-		"imageCacheCleared": "Image cache cleared!"
+		"imageCacheCleared": "Image cache cleared!",
+		"leaveGithubStar": "Support us with a Github star"
 	},
 	"error": {
 		"checkSpendableErr": "Error while checking if token is spendable",

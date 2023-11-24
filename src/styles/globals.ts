@@ -84,9 +84,9 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.cre
 	},
 	radioBtn: {
 		borderWidth: 1,
-		borderRadius: 50,
-		paddingHorizontal: '10@s',
-		paddingVertical: '10@vs',
+		width: '20@s',
+		height: '20@s',
+		borderRadius: '10@s',
 		borderColor: color?.BORDER
 	},
 	bold: {

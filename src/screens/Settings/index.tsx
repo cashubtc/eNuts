@@ -15,6 +15,7 @@ import * as Updates from 'expo-updates'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, View } from 'react-native'
+import { vs } from 'react-native-size-matters'
 
 import MenuItem from './MenuItem'
 
@@ -39,7 +40,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 			noIcons
 		>
 			<ScrollView>
-				<View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
+				<View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
 					<MenuItem
 						txt={t('general', { ns: NS.topNav })}
 						icon={<OptionsIcon color={color.TEXT} />}
