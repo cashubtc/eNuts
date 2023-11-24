@@ -219,7 +219,8 @@
 		"nostrIssueSuccess": "Urejeshaji wa data ya Nostr umefanikiwa!",
 		"createLnInvoice": "Unda ankara ya Lightning",
 		"metadataCacheCleared": "Metadata imeondolewa",
-		"imageCacheCleared": "Picha imeondolewa"
+		"imageCacheCleared": "Picha imeondolewa",
+		"leaveGithubStar": "Usaidie na nyota kwenye Github"
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",
@@ -318,8 +319,7 @@
 		"newMintAdded": "Sarafu imeongezwa!",
 		"newMintAddedQuestion": "Unataka kupokea Ecash kutoka kwake sasa?",
 		"selectSwapReceiver": "Chagua sarafu kama mpokeaji wa malipo.",
-		"prepairZapData": "Kuandaa data ya shughuli...",
-		"leaveGithubStar": "Usaidie na nyota kwenye Github"
+		"prepairZapData": "Kuandaa data ya shughuli..."
 	},
 	"topNav": {
 		"about": "Kuhusu sisi",

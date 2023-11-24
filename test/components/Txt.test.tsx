@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Txt from '@comps/Txt'
 import { render, screen } from '@testing-library/react-native'
+import { vs } from 'react-native-size-matters'
 
 describe('Basic test of the Txt.tsx component', () => {
 	it('renders the expected string', () => {
@@ -13,7 +14,7 @@ describe('Basic test of the Txt.tsx component', () => {
 		render(<Txt txt='Hello World!' />)
 		const textElement = screen.getByText('Hello World!')
 		expect(textElement.props.style[0]).toStrictEqual({
-			fontSize: 16,
+			fontSize: vs(14),
 			color: '#656565'
 		})
 	})
