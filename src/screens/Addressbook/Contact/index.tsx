@@ -251,9 +251,9 @@ const styles = ScaledSheet.create({
 		top: '50@vs',
 		left: '20@s',
 		zIndex: 1,
-		width: '40@vs',
-		height: '40@vs',
-		borderRadius: 20,
+		width: '40@s',
+		height: '40@s',
+		borderRadius: '20@s',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center'
