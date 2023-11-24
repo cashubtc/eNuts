@@ -17,7 +17,8 @@ import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts }
 import { autoMintSwap, checkFees, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 interface IErrorProps {
 	e?: unknown
@@ -289,7 +290,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
-			<Loading size={40} nostr={!!nostr} />
+			<Loading size={s(35)} nostr={!!nostr} />
 			<Txt
 				styles={[styles.descText]}
 				txt={t(processingTxt)}
@@ -299,19 +300,19 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',
 		justifyContent: 'center',
-		paddingHorizontal: 20
+		paddingHorizontal: '20@s',
 	},
 	descText: {
-		marginTop: 20,
+		marginTop: '20@vs',
 		textAlign: 'center',
 	},
 	hint: {
-		fontSize: 14,
-		marginTop: 10,
+		fontSize: '12@vs',
+		marginTop: '10@vs',
 	}
 })

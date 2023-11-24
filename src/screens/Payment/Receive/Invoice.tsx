@@ -18,8 +18,9 @@ import { formatMintUrl, formatSeconds, isErr, openUrl, share } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
 	const { mintUrl, amount, hash, expiry, paymentRequest } = route.params
@@ -110,7 +111,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				isInvoice
 			/>
 			<View>
-				<Text style={[styles.lnExpiry, { color: expire < 1 ? mainColors.ERROR : hi[highlight], fontSize: 28 }]}>
+				<Text style={[styles.lnExpiry, { color: expire < 1 ? mainColors.ERROR : hi[highlight], fontSize: vs(26) }]}>
 					{expire > 0 ?
 						formatSeconds(expire)
 						:
@@ -120,10 +121,10 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 							t('invoiceExpired') + '!'
 					}
 				</Text>
-				{mintUrl === _testmintUrl && <View style={{ marginTop: 20 }}><Loading /></View>}
+				{mintUrl === _testmintUrl && <View style={{ marginTop: vs(20) }}><Loading /></View>}
 				{expire > 0 &&
 					<View style={styles.awaitingWrap}>
-						<Txt txt={t('paymentPending') + '...'} styles={[{ fontWeight: '500', marginRight: 10 }]} />
+						<Txt txt={t('paymentPending') + '...'} styles={[{ fontWeight: '500', marginRight: s(10) }]} />
 						<Loading />
 					</View>
 				}
@@ -140,7 +141,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					/>
 					<TxtButton
 						txt={t('shareInvoice')}
-						icon={<ShareIcon width={18} height={18} color={hi[highlight]} />}
+						icon={<ShareIcon width={s(18)} height={s(18)} color={hi[highlight]} />}
 						onPress={() => void share(paymentRequest)}
 					/>
 				</View>
@@ -156,12 +157,12 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: 20,
-		paddingTop: 120,
+		padding: '20@s',
+		paddingTop: '100@vs',
 	},
 	invoiceWrap: {
 		alignItems: 'center',
@@ -169,14 +170,14 @@ const styles = StyleSheet.create({
 	copyWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: 20,
+		marginTop: '20@vs',
 	},
 	invoiceStr: {
-		fontSize: 14,
-		marginLeft: 10,
+		fontSize: '12@vs',
+		marginLeft: '10@s',
 	},
 	lnExpiry: {
-		fontSize: 36,
+		fontSize: '34@vs',
 		fontWeight: '600',
 		textAlign: 'center',
 	},
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginTop: 10,
+		marginTop: '10@vs',
 	},
 	lnBtnWrap: {
 		width: '100%'

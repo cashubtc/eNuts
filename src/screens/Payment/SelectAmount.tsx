@@ -15,7 +15,8 @@ import { cleanUpNumericStr, formatSatStr, getInvoiceFromLnurl, vib } from '@util
 import { checkFees, requestMint } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, View } from 'react-native'
+import { Animated, KeyboardAvoidingView, TextInput, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
 	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
@@ -177,7 +178,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					styles={[styles.headerHint]}
 				/>
 			}
-			<View style={[styles.overviewWrap, { marginTop: isMelt || isSwap ? 0 : 20 }]}>
+			<View style={[styles.overviewWrap, { marginTop: isMelt || isSwap ? 0 : vs(20) }]}>
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
 						keyboardType='numeric'
@@ -198,7 +199,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				/>
 				{(isMelt || isSwap) &&
 					<>
-						<Separator style={[{ marginVertical: 20 }]} />
+						<Separator style={[{ marginVertical: vs(20) }]} />
 						<MeltOverview
 							amount={+amount}
 							shouldEstimate={shouldEstimate}
@@ -253,10 +254,10 @@ export function MeltOverview({ amount, shouldEstimate, balTooLow, isInvoice, fee
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	headerHint: {
-		paddingHorizontal: 20,
-		marginBottom: 20,
+		paddingHorizontal: '20@s',
+		marginBottom: '20@vs',
 		fontWeight: '500'
 	},
 	amountWrap: {
@@ -266,14 +267,14 @@ const styles = StyleSheet.create({
 	continue: {
 		flex: 1,
 		position: 'absolute',
-		right: 20,
-		left: 20,
-		bottom: 20,
+		right: '20@s',
+		left: '20@s',
+		bottom: '20@vs',
 		alignItems: 'center'
 	},
 	overviewWrap: {
 		width: '100%',
-		paddingHorizontal: 20,
+		paddingHorizontal: '20@s',
 	},
 	overview: {
 		flexDirection: 'row',
@@ -281,13 +282,13 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	sats: {
-		fontSize: 14,
+		fontSize: '12@vs',
 		textAlign: 'center',
-		marginLeft: -4,
-		marginTop: -5
+		marginLeft: '-4@s',
+		marginTop: '-5@vs'
 	},
 	feeHint: {
-		fontSize: 12,
-		marginTop: 10,
+		fontSize: '10@vs',
+		marginTop: '10@vs',
 	},
 })

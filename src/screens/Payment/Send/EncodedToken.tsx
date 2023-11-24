@@ -17,7 +17,8 @@ import { isTokenSpendable } from '@wallet'
 import LottieView from 'lottie-react-native'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
@@ -70,7 +71,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	}, [])
 
 	return (
-		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? 50 : 20 }]}>
+		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? vs(50) : vs(20) }]}>
 			{!spent &&
 				<TopNav
 					withBackBtn
@@ -92,7 +93,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 								source={require('../../../../assets/lottie/success/success.json')}
 								autoPlay
 								loop={false}
-								style={{ width: 130 }}
+								style={{ width: s(130) }}
 							/>
 						</View>
 					</View>
@@ -112,7 +113,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 							<Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
 							:
 							<QR
-								size={320}
+								size={s(280)}
 								value={value}
 								onError={() => setError({ msg: t('bigQrMsg'), open: true })}
 							/>
@@ -124,16 +125,16 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 								<Button
 									txt={t(copied ? 'copied' : 'copyToken')}
 									onPress={() => void copy(value)}
-									icon={<CopyIcon width={18} height={18} color={mainColors.WHITE} />}
+									icon={<CopyIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />}
 								/>
-								<View style={{ marginVertical: 10 }} />
+								<View style={{ marginVertical: vs(10) }} />
 							</>
 						}
 						<Button
 							outlined
 							txt={t('share')}
 							onPress={() => void share(value, `cashu://${value}`)}
-							icon={<ShareIcon width={18} height={18} color={hi[highlight]} />}
+							icon={<ShareIcon width={s(18)} height={s(18)} color={hi[highlight]} />}
 						/>
 					</View>
 				</>
@@ -142,40 +143,40 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		width: '100%',
-		padding: 20,
+		padding: '20@s',
 	},
 	qrWrap: {
 		alignItems: 'center',
-		marginTop: 100,
+		marginTop: '90@vs',
 	},
 	tokenAmount: {
-		fontSize: 42,
+		fontSize: '40@vs',
 		fontWeight: '500',
-		marginTop: 25,
+		marginTop: '25@vs',
 	},
 	tokenFormat: {
-		marginBottom: 25,
+		marginBottom: '25@vs',
 	},
 	errorMsg: {
-		marginVertical: 25,
+		marginVertical: '25@vs',
 		textAlign: 'center',
 	},
 	successTxt: {
-		fontSize: 30,
+		fontSize: '28@vs',
 		fontWeight: '800',
 		textAlign: 'center',
-		marginTop: 30,
+		marginTop: '30@vs',
 	},
 	successAnim: {
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 20
+		marginTop: '20@vs'
 	},
 	fullWidth: {
 		width: '100%',

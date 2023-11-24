@@ -12,8 +12,9 @@ import { formatSatStr, vib } from '@util'
 import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	const { amount, memo, fee, mint, isClaim, isMelt, isZap, nostr, isScanned } = route.params
@@ -76,7 +77,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						source={require('../../../assets/lottie/success/success.json')}
 						autoPlay
 						loop={false}
-						style={{ width: 130 }}
+						style={{ width: s(120) }}
 					/>
 				</View>
 				{isMelt && amount &&
@@ -104,7 +105,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 							txt={t('scanAnother', { ns: NS.common })}
 							onPress={() => navigation.navigate('qr scan', { mint: undefined })}
 						/>
-						<View style={[{ marginVertical: 10 }]} />
+						<View style={[{ marginVertical: vs(10) }]} />
 					</>
 				}
 				<Button
@@ -136,44 +137,43 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		flex: 1,
-		padding: 20,
+		padding: '20@s',
 	},
 	img: {
-		marginTop: 100,
-		height: 100,
+		marginTop: '90@s',
+		height: '90@s',
 		opacity: .8
 	},
 	nostrImg: {
-		marginTop: 100,
-		justifyContent:
-			'center',
+		marginTop: '90@vs',
+		justifyContent: 'center',
 		alignItems: 'center'
 	},
 	successTxt: {
-		fontSize: 30,
+		fontSize: '28@vs',
 		fontWeight: '800',
 		textAlign: 'center',
-		marginTop: 30,
+		marginTop: '30@vs',
 	},
 	meltWrap: {
 		width: '100%',
-		marginTop: 20,
+		marginTop: '20@vs',
 	},
 	meltOverview: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		marginBottom: 10,
+		marginBottom: '10@vs',
 	},
 	meltTxt: {
 		fontWeight: '500'
 	},
 	mints: {
-		marginTop: 20,
-		fontSize: 16,
+		marginTop: '20@vs',
+		fontSize: '14@vs',
 		textAlign: 'center',
 		fontWeight: '500',
 	},
@@ -182,20 +182,20 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		right: 0,
 		left: 0,
-		paddingHorizontal: 20,
+		paddingHorizontal: '20@s',
 	},
 	confetti: {
-		width: 400,
+		width: '380@s',
 		position: 'absolute',
 		top: 0,
 		right: 0,
-		bottom: -300,
+		bottom: '-300@vs',
 		left: 0,
 		zIndex: -1
 	},
 	successAnim: {
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 20
+		marginTop: '20@vs'
 	}
 })

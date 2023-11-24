@@ -14,7 +14,8 @@ import { decodeLnInvoice, getStrFromClipboard, isErr, isLnurl, openUrl } from '@
 import { checkFees } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 import { MeltOverview } from '../SelectAmount'
 
@@ -185,39 +186,39 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		paddingBottom: isIOS ? 50 : 20,
-		paddingTop: 110,
+		paddingBottom: isIOS ? '50@vs' : '20@vs',
+		paddingTop: '90@vs',
 	},
 	hint: {
-		paddingHorizontal: 20,
-		marginBottom: 20,
+		paddingHorizontal: '20@s',
+		marginBottom: '20@vs',
 		fontWeight: '500',
 	},
 	feeHint: {
-		fontSize: 12,
-		paddingHorizontal: 20,
-		marginTop: 10,
+		fontSize: '10@vs',
+		paddingHorizontal: '20@s',
+		marginTop: '10@vs',
 	},
 	pasteInputTxtWrap: {
 		position: 'absolute',
-		right: 10,
-		top: 10,
-		padding: 10
+		right: '10@s',
+		top: '10@vs',
+		padding: '10@s',
 	},
 	overviewWrap: {
 		width: '100%',
-		paddingVertical: 20,
-		paddingBottom: 20,
+		paddingVertical: '20@vs',
+		paddingBottom: '20@vs',
 		marginBottom: 0
 	},
 	paddingHorizontal: {
-		paddingHorizontal: 20
+		paddingHorizontal: '20@s'
 	},
 	loadingWrap: {
-		marginTop: 40,
+		marginTop: '40@vs',
 	}
 })

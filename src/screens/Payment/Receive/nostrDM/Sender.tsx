@@ -7,7 +7,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import Username from '@screens/Addressbook/Username'
 import { useThemeContext } from '@src/context/Theme'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 interface ISenderProps {
 	contact?: IContact
@@ -31,11 +32,11 @@ export default function Sender({ contact, navigation }: ISenderProps) {
 				/>
 				{contact &&
 					<View>
-						<Username contact={contact} fontSize={16} />
+						<Username contact={contact} fontSize={vs(14)} />
 						{contact.about && contact.about.length > 0 &&
 							<Txt
 								txt={truncateStr(contact.about)}
-								styles={[{ color: color.TEXT_SECONDARY, fontSize: 14 }]}
+								styles={[{ color: color.TEXT_SECONDARY, fontSize: vs(12) }]}
 							/>
 						}
 					</View>
@@ -46,7 +47,7 @@ export default function Sender({ contact, navigation }: ISenderProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	colWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
