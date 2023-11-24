@@ -19,7 +19,8 @@ import { isStr } from '@util'
 import { nip19 } from 'nostr-tools'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import ProfilePic from '../ProfilePic'
 import Username from '../Username'
@@ -194,11 +195,11 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						onChangeText={text => setNewNpub(text)}
 						value={newNpub}
 						onSubmitEditing={() => void editNpub()}
-						style={[{ paddingRight: 60 }]}
+						style={[{ paddingRight: s(55) }]}
 					/>
 					{/* scan icon */}
 					<TouchableOpacity
-						style={[styles.inputQR, { backgroundColor: color.INPUT_BG }]}
+						style={styles.inputQR}
 						onPress={() => {
 							closeSheet()
 							const t = setTimeout(() => {
@@ -240,7 +241,7 @@ function SmallBtn({ children, onPress }: ISmallBtnProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0
 	},
@@ -263,13 +264,16 @@ const styles = StyleSheet.create({
 	},
 	wrap: {
 		position: 'relative',
-		width: '100%'
+		width: '100%',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	inputQR: {
 		position: 'absolute',
-		right: 15,
-		top: 22,
-		paddingHorizontal: 10
+		right: '13@s',
+		height: '41@vs',
+		paddingHorizontal: '10@s',
 	},
 	picWrap: {
 		width: 100,

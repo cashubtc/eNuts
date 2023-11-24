@@ -3,8 +3,9 @@ import { STORE_KEYS } from '@src/storage/store/consts'
 import { store } from '@store'
 import { H_Colors } from '@styles/colors'
 import { useTranslation } from 'react-i18next'
-import { Image, StyleSheet } from 'react-native'
+import { Image } from 'react-native'
 import Onboarding from 'react-native-onboarding-swiper'
+import { ScaledSheet } from 'react-native-size-matters'
 
 export default function NostrOnboardingScreen({navigation}: TNostrOnboardingPageProps) {
 	const { t } = useTranslation()
@@ -31,12 +32,12 @@ export default function NostrOnboardingScreen({navigation}: TNostrOnboardingPage
 	)
 }
 
-const styles = StyleSheet.create({
-	title: { fontSize: 28 },
-	subTitle: { fontSize: 18 },
+const styles = ScaledSheet.create({
+	title: { fontSize: '28@vs', fontWeight: '500' },
+	subTitle: { fontSize: '16@vs' },
 	nostrImg: {
-		width: 400,
-		height: 180,
+		width: '480@s',
+		height: '180@vs',
 		resizeMode: 'contain'
-	}
+	},
 })

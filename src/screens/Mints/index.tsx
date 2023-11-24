@@ -5,7 +5,7 @@ import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, QRIcon, Zap
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
-import { _testmintUrl, isIOS } from '@consts'
+import { _testmintUrl } from '@consts'
 import { addMint, getMintsBalances, getMintsUrls } from '@db'
 import { l } from '@log'
 import MyModal from '@modal'
@@ -22,8 +22,9 @@ import { getColor } from '@styles/colors'
 import { formatMintUrl, formatSatStr, isErr, normalizeMintUrl, sortMintsByDefault } from '@util'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function Mints({ navigation, route }: TMintsPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -232,11 +233,11 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 						value={input}
 						onChangeText={setInput}
 						onSubmitEditing={() => void handleMintInput()}
-						style={[{ paddingRight: 60 }]}
+						style={[{ paddingRight: s(55) }]}
 					/>
 					{/* scan icon */}
 					<TouchableOpacity
-						style={[styles.inputQR, { backgroundColor: color.INPUT_BG }]}
+						style={styles.inputQR}
 						onPress={() => {
 							setNewMintModal(false)
 							const t = setTimeout(() => {
@@ -319,7 +320,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',
@@ -330,13 +331,16 @@ const styles = StyleSheet.create({
 	},
 	wrap: {
 		position: 'relative',
-		width: '100%'
+		width: '100%',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	inputQR: {
 		position: 'absolute',
-		right: isIOS ? 12 : 15,
-		top: isIOS ? 18 : 22,
-		paddingHorizontal: 10
+		right: '13@s',
+		height: '41@vs',
+		paddingHorizontal: '10@s',
 	},
 	newMint: {
 		position: 'absolute',

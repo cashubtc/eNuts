@@ -3,8 +3,9 @@ import type { TOnboardingPageProps } from '@model/nav'
 import { NS } from '@src/i18n'
 import { H_Colors } from '@styles/colors'
 import { useTranslation } from 'react-i18next'
-import { Image, StyleSheet } from 'react-native'
+import { Image } from 'react-native'
 import Onboarding from 'react-native-onboarding-swiper'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -14,7 +15,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 			pages={[
 				{
 					backgroundColor: H_Colors.Default,
-					image: <Logo size={180} />,
+					image: <Logo size={s(180)} />,
 					title: 'eNuts & Ecash',
 					subtitle: t('explainer1'),
 				},
@@ -43,17 +44,17 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 	)
 }
 
-const styles = StyleSheet.create({
-	title: { fontSize: 28 },
-	subTitle: { fontSize: 18 },
+const styles = ScaledSheet.create({
+	title: { fontSize: '28@vs', fontWeight: '500' },
+	subTitle: { fontSize: '16@vs' },
 	cashuImg: {
-		width: 200,
-		height: 200,
+		width: '200@s',
+		height: '200@vs',
 		resizeMode: 'contain'
 	},
 	sendReceiveImg: {
-		width: 380,
-		height: 250,
+		width: '380@s',
+		height: '250@vs',
 		resizeMode: 'contain'
 	}
 })

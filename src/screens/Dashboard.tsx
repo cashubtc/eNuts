@@ -31,7 +31,8 @@ import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -312,31 +313,31 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			{/* Balance, Disclaimer & History */}
 			<Balance balance={balance} nav={navigation} />
 			{/* Receive/send/mints buttons */}
-			<View style={[styles.actionWrap, { paddingHorizontal: 30 }]}>
+			<View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
 				{/* Send button or add first mint */}
 				{hasMint ?
 					<ActionBtn
-						icon={<SendIcon width={32} height={32} color={hi[highlight]} />}
+						icon={<SendIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
 						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
 						onPress={() => setModal(prev => ({ ...prev, sendOpts: true }))}
 					/>
 					:
 					<ActionBtn
-						icon={<PlusIcon width={36} height={36} color={hi[highlight]} />}
+						icon={<PlusIcon width={s(36)} height={vs(36)} color={hi[highlight]} />}
 						txt='Mint'
 						color={hi[highlight]}
 						onPress={() => setModal(prev => ({ ...prev, mint: true }))}
 					/>
 				}
 				<ActionBtn
-					icon={<ScanQRIcon width={32} height={32} color={hi[highlight]} />}
+					icon={<ScanQRIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
 					txt={t('scan')}
 					color={hi[highlight]}
 					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
 				/>
 				<ActionBtn
-					icon={<ReceiveIcon width={32} height={32} color={hi[highlight]} />}
+					icon={<ReceiveIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
 					txt={t('receive', { ns: NS.wallet })}
 					color={hi[highlight]}
 					onPress={() => {
@@ -354,9 +355,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					onPress={() => navigation.navigate('disclaimer')}
 					style={styles.betaHint}
 				>
-					<AboutIcon color={mainColors.WARN} />
-					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginHorizontal: 10 }]} />
-					<ChevronRightIcon color={mainColors.WARN} />
+					<AboutIcon width={s(20)} height={vs(20)} color={mainColors.WARN} />
+					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginHorizontal: s(10) }]} />
+					<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
 				</TouchableOpacity>
 			</View>
 			{/* Bottom nav icons */}
@@ -437,7 +438,7 @@ function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 		<View style={styles.btnWrap}>
 			<IconBtn
 				icon={icon}
-				size={70}
+				size={vs(60)}
 				outlined
 				onPress={onPress}
 				disabled={disabled}
@@ -451,7 +452,7 @@ function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		flex: 1,
 	},
@@ -459,28 +460,29 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		marginTop: -35,
+		marginTop: '-30@vs',
 	},
 	btnWrap: {
 		alignItems: 'center',
-		minWidth: 100
+		minWidth: '100@s'
 	},
 	btnTxt: {
-		marginTop: 10,
+		marginTop: '10@vs',
 	},
 	hintWrap: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 50,
+		marginBottom: '50@vs',
 	},
 	betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		padding: 10,
+		paddingHorizontal: '10@s',
+		paddingVertical: '10@vs',
 		borderWidth: 1,
 		borderStyle: 'dashed',
 		borderColor: mainColors.WARN,
-		borderRadius: 50,
+		borderRadius: '50@s',
 	}
 })

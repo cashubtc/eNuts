@@ -2,6 +2,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi } from '@styles'
 import { createRef, type LegacyRef, useEffect } from 'react'
 import { type KeyboardTypeOptions, type NativeSyntheticEvent, type StyleProp, TextInput, type TextInputSubmitEditingEventData, type TextStyle } from 'react-native'
+import { vs } from 'react-native-size-matters'
 
 interface ITxtInputProps {
 	keyboardType?: KeyboardTypeOptions
@@ -51,7 +52,7 @@ export default function TxtInput({
 			onSubmitEditing={onSubmitEditing}
 			maxLength={maxLength}
 			value={value}
-			style={[globals(color).input, { marginBottom: 20 }, style]}
+			style={[globals(color).input, { marginBottom: vs(20) }, style]}
 		/>
 	)
 }

@@ -32,7 +32,8 @@ import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { RefreshControl, Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import ContactPreview from './ContactPreview'
 import Recents from './Recents'
@@ -374,7 +375,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
 				withBackBtn={isPayment}
-				nostrProfile={nostr.userProfile?.picture}
+				nostrProfile={nostr.pubKey.hex.length > 0 ? nostr.userProfile?.picture : undefined}
 				handlePress={() => navigation.goBack()}
 				openProfile={() => navigation.navigate('Contact', {
 					contact: nostr.userProfile,
@@ -393,13 +394,15 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							handleSend={handleSend}
 						/>
 					}
-					<Search
-						contactsRef={contactsRef}
-						setContacts={setContacts}
-						search={search}
-						setSearch={setSearch}
-						nostrRef={nostrRef}
-					/>
+					{nostr.pubKey.hex.length > 0 &&
+						<Search
+							contactsRef={contactsRef}
+							setContacts={setContacts}
+							search={search}
+							setSearch={setSearch}
+							nostrRef={nostrRef}
+						/>
+					}
 					{/* user contacts */}
 					{contactsRef.current.length > 0 ?
 						<View style={[
@@ -499,11 +502,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						onChangeText={text => setInput(text)}
 						value={input}
 						onSubmitEditing={() => void handleNpubInput()}
-						style={[{ paddingRight: 60 }]}
+						style={[{ paddingRight: s(55) }]}
 					/>
 					{/* scan icon */}
 					<TouchableOpacity
-						style={[styles.inputQR, { backgroundColor: color.INPUT_BG }]}
+						style={styles.inputQR}
 						onPress={() => {
 							setNewNpubModal(false)
 							const t = setTimeout(() => {
@@ -531,32 +534,35 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
-		paddingTop: 100
+		paddingTop: '100@vs'
 	},
 	loadingWrap: {
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginBottom: 100,
+		marginBottom: '100@vs',
 	},
 	contactsWrap: {
 		flex: 1,
 	},
 	contactSeparator: {
-		marginHorizontal: 20,
+		marginHorizontal: '20@s',
 		marginTop: 0,
 		marginBottom: 0,
 	},
 	wrap: {
 		position: 'relative',
-		width: '100%'
+		width: '100%',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	inputQR: {
 		position: 'absolute',
-		right: isIOS ? 12 : 15,
-		top: isIOS ? 18 : 22,
-		paddingHorizontal: 10
+		right: '13@s',
+		height: '41@vs',
+		paddingHorizontal: '10@s',
 	},
 })
