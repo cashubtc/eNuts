@@ -41,7 +41,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		const clipboard = await getStrFromClipboard()
 		if (!clipboard) { return }
 		setInput(clipboard)
-		// pasted LNURL which does not need decoding
+		// pasted LNURL address which does not need decoding
 		if (isLnurl(clipboard)) { return }
 		// pasted LN invoice
 		await handleInvoicePaste(clipboard)
@@ -49,15 +49,13 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 
 	const handleInvoicePaste = async (clipboard: string) => {
 		try {
-			const { amount } = decodeLnInvoice(clipboard)
-			setDecodedAmount(amount / 1000)
 			startLoading()
-			// l({ mintUrl: mint.mintUrl })
+			const { amount } = decodeLnInvoice(clipboard)
+			setDecodedAmount(amount)
 			const fee = await checkFees(mint.mintUrl, clipboard)
-			// l({ estFee: fee })
 			setEstFee(fee)
-			stopLoading()
 			inputRef.current?.blur()
+			stopLoading()
 		} catch (e) {
 			// invalid LN invoice
 			stopLoading()
@@ -66,23 +64,20 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		}
 	}
 
-	const handleBtnPress = async () => {
+	const handleBtnPress = () => {
 		if (loading) { return }
 		// open user LN wallet
 		if (!input.length) {
-			await openUrl('lightning://')?.catch(e =>
+			return openUrl('lightning://')?.catch(e =>
 				openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-			return
 		}
 		// user pasted a LNURL, we need to get the amount by the user
 		if (isLnurl(input)) {
-			navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: input })
-			return
+			return navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: input })
 		}
 		// not enough funds
 		if (decodedAmount + estFee > balance) {
-			openPromptAutoClose({ msg: t('noFunds') })
-			return
+			return openPromptAutoClose({ msg: t('noFunds') })
 		}
 		// user pasted a LN invoice before submitting
 		try {
@@ -90,8 +85,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			const { timeLeft } = decodeLnInvoice(input)
 			// Invoice expired
 			if (timeLeft <= 0) {
-				openPromptAutoClose({ msg: t('expired') + '!' })
-				return
+				return openPromptAutoClose({ msg: t('expired') + '!' })
 			}
 			// navigate to coin selection screen
 			navigation.navigate('coinSelection', {

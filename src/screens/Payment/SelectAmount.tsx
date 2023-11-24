@@ -56,13 +56,11 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				const lnurlInvoice = await getInvoiceFromLnurl(lnurl, +amount)
 				if (!lnurlInvoice?.length) {
 					openPromptAutoClose({ msg: t('feeErr', { ns: NS.common, input: lnurl }) })
-					setFee(prev => ({ ...prev, isCalculating: false }))
-					return
+					return setFee(prev => ({ ...prev, isCalculating: false }))
 				}
 				const estFee = await checkFees(mint.mintUrl, lnurlInvoice)
 				setFee({ estimation: estFee, isCalculating: false })
-				setShouldEstimate(false)
-				return
+				return setShouldEstimate(false)
 			}
 			// check fee for multimint swap
 			if (isSwap && targetMint?.mintUrl.length) {
@@ -86,7 +84,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		return t(shouldEstimate ? 'estimateFee' : 'continue', { ns: NS.common })
 	}
 
-	const handleAmountSubmit = async () => {
+	const handleAmountSubmit = () => {
 		if (fee.isCalculating || balTooLow) { return }
 		const isSendingTX = isSendEcash || isMelt || isSwap
 		// error & shake animation if amount === 0 or greater than mint balance
@@ -102,14 +100,13 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		}
 		// estimate melting/swap fee
 		if (!isSendEcash && shouldEstimate && (lnurl?.length || isSwap)) {
-			await handleFeeEstimation(lnurl || '')
-			return
+			return handleFeeEstimation(lnurl || '')
 		}
 		// send ecash / melt / swap
 		if (isSendingTX) {
 			// Check if user melts/swaps his whole mint balance, so there is no need for coin selection and that can be skipped here
 			if (!isSendEcash && isSendingWholeMintBal()) {
-				navigation.navigate('processing', {
+				return navigation.navigate('processing', {
 					mint,
 					amount: +amount,
 					estFee: fee.estimation,
@@ -119,20 +116,18 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					targetMint,
 					recipient: lnurl
 				})
-				return
 			}
 			// optional memo
 			if (isSendEcash) {
-				navigation.navigate('memoScreen', {
+				return navigation.navigate('memoScreen', {
 					mint,
 					balance,
 					amount: +amount,
 					nostr,
 					isSendingWholeMintBal: !nostr && isSendingWholeMintBal()
 				})
-				return
 			}
-			navigation.navigate('coinSelection', {
+			return navigation.navigate('coinSelection', {
 				mint,
 				balance,
 				amount: +amount,
@@ -143,7 +138,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				targetMint,
 				recipient: lnurl
 			})
-			return
 		}
 		// request new token from mint
 		navigation.navigate('processing', { mint, amount: +amount })
@@ -252,7 +246,7 @@ export function MeltOverview({ amount, shouldEstimate, balTooLow, isInvoice, fee
 				bold
 			/>
 			<Txt
-				txt={formatSatStr(shouldEstimate ? 0 : amount + fee)}
+				txt={formatSatStr(shouldEstimate ? 0 : (amount + fee))}
 				styles={[{ color: !shouldEstimate && balTooLow ? mainColors.ERROR : shouldEstimate ? color.TEXT : mainColors.VALID }]}
 			/>
 		</View>
