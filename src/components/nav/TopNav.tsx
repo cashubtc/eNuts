@@ -8,7 +8,8 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import MintBalanceBtn from './MintBalanceBtn'
 
@@ -75,7 +76,7 @@ export default function TopNav({
 				{showSearch &&
 					<TouchableOpacity
 						onPress={() => toggleSearch?.()}
-						style={{ padding: 5 }}
+						style={{ paddingHorizontal: s(5), paddingVertical: vs(5) }}
 					>
 						<SearchIcon color={color.TEXT} />
 					</TouchableOpacity>
@@ -108,7 +109,7 @@ export default function TopNav({
 								<ProfilePic
 									hex={pubKey.hex}
 									uri={nostrProfile}
-									size={30}
+									size={s(30)}
 									overlayColor={color.INPUT_BG}
 									isUser
 								/>
@@ -122,7 +123,7 @@ export default function TopNav({
 							<ScanQRIcon color={color.TEXT} />
 						}
 						{historyOpts && historyOpts.length > 0 &&
-							<Popup opts={historyOpts} optsWidth={250} />
+							<Popup opts={historyOpts} optsWidth={s(250)} />
 						}
 					</TouchableOpacity>
 				}
@@ -131,7 +132,7 @@ export default function TopNav({
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	topNav: {
 		position: 'absolute',
 		top: 0,
@@ -141,23 +142,23 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingTop: 60,
-		paddingHorizontal: 20,
-		paddingBottom: 10,
+		paddingTop: '60@vs',
+		paddingHorizontal: '20@s',
+		paddingBottom: '10@vs',
 	},
 	wrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	backiconWrap: {
-		marginLeft: -20,
-		paddingLeft: 20,
-		paddingRight: 20,
+		marginLeft: '-20@s',
+		paddingLeft: '20@s',
+		paddingRight: '20@s',
 	},
 	right: {
-		paddingLeft: 20,
+		paddingLeft: '20@s',
 	},
 	cancel: {
-		marginRight: -20
+		marginRight: '-20@s'
 	}
 })

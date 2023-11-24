@@ -7,7 +7,8 @@ import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
 import { formatSatStr, isNum } from '@util'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 import EntryTime from './entryTime'
 
@@ -44,12 +45,12 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			style={styles.listItem}
 			onPress={() => nav.navigation.navigate('history entry details', { entry: item })}
 		>
-			<View style={{ paddingBottom: 10 }}>
+			<View style={{ paddingBottom: vs(10) }}>
 				{getIcon()}
 			</View>
 			<View style={styles.infoWrap}>
 				<Txt txt={getTxTypeStr()} />
-				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: 14 }]}>
+				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: vs(12) }]}>
 					<EntryTime from={item.timestamp * 1000} fallback={t('justNow')} />
 				</Text>
 			</View>
@@ -59,7 +60,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.amount, 'standard')}`}
 					styles={[{ color: getTxColor() }]}
 				/>
-				<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right' }}>
+				<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>
 					{t('fee', { ns: NS.common })}: {isNum(item.fee) ? item.fee : 0}
 				</Text>
 			</View>
@@ -67,7 +68,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	listItem: {
 		position: 'relative',
 		flexDirection: 'row',
@@ -76,10 +77,10 @@ const styles = StyleSheet.create({
 	},
 	infoWrap: {
 		alignItems: 'center',
-		paddingBottom: 10
+		paddingBottom: '10@vs',
 	},
 	placeholder: {
-		width: 30,
+		width: '30@s',
 	},
 	amount: {
 		position: 'absolute',

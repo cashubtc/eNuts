@@ -18,8 +18,9 @@ import { getHistory, historyStore } from '@store/HistoryStore'
 import { globals } from '@styles'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import HistoryEntry from './Entry'
 
@@ -75,7 +76,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 						}
 					},
 					disabled: !hasEntries,
-					icon: <TrashbinIcon width={20} height={20} color={hasEntries ? color.TEXT : color.TEXT_SECONDARY} />,
+					icon: <TrashbinIcon width={s(20)} height={vs(20)} color={hasEntries ? color.TEXT : color.TEXT_SECONDARY} />,
 				}]}
 			/>
 			<View style={styles.listWrap}>
@@ -99,7 +100,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 											item={item}
 											nav={{ navigation, route }}
 										/>
-										{i < data.item[1].length - 1 && <Separator style={[{ marginBottom: 10 }]} />}
+										{i < data.item[1].length - 1 && <Separator style={[{ marginBottom: vs(10) }]} />}
 									</View>
 								))}
 							</View>
@@ -122,7 +123,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',
@@ -130,20 +131,20 @@ const styles = StyleSheet.create({
 	listWrap: {
 		flex: 1,
 		width: '100%',
-		marginTop: 100,
+		marginTop: '100@vs',
 	},
 	date: {
-		fontSize: 15,
-		marginHorizontal: 20,
-		marginBottom: 10,
-		marginTop: 20,
+		fontSize: '14@vs',
+		marginHorizontal: '20@s',
+		marginBottom: '10@vs',
+		marginTop: '20@vs',
 	},
 	entriesWrap: {
 		flex: 1,
 		borderRadius: 20,
-		paddingHorizontal: 20,
-		paddingTop: 10,
+		paddingHorizontal: '20@s',
+		paddingTop: '10@vs',
 		paddingBottom: 0,
-		marginBottom: isIOS ? 50 : 20,
+		marginBottom: isIOS ? '50@vs' : '20@vs',
 	}
 })

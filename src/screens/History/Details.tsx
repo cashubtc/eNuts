@@ -19,8 +19,10 @@ import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, getLnInvoic
 import { claimToken, isTokenSpendable } from '@wallet'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
+
 
 const initialCopyState = {
 	value: false,
@@ -39,7 +41,6 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		mints,
 		sender,
 		recipient,
-		// preImage,
 		fee,
 		isSpent
 	} = route.params.entry
@@ -90,13 +91,6 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		setCopy({ ...copy, hash: true })
 		handleTimeout()
 	}
-
-	// const copyPreimage = async () => {
-	// 	if (!preImage) { return }
-	// 	await copyStrToClipboard(preImage)
-	// 	setCopy({ ...copy, preimage: true })
-	// 	handleTimeout()
-	// }
 
 	const handleTimeout = () => {
 		const t = setTimeout(() => {
@@ -168,7 +162,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<ScrollView style={{ marginTop: 110, marginBottom: insets.bottom }} showsVerticalScrollIndicator={false} >
+			<ScrollView style={{ marginTop: vs(100), marginBottom: insets.bottom }} showsVerticalScrollIndicator={false} >
 				<View style={styles.topSection}>
 					<Text style={[styles.amount, { color: getTxColor() }]}>
 						{getAmount()}
@@ -237,9 +231,9 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							{value.length > 0 &&
 								<>
 									{copy.value ?
-										<CheckmarkIcon width={18} height={20} color={mainColors.VALID} />
+										<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
 										:
-										<CopyIcon width={19} height={21} color={color.TEXT} />
+										<CopyIcon width={s(19)} height={vs(21)} color={color.TEXT} />
 									}
 								</>
 							}
@@ -266,7 +260,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 										onPress={() => void handleClaim()}
 									>
 										<Txt txt={t('claimToken')} />
-										{loading ? <Loading /> : <BackupIcon width={20} height={20} color={color.TEXT} />}
+										{loading ? <Loading /> : <BackupIcon width={s(20)} height={vs(20)} color={color.TEXT} />}
 									</TouchableOpacity>
 									<Separator />
 								</>
@@ -293,41 +287,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 									{hash.length > 0 &&
 										<>
 											{copy.hash ?
-												<CheckmarkIcon width={18} height={20} color={mainColors.VALID} />
+												<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
 												:
-												<CopyIcon width={18} height={20} color={color.TEXT} />
+												<CopyIcon width={s(18)} height={vs(20)} color={color.TEXT} />
 											}
 										</>
 									}
 								</View>
 							</TouchableOpacity>
 							<Separator />
-							{/* LN payment preImage */}
-							{/* <TouchableOpacity
-								style={styles.entryInfo}
-								onPress={() => {
-									if (!preImage || copy.preimage) { return }
-									void copyPreimage()
-								}}
-							>
-								<Txt txt='Pre-Image' />
-								<View style={styles.copyWrap}>
-									<Txt
-										txt={preImage || t('n/a')}
-										styles={[styles.infoValue, preImage && preImage.length > 0 ? styles.mr10 : {}]}
-									/>
-									{preImage && preImage.length > 0 &&
-										<>
-											{copy.preimage ?
-												<CheckmarkIcon width={18} height={20} color={mainColors.VALID} />
-												:
-												<CopyIcon width={18} height={20} color={color.TEXT} />
-											}
-										</>
-									}
-								</View>
-							</TouchableOpacity>
-							<Separator /> */}
 							{/* LN payment fees */}
 							<View style={styles.entryInfo}>
 								<Txt txt={t('fee')} />
@@ -342,7 +310,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						onPress={handleQR}
 					>
 						<Txt txt={t('showQr', { ns: NS.history })} />
-						<QRIcon width={17} height={17} color={color.TEXT} />
+						<QRIcon width={s(17)} height={vs(17)} color={color.TEXT} />
 					</TouchableOpacity>
 				</View>
 			</ScrollView>
@@ -379,32 +347,32 @@ function IsSpentContainer({ isSpent, handleCheckSpendable, children }: IIsSpentC
 		</TouchableOpacity>
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0,
 	},
 	topSection: {
-		marginBottom: 30,
+		marginBottom: '30@vs',
 		alignItems: 'center',
 	},
 	infoValue: {
-		maxWidth: 200,
+		maxWidth: '200@s',
 	},
 	amount: {
-		fontSize: 52,
+		fontSize: '48@vs',
 		fontWeight: '600',
 	},
 	entryInfo: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: 20,
+		paddingBottom: '20@vs',
 	},
 	copyWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	mr10: {
-		marginRight: 10,
+		marginRight: '10@s',
 	}
 })

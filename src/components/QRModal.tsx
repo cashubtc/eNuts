@@ -1,6 +1,7 @@
 import { NS } from '@src/i18n'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
+import { s, vs } from 'react-native-size-matters'
 
 import Button from './Button'
 import MyModal from './modal'
@@ -29,19 +30,19 @@ export default function QRModal({
 	const { t } = useTranslation([NS.common])
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={close}>
-			<View style={{ marginBottom: 20 }} />
+			<View style={{ marginBottom: vs(20) }} />
 			{error ?
 				<Txt txt={t('bigQrMsg')} styles={[{ textAlign: 'center' }]} />
 				:
 				<QR
 					value={value}
-					size={320}
+					size={s(280)}
 					onError={onError}
 					isInvoice={isInvoice}
 					truncateNum={truncateNum}
 				/>
 			}
-			<View style={{ marginVertical: 20 }} />
+			<View style={{ marginVertical: vs(10) }} />
 			<Button
 				outlined
 				txt='OK'

@@ -110,7 +110,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					<HistoryEntry
 						key={h.timestamp}
 						icon={h.type === 2 || h.type === 3 ?
-							<ZapIcon width={s(32)} height={s(32)} color={getColor(highlight, color)} />
+							<ZapIcon width={s(28)} height={s(28)} color={getColor(highlight, color)} />
 							:
 							<EcashIcon color={getColor(highlight, color)} />
 						}

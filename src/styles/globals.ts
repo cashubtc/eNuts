@@ -9,22 +9,22 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.cre
 		backgroundColor: color?.BACKGROUND
 	},
 	txt: {
-		fontSize: '15@vs',
+		fontSize: '14@vs',
 		color: color?.TEXT
 	},
 	txtBold: {
-		fontSize: '15@vs',
+		fontSize: '14@vs',
 		fontWeight: '500',
 		color: color?.TEXT
 	},
 	pressTxt: {
-		fontSize: '15@vs',
+		fontSize: '14@vs',
 		fontWeight: '500',
 		textAlign: 'center',
 		color: h ? highlight[h] : mainColors.BLACK
 	},
 	navTxt: {
-		fontSize: '20@vs',
+		fontSize: '18@vs',
 		fontWeight: '500',
 		color: color?.TEXT
 	},
@@ -34,7 +34,7 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.cre
 		paddingHorizontal: '18@s',
 		paddingVertical: '18@vs',
 		borderRadius: 50,
-		fontSize: '15@vs',
+		fontSize: '14@vs',
 		width: '100%',
 	},
 	modalHeader: {
@@ -46,7 +46,7 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.cre
 		color: color?.TEXT,
 	},
 	modalTxt: {
-		fontSize: '15@vs',
+		fontSize: '14@vs',
 		textAlign: 'center',
 		color: color?.TEXT,
 		marginHorizontal: 20,
