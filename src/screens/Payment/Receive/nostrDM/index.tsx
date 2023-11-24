@@ -137,7 +137,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 							styles={[styles.heading]}
 						/>
 					}
-					<ScrollView style={{ marginBottom: isIOS ? vs(30) : 0 }}>
+					<ScrollView style={{ marginBottom: isIOS ? vs(30) : 0 }} alwaysBounceVertical={false}>
 						{dms.length ?
 							dms.map(dm => (
 								<NostrMessage

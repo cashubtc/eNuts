@@ -38,7 +38,7 @@ export default function SelectMintToSwapToScreen({ navigation, route }: TSelectM
 		>
 			<Txt txt={t('selectSwapReceiver')} styles={[styles.hint]} />
 			{remainingMints && remainingMints.length > 0 &&
-				<ScrollView>
+				<ScrollView alwaysBounceVertical={false}>
 					<View style={globals(color).wrapContainer}>
 						{remainingMints.map((m, i) => (
 							<View key={m.mintUrl}>

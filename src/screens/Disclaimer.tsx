@@ -20,7 +20,7 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<ScrollView style={styles.container}>
+			<ScrollView style={styles.container} alwaysBounceVertical={false}>
 				<Txt
 					txt={t('disclaimerHint', { ns: NS.common })}
 					bold

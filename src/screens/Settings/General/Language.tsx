@@ -31,7 +31,7 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					{langs.map((l, i) => (
 						<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />

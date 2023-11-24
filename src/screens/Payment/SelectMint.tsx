@@ -130,7 +130,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 				/>
 			}
 			{userMints.length > 0 && !allMintsEmpty ?
-				<ScrollView>
+				<ScrollView alwaysBounceVertical={false}>
 					<View style={globals(color).wrapContainer}>
 						{sortMintsByDefault(userMints, defaultMint).map((m, i) => (
 							<View key={m.mintUrl}>

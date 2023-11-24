@@ -46,7 +46,7 @@ export default function OptsModal({
 				center
 				styles={[styles.hint]}
 			/>
-			<ScrollView style={styles.optionWrap}>
+			<ScrollView style={styles.optionWrap} alwaysBounceVertical={false}>
 				<Option
 					icon={isSend ? <SendMsgIcon width={s(16)} height={s(16)} color={mainColors.VALID} /> : <CopyIcon color={mainColors.VALID} />}
 					txt={button1Txt}

@@ -37,7 +37,11 @@ export default function AdvancedFunctionScreen({ navigation }: TAdvancedSettings
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView style={{ width: '100%', marginBottom: vs(60) + insets.bottom }} showsVerticalScrollIndicator={false}>
+			<ScrollView
+				style={{ width: '100%', marginBottom: vs(60) + insets.bottom }}
+				showsVerticalScrollIndicator={false}
+				alwaysBounceVertical={false}
+			>
 				<Text style={[styles.subHeader, { color: color.TEXT }]}>
 					{t('reqTimeout', { ns: NS.common })}
 				</Text>

@@ -155,7 +155,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			{usertMints.length > 0 ?
 				<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
 					{/* Mints list where test mint is always visible */}
-					<ScrollView style={globals(color).wrapContainer}>
+					<ScrollView style={globals(color).wrapContainer} alwaysBounceVertical={false}>
 						{sortMintsByDefault(usertMints, defaultMint).map((m, i) => (
 							<View key={m.mintUrl}>
 								<TouchableOpacity

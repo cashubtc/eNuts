@@ -27,7 +27,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 			handlePress={() => navigation.goBack()}
 		>
 			<Txt txt={t('chooseTarget')} styles={[styles.hint]} bold />
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					{isSendEcash || nostr ?
 						<>

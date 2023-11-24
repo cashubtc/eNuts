@@ -57,7 +57,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 			withBackBtn
 			handlePress={() => navigation.navigate('Settings')}
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					{pin ?
 						<>

@@ -116,7 +116,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					navigation.goBack()
 				}}
 			/>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					<OverviewRow txt1={t('paymentType')} txt2={t(getPaymentType())} />
 					<OverviewRow txt1={t('mint')} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />

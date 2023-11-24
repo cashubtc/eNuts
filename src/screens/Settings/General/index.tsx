@@ -21,7 +21,7 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					<MenuItem
 						txt={t('display', { ns: NS.topNav })}

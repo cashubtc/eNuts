@@ -39,7 +39,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 			screenName={t('settings', { ns: NS.topNav })}
 			noIcons
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false} >
 				<View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
 					<MenuItem
 						txt={t('general', { ns: NS.topNav })}

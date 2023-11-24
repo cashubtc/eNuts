@@ -29,7 +29,7 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					<MenuItem
 						txt={t('readme')}

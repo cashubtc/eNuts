@@ -25,7 +25,7 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					<View style={[globals().wrapRow, { paddingBottom: vs(15) }]}>
 						<View style={styles.iconWrap}>

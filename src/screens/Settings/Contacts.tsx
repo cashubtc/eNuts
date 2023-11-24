@@ -57,7 +57,7 @@ export default function ContactsSettings({ navigation, route }: TNostrSettingsPa
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					<TouchableOpacity style={[globals().wrapRow, {paddingBottom: vs(15)}]} onPress={() => setVisible(prev => ({ ...prev, metadata: true }))}>
 						<View style={styles.iconWrap}>

@@ -21,7 +21,7 @@ export default function DisplaySettings({ navigation, route }: TDisplaySettingsP
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView style={{ marginBottom: vs(60) }}>
+			<ScrollView style={{ marginBottom: vs(60) }} alwaysBounceVertical={false}>
 				<Txt
 					txt='Theme'
 					bold
