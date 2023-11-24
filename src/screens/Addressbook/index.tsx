@@ -359,7 +359,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}, [isFocused])
 
 	useEffect(() => {
-		setContacts([...contacts.sort(sortFavs)])
+		setContacts(prev => [...uniqByIContacts(prev, 'hex')].sort(sortFavs))
 		// re-render search results if favs change
 		if (search.results.length) {
 			setSearch(prev => ({

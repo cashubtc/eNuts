@@ -153,15 +153,15 @@ const styles = ScaledSheet.create({
 	},
 	qrWrap: {
 		alignItems: 'center',
-		marginTop: '90@vs',
+		marginTop: '70@vs',
 	},
 	tokenAmount: {
 		fontSize: '40@vs',
 		fontWeight: '500',
-		marginTop: '25@vs',
+		marginTop: '20@vs',
 	},
 	tokenFormat: {
-		marginBottom: '25@vs',
+		marginBottom: '15@vs',
 	},
 	errorMsg: {
 		marginVertical: '25@vs',
