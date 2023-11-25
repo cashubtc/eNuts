@@ -1,4 +1,5 @@
 import Button from '@comps/Button'
+import { ExclamationIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { TBeforeRemoveEvent, TProcessingErrorPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
@@ -8,7 +9,9 @@ import { globals, mainColors } from '@styles'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
-import { ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
+
+const alreadySpentErr = 'Token already spent.'
 
 export default function ProcessingErrorScreen({ navigation, route }: TProcessingErrorPageProps) {
 
@@ -26,9 +29,13 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 		<View style={[globals(color).container, styles.container, { paddingBottom: vs(20) }]}>
 			<View />
 			<View style={styles.setion}>
-				<Txt txt={route.params.errorMsg} styles={[{ color: mainColors.ERROR, textAlign: 'center' }]} />
-				{!route.params.scan &&
-					<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('tryLater')} />
+				<ExclamationIcon width={s(60)} height={s(60)} color={mainColors.ERROR} />
+				<Txt txt={route.params.errorMsg} bold center styles={[{ color: mainColors.ERROR, marginVertical: vs(15), fontSize: vs(18) }]} />
+				{!route.params.scan && route.params.errorMsg !== alreadySpentErr &&
+					<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('tryLater')} />
+				}
+				{route.params.errorMsg === alreadySpentErr &&
+					<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('alreadySpentHint')} />
 				}
 			</View>
 			{route.params.scan &&
@@ -60,7 +67,7 @@ const styles = ScaledSheet.create({
 		alignItems: 'center',
 	},
 	hint: {
-		fontSize: '12@vs',
+		fontSize: '14@vs',
 		marginTop: '10@vs',
 	}
 })

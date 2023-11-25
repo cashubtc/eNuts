@@ -220,7 +220,8 @@
 		"createLnInvoice": "Créer une facture Lightning.",
 		"metadataCacheCleared": "Cache des métadonnées vidé!",
 		"imageCacheCleared": "Cache des images vidé!",
-		"leaveGithubStar": "Soutenez-nous avec une étoile sur Github"
+		"leaveGithubStar": "Soutenez-nous avec une étoile sur Github",
+		"alreadySpentHint": "Certains preuves de votre solde ont déjà été dépensés ou réclamés ailleurs. Résolvez ce problème en les supprimant dans 'Options' > 'Paramètres des mints' > 'Vérifier les preuves'."
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

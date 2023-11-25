@@ -220,7 +220,8 @@
 		"createLnInvoice": "Crear un recibo Lightning",
 		"metadataCacheCleared": "Caché de metadatos limpiada",
 		"imageCacheCleared": "Caché de imagenes limpiada",
-		"leaveGithubStar": "Apóyenos con una estrella en Github"
+		"leaveGithubStar": "Apóyenos con una estrella en Github",
+		"alreadySpentHint": "Algunas pruebas en su saldo han sido gastadas o reclamadas en otro lugar. Resuelva esto eliminando las pruebas en 'Opciones' > 'Gestión de ceca' > 'Comprobar pruebas'."
 	},
 	"error": {
 		"checkSpendableErr": "Error al comprobar si el token puede ser gastado",

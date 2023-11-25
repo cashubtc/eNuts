@@ -220,7 +220,8 @@
 		"createLnInvoice": "Unda ankara ya Lightning",
 		"metadataCacheCleared": "Metadata imeondolewa",
 		"imageCacheCleared": "Picha imeondolewa",
-		"leaveGithubStar": "Usaidie na nyota kwenye Github"
+		"leaveGithubStar": "Usaidie na nyota kwenye Github",
+		"alreadySpentHint": "Baadhi ya ushahidi kwenye salio lako umetumika au kudaiwa mahali pengine. Tatua tatizo hili kwa kufuta ushahidi huo kwenye 'Chaguo' > 'Usimamizi wa sarafu' > 'Angalia uthibitisho'."
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

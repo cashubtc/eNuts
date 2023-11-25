@@ -38,13 +38,13 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 			{nostr && nostr.contact && nostr.contact.picture ?
 				<View style={styles.nostrImg}>
 					<ProfilePic
-						size={100}
+						size={s(100)}
 						hex={nostr.contact.hex}
 						uri={nostr.contact.picture}
 					/>
 				</View>
 				:
-				<Logo size={250} style={styles.img} success />
+				<Logo size={s(230)} style={styles.img} success />
 			}
 			<View style={{ width: '100%' }}>
 				<Text style={[styles.successTxt, { color: color.TEXT }]}>

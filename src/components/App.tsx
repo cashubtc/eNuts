@@ -199,8 +199,8 @@ function _App() {
 	return (
 		<ThemeProvider>
 			<PinCtx.Provider value={pinData}>
-				<MenuProvider>
-					<PrivacyProvider>
+				<PrivacyProvider>
+					<MenuProvider>
 						<NostrProvider>
 							<NavContainer>
 								<FocusClaimProvider >
@@ -220,8 +220,8 @@ function _App() {
 								</FocusClaimProvider>
 							</NavContainer>
 						</NostrProvider>
-					</PrivacyProvider>
-				</MenuProvider>
+					</MenuProvider>
+				</PrivacyProvider>
 			</PinCtx.Provider>
 		</ThemeProvider>
 	)
