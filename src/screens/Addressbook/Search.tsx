@@ -1,68 +1,57 @@
 import { CloseIcon, SearchIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import TxtInput from '@comps/TxtInput'
-import { isIOS } from '@consts'
 import type { IContact } from '@model/nostr'
 import type { Nostr } from '@nostr/class/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
-import { createRef, useCallback, useEffect, useRef, useState } from 'react'
+import { createRef, type Dispatch, type SetStateAction, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, type TextInput, TouchableOpacity, View } from 'react-native'
+import { type TextInput, TouchableOpacity, View } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
+
+import type { ISearchStates } from '.'
 
 interface ISearchProps {
 	contactsRef: React.MutableRefObject<IContact[]>
-	searchResults: IContact[]
-	setSearchResults: (contacts: IContact[]) => void
 	setContacts: (contacts: IContact[]) => void
+	search: ISearchStates
+	setSearch: Dispatch<SetStateAction<ISearchStates>>
 	nostrRef: React.MutableRefObject<Nostr | undefined>
 }
 
 export default function Search({
 	contactsRef,
 	setContacts,
-	searchResults,
-	setSearchResults,
+	search,
+	setSearch,
 	nostrRef
 }: ISearchProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
-	const [searchInput, setSearchInput] = useState('')
 	const inputRef = createRef<TextInput>()
 	const lastSearchQuery = useRef('')
-	const [isSearching, setIsSearching] = useState(false)
 
 	const handleOnChangeSearch = (text: string) => {
 		lastSearchQuery.current = ''
-		setSearchInput(text)
-		// handle search by username if all contacts have been synced
-		if (searchResults.length) {
+		setSearch(prev => ({ ...prev, input: text, hasResults: true, isSearching: false }))
+		if (search.results.length || !text.length) {
 			setContacts(contactsRef.current)
-			return setSearchResults([])
-		}
-		// reset search results
-		if (!text.length) {
-			setContacts(contactsRef.current)
-			return setSearchResults([])
+			return setSearch(prev => ({ ...prev, results: [] }))
 		}
 	}
 
 	const handleNip50Search = useCallback((text: string) => {
 		if (text === lastSearchQuery.current) { return }
 		if (!text.length) {
-			return setSearchResults([])
+			return setSearch(prev => ({ ...prev, results: [] }))
 		}
-		setIsSearching(true)
+		setSearch(prev => ({ ...prev, isSearching: true }))
 		lastSearchQuery.current = text
 		nostrRef.current?.search(text)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
-
-	useEffect(() => {
-		if (isSearching) { setIsSearching(false) }
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchResults])
 
 	return (
 		<View style={styles.inputWrap}>
@@ -70,9 +59,9 @@ export default function Search({
 				innerRef={inputRef}
 				keyboardType='default'
 				placeholder={t('searchContacts')}
-				value={searchInput}
+				value={search.input}
 				onChangeText={text => void handleOnChangeSearch(text)}
-				onSubmitEditing={() => void handleNip50Search(searchInput)}
+				onSubmitEditing={() => void handleNip50Search(search.input)}
 				style={[styles.searchInput]}
 			/>
 			{/* Submit nip50 search */}
@@ -80,17 +69,16 @@ export default function Search({
 				style={styles.submitSearch}
 				onPress={() => {
 					inputRef.current?.blur()
-					if (searchResults.length) {
-						setSearchResults([])
-						return setSearchInput('')
+					if (search.results.length) {
+						return setSearch(prev => ({ ...prev, input: '', results: [] }))
 					}
-					void handleNip50Search(searchInput)
+					void handleNip50Search(search.input)
 				}}
 			>
-				{isSearching ?
+				{search.isSearching && !search.results.length && search.input.length > 0 ?
 					<Loading color={hi[highlight]} />
 					:
-					searchResults.length ?
+					search.results.length ?
 						<CloseIcon color={color.INPUT_PH} />
 						:
 						<SearchIcon color={color.INPUT_PH} />
@@ -100,25 +88,24 @@ export default function Search({
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	inputWrap: {
-		paddingHorizontal: 20,
-		marginTop: 10
+		paddingHorizontal: '20@s',
+		marginTop: '10@vs',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	searchInput: {
-		marginBottom: 20,
-		paddingLeft: 20,
-		paddingRight: 50,
-		paddingVertical: '4%',
+		marginBottom: '20@vs',
+		paddingLeft: '20@s',
+		paddingRight: '40@s',
+		paddingVertical: '10@vs',
 	},
 	submitSearch: {
 		position: 'absolute',
-		right: '7%',
-		top: isIOS ? '3%' : '10%',
-		justifyContent: 'center',
-		alignItems: 'center',
-		width: 40,
-		height: 40,
-		borderRadius: 20,
+		right: '20@s',
+		height: '42@vs',
+		paddingHorizontal: '10@s',
 	},
 })

@@ -80,6 +80,7 @@
 		"english": "Kiingereza",
 		"spanish": "Kihispania",
 		"swahili": "Kiswahili",
+		"hungarian": "Kihungari",
 		"enutsRandD": "eNuts Telegram",
 		"estimatedFees": "Ada zilizokadiriwa",
 		"estimateFee": "Kadiri ada",
@@ -216,7 +217,11 @@
 		"nostrIssueHint": "Kama unakumbana na shida kufungua mawasiliano yako ya Nostr, bonyeza kitufe hapa chini au rudisha data ya Nostr katika \"chaguo > mawasiliano > rudisha data sasa\" ili kutatua tatizo.",
 		"submitNostrIssue": "Rudisha data sasa",
 		"nostrIssueSuccess": "Urejeshaji wa data ya Nostr umefanikiwa!",
-		"createLnInvoice": "Unda ankara ya Lightning"
+		"createLnInvoice": "Unda ankara ya Lightning",
+		"metadataCacheCleared": "Metadata imeondolewa",
+		"imageCacheCleared": "Picha imeondolewa",
+		"leaveGithubStar": "Usaidie na nyota kwenye Github",
+		"alreadySpentHint": "Baadhi ya ushahidi kwenye salio lako umetumika au kudaiwa mahali pengine. Tatua tatizo hili kwa kufuta ushahidi huo kwenye 'Chaguo' > 'Usimamizi wa sarafu' > 'Angalia uthibitisho'."
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

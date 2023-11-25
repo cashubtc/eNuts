@@ -1,7 +1,8 @@
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
-import { SafeAreaView, type StyleProp, StyleSheet, type TextStyle, TouchableOpacity } from 'react-native'
+import { SafeAreaView, type StyleProp, type TextStyle, TouchableOpacity } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import Loading from './Loading'
 import Txt from './Txt'
@@ -27,19 +28,24 @@ export default function Button({ txt, onPress, border, outlined, filled, disable
 				disabled={disabled}
 				style={[
 					styles.touchableOpacity,
-					{ backgroundColor: hi[highlight], padding: 20 },
+					{ backgroundColor: hi[highlight], paddingHorizontal: s(18), paddingVertical: vs(18) },
 					border ? { borderWidth: 1, borderColor: mainColors.WHITE } : {},
 					filled ? { backgroundColor: mainColors.WHITE } : {},
-					outlined ? { backgroundColor: 'transparent', padding: 18, borderWidth: 1, borderColor: hi[highlight] } : {},
+					outlined ? { backgroundColor: 'transparent', paddingHorizontal: s(16), paddingVertical: vs(16), borderWidth: 1, borderColor: hi[highlight] } : {},
 					disabled ? { opacity: .3 } : {}
 				]}
 				onPress={onPress}
 			>
-				<Txt txt={txt} bold center styles={[
-					{ color: getColor(highlight, color) },
-					filled || outlined ? { color: hi[highlight] } : {},
-					loading || icon ? { marginRight: 10 } : {}
-				]} />
+				<Txt
+					txt={txt}
+					bold
+					center
+					styles={[
+						{ color: getColor(highlight, color) },
+						filled || outlined ? { color: hi[highlight] } : {},
+						loading || icon ? { marginRight: s(10) } : {}
+					]}
+				/>
 				{loading && <Loading color={getColor(highlight, color)} />}
 				{!loading ? icon : null}
 			</TouchableOpacity>
@@ -66,9 +72,9 @@ export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIc
 				style={[
 					styles.iconBtn,
 					{
-						width: size || 60,
-						height: size || 60,
-						borderRadius: (size || 60) / 2,
+						width: size || s(60),
+						height: size || s(60),
+						borderRadius: (size || s(60)) / 2,
 						backgroundColor: outlined ? color.BACKGROUND : hi[highlight],
 						borderColor: hi[highlight],
 						// opacity: disabled ? .6 : 1
@@ -102,14 +108,14 @@ export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITx
 		>
 			<Txt
 				txt={txt}
-				styles={[globals(color).pressTxt, { color: txtColor || hi[highlight], marginRight: icon ? 10 : 0 }]}
+				styles={[globals(color).pressTxt, { color: txtColor || hi[highlight], marginRight: icon ? s(10) : 0 }]}
 			/>
 			{icon ? icon : null}
 		</TouchableOpacity>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	safeArea: {
 		width: '100%'
 	},
@@ -128,8 +134,8 @@ const styles = StyleSheet.create({
 	},
 	// txt button
 	copyTxt: {
-		paddingTop: 30,
-		paddingBottom: 10,
+		paddingTop: '30@vs',
+		paddingBottom: '10@vs',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center'

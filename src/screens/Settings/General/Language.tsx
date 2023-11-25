@@ -11,6 +11,7 @@ import { STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, TouchableOpacity, View } from 'react-native'
+import { vs } from 'react-native-size-matters'
 
 const langs: ILangsOpt[] = [
 	{ name: 'english', code: 'en' },
@@ -18,6 +19,7 @@ const langs: ILangsOpt[] = [
 	{ name: 'french', code: 'fr' },
 	{ name: 'swahili', code: 'sw' },
 	{ name: 'spanish', code: 'es' },
+	{ name: 'hungarian', code: 'hu' },
 ]
 
 export default function LanguageSettings({ navigation }: TLanguageSettingsPageProps) {
@@ -29,7 +31,7 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					{langs.map((l, i) => (
 						<LangSelection key={l.code} code={l.code} name={l.name} selected={l.code === i18n.language} hasSeparator={i !== langs.length - 1} />
@@ -55,13 +57,13 @@ function LangSelection({ code, name, selected, hasSeparator }: ILangSelectionPro
 	}
 	return (
 		<>
-			<TouchableOpacity style={globals().wrapRow}
+			<TouchableOpacity style={[globals().wrapRow, { paddingBottom: vs(15) }]}
 				onPress={() => void handleLangChange()}
 			>
 				<Txt txt={t(name)} />
 				<RadioBtn selected={selected} />
 			</TouchableOpacity>
-			{hasSeparator && <Separator />}
+			{hasSeparator && <Separator style={[{ marginBottom: vs(15) }]} />}
 		</>
 	)
 }

@@ -3,7 +3,8 @@ import Txt from '@comps/Txt'
 import { useThemeContext } from '@src/context/Theme'
 import { extractStrFromURL } from '@src/util'
 import { highlight as hi } from '@styles'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function Website({ website, onPress }: { website?: string, onPress: (url: string) => void }) {
 	const { highlight } = useThemeContext()
@@ -13,10 +14,10 @@ export default function Website({ website, onPress }: { website?: string, onPres
 		site?.length ?
 			<View style={styles.infoWrap}>
 				<View style={styles.iconWrap}>
-					<LinkIcon width={20} height={20} color={hi[highlight]} />
+					<LinkIcon width={s(18)} height={s(18)} color={hi[highlight]} />
 				</View>
 				<TouchableOpacity onPress={() => onPress(navSite || '')}>
-					<Txt txt={site} styles={[{ color: hi[highlight], paddingBottom: 3 }]} />
+					<Txt txt={site} styles={[{ color: hi[highlight], paddingBottom: vs(3) }]} />
 				</TouchableOpacity>
 			</View>
 			:
@@ -24,12 +25,12 @@ export default function Website({ website, onPress }: { website?: string, onPres
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	infoWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	iconWrap: {
-		minWidth: 25,
+		minWidth: '25@s',
 	}
 })

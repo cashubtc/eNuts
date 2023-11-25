@@ -15,7 +15,8 @@ import { cleanUpNumericStr, formatSatStr, vib } from '@util'
 import { nip19 } from 'nostr-tools'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Animated, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SelectNostrAmountScreen({ navigation, route }: TSelectNostrAmountPageProps) {
 	const { mint, balance, nostr } = route.params
@@ -65,7 +66,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 					>
 						<LeftArrow color={hi[highlight]} />
 					</TouchableOpacity>
-					<View style={{ marginLeft: 10 }}>
+					<View style={{ marginLeft: s(10) }}>
 						<Text style={[globals(color).navTxt, styles.navTxt]}>
 							{t('sendEcash', { ns: NS.common })}
 						</Text>
@@ -83,7 +84,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 				isSending
 				dimmed
 			/>
-			<View style={[styles.profilePicContainer, { marginTop: nostr?.contact?.banner ? -40 : -90 }]}>
+			<View style={[styles.profilePicContainer, { marginTop: nostr?.contact?.banner ? vs(-40) : vs(-90) }]}>
 				<View style={styles.picWrap}>
 					<ProfilePic
 						hex={nostr?.contact?.hex ?? ''}
@@ -113,12 +114,18 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 				</Animated.View>
 				<Txt
 					txt={formatSatStr(+amount, 'standard', false)}
-					styles={[{ color: color.TEXT_SECONDARY, fontSize: 14, textAlign: 'center' }]}
+					styles={[{ color: color.TEXT_SECONDARY, fontSize: vs(12), textAlign: 'center' }]}
 				/>
 			</View>
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={styles.actionWrap}
+				style={{
+					position: 'absolute',
+					bottom: vs(20),
+					left: s(20),
+					right: s(20),
+					marginBottom: isIOS ? vs(20) : 0,
+				}}
 			>
 				<Button
 					txt={t('continue', { ns: NS.common })}
@@ -129,14 +136,14 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0
 	},
 	backiconWrap: {
-		paddingRight: 10,
-		paddingLeft: 20,
-		paddingVertical: 10,
+		paddingRight: '10@s',
+		paddingLeft: '20@s',
+		paddingVertical: '10@vs',
 	},
 	navTxtWrap: {
 		flexDirection: 'row',
@@ -153,28 +160,28 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		height: 100,
-		paddingRight: 20,
-		paddingTop: 40,
+		height: '90@vs',
+		paddingRight: '20@s',
+		paddingTop: '40@vs',
 		zIndex: 1,
 	},
 	profilePicContainer: {
 		flexDirection: 'row',
 		alignItems: 'flex-end',
 		justifyContent: 'space-between',
-		paddingHorizontal: 20,
+		paddingHorizontal: '20@s',
 	},
 	picWrap: {
-		width: 80,
-		height: 80,
-		borderRadius: 40,
+		width: '80@s',
+		height: '80@s',
+		borderRadius: '40@s',
 		overflow: 'hidden',
-		marginBottom: 10
+		marginBottom: '10@vs',
 	},
 	username: {
-		fontSize: 19,
+		fontSize: '17@vs',
 		fontWeight: '500',
-		marginHorizontal: 20,
+		marginHorizontal: '20@s',
 	},
 	amountWrap: {
 		width: '100%',
@@ -183,12 +190,12 @@ const styles = StyleSheet.create({
 	continue: {
 		flex: 1,
 		position: 'absolute',
-		right: 20,
-		left: 20,
+		right: '20@s',
+		left: '20@s',
 		alignItems: 'center'
 	},
 	overviewWrap: {
-		marginTop: 30,
+		marginTop: '30@vs',
 	},
 	overview: {
 		flexDirection: 'row',
@@ -197,12 +204,5 @@ const styles = StyleSheet.create({
 	},
 	bold: {
 		fontWeight: '500'
-	},
-	actionWrap: {
-		position: 'absolute',
-		bottom: 20,
-		left: 20,
-		right: 20,
-		marginBottom: isIOS ? 20 : 0,
 	},
 })

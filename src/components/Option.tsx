@@ -1,6 +1,7 @@
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import { ChevronRightIcon } from './Icons'
 import Loading from './Loading'
@@ -24,7 +25,7 @@ export default function Option({ icon, txt, hint, onPress, hasSeparator, loading
 			<TouchableOpacity style={globals().wrapRow} onPress={onPress}>
 				<View style={styles.txtWrap}>
 					{icon ?
-						<View style={{ minWidth: 40 }}>
+						<View style={{ minWidth: s(40) }}>
 							{icon}
 						</View>
 						:
@@ -46,9 +47,9 @@ export default function Option({ icon, txt, hint, onPress, hasSeparator, loading
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	targetHint: {
-		fontSize: 12,
+		fontSize: '10@vs',
 	},
 	txtWrap: {
 		flexDirection: 'row',
@@ -56,6 +57,6 @@ const styles = StyleSheet.create({
 		maxWidth: '80%'
 	},
 	iconWrap: {
-		marginRight: -5,
+		marginRight: '-5@s',
 	}
 })

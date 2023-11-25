@@ -5,9 +5,10 @@ import type { THistoryPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
-import { formatInt, formatSatStr } from '@util'
+import { formatSatStr, isNum } from '@util'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 import EntryTime from './entryTime'
 
@@ -31,11 +32,6 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 		return item.amount < 0 ? mainColors.ERROR : mainColors.VALID
 	}
 
-	const getAmount = () => {
-		if (item.type === 3) { return `${formatInt(Math.abs(item.amount), 'compact', 'en')}` }
-		return `${item.amount > 0 ? '+' : ''}${formatInt(item.amount, 'compact', 'en')}`
-	}
-
 	const getIcon = () => {
 		if (item.type === 3) { return <SwapCurrencyIcon width={16} height={16} color={color.TEXT} /> }
 		return item.amount < 0 ?
@@ -49,31 +45,30 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			style={styles.listItem}
 			onPress={() => nav.navigation.navigate('history entry details', { entry: item })}
 		>
-			<View style={{ paddingBottom: 10 }}>
+			<View style={{ paddingBottom: vs(10) }}>
 				{getIcon()}
 			</View>
 			<View style={styles.infoWrap}>
 				<Txt txt={getTxTypeStr()} />
-				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: 14 }]}>
+				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: vs(12) }]}>
 					<EntryTime from={item.timestamp * 1000} fallback={t('justNow')} />
 				</Text>
 			</View>
 			<View style={styles.placeholder} />
 			<View style={styles.amount}>
 				<Txt
-					txt={getAmount()}
+					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.amount, 'standard')}`}
 					styles={[{ color: getTxColor() }]}
 				/>
-				<Txt
-					txt={formatSatStr(item.amount, 'standard', false)}
-					styles={[{ color: getTxColor() }]}
-				/>
+				<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>
+					{t('fee', { ns: NS.common })}: {isNum(item.fee) ? item.fee : 0}
+				</Text>
 			</View>
 		</TouchableOpacity>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	listItem: {
 		position: 'relative',
 		flexDirection: 'row',
@@ -82,16 +77,14 @@ const styles = StyleSheet.create({
 	},
 	infoWrap: {
 		alignItems: 'center',
-		paddingBottom: 10
+		paddingBottom: '10@vs',
 	},
 	placeholder: {
-		width: 30,
+		width: '30@s',
 	},
 	amount: {
-		flexDirection: 'row',
-		alignItems: 'center',
 		position: 'absolute',
-		top: 10,
+		top: 0,
 		right: 0,
 	},
 })

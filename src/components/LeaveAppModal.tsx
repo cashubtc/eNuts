@@ -5,6 +5,7 @@ import { globals } from '@styles'
 import { isErr, openUrl } from '@util'
 import { useTranslation } from 'react-i18next'
 import { Text } from 'react-native'
+import { vs } from 'react-native-size-matters'
 
 import Button, { TxtButton } from './Button'
 import MyModal from './modal'
@@ -36,7 +37,7 @@ export default function LeaveAppModal({ url, visible, closeModal }: ILeaveAppMod
 				<TxtButton
 					txt={t('cancel')}
 					onPress={closeModal}
-					style={[{ paddingTop: 25, paddingBottom: 20 }]}
+					style={[{ paddingTop: vs(25), paddingBottom: vs(20) }]}
 				/>
 			</MyModal>
 		</>

@@ -1,7 +1,8 @@
 import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
 import { formatSatStr } from '@util'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import { MintBoardIcon } from './Icons'
 import Txt from './Txt'
@@ -16,19 +17,19 @@ export default function MintBalance({ balance, txtColor, disabled }: IMintBalanc
 	const { color, highlight } = useThemeContext()
 	return (
 		<View style={[styles.wrap, { borderColor: disabled ? color.TEXT_SECONDARY : hi[highlight] }]}>
-			<MintBoardIcon width={18} height={20} color={disabled ? color.TEXT_SECONDARY : hi[highlight]} />
-			<Txt txt={formatSatStr(balance)} styles={[{ fontSize: 12, color: txtColor, marginLeft: 5 }]} />
+			<MintBoardIcon width={s(16)} height={s(16)} color={disabled ? color.TEXT_SECONDARY : hi[highlight]} />
+			<Txt txt={formatSatStr(balance)} styles={[{ fontSize: vs(10), color: txtColor, marginLeft: s(5) }]} />
 		</View>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	wrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		borderWidth: 1,
-		paddingVertical: 4,
-		paddingHorizontal: 6,
+		paddingVertical: '4@vs',
+		paddingHorizontal: '6@s',
 		borderRadius: 20,
 	},
 })

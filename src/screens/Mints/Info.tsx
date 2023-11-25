@@ -14,8 +14,9 @@ import { globals, highlight as hi, mainColors } from '@styles'
 import { getMintInfo } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -42,15 +43,16 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 	return (
 		<Screen
 			withBackBtn
+			screenName={t('mintInfo', { ns: NS.mints })}
 			handlePress={() => navigation.goBack()}
 		>
 			{info ?
-				<ScrollView style={{ marginBottom: isIOS ? insets.bottom : 0 }}>
+				<ScrollView style={{ marginBottom: isIOS ? insets.bottom : 0 }} alwaysBounceVertical={false}>
 					{/* Name, Version & short description */}
 					<View style={[globals(color).wrapContainer, styles.mainInfo]}>
 						<View style={[styles.circleContainer, { backgroundColor: color.INPUT_BG, borderColor: color.BORDER }]}>
 							<Text style={[styles.mintIcon, { color: color.TEXT }]}>
-								<MintBoardIcon width={30} height={28} color={hi[highlight]} />
+								<MintBoardIcon width={s(30)} height={s(28)} color={hi[highlight]} />
 							</Text>
 						</View>
 						<Txt
@@ -106,14 +108,14 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 								}
 							</View>
 						))}
-						<Separator style={[{ marginVertical: 20 }]} />
+						<Separator style={[{ marginVertical: vs(20) }]} />
 						<Txt
 							txt={t('supportedNuts', { ns: NS.mints })}
 							bold
 							styles={[styles.description]}
 						/>
 						{info.nuts?.map((n, i) => <Txt key={i} txt={n} />)}
-						<Separator style={[{ marginVertical: 20 }]} />
+						<Separator style={[{ marginVertical: vs(20) }]} />
 						<Txt
 							txt={t('pubKey', { ns: NS.mints })}
 							bold
@@ -141,39 +143,39 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	mainInfo: {
-		padding: 20,
+		padding: '20@s',
 		alignItems: 'center',
-		marginTop: 50,
-		marginBottom: 20,
+		marginTop: '50@vs',
+		marginBottom: '20@vs',
 	},
 	circleContainer: {
-		width: 90,
-		height: 90,
+		width: '90@s',
+		height: '90@s',
 		borderWidth: 1,
-		borderRadius: 45,
-		marginTop: -70,
-		marginBottom: 15,
+		borderRadius: '45@s',
+		marginTop: '-70@vs',
+		marginBottom: '15@vs',
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
 	mintIcon: {
-		fontSize: 36,
+		fontSize: '34@vs',
 		fontWeight: '300',
 	},
 	mintName: {
-		fontSize: 26,
+		fontSize: '24@vs',
 	},
 	mintVersion: {
-		marginVertical: 10,
+		marginVertical: '10@vs',
 	},
 	infoEntry: {
-		paddingBottom: 20,
+		paddingBottom: '20@vs',
 	},
 	description: {
-		fontSize: 14,
-		marginBottom: 5,
+		fontSize: '12@vs',
+		marginBottom: '5@vs',
 	},
 	contactWrap: {
 		flexDirection: 'row',

@@ -80,6 +80,7 @@
 		"english": "Anglais",
 		"spanish": "Espagnol",
 		"swahili": "Swahili",
+		"hungarian": "Hongrois",
 		"enutsRandD": "eNuts Telegram",
 		"estimatedFees": "Frais estimés",
 		"estimateFee": "Estimer les frais.",
@@ -216,7 +217,11 @@
 		"nostrIssueHint": "Si vous rencontrez des problèmes pour ouvrir vos contacts Nostr, cliquez sur le bouton ci-dessous ou réinitialisez les données Nostr dans \"options > contacts > Réinitialiser maintenant\" pour résoudre le problème.",
 		"submitNostrIssue": "Réinitialiser maintenant",
 		"nostrIssueSuccess": "Réinitialisation des données Nostr réussie!",
-		"createLnInvoice": "Créer une facture Lightning."
+		"createLnInvoice": "Créer une facture Lightning.",
+		"metadataCacheCleared": "Cache des métadonnées vidé!",
+		"imageCacheCleared": "Cache des images vidé!",
+		"leaveGithubStar": "Soutenez-nous avec une étoile sur Github",
+		"alreadySpentHint": "Certains preuves de votre solde ont déjà été dépensés ou réclamés ailleurs. Résolvez ce problème en les supprimant dans 'Options' > 'Paramètres des mints' > 'Vérifier les preuves'."
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

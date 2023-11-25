@@ -14,7 +14,8 @@ import { getColor } from '@styles/colors'
 import { formatBalance, formatInt, formatSatStr, isBool } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import { TxtButton } from './Button'
 import Logo from './Logo'
@@ -77,7 +78,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			<TouchableOpacity
 				onPress={() => void handleLogoPress()}
 			>
-				<Logo size={hidden.balance ? 100 : 40} style={{ marginTop: hidden.balance ? 40 : 0, marginBottom: hidden.balance ? 40 : 10 }} />
+				<Logo size={hidden.balance ? s(100) : s(40)} style={{ marginTop: hidden.balance ? vs(40) : 0, marginBottom: hidden.balance ? vs(40) : vs(10) }} />
 			</TouchableOpacity>
 			{/* balance */}
 			{!hidden.balance &&
@@ -93,7 +94,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 						<Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
 							{formatSats ? 'BTC' : formatSatStr(balance, 'compact', false)}
 						</Text>
-						<SwapCurrencyIcon width={20} height={20} color={getColor(highlight, color)} />
+						<SwapCurrencyIcon width={s(20)} height={s(20)} color={getColor(highlight, color)} />
 					</View>
 				</TouchableOpacity>
 			}
@@ -109,7 +110,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					<HistoryEntry
 						key={h.timestamp}
 						icon={h.type === 2 || h.type === 3 ?
-							<ZapIcon width={32} height={32} color={getColor(highlight, color)} />
+							<ZapIcon width={s(28)} height={s(28)} color={getColor(highlight, color)} />
 							:
 							<EcashIcon color={getColor(highlight, color)} />
 						}
@@ -126,7 +127,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					txt={t('seeFullHistory')}
 					onPress={() => nav?.navigate('history')}
 					txtColor={getColor(highlight, color)}
-					style={[{ paddingTop: 20, paddingBottom: hidden.txs ? 20 : 0 }]}
+					style={[{ paddingTop: vs(15), paddingBottom: hidden.txs ? vs(15) : 0 }]}
 				/>
 			}
 		</View>
@@ -159,7 +160,7 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHis
 				</View>
 				<View>
 					<Txt txt={txType} styles={[{ color: getColor(highlight, color) }]} />
-					<Text style={{ color: getColor(highlight, color), paddingBottom: 3 }}>
+					<Text style={{ color: getColor(highlight, color), paddingBottom: vs(3), fontSize: vs(12) }}>
 						<EntryTime from={timestamp * 1000} fallback={t('justNow')} />
 					</Text>
 				</View>
@@ -169,43 +170,42 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHis
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	board: {
 		borderBottomLeftRadius: 50,
 		borderBottomRightRadius: 50,
-		paddingHorizontal: 30,
-		paddingTop: 60,
-		paddingBottom: 60,
+		paddingHorizontal: '30@s',
+		paddingVertical: '60@vs',
 		minHeight: '50%'
 	},
 	balanceWrap: {
 		alignItems: 'center',
-		marginHorizontal: -20,
-		marginBottom: 10,
+		marginHorizontal: '-20@s',
+		marginBottom: '10@vs',
 	},
 	balAmount: {
 		alignItems: 'center',
-		fontSize: 48,
+		fontSize: '42@vs',
 		fontWeight: '600',
 	},
 	balAssetNameWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: 10,
+		marginBottom: '10@vs',
 	},
 	balAssetName: {
-		fontSize: 14,
-		marginRight: 5
+		fontSize: '14@vs',
+		marginRight: '5@s'
 	},
 	iconWrap: {
-		minWidth: 40,
-		paddingTop: 3,
+		minWidth: '40@s',
+		paddingTop: '3@vs',
 	},
 	entry: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: 5,
+		paddingBottom: '5@vs',
 	},
 	wrap: {
 		flexDirection: 'row',

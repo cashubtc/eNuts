@@ -6,7 +6,8 @@ import { highlight as hi, mainColors } from '@styles'
 import { isStr } from '@util'
 import { Image } from 'expo-image'
 import { useMemo, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import { headers } from './const'
 
@@ -37,7 +38,7 @@ export default function ProfilePic({
 
 	const { color, highlight } = useThemeContext()
 	const [isErr, setIsErr] = useState(false)
-	const defaultSize = useMemo(() => isUser ? 60 : 40, [isUser])
+	const defaultSize = useMemo(() => isUser ? s(60) : s(40), [isUser])
 	const circleStyle = {
 		width: size || defaultSize,
 		height: size || defaultSize,
@@ -46,7 +47,7 @@ export default function ProfilePic({
 	const proxyUri = useMemo(() => `${imgProxy(hex ?? '', uri ?? '', circleStyle.width, 'picture', 64)}`, [circleStyle.width, hex, uri])
 
 	return (
-		<View style={{ position: 'relative', marginRight: isUser ? 0 : 10 }}>
+		<View style={{ position: 'relative', marginRight: isUser ? 0 : s(10) }}>
 			{isStr(proxyUri) && proxyUri.length > 0 && !isErr ?
 				<Image
 					// https://docs.expo.dev/versions/latest/sdk/image/
@@ -76,24 +77,24 @@ export default function ProfilePic({
 						...circleStyle
 					}
 				]}>
-					<UserIcon width={isUser ? 15 : 30} height={isUser ? 15 : 30} color={hi[highlight]} />
+					<UserIcon width={isUser ? s(15) : s(30)} height={isUser ? vs(15) : vs(30)} color={hi[highlight]} />
 				</View>
 			}
 			{!isUser && isInContacts &&
 				<View style={[styles.imgIcon, styles.isContact, styles.right, { backgroundColor: hi[highlight],  }]}>
-					<UserIcon width={10} height={10} color={mainColors.WHITE} />
+					<UserIcon width={s(10)} height={vs(10)} color={mainColors.WHITE} />
 				</View>
 			}
 			{!isUser && isFav &&
 				<View style={[styles.imgIcon, styles.left]}>
-					<ListFavIcon width={14} height={14} color={mainColors.STAR} />
+					<ListFavIcon width={s(14)} height={vs(14)} color={mainColors.STAR} />
 				</View>
 			}
 		</View>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	circle: {
 		borderWidth: 1,
 		alignItems: 'center',
@@ -115,8 +116,8 @@ const styles = StyleSheet.create({
 		left: 0,
 	},
 	isContact: {
-		width: 14,
-		height: 14,
+		width: '14@s',
+		height: '14@vs',
 		borderRadius: 7,
 		justifyContent: 'center',
 		alignItems: 'center',

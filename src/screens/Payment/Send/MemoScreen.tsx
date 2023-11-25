@@ -14,7 +14,8 @@ import { globals, highlight as hi, mainColors } from '@styles'
 import { nip19 } from 'nostr-tools'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 
@@ -51,8 +52,8 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 			globals(color).container,
 			styles.container,
 			{
-				paddingTop: nostr ? 0 : 110,
-				paddingBottom: isIOS ? 50 : 20,
+				paddingTop: nostr ? 0 : vs(100),
+				paddingBottom: isIOS ? vs(50) : vs(20),
 			}
 		]}>
 			{!nostr ?
@@ -77,7 +78,7 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 							>
 								<LeftArrow color={hi[highlight]} />
 							</TouchableOpacity>
-							<View style={{ marginLeft: 10 }}>
+							<View style={{ marginLeft: s(10) }}>
 								<Text style={[globals(color).navTxt, styles.navTxt]}>
 									{t('sendEcash')}
 								</Text>
@@ -109,7 +110,7 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 			}
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={{ marginHorizontal: 20 }}
+				style={{ marginHorizontal: s(20) }}
 			>
 				<TxtInput
 					placeholder={t('optionalMemo')}
@@ -126,19 +127,19 @@ export default function MemoScreen({ navigation, route }: TMemoPageProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 	},
 	hint: {
 		fontWeight: '500',
-		marginHorizontal: 20,
+		marginHorizontal: '20@s',
 	},
 	backiconWrap: {
-		paddingRight: 10,
-		paddingLeft: 20,
-		paddingVertical: 10,
+		paddingRight: '10@s',
+		paddingLeft: '20@s',
+		paddingVertical: '10@vs',
 	},
 	navTxtWrap: {
 		flexDirection: 'row',
@@ -156,28 +157,28 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		height: 100,
-		paddingRight: 20,
-		paddingTop: 40,
+		height: '100@vs',
+		paddingRight: '20@s',
+		paddingTop: '40@vs',
 		zIndex: 1,
 	},
 	profilePicContainer: {
 		flexDirection: 'row',
 		alignItems: 'flex-end',
 		justifyContent: 'space-between',
-		marginTop: -40,
-		paddingHorizontal: 20,
+		marginTop: '-40@vs',
+		paddingHorizontal: '20@s',
 	},
 	picWrap: {
-		width: 80,
-		height: 80,
-		borderRadius: 40,
+		width: '80@s',
+		height: '80@s',
+		borderRadius: '40@s',
 		overflow: 'hidden',
-		marginBottom: 10
+		marginBottom: '10@vs'
 	},
 	username: {
-		fontSize: 19,
+		fontSize: '17@vs',
 		fontWeight: '500',
-		marginHorizontal: 20,
+		marginHorizontal: '20@s',
 	},
 })

@@ -1,5 +1,7 @@
 import { LanguageIcon, PaletteIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
+import Txt from '@comps/Txt'
+import { appVersion } from '@consts/env'
 import type { TGeneralSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { useThemeContext } from '@src/context/Theme'
@@ -19,7 +21,7 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					<MenuItem
 						txt={t('display', { ns: NS.topNav })}
@@ -35,6 +37,7 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 						hasChevron
 					/>
 				</View>
+				<Txt txt={appVersion} bold center />
 			</ScrollView>
 			<BottomNav navigation={navigation} route={route} />
 		</Screen>

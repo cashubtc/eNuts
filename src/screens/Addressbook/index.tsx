@@ -5,6 +5,7 @@ import { QRIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
+import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { getMintsBalances } from '@db'
@@ -31,7 +32,8 @@ import { Image } from 'expo-image'
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { RefreshControl, Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import ContactPreview from './ContactPreview'
 import Recents from './Recents'
@@ -51,8 +53,15 @@ interface CustomViewToken {
 
 interface IViewableItems { viewableItems: CustomViewToken[] }
 
-const marginBottom = isIOS ? 100 : 75
-const marginBottomPayment = isIOS ? 25 : 0
+export interface ISearchStates {
+	input: string
+	isSearching: boolean
+	results: IContact[]
+	hasResults: boolean
+}
+
+const marginBottom = vs(70)
+const marginBottomPayment = isIOS ? vs(20) : 0
 
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
 export default function AddressbookPage({ navigation, route }: TAddressBookPageProps) {
@@ -75,7 +84,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	const [newNpubModal, setNewNpubModal] = useState(false)
 	const [input, setInput] = useState('')
 	// search functionality
-	const [searchResults, setSearchResults] = useState<IContact[]>([])
+	const [search, setSearch] = useState<ISearchStates>({
+		input: '',
+		isSearching: false,
+		results: [],
+		hasResults: true,
+	})
 	// contact list
 	const [contacts, setContacts] = useState<IContact[]>([])
 	// TODO we have 3 copies of contacts, this is not good (the class instance, the state and the ref)
@@ -132,8 +146,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					})
 				},
 				onSearchChanged: profile => {
-					if (!profile) { return }
-					setSearchResults(prev => uniqByIContacts([...prev, profile], 'hex'))
+					if (!profile) {
+						return setSearch(prev => ({ ...prev, isSearching: false, hasResults: false }))
+					}
+					if (search.isSearching) { setSearch(prev => ({ ...prev, isSearching: false })) }
+					if (!search.hasResults) { setSearch(prev => ({ ...prev, hasResults: true })) }
+					setSearch(prev => ({ ...prev, results: uniqByIContacts([...prev.results, profile], 'hex') }))
 					// we set the contact state of a search result that is already in the contacts list
 					// so that the contact list can render the profile if user favorites it
 					// TODO cache it
@@ -328,13 +346,12 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	useEffect(() => {
 		if (!isFocused || nostr.pubKey.hex === nostrRef.current?.hex) { return }
 		setContacts([]) // reset contacts in case user has edited his npub
-		setSearchResults([])
+		setSearch(prev => ({ ...prev, results: [] }))
 		last.current.idx = -1
 		// user has no nostr data yet
 		if (!nostr.pubKey.encoded || !nostr.pubKey.hex) {
 			setNewNpubModal(true)
-			stopLoading()
-			return
+			return stopLoading()
 		}
 		// user has nostr data, set states
 		void initContacts(nostr.pubKey.hex)
@@ -342,10 +359,13 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	}, [isFocused])
 
 	useEffect(() => {
-		setContacts([...contacts].sort(sortFavs))
+		setContacts(prev => [...uniqByIContacts(prev, 'hex')].sort(sortFavs))
 		// re-render search results if favs change
-		if (searchResults.length) {
-			setSearchResults([...searchResults])
+		if (search.results.length) {
+			setSearch(prev => ({
+				...prev,
+				results: uniqByIContacts(prev.results.sort(sortFavs), 'hex')
+			}))
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [nostr.favs])
@@ -355,7 +375,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			<TopNav
 				screenName={route.params?.isMelt ? t('cashOut') : t('addressBook', { ns: NS.topNav })}
 				withBackBtn={isPayment}
-				nostrProfile={nostr.userProfile?.picture}
+				nostrProfile={nostr.pubKey.hex.length > 0 ? nostr.userProfile?.picture : undefined}
 				handlePress={() => navigation.goBack()}
 				openProfile={() => navigation.navigate('Contact', {
 					contact: nostr.userProfile,
@@ -374,23 +394,25 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 							handleSend={handleSend}
 						/>
 					}
-					<Search
-						contactsRef={contactsRef}
-						setContacts={setContacts}
-						searchResults={searchResults}
-						setSearchResults={setSearchResults}
-						nostrRef={nostrRef}
-					/>
+					{nostr.pubKey.hex.length > 0 &&
+						<Search
+							contactsRef={contactsRef}
+							setContacts={setContacts}
+							search={search}
+							setSearch={setSearch}
+							nostrRef={nostrRef}
+						/>
+					}
 					{/* user contacts */}
 					{contactsRef.current.length > 0 ?
 						<View style={[
 							styles.contactsWrap,
 							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : marginBottom },
 						]}>
-							{searchResults.length > 0 ?
+							{search.input.length > 0 && search.results.length > 0 && search.hasResults ?
 								<FlashList
 									ref={searchListRef}
-									data={searchResults}
+									data={search.results}
 									estimatedItemSize={75}
 									keyExtractor={item => item.hex}
 									renderItem={({ item }) => (
@@ -412,44 +434,46 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										<Separator style={[styles.contactSeparator]} />
 									)}
 								/>
-								:
-								<FlashList
-									ref={ref}
-									data={contacts}
-									viewabilityConfig={{ minimumViewTime: 500 }}
-									estimatedItemSize={75}
-									onViewableItemsChanged={onViewableItemsChanged}
-									refreshControl={
-										<RefreshControl
-											refreshing={isRefreshing}
-											onRefresh={() => void handleRefresh()}
-											title={t('pullRefresh')}
-											tintColor={hi[highlight]}
-											titleColor={color.TEXT}
-										/>
-									}
-									keyExtractor={item => item.hex}
-									renderItem={({ item }) => (
-										<ContactPreview
-											contact={item}
-											openProfile={() => {
-												navigation.navigate('Contact', {
-													contact: item,
-												})
-											}}
-											handleSend={() => void handleSend(item)}
-											isPayment={isPayment}
-										/>
-									)}
-									ListEmptyComponent={() => (
-										<Empty
-											txt={t('noResults', { ns: NS.addrBook })}
-										/>
-									)}
-									ItemSeparatorComponent={() => (
-										<Separator style={[styles.contactSeparator]} />
-									)}
-								/>
+								: search.input.length > 0 && !search.results.length && !search.hasResults ?
+									<Txt txt='No results' bold center />
+									:
+									<FlashList
+										ref={ref}
+										data={contacts}
+										viewabilityConfig={{ minimumViewTime: 500 }}
+										estimatedItemSize={75}
+										onViewableItemsChanged={onViewableItemsChanged}
+										refreshControl={
+											<RefreshControl
+												refreshing={isRefreshing}
+												onRefresh={() => void handleRefresh()}
+												title={t('pullRefresh')}
+												tintColor={hi[highlight]}
+												titleColor={color.TEXT}
+											/>
+										}
+										keyExtractor={item => item.hex}
+										renderItem={({ item }) => (
+											<ContactPreview
+												contact={item}
+												openProfile={() => {
+													navigation.navigate('Contact', {
+														contact: item,
+													})
+												}}
+												handleSend={() => void handleSend(item)}
+												isPayment={isPayment}
+											/>
+										)}
+										ListEmptyComponent={() => (
+											<Empty
+												txt={t('noResults', { ns: NS.addrBook })}
+											/>
+										)}
+										ItemSeparatorComponent={() => (
+											<Separator style={[styles.contactSeparator]} />
+										)}
+									/>
 							}
 						</View>
 						:
@@ -478,11 +502,11 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						onChangeText={text => setInput(text)}
 						value={input}
 						onSubmitEditing={() => void handleNpubInput()}
-						style={[{ paddingRight: 60 }]}
+						style={[{ paddingRight: s(55) }]}
 					/>
 					{/* scan icon */}
 					<TouchableOpacity
-						style={[styles.inputQR, { backgroundColor: color.INPUT_BG }]}
+						style={styles.inputQR}
 						onPress={() => {
 							setNewNpubModal(false)
 							const t = setTimeout(() => {
@@ -510,32 +534,35 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
-		paddingTop: 100
+		paddingTop: '100@vs'
 	},
 	loadingWrap: {
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginBottom: 100,
+		marginBottom: '100@vs',
 	},
 	contactsWrap: {
 		flex: 1,
 	},
 	contactSeparator: {
-		marginHorizontal: 20,
+		marginHorizontal: '20@s',
 		marginTop: 0,
 		marginBottom: 0,
 	},
 	wrap: {
 		position: 'relative',
-		width: '100%'
+		width: '100%',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	inputQR: {
 		position: 'absolute',
-		right: isIOS ? 12 : 15,
-		top: isIOS ? 18 : 22,
-		paddingHorizontal: 10
+		right: '13@s',
+		height: '41@vs',
+		paddingHorizontal: '10@s',
 	},
 })

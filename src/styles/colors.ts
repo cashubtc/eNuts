@@ -9,7 +9,7 @@ export enum Colors {
 	L_Text_Secondary = '#ADADAD',
 	L_Input_Bg = '#F6F6F6',
 	L_Border = '#D8D8D8',
-	L_DARK_Border = '#E6E6E6',
+	L_DARK_Border = '#E7E8E8',
 	// dark theme
 	D_Background = '#1C1C1E',
 	D_Drawer = '#252429',

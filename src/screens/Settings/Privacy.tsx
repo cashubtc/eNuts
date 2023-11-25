@@ -3,6 +3,7 @@ import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Toggle from '@comps/Toggle'
 import Txt from '@comps/Txt'
+import { appVersion } from '@consts/env'
 import type { TPrivacySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { usePrivacyContext } from '@src/context/Privacy'
@@ -10,7 +11,8 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function PrivacySettings({ navigation, route }: TPrivacySettingsPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -23,14 +25,9 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<Txt
-				txt={t('general', { ns: NS.topNav })}
-				bold
-				styles={[styles.subHeader]}
-			/>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
-					<View style={globals().wrapRow}>
+					<View style={[globals().wrapRow, { paddingBottom: vs(15) }]}>
 						<View style={styles.iconWrap}>
 							<Icon hidden={hidden.balance} />
 							<Txt txt={t('hideNuts')} styles={[styles.optTxt]} />
@@ -40,8 +37,8 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 							onChange={() => void handleHiddenBalance()}
 						/>
 					</View>
-					<Separator />
-					<View style={globals().wrapRow}>
+					<Separator style={[styles.separator]} />
+					<View style={[globals().wrapRow, { paddingBottom: vs(15) }]}>
 						<View style={styles.iconWrap}>
 							<Icon hidden={hidden.txs} />
 							<Txt txt={t('hideLatestTxs')} styles={[styles.optTxt]} />
@@ -52,6 +49,7 @@ export default function PrivacySettings({ navigation, route }: TPrivacySettingsP
 						/>
 					</View>
 				</View>
+				<Txt txt={appVersion} bold center />
 			</ScrollView>
 			<BottomNav navigation={navigation} route={route} />
 		</Screen >
@@ -63,16 +61,15 @@ function Icon({ hidden }: { hidden?: boolean }) {
 	return hidden ? <EyeClosedIcon color={color.TEXT} /> : <EyeIcon color={color.TEXT} />
 }
 
-const styles = StyleSheet.create({
-	subHeader: {
-		paddingHorizontal: 20,
-		marginBottom: 10,
-	},
+const styles = ScaledSheet.create({
 	iconWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	optTxt: {
-		marginLeft: 15,
+		marginLeft: '15@s'
+	},
+	separator: {
+		marginBottom: '15@vs'
 	}
 })

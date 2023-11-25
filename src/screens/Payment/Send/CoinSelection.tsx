@@ -14,7 +14,8 @@ import { globals } from '@styles'
 import { formatInt, formatMintUrl, formatSatStr, getSelectedAmount, isLnurl, isNum } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 import { CoinSelectionModal, CoinSelectionResume, OverviewRow } from './ProofList'
 
@@ -115,7 +116,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					navigation.goBack()
 				}}
 			/>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					<OverviewRow txt1={t('paymentType')} txt2={t(getPaymentType())} />
 					<OverviewRow txt1={t('mint')} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
@@ -182,13 +183,13 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 	},
 	coinSelectionHint: {
-		fontSize: 12,
+		fontSize: '10@vs',
 		maxWidth: '88%',
 	},
 })

@@ -1,6 +1,7 @@
 import { useThemeContext } from '@src/context/Theme'
 import { mainColors } from '@styles'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { TouchableOpacity } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import useCopy from './hooks/Copy'
 import { CheckmarkIcon, CopyIcon } from './Icons'
@@ -17,17 +18,17 @@ export default function Copy({ txt }: { txt: string }) {
 			disabled={copied}
 		>
 			{copied ?
-				<CheckmarkIcon width={18} height={18} color={mainColors.VALID} />
+				<CheckmarkIcon width={s(16)} height={s(16)} color={mainColors.VALID} />
 				:
-				<CopyIcon width={18} height={18} color={color.TEXT_SECONDARY} />
+				<CopyIcon width={s(18)} height={s(18)} color={color.TEXT_SECONDARY} />
 			}
 		</TouchableOpacity>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	copyIconWrap: {
-		paddingHorizontal: 10,
-		paddingVertical: 5,
+		paddingHorizontal: '10@s',
+		paddingVertical: '5@vs',
 	},
 })

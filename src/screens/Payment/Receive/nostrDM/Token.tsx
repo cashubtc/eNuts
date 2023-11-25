@@ -21,7 +21,8 @@ import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 interface ITokenProps {
 	sender?: IContact
@@ -131,7 +132,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 					txt={formatMintUrl(info?.mints[0] || '')}
 					styles={[{
 						color: mints.includes(info?.mints[0] || '') ? color.TEXT_SECONDARY : mainColors.WARN,
-						marginBottom: 10
+						marginBottom: vs(10)
 					}]}
 				/>
 			</View>
@@ -158,25 +159,25 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	tokenWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		borderWidth: 1,
 		borderRadius: 20,
-		paddingVertical: 10,
-		paddingHorizontal: 20,
-		marginVertical: 10,
+		paddingVertical: '10@vs',
+		paddingHorizontal: '20@s',
+		marginVertical: '10@vs',
 	},
 	amount: {
-		fontSize: 22,
+		fontSize: '20@s',
 		fontWeight: '500',
 		color: mainColors.VALID
 	},
 	redeem: {
-		paddingVertical: 5,
-		paddingHorizontal: 10,
+		paddingVertical: '5@vs',
+		paddingHorizontal: '10@s',
 		borderRadius: 50,
 	}
 })

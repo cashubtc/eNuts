@@ -5,7 +5,7 @@ import QRModal from '@comps/QRModal'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
-import { _testmintUrl, isIOS } from '@consts'
+import { _testmintUrl } from '@consts'
 import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
 import { getBackUpTokenForMint } from '@db/backup'
 import { l } from '@log'
@@ -22,7 +22,8 @@ import { formatMintUrl, formatSatStr } from '@util'
 import { checkProofsSpent } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function MintManagement({ navigation, route }: TMintManagementPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -151,12 +152,12 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<ScrollView style={{ marginBottom: isIOS ? 30 : 0 }} showsVerticalScrollIndicator={false}>
+			<ScrollView style={{ marginBottom: vs(20) }} showsVerticalScrollIndicator={false}>
 				{/* General */}
 				<Txt txt={t('general', { ns: NS.mints })} styles={[styles.sectionHeader]} />
 				<View style={globals(color).wrapContainer}>
 					{/* Balance */}
-					<View style={globals().wrapRow}>
+					<View style={[globals().wrapRow, { paddingBottom: vs(15) }]}>
 						<View style={styles.mintOption}>
 							<View style={{ minWidth: 30 }}>
 								<BitcoinIcon color={color.TEXT} />
@@ -165,7 +166,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						</View>
 						<Txt txt={formatSatStr(route.params.amount)} />
 					</View>
-					<Separator />
+					<Separator style={[styles.separator]} />
 					{/* Mint url */}
 					<MintOption
 						txt={formatMintUrl(route.params.mint?.mintUrl)}
@@ -173,7 +174,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						noChevron
 						onPress={() => void copy(route.params.mint?.mintUrl)}
 						icon={copied ?
-							<CheckmarkIcon width={20} height={20} color={mainColors.VALID} />
+							<CheckmarkIcon width={s(20)} height={s(20)} color={mainColors.VALID} />
 							:
 							<CopyIcon color={color.TEXT} />
 						}
@@ -184,7 +185,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						hasSeparator
 						noChevron
 						onPress={() => setQr({ open: true, error: false })}
-						icon={<QRIcon width={16} height={16} color={color.TEXT} />}
+						icon={<QRIcon width={s(16)} height={s(16)} color={color.TEXT} />}
 					/>
 					{/* Add custom name */}
 					<MintOption
@@ -195,7 +196,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 								setCustomNameOpen(true)
 							})()
 						}}
-						icon={<PenIcon width={22} height={22} color={color.TEXT} />}
+						icon={<PenIcon width={s(22)} height={s(22)} color={color.TEXT} />}
 						noChevron
 						hasSeparator
 					/>
@@ -203,7 +204,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<MintOption
 						txt={isDefault ? t('removeDefault', { ns: NS.mints }) : t('setDefault', { ns: NS.mints })}
 						onPress={() => void handleDefaultMint()}
-						icon={<MintBoardIcon width={22} height={22} color={color.TEXT} />}
+						icon={<MintBoardIcon width={s(22)} height={s(22)} color={color.TEXT} />}
 						noChevron
 						hasSeparator
 					/>
@@ -211,7 +212,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<MintOption
 						txt={t('mintInfo', { ns: NS.mints })}
 						onPress={() => navigation.navigate('mint info', { mintUrl: route.params.mint?.mintUrl })}
-						icon={<AboutIcon width={22} height={22} color={color.TEXT} />}
+						icon={<AboutIcon width={s(22)} height={s(22)} color={color.TEXT} />}
 					/>
 				</View>
 				{/* Fund management */}
@@ -246,14 +247,14 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt={t('multimintSwap')}
 						hasSeparator
 						onPress={() => void handleMintSwap()}
-						icon={<SwapIcon width={22} height={22} color={color.TEXT} />}
+						icon={<SwapIcon width={s(22)} height={s(22)} color={color.TEXT} />}
 					/>
 					{/* Backup mint */}
 					<MintOption
 						txt={t('mintBackup', { ns: NS.topNav })}
 						hasSeparator
 						onPress={() => void handleMintBackup()}
-						icon={<FlagIcon width={22} height={22} color={color.TEXT} />}
+						icon={<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />}
 					/>
 					{/* Proof list */}
 					<MintOption
@@ -265,7 +266,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							}
 							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
 						}}
-						icon={<EyeIcon width={22} height={22} color={color.TEXT} />}
+						icon={<EyeIcon width={s(22)} height={s(22)} color={color.TEXT} />}
 					/>
 				</View>
 				{/* Danger zone */}
@@ -276,7 +277,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						txt={t('checkProofs', { ns: NS.mints })}
 						hasSeparator
 						onPress={() => setCheckProofsOpen(true)}
-						icon={<ValidateIcon width={22} height={22} color={mainColors.WARN} />}
+						icon={<ValidateIcon width={s(22)} height={s(22)} color={mainColors.WARN} />}
 						rowColor={mainColors.WARN}
 						noChevron
 					/>
@@ -290,7 +291,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							}
 							setDelMintModalOpen(true)
 						}}
-						icon={<TrashbinIcon width={22} height={22} color={mainColors.ERROR} />}
+						icon={<TrashbinIcon width={s(22)} height={s(22)} color={mainColors.ERROR} />}
 						rowColor={mainColors.ERROR}
 						noChevron
 					/>
@@ -336,7 +337,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 					<TxtButton
 						txt={t('cancel')}
 						onPress={() => setCustomNameOpen(false)}
-						style={[{ paddingTop: 30, paddingBottom: 15 }]}
+						style={[{ paddingTop: vs(30), paddingBottom: vs(15) }]}
 					/>
 				</MyModal>
 			}
@@ -365,37 +366,40 @@ function MintOption({ txt, onPress, icon, rowColor, hasSeparator, noChevron }: I
 	const { color } = useThemeContext()
 	return (
 		<>
-			<TouchableOpacity onPress={onPress} style={globals().wrapRow}>
+			<TouchableOpacity onPress={onPress} style={[globals().wrapRow, { paddingBottom: vs(15) }]}>
 				<View style={styles.mintOption}>
-					<View style={{ minWidth: 30 }}>
+					<View style={{ minWidth: s(30) }}>
 						{icon}
 					</View>
 					<Txt txt={txt} styles={[{ color: rowColor || color.TEXT }]} />
 				</View>
 				{!noChevron ? <ChevronRightIcon color={color.TEXT} /> : <View />}
 			</TouchableOpacity>
-			{hasSeparator && <Separator />}
+			{hasSeparator && <Separator style={[styles.separator]} />}
 		</>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
-		paddingTop: 100
+		paddingTop: '90@vs',
 	},
 	mintUrl: {
-		fontSize: 16,
-		marginRight: 10,
+		fontSize: '14@vs',
+		marginRight: '10@s',
 		fontWeight: '500',
 	},
 	sectionHeader: {
 		fontWeight: '500',
-		paddingHorizontal: 20,
-		marginTop: 20,
-		marginBottom: 10
+		paddingHorizontal: '20@s',
+		marginTop: '20@vs',
+		marginBottom: '10@vs',
 	},
 	mintOption: {
 		flexDirection: 'row',
 		alignItems: 'center'
+	},
+	separator: {
+		marginBottom: '15@vs'
 	}
 })

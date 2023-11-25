@@ -1,57 +1,57 @@
-import { isIOS } from '@consts'
-import { StyleSheet } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 import { highlight, type HighlightKey, mainColors, type Theme } from './colors'
 
-export const globalStyles = (color?: Theme, h?: HighlightKey) => StyleSheet.create({
+export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 110,
+		paddingTop: '100@vs',
 		backgroundColor: color?.BACKGROUND
 	},
 	txt: {
-		fontSize: 16,
+		fontSize: '14@vs',
 		color: color?.TEXT
 	},
 	txtBold: {
-		fontSize: 16,
+		fontSize: '14@vs',
 		fontWeight: '500',
 		color: color?.TEXT
 	},
 	pressTxt: {
-		fontSize: 16,
+		fontSize: '14@vs',
 		fontWeight: '500',
 		textAlign: 'center',
 		color: h ? highlight[h] : mainColors.BLACK
 	},
 	navTxt: {
-		fontSize: 20,
+		fontSize: '18@vs',
 		fontWeight: '500',
 		color: color?.TEXT
 	},
 	input: {
 		color: color?.TEXT,
 		backgroundColor: color?.INPUT_BG,
-		padding: 20,
+		paddingHorizontal: '18@s',
+		paddingVertical: '18@vs',
 		borderRadius: 50,
-		fontSize: 16,
+		fontSize: '14@vs',
 		width: '100%',
 	},
 	modalHeader: {
-		fontSize: 24,
+		fontSize: '22@vs',
 		fontWeight: '500',
-		marginBottom: 30,
-		marginTop: 10,
+		marginBottom: '30@vs',
+		marginTop: '10@vs',
 		textAlign: 'center',
 		color: color?.TEXT,
 	},
 	modalTxt: {
-		fontSize: 16,
+		fontSize: '14@vs',
 		textAlign: 'center',
 		color: color?.TEXT,
 		marginHorizontal: 20,
 		marginTop: -15,
-		marginBottom: 30,
+		marginBottom: '30@vs',
 	},
 	scrollContainer: {
 		flex: 1,
@@ -63,28 +63,30 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => StyleSheet.crea
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: 20,
+		paddingHorizontal: '20@s',
+		paddingVertical: '20@vs',
 	},
 	wrapContainer: {
 		borderRadius: 20,
 		backgroundColor: color?.DRAWER,
-		paddingHorizontal: 20,
-		paddingTop: 20,
+		paddingHorizontal: '20@s',
+		paddingTop: '20@vs',
 		paddingBottom: 0,
-		marginBottom: isIOS ? 50 : 20,
+		marginBottom: '25@vs',
 	},
 	wrapRow: {
 		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: 20,
+		paddingBottom: '20@vs',
 		// backgroundColor: '#fff'
 	},
 	radioBtn: {
 		borderWidth: 1,
-		borderRadius: 50,
-		padding: 10,
+		width: '20@s',
+		height: '20@s',
+		borderRadius: '10@s',
 		borderColor: color?.BORDER
 	},
 	bold: {
@@ -92,8 +94,8 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => StyleSheet.crea
 	},
 	selectAmount: {
 		width: '100%',
-		fontSize: 52,
-		marginBottom: 5,
+		fontSize: '48@vs',
+		marginBottom: '5@vs',
 		fontWeight: '600',
 		padding: 0,
 		textAlign: 'center',

@@ -6,7 +6,8 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 import MsgContent from './MsgContent'
 import Sender from './Sender'
@@ -35,13 +36,13 @@ export default function NostrMessage({ msgEntry, sender, dms, setDms, mints, nav
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	msgContainer: {
-		paddingVertical: 10,
-		marginBottom: 20,
+		paddingVertical: '10@vs',
+		marginBottom: '20@vs',
 	},
 	separator: {
-		marginTop: 10,
-		marginBottom: 20,
+		marginTop: '10@vs',
+		marginBottom: '20@vs',
 	}
 })

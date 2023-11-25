@@ -14,7 +14,8 @@ import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Animated, SafeAreaView, Text, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import PinHint from './Hint'
 import PinDots from './PinDots'
@@ -234,13 +235,13 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			]}
 		>
 			{success ?
-				<UnlockIcon width={40} height={40} color={mainColors.WHITE} />
+				<UnlockIcon width={s(40)} height={s(40)} color={mainColors.WHITE} />
 				:
 				<>
 					{attempts.locked && !isConfirm && <View />}
 					<View style={styles.lockWrap}>
 						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
-							<LockIcon width={40} height={40} color={mainColors.WHITE} />
+							<LockIcon width={s(30)} height={s(30)} color={mainColors.WHITE} />
 						</Animated.View>
 						{!shouldEdit && !shouldRemove && auth.length > 0 &&
 							<Txt txt={t('walletLocked')} bold styles={[styles.lockTxt]} />
@@ -313,36 +314,35 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		flex: 1,
 		alignItems: 'center',
-		paddingTop: 20,
-		paddingHorizontal: 20,
+		paddingHorizontal: '20@s',
 	},
 	lockWrap: {
 		alignItems: 'center',
-		marginTop: 60,
+		marginTop: '30@vs',
 	},
 	lockTxt: {
-		marginTop: 10,
-		marginBottom: 20,
+		marginTop: '10@vs',
+		marginBottom: '20@vs',
 		color: mainColors.WHITE
 	},
 	bottomSection: {
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 20,
+		marginBottom: '20@vs',
 	},
 	mismatch: {
-		marginVertical: 10,
+		marginVertical: '10@vs',
 	},
 	skip: {
-		paddingTop: 20,
-		paddingBottom: 10,
+		paddingTop: '20@vs',
+		paddingBottom: '10@vs',
 	},
 	lockedTime: {
-		fontSize: 24,
+		fontSize: '22@vs',
 		color: mainColors.WHITE
 	}
 })

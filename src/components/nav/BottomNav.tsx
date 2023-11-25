@@ -1,6 +1,5 @@
 import { BookIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
-import { isIOS } from '@consts'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -9,7 +8,8 @@ import { STORE_KEYS } from '@store/consts'
 import { highlight as hi } from '@styles'
 import { isStr } from '@util'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, TouchableOpacity } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { t } = useTranslation([NS.topNav])
@@ -37,13 +37,13 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		route.name === 'Contacts settings'
 
 	return (
-		<View style={[styles.bottomNav, { backgroundColor: color.BACKGROUND, paddingBottom: isIOS ? 40 : 10 }]}>
+		<SafeAreaView style={[styles.bottomNav, { backgroundColor: color.BACKGROUND, paddingBottom: vs(10) }]}>
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => void handleNav('dashboard')}
 				disabled={isWalletRelatedScreen}
 			>
-				<WalletIcon width={28} height={28} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
+				<WalletIcon width={s(26)} height={s(26)} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt='Wallet'
 					styles={[styles.iconTxt, {
@@ -57,7 +57,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				onPress={() => void handleNav('Address book')}
 				disabled={route.name === 'Address book'}
 			>
-				<BookIcon width={28} height={28} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
+				<BookIcon width={s(26)} height={s(26)} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('contacts', { ns: NS.bottomNav })}
 					styles={[
@@ -73,7 +73,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				onPress={() => void handleNav('Settings')}
 				disabled={isSettingsRelatedScreen}
 			>
-				<SettingsIcon width={28} height={28} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
+				<SettingsIcon width={s(26)} height={s(26)} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('settings')}
 					styles={[styles.iconTxt, {
@@ -82,11 +82,11 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 					}]}
 				/>
 			</TouchableOpacity>
-		</View>
+		</SafeAreaView>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	bottomNav: {
 		position: 'absolute',
 		left: 0,
@@ -97,12 +97,12 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-around',
 	},
 	navIcon: {
-		minWidth: 100,
+		minWidth: '100@s',
 		alignItems: 'center',
-		marginTop: 10,
+		marginTop: '10@vs',
 	},
 	iconTxt: {
-		fontSize: 14,
-		marginTop: 4,
+		fontSize: '12@vs',
+		marginTop: '4@vs',
 	}
 })

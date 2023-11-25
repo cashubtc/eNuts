@@ -1,7 +1,8 @@
 import { isIOS } from '@consts'
 import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi } from '@styles'
-import { StyleSheet, Switch } from 'react-native'
+import { Switch } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 interface IToggleProps {
 	value: boolean,
@@ -21,9 +22,9 @@ export default function Toggle({ value, onChange }: IToggleProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	switch: {
-		marginVertical: -10,
+		marginVertical: '-10@vs',
 		transform: [{ scaleX: isIOS ? .6 : 1 }, { scaleY: isIOS ? .6 : 1 }]
 	}
 })

@@ -2,7 +2,8 @@ import type { IContact } from '@model/nostr'
 import { FlashList } from '@shopify/flash-list'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { TouchableOpacity } from 'react-native'
+import { s, vs } from 'react-native-size-matters'
 
 import ProfilePic from './ProfilePic'
 
@@ -30,15 +31,11 @@ export default function Recents({ handleSend }: IRecentsProps) {
 					/>
 				</TouchableOpacity>
 			)}
-			contentContainerStyle={styles.recentList}
+			contentContainerStyle={{
+				paddingVertical: vs(10),
+				paddingLeft: s(20),
+				paddingRight: 0,
+			}}
 		/>
 	)
 }
-
-const styles = StyleSheet.create({
-	recentList: {
-		paddingVertical: 10,
-		paddingLeft: 20,
-		paddingRight: 0,
-	}
-})

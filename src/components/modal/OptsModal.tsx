@@ -7,7 +7,8 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { mainColors } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet } from 'react-native'
+import { ScrollView } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import MyModal from '.'
 
@@ -45,15 +46,15 @@ export default function OptsModal({
 				center
 				styles={[styles.hint]}
 			/>
-			<ScrollView style={styles.optionWrap}>
+			<ScrollView style={styles.optionWrap} alwaysBounceVertical={false}>
 				<Option
-					icon={isSend ? <SendMsgIcon width={16} height={16} color={mainColors.VALID} /> : <CopyIcon color={mainColors.VALID} />}
+					icon={isSend ? <SendMsgIcon width={s(16)} height={s(16)} color={mainColors.VALID} /> : <CopyIcon color={mainColors.VALID} />}
 					txt={button1Txt}
 					hint={isSend ? t('sendEcashDashboard') : t('receiveEcashDashboard')}
 					onPress={onPressFirstBtn}
 					hasSeparator
 					loading={loading}
-					secondIcon={!isSend && <ReceiveIcon width={26} height={26} color={color.TEXT} />}
+					secondIcon={!isSend && <ReceiveIcon width={s(26)} height={s(26)} color={color.TEXT} />}
 				/>
 				{!isSend && nutPub.length > 0 &&
 					<Option
@@ -65,7 +66,7 @@ export default function OptsModal({
 					/>
 				}
 				<Option
-					icon={<ZapIcon width={26} height={26} color={mainColors.ZAP} />}
+					icon={<ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />}
 					txt={button2Txt}
 					hint={isSend ? t('payInvoiceDashboard') : t('createInvoiceDashboard')}
 					onPress={onPressSecondBtn}
@@ -73,20 +74,20 @@ export default function OptsModal({
 				<TxtButton
 					txt={t('cancel')}
 					onPress={onPressCancel}
-					style={[{ paddingBottom: 15, paddingTop: 15 }]}
+					style={[{ paddingBottom: vs(15), paddingTop: vs(15) }]}
 				/>
 			</ScrollView>
 		</MyModal>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	optionWrap: {
 		width: '100%',
-		paddingHorizontal: 10
+		paddingHorizontal: '10@s'
 	},
 	hint: {
-		fontSize: 20,
-		marginBottom: 30,
+		fontSize: '18@vs',
+		marginBottom: '30@vs',
 	},
 })

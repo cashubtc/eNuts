@@ -13,7 +13,8 @@ import { globals } from '@styles'
 import { checkFees, claimToken } from '@wallet'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 export default function QRProcessingScreen({ navigation, route }: TQRProcessingPageProps) {
 	const { t } = useTranslation([NS.mints])
@@ -190,19 +191,19 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',
 		justifyContent: 'center',
-		paddingHorizontal: 20
+		paddingHorizontal: '20@s',
 	},
 	descText: {
-		marginTop: 20,
+		marginTop: '20@vs',
 		textAlign: 'center',
 	},
 	hint: {
-		fontSize: 14,
-		marginTop: 10,
+		fontSize: '12@vs',
+		marginTop: '10@vs',
 	}
 })

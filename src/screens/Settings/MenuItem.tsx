@@ -3,7 +3,8 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { useThemeContext } from '@src/context/Theme'
 import { globals } from '@styles'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 interface IMenuItemProps {
 	txt: string
@@ -18,7 +19,7 @@ export default function SettingsMenuItem({ txt, icon, onPress, hasSeparator, has
 	return (
 		<>
 			<TouchableOpacity
-				style={globals().wrapRow}
+				style={[globals().wrapRow, { paddingBottom: vs(15) }]}
 				onPress={onPress}
 			>
 				<View style={styles.setting}>
@@ -30,17 +31,17 @@ export default function SettingsMenuItem({ txt, icon, onPress, hasSeparator, has
 				</View>
 				{hasChevron && <ChevronRightIcon color={color.TEXT} />}
 			</TouchableOpacity>
-			{hasSeparator && <Separator />}
+			{hasSeparator && <Separator style={[{ marginBottom: vs(15) }]} />}
 		</>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	setting: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	settingTxt: {
-		marginLeft: 15,
+		marginLeft: '15@s',
 	},
 })

@@ -5,7 +5,8 @@ import { NS } from '@src/i18n'
 import { mainColors } from '@src/styles'
 import { isErr, openUrl } from '@util'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export interface ErrorDetailsProps {
 	error: Error
@@ -20,7 +21,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 	return (
 		<View style={styles.container}>
 			<Txt txt={t('header')} bold styles={[styles.header]} />
-			<Txt txt={t('msg')} styles={[{ marginBottom: 20 }]} />
+			<Txt txt={t('msg')} styles={[{ marginBottom: s(20) }]} />
 			<ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 				<Txt txt={props.error.message} styles={[{ color: mainColors.ERROR }]} />
 				<Txt txt={props?.componentStack || t('stackNA')} />
@@ -36,22 +37,22 @@ export function ErrorDetails(props: ErrorDetailsProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		flex: 1,
-		paddingHorizontal: 20,
-		paddingBottom: 20,
-		paddingTop: 80,
+		paddingHorizontal: '20@s',
+		paddingBottom: '20@vs',
+		paddingTop: '80@vs',
 	},
 	header: {
-		fontSize: 24,
-		marginBottom: 30,
+		fontSize: '22@vs',
+		marginBottom: '30@vs',
 		textAlign: 'center',
 	},
 	scroll: {
-		marginBottom: 20,
+		marginBottom: '20@vs',
 	},
 	bugReport: {
-		padding: 20,
+		padding: '20@vs',
 	},
 })

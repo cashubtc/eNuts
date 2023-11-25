@@ -21,7 +21,8 @@ import { getUnixTimestampFromDaysAgo, isCashuToken } from '@util'
 import { Event as NostrEvent } from 'nostr-tools'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 import NostrMessage from './NostrMessage'
 
@@ -136,7 +137,7 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 							styles={[styles.heading]}
 						/>
 					}
-					<ScrollView style={{ marginBottom: isIOS ? 30 : 0 }}>
+					<ScrollView style={{ marginBottom: isIOS ? vs(30) : 0 }} alwaysBounceVertical={false}>
 						{dms.length ?
 							dms.map(dm => (
 								<NostrMessage
@@ -164,25 +165,25 @@ export default function NostrDMScreen({ navigation, route }: TNostrReceivePagePr
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	loadingContainer: {
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginBottom: 100,
+		marginBottom: '90@vs',
 	},
 	heading: {
 		fontWeight: '500',
-		paddingHorizontal: 20,
-		marginBottom: 20,
+		paddingHorizontal: '20@s',
+		marginBottom: '20@vs',
 	},
 	loadingtxt: {
-		marginTop: 20,
-		marginBottom: 10,
+		marginTop: '20@vs',
+		marginBottom: '10@vs',
 		textAlign: 'center',
 	},
 	hint: {
-		fontSize: 14,
-		marginBottom: 20
+		fontSize: '12@vs',
+		marginBottom: '20@vs',
 	}
 })

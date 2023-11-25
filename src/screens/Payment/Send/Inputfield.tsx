@@ -14,7 +14,8 @@ import { decodeLnInvoice, getStrFromClipboard, isErr, isLnurl, openUrl } from '@
 import { checkFees } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
 import { MeltOverview } from '../SelectAmount'
 
@@ -41,7 +42,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		const clipboard = await getStrFromClipboard()
 		if (!clipboard) { return }
 		setInput(clipboard)
-		// pasted LNURL which does not need decoding
+		// pasted LNURL address which does not need decoding
 		if (isLnurl(clipboard)) { return }
 		// pasted LN invoice
 		await handleInvoicePaste(clipboard)
@@ -49,15 +50,13 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 
 	const handleInvoicePaste = async (clipboard: string) => {
 		try {
-			const { amount } = decodeLnInvoice(clipboard)
-			setDecodedAmount(amount / 1000)
 			startLoading()
-			// l({ mintUrl: mint.mintUrl })
+			const { amount } = decodeLnInvoice(clipboard)
+			setDecodedAmount(amount)
 			const fee = await checkFees(mint.mintUrl, clipboard)
-			// l({ estFee: fee })
 			setEstFee(fee)
-			stopLoading()
 			inputRef.current?.blur()
+			stopLoading()
 		} catch (e) {
 			// invalid LN invoice
 			stopLoading()
@@ -66,23 +65,20 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		}
 	}
 
-	const handleBtnPress = async () => {
+	const handleBtnPress = () => {
 		if (loading) { return }
 		// open user LN wallet
 		if (!input.length) {
-			await openUrl('lightning://')?.catch(e =>
+			return openUrl('lightning://')?.catch(e =>
 				openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-			return
 		}
 		// user pasted a LNURL, we need to get the amount by the user
 		if (isLnurl(input)) {
-			navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: input })
-			return
+			return navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: input })
 		}
 		// not enough funds
 		if (decodedAmount + estFee > balance) {
-			openPromptAutoClose({ msg: t('noFunds') })
-			return
+			return openPromptAutoClose({ msg: t('noFunds') })
 		}
 		// user pasted a LN invoice before submitting
 		try {
@@ -90,8 +86,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			const { timeLeft } = decodeLnInvoice(input)
 			// Invoice expired
 			if (timeLeft <= 0) {
-				openPromptAutoClose({ msg: t('expired') + '!' })
-				return
+				return openPromptAutoClose({ msg: t('expired') + '!' })
 			}
 			// navigate to coin selection screen
 			navigation.navigate('coinSelection', {
@@ -191,39 +186,39 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		paddingBottom: isIOS ? 50 : 20,
-		paddingTop: 110,
+		paddingBottom: isIOS ? '50@vs' : '20@vs',
+		paddingTop: '90@vs',
 	},
 	hint: {
-		paddingHorizontal: 20,
-		marginBottom: 20,
+		paddingHorizontal: '20@s',
+		marginBottom: '20@vs',
 		fontWeight: '500',
 	},
 	feeHint: {
-		fontSize: 12,
-		paddingHorizontal: 20,
-		marginTop: 10,
+		fontSize: '10@vs',
+		paddingHorizontal: '20@s',
+		marginTop: '10@vs',
 	},
 	pasteInputTxtWrap: {
 		position: 'absolute',
-		right: 10,
-		top: 10,
-		padding: 10
+		right: '10@s',
+		top: '10@vs',
+		padding: '10@s',
 	},
 	overviewWrap: {
 		width: '100%',
-		paddingVertical: 20,
-		paddingBottom: 20,
+		paddingVertical: '20@vs',
+		paddingBottom: '20@vs',
 		marginBottom: 0
 	},
 	paddingHorizontal: {
-		paddingHorizontal: 20
+		paddingHorizontal: '20@s'
 	},
 	loadingWrap: {
-		marginTop: 40,
+		marginTop: '40@vs',
 	}
 })

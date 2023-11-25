@@ -19,7 +19,8 @@ import { isStr } from '@util'
 import { nip19 } from 'nostr-tools'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import ProfilePic from '../ProfilePic'
 import Username from '../Username'
@@ -119,7 +120,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					<ProfilePic
 						hex={contact?.hex}
 						uri={contact?.picture}
-						size={100}
+						size={s(70)}
 						isUser={isUser}
 					/>
 				</View>
@@ -128,7 +129,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						<SmallBtn onPress={openEditSheet}>
 							<PenIcon color={mainColors.WHITE} />
 						</SmallBtn>
-						<View style={{ marginHorizontal: 5 }} />
+						<View style={{ marginHorizontal: s(5) }} />
 						<SmallBtn onPress={openDeleteSheet}>
 							<TrashbinIcon color={mainColors.WHITE} />
 						</SmallBtn>
@@ -137,7 +138,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			</View>
 			<View style={styles.contentWrap}>
 				{/* username */}
-				<Username contact={contact} fontSize={24} />
+				<Username contact={contact} fontSize={vs(22)} />
 				{/* npub */}
 				<View style={styles.npubWrap}>
 					<Txt
@@ -156,7 +157,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 					<Lud lud16={contact?.lud16} lud06={contact?.lud06} onPress={handlePress} />
 				</View>
 				{/* about */}
-				<ScrollView>
+				<ScrollView alwaysBounceVertical={false}>
 					{contact?.about && contact.about.length > 0 &&
 						<Txt txt={contact.about} styles={[styles.about]} />
 					}
@@ -194,11 +195,11 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 						onChangeText={text => setNewNpub(text)}
 						value={newNpub}
 						onSubmitEditing={() => void editNpub()}
-						style={[{ paddingRight: 60 }]}
+						style={[{ paddingRight: s(55) }]}
 					/>
 					{/* scan icon */}
 					<TouchableOpacity
-						style={[styles.inputQR, { backgroundColor: color.INPUT_BG }]}
+						style={styles.inputQR}
 						onPress={() => {
 							closeSheet()
 							const t = setTimeout(() => {
@@ -240,19 +241,19 @@ function SmallBtn({ children, onPress }: ISmallBtnProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		paddingTop: 0
 	},
 	backBtn: {
 		backgroundColor: 'rgba(0, 0, 0, .4)',
 		position: 'absolute',
-		top: 50,
-		left: 20,
+		top: '50@vs',
+		left: '20@s',
 		zIndex: 1,
-		width: 40,
-		height: 40,
-		borderRadius: 20,
+		width: '40@s',
+		height: '40@s',
+		borderRadius: '20@s',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center'
@@ -263,60 +264,63 @@ const styles = StyleSheet.create({
 	},
 	wrap: {
 		position: 'relative',
-		width: '100%'
+		width: '100%',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	inputQR: {
 		position: 'absolute',
-		right: 15,
-		top: 22,
-		paddingHorizontal: 10
+		right: '13@s',
+		height: '41@vs',
+		paddingHorizontal: '10@s',
 	},
 	picWrap: {
-		width: 100,
-		height: 100,
-		borderRadius: 50,
+		width: '70@s',
+		height: '70@s',
+		borderRadius: 35,
 		overflow: 'hidden'
 	},
 	profilePicContainer: {
 		flexDirection: 'row',
 		alignItems: 'flex-end',
 		justifyContent: 'space-between',
-		marginTop: -50,
-		paddingHorizontal: 20,
+		marginTop: '-35@s',
+		paddingHorizontal: '20@s',
 	},
 	sendEcash: {
-		paddingHorizontal: 10,
-		paddingVertical: 5,
+		paddingHorizontal: '10@s',
+		paddingVertical: '5@vs',
 		borderRadius: 50,
-		marginBottom: 5,
+		marginBottom: '-5@vs',
 	},
 	sendTxt: {
 		color: mainColors.WHITE,
 	},
 	contentWrap: {
-		paddingTop: 10,
-		paddingHorizontal: 20,
+		paddingTop: '10@vs',
+		paddingHorizontal: '20@s',
 	},
 	npubWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	npub: {
-		fontSize: 14,
+		fontSize: '12@vs',
 	},
 	tagsWrap: {
-		marginTop: 20,
+		marginTop: '20@vs',
 	},
 	about: {
-		marginTop: 20,
+		marginTop: '20@vs',
 	},
 	newNpubHintTxt: {
 		color: mainColors.WARN
 	},
 	sendBtn: {
 		position: 'absolute',
-		bottom: 20,
-		left: 20,
-		right: 20,
+		bottom: '20@vs',
+		left: '20@s',
+		right: '20@s',
 	}
 })

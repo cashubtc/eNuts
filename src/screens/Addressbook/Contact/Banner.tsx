@@ -4,7 +4,8 @@ import { imgProxy } from '@nostr/consts'
 import { isStr } from '@util'
 import { Image } from 'expo-image'
 import { useState } from 'react'
-import { Dimensions, StyleSheet, View } from 'react-native'
+import { Dimensions, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 import { headers } from '../const'
 
@@ -33,7 +34,7 @@ export default function ProfileBanner({ hex, uri, dimmed, isSending }: IProfileB
 						cachePolicy='disk'
 						transition={200}
 						contentFit='cover'
-						style={[styles.banner, { height: isSending ? 150 : 200 }]}
+						style={[styles.banner, { height: isSending ? vs(140) : vs(180) }]}
 					/>
 					<View style={[styles.overlay, { backgroundColor: dimmed ? 'rgba(0, 0, 0, .5)' : 'transparent' }]} />
 				</>
@@ -49,7 +50,7 @@ export default function ProfileBanner({ hex, uri, dimmed, isSending }: IProfileB
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	imgWrap: {
 		width: '100%',
 		justifyContent: 'center',
@@ -61,14 +62,14 @@ const styles = StyleSheet.create({
 	},
 	defaultBanner: {
 		width: undefined,
-		height: 350,
+		height: '320@vs',
 		opacity: .4,
-		marginTop: -150
+		marginTop: '-140@vs',
 	},
 	overlay: {
 		position: 'absolute',
 		width: '100%',
-		height: 200,
+		height: '140@vs',
 		zIndex: 1
 	},
 })

@@ -1,4 +1,4 @@
-import { GithubIcon, ReadmeIcon, TelegramIcon } from '@comps/Icons'
+import { GithubIcon, OutlinedFavIcon, ReadmeIcon, TelegramIcon } from '@comps/Icons'
 import LeaveAppModal from '@comps/LeaveAppModal'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
@@ -29,7 +29,7 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					<MenuItem
 						txt={t('readme')}
@@ -41,6 +41,12 @@ export default function AboutSettings({ navigation }: TAboutSettingsPageProps) {
 						txt={t('githubIssues')}
 						icon={<GithubIcon color={color.TEXT} />}
 						onPress={() => handlePress('https://github.com/cashubtc/eNuts/issues/new/choose')}
+						hasSeparator
+					/>
+					<MenuItem
+						txt={t('leaveGithubStar')}
+						icon={<OutlinedFavIcon color={color.TEXT} />}
+						onPress={() => handlePress('https://github.com/cashubtc/eNuts')}
 						hasSeparator
 					/>
 					<MenuItem

@@ -9,7 +9,8 @@ import { NS } from '@src/i18n'
 import { globals, highlight as hi } from '@styles'
 import { isErr } from '@util'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function MintConfirmScreen({ navigation, route }: TMintConfirmPageProps) {
 
@@ -38,7 +39,7 @@ export default function MintConfirmScreen({ navigation, route }: TMintConfirmPag
 		<View style={[globals(color).container, styles.container]}>
 			<View />
 			<View style={styles.infoWrap}>
-				<MintBoardIcon width={40} height={40} color={hi[highlight]} />
+				<MintBoardIcon width={s(40)} height={s(40)} color={hi[highlight]} />
 				<Text style={globals(color).modalHeader}>
 					{t('confirmMint')}
 				</Text>
@@ -61,18 +62,18 @@ export default function MintConfirmScreen({ navigation, route }: TMintConfirmPag
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: 20
+		padding: '20@s',
 	},
 	descText: {
-		marginBottom: 10,
+		marginBottom: '10@vs',
 		textAlign: 'center',
 	},
 	hint: {
-		fontSize: 14,
+		fontSize: '12@vs',
 		textAlign: 'center',
 	},
 	infoWrap: {

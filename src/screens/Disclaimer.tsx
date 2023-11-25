@@ -3,12 +3,12 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { TDisclaimerPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 	const { color } = useThemeContext()
@@ -20,7 +20,7 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<ScrollView style={styles.container}>
+			<ScrollView style={styles.container} alwaysBounceVertical={false}>
 				<Txt
 					txt={t('disclaimerHint', { ns: NS.common })}
 					bold
@@ -31,11 +31,11 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 						onPress={() => navigation.navigate('About settings')}
 						style={styles.shareFeedback}
 					>
-						<Txt txt={t('shareOrReport', { ns: NS.common })} bold styles={[{ fontSize: 18 }]} />
+						<Txt txt={t('shareOrReport', { ns: NS.common })} bold styles={[{ fontSize: vs(16) }]} />
 						<ChevronRightIcon color={color.TEXT} />
 					</TouchableOpacity>
 				</View>
-				<View style={{ marginHorizontal: 20 }}>
+				<View style={{ marginHorizontal: s(20) }}>
 					{/* beta */}
 					<Txt txt={t('enutsDisclaimer')} bold styles={[styles.header, { color: color.TEXT }]} />
 					<Txt txt={t('disclaimer')} styles={[{ color: color.TEXT_SECONDARY }]} />
@@ -61,32 +61,33 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	container: {
-		marginTop: 110,
-		marginBottom: isIOS ? 25 : 0,
+		marginTop: '90@vs',
+		paddingTop: '20@vs',
+		marginBottom: '20@vs',
 	},
 	header: {
-		fontSize: 18,
-		marginBottom: 10,
+		fontSize: '16@vs',
+		marginBottom: '10@vs',
 	},
 	subheader: {
-		paddingHorizontal: 20,
-		marginBottom: 20,
+		paddingHorizontal: '20@s',
+		marginBottom: '20@vs',
 	},
 	separator: {
-		marginVertical: 20
+		marginVertical: '20@vs',
 	},
 	ok: {
 		position: 'absolute',
-		bottom: 20,
-		right: 20,
-		left: 20,
+		bottom: '20@vs',
+		right: '20@s',
+		left: '20@s',
 	},
 	shareFeedback: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: 20
+		paddingBottom: '20@vs',
 	}
 })

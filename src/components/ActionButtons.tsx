@@ -1,5 +1,6 @@
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import Button from './Button'
 
@@ -32,7 +33,7 @@ export default function ActionButtons({
 			style={[
 				styles.actionWrap,
 				ontopOfNav ? styles.ontopOfNav : {},
-				absolutePos ? { ...styles.absolute, bottom: insets.bottom } : {},
+				absolutePos ? { position: 'absolute', right: 0, left: 0, padding: s(20), bottom: insets.bottom } : {},
 			]}
 		>
 			<Button
@@ -41,7 +42,7 @@ export default function ActionButtons({
 				onPress={topBtnAction}
 				icon={topIcon}
 			/>
-			<View style={{ marginVertical: 10 }} />
+			<View style={{ marginVertical: vs(10) }} />
 			<Button
 				txt={bottomBtnTxt}
 				outlined
@@ -52,20 +53,14 @@ export default function ActionButtons({
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	actionWrap: {
 		width: '100%',
 		alignItems: 'center'
 	},
 	ontopOfNav: {
-		paddingLeft: 20,
-		paddingRight: 20,
-		marginBottom: 75,
-	},
-	absolute: {
-		position: 'absolute',
-		right: 0,
-		left: 0,
-		padding: 20,
+		paddingLeft: '20@s',
+		paddingRight: '20@s',
+		marginBottom: '70@vs',
 	},
 })

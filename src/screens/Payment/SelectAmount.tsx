@@ -15,7 +15,8 @@ import { cleanUpNumericStr, formatSatStr, getInvoiceFromLnurl, vib } from '@util
 import { checkFees, requestMint } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, KeyboardAvoidingView, StyleSheet, TextInput, View } from 'react-native'
+import { Animated, KeyboardAvoidingView, TextInput, View } from 'react-native'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
 	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
@@ -56,13 +57,11 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				const lnurlInvoice = await getInvoiceFromLnurl(lnurl, +amount)
 				if (!lnurlInvoice?.length) {
 					openPromptAutoClose({ msg: t('feeErr', { ns: NS.common, input: lnurl }) })
-					setFee(prev => ({ ...prev, isCalculating: false }))
-					return
+					return setFee(prev => ({ ...prev, isCalculating: false }))
 				}
 				const estFee = await checkFees(mint.mintUrl, lnurlInvoice)
 				setFee({ estimation: estFee, isCalculating: false })
-				setShouldEstimate(false)
-				return
+				return setShouldEstimate(false)
 			}
 			// check fee for multimint swap
 			if (isSwap && targetMint?.mintUrl.length) {
@@ -86,7 +85,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		return t(shouldEstimate ? 'estimateFee' : 'continue', { ns: NS.common })
 	}
 
-	const handleAmountSubmit = async () => {
+	const handleAmountSubmit = () => {
 		if (fee.isCalculating || balTooLow) { return }
 		const isSendingTX = isSendEcash || isMelt || isSwap
 		// error & shake animation if amount === 0 or greater than mint balance
@@ -102,14 +101,13 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		}
 		// estimate melting/swap fee
 		if (!isSendEcash && shouldEstimate && (lnurl?.length || isSwap)) {
-			await handleFeeEstimation(lnurl || '')
-			return
+			return handleFeeEstimation(lnurl || '')
 		}
 		// send ecash / melt / swap
 		if (isSendingTX) {
 			// Check if user melts/swaps his whole mint balance, so there is no need for coin selection and that can be skipped here
 			if (!isSendEcash && isSendingWholeMintBal()) {
-				navigation.navigate('processing', {
+				return navigation.navigate('processing', {
 					mint,
 					amount: +amount,
 					estFee: fee.estimation,
@@ -119,20 +117,18 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					targetMint,
 					recipient: lnurl
 				})
-				return
 			}
 			// optional memo
 			if (isSendEcash) {
-				navigation.navigate('memoScreen', {
+				return navigation.navigate('memoScreen', {
 					mint,
 					balance,
 					amount: +amount,
 					nostr,
 					isSendingWholeMintBal: !nostr && isSendingWholeMintBal()
 				})
-				return
 			}
-			navigation.navigate('coinSelection', {
+			return navigation.navigate('coinSelection', {
 				mint,
 				balance,
 				amount: +amount,
@@ -143,7 +139,6 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				targetMint,
 				recipient: lnurl
 			})
-			return
 		}
 		// request new token from mint
 		navigation.navigate('processing', { mint, amount: +amount })
@@ -183,7 +178,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					styles={[styles.headerHint]}
 				/>
 			}
-			<View style={[styles.overviewWrap, { marginTop: isMelt || isSwap ? 0 : 20 }]}>
+			<View style={[styles.overviewWrap, { marginTop: isMelt || isSwap ? 0 : vs(20) }]}>
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
 						keyboardType='numeric'
@@ -204,7 +199,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				/>
 				{(isMelt || isSwap) &&
 					<>
-						<Separator style={[{ marginVertical: 20 }]} />
+						<Separator style={[{ marginVertical: vs(20) }]} />
 						<MeltOverview
 							amount={+amount}
 							shouldEstimate={shouldEstimate}
@@ -252,17 +247,17 @@ export function MeltOverview({ amount, shouldEstimate, balTooLow, isInvoice, fee
 				bold
 			/>
 			<Txt
-				txt={formatSatStr(shouldEstimate ? 0 : amount + fee)}
+				txt={formatSatStr(shouldEstimate ? 0 : (amount + fee))}
 				styles={[{ color: !shouldEstimate && balTooLow ? mainColors.ERROR : shouldEstimate ? color.TEXT : mainColors.VALID }]}
 			/>
 		</View>
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	headerHint: {
-		paddingHorizontal: 20,
-		marginBottom: 20,
+		paddingHorizontal: '20@s',
+		marginBottom: '20@vs',
 		fontWeight: '500'
 	},
 	amountWrap: {
@@ -272,14 +267,14 @@ const styles = StyleSheet.create({
 	continue: {
 		flex: 1,
 		position: 'absolute',
-		right: 20,
-		left: 20,
-		bottom: 20,
+		right: '20@s',
+		left: '20@s',
+		bottom: '20@vs',
 		alignItems: 'center'
 	},
 	overviewWrap: {
 		width: '100%',
-		paddingHorizontal: 20,
+		paddingHorizontal: '20@s',
 	},
 	overview: {
 		flexDirection: 'row',
@@ -287,13 +282,13 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	sats: {
-		fontSize: 14,
+		fontSize: '12@vs',
 		textAlign: 'center',
-		marginLeft: -4,
-		marginTop: -5
+		marginLeft: '-4@s',
+		marginTop: '-5@vs'
 	},
 	feeHint: {
-		fontSize: 12,
-		marginTop: 10,
+		fontSize: '10@vs',
+		marginTop: '10@vs',
 	},
 })

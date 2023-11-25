@@ -80,6 +80,7 @@
 		"english": "Englisch",
 		"spanish": "Spanisch",
 		"swahili": "Suaheli",
+		"hungarian": "Ungarisch",
 		"enutsRandD": "eNuts Telegram",
 		"estimatedFees": "Geschätzte Gebühr",
 		"estimateFee": "Gebühren schätzen",
@@ -213,10 +214,14 @@
 		"meltNostrProfileHint": "Senden Sie Ihr Guthaben zu der LN-Adresse, die mit Ihrem Nostr-Profil verknüpft ist.",
 		"nostrDmHint": "eNuts kann nicht auf Ihre Nostr-Nachrichten zugreifen, da es keinen Zugriff auf Ihren privaten Schlüssel hat. Stattdessen generiert es einen neuen Schlüssel zum Senden von Ecash. Wenn Sie Ecash über Nostr senden, erhält der Empfänger es mit Ihrem neuen öffentlichen eNuts-Schlüssel. Wenn der Empfänger auf die Nachricht mit einem Ecash-Token antwortet, wird es hier angezeigt. Wir arbeiten aktiv an einer sicheren Lösung für private Schlüssel.",
 		"nostrIssueHeader": "Nostr-Kontaktproblem",
-		"nostrIssueHint": "Wenn Sie Schwierigkeiten haben, Ihre Nostr-Kontakte zu öffnen, klicken Sie auf die Schaltfläche unten oder setzen Sie die Nostr-Daten in \"Optionen > Kontakte > Daten zurücksetzen\" zurück, um das Problem zu lösen.",
+		"nostrIssueHint": "Wenn Sie Schwierigkeiten haben, Ihre Nostr-Kontakte zu öffnen, klicken Sie auf die Schaltfläche unten oder setzen Sie die Nostr-Daten zurück in \"Optionen > Kontakte > Daten zurücksetzen\", um das Problem zu lösen.",
 		"submitNostrIssue": "Daten zurücksetzen",
 		"nostrIssueSuccess": "Nostr-Daten erfolgreich zurückgesetzt!",
-		"createLnInvoice": "Lightning Rechnung erstellen"
+		"createLnInvoice": "Lightning Rechnung erstellen",
+		"metadataCacheCleared": "Metadatencache gelöscht!",
+		"imageCacheCleared": "Bildercache gelöscht!",
+		"leaveGithubStar": "Unterstützen Sie uns mit einem Github-Stern",
+		"alreadySpentHint": "Einige Proofs in Ihrem Guthaben wurden anderswo ausgegeben oder beansprucht. Beheben Sie dies, indem Sie sie die betroffenen Proofs unter 'Optionen' > 'Mint-Management' > 'Proofs überprüfen' löschen."
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",

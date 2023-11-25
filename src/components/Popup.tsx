@@ -1,11 +1,12 @@
 import { useThemeContext } from '@src/context/Theme'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import {
 	Menu,
 	MenuOption,
 	MenuOptions,
 	MenuTrigger,
 } from 'react-native-popup-menu'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import { MenuDotsIcon } from './Icons'
 import Separator from './Separator'
@@ -29,14 +30,14 @@ export default function Popup({ opts, optsWidth }: IPopupProps) {
 	return (
 		<Menu>
 			<MenuTrigger style={styles.menuTrigger}>
-				<MenuDotsIcon color={color.TEXT} />
+				<MenuDotsIcon width={s(22)} height={vs(22)} color={color.TEXT} />
 			</MenuTrigger>
 			<MenuOptions
 				customStyles={{
 					optionsContainer: {
 						backgroundColor: color.INPUT_BG,
 						borderRadius: 10,
-						width: optsWidth ?? 210,
+						width: optsWidth ?? s(210),
 					},
 				}}
 			>
@@ -70,15 +71,16 @@ function PopupOption({ txt, onSelect, icon, hasSeparator, disabled }: IPopupOpti
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	optWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: 10
+		paddingHorizontal: '10@s',
+		paddingVertical: '10@vs'
 	},
 	menuTrigger: {
-		paddingVertical: 10,
-		paddingLeft: 10
+		// paddingVertical: '10@vs',
+		paddingLeft: '10@s'
 	}
 })

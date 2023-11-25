@@ -11,7 +11,8 @@ import { NS } from '@src/i18n'
 import { globals, highlight, mainColors } from '@styles'
 import { isNum } from '@util'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function SelectTargetScreen({ navigation, route }: TSelectTargetPageProps) {
 	const { mint, balance, remainingMints, isSendEcash, nostr } = route.params
@@ -26,12 +27,12 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 			handlePress={() => navigation.goBack()}
 		>
 			<Txt txt={t('chooseTarget')} styles={[styles.hint]} bold />
-			<ScrollView>
+			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					{isSendEcash || nostr ?
 						<>
 							<Option
-								icon={<ShareIcon width={18} height={18} color={mainColors.VALID} />}
+								icon={<ShareIcon width={s(18)} height={s(18)} color={mainColors.VALID} />}
 								txt={t('copyShareToken')}
 								hint={t('copyShareTokenHint')}
 								onPress={() => navigation.navigate('selectAmount', { mint, balance, nostr, isSendEcash: true })}
@@ -80,7 +81,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 								</>
 							}
 							<Option
-								icon={<ZapIcon width={28} height={28} color={mainColors.ZAP} />}
+								icon={<ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />}
 								txt={t('inputField')}
 								hint={t('meltInputHint')}
 								onPress={() => navigation.navigate('meltInputfield', { mint, balance })}
@@ -119,9 +120,9 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
 	hint: {
-		paddingHorizontal: 20,
-		marginBottom: 20,
+		paddingHorizontal: '20@s',
+		marginBottom: '20@vs',
 	},
 })
