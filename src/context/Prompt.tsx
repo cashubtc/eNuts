@@ -1,8 +1,13 @@
 import { l } from '@log'
 import type { IOpenPromptAutoCloseProps, IPromptState } from '@model'
+import { RootStackParamList } from '@model/nav'
+import { type NavigationProp, useNavigation } from '@react-navigation/core'
 import { createContext, useContext, useRef, useState } from 'react'
 
+type StackNavigation = NavigationProp<RootStackParamList>
+
 const usePrompt = () => {
+	const nav = useNavigation<StackNavigation>()
 	const timerId = useRef<ReturnType<typeof setTimeout>>()
 	const [prompt, setPrompt] = useState<IPromptState>({ open: false, msg: '' })
 
@@ -18,11 +23,14 @@ const usePrompt = () => {
 		timerId.current = undefined
 	}
 
-	const openPrompt = (msg: string, success?: boolean) => setPrompt({ open: true, success, msg })
+	const openPrompt = (msg: string, success?: boolean, showVersion?: boolean) => setPrompt({ open: true, success, msg, showVersion })
 
 	const closePrompt = () => {
 		setPrompt({ open: false, msg: '' })
 		if (timerId.current) { clearTimer() }
+		if (prompt.showVersion) {
+			nav.navigate('Settings')
+		}
 	}
 
 	const openPromptAutoClose = ({ msg, success, ms }: IOpenPromptAutoCloseProps) => {

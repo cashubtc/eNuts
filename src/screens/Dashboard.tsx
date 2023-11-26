@@ -27,12 +27,15 @@ import { addToHistory } from '@store/latestHistoryEntries'
 import { saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
 import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice, isStr } from '@util'
+import { extractVersion, getLatestVersion } from '@util/github'
 import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
+
+import { version } from '../../package.json'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -46,7 +49,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { nutPub } = useNostrContext().nostr
 	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
-	const { openPromptAutoClose } = usePromptContext()
+	const { openPromptAutoClose, openPrompt } = usePromptContext()
 	// Cashu token hook
 	const {
 		token,
@@ -252,6 +255,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				}))
 				clearTimeout(t)
 			}, 1000)
+			// check for new app version
+			if (userHasMints) {
+				const { tag_name } = await getLatestVersion()
+				const latest = extractVersion(tag_name)
+				if (latest === version) { return }
+				openPrompt('New version available', true, true)
+			}
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])

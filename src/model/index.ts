@@ -147,6 +147,7 @@ export interface IPromptState {
 	open: boolean
 	success?: boolean
 	msg: string
+	showVersion?: boolean
 }
 
 export interface IOpenPromptAutoCloseProps {
