@@ -257,10 +257,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			}, 1000)
 			// check for new app version
 			if (userHasMints) {
-				const { tag_name } = await getLatestVersion()
-				const latest = extractVersion(tag_name)
+				const releaseInfo = await getLatestVersion()
+				const latest = extractVersion(releaseInfo.tag_name)
 				if (latest === version) { return }
-				openPrompt('New version available', true, true)
+				openPrompt('New version available', true, true, releaseInfo)
 			}
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps

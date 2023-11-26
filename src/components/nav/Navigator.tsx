@@ -34,6 +34,7 @@ import MintConfirmScreen from '@screens/QRScan/MintConfirm'
 import NpubConfirmScreen from '@screens/QRScan/NpubConfirm'
 import QRProcessingScreen from '@screens/QRScan/QRProcessing'
 import ScanSuccessScreen from '@screens/QRScan/ScanSuccess'
+import ReleaseScreen from '@screens/Release'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
 import BackupPage from '@screens/Settings/Backup'
@@ -169,6 +170,7 @@ export default function Navigator({
 				<Stack.Screen name='Address book' component={AddressbookPage} />
 				<Stack.Screen name='Contact' component={ContactPage} />
 				<Stack.Screen name='Settings' component={Settings} />
+				<Stack.Screen name='Release' component={ReleaseScreen} />
 				<Stack.Screen name='General settings' component={GeneralSettings} />
 				<Stack.Screen name='Display settings' component={DisplaySettings} />
 				<Stack.Screen name='Security settings' component={SecuritySettings} />

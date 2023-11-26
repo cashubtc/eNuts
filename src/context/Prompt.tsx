@@ -2,6 +2,7 @@ import { l } from '@log'
 import type { IOpenPromptAutoCloseProps, IPromptState } from '@model'
 import { RootStackParamList } from '@model/nav'
 import { type NavigationProp, useNavigation } from '@react-navigation/core'
+import type { GithubLatest } from '@src/model/github'
 import { createContext, useContext, useRef, useState } from 'react'
 
 type StackNavigation = NavigationProp<RootStackParamList>
@@ -23,13 +24,18 @@ const usePrompt = () => {
 		timerId.current = undefined
 	}
 
-	const openPrompt = (msg: string, success?: boolean, showVersion?: boolean) => setPrompt({ open: true, success, msg, showVersion })
+	const openPrompt = (
+		msg: string,
+		success?: boolean,
+		showVersion?: boolean,
+		releaseInfo?: GithubLatest
+	) => setPrompt({ open: true, success, msg, showVersion, releaseInfo })
 
 	const closePrompt = () => {
 		setPrompt({ open: false, msg: '' })
 		if (timerId.current) { clearTimer() }
 		if (prompt.showVersion) {
-			nav.navigate('Settings')
+			nav.navigate('Release', { info: prompt.releaseInfo })
 		}
 	}
 
