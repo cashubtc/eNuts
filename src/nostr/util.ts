@@ -159,3 +159,8 @@ export function shuffle<T>(a: T[]) {
 	}
 	return a
 }
+
+export function hasRelayValidPrefix(str: string) {
+	const validPrefixes = ['http', 'https', 'ws', 'wss']
+	return validPrefixes.some(prefix => str.startsWith(prefix))
+}
