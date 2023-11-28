@@ -57,7 +57,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			<View style={styles.placeholder} />
 			<View style={styles.amount}>
 				<Txt
-					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.amount, 'standard')}`}
+					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.type === 3 ? Math.abs(item.amount) : item.amount, 'standard')}`}
 					styles={[{ color: getTxColor() }]}
 				/>
 				<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>
