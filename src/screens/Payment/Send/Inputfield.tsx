@@ -10,7 +10,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { decodeLnInvoice, getStrFromClipboard, isErr, isLnurl, openUrl } from '@util'
+import { decodeLnInvoice, getStrFromClipboard, isErr, isLnInvoice, isLnurl, openUrl } from '@util'
 import { checkFees } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -86,6 +86,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			const { timeLeft } = decodeLnInvoice(input)
 			// Invoice expired
 			if (timeLeft <= 0) {
+				setInput('')
 				return openPromptAutoClose({ msg: t('expired') + '!' })
 			}
 			// navigate to coin selection screen
@@ -118,6 +119,8 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 				screenName={t('cashOut')}
 				withBackBtn
 				handlePress={() => navigation.goBack()}
+				mintBalance={balance}
+				disableMintBalance
 			/>
 			<View>
 				{!input.length &&
@@ -160,7 +163,12 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 						keyboardType='email-address'
 						placeholder={t('invoiceOrLnurl')}
 						value={input}
-						onChangeText={setInput}
+						onChangeText={text => {
+							setInput(text)
+							if (isLnInvoice(text)) {
+								void handleInvoicePaste(text)
+							}
+						}}
 						onSubmitEditing={() => void handleBtnPress()}
 						autoFocus
 						ms={200}
@@ -178,8 +186,9 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 				<Button
 					outlined={!input.length}
 					disabled={loading}
-					txt={input.length > 0 ? t('continue') : t('createViaLn')}
+					txt={input.length ? t('continue') : t('createViaLn')}
 					onPress={() => void handleBtnPress()}
+					icon={loading ? <Loading size={20} /> : undefined}
 				/>
 			</KeyboardAvoidingView>
 		</View>
@@ -191,7 +200,7 @@ const styles = ScaledSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		paddingBottom: isIOS ? '50@vs' : '20@vs',
-		paddingTop: '90@vs',
+		paddingTop: '100@vs',
 	},
 	hint: {
 		paddingHorizontal: '20@s',
