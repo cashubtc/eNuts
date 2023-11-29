@@ -1,79 +1,90 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import Blank from '@comps/Blank'
-import { AppleIcon, DownloadIcon, EyeClosedIcon, EyeIcon, GithubIcon } from '@comps/Icons'
+import { AppleIcon, ChevronRightIcon, DownloadIcon, EyeClosedIcon, EyeIcon, GithubIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import { latestApkUrl, releaseUrl, testflightUrl } from '@consts/urls'
 import type { TReleasePageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
+import { useReleaseContext } from '@src/context/Release'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { mainColors } from '@styles'
-import { H_Colors } from '@styles/colors'
 import { getShortDateStr, isErr, openUrl } from '@util'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
+import { version } from '../../package.json'
 import ProfilePic from './Addressbook/ProfilePic'
 
-export default function ReleaseScreen({ navigation, route }: TReleasePageProps) {
+export default function ReleaseScreen({ navigation }: TReleasePageProps) {
 	const { t } = useTranslation([NS.common])
-	const { info } = route.params
+	const { isOutdated, info } = useReleaseContext()
 	const { color } = useThemeContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const [showBody, setShowBody] = useState(false)
 	if (!info) { return <Blank /> }
 	return (
 		<Screen
-			screenName={info.tag_name}
+			screenName={isOutdated ? t('newRelease') : t('releaseNotes')}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
 			<View style={styles.container}>
-				<Badge txt='Latest Release' />
+				<View style={styles.badgeWrap}>
+					{isOutdated &&
+						<>
+							<Badge txt={`v${version}-beta`} color={mainColors.WARN} />
+							<View style={styles.chevronWrap}>
+								<ChevronRightIcon width={8} height={15} color={color.TEXT} />
+							</View>
+						</>
+					}
+					<Badge txt={info.tag_name} color={mainColors.VALID} />
+				</View>
 				<View style={styles.author}>
 					<ProfilePic
 						size={s(30)}
 						uri={info.author.avatar_url}
 						isUser
 					/>
-					<Txt
-						txt={info.author.login}
-						styles={[{ marginLeft: s(10) }]}
-						bold
-					/>
-					<Txt
-						txt={`published on ${getShortDateStr(new Date(info.published_at))}`}
-						styles={[{ color: color.TEXT_SECONDARY, marginLeft: s(5) }]}
-					/>
+					<Text style={{ marginLeft: s(10), fontWeight: '600', color: color.TEXT, fontSize: vs(16) }}>
+						{info.author.login}
+						<Text style={{ color: color.TEXT_SECONDARY, marginLeft: s(5), fontSize: vs(14), fontWeight: '400' }}>
+							{t('publishedOn', { date: getShortDateStr(new Date(info.published_at)) })}
+						</Text>
+					</Text>
 				</View>
 			</View>
-			<View style={styles.container}>
-				<ActionBtn
-					txt={isIOS ? 'Open on Testflight' : 'Download APK'}
-					icon={isIOS ? <AppleIcon color={color.TEXT} /> : <DownloadIcon color={color.TEXT} />}
-					onPress={() => {
-						void openUrl(isIOS ? testflightUrl : latestApkUrl(info.tag_name))?.catch(e =>
-							openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-					}}
-				/>
-				<ActionBtn
-					txt='Show on Github'
-					icon={<GithubIcon color={color.TEXT} />}
-					onPress={() => {
-						void openUrl(releaseUrl(info.tag_name))?.catch(e =>
-							openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-					}}
-				/>
-				<ActionBtn
-					txt={showBody ? 'Hide Release Notes' : 'Show Release Notes'}
-					icon={showBody ? <EyeClosedIcon color={color.TEXT} /> : <EyeIcon color={color.TEXT} />}
-					onPress={() => setShowBody(prev => !prev)}
-				/>
-			</View>
-			{showBody &&
+			{isOutdated &&
+				<View style={styles.container}>
+					<ActionBtn
+						txt={isIOS ? t('openOnTestflight') : t('downloadApk')}
+						icon={isIOS ? <AppleIcon color={color.TEXT} /> : <DownloadIcon color={color.TEXT} />}
+						onPress={() => {
+							void openUrl(isIOS ? testflightUrl : latestApkUrl(info.tag_name))?.catch(e =>
+								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+						}}
+					/>
+					<ActionBtn
+						txt={t('showOnGithub')}
+						icon={<GithubIcon color={color.TEXT} />}
+						onPress={() => {
+							void openUrl(releaseUrl(info.tag_name))?.catch(e =>
+								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+						}}
+					/>
+					<ActionBtn
+						txt={showBody ? t('hideReleaseNotes') : t('releaseNotes')}
+						icon={showBody ? <EyeClosedIcon color={color.TEXT} /> : <EyeIcon color={color.TEXT} />}
+						onPress={() => setShowBody(prev => !prev)}
+					/>
+				</View>
+			}
+			{(showBody || !isOutdated) &&
 				<ScrollView alwaysBounceVertical={false} style={[styles.container, styles.notesBody]}>
 					<Txt txt={info.body} styles={[styles.body]} />
 				</ScrollView>
@@ -82,9 +93,9 @@ export default function ReleaseScreen({ navigation, route }: TReleasePageProps) 
 	)
 }
 
-function Badge({ txt }: { txt: string }) {
+function Badge({ txt, color }: { txt: string, color: string }) {
 	return (
-		<View style={styles.badge}>
+		<View style={[styles.badge, { backgroundColor: color }]}>
 			<Txt
 				txt={txt}
 				bold
@@ -111,12 +122,20 @@ const styles = ScaledSheet.create({
 	container: {
 		paddingHorizontal: '20@s',
 	},
+	badgeWrap: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginTop: '5@vs',
+	},
 	badge: {
 		alignSelf: 'flex-start',
-		backgroundColor: H_Colors.Default,
 		paddingHorizontal: '6@s',
 		paddingVertical: '3@s',
 		borderRadius: '5@s',
+		marginBottom: '5@vs',
+	},
+	chevronWrap: {
+		marginHorizontal: '10@s',
 		marginBottom: '5@vs',
 	},
 	author: {
@@ -124,6 +143,7 @@ const styles = ScaledSheet.create({
 		alignItems: 'center',
 		marginTop: '10@vs',
 		paddingBottom: '10@vs',
+		paddingRight: '20@s',
 	},
 	pressable: {
 		paddingVertical: '15@vs',

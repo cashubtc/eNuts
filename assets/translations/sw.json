@@ -221,7 +221,15 @@
 		"metadataCacheCleared": "Metadata imeondolewa",
 		"imageCacheCleared": "Picha imeondolewa",
 		"leaveGithubStar": "Usaidie na nyota kwenye Github",
-		"alreadySpentHint": "Baadhi ya ushahidi kwenye salio lako umetumika au kudaiwa mahali pengine. Tatua tatizo hili kwa kufuta ushahidi huo kwenye 'Chaguo' > 'Usimamizi wa sarafu' > 'Angalia uthibitisho'."
+		"alreadySpentHint": "Baadhi ya ushahidi kwenye salio lako umetumika au kudaiwa mahali pengine. Tatua tatizo hili kwa kufuta ushahidi huo kwenye 'Chaguo' > 'Usimamizi wa sarafu' > 'Angalia uthibitisho'.",
+		"newRelease": "Toleo jipya",
+		"releaseNotes": "Maelezo ya kutolewa",
+		"new": "Mpya",
+		"publishedOn": " iliyoandikwa hii tarehe {{date}}",
+		"openOnTestflight": "Fungua kwenye Testflight",
+		"downloadApk": "Pakua APK",
+		"showOnGithub": "Onyesha kwenye Github",
+		"hideReleaseNotes": "Ficha maelezo ya kutolewa"
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

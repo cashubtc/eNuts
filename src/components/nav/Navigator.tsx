@@ -170,7 +170,7 @@ export default function Navigator({
 				<Stack.Screen name='Address book' component={AddressbookPage} />
 				<Stack.Screen name='Contact' component={ContactPage} />
 				<Stack.Screen name='Settings' component={Settings} />
-				<Stack.Screen name='Release' component={ReleaseScreen} />
+				<Stack.Screen name='release' component={ReleaseScreen} />
 				<Stack.Screen name='General settings' component={GeneralSettings} />
 				<Stack.Screen name='Display settings' component={DisplaySettings} />
 				<Stack.Screen name='Security settings' component={SecuritySettings} />

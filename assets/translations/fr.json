@@ -221,7 +221,15 @@
 		"metadataCacheCleared": "Cache des métadonnées vidé!",
 		"imageCacheCleared": "Cache des images vidé!",
 		"leaveGithubStar": "Soutenez-nous avec une étoile sur Github",
-		"alreadySpentHint": "Certains preuves de votre solde ont déjà été dépensés ou réclamés ailleurs. Résolvez ce problème en les supprimant dans 'Options' > 'Paramètres des mints' > 'Vérifier les preuves'."
+		"alreadySpentHint": "Certains preuves de votre solde ont déjà été dépensés ou réclamés ailleurs. Résolvez ce problème en les supprimant dans 'Options' > 'Paramètres des mints' > 'Vérifier les preuves'.",
+		"newRelease": "Nouvelle version",
+		"releaseNotes": "Notes de version",
+		"new": "Nouveau",
+		"publishedOn": " publié ceci le {{date}}",
+		"openOnTestflight": "Ouvrir sur Testflight",
+		"downloadApk": "Télécharger APK",
+		"showOnGithub": "Voir sur Github",
+		"hideReleaseNotes": "Masquer les notes de version"
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

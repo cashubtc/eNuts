@@ -221,7 +221,15 @@
 		"metadataCacheCleared": "Metadata cache cleared!",
 		"imageCacheCleared": "Image cache cleared!",
 		"leaveGithubStar": "Support us with a Github star",
-		"alreadySpentHint": "Some proofs in your balance are spent or claimed elsewhere. Resolve by deleting them in 'Options' > 'Mint Management' > 'Check Proofs'."
+		"alreadySpentHint": "Some proofs in your balance are spent or claimed elsewhere. Resolve by deleting them in 'Options' > 'Mint Management' > 'Check Proofs'.",
+		"newRelease": "New release",
+		"releaseNotes": "Release notes",
+		"new": "New",
+		"publishedOn": " published this on {{date}}",
+		"openOnTestflight": "Open on Testflight",
+		"downloadApk": "Download APK",
+		"showOnGithub": "Show on Github",
+		"hideReleaseNotes": "Hide release notes"
 	},
 	"error": {
 		"checkSpendableErr": "Error while checking if token is spendable",

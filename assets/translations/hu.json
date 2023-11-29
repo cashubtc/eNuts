@@ -186,7 +186,7 @@
 		"donateLn": "Támogatás",
 		"supportHint": "Bármilyen segítség, nagyságától függetlenül, hatalmas lökést ad. Megerősítési ablak fejlesztés alatt.",
 		"newToken": "Új Cashu token",
-		"disclaimerHint": "Ezt a megjegyzést érdemes komolyan venni és nem szabad alábecsülni. Nagyra értékeljük a projekt iránti érdeklődésed és dolgozunk a folyamatos csiszolásán.",
+		"disclaimerHint": "Ezt a megjegyzést érdemes komolyan venni és nem szabad alábecsülni. Nagyra értékeljük a projekt iránti érdeklődésed és folyamatosan dolgozunk annak csiszolásán.",
 		"searchContacts": "Keress vagy írj be egy NPUB-ot",
 		"submit": "Elküld",
 		"clearMetadataCache": "Metadata tár tisztítása",
@@ -212,7 +212,7 @@
 		"zap": "Zap",
 		"zapNow": "Zap most",
 		"meltNostrProfileHint": "Tőkéd átvitele a Nostr profilodhoz tartozó LN címre.",
-		"nostrDmHint": "Az eNuts nem fér hozzá a Nostr címed privát üzeneteidez mivel nincs meg hozzá a privát kulcs. Amikor Ecash-t küldesz Nostr-on keresztül a címzett megkapja a te eNuts által kezelt publikus kulcsod. Ha a címzett válaszol arra az üzenetre Ecash token formájában az látni fogod itt. Aktívan dolgozunk egy biztonságos privát kulcsos megoldáson.",
+		"nostrDmHint": "Az eNuts nem fér hozzá a Nostr címed privát üzeneteihez mivel nincs meg hozzá a privát kulcs. Amikor Ecash-t küldesz Nostr-en keresztül a címzett megkapja a te eNuts által kezelt publikus kulcsod. Ha a címzett válaszol arra az üzenetre Ecash token formájában az látni fogod itt. Aktívan dolgozunk egy biztonságos privát kulcsos megoldáson.",
 		"nostrIssueHeader": "Nostr névjegyzék hiba",
 		"nostrIssueHint": "Ha hibába ütközöl a Nostr névjegyzék kezelése közben, kattints a reset alatti gombra a \"beállítások > névjegyzék > adatok helyreállítása\" pontban a probléma megoldásához.",
 		"submitNostrIssue": "Adatok helyreállítása",
@@ -221,7 +221,15 @@
 		"metadataCacheCleared": "Metadata tárat tisztítva!",
 		"imageCacheCleared": "Képtár tisztítva!",
 		"leaveGithubStar": "Támogass minket egy Github csillaggal",
-		"alreadySpentHint": "Néhány bizonylat az egyenlegeden már el lett költve, vagy más eszköz által igénybe véve. A probléma megoldásához töröld ezeket a bizonylatokat az adatbázisodból: 'Beállítások' > 'Verdék kezelése' > 'Igazolások ellenőrzése'."
+		"alreadySpentHint": "Néhány bizonylat az egyenlegeden már el lett költve, vagy más eszköz által igénybe véve. A probléma megoldásához töröld ezeket a bizonylatokat az adatbázisodból: 'Beállítások' > 'Verdék kezelése' > 'Igazolások ellenőrzése'.",
+		"newRelease": "Új verzió",
+		"releaseNotes": "Verzió megjegyzések",
+		"new": "Új",
+		"publishedOn": " ezt közzétette ekkor: {{date}}",
+		"openOnTestflight": "Megnyitás a Testflight-on",
+		"downloadApk": "APK letöltése",
+		"showOnGithub": "Megnyitás Github-on",
+		"hideReleaseNotes": "Verzió megjegyzések elrejtése"
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",
@@ -324,7 +332,7 @@
 	},
 	"topNav": {
 		"about": "Rólunk",
-		"addressBook": "Címjegyzék",
+		"addressBook": "Névjegyzék",
 		"advancedFunctions": "Haladó funkciók",
 		"backup": "Biztonsági mentés",
 		"display": "Megjelenés",
@@ -338,7 +346,7 @@
 		"general": "Általános"
 	},
 	"wallet": {
-		"cashuContent": "A Cashu szerzője nem kriptó szakértő és a protokol felülvizsgálatra vár. Emiatt fennáll a lehetősége végzetes hibák előfordulásának. A Cashu nem kész termék.",
+		"cashuContent": "A Cashu szerzője nem kriptó szakértő és a protokol felülvizsgálatra vár. Emiatt fennáll a lehetősége végzetes hibák előfordulásának. A Cashu nem végleges.",
 		"cashuExperiment": "A Cashu kísérleti szoftver.",
 		"claiming": "Átvétel...",
 		"processingInvoice": "Számla feldolgozása...",

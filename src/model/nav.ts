@@ -2,7 +2,6 @@ import type { EventArg } from '@react-navigation/core'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection, ITokenInfo } from '.'
-import type { GithubLatest } from './github'
 import type { HexKey, IContact } from './nostr'
 
 export interface INostrSendData {
@@ -24,9 +23,7 @@ export type RootStackParamList = {
 		newMint?: boolean
 	} | undefined
 	Settings: undefined
-	Release: {
-		info?: GithubLatest
-	}
+	release: undefined
 	'General settings': undefined
 	'Security settings': undefined
 	'Privacy settings': undefined
@@ -243,7 +240,7 @@ export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr sc
 export type THistoryPageProps = NativeStackScreenProps<RootStackParamList, 'history', 'MyStack'>
 export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 'history entry details', 'MyStack'>
 export type TSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Settings'>
-export type TReleasePageProps = NativeStackScreenProps<RootStackParamList, 'Release'>
+export type TReleasePageProps = NativeStackScreenProps<RootStackParamList, 'release'>
 export type TGeneralSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'General settings'>
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
 export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>

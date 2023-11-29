@@ -3,8 +3,6 @@ import type { HighlightKey } from '@styles'
 import type { ExpoConfig } from 'expo/config'
 import type { SQLStmtCb, SQLStmtErrCb, WebSQLDatabase } from 'expo-sqlite'
 
-import type { GithubLatest } from './github'
-
 export interface IExpoConfig extends ExpoConfig {
 	extra?: {
 		DEBUG?: string // | 'full'
@@ -149,8 +147,6 @@ export interface IPromptState {
 	open: boolean
 	success?: boolean
 	msg: string
-	showVersion?: boolean
-	releaseInfo?: GithubLatest
 }
 
 export interface IOpenPromptAutoCloseProps {
