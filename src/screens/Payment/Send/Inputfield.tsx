@@ -200,7 +200,7 @@ const styles = ScaledSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		paddingBottom: isIOS ? '50@vs' : '20@vs',
-		paddingTop: '100@vs',
+		paddingTop: '90@vs',
 	},
 	hint: {
 		paddingHorizontal: '20@s',

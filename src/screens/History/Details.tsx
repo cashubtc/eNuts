@@ -351,7 +351,7 @@ function IsSpentContainer({ isSpent, handleCheckSpendable, children }: IIsSpentC
 
 const styles = ScaledSheet.create({
 	container: {
-		paddingTop: '80@vs',
+		paddingTop: '90@vs',
 	},
 	topSection: {
 		marginBottom: '30@vs',

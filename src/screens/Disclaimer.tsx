@@ -66,7 +66,7 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 
 const styles = ScaledSheet.create({
 	scrollContainer: {
-		marginTop: '80@vs',
+		marginTop: '90@vs',
 		marginBottom: isIOS ? '20@vs' : '0@vs',
 	},
 	container: {

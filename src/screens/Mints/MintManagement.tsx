@@ -384,7 +384,7 @@ function MintOption({ txt, onPress, icon, rowColor, hasSeparator, noChevron }: I
 
 const styles = ScaledSheet.create({
 	scrollContainer: {
-		marginTop: '80@vs',
+		marginTop: '90@vs',
 		marginBottom: isIOS ? '20@vs' : '0@vs',
 	},
 	mintUrl: {

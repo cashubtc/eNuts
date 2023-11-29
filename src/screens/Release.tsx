@@ -34,17 +34,6 @@ export default function ReleaseScreen({ navigation }: TReleasePageProps) {
 			handlePress={() => navigation.goBack()}
 		>
 			<View style={styles.container}>
-				<View style={styles.badgeWrap}>
-					{isOutdated &&
-						<>
-							<Badge txt={`v${version}-beta`} color={mainColors.WARN} />
-							<View style={styles.chevronWrap}>
-								<ChevronRightIcon width={8} height={15} color={color.TEXT} />
-							</View>
-						</>
-					}
-					<Badge txt={info.tag_name} color={mainColors.VALID} />
-				</View>
 				<View style={styles.author}>
 					<ProfilePic
 						size={s(30)}
@@ -57,6 +46,17 @@ export default function ReleaseScreen({ navigation }: TReleasePageProps) {
 							{t('publishedOn', { date: getShortDateStr(new Date(info.published_at)) })}
 						</Text>
 					</Text>
+				</View>
+				<View style={styles.badgeWrap}>
+					{isOutdated &&
+						<>
+							<Badge txt={`v${version}-beta`} color={mainColors.WARN} />
+							<View style={styles.chevronWrap}>
+								<ChevronRightIcon width={8} height={15} color={color.TEXT} />
+							</View>
+						</>
+					}
+					<Badge txt={info.tag_name} color={mainColors.VALID} />
 				</View>
 			</View>
 			{isOutdated &&
@@ -141,8 +141,7 @@ const styles = ScaledSheet.create({
 	author: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: '10@vs',
-		paddingBottom: '10@vs',
+		paddingBottom: '20@vs',
 		paddingRight: '20@s',
 	},
 	pressable: {

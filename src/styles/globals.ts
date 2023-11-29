@@ -5,7 +5,7 @@ import { highlight, type HighlightKey, mainColors, type Theme } from './colors'
 export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: '80@vs',
+		paddingTop: '90@vs',
 		backgroundColor: color?.BACKGROUND
 	},
 	txt: {
