@@ -162,158 +162,160 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<ScrollView style={{ marginTop: vs(100), marginBottom: insets.bottom }} showsVerticalScrollIndicator={false} >
-				<View style={styles.topSection}>
-					<Text style={[styles.amount, { color: getTxColor() }]}>
-						{getAmount()}
-					</Text>
-					<Txt
-						txt={formatSatStr(amount, 'standard', false)}
-						styles={[{ color: color.TEXT_SECONDARY }]}
-					/>
-				</View>
-				<View style={globals(color).wrapContainer}>
-					{/* Settle Time */}
-					<View style={styles.entryInfo}>
-						<Txt txt={t('settleTime', { ns: NS.history })} />
-						<Txt txt={new Date(timestamp * 1000).toLocaleString()} />
-					</View>
-					<Separator />
-					{/* nostr recipient */}
-					{recipient && recipient.length > 0 &&
-						<>
-							<View style={styles.entryInfo}>
-								<Txt txt={t('recipient')} />
-								<Txt txt={type === 3 ? formatMintUrl(recipient) : truncateStr(recipient)} />
-							</View>
-							<Separator />
-						</>
-					}
-					{/* nostr sender (in case user claims from nostr DMs) */}
-					{sender && sender.length > 0 &&
-						<>
-							<View style={styles.entryInfo}>
-								<Txt txt={t('sender')} />
-								<Txt txt={truncateStr(sender)} />
-							</View>
-							<Separator />
-						</>
-					}
-					{/* Memo */}
-					<View style={styles.entryInfo}>
-						<Txt txt={t('memo', { ns: NS.history })} />
+			<ScrollView showsVerticalScrollIndicator={false}>
+				<View style={{ marginBottom: insets.bottom, paddingTop: vs(20) }}>
+					<View style={styles.topSection}>
+						<Text style={[styles.amount, { color: getTxColor() }]}>
+							{getAmount()}
+						</Text>
 						<Txt
-							txt={getMemo()}
-							styles={[styles.infoValue]}
+							txt={formatSatStr(amount, 'standard', false)}
+							styles={[{ color: color.TEXT_SECONDARY }]}
 						/>
 					</View>
-					<Separator />
-					{/* Mints */}
-					<View style={styles.entryInfo}>
-						<Txt txt={isLn.current ? 'Mint' : 'Mints'} />
-						<Txt txt={customMints.map(m => m.customName.length ? m.customName : formatMintUrl(m.mintUrl)).join(', ')} />
-					</View>
-					<Separator />
-					{/* cashu token or ln invoice */}
-					<TouchableOpacity
-						style={styles.entryInfo}
-						onPress={() => {
-							if (!value.length || copy.value) { return }
-							void copyValue()
-						}}
-					>
-						<Txt txt={isLn.current ? t('invoice') : 'Token'} />
-						<View style={styles.copyWrap}>
-							<Txt
-								txt={value.length ? `${value.slice(0, 16)}...` : t('n/a')}
-								styles={[styles.infoValue, value.length > 0 ? styles.mr10 : {}]}
-							/>
-							{value.length > 0 &&
-								<>
-									{copy.value ?
-										<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
-										:
-										<CopyIcon width={s(19)} height={vs(21)} color={color.TEXT} />
-									}
-								</>
-							}
+					<View style={globals(color).wrapContainer}>
+						{/* Settle Time */}
+						<View style={styles.entryInfo}>
+							<Txt txt={t('settleTime', { ns: NS.history })} />
+							<Txt txt={new Date(timestamp * 1000).toLocaleString()} />
 						</View>
-					</TouchableOpacity>
-					<Separator />
-					{/* check is token spendable */}
-					{isPayment.current && !isLn.current &&
-						<>
-							<IsSpentContainer
-								isSpent={spent}
-								handleCheckSpendable={() => void handleCheckSpendable()}
-							>
-								<Txt
-									txt={isUndef(spent) ? t('checkSpent', { ns: NS.history }) : t(spent ? 'isSpent' : 'isPending', { ns: NS.history })}
-								/>
-								{getSpentIcon()}
-							</IsSpentContainer>
-							<Separator />
-							{!isUndef(spent) && !spent &&
-								<>
-									<TouchableOpacity
-										style={styles.entryInfo}
-										onPress={() => void handleClaim()}
-									>
-										<Txt txt={t('claimToken')} />
-										{loading ? <Loading /> : <BackupIcon width={s(20)} height={vs(20)} color={color.TEXT} />}
-									</TouchableOpacity>
-									<Separator />
-								</>
-							}
-						</>
-					}
-					{/* Lightning related */}
-					{isLn.current &&
-						<>
-							{/* LN payment hash */}
-							<TouchableOpacity
-								style={styles.entryInfo}
-								onPress={() => {
-									if (!hash.length || copy.hash) { return }
-									void copyHash()
-								}}
-							>
-								<Txt txt={t('paymentHash', { ns: NS.history })} />
-								<View style={styles.copyWrap}>
-									<Txt
-										txt={hash.length > 0 ? `${hash.slice(0, 16)}...` : t('n/a')}
-										styles={[styles.infoValue, hash.length > 0 ? styles.mr10 : {}]}
-									/>
-									{hash.length > 0 &&
-										<>
-											{copy.hash ?
-												<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
-												:
-												<CopyIcon width={s(18)} height={vs(20)} color={color.TEXT} />
-											}
-										</>
-									}
+						<Separator />
+						{/* nostr recipient */}
+						{recipient && recipient.length > 0 &&
+							<>
+								<View style={styles.entryInfo}>
+									<Txt txt={t('recipient')} />
+									<Txt txt={type === 3 ? formatMintUrl(recipient) : truncateStr(recipient)} />
 								</View>
-							</TouchableOpacity>
-							<Separator />
-							{/* LN payment fees */}
-							<View style={styles.entryInfo}>
-								<Txt txt={t('fee')} />
-								<Txt txt={isNum(fee) ? formatSatStr(fee) : t('n/a')} />
+								<Separator />
+							</>
+						}
+						{/* nostr sender (in case user claims from nostr DMs) */}
+						{sender && sender.length > 0 &&
+							<>
+								<View style={styles.entryInfo}>
+									<Txt txt={t('sender')} />
+									<Txt txt={truncateStr(sender)} />
+								</View>
+								<Separator />
+							</>
+						}
+						{/* Memo */}
+						<View style={styles.entryInfo}>
+							<Txt txt={t('memo', { ns: NS.history })} />
+							<Txt
+								txt={getMemo()}
+								styles={[styles.infoValue]}
+							/>
+						</View>
+						<Separator />
+						{/* Mints */}
+						<View style={styles.entryInfo}>
+							<Txt txt={isLn.current ? 'Mint' : 'Mints'} />
+							<Txt txt={customMints.map(m => m.customName.length ? m.customName : formatMintUrl(m.mintUrl)).join(', ')} />
+						</View>
+						<Separator />
+						{/* cashu token or ln invoice */}
+						<TouchableOpacity
+							style={styles.entryInfo}
+							onPress={() => {
+								if (!value.length || copy.value) { return }
+								void copyValue()
+							}}
+						>
+							<Txt txt={isLn.current ? t('invoice') : 'Token'} />
+							<View style={styles.copyWrap}>
+								<Txt
+									txt={value.length ? `${value.slice(0, 16)}...` : t('n/a')}
+									styles={[styles.infoValue, value.length > 0 ? styles.mr10 : {}]}
+								/>
+								{value.length > 0 &&
+									<>
+										{copy.value ?
+											<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
+											:
+											<CopyIcon width={s(19)} height={vs(21)} color={color.TEXT} />
+										}
+									</>
+								}
 							</View>
-							<Separator />
-						</>
-					}
-					{/* QR code */}
-					<TouchableOpacity
-						style={styles.entryInfo}
-						onPress={handleQR}
-					>
-						<Txt txt={t('showQr', { ns: NS.history })} />
-						<QRIcon width={s(17)} height={vs(17)} color={color.TEXT} />
-					</TouchableOpacity>
+						</TouchableOpacity>
+						<Separator />
+						{/* check is token spendable */}
+						{isPayment.current && !isLn.current &&
+							<>
+								<IsSpentContainer
+									isSpent={spent}
+									handleCheckSpendable={() => void handleCheckSpendable()}
+								>
+									<Txt
+										txt={isUndef(spent) ? t('checkSpent', { ns: NS.history }) : t(spent ? 'isSpent' : 'isPending', { ns: NS.history })}
+									/>
+									{getSpentIcon()}
+								</IsSpentContainer>
+								<Separator />
+								{!isUndef(spent) && !spent &&
+									<>
+										<TouchableOpacity
+											style={styles.entryInfo}
+											onPress={() => void handleClaim()}
+										>
+											<Txt txt={t('claimToken')} />
+											{loading ? <Loading /> : <BackupIcon width={s(20)} height={vs(20)} color={color.TEXT} />}
+										</TouchableOpacity>
+										<Separator />
+									</>
+								}
+							</>
+						}
+						{/* Lightning related */}
+						{isLn.current &&
+							<>
+								{/* LN payment hash */}
+								<TouchableOpacity
+									style={styles.entryInfo}
+									onPress={() => {
+										if (!hash.length || copy.hash) { return }
+										void copyHash()
+									}}
+								>
+									<Txt txt={t('paymentHash', { ns: NS.history })} />
+									<View style={styles.copyWrap}>
+										<Txt
+											txt={hash.length > 0 ? `${hash.slice(0, 16)}...` : t('n/a')}
+											styles={[styles.infoValue, hash.length > 0 ? styles.mr10 : {}]}
+										/>
+										{hash.length > 0 &&
+											<>
+												{copy.hash ?
+													<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
+													:
+													<CopyIcon width={s(18)} height={vs(20)} color={color.TEXT} />
+												}
+											</>
+										}
+									</View>
+								</TouchableOpacity>
+								<Separator />
+								{/* LN payment fees */}
+								<View style={styles.entryInfo}>
+									<Txt txt={t('fee')} />
+									<Txt txt={isNum(fee) ? formatSatStr(fee) : t('n/a')} />
+								</View>
+								<Separator />
+							</>
+						}
+						{/* QR code */}
+						<TouchableOpacity
+							style={styles.entryInfo}
+							onPress={handleQR}
+						>
+							<Txt txt={t('showQr', { ns: NS.history })} />
+							<QRIcon width={s(17)} height={vs(17)} color={color.TEXT} />
+						</TouchableOpacity>
+					</View>
 				</View>
-			</ScrollView>
+			</ScrollView >
 			<QRModal
 				visible={qr.open}
 				value={value}
@@ -323,7 +325,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				isInvoice={isLn.current}
 				truncateNum={isLn.current ? 20 : 25}
 			/>
-		</View>
+		</View >
 	)
 }
 
@@ -349,7 +351,7 @@ function IsSpentContainer({ isSpent, handleCheckSpendable, children }: IIsSpentC
 
 const styles = ScaledSheet.create({
 	container: {
-		paddingTop: 0,
+		paddingTop: '80@vs',
 	},
 	topSection: {
 		marginBottom: '30@vs',
