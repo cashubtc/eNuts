@@ -1,4 +1,5 @@
 import { IContact } from '@model/nostr'
+import { uniqByIContacts } from '@util'
 
 import { store } from '.'
 import { STORE_KEYS } from './consts'
@@ -22,8 +23,7 @@ export async function updateNostrDmUsers(newDm: IContact) {
 		await store.setObj(STORE_KEYS.nostrDms, [newDm])
 		return
 	}
-	if (stored.includes(newDm)) { return }
-	await store.setObj(STORE_KEYS.nostrDms, [...stored, newDm])
+	await store.setObj(STORE_KEYS.nostrDms, uniqByIContacts([...stored, newDm], 'hex'))
 }
 
 /**

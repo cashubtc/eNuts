@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
 import type { TDisclaimerPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { useThemeContext } from '@src/context/Theme'
@@ -20,41 +21,43 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<ScrollView style={styles.container} alwaysBounceVertical={false}>
-				<Txt
-					txt={t('disclaimerHint', { ns: NS.common })}
-					bold
-					styles={[styles.subheader]}
-				/>
-				<View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
-					<TouchableOpacity
-						onPress={() => navigation.navigate('About settings')}
-						style={styles.shareFeedback}
-					>
-						<Txt txt={t('shareOrReport', { ns: NS.common })} bold styles={[{ fontSize: vs(16) }]} />
-						<ChevronRightIcon color={color.TEXT} />
-					</TouchableOpacity>
-				</View>
-				<View style={{ marginHorizontal: s(20) }}>
-					{/* beta */}
-					<Txt txt={t('enutsDisclaimer')} bold styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('disclaimer')} styles={[{ color: color.TEXT_SECONDARY }]} />
-					<Separator style={[styles.separator]} />
-					{/* enuts mint */}
-					<Txt txt={t('enutsMint')} bold styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('mintDisclaimer')} styles={[{ color: color.TEXT_SECONDARY }]} />
-					<Separator style={[styles.separator]} />
-					{/* custodial */}
-					<Txt txt={t('custodialRisk')} bold styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('custodialRiskContent')} styles={[{ color: color.TEXT_SECONDARY }]} />
-					<Separator style={[styles.separator]} />
-					{/* loss */}
-					<Txt txt={t('lossOfTokens')} bold styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('lossContent')} styles={[{ color: color.TEXT_SECONDARY }]} />
-					<Separator style={[styles.separator]} />
-					{/* cashu */}
-					<Txt txt={t('cashuExperiment')} bold styles={[styles.header, { color: color.TEXT }]} />
-					<Txt txt={t('cashuContent')} styles={[{ color: color.TEXT_SECONDARY }]} />
+			<ScrollView style={styles.scrollContainer} alwaysBounceVertical={false}>
+				<View style={styles.container}>
+					<Txt
+						txt={t('disclaimerHint', { ns: NS.common })}
+						bold
+						styles={[styles.subheader]}
+					/>
+					<View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
+						<TouchableOpacity
+							onPress={() => navigation.navigate('About settings')}
+							style={styles.shareFeedback}
+						>
+							<Txt txt={t('shareOrReport', { ns: NS.common })} bold styles={[{ fontSize: vs(16) }]} />
+							<ChevronRightIcon color={color.TEXT} />
+						</TouchableOpacity>
+					</View>
+					<View style={{ marginHorizontal: s(20) }}>
+						{/* beta */}
+						<Txt txt={t('enutsDisclaimer')} bold styles={[styles.header, { color: color.TEXT }]} />
+						<Txt txt={t('disclaimer')} styles={[{ color: color.TEXT_SECONDARY }]} />
+						<Separator style={[styles.separator]} />
+						{/* enuts mint */}
+						<Txt txt={t('enutsMint')} bold styles={[styles.header, { color: color.TEXT }]} />
+						<Txt txt={t('mintDisclaimer')} styles={[{ color: color.TEXT_SECONDARY }]} />
+						<Separator style={[styles.separator]} />
+						{/* custodial */}
+						<Txt txt={t('custodialRisk')} bold styles={[styles.header, { color: color.TEXT }]} />
+						<Txt txt={t('custodialRiskContent')} styles={[{ color: color.TEXT_SECONDARY }]} />
+						<Separator style={[styles.separator]} />
+						{/* loss */}
+						<Txt txt={t('lossOfTokens')} bold styles={[styles.header, { color: color.TEXT }]} />
+						<Txt txt={t('lossContent')} styles={[{ color: color.TEXT_SECONDARY }]} />
+						<Separator style={[styles.separator]} />
+						{/* cashu */}
+						<Txt txt={t('cashuExperiment')} bold styles={[styles.header, { color: color.TEXT }]} />
+						<Txt txt={t('cashuContent')} styles={[{ color: color.TEXT_SECONDARY }]} />
+					</View>
 				</View>
 			</ScrollView>
 		</View>
@@ -62,10 +65,13 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 }
 
 const styles = ScaledSheet.create({
+	scrollContainer: {
+		marginTop: '80@vs',
+		marginBottom: isIOS ? '20@vs' : '0@vs',
+	},
 	container: {
-		marginTop: '90@vs',
-		paddingTop: '20@vs',
-		marginBottom: '20@vs',
+		paddingTop: '5@vs',
+		paddingBottom: '20@vs',
 	},
 	header: {
 		fontSize: '16@vs',

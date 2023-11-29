@@ -322,12 +322,12 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 
 const styles = ScaledSheet.create({
 	container: {
-		paddingTop: 0,
+		// paddingTop: 0,
 		alignItems: 'center',
 	},
 	topSection: {
 		width: '100%',
-		marginTop: 110,
+		// marginTop: 110,
 	},
 	wrap: {
 		position: 'relative',

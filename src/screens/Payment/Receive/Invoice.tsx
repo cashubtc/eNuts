@@ -1,4 +1,5 @@
-import Button, { TxtButton } from '@comps/Button'
+import ActionButtons from '@comps/ActionButtons'
+import Button from '@comps/Button'
 import { ShareIcon, WalletIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import QR from '@comps/QR'
@@ -18,14 +19,12 @@ import { formatMintUrl, formatSeconds, isErr, openUrl, share } from '@util'
 import { requestToken } from '@wallet'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, Text, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Text, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
 	const { mintUrl, amount, hash, expiry, paymentRequest } = route.params
 	const { openPromptAutoClose } = usePromptContext()
-	const insets = useSafeAreaInsets()
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -101,18 +100,19 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
 				screenName={t('payInvoice', { ns: NS.wallet })}
-				txt={t('backToDashboard')}
+				txt={t('cancel')}
 				handlePress={() => void handlePayment(true)}
 			/>
-			<ScrollView alwaysBounceVertical={false} showsVerticalScrollIndicator={false}>
+
+			<View style={styles.content}>
 				<QR
-					size={300}
+					size={vs(250)}
 					value={paymentRequest}
 					onError={() => l('Error while generating the LN QR code')}
 					isInvoice
 				/>
 				<View>
-					<Text style={[styles.lnExpiry, { color: expire < 1 ? mainColors.ERROR : hi[highlight], fontSize: vs(26) }]}>
+					<Text style={[styles.lnExpiry, { color: expire < 1 ? mainColors.ERROR : hi[highlight], fontSize: vs(22) }]}>
 						{expire > 0 ?
 							formatSeconds(expire)
 							:
@@ -131,21 +131,17 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					}
 				</View>
 				{expire > 0 && (!paid || paid === 'unpaid') ?
-					<View style={[styles.lnBtnWrap, { marginBottom: insets.bottom }]}>
-						<Button
-							txt={t('payWithLn')}
-							onPress={() => {
-								void openUrl(`lightning:${paymentRequest}`)?.catch(e =>
-									openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-							}}
-							icon={<WalletIcon color={getColor(highlight, color)} />}
-						/>
-						<TxtButton
-							txt={t('shareInvoice')}
-							icon={<ShareIcon width={s(18)} height={s(18)} color={hi[highlight]} />}
-							onPress={() => void share(paymentRequest)}
-						/>
-					</View>
+					<ActionButtons
+						topBtnTxt={t('payWithLn')}
+						topBtnAction={() => {
+							void openUrl(`lightning:${paymentRequest}`)?.catch(e =>
+								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+						}}
+						topIcon={<WalletIcon color={getColor(highlight, color)} />}
+						bottomBtnTxt={t('shareInvoice')}
+						bottomBtnAction={() => void share(paymentRequest)}
+						bottomIcon={<ShareIcon width={s(18)} height={s(18)} color={hi[highlight]} />}
+					/>
 					:
 					mintUrl !== _testmintUrl ?
 						<Button
@@ -154,43 +150,30 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 						/>
 						: null
 				}
-			</ScrollView>
+			</View>
 		</View>
 	)
 }
 
 const styles = ScaledSheet.create({
 	container: {
+		paddingHorizontal: '20@s',
+		paddingBottom: '20@s',
+	},
+	content: {
+		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: '20@s',
-		paddingTop: '100@vs',
-	},
-	invoiceWrap: {
-		alignItems: 'center',
-	},
-	copyWrap: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginTop: '20@vs',
-	},
-	invoiceStr: {
-		fontSize: '12@vs',
-		marginLeft: '10@s',
 	},
 	lnExpiry: {
 		fontSize: '34@vs',
 		fontWeight: '600',
 		textAlign: 'center',
-		marginTop: '20@vs',
 	},
 	awaitingWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginVertical: '20@vs',
-	},
-	lnBtnWrap: {
-		width: '100%'
+		marginTop: '5@vs',
 	},
 })

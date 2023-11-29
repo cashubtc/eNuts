@@ -91,13 +91,13 @@ export default function Search({
 const styles = ScaledSheet.create({
 	inputWrap: {
 		paddingHorizontal: '20@s',
-		marginTop: '10@vs',
+		marginTop: '5@vs',
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	searchInput: {
-		marginBottom: '20@vs',
+		marginBottom: '10@vs',
 		paddingLeft: '20@s',
 		paddingRight: '40@s',
 		paddingVertical: '10@vs',
@@ -105,7 +105,7 @@ const styles = ScaledSheet.create({
 	submitSearch: {
 		position: 'absolute',
 		right: '20@s',
-		height: '42@vs',
+		height: '32@vs',
 		paddingHorizontal: '10@s',
 	},
 })

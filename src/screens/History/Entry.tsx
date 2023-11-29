@@ -49,7 +49,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 				{getIcon()}
 			</View>
 			<View style={styles.infoWrap}>
-				<Txt txt={getTxTypeStr()} />
+				<Txt txt={getTxTypeStr()} styles={[{ marginBottom: vs(5) }]} />
 				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: vs(12) }]}>
 					<EntryTime from={item.timestamp * 1000} fallback={t('justNow')} />
 				</Text>
@@ -58,7 +58,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			<View style={styles.amount}>
 				<Txt
 					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.type === 3 ? Math.abs(item.amount) : item.amount, 'standard')}`}
-					styles={[{ color: getTxColor() }]}
+					styles={[{ color: getTxColor(), marginBottom: vs(5) }]}
 				/>
 				<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>
 					{t('fee', { ns: NS.common })}: {isNum(item.fee) ? item.fee : 0}

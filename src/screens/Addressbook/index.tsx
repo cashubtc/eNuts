@@ -536,7 +536,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 
 const styles = ScaledSheet.create({
 	container: {
-		paddingTop: '100@vs'
+		paddingTop: '80@vs'
 	},
 	loadingWrap: {
 		flex: 1,

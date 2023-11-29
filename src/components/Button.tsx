@@ -28,10 +28,10 @@ export default function Button({ txt, onPress, border, outlined, filled, disable
 				disabled={disabled}
 				style={[
 					styles.touchableOpacity,
-					{ backgroundColor: hi[highlight], paddingHorizontal: s(18), paddingVertical: vs(18) },
+					{ backgroundColor: hi[highlight], paddingHorizontal: vs(18), paddingVertical: vs(18) },
 					border ? { borderWidth: 1, borderColor: mainColors.WHITE } : {},
 					filled ? { backgroundColor: mainColors.WHITE } : {},
-					outlined ? { backgroundColor: 'transparent', paddingHorizontal: s(16), paddingVertical: vs(16), borderWidth: 1, borderColor: hi[highlight] } : {},
+					outlined ? { backgroundColor: 'transparent', paddingHorizontal: vs(18), paddingVertical: vs(18), borderWidth: 1, borderColor: hi[highlight] } : {},
 					disabled ? { opacity: .3 } : {}
 				]}
 				onPress={onPress}

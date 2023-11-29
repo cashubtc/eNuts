@@ -5,7 +5,7 @@ import QRModal from '@comps/QRModal'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
-import { _testmintUrl } from '@consts'
+import { _testmintUrl, isIOS } from '@consts'
 import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
 import { getBackUpTokenForMint } from '@db/backup'
 import { l } from '@log'
@@ -146,155 +146,157 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	}
 
 	return (
-		<View style={[globals(color).container, styles.container]}>
+		<View style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
 			<TopNav
 				screenName={t('mintSettings', { ns: NS.topNav })}
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<ScrollView style={{ marginBottom: vs(20) }} showsVerticalScrollIndicator={false}>
-				{/* General */}
-				<Txt txt={t('general', { ns: NS.mints })} styles={[styles.sectionHeader]} />
-				<View style={globals(color).wrapContainer}>
-					{/* Balance */}
-					<View style={[globals().wrapRow, { paddingBottom: vs(15) }]}>
-						<View style={styles.mintOption}>
-							<View style={{ minWidth: 30 }}>
-								<BitcoinIcon color={color.TEXT} />
+			<ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+				<View>
+					{/* General */}
+					<Txt txt={t('general', { ns: NS.mints })} styles={[styles.sectionHeader]} />
+					<View style={globals(color).wrapContainer}>
+						{/* Balance */}
+						<View style={[globals().wrapRow, { paddingBottom: vs(15) }]}>
+							<View style={styles.mintOption}>
+								<View style={{ minWidth: 30 }}>
+									<BitcoinIcon color={color.TEXT} />
+								</View>
+								<Txt txt={t('balance')} />
 							</View>
-							<Txt txt={t('balance')} />
+							<Txt txt={formatSatStr(route.params.amount)} />
 						</View>
-						<Txt txt={formatSatStr(route.params.amount)} />
+						<Separator style={[styles.separator]} />
+						{/* Mint url */}
+						<MintOption
+							txt={formatMintUrl(route.params.mint?.mintUrl)}
+							hasSeparator
+							noChevron
+							onPress={() => void copy(route.params.mint?.mintUrl)}
+							icon={copied ?
+								<CheckmarkIcon width={s(20)} height={s(20)} color={mainColors.VALID} />
+								:
+								<CopyIcon color={color.TEXT} />
+							}
+						/>
+						{/* scan url */}
+						<MintOption
+							txt={t('showQr', { ns: NS.history })}
+							hasSeparator
+							noChevron
+							onPress={() => setQr({ open: true, error: false })}
+							icon={<QRIcon width={s(16)} height={s(16)} color={color.TEXT} />}
+						/>
+						{/* Add custom name */}
+						<MintOption
+							txt={t('customName', { ns: NS.mints })}
+							onPress={() => {
+								void (async () => {
+									await hasMintName()
+									setCustomNameOpen(true)
+								})()
+							}}
+							icon={<PenIcon width={s(22)} height={s(22)} color={color.TEXT} />}
+							noChevron
+							hasSeparator
+						/>
+						{/* Default */}
+						<MintOption
+							txt={isDefault ? t('removeDefault', { ns: NS.mints }) : t('setDefault', { ns: NS.mints })}
+							onPress={() => void handleDefaultMint()}
+							icon={<MintBoardIcon width={s(22)} height={s(22)} color={color.TEXT} />}
+							noChevron
+							hasSeparator
+						/>
+						{/* Mint info */}
+						<MintOption
+							txt={t('mintInfo', { ns: NS.mints })}
+							onPress={() => navigation.navigate('mint info', { mintUrl: route.params.mint?.mintUrl })}
+							icon={<AboutIcon width={s(22)} height={s(22)} color={color.TEXT} />}
+						/>
 					</View>
-					<Separator style={[styles.separator]} />
-					{/* Mint url */}
-					<MintOption
-						txt={formatMintUrl(route.params.mint?.mintUrl)}
-						hasSeparator
-						noChevron
-						onPress={() => void copy(route.params.mint?.mintUrl)}
-						icon={copied ?
-							<CheckmarkIcon width={s(20)} height={s(20)} color={mainColors.VALID} />
-							:
-							<CopyIcon color={color.TEXT} />
-						}
-					/>
-					{/* scan url */}
-					<MintOption
-						txt={t('showQr', { ns: NS.history })}
-						hasSeparator
-						noChevron
-						onPress={() => setQr({ open: true, error: false })}
-						icon={<QRIcon width={s(16)} height={s(16)} color={color.TEXT} />}
-					/>
-					{/* Add custom name */}
-					<MintOption
-						txt={t('customName', { ns: NS.mints })}
-						onPress={() => {
-							void (async () => {
-								await hasMintName()
-								setCustomNameOpen(true)
-							})()
-						}}
-						icon={<PenIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-						noChevron
-						hasSeparator
-					/>
-					{/* Default */}
-					<MintOption
-						txt={isDefault ? t('removeDefault', { ns: NS.mints }) : t('setDefault', { ns: NS.mints })}
-						onPress={() => void handleDefaultMint()}
-						icon={<MintBoardIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-						noChevron
-						hasSeparator
-					/>
-					{/* Mint info */}
-					<MintOption
-						txt={t('mintInfo', { ns: NS.mints })}
-						onPress={() => navigation.navigate('mint info', { mintUrl: route.params.mint?.mintUrl })}
-						icon={<AboutIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-					/>
-				</View>
-				{/* Fund management */}
-				<Txt txt={t('funds', { ns: NS.mints })} styles={[styles.sectionHeader]} />
-				<View style={globals(color).wrapContainer}>
-					{/* Mint new tokens */}
-					<MintOption
-						txt={t('mintNewTokens', { ns: NS.mints })}
-						hasSeparator
-						onPress={() => navigation.navigate('selectAmount', { mint: route.params.mint, balance: route.params.amount })}
-						icon={<PlusIcon color={color.TEXT} />}
-					/>
-					{/* Redeem to lightning */}
-					<MintOption
-						txt={t('meltToken', { ns: NS.mints })}
-						hasSeparator
-						onPress={() => {
-							if (route.params.amount < 1) {
-								openPromptAutoClose({ msg: t('noFunds') })
-								return
-							}
-							navigation.navigate('selectTarget', {
-								mint: route.params.mint,
-								balance: route.params.amount,
-								remainingMints: route.params.remainingMints
-							})
-						}}
-						icon={<ZapIcon color={color.TEXT} />}
-					/>
-					{/* Inter-mint swap */}
-					<MintOption
-						txt={t('multimintSwap')}
-						hasSeparator
-						onPress={() => void handleMintSwap()}
-						icon={<SwapIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-					/>
-					{/* Backup mint */}
-					<MintOption
-						txt={t('mintBackup', { ns: NS.topNav })}
-						hasSeparator
-						onPress={() => void handleMintBackup()}
-						icon={<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-					/>
-					{/* Proof list */}
-					<MintOption
-						txt='Proofs'
-						onPress={() => {
-							if (route.params.amount < 1) {
-								openPromptAutoClose({ msg: t('noProofs', { ns: NS.mints }) })
-								return
-							}
-							navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
-						}}
-						icon={<EyeIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-					/>
-				</View>
-				{/* Danger zone */}
-				<Txt txt={t('dangerZone', { ns: NS.mints })} styles={[styles.sectionHeader]} />
-				<View style={globals(color).wrapContainer}>
-					{/* Check proofs */}
-					<MintOption
-						txt={t('checkProofs', { ns: NS.mints })}
-						hasSeparator
-						onPress={() => setCheckProofsOpen(true)}
-						icon={<ValidateIcon width={s(22)} height={s(22)} color={mainColors.WARN} />}
-						rowColor={mainColors.WARN}
-						noChevron
-					/>
-					{/* Delete mint */}
-					<MintOption
-						txt={t('delMint', { ns: NS.mints })}
-						onPress={() => {
-							if (route.params.amount > 0) {
-								openPromptAutoClose({ msg: t('mintDelErr') })
-								return
-							}
-							setDelMintModalOpen(true)
-						}}
-						icon={<TrashbinIcon width={s(22)} height={s(22)} color={mainColors.ERROR} />}
-						rowColor={mainColors.ERROR}
-						noChevron
-					/>
+					{/* Fund management */}
+					<Txt txt={t('funds', { ns: NS.mints })} styles={[styles.sectionHeader]} />
+					<View style={globals(color).wrapContainer}>
+						{/* Mint new tokens */}
+						<MintOption
+							txt={t('mintNewTokens', { ns: NS.mints })}
+							hasSeparator
+							onPress={() => navigation.navigate('selectAmount', { mint: route.params.mint, balance: route.params.amount })}
+							icon={<PlusIcon color={color.TEXT} />}
+						/>
+						{/* Redeem to lightning */}
+						<MintOption
+							txt={t('meltToken', { ns: NS.mints })}
+							hasSeparator
+							onPress={() => {
+								if (route.params.amount < 1) {
+									openPromptAutoClose({ msg: t('noFunds') })
+									return
+								}
+								navigation.navigate('selectTarget', {
+									mint: route.params.mint,
+									balance: route.params.amount,
+									remainingMints: route.params.remainingMints
+								})
+							}}
+							icon={<ZapIcon color={color.TEXT} />}
+						/>
+						{/* Inter-mint swap */}
+						<MintOption
+							txt={t('multimintSwap')}
+							hasSeparator
+							onPress={() => void handleMintSwap()}
+							icon={<SwapIcon width={s(22)} height={s(22)} color={color.TEXT} />}
+						/>
+						{/* Backup mint */}
+						<MintOption
+							txt={t('mintBackup', { ns: NS.topNav })}
+							hasSeparator
+							onPress={() => void handleMintBackup()}
+							icon={<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />}
+						/>
+						{/* Proof list */}
+						<MintOption
+							txt='Proofs'
+							onPress={() => {
+								if (route.params.amount < 1) {
+									openPromptAutoClose({ msg: t('noProofs', { ns: NS.mints }) })
+									return
+								}
+								navigation.navigate('mint proofs', { mintUrl: route.params.mint.mintUrl })
+							}}
+							icon={<EyeIcon width={s(22)} height={s(22)} color={color.TEXT} />}
+						/>
+					</View>
+					{/* Danger zone */}
+					<Txt txt={t('dangerZone', { ns: NS.mints })} styles={[styles.sectionHeader]} />
+					<View style={globals(color).wrapContainer}>
+						{/* Check proofs */}
+						<MintOption
+							txt={t('checkProofs', { ns: NS.mints })}
+							hasSeparator
+							onPress={() => setCheckProofsOpen(true)}
+							icon={<ValidateIcon width={s(22)} height={s(22)} color={mainColors.WARN} />}
+							rowColor={mainColors.WARN}
+							noChevron
+						/>
+						{/* Delete mint */}
+						<MintOption
+							txt={t('delMint', { ns: NS.mints })}
+							onPress={() => {
+								if (route.params.amount > 0) {
+									openPromptAutoClose({ msg: t('mintDelErr') })
+									return
+								}
+								setDelMintModalOpen(true)
+							}}
+							icon={<TrashbinIcon width={s(22)} height={s(22)} color={mainColors.ERROR} />}
+							rowColor={mainColors.ERROR}
+							noChevron
+						/>
+					</View>
 				</View>
 			</ScrollView>
 			{/* modal for deleting a mint */}
@@ -381,8 +383,9 @@ function MintOption({ txt, onPress, icon, rowColor, hasSeparator, noChevron }: I
 }
 
 const styles = ScaledSheet.create({
-	container: {
-		paddingTop: '90@vs',
+	scrollContainer: {
+		marginTop: '80@vs',
+		marginBottom: isIOS ? '20@vs' : '0@vs',
 	},
 	mintUrl: {
 		fontSize: '14@vs',
@@ -392,7 +395,7 @@ const styles = ScaledSheet.create({
 	sectionHeader: {
 		fontWeight: '500',
 		paddingHorizontal: '20@s',
-		marginTop: '20@vs',
+		marginTop: '10@vs',
 		marginBottom: '10@vs',
 	},
 	mintOption: {

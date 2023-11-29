@@ -117,6 +117,7 @@ const styles = ScaledSheet.create({
 		paddingHorizontal: '6@s',
 		paddingVertical: '3@s',
 		borderRadius: '5@s',
+		marginBottom: '5@vs',
 	},
 	author: {
 		flexDirection: 'row',
