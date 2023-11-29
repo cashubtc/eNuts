@@ -82,13 +82,6 @@ export type RootStackParamList = {
 		nostr?: INostrSendData
 		balance: number
 	}
-	memoScreen: {
-		mint: IMintUrl
-		balance: number
-		amount: number
-		isSendingWholeMintBal?: boolean,
-		nostr?: INostrSendData
-	}
 	coinSelection: {
 		mint: IMintUrl
 		balance: number
@@ -216,7 +209,6 @@ export type TSelectMintToSwapToPageProps = NativeStackScreenProps<RootStackParam
 export type TMeltInputfieldPageProps = NativeStackScreenProps<RootStackParamList, 'meltInputfield', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
 export type TSelectNostrAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectNostrAmount', 'MyStack'>
-export type TMemoPageProps = NativeStackScreenProps<RootStackParamList, 'memoScreen', 'MyStack'>
 export type TCoinSelectionPageProps = NativeStackScreenProps<RootStackParamList, 'coinSelection', 'MyStack'>
 export type TNostrReceivePageProps = NativeStackScreenProps<RootStackParamList, 'nostrReceive', 'MyStack'>
 export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>

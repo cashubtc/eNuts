@@ -1,4 +1,4 @@
-import { AboutIcon, BookIcon, EyeClosedIcon, HeartIcon, LockIcon, MintBoardIcon, OptionsIcon, ReadmeIcon, ReleaseIcon } from '@comps/Icons'
+import { AboutIcon, BookIcon, EyeClosedIcon, HeartIcon, LockIcon, MintBoardIcon, OptionsIcon, ReadmeIcon, ReleaseTagIcon } from '@comps/Icons'
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
@@ -89,7 +89,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 					/>
 					<MenuItem
 						txt={isOutdated ? t('newRelease') : t('releaseNotes')}
-						icon={isOutdated ? <ReleaseIcon color={mainColors.VALID} /> : <ReadmeIcon color={color.TEXT} />}
+						icon={isOutdated ? <ReleaseTagIcon color={mainColors.VALID} /> : <ReadmeIcon color={color.TEXT} />}
 						onPress={() => navigation.navigate('release')}
 						hasChevron
 						hasSeparator

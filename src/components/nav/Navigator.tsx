@@ -25,7 +25,6 @@ import SelectNostrAmountScreen from '@screens/Payment/SelectNostrAmount'
 import CoinSelectionScreen from '@screens/Payment/Send/CoinSelection'
 import EncodedTokenPage from '@screens/Payment/Send/EncodedToken'
 import InputfieldScreen from '@screens/Payment/Send/Inputfield'
-import MemoScreen from '@screens/Payment/Send/MemoScreen'
 import SelectMintToSwapToScreen from '@screens/Payment/Send/SelectMintToSwapTo'
 import SelectTargetScreen from '@screens/Payment/Send/SelectTarget'
 import SuccessPage from '@screens/Payment/Success'
@@ -101,7 +100,6 @@ export default function Navigator({
 				<Stack.Screen name='meltInputfield' component={InputfieldScreen} />
 				<Stack.Screen name='selectAmount' component={SelectAmountScreen} />
 				<Stack.Screen name='selectNostrAmount' component={SelectNostrAmountScreen} />
-				<Stack.Screen name='memoScreen' component={MemoScreen} />
 				<Stack.Screen name='coinSelection' component={CoinSelectionScreen} />
 				<Stack.Screen name='nostrReceive' component={NostrDMScreen} />
 				<Stack.Screen

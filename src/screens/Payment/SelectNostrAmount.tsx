@@ -1,10 +1,11 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
-import Button from '@comps/Button'
-import { LeftArrow } from '@comps/Icons'
+import { IconBtn } from '@comps/Button'
+import { ChevronRightIcon, LeftArrow } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TSelectNostrAmountPageProps } from '@model/nav'
 import MintBalanceBtn from '@nav/MintBalanceBtn'
+import { useFocusEffect } from '@react-navigation/native'
 import ProfileBanner from '@screens/Addressbook/Contact/Banner'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
@@ -13,7 +14,7 @@ import { getNostrUsername, truncateNpub } from '@src/nostr/util'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, formatSatStr, vib } from '@util'
 import { nip19 } from 'nostr-tools'
-import { createRef, useEffect, useState } from 'react'
+import { createRef, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
@@ -23,8 +24,10 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 	const { t } = useTranslation([NS.wallet])
 	const { color, highlight } = useThemeContext()
 	const { anim, shake } = useShakeAnimation()
-	const inputRef = createRef<TextInput>()
+	const numericInputRef = createRef<TextInput>()
+	const txtInputRef = createRef<TextInput>()
 	const [amount, setAmount] = useState('')
+	const [memo, setMemo] = useState('')
 	// invoice amount too low
 	const [err, setErr] = useState(false)
 
@@ -40,21 +43,30 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 			}, 500)
 			return
 		}
-		navigation.navigate('memoScreen', {
+		navigation.navigate('coinSelection', {
 			mint,
 			balance,
 			amount: +amount,
+			estFee: 0,
+			isSendEcash: true,
 			nostr,
+			memo
 		})
 	}
 
-	// auto-focus numeric keyboard
-	useEffect(() => {
-		const t = setTimeout(() => {
-			inputRef.current?.focus()
-			clearTimeout(t)
-		}, 200)
-	}, [inputRef])
+	const onMemoChange = useCallback((text: string) => setMemo(text), [])
+
+	// auto-focus numeric input when the screen gains focus
+	useFocusEffect(
+		useCallback(() => {
+			const timeoutId = setTimeout(() => {
+				if (!txtInputRef.current?.isFocused()) {
+					numericInputRef.current?.focus()
+				}
+			}, 200)
+			return () => clearTimeout(timeoutId)
+		}, [txtInputRef, numericInputRef])
+	)
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
@@ -89,7 +101,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 					<ProfilePic
 						hex={nostr?.contact?.hex ?? ''}
 						uri={nostr?.contact?.picture}
-						size={80}
+						size={s(60)}
 					/>
 				</View>
 			</View>
@@ -101,7 +113,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
 						keyboardType='numeric'
-						ref={inputRef}
+						ref={numericInputRef}
 						placeholder='0'
 						placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
 						style={[globals().selectAmount, { color: err ? mainColors.ERROR : hi[highlight] }]}
@@ -119,17 +131,23 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 			</View>
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={{
-					position: 'absolute',
-					bottom: vs(20),
-					left: s(20),
-					right: s(20),
-					marginBottom: isIOS ? vs(20) : 0,
-				}}
+				style={styles.actionWrap}
 			>
-				<Button
-					txt={t('continue', { ns: NS.common })}
-					onPress={() => void handleAmountSubmit()}
+				<TextInput
+					keyboardType='default'
+					placeholder={t('optionalMemo', { ns: NS.common })}
+					placeholderTextColor={color.INPUT_PH}
+					selectionColor={hi[highlight]}
+					cursorColor={hi[highlight]}
+					onChangeText={onMemoChange}
+					onSubmitEditing={() => handleAmountSubmit()}
+					maxLength={21}
+					style={[styles.memoInput, { color: color?.TEXT, backgroundColor: color?.INPUT_BG }]}
+				/>
+				<IconBtn
+					onPress={() => handleAmountSubmit()}
+					icon={<ChevronRightIcon color={mainColors.WHITE} />}
+					size={s(55)}
 				/>
 			</KeyboardAvoidingView>
 		</View>
@@ -172,11 +190,11 @@ const styles = ScaledSheet.create({
 		paddingHorizontal: '20@s',
 	},
 	picWrap: {
-		width: '80@s',
-		height: '80@s',
-		borderRadius: '40@s',
+		width: '60@s',
+		height: '60@s',
+		borderRadius: '30@s',
 		overflow: 'hidden',
-		marginBottom: '10@vs',
+		marginBottom: '5@vs',
 	},
 	username: {
 		fontSize: '17@vs',
@@ -195,7 +213,7 @@ const styles = ScaledSheet.create({
 		alignItems: 'center'
 	},
 	overviewWrap: {
-		marginTop: '30@vs',
+		marginTop: '20@vs',
 	},
 	overview: {
 		flexDirection: 'row',
@@ -205,4 +223,22 @@ const styles = ScaledSheet.create({
 	bold: {
 		fontWeight: '500'
 	},
+	actionWrap: {
+		position: 'absolute',
+		bottom: '20@vs',
+		left: '20@s',
+		right: '20@s',
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: isIOS ? '20@vs' : '0@vs',
+		maxWidth: '100%',
+	},
+	memoInput: {
+		flex: 1,
+		marginRight: '20@s',
+		paddingHorizontal: '18@s',
+		paddingVertical: '18@vs',
+		borderRadius: 50,
+		fontSize: '14@vs',
+	}
 })
