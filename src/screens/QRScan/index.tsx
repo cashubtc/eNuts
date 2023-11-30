@@ -25,7 +25,7 @@ import { s, ScaledSheet } from 'react-native-size-matters'
 import QRMarker from './Marker'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
-	const { mint, balance } = route.params
+	const { mint, balance, isPayment } = route.params
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
@@ -100,7 +100,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		if (isNProfile(data)) {
 			try {
 				const res = nip19.decode(data)?.data
-				return navigation.navigate('npub confirm', { hex: res.pubkey })
+				return navigation.navigate('npub confirm', { hex: res.pubkey, isPayment })
 			} catch (e) {
 				return openPromptAutoClose({ msg: t('unknownType') + ` "${data}"` })
 			}
@@ -108,7 +108,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		const npub = isNpubQR(data)
 		if (npub) {
 			const hex = nip19.decode(npub)?.data
-			return navigation.navigate('npub confirm', { hex })
+			return navigation.navigate('npub confirm', { hex, isPayment })
 		}
 		// handle mint urls
 		if (isUrl(data) && new URL(data).protocol === 'https:') {

@@ -1,7 +1,7 @@
 import Button, { TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import useLoading from '@comps/hooks/Loading'
-import { QRIcon } from '@comps/Icons'
+import { QRIcon, ScanQRIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
@@ -395,13 +395,24 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 						/>
 					}
 					{nostr.pubKey.hex.length > 0 &&
-						<Search
-							contactsRef={contactsRef}
-							setContacts={setContacts}
-							search={search}
-							setSearch={setSearch}
-							nostrRef={nostrRef}
-						/>
+						<View style={styles.searchWrap}>
+							<Search
+								contactsRef={contactsRef}
+								setContacts={setContacts}
+								search={search}
+								setSearch={setSearch}
+								nostrRef={nostrRef}
+								isPayment={isPayment}
+							/>
+							{isPayment &&
+								<TouchableOpacity
+									style={styles.scanQr}
+									onPress={() => navigation.navigate('qr scan', { isPayment: true })}
+								>
+									<ScanQRIcon color={color.TEXT} />
+								</TouchableOpacity>
+							}
+						</View>
 					}
 					{/* user contacts */}
 					{contactsRef.current.length > 0 ?
@@ -565,4 +576,14 @@ const styles = ScaledSheet.create({
 		height: '41@vs',
 		paddingHorizontal: '10@s',
 	},
+	searchWrap: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingHorizontal: '20@s'
+	},
+	scanQr: {
+		paddingVertical: '10@s',
+		paddingLeft: '10@s',
+		marginBottom: '5@vs'
+	}
 })

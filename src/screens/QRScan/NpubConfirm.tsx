@@ -34,7 +34,7 @@ import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPageProps) {
 
-	const { hex } = route.params
+	const { hex, isPayment } = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const { replaceNpub, setNostr } = useNostrContext()
@@ -175,12 +175,16 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 							txt={t('sendEcash')}
 							onPress={() => void handleSend()}
 						/>
-						<View style={{ marginVertical: vs(10) }} />
-						<Button
-							txt={t('useNpub')}
-							onPress={() => void handleNpub()}
-							outlined
-						/>
+						{!isPayment &&
+							<>
+								<View style={{ marginVertical: vs(10) }} />
+								<Button
+									txt={t('useNpub')}
+									onPress={() => void handleNpub()}
+									outlined
+								/>
+							</>
+						}
 						<TxtButton
 							txt={t('scanAgain')}
 							onPress={() => navigation.goBack()}

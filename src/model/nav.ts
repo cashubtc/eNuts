@@ -128,6 +128,7 @@ export type RootStackParamList = {
 	}
 	'npub confirm': {
 		hex: HexKey
+		isPayment?: boolean
 	}
 	'scan success': {
 		mintUrl?: string
@@ -180,6 +181,7 @@ export type RootStackParamList = {
 	'qr scan': {
 		mint?: IMintUrl
 		balance?: number
+		isPayment?: boolean
 	}
 	'history entry details': {
 		entry: IHistoryEntry
