@@ -195,7 +195,6 @@
         "processTestPay": "Procesando pago de prueba...",
         "confirmMint": "Confirmar nueva ceca",
         "confirmMintHint": "¿Seguro que quieres añadir esta ceca?",
-        "confirmNpubHint": "¿Seguro que quieres usar esta NPUB?",
         "npubAlreadyAdded": "La NPUB ya ha sido añadida",
         "replaceNpub": "Reemplazar NPUB",
         "replaceNpubTxt": "¿Seguro qué quieres reemplazar la NPUB actual?",

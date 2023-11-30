@@ -195,7 +195,6 @@
         "processTestPay": "Processing test payment...",
         "confirmMint": "Confirm new mint",
         "confirmMintHint": "Are you sure that you want to add this mint?",
-        "confirmNpubHint": "Are you sure that you want to use this NPUB?",
         "npubAlreadyAdded": "NPUB already added",
         "replaceNpub": "Replace NPUB",
         "replaceNpubTxt": "Are you sure that you want to replace the current NPUB?",

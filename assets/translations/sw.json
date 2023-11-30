@@ -195,7 +195,6 @@
         "processTestPay": "Inaprocessisha malipo ya majaribio",
         "confirmMint": "Thibitisha sarafu",
         "confirmMintHint": "Je, uko hakika unataka kuongeza sarafu hii?",
-        "confirmNpubHint": "Je, uko hakika unataka kuongeza NPUB hii?",
         "npubAlreadyAdded": "NPUB tayari imeongezwa",
         "replaceNpub": "Je, unataka kubadilisha NPUB hii?",
         "replaceNpubTxt": "NPUB hii tayari imeongezwa. Je, unataka kubadilisha?",

@@ -195,7 +195,6 @@
         "processTestPay": "Próba fizetés feldolgozása...",
         "confirmMint": "Új verde megerősítése",
         "confirmMintHint": "Biztosan hozzáadod ezt a verdét?",
-        "confirmNpubHint": "Biztosan hozzáadod ezt az NPUB-ot?",
         "npubAlreadyAdded": "NPUB már hozzáadva",
         "replaceNpub": "NPUB cseréje",
         "replaceNpubTxt": "Biztosan le akarod cserélni a jelenlegi NPUB-ot?",
