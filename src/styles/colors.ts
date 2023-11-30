@@ -119,6 +119,6 @@ export enum mainColors {
 export const themeColors = Object.keys(highlight) as HighlightKey[]
 
 export const getColor = (highlight: HighlightKey, color: Theme) => {
-	if (highlight === 'Azyre' || highlight === 'Zap') { return color.BACKGROUND }
+	if (highlight === 'Azyre' || highlight === 'Zap' || highlight === 'Rosy') { return color.BACKGROUND }
 	return mainColors.WHITE
 }
