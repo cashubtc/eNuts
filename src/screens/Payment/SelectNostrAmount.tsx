@@ -11,6 +11,7 @@ import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getNostrUsername, truncateNpub } from '@src/nostr/util'
+import { getColor } from '@src/styles/colors'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, formatSatStr, vib } from '@util'
 import { nip19 } from 'nostr-tools'
@@ -146,7 +147,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 				/>
 				<IconBtn
 					onPress={() => handleAmountSubmit()}
-					icon={<ChevronRightIcon color={mainColors.WHITE} />}
+					icon={<ChevronRightIcon width={s(12)} height={s(19)} color={getColor(highlight, color)} />}
 					size={s(55)}
 				/>
 			</KeyboardAvoidingView>

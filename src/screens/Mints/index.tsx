@@ -308,7 +308,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			{usertMints.length > 0 &&
 				<View style={[styles.newMint, { marginBottom: insets.bottom }]}>
 					<IconBtn
-						icon={<PlusIcon width={28} height={28} color={getColor(highlight, color)} />}
+						icon={<PlusIcon width={s(30)} height={s(30)} color={getColor(highlight, color)} />}
 						onPress={() => {
 							closePrompt()
 							setNewMintModal(true)
