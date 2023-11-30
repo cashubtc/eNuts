@@ -15,7 +15,7 @@ import { checkFees } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { ScaledSheet } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import { MeltOverview } from '../SelectAmount'
 
@@ -155,7 +155,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			</View>
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={styles.paddingHorizontal}
+				style={styles.actionWrap}
 			>
 				<View style={{ position: 'relative' }}>
 					<TxtInput
@@ -172,6 +172,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 						onSubmitEditing={() => void handleBtnPress()}
 						autoFocus
 						ms={200}
+						style={{ paddingRight: s(90) }}
 					/>
 					{/* Paste / Clear Input */}
 					<TouchableOpacity
@@ -224,8 +225,9 @@ const styles = ScaledSheet.create({
 		paddingBottom: '20@vs',
 		marginBottom: 0
 	},
-	paddingHorizontal: {
-		paddingHorizontal: '20@s'
+	actionWrap: {
+		paddingHorizontal: '20@s',
+		marginBottom: isIOS ? '20@vs' : '0@vs',
 	},
 	loadingWrap: {
 		marginTop: '40@vs',
