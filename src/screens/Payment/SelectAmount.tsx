@@ -294,7 +294,8 @@ const styles = ScaledSheet.create({
 		right: '20@s',
 		left: '20@s',
 		bottom: '20@vs',
-		alignItems: 'center'
+		alignItems: 'center',
+		marginBottom: isIOS ? '20@vs' : '0@vs',
 	},
 	overviewWrap: {
 		width: '100%',
