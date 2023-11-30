@@ -228,6 +228,7 @@
         "hideReleaseNotes": "Esconder notas de la versión",
         "useNpub": "Usar NPUB",
         "autoSwapToDefaulMint": "Cambiar a la ceca por defecto",
+        "trustMintOpt": "Confiar en la ceca",
         "swapHint": "Esta opción requiere un pago mediante Lightning y puede conllevar tarifas asociadas.",
         "trustHint": "La casa de moneda asociada con el token se añadirá a tu lista de confianza."
     },
