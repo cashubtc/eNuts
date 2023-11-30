@@ -234,10 +234,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		})
 	}
 
-	const handleAutoSwap = () => {
-		
-	}
-
 	// close send/receive options modal
 	const closeOptsModal = () => setModal(prev => ({ ...prev, receiveOpts: false, sendOpts: false }))
 
@@ -373,7 +369,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					loading={loading}
 					tokenInfo={tokenInfo}
 					handleTrustModal={() => void handleTrustModal()}
-					handleAutoSwap={() => void handleAutoSwap()}
 					closeModal={() => {
 						setTrustModal(false)
 						setToken('')

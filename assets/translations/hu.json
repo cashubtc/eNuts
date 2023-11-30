@@ -215,7 +215,7 @@
         "submitNostrIssue": "Adatok helyreállítása",
         "nostrIssueSuccess": "Nostr adatok sikeresen helyreállítva!",
         "createLnInvoice": "Lightning számla létrehozása",
-        "metadataCacheCleared": "Metadata tárat tisztítva!",
+        "metadataCacheCleared": "Metadata tár tisztítva!",
         "imageCacheCleared": "Képtár tisztítva!",
         "leaveGithubStar": "Támogass minket egy Github csillaggal",
         "alreadySpentHint": "Néhány bizonylat az egyenlegeden már el lett költve, vagy más eszköz által igénybe véve. A probléma megoldásához töröld ezeket a bizonylatokat az adatbázisodból: 'Beállítások' > 'Verdék kezelése' > 'Igazolások ellenőrzése'.",

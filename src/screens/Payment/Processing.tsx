@@ -143,7 +143,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 		// simple way
 		try {
-			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0)
+			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0, proofs)
 			// add as history entry (multimint swap)
 			await addToHistory({
 				amount: -amount,

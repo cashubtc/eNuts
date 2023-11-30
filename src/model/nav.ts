@@ -106,6 +106,7 @@ export type RootStackParamList = {
 		isSendEcash?: boolean
 		nostr?: INostrSendData
 		isSwap?: boolean
+		isAutoSwap?: boolean
 		isZap?: boolean
 		payZap?: boolean
 		targetMint?: IMintUrl

@@ -83,10 +83,6 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		navigation.navigate('qr processing', { tokenInfo, token })
 	}
 
-	const handleAutoSwap = () => {
-		
-	}
-
 	const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {
 		setScanned(true)
 		const bcType = isIOS ? 'org.iso.QRCode' : +QRType
@@ -193,7 +189,6 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 					loading={loading}
 					tokenInfo={tokenInfo}
 					handleTrustModal={() => void handleTrustModal()}
-					handleAutoSwap={() => void handleAutoSwap()}
 					closeModal={() => {
 						setTrustModal(false)
 						setScanned(false)
