@@ -15,7 +15,7 @@ const loadJSON = (filename) => {
 }
 
 // paste unused keys from the jest test output here
-const unusedKeys = ['notClaim']
+const unusedKeys = []
 
 const updateTranslationFiles = (unusedKeys) => {
 	const translationDir = path.resolve(__dirname, tlPath)

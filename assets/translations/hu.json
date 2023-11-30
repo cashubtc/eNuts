@@ -116,7 +116,6 @@
         "noFundsForFee": "Nincs elegendő fedezet, kérjük vedd figyelembe a díjat: ~{{fee}} Sat",
         "noMint": "Nem található verde",
         "noProofsToBackup": "Nincsenek igazolások a biztonsági mentés készítéséhez.",
-        "notClaim": "Ha \"Nem\"-el válaszolsz, a token nem lesz átvéve",
         "notQrCode": "Nem QR kód!",
         "noTX": "Még nincsenek utalások",
         "optionalMemo": "Választható megj.",

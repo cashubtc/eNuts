@@ -116,7 +116,6 @@
         "noFundsForFee": "Not enough funds, please leave room for potential fees: ~{{fee}} Sats",
         "noMint": "Found no mint",
         "noProofsToBackup": "Found no proofs to create a backup.",
-        "notClaim": "If you choose \"No\", the token will not be claimed",
         "notQrCode": "Not a QR code!",
         "noTX": "No transactions yet",
         "optionalMemo": "Optional memo",

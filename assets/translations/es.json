@@ -116,7 +116,6 @@
         "noFundsForFee": "No hay fondos suficientes. Por favor, deja margen para posibles comisiones: ~{{fee}} Sats",
         "noMint": "No se encontró ninguna ceca",
         "noProofsToBackup": "No se encontraron pruebas para crear una copia de seguridad.",
-        "notClaim": "Si eliges \"No\", el token no será reclamado",
         "notQrCode": "¡No es un código QR!",
         "noTX": "No hay transacciones todavía",
         "optionalMemo": "Nota opcional",

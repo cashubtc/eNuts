@@ -116,7 +116,6 @@
         "noFundsForFee": "Solde insuffisant, veuillez prévoir de la marge pour les frais éventuels: ~{{fee}} Sats",
         "noMint": "Aucune Mint trouvée",
         "noProofsToBackup": "Aucune preuve trouvée pour créer une sauvegarde.",
-        "notClaim": "Si vous choisissez \"Non\", le token ne sera pas réclamé",
         "notQrCode": "Ce n'est pas un code QR!",
         "noTX": "Pas encore de transactions",
         "optionalMemo": "Mémo facultatif",

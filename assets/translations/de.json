@@ -116,7 +116,6 @@
         "noFundsForFee": "Nicht genug Guthaben, bitte lassen Sie Platz für eventuelle Gebühren: ~{{fee}} Sats",
         "noMint": "Keine Mint gefunden",
         "noProofsToBackup": "Keine Proofs verfügbar für eine Sicherung.",
-        "notClaim": "Wenn Sie \"Nein\" wählen, wird der Token nicht beansprucht",
         "notQrCode": "Kein QR-Code!",
         "noTX": "Noch keine Transaktionen",
         "optionalMemo": "Optionales Memo",
