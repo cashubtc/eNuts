@@ -248,6 +248,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 						icon={fee.isCalculating ? <Loading color={hi[highlight]} /> : undefined}
 					/>
 				}
+				{isIOS && <View style={{ height: isSendEcash ? vs(100) : vs(20) }} />}
 			</KeyboardAvoidingView>
 		</Screen>
 	)
@@ -294,8 +295,7 @@ const styles = ScaledSheet.create({
 		right: '20@s',
 		left: '20@s',
 		bottom: '20@vs',
-		alignItems: 'center',
-		marginBottom: isIOS ? '20@vs' : '0@vs',
+		alignItems: 'center'
 	},
 	overviewWrap: {
 		width: '100%',
@@ -317,13 +317,13 @@ const styles = ScaledSheet.create({
 		marginTop: '10@vs',
 	},
 	actionWrap: {
+		flex: 1,
 		position: 'absolute',
 		bottom: '20@vs',
 		left: '20@s',
 		right: '20@s',
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: isIOS ? '20@vs' : '0@vs',
 		maxWidth: '100%',
 	},
 	memoInput: {
@@ -333,5 +333,5 @@ const styles = ScaledSheet.create({
 		paddingVertical: '18@vs',
 		borderRadius: 50,
 		fontSize: '14@vs',
-	}
+	},
 })

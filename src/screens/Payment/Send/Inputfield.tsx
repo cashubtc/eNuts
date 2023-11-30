@@ -191,6 +191,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 					onPress={() => void handleBtnPress()}
 					icon={loading ? <Loading size={20} /> : undefined}
 				/>
+				{isIOS && <View style={styles.placeholder} />}
 			</KeyboardAvoidingView>
 		</View>
 	)
@@ -227,9 +228,11 @@ const styles = ScaledSheet.create({
 	},
 	actionWrap: {
 		paddingHorizontal: '20@s',
-		marginBottom: isIOS ? '20@vs' : '0@vs',
 	},
 	loadingWrap: {
 		marginTop: '40@vs',
+	},
+	placeholder: {
+		height: '20@vs',
 	}
 })

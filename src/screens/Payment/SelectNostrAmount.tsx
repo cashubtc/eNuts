@@ -150,6 +150,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 					icon={<ChevronRightIcon width={s(12)} height={s(19)} color={getColor(highlight, color)} />}
 					size={s(55)}
 				/>
+				{isIOS && <View style={styles.placeholder} />}
 			</KeyboardAvoidingView>
 		</View>
 	)
@@ -226,10 +227,9 @@ const styles = ScaledSheet.create({
 	},
 	actionWrap: {
 		position: 'absolute',
-		bottom: '0@vs',
+		bottom: '20@vs',
 		left: '20@s',
 		right: '20@s',
-		marginBottom: isIOS ? '40@vs' : '20@vs',
 		flexDirection: 'row',
 		alignItems: 'center',
 		maxWidth: '100%',
@@ -241,5 +241,8 @@ const styles = ScaledSheet.create({
 		paddingVertical: '18@vs',
 		borderRadius: 50,
 		fontSize: '14@vs',
+	},
+	placeholder: {
+		height: '100@vs',
 	}
 })

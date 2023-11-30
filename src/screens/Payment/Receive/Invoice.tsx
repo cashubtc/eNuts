@@ -4,14 +4,14 @@ import { ShareIcon, WalletIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
+import { _testmintUrl, isIOS } from '@consts'
+import { getBalance } from '@db'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { _testmintUrl } from '@src/consts'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { getBalance } from '@src/storage/db'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
@@ -150,6 +150,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 						/>
 						: null
 				}
+				{isIOS && <View style={styles.placeholder} />}
 			</View>
 		</View>
 	)
@@ -176,4 +177,7 @@ const styles = ScaledSheet.create({
 		justifyContent: 'center',
 		marginTop: '5@vs',
 	},
+	placeholder: {
+		height: '20@vs',
+	}
 })
