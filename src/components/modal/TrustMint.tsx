@@ -36,7 +36,6 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 	const { openPromptAutoClose } = usePromptContext()
 	const [defaultMint, setDefaultMint] = useState('')
 	// TODO review this
-	// TODO overpaid fees are lost (can/should we consider them as a tip to the devs and store them somewhere?)
 	const handleAutoSwap = async () => {
 		if (!tokenInfo || !defaultMint.length) {
 			return l('tokenInfo is undefined or user has no default mint')
