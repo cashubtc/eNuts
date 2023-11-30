@@ -226,12 +226,12 @@ const styles = ScaledSheet.create({
 	},
 	actionWrap: {
 		position: 'absolute',
-		bottom: '20@vs',
+		bottom: '0@vs',
 		left: '20@s',
 		right: '20@s',
+		marginBottom: isIOS ? '40@vs' : '20@vs',
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: isIOS ? '20@vs' : '0@vs',
 		maxWidth: '100%',
 	},
 	memoInput: {
