@@ -45,6 +45,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			proofs.push(...p.proofs.map(pr => ({ ...pr, selected: true })))
 		}
 		try {
+			// TODO function autoMintSwap called in "processing screen" calls requestMint again. This can be avoided by creating a new autoSwap function?
 			const estFee = await checkFees(defaultMint, (await requestMint(defaultMint, tokenInfo.value)).pr)
 			nav.navigate('processing', {
 				mint: {
