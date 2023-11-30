@@ -227,7 +227,8 @@
         "openOnTestflight": "Öffnen in Testflight",
         "downloadApk": "APK herunterladen",
         "showOnGithub": "Auf Github anzeigen",
-        "hideReleaseNotes": "Versionshinweise verbergen"
+        "hideReleaseNotes": "Versionshinweise verbergen",
+        "useNpub": "NPUB verwenden"
     },
     "error": {
         "checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",

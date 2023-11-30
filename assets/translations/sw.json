@@ -227,7 +227,8 @@
         "openOnTestflight": "Fungua kwenye Testflight",
         "downloadApk": "Pakua APK",
         "showOnGithub": "Onyesha kwenye Github",
-        "hideReleaseNotes": "Ficha maelezo ya kutolewa"
+        "hideReleaseNotes": "Ficha maelezo ya kutolewa",
+        "useNpub": "Tumia NPUB"
     },
     "error": {
         "checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

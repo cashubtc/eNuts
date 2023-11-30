@@ -227,7 +227,8 @@
         "openOnTestflight": "Abrir en Testflight",
         "downloadApk": "Descargar APK",
         "showOnGithub": "Mostrar en Github",
-        "hideReleaseNotes": "Esconder notas de la versión"
+        "hideReleaseNotes": "Esconder notas de la versión",
+        "useNpub": "Usar NPUB"
     },
     "error": {
         "checkSpendableErr": "Error al comprobar si el token puede ser gastado",

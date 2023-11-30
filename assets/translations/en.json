@@ -227,7 +227,8 @@
         "openOnTestflight": "Open on Testflight",
         "downloadApk": "Download APK",
         "showOnGithub": "Show on Github",
-        "hideReleaseNotes": "Hide release notes"
+        "hideReleaseNotes": "Hide release notes",
+        "useNpub": "Use NPUB"
     },
     "error": {
         "checkSpendableErr": "Error while checking if token is spendable",

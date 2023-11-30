@@ -1,40 +1,61 @@
-import ActionButtons from '@comps/ActionButtons'
+import Button, { TxtButton } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
-import { NostrIcon } from '@comps/Icons'
+import LeaveAppModal from '@comps/LeaveAppModal'
 import Loading from '@comps/Loading'
 import { BottomModal } from '@comps/modal/Question'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
+import { getMintsBalances } from '@db'
 import type { TNpubConfirmPageProps } from '@model/nav'
-import { IContact } from '@model/nostr'
+import type { IContact } from '@model/nostr'
 import { pool } from '@nostr/class/Pool'
 import { defaultRelays, EventKind } from '@nostr/consts'
-import { getNostrUsername, handleNewNpub, parseProfileContent } from '@nostr/util'
+import { getNostrUsername, handleNewNpub, npubEncode, parseProfileContent, truncateNpub } from '@nostr/util'
+import ProfileBanner from '@screens/Addressbook/Contact/Banner'
+import Lud from '@screens/Addressbook/Contact/Lud'
 import NIP05Verified from '@screens/Addressbook/Contact/NIP05'
+import Website from '@screens/Addressbook/Contact/Website'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
+import Username from '@screens/Addressbook/Username'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { globals, highlight as hi } from '@styles'
+import { getCustomMintNames } from '@store/mintStore'
+import { globals } from '@styles'
 import { isStr } from '@util'
 import { Event as NostrEvent, nip19 } from 'nostr-tools'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Text, View } from 'react-native'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import { View } from 'react-native'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPageProps) {
 
 	const { hex } = route.params
 	const { t } = useTranslation([NS.common])
-	const { color, highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	const { replaceNpub, setNostr } = useNostrContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const [modal, setModal] = useState(false)
 	const [userProfile, setUserProfile] = useState<IContact | undefined>()
 	const { loading, startLoading, stopLoading } = useLoading()
+	const [visible, setVisible] = useState(false)
+	const closeModal = useCallback(() => setVisible(false), [])
+	const [url, setUrl] = useState('')
+
+	// link press
+	const handlePress = (url: string) => {
+		if (url === 'lightning://') {
+			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+			openPromptAutoClose({ msg: `⚠️\n\n${t('zapSoon', { ns: NS.common })}\n\n⚡👀` })
+			return
+		}
+		setVisible(true)
+		setUrl(url)
+	}
 
 	const handleMetadata = () => {
 		if (!hex || !isStr(hex)) { return }
@@ -84,6 +105,32 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 		navigation.navigate('scan success', { hex, userProfile })
 	}
 
+	// start sending ecash via nostr
+	const handleSend = async () => {
+		const mintsWithBal = await getMintsBalances()
+		const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
+		const nonEmptyMints = mintsWithBal.filter(m => m.amount > 0)
+		const nostr = {
+			senderName: getNostrUsername(userProfile),
+			contact: userProfile,
+		}
+		if (nonEmptyMints.length === 1) {
+			navigation.navigate('selectNostrAmount', {
+				mint: mints.find(m => m.mintUrl === nonEmptyMints[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' },
+				balance: nonEmptyMints[0].amount,
+				nostr,
+			})
+			return
+		}
+		navigation.navigate('selectMint', {
+			mints,
+			mintsWithBal,
+			allMintsEmpty: !nonEmptyMints.length,
+			isSendEcash: true,
+			nostr,
+		})
+	}
+
 	useEffect(() => {
 		startLoading()
 		handleMetadata()
@@ -92,42 +139,56 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
-			<View />
-			<View style={styles.infoWrap}>
-				{loading ?
-					<Loading color={hi[highlight]} size={s(50)} />
-					: userProfile?.picture ?
-						<>
+			{loading ?
+				<Loading size={vs(30)} />
+				:
+				<>
+					{/* Contact pictures overview */}
+					<ProfileBanner hex={userProfile?.hex} uri={userProfile?.banner} />
+					<View style={styles.profilePicContainer}>
+						<View style={styles.picWrap}>
 							<ProfilePic
-								hex={userProfile.hex}
-								uri={userProfile.picture}
-								size={100}
+								hex={userProfile?.hex}
+								uri={userProfile?.picture}
+								size={s(70)}
 							/>
-							<Text style={[styles.name, { color: color.TEXT }]}>
-								{getNostrUsername(userProfile)}
-							</Text>
-							{userProfile?.nip05 &&
-								<NIP05Verified nip05={userProfile.nip05} onPress={() => {/* ignore */ }} />
-							}
-							<Txt
-								txt={nip19.npubEncode(hex)}
-								styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-							/>
-						</>
-						:
-						<NostrIcon width={s(50)} height={s(50)} />
-				}
-				<Txt
-					txt={t('confirmNpubHint')}
-					styles={[styles.descText]}
-				/>
-			</View>
-			<ActionButtons
-				topBtnTxt={t('confirm')}
-				topBtnAction={() => void handleNpub()}
-				bottomBtnTxt={t('cancel')}
-				bottomBtnAction={() => navigation.goBack()}
-			/>
+						</View>
+					</View>
+					<View style={styles.contentWrap}>
+						{/* username */}
+						<Username contact={userProfile} fontSize={vs(22)} />
+						{/* npub */}
+						<Txt
+							// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+							txt={`${truncateNpub(npubEncode(userProfile?.hex ?? ''))}`}
+							styles={[styles.npub, { color: color.TEXT_SECONDARY }]}
+						/>
+						{/* tags */}
+						<View style={styles.tagsWrap}>
+							<NIP05Verified nip05={userProfile?.nip05} onPress={handlePress} />
+							<Website website={userProfile?.website} onPress={handlePress} />
+							<Lud lud16={userProfile?.lud16} lud06={userProfile?.lud06} onPress={handlePress} />
+						</View>
+					</View>
+					<View style={styles.action}>
+						<Button
+							txt={t('sendEcash')}
+							onPress={() => void handleSend()}
+						/>
+						<View style={{ marginVertical: vs(10) }} />
+						<Button
+							txt={t('useNpub')}
+							onPress={() => void handleNpub()}
+							outlined
+						/>
+						<TxtButton
+							txt={t('scanAgain')}
+							onPress={() => navigation.goBack()}
+						/>
+					</View>
+				</>
+			}
+			<LeaveAppModal url={url} visible={visible} closeModal={closeModal} />
 			<BottomModal
 				visible={modal}
 				header={t('replaceNpub')}
@@ -143,26 +204,35 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 
 const styles = ScaledSheet.create({
 	container: {
-		alignItems: 'center',
+		paddingTop: '0@vs',
+	},
+	profilePicContainer: {
+		flexDirection: 'row',
+		alignItems: 'flex-end',
 		justifyContent: 'space-between',
-		padding: '20@s',
+		marginTop: '-35@s',
+		paddingHorizontal: '20@s',
 	},
-	descText: {
-		marginBottom: '10@vs',
-		textAlign: 'center',
+	picWrap: {
+		width: '70@s',
+		height: '70@s',
+		borderRadius: 35,
+		overflow: 'hidden'
 	},
-	hint: {
+	contentWrap: {
+		paddingTop: '10@vs',
+		paddingHorizontal: '20@s',
+	},
+	npub: {
 		fontSize: '12@vs',
-		textAlign: 'center',
-		marginVertical: '20@vs',
 	},
-	infoWrap: {
-		alignItems: 'center',
-	},
-	name: {
-		fontSize: '20@vs',
-		fontWeight: '500',
+	tagsWrap: {
 		marginTop: '20@vs',
-		marginBottom: '5@vs',
-	}
+	},
+	action: {
+		position: 'absolute',
+		bottom: isIOS ? '40@vs' : '20@vs',
+		right: '20@s',
+		left: '20@s'
+	},
 })

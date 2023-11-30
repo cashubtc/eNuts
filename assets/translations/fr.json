@@ -227,7 +227,8 @@
         "openOnTestflight": "Ouvrir sur Testflight",
         "downloadApk": "Télécharger APK",
         "showOnGithub": "Voir sur Github",
-        "hideReleaseNotes": "Masquer les notes de version"
+        "hideReleaseNotes": "Masquer les notes de version",
+        "useNpub": "Utiliser NPUB"
     },
     "error": {
         "checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

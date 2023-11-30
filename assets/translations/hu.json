@@ -227,7 +227,8 @@
         "openOnTestflight": "Megnyitás a Testflight-on",
         "downloadApk": "APK letöltése",
         "showOnGithub": "Megnyitás Github-on",
-        "hideReleaseNotes": "Verzió megjegyzések elrejtése"
+        "hideReleaseNotes": "Verzió megjegyzések elrejtése",
+        "useNpub": "Usar NPUB"
     },
     "error": {
         "checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",
