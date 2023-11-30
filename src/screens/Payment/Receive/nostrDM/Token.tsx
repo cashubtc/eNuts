@@ -76,6 +76,10 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 		await receiveToken()
 	}
 
+	const handleAutoSwap = () => {
+		
+	}
+
 	// helper function that gets called either right after pasting token or in the trust modal depending on user permission
 	const receiveToken = async () => {
 		if (!info) { return }
@@ -152,6 +156,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 					loading={loading}
 					tokenInfo={info}
 					handleTrustModal={() => void handleTrustModal()}
+					handleAutoSwap={() => void handleAutoSwap()}
 					closeModal={() => setTrustModal(false)}
 				/>
 			}

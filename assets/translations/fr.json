@@ -228,7 +228,11 @@
         "downloadApk": "Télécharger APK",
         "showOnGithub": "Voir sur Github",
         "hideReleaseNotes": "Masquer les notes de version",
-        "useNpub": "Utiliser NPUB"
+        "useNpub": "Utiliser NPUB",
+        "autoSwapToDefaulMint": "Auto-Échange vers défault mint",
+        "trustMintOpt": "Faire confiance à cette mint",
+        "swapHint": "Ce choix nécessite un paiement Lightning et peut entraîner des frais associés.",
+        "trustHint": "La menthe associée au jeton sera ajoutée à votre liste de confiance."
     },
     "error": {
         "checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

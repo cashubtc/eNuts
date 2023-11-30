@@ -228,7 +228,10 @@
         "downloadApk": "Descargar APK",
         "showOnGithub": "Mostrar en Github",
         "hideReleaseNotes": "Esconder notas de la versión",
-        "useNpub": "Usar NPUB"
+        "useNpub": "Usar NPUB",
+        "autoSwapToDefaulMint": "Cambiar a la ceca por defecto",
+        "swapHint": "Esta opción requiere un pago mediante Lightning y puede conllevar tarifas asociadas.",
+        "trustHint": "La casa de moneda asociada con el token se añadirá a tu lista de confianza."
     },
     "error": {
         "checkSpendableErr": "Error al comprobar si el token puede ser gastado",

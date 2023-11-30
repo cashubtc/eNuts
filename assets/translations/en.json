@@ -228,7 +228,11 @@
         "downloadApk": "Download APK",
         "showOnGithub": "Show on Github",
         "hideReleaseNotes": "Hide release notes",
-        "useNpub": "Use NPUB"
+        "useNpub": "Use NPUB",
+        "autoSwapToDefaulMint": "Auto-swap to default mint",
+        "trustMintOpt": "Trust mint",
+        "swapHint": "This choice requires a Lightning payment and may incur associated fees.",
+        "trustHint": "The mint associated with the token will be added to your trusted list."
     },
     "error": {
         "checkSpendableErr": "Error while checking if token is spendable",

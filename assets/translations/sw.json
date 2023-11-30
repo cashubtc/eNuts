@@ -228,7 +228,11 @@
         "downloadApk": "Pakua APK",
         "showOnGithub": "Onyesha kwenye Github",
         "hideReleaseNotes": "Ficha maelezo ya kutolewa",
-        "useNpub": "Tumia NPUB"
+        "useNpub": "Tumia NPUB",
+        "autoSwapToDefaulMint": "Badilisha otomatiki sarafu msingi",
+        "trustMintOpt": "Iamini sarafu hii",
+        "swapHint": "Chaguo hili linahitaji malipo ya Lightning na linaweza kusababisha ada zinazohusiana.",
+        "trustHint": "Minti inayohusiana na alama itaongezwa kwenye orodha yako ya kuaminika."
     },
     "error": {
         "checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

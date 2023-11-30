@@ -228,7 +228,11 @@
         "downloadApk": "APK herunterladen",
         "showOnGithub": "Auf Github anzeigen",
         "hideReleaseNotes": "Versionshinweise verbergen",
-        "useNpub": "NPUB verwenden"
+        "useNpub": "NPUB verwenden",
+        "autoSwapToDefaulMint": "Auto-Tausch zu Standard-Mint",
+        "trustMintOpt": "Mint vertrauen",
+        "swapHint": "Diese Option erfordert eine Lightning-Zahlung und kann damit verbundene Gebühren verursachen.",
+        "trustHint": "Die mit dem Token verbundene Mint wird zu Ihrer Vertrauensliste hinzugefügt."
     },
     "error": {
         "checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
