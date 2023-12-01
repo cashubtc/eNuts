@@ -76,11 +76,18 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			}
 			{/* Show in which mint(s) the tokens are */}
 			<View style={styles.tokenMintsView}>
-				{tokenInfo?.mints.map(m => <Text style={[styles.mintPrompt, { color: color.TEXT }]} key={m}>{formatMintUrl(m)}</Text>)}
+				{tokenInfo?.mints.map(m => (
+					<Text
+						style={[styles.mintPrompt, { color: color.TEXT }]}
+						key={m}
+					>
+						{formatMintUrl(m)}
+					</Text>
+				))}
 			</View>
 			{defaultMint.length > 0 &&
 				<>
-					<TouchableOpacity onPress={() => void handleAutoSwap()} style={{ paddingHorizontal: s(20) }}>
+					<TouchableOpacity onPress={() => void handleAutoSwap()} style={styles.ph}>
 						<View style={styles.action}>
 							<View style={{ minWidth: s(40) }}>
 								<SwapIcon width={s(22)} height={s(22)} color={mainColors.ZAP} />
@@ -91,10 +98,10 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 							</View>
 						</View>
 					</TouchableOpacity>
-					<Separator style={[{ width: '100%', marginTop: vs(20) }]} />
+					<Separator style={[styles.separator]} />
 				</>
 			}
-			<TouchableOpacity onPress={handleTrustModal} style={{ marginBottom: vs(20), paddingHorizontal: s(20) }}>
+			<TouchableOpacity onPress={handleTrustModal} style={styles.trustClaim}>
 				<View style={styles.action}>
 					<View style={{ minWidth: s(40) }}>
 						<ReceiveIcon width={s(26)} height={s(26)} color={mainColors.VALID} />
@@ -108,7 +115,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			<TxtButton
 				txt={t('cancel')}
 				onPress={closeModal}
-				style={[{ paddingBottom: vs(15), paddingTop: vs(15) }]}
+				style={[styles.TxtButton]}
 			/>
 		</MyModal>
 	)
@@ -126,5 +133,20 @@ const styles = ScaledSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		width: '100%',
+	},
+	ph: {
+		paddingHorizontal: '20@s'
+	},
+	trustClaim: {
+		marginBottom: vs(20),
+		paddingHorizontal: s(20)
+	},
+	TxtButton: {
+		paddingBottom: vs(15),
+		paddingTop: vs(15)
+	},
+	separator: {
+		width: '100%',
+		marginTop: vs(20)
 	}
 })
