@@ -196,7 +196,7 @@ export async function autoMintSwap(
 	fee: number,
 	proofs: Proof[] = []
 ): Promise<{ payResult: { result?: PayLnInvoiceResponse, fee?: number, realFee?: number, error?: unknown }; requestTokenResult: { success: boolean; invoice?: IInvoice | null } }> {
-	if (!isNum(fee) || fee < 0) { fee = await checkFees(destMintUrl, (await requestMint(destMintUrl, amount)).pr) }
+	if (!isNum(fee) || fee <= 0) { fee = await checkFees(destMintUrl, (await requestMint(destMintUrl, amount)).pr) }
 	l('[autoMintSwap]', { fee, amount, srcMintUrl, destMintUrl })
 	if (!amount || !isNum(amount) || isNaN(amount) || !isFinite(amount) || amount <= 0) {
 		throw new Error('Swap Error: not enough funds')

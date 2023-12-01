@@ -14,7 +14,7 @@ import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { getDefaultMint } from '@store/mintStore'
 import { globals } from '@styles'
 import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
-import { autoMintSwap, checkFees, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
+import { autoMintSwap, checkFees, fullAutoMintSwap, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
@@ -38,6 +38,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		isSendEcash,
 		nostr,
 		isSwap,
+		isAutoSwap,
 		isZap,
 		payZap,
 		targetMint,
@@ -163,6 +164,35 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 	}
 
+	const handleAutoSwap = async () => {
+		if (!targetMint?.mintUrl?.trim()) {
+			return handleError({ e: `targetMint: ${targetMint?.mintUrl} is invalid` })
+		}
+		// simple way
+		try {
+			const {
+				payResult,
+				requestTokenResult
+			} = (await fullAutoMintSwap(mint.mintUrl, targetMint.mintUrl, estFee ?? 0)).result
+			// add as history entry (multimint swap)
+			await addToHistory({
+				amount: -amount,
+				fee: payResult.realFee,
+				type: 3,
+				value: requestTokenResult.invoice?.pr ||'',
+				mints: [mint.mintUrl],
+				recipient: targetMint?.mintUrl || ''
+			})
+			navigation.navigate('success', {
+				amount,
+				fee: payResult.realFee,
+				isMelt: true
+			})
+		} catch (e) {
+			handleError({ e })
+		}
+	}
+
 	const handleSendingEcash = async () => {
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
@@ -274,12 +304,15 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		if (isSwap) {
 			return void handleSwap()
 		}
+		if (isAutoSwap) {
+			return void handleAutoSwap()
+		}
 		if (isSendEcash) {
 			return void handleSendingEcash()
 		}
 		void handleMinting()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isMelt, isSwap, isZap, payZap, isSendEcash])
+	}, [isMelt, isSwap, isZap, payZap, isSendEcash, isAutoSwap])
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
 	useEffect(() => {

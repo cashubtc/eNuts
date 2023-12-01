@@ -40,12 +40,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 		if (!tokenInfo || !defaultMint.length) {
 			return l('tokenInfo is undefined or user has no default mint')
 		}
-		const proofs = []
-		for (const p of tokenInfo.decoded.token) {
-			proofs.push(...p.proofs.map(pr => ({ ...pr, selected: true })))
-		}
 		try {
-			// TODO function autoMintSwap called in "processing screen" calls requestMint again. This can be avoided by creating a new autoSwap function?
 			const estFee = await checkFees(defaultMint, (await requestMint(defaultMint, tokenInfo.value)).pr)
 			nav.navigate('processing', {
 				mint: {
@@ -54,9 +49,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 				},
 				targetMint: { mintUrl: defaultMint, customName: '' },
 				amount: tokenInfo.value - estFee,
-				estFee,
-				isSwap: true,
-				proofs
+				isAutoSwap: true
 			})
 		} catch (e) {
 			openPromptAutoClose({ msg: isErr(e) ? e.message : '' })
