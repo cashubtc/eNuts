@@ -229,7 +229,7 @@
         "useNpub": "Usar NPUB",
         "autoSwapToDefaulMint": "Automatikus csere alapverdére",
         "trustMintOpt": "Ezt a forrást akarom megbízni",
-        "swapHint": "Ez a választás egy villám fizetést igényel, és esetleg jár vele kapcsolatos díjakkal.",
+        "swapHint": "Ez az opció egy Lightning-fizetést igényel, költségekkel jár, és még akkor is hozzáadhatja az ismeretlen Minton listához, ha egy költség-visszatérítés megtörténik.",
         "trustHint": "A tokenhez kapcsolódó pénzverde hozzá lesz adva a megbízott listájához."
     },
     "error": {

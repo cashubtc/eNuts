@@ -229,7 +229,7 @@
         "useNpub": "NPUB verwenden",
         "autoSwapToDefaulMint": "Auto-Tausch zu Standard-Mint",
         "trustMintOpt": "Mint vertrauen",
-        "swapHint": "Diese Option erfordert eine Lightning-Zahlung und kann damit verbundene Gebühren verursachen.",
+        "swapHint": "Diese Option erfordert eine Lightning-Zahlung, bringt Gebühren mit sich und kann die unbekannte Mint dennoch zur Liste hinzufügen, wenn eine Gebühren-Rückzahlung erfolgt.",
         "trustHint": "Die mit dem Token verbundene Mint wird zu Ihrer Vertrauensliste hinzugefügt."
     },
     "error": {

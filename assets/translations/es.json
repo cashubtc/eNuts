@@ -229,7 +229,7 @@
         "useNpub": "Usar NPUB",
         "autoSwapToDefaulMint": "Cambiar a la ceca por defecto",
         "trustMintOpt": "Confiar en la ceca",
-        "swapHint": "Esta opción requiere un pago mediante Lightning y puede conllevar tarifas asociadas.",
+        "swapHint": "Cette option nécessite un paiement Lightning, implique des frais et peut toujours ajouter la mint inconnue à la liste si un remboursement de frais survient.",
         "trustHint": "La casa de moneda asociada con el token se añadirá a tu lista de confianza."
     },
     "error": {

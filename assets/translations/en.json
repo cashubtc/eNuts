@@ -229,7 +229,7 @@
         "useNpub": "Use NPUB",
         "autoSwapToDefaulMint": "Auto-swap to default mint",
         "trustMintOpt": "Trust mint",
-        "swapHint": "This choice requires a Lightning payment and may incur associated fees.",
+        "swapHint": "This option requires a Lightning payment, involves fees, and may still add the unknown mint to the list if a fee refund occurs.",
         "trustHint": "The mint associated with the token will be added to your trusted list."
     },
     "error": {

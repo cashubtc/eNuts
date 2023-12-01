@@ -229,7 +229,7 @@
         "useNpub": "Tumia NPUB",
         "autoSwapToDefaulMint": "Badilisha otomatiki sarafu msingi",
         "trustMintOpt": "Iamini sarafu hii",
-        "swapHint": "Chaguo hili linahitaji malipo ya Lightning na linaweza kusababisha ada zinazohusiana.",
+        "swapHint": "Chaguo hili linahitaji malipo ya Lightning, linajumuisha ada, na linaweza bado kuongeza mint isiyojulikana kwenye orodha ikiwa kuna marejesho ya ada.",
         "trustHint": "Minti inayohusiana na alama itaongezwa kwenye orodha yako ya kuaminika."
     },
     "error": {

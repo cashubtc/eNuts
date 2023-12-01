@@ -94,7 +94,10 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 							</View>
 							<View>
 								<Txt txt={t('autoSwapToDefaulMint')} bold />
-								<Txt styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]} txt={t('swapHint')} />
+								<Txt
+									styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
+									txt={t('swapHint')}
+								/>
 							</View>
 						</View>
 					</TouchableOpacity>
