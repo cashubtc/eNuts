@@ -11,7 +11,6 @@ import { truncateStr } from '@nostr/util'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
 import { historyStore } from '@store'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames } from '@store/mintStore'
@@ -155,8 +154,6 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		if (tokenMemo) { return tokenMemo }
 		return t('noMemo', { ns: NS.history })
 	}
-
-	l({ fee })
 
 	return (
 		<View style={[globals(color).container, styles.container]}>

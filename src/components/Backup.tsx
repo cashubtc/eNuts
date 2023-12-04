@@ -1,5 +1,7 @@
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { highlight as hi, mainColors } from '@styles/colors'
 import { formatMintUrl, share } from '@util'
 import { useTranslation } from 'react-i18next'
@@ -20,6 +22,11 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const { copied, copy } = useCopy()
+	const handleCopy = async () => {
+		await copy(token)
+		// we can save the created backup here to avoid foreground prompts of self-created backup tokens
+		await store.set(STORE_KEYS.createdToken, token)
+	}
 	return (
 		<>
 			<View style={styles.container}>
@@ -43,7 +50,7 @@ export default function BackupSuccess({ token, mint }: IBackupSuccessProps) {
 				}
 				<TouchableOpacity
 					style={[styles.tokenWrap, { backgroundColor: color.INPUT_BG }]}
-					onPress={() => void copy(token)}
+					onPress={() => void handleCopy()}
 				>
 					<View style={styles.backupTxtWrap}>
 						<FlagIcon color={color.TEXT} />
