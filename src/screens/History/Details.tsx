@@ -11,6 +11,7 @@ import { truncateStr } from '@nostr/util'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { historyStore } from '@store'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames } from '@store/mintStore'
@@ -155,6 +156,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		return t('noMemo', { ns: NS.history })
 	}
 
+	l({ fee })
+
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<TopNav
@@ -163,7 +166,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				handlePress={() => navigation.goBack()}
 			/>
 			<ScrollView showsVerticalScrollIndicator={false}>
-				<View style={{ marginBottom: insets.bottom, paddingTop: vs(20) }}>
+				<View style={{ marginBottom: insets.bottom, paddingTop: vs(10) }}>
 					<View style={styles.topSection}>
 						<Text style={[styles.amount, { color: getTxColor() }]}>
 							{getAmount()}
@@ -201,14 +204,18 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							</>
 						}
 						{/* Memo */}
-						<View style={styles.entryInfo}>
-							<Txt txt={t('memo', { ns: NS.history })} />
-							<Txt
-								txt={getMemo()}
-								styles={[styles.infoValue]}
-							/>
-						</View>
-						<Separator />
+						{getMemo().length > 0 &&
+							<>
+								<View style={styles.entryInfo}>
+									<Txt txt={t('memo', { ns: NS.history })} />
+									<Txt
+										txt={getMemo()}
+										styles={[styles.infoValue]}
+									/>
+								</View>
+								<Separator />
+							</>
+						}
 						{/* Mints */}
 						<View style={styles.entryInfo}>
 							<Txt txt={isLn.current ? 'Mint' : 'Mints'} />
@@ -300,7 +307,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 								{/* LN payment fees */}
 								<View style={styles.entryInfo}>
 									<Txt txt={t('fee')} />
-									<Txt txt={isNum(fee) ? formatSatStr(fee) : t('n/a')} />
+									<Txt txt={formatSatStr(isNum(fee) ? fee : 0)} />
 								</View>
 								<Separator />
 							</>
