@@ -6,6 +6,7 @@ import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import { pool } from '@nostr/class/Pool'
 import { getNostrUsername } from '@nostr/util'
+import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -29,6 +30,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
 	const { setNostr } = useNostrContext()
+	const { clearUrl } = useInitialURL()
 	const {
 		mint,
 		amount,
@@ -47,6 +49,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	} = route.params
 
 	const handleError = ({ e, customMsg }: IErrorProps) => {
+		// reset zap deep link
+		clearUrl()
 		const translatedErrMsg = t(customMsg || 'requestMintErr', { ns: NS.error })
 		navigation.navigate('processingError', {
 			amount,
@@ -127,6 +131,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				mints: [mint.mintUrl],
 				timestamp: Math.ceil(Date.now() / 1000)
 			})
+			// reset zap deep link
+			clearUrl()
 			navigation.navigate('success', {
 				amount,
 				fee: res.realFee,
