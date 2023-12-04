@@ -117,7 +117,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					// @ts-expect-error navigation type is not complete
 					if (prevRoute?.name === 'processing' && prevRoute.params?.isZap) {
 						// clear the deep link url if user cancels
-						if (url.length) { clearUrl() }
+						clearUrl()
 						return navigation.navigate('dashboard')
 					}
 					navigation.goBack()
