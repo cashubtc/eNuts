@@ -11,6 +11,7 @@ import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { highlight as hi } from '@styles'
+import { isStr } from '@util'
 import { nip19 } from 'nostr-tools'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -106,7 +107,7 @@ const ContactPreview = React.memo(({
 				{Object.keys(contact).length > 1 ?
 					<View style={styles.nameWrap}>
 						<Username contact={contact} fontSize={vs(14)} />
-						{contact?.nip05 &&
+						{isStr(contact.nip05) && contact.nip05.length > 0 &&
 							<Txt
 								txt={truncateStr(contact.nip05, 25)}
 								styles={[{ color: hi[highlight], fontSize: vs(12) }]}
