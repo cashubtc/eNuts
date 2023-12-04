@@ -18,6 +18,7 @@ import { ScrollView, View } from 'react-native'
 import { ScaledSheet } from 'react-native-size-matters'
 
 import { CoinSelectionModal, CoinSelectionResume, OverviewRow } from './ProofList'
+import { useInitialURL } from '@src/context/Linking'
 
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
 	const {
@@ -37,6 +38,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	} = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
+	const { url, clearUrl } = useInitialURL()
 	const [isEnabled, setIsEnabled] = useState(false)
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
@@ -101,7 +103,11 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			<TopNav
 				screenName={t('paymentOverview', { ns: NS.mints })}
 				cancel
-				handleCancel={() => navigation.navigate('dashboard')}
+				handleCancel={() => {
+					// clear the deep link url if user cancels
+					if (url.length) { clearUrl() }
+					navigation.navigate('dashboard')
+				}}
 				withBackBtn
 				handlePress={() => {
 					if (scanned) { return navigation.navigate('qr scan', {}) }
@@ -110,7 +116,8 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					// if user comes from processing screen, navigate back to dashboard
 					// @ts-expect-error navigation type is not complete
 					if (prevRoute?.name === 'processing' && prevRoute.params?.isZap) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						// clear the deep link url if user cancels
+						if (url.length) { clearUrl() }
 						return navigation.navigate('dashboard')
 					}
 					navigation.goBack()
