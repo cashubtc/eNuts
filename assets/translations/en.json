@@ -22,9 +22,6 @@
         "welcome": "Welcome",
         "welcomeBack": "Welcome back!"
     },
-    "backup": {
-        "copyBackup": "Copy the token and keep it in a safe place."
-    },
     "bottomNav": {
         "contacts": "Contacts"
     },
@@ -230,7 +227,10 @@
         "autoSwapToDefaulMint": "Auto-swap to default mint",
         "trustMintOpt": "Trust mint",
         "swapHint": "This option requires a Lightning payment, involves fees, and may still add the unknown mint to the list if a fee refund occurs.",
-        "trustHint": "The mint associated with the token will be added to your trusted list."
+        "trustHint": "The mint associated with the token will be added to your trusted list.",
+		"backupQ": "How does it work?",
+		"backupHint": "The existing backup process represents a rudimentary implementation. It creates a Cashu token from mints and proofs which becomes invalid after new transactions. To restore the token on a new device, follow the familiar claiming process and the old balance becomes invalid. Avoid redeeming on top of the current balance to prevent errors. It's worth mentioning that we're actively engaged in developing a seed phrase backup solution for enhanced security and convenience.",
+		"singleBackupHint": "Note: You can also create a backup for a single mint under 'Options' > 'Mint management' > 'Select mint' > 'Backup funds'."
     },
     "error": {
         "checkSpendableErr": "Error while checking if token is spendable",

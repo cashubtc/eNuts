@@ -22,9 +22,6 @@
         "welcome": "Bienvenido",
         "welcomeBack": "¡Bienvenido de nuevo!"
     },
-    "backup": {
-        "copyBackup": "Copia el token y mantenlo en un lugar seguro."
-    },
     "bottomNav": {
         "contacts": "Contactos"
     },
@@ -230,7 +227,10 @@
         "autoSwapToDefaulMint": "Cambiar a la ceca por defecto",
         "trustMintOpt": "Confiar en la ceca",
         "swapHint": "Cette option nécessite un paiement Lightning, implique des frais et peut toujours ajouter la mint inconnue à la liste si un remboursement de frais survient.",
-        "trustHint": "La casa de moneda asociada con el token se añadirá a tu lista de confianza."
+        "trustHint": "La casa de moneda asociada con el token se añadirá a tu lista de confianza.",
+		"backupQ": "¿Cómo funciona?",
+		"backupHint": "El proceso de copia de seguridad actual representa una implementación rudimentaria. Crea un token Cashu a partir de monedas y pruebas que se vuelve inválido después de nuevas transacciones. Para restaurar el token en un nuevo dispositivo, sigue el proceso de reclamación habitual y el antiguo saldo se vuelve inválido. Evita canjearlo sobre el saldo actual para prevenir errores. Cabe mencionar que estamos trabajando activamente en el desarrollo de una solución de respaldo con frase semilla para mejorar la seguridad y la comodidad.",
+		"singleBackupHint": "Nota: También puedes crear una copia de seguridad para una única ceca bajo 'Opciones' > 'Gestión de ceca' > 'Seleccionar ceca' > 'Reserva de fondos'."
     },
     "error": {
         "checkSpendableErr": "Error al comprobar si el token puede ser gastado",

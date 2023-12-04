@@ -22,9 +22,6 @@
         "welcome": "Bienvenue",
         "welcomeBack": "Bienvenue de retour!"
     },
-    "backup": {
-        "copyBackup": "Copiez le jeton et gardez-le dans un endroit sûr."
-    },
     "bottomNav": {
         "contacts": "Contacts"
     },
@@ -230,7 +227,10 @@
         "autoSwapToDefaulMint": "Auto-Échange vers défault mint",
         "trustMintOpt": "Faire confiance à cette mint",
         "swapHint": "Ce choix nécessite un paiement Lightning et peut entraîner des frais associés.",
-        "trustHint": "La menthe associée au jeton sera ajoutée à votre liste de confiance."
+        "trustHint": "La menthe associée au jeton sera ajoutée à votre liste de confiance.",
+		"backupQ": "Comment ça fonctionne?",
+		"backupHint": "Le processus de sauvegarde actuel représente une implémentation rudimentaire. Il crée un token Cashu à partir des mints et des preuves, qui devient invalide après de nouvelles transactions. Pour restaurer le token sur un nouvel appareil, suivez le processus de réclamation habituel et l'ancien solde devient invalide. Évitez de le racheter sur le solde actuel pour éviter les erreurs. Il est à noter que nous travaillons activement sur le développement d'une solution de sauvegarde par phrase semence pour une sécurité et une commodité accrues.",
+		"singleBackupHint": "Remarque : Vous pouvez également effectuer une sauvegarde pour une seule mint sous 'Options' > 'Paramètres des mints' > 'Sélectionner une mint' > 'Sauvegarde des fonds'."
     },
     "error": {
         "checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",
