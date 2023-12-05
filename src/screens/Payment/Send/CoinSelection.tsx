@@ -8,6 +8,7 @@ import type { IProofSelection } from '@model'
 import type { TCoinSelectionPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { getNostrUsername, isNpub, npubEncode, truncateNpub, truncateStr } from '@nostr/util'
+import { useInitialURL } from '@src/context/Linking'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
@@ -18,7 +19,6 @@ import { ScrollView, View } from 'react-native'
 import { ScaledSheet } from 'react-native-size-matters'
 
 import { CoinSelectionModal, CoinSelectionResume, OverviewRow } from './ProofList'
-import { useInitialURL } from '@src/context/Linking'
 
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
 	const {

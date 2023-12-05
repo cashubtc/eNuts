@@ -5,7 +5,7 @@ import Loading from '@comps/Loading'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
 import { _testmintUrl, isIOS } from '@consts'
-import { getBalance } from '@db'
+import { getAllInvoices } from '@db'
 import { l } from '@log'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -39,12 +39,19 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	}
 
 	const handlePayment = async (isCancelling?: boolean) => {
-		const previousBalance = await getBalance()
 		try {
+			const allInvoices = (await getAllInvoices()).map(i => i.pr)
 			const { success } = await requestToken(mintUrl, amount, hash)
-			const newBalance = await getBalance()
-			// it is possible that success is false but invoice has been paid...
-			if (success || newBalance > previousBalance) {
+			/*
+			it is possible that success is false but invoice has
+			been paid and token have been issued due to the double
+			check in the background...(requestTokenLoop())
+			So we check if the invoice is in the db and if it is
+			not then we check if the invoice has expired and if
+			it has not then we assume that the invoice has been
+			paid and token have been issued.
+			*/
+			if (success || (!allInvoices.includes(paymentRequest) && expire > 0)) {
 				// add as history entry
 				await addToHistory({
 					amount,
