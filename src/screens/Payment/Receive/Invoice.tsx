@@ -50,6 +50,8 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			not then we check if the invoice has expired and if
 			it has not then we assume that the invoice has been
 			paid and token have been issued.
+			TODO we need a global context that handles invoices
+			payments so the frontend can handle updates accordingly
 			*/
 			if (success || (!allInvoices.includes(paymentRequest) && expire > 0)) {
 				// add as history entry
