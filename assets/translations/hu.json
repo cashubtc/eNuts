@@ -361,7 +361,7 @@
         "enutsMint": "Az alapértelmezett eNuts verde",
         "mintDisclaimer": "Az alapértelmezett eNuts verde használata teljes mértékben saját felelősséged. Nyomatékosan hangsúlyozzuk, hogy körültekintően járj el és kizárólag kísérletezési vagy oktatási célra használd. Semmilyen garancia nincs a funkcionalitásra, biztonságra, elérhetőségre és megszűnhet előzetes figyelmeztetés nélkül. A letétbe helyezett összegre vissza nem térítendő adományként kell tekinteni, ami valószínűleg a további fejlesztésre lesz fordítva. Légy tudatában a béta szoftver használatának kockázatairól és téged terhel minden felelősség a vagyonodat illetően amikor ezt a verdét használod.",
         "paidOut": "Kifizetve",
-        "pasteToken": "Ecash beváltva",
+        "pasteToken": "Ecash beváltása",
         "payInvoice": "Számla fizetése",
         "payLNInvoice": "Lightning számla fizetése",
         "receive": "Fogad",
