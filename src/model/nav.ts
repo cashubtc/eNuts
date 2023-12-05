@@ -100,6 +100,7 @@ export type RootStackParamList = {
 	nostrReceive: undefined
 	processing: {
 		mint: IMintUrl
+		tokenInfo?: ITokenInfo
 		amount: number
 		estFee?: number
 		isMelt?: boolean

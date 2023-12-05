@@ -143,7 +143,7 @@
         "today": "Today",
         "tokenInfoErr": "Error while getting token info",
         "totalInclFee": "Total incl. fee",
-        "trustMint": "Do you want to trust this mint",
+        "trustMint": "Trust this mint?",
         "tryLater": "Please try again later.",
         "unknownType": "Unknown data",
         "version": "Version",
@@ -230,7 +230,8 @@
         "trustHint": "The mint associated with the token will be added to your trusted list.",
 		"backupQ": "How does it work?",
 		"backupHint": "The existing backup process represents a rudimentary implementation. It creates a Cashu token from mints and proofs which becomes invalid after new transactions. To restore the token on a new device, follow the familiar claiming process and the old balance becomes invalid. Avoid redeeming on top of the current balance to prevent errors. It's worth mentioning that we're actively engaged in developing a seed phrase backup solution for enhanced security and convenience.",
-		"singleBackupHint": "Note: You can also create a backup for a single mint under 'Options' > 'Mint management' > 'Select mint' > 'Backup funds'."
+		"singleBackupHint": "Note: You can also create a backup for a single mint under 'Options' > 'Mint management' > 'Select mint' > 'Backup funds'.",
+		"noDefaultHint": "You need to setup a default mint to perform an auto swap."
     },
     "error": {
         "checkSpendableErr": "Error while checking if token is spendable",

@@ -10,10 +10,10 @@ import { _testmintUrl } from '@consts'
 import {
 	addInvoice, addMint, addToken, deleteProofs,
 	delInvoice, getAllInvoices, getInvoice,
-	getMintBalance, getMintsBalances, getMintsUrls
+	getMintsBalances, getMintsUrls
 } from '@db'
 import { l } from '@log'
-import type { IInvoice } from '@src/model'
+import type { IInvoice, ITokenInfo } from '@model'
 import { getCustomMintNames } from '@store/mintStore'
 import { decodeLnInvoice, isCashuToken, isNum } from '@util'
 
@@ -218,7 +218,31 @@ export async function autoMintSwap(
 	}
 }
 
-export async function fullAutoMintSwap(srcMintUrl: string, destMintUrl: string, fee: number) {
+export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: string) {
+	l('[fullAutoMintSwap] ', { tokenInfo, destMintUrl })
+	try {
+		const invoice = await requestMint(destMintUrl, tokenInfo.value)
+		const estFee = await checkFees(destMintUrl, invoice.pr)
+		const proofs: Proof[] = []
+		for (const t of tokenInfo.decoded.token) {
+			proofs.push(...t.proofs)
+		}
+		const { payResult, requestTokenResult } = await autoMintSwap(
+			tokenInfo.mints[0],
+			destMintUrl,
+			tokenInfo.value - estFee,
+			estFee,
+			proofs
+		)
+		l('[fullAutoMintSwap]', { payResult, requestTokenResult })
+		return { payResult, requestTokenResult }
+	} catch (e) {
+		return { payResult: undefined, requestTokenResult: undefined }
+	}
+}
+
+// This won't work if the source mint is not in our db
+/* export async function fullAutoMintSwap(srcMintUrl: string, destMintUrl: string, fee: number) {
 	let amount = await getMintBalance(srcMintUrl)
 	let result = await autoMintSwap(srcMintUrl, destMintUrl, amount, fee)
 	amount = await getMintBalance(srcMintUrl)
@@ -229,7 +253,7 @@ export async function fullAutoMintSwap(srcMintUrl: string, destMintUrl: string, 
 		l('[fullAutoMintSwap][round: 2]', result)
 	} catch (error) { return { result, error } }
 	return { result }
-}
+} */
 
 // get mints for send/receive process
 export async function getMintsForPayment() {

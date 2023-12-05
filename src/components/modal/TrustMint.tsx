@@ -12,7 +12,6 @@ import { NS } from '@src/i18n'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
 import { formatMintUrl, formatSatStr, isErr, isStr } from '@util'
-import { checkFees, requestMint } from '@wallet'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Text, TouchableOpacity, View } from 'react-native'
@@ -35,25 +34,22 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 	const { color, highlight } = useThemeContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const [defaultMint, setDefaultMint] = useState('')
-	// TODO review this
-	const handleAutoSwap = async () => {
-		if (!tokenInfo || !defaultMint.length) {
-			return l('tokenInfo is undefined or user has no default mint')
+
+	const handleAutoSwap = () => {
+		if (!tokenInfo) {
+			return openPromptAutoClose({ msg: 'tokenInfo is undefined or user has no default mint' })
 		}
-		try {
-			const estFee = await checkFees(defaultMint, (await requestMint(defaultMint, tokenInfo.value)).pr)
-			nav.navigate('processing', {
-				mint: {
-					mintUrl: tokenInfo.mints[0],
-					customName: ''
-				},
-				targetMint: { mintUrl: defaultMint, customName: '' },
-				amount: tokenInfo.value - estFee,
-				isAutoSwap: true
-			})
-		} catch (e) {
-			openPromptAutoClose({ msg: isErr(e) ? e.message : '' })
-		}
+		closeModal()
+		nav.navigate('processing', {
+			mint: {
+				mintUrl: tokenInfo.mints[0],
+				customName: ''
+			},
+			tokenInfo,
+			targetMint: { mintUrl: defaultMint, customName: '' },
+			amount: 0, // The amount is not important here, it will be retrieved from the tokenInfo
+			isAutoSwap: true
+		})
 	}
 	useEffect(() => {
 		void (async () => {
@@ -66,7 +62,7 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 	return (
 		<MyModal type='bottom' animation='slide' visible close={closeModal}>
 			<Text style={[globals(color, highlight).modalHeader, { marginBottom: vs(15) }]}>
-				{t('trustMint')}?
+				{t('trustMint')}
 			</Text>
 			{/* token amount */}
 			{tokenInfo &&
@@ -85,26 +81,33 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 					</Text>
 				))}
 			</View>
-			{defaultMint.length > 0 &&
-				<>
-					<TouchableOpacity onPress={() => void handleAutoSwap()} style={styles.ph}>
-						<View style={styles.action}>
-							<View style={{ minWidth: s(40) }}>
-								<SwapIcon width={s(22)} height={s(22)} color={mainColors.ZAP} />
-							</View>
-							<View>
-								<Txt txt={t('autoSwapToDefaulMint')} bold />
-								<Txt
-									styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
-									txt={t('swapHint')}
-								/>
-							</View>
-						</View>
-					</TouchableOpacity>
-					<Separator style={[styles.separator]} />
-				</>
-			}
-			<TouchableOpacity onPress={handleTrustModal} style={styles.trustClaim}>
+			<TouchableOpacity
+				onPress={() => void handleAutoSwap()}
+				style={{ opacity: defaultMint.length === 0 ? 0.4 : 1 }}
+				disabled={defaultMint.length === 0}
+			>
+				<View style={styles.action}>
+					<View style={{ minWidth: s(40) }}>
+						<SwapIcon width={s(22)} height={s(22)} color={mainColors.ZAP} />
+					</View>
+					<View>
+						<Txt txt={t('autoSwapToDefaulMint')} bold />
+						{defaultMint.length === 0 ?
+							<Txt
+								txt={t('noDefaultHint')}
+								styles={[{ fontSize: vs(11), color: mainColors.WARN }]}
+							/>
+							:
+							<Txt
+								txt={t('swapHint')}
+								styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
+							/>
+						}
+					</View>
+				</View>
+			</TouchableOpacity>
+			<Separator style={[styles.separator]} />
+			<TouchableOpacity onPress={handleTrustModal}>
 				<View style={styles.action}>
 					<View style={{ minWidth: s(40) }}>
 						<ReceiveIcon width={s(26)} height={s(26)} color={mainColors.VALID} />
@@ -130,23 +133,17 @@ const styles = ScaledSheet.create({
 		marginBottom: '5@vs',
 	},
 	tokenMintsView: {
-		marginBottom: '40@vs'
+		marginBottom: '30@vs'
 	},
 	action: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		width: '100%',
-	},
-	ph: {
-		paddingHorizontal: '20@s'
-	},
-	trustClaim: {
-		marginBottom: vs(20),
-		paddingHorizontal: s(20)
+		paddingHorizontal: '20@s',
+		width: '100%'
 	},
 	TxtButton: {
 		paddingBottom: vs(15),
-		paddingTop: vs(15)
+		paddingTop: vs(35)
 	},
 	separator: {
 		width: '100%',

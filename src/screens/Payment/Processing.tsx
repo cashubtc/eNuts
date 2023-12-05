@@ -33,6 +33,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const { clearUrl } = useInitialURL()
 	const {
 		mint,
+		tokenInfo,
 		amount,
 		memo,
 		estFee,
@@ -110,6 +111,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 		try {
 			const target = invoice || recipient || ''
+			// TODO this process can take a while, we need to add it as pending transaction (only if it is not a zap?)
 			const res = await payLnInvoice(mint.mintUrl, target, estFee || 0, proofs || [])
 			if (!res.result?.isPaid) {
 				// here it could be a routing path finding issue
@@ -150,6 +152,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 		// simple way
 		try {
+			// TODO this process can take a while, we need to add it as pending transaction
 			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0, proofs)
 			// add as history entry (multimint swap)
 			await addToHistory({
@@ -172,31 +175,33 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 	const handleAutoSwap = async () => {
 		if (!targetMint?.mintUrl?.trim()) {
-			return handleError({ e: `targetMint: ${targetMint?.mintUrl} is invalid` })
+			return handleError({ e: 'targetMint is invalid' })
 		}
-		// simple way
-		try {
-			const {
-				payResult,
-				requestTokenResult
-			} = (await fullAutoMintSwap(mint.mintUrl, targetMint.mintUrl, estFee ?? 0)).result
-			// add as history entry (multimint swap)
-			await addToHistory({
-				amount: -amount,
-				fee: payResult.realFee,
-				type: 3,
-				value: requestTokenResult.invoice?.pr ||'',
-				mints: [mint.mintUrl],
-				recipient: targetMint?.mintUrl || ''
-			})
-			navigation.navigate('success', {
-				amount,
-				fee: payResult.realFee,
-				isMelt: true
-			})
-		} catch (e) {
-			handleError({ e })
+		if (!tokenInfo) {
+			return handleError({ e: 'tokenInfo is undefined' })
 		}
+		if (tokenInfo.mints.length !== 1) {
+			return handleError({ e: 'Auto-mint-swap currently only supports a single source mint.' })
+		}
+		// TODO this process can take a while, we need to add it as pending transaction
+		const { payResult, requestTokenResult } = await fullAutoMintSwap(tokenInfo, targetMint.mintUrl)
+		if (!payResult || !requestTokenResult) {
+			return handleError({ e: 'payResult or requestTokenResult is undefined' })
+		}
+		// add as history entry (multimint swap)
+		await addToHistory({
+			amount: -tokenInfo.value - (payResult.realFee ?? 0),
+			fee: payResult.realFee,
+			type: 3,
+			value: requestTokenResult.invoice?.pr || '',
+			mints: [mint.mintUrl],
+			recipient: targetMint?.mintUrl || ''
+		})
+		navigation.navigate('success', {
+			amount: tokenInfo.value,
+			fee: payResult.realFee,
+			isMelt: true
+		})
 	}
 
 	const handleSendingEcash = async () => {
