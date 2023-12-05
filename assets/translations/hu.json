@@ -229,7 +229,7 @@
         "swapHint": "Ez az opció egy Lightning-fizetést igényel, költségekkel jár, és még akkor is hozzáadhatja az ismeretlen Minton listához, ha egy költség-visszatérítés megtörténik.",
         "trustHint": "A tokenhez kapcsolódó pénzverde hozzá lesz adva a megbízott listájához.",
 		"backupQ": "Hogyan működik?",
-		"backupHInt": "A jelenlegi biztonsági másolati folyamat egy alapvető megvalósítás. Egy Cashu token létrehozása történik a percek és bizonyítékok alapján, amely érvénytelen lesz az új tranzakciók után. A token helyreállításához az új eszközön kövesse az ismert igénylési folyamatot, és a régi egyenleg érvénytelen lesz. Kerülje el a beváltást a jelenlegi egyenleg tetején, hogy hibákat elkerüljön. Fontos megjegyezni, hogy aktívan dolgozunk egy magmagazin mentési megoldás kifejlesztésén a megnövelt biztonság és kényelem érdekében.",
+		"backupHint": "A jelenlegi biztonsági másolati folyamat egy alapvető megvalósítás. Egy Cashu token létrehozása történik a percek és bizonyítékok alapján, amely érvénytelen lesz az új tranzakciók után. A token helyreállításához az új eszközön kövesse az ismert igénylési folyamatot, és a régi egyenleg érvénytelen lesz. Kerülje el a beváltást a jelenlegi egyenleg tetején, hogy hibákat elkerüljön. Fontos megjegyezni, hogy aktívan dolgozunk egy magmagazin mentési megoldás kifejlesztésén a megnövelt biztonság és kényelem érdekében.",
 		"singleBackupHint": "Megjegyzés: Egyedi kibocsátás esetén is létrehozhat egy biztonsági másolatot az 'Beállítások' > 'Verdék kezelése' > 'Válasszon Verdéket' > 'Tőke biztonsági mentése' menüpont alatt.",
 		"noDefaultHint": "Be kell állítanod egy alapértelmezett nyomdát az automatikus cseréhez."
     },
