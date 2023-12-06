@@ -21,7 +21,7 @@ export default function Username({ contact, fontSize }: IUsernameProps) {
 			styles={txtStyle}
 		/>
 	}
-	if (!contact?.hex.length) { return 'N/A' }
+	if (!contact?.hex.length) { return <Txt txt='N/A' /> }
 	return <Txt
 		txt={contact.hex.length ? truncateNpub(nip19.npubEncode(contact.hex)) : t('n/a')}
 		styles={txtStyle}

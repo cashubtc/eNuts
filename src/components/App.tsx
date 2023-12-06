@@ -14,6 +14,7 @@ import { NostrProvider } from '@src/context/Nostr'
 import { PinCtx } from '@src/context/Pin'
 import { PrivacyProvider } from '@src/context/Privacy'
 import { PromptProvider } from '@src/context/Prompt'
+import { ReleaseProvider } from '@src/context/Release'
 import { ThemeProvider, useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
@@ -201,25 +202,27 @@ function _App() {
 			<PinCtx.Provider value={pinData}>
 				<PrivacyProvider>
 					<MenuProvider>
-						<NostrProvider>
-							<NavContainer>
-								<FocusClaimProvider >
-									<PromptProvider>
-										<KeyboardProvider>
-											<Navigator
-												shouldOnboard={shouldOnboard}
-												pinHash={auth.pinHash}
-												bgAuth={bgAuth}
-												setBgAuth={setBgAuth}
-											/>
-											<StatusBar style="auto" />
-											<ClipboardModal />
-											<Toaster />
-										</KeyboardProvider>
-									</PromptProvider>
-								</FocusClaimProvider>
-							</NavContainer>
-						</NostrProvider>
+						<ReleaseProvider>
+							<NostrProvider>
+								<NavContainer>
+									<FocusClaimProvider >
+										<PromptProvider>
+											<KeyboardProvider>
+												<Navigator
+													shouldOnboard={shouldOnboard}
+													pinHash={auth.pinHash}
+													bgAuth={bgAuth}
+													setBgAuth={setBgAuth}
+												/>
+												<StatusBar style="auto" />
+												<ClipboardModal />
+												<Toaster />
+											</KeyboardProvider>
+										</PromptProvider>
+									</FocusClaimProvider>
+								</NavContainer>
+							</NostrProvider>
+						</ReleaseProvider>
 					</MenuProvider>
 				</PrivacyProvider>
 			</PinCtx.Provider>

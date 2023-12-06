@@ -5,7 +5,7 @@ import { highlight, type HighlightKey, mainColors, type Theme } from './colors'
 export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: '100@vs',
+		paddingTop: '90@vs',
 		backgroundColor: color?.BACKGROUND
 	},
 	txt: {
@@ -72,7 +72,7 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.cre
 		paddingHorizontal: '20@s',
 		paddingTop: '20@vs',
 		paddingBottom: 0,
-		marginBottom: '25@vs',
+		marginBottom: '20@vs',
 	},
 	wrapRow: {
 		flex: 1,

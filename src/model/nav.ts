@@ -2,7 +2,7 @@ import type { EventArg } from '@react-navigation/core'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection, ITokenInfo } from '.'
-import { HexKey, IContact } from './nostr'
+import type { HexKey, IContact } from './nostr'
 
 export interface INostrSendData {
 	senderName: string
@@ -23,6 +23,7 @@ export type RootStackParamList = {
 		newMint?: boolean
 	} | undefined
 	Settings: undefined
+	release: undefined
 	'General settings': undefined
 	'Security settings': undefined
 	'Privacy settings': undefined
@@ -81,13 +82,6 @@ export type RootStackParamList = {
 		nostr?: INostrSendData
 		balance: number
 	}
-	memoScreen: {
-		mint: IMintUrl
-		balance: number
-		amount: number
-		isSendingWholeMintBal?: boolean,
-		nostr?: INostrSendData
-	}
 	coinSelection: {
 		mint: IMintUrl
 		balance: number
@@ -106,12 +100,14 @@ export type RootStackParamList = {
 	nostrReceive: undefined
 	processing: {
 		mint: IMintUrl
+		tokenInfo?: ITokenInfo
 		amount: number
 		estFee?: number
 		isMelt?: boolean
 		isSendEcash?: boolean
 		nostr?: INostrSendData
 		isSwap?: boolean
+		isAutoSwap?: boolean
 		isZap?: boolean
 		payZap?: boolean
 		targetMint?: IMintUrl
@@ -134,6 +130,7 @@ export type RootStackParamList = {
 	}
 	'npub confirm': {
 		hex: HexKey
+		isPayment?: boolean
 	}
 	'scan success': {
 		mintUrl?: string
@@ -186,6 +183,7 @@ export type RootStackParamList = {
 	'qr scan': {
 		mint?: IMintUrl
 		balance?: number
+		isPayment?: boolean
 	}
 	'history entry details': {
 		entry: IHistoryEntry
@@ -215,7 +213,6 @@ export type TSelectMintToSwapToPageProps = NativeStackScreenProps<RootStackParam
 export type TMeltInputfieldPageProps = NativeStackScreenProps<RootStackParamList, 'meltInputfield', 'MyStack'>
 export type TSelectAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectAmount', 'MyStack'>
 export type TSelectNostrAmountPageProps = NativeStackScreenProps<RootStackParamList, 'selectNostrAmount', 'MyStack'>
-export type TMemoPageProps = NativeStackScreenProps<RootStackParamList, 'memoScreen', 'MyStack'>
 export type TCoinSelectionPageProps = NativeStackScreenProps<RootStackParamList, 'coinSelection', 'MyStack'>
 export type TNostrReceivePageProps = NativeStackScreenProps<RootStackParamList, 'nostrReceive', 'MyStack'>
 export type TProcessingPageProps = NativeStackScreenProps<RootStackParamList, 'processing', 'MyStack'>
@@ -239,6 +236,7 @@ export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr sc
 export type THistoryPageProps = NativeStackScreenProps<RootStackParamList, 'history', 'MyStack'>
 export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 'history entry details', 'MyStack'>
 export type TSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Settings'>
+export type TReleasePageProps = NativeStackScreenProps<RootStackParamList, 'release'>
 export type TGeneralSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'General settings'>
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
 export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>

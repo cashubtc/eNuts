@@ -125,13 +125,11 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 
 const styles = ScaledSheet.create({
 	container: {
-		paddingTop: 0,
 		alignItems: 'center',
 	},
 	listWrap: {
 		flex: 1,
 		width: '100%',
-		marginTop: '100@vs',
 	},
 	date: {
 		fontSize: '14@vs',
@@ -145,6 +143,6 @@ const styles = ScaledSheet.create({
 		paddingHorizontal: '20@s',
 		paddingTop: '10@vs',
 		paddingBottom: 0,
-		marginBottom: isIOS ? '50@vs' : '20@vs',
+		marginBottom: '20@vs',
 	}
 })

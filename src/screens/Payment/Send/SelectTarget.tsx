@@ -101,13 +101,11 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 								onPress={() => {
 									// check if source mint is testmint
 									if (mint.mintUrl === _testmintUrl) {
-										openPromptAutoClose({ msg: t('swapNotAllowed') })
-										return
+										return openPromptAutoClose({ msg: t('swapNotAllowed') })
 									}
 									// check if there is another mint except testmint
 									if (!remainingMints?.length) {
-										openPromptAutoClose({ msg: t('atLeast2Mints') })
-										return
+										return openPromptAutoClose({ msg: t('atLeast2Mints') })
 									}
 									navigation.navigate('selectMintToSwapTo', { mint, balance, remainingMints })
 								}}

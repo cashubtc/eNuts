@@ -10,7 +10,7 @@ import { finishEvent, SimplePool, validateEvent } from 'nostr-tools'
 
 import { defaultRelays, enutsPubkey, EventKind } from '../consts'
 import { encrypt } from '../crypto'
-import { normalizeURL, parseUserRelays } from '../util'
+import { hasRelayValidPrefix, normalizeURL, parseUserRelays } from '../util'
 
 interface IPoolSubArgs {
 	filter: IPoolSubProps,
@@ -186,7 +186,8 @@ class Pool {
 		const userRelays = cTo<string[]>(storedRelays || '[]')
 		const relaysToPublish = [...userRelays, ...defaultRelays]
 		const recipientRelays = await this.#getRelaysByHex(nostr.contact.hex, relaysToPublish)
-		const published = this.#publishEventToPool(event, sk, [...recipientRelays, ...relaysToPublish])
+		const allRelays = [...recipientRelays, ...relaysToPublish].filter(hasRelayValidPrefix)
+		const published = this.#publishEventToPool(event, sk, allRelays)
 		if (!published) { return false }
 		// save recipient hex to get the conversation later on
 		await updateNostrDmUsers(nostr.contact)

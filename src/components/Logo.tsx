@@ -1,3 +1,4 @@
+import { useThemeContext } from '@src/context/Theme'
 import { Image, type ImageStyle, type StyleProp, StyleSheet, View } from 'react-native'
 
 interface ILogoProps {
@@ -7,8 +8,15 @@ interface ILogoProps {
 }
 
 export default function Logo({ size, success, style }: ILogoProps) {
+	const { highlight, theme } = useThemeContext()
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-	const src = success ? require('@assets/icon_transparent_success.png') : require('@assets/icon_transparent.png')
+	const src = success ?
+		require('@assets/icon_transparent_success.png')
+		:
+		theme === 'Dark' && (highlight === 'Zap' || highlight === 'Azyre' || highlight === 'Rosy') ?
+			require('@assets/icon_transparent_dark.png')
+			:
+			require('@assets/icon_transparent.png')
 	return (
 		<View style={styles.imgWrap}>
 			<Image

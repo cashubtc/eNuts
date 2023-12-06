@@ -49,20 +49,23 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 				{getIcon()}
 			</View>
 			<View style={styles.infoWrap}>
-				<Txt txt={getTxTypeStr()} />
+				<Txt txt={getTxTypeStr()} styles={[{ marginBottom: vs(5) }]} />
 				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: vs(12) }]}>
 					<EntryTime from={item.timestamp * 1000} fallback={t('justNow')} />
 				</Text>
 			</View>
 			<View style={styles.placeholder} />
-			<View style={styles.amount}>
+			<View style={[styles.amount, { top: isNum(item.fee) ? 0 : vs(10) }]}>
 				<Txt
-					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.amount, 'standard')}`}
-					styles={[{ color: getTxColor() }]}
+					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.type === 3 ? Math.abs(item.amount) : item.amount, 'standard')}`}
+					styles={[{ color: getTxColor(), marginBottom: vs(5) }]}
 				/>
-				<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>
-					{t('fee', { ns: NS.common })}: {isNum(item.fee) ? item.fee : 0}
-				</Text>
+				{isNum(item.fee) &&
+					<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>
+						{t('fee', { ns: NS.common })}: {item.fee}
+					</Text>
+				}
+
 			</View>
 		</TouchableOpacity>
 	)
@@ -84,7 +87,6 @@ const styles = ScaledSheet.create({
 	},
 	amount: {
 		position: 'absolute',
-		top: 0,
 		right: 0,
 	},
 })

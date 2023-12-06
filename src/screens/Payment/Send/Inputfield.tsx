@@ -10,12 +10,12 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { decodeLnInvoice, getStrFromClipboard, isErr, isLnurl, openUrl } from '@util'
+import { decodeLnInvoice, getStrFromClipboard, isErr, isLnInvoice, isLnurl, openUrl } from '@util'
 import { checkFees } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { ScaledSheet } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import { MeltOverview } from '../SelectAmount'
 
@@ -86,6 +86,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			const { timeLeft } = decodeLnInvoice(input)
 			// Invoice expired
 			if (timeLeft <= 0) {
+				setInput('')
 				return openPromptAutoClose({ msg: t('expired') + '!' })
 			}
 			// navigate to coin selection screen
@@ -118,6 +119,8 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 				screenName={t('cashOut')}
 				withBackBtn
 				handlePress={() => navigation.goBack()}
+				mintBalance={balance}
+				disableMintBalance
 			/>
 			<View>
 				{!input.length &&
@@ -152,7 +155,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			</View>
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={styles.paddingHorizontal}
+				style={styles.actionWrap}
 			>
 				<View style={{ position: 'relative' }}>
 					<TxtInput
@@ -160,10 +163,16 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 						keyboardType='email-address'
 						placeholder={t('invoiceOrLnurl')}
 						value={input}
-						onChangeText={setInput}
+						onChangeText={text => {
+							setInput(text)
+							if (isLnInvoice(text)) {
+								void handleInvoicePaste(text)
+							}
+						}}
 						onSubmitEditing={() => void handleBtnPress()}
 						autoFocus
 						ms={200}
+						style={{ paddingRight: s(90) }}
 					/>
 					{/* Paste / Clear Input */}
 					<TouchableOpacity
@@ -178,9 +187,11 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 				<Button
 					outlined={!input.length}
 					disabled={loading}
-					txt={input.length > 0 ? t('continue') : t('createViaLn')}
+					txt={input.length ? t('continue') : t('createViaLn')}
 					onPress={() => void handleBtnPress()}
+					icon={loading ? <Loading size={20} /> : undefined}
 				/>
+				{isIOS && <View style={styles.placeholder} />}
 			</KeyboardAvoidingView>
 		</View>
 	)
@@ -215,10 +226,13 @@ const styles = ScaledSheet.create({
 		paddingBottom: '20@vs',
 		marginBottom: 0
 	},
-	paddingHorizontal: {
-		paddingHorizontal: '20@s'
+	actionWrap: {
+		paddingHorizontal: '20@s',
 	},
 	loadingWrap: {
 		marginTop: '40@vs',
+	},
+	placeholder: {
+		height: '20@vs',
 	}
 })

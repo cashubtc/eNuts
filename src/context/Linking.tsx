@@ -1,5 +1,5 @@
 import { isCashuToken, isLnInvoice } from '@util'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { EmitterSubscription } from 'react-native'
 import { Linking } from 'react-native'
 
@@ -35,6 +35,8 @@ export const useInitialURL = () => {
 		setUrl('')
 	}
 
+	const clearUrl = useCallback(() => setUrl(''), [])
+
 	useEffect(() => {
 		const getUrlAsync = async () => {
 			// Get the deep link used to open the app
@@ -49,5 +51,5 @@ export const useInitialURL = () => {
 		return () => subscription.remove()
 	}, [])
 
-	return { url, processing }
+	return { url, clearUrl, processing }
 }

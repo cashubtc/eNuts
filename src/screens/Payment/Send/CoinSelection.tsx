@@ -8,6 +8,7 @@ import type { IProofSelection } from '@model'
 import type { TCoinSelectionPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { getNostrUsername, isNpub, npubEncode, truncateNpub, truncateStr } from '@nostr/util'
+import { useInitialURL } from '@src/context/Linking'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
@@ -37,6 +38,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 	} = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
+	const { url, clearUrl } = useInitialURL()
 	const [isEnabled, setIsEnabled] = useState(false)
 	const toggleSwitch = () => setIsEnabled(prev => !prev)
 	const [proofs, setProofs] = useState<IProofSelection[]>([])
@@ -101,7 +103,11 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 			<TopNav
 				screenName={t('paymentOverview', { ns: NS.mints })}
 				cancel
-				handleCancel={() => navigation.navigate('dashboard')}
+				handleCancel={() => {
+					// clear the deep link url if user cancels
+					if (url.length) { clearUrl() }
+					navigation.navigate('dashboard')
+				}}
 				withBackBtn
 				handlePress={() => {
 					if (scanned) { return navigation.navigate('qr scan', {}) }
@@ -110,7 +116,8 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					// if user comes from processing screen, navigate back to dashboard
 					// @ts-expect-error navigation type is not complete
 					if (prevRoute?.name === 'processing' && prevRoute.params?.isZap) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						// clear the deep link url if user cancels
+						clearUrl()
 						return navigation.navigate('dashboard')
 					}
 					navigation.goBack()

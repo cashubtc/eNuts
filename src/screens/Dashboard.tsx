@@ -37,7 +37,7 @@ import { s, ScaledSheet, vs } from 'react-native-size-matters'
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation([NS.common])
 	// The URL content that redirects to this app after clicking on it (cashu:)
-	const { url } = useInitialURL()
+	const { url, clearUrl } = useInitialURL()
 	// Theme
 	const { color, highlight } = useThemeContext()
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
@@ -106,8 +106,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}
 
 	// This function is only called if the mint of the received token is available as trusted in user DB
-	const handleTokenSubmit = async (url: string) => {
-		const tokenInfo = getTokenInfo(url)
+	const handleTokenSubmit = async (deepUrl: string) => {
+		// clear deep link
+		clearUrl()
+		const tokenInfo = getTokenInfo(deepUrl)
 		if (!tokenInfo) {
 			openPromptAutoClose({ msg: t('clipboardInvalid') })
 			closeOptsModal()
@@ -128,7 +130,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			}, 200)
 			return
 		}
-		await receiveToken(url)
+		await receiveToken(deepUrl)
 	}
 
 	// helper function that gets called either right after pasting token or in the trust modal depending on user permission
@@ -252,6 +254,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				}))
 				clearTimeout(t)
 			}, 1000)
+
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -271,11 +274,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
 
-	// handle initial URL passed on by clicking on a cashu link
+	// handle deep links
 	useEffect(() => {
 		if (!url) { return }
-		if (isCashuToken(url)) {
-			return void handleTokenSubmit(url)
+		const t = isCashuToken(url)
+		if (t) {
+			return void handleTokenSubmit(t)
 		}
 		if (isLnInvoice(url)) {
 			navigation.navigate('processing', {

@@ -159,8 +159,8 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHis
 					{icon}
 				</View>
 				<View>
-					<Txt txt={txType} styles={[{ color: getColor(highlight, color) }]} />
-					<Text style={{ color: getColor(highlight, color), paddingBottom: vs(3), fontSize: vs(12) }}>
+					<Txt txt={txType} styles={[{ color: getColor(highlight, color), marginBottom: vs(2) }]} />
+					<Text style={{ color: getColor(highlight, color), fontSize: vs(12) }}>
 						<EntryTime from={timestamp * 1000} fallback={t('justNow')} />
 					</Text>
 				</View>
@@ -175,13 +175,14 @@ const styles = ScaledSheet.create({
 		borderBottomLeftRadius: 50,
 		borderBottomRightRadius: 50,
 		paddingHorizontal: '30@s',
-		paddingVertical: '60@vs',
+		paddingTop: '40@vs',
+		paddingBottom: '50@vs',
 		minHeight: '50%'
 	},
 	balanceWrap: {
 		alignItems: 'center',
 		marginHorizontal: '-20@s',
-		marginBottom: '10@vs',
+		marginBottom: '5@vs',
 	},
 	balAmount: {
 		alignItems: 'center',
@@ -205,7 +206,7 @@ const styles = ScaledSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: '5@vs',
+		paddingBottom: '6@vs',
 	},
 	wrap: {
 		flexDirection: 'row',

@@ -18,7 +18,10 @@ const usePrompt = () => {
 		timerId.current = undefined
 	}
 
-	const openPrompt = (msg: string, success?: boolean) => setPrompt({ open: true, success, msg })
+	const openPrompt = (
+		msg: string,
+		success?: boolean,
+	) => setPrompt({ open: true, success, msg })
 
 	const closePrompt = () => {
 		setPrompt({ open: false, msg: '' })

@@ -6,6 +6,7 @@ import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import { pool } from '@nostr/class/Pool'
 import { getNostrUsername } from '@nostr/util'
+import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -14,7 +15,7 @@ import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { getDefaultMint } from '@store/mintStore'
 import { globals } from '@styles'
 import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
-import { autoMintSwap, checkFees, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
+import { autoMintSwap, checkFees, fullAutoMintSwap, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
@@ -29,8 +30,10 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
 	const { setNostr } = useNostrContext()
+	const { clearUrl } = useInitialURL()
 	const {
 		mint,
+		tokenInfo,
 		amount,
 		memo,
 		estFee,
@@ -38,6 +41,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		isSendEcash,
 		nostr,
 		isSwap,
+		isAutoSwap,
 		isZap,
 		payZap,
 		targetMint,
@@ -46,6 +50,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	} = route.params
 
 	const handleError = ({ e, customMsg }: IErrorProps) => {
+		// reset zap deep link
+		clearUrl()
 		const translatedErrMsg = t(customMsg || 'requestMintErr', { ns: NS.error })
 		navigation.navigate('processingError', {
 			amount,
@@ -105,6 +111,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 		try {
 			const target = invoice || recipient || ''
+			// TODO this process can take a while, we need to add it as pending transaction (only if it is not a zap?)
 			const res = await payLnInvoice(mint.mintUrl, target, estFee || 0, proofs || [])
 			if (!res.result?.isPaid) {
 				// here it could be a routing path finding issue
@@ -126,6 +133,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				mints: [mint.mintUrl],
 				timestamp: Math.ceil(Date.now() / 1000)
 			})
+			// reset zap deep link
+			clearUrl()
 			navigation.navigate('success', {
 				amount,
 				fee: res.realFee,
@@ -143,7 +152,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 		// simple way
 		try {
-			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0)
+			// TODO this process can take a while, we need to add it as pending transaction
+			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0, proofs)
 			// add as history entry (multimint swap)
 			await addToHistory({
 				amount: -amount,
@@ -161,6 +171,37 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		} catch (e) {
 			handleError({ e })
 		}
+	}
+
+	const handleAutoSwap = async () => {
+		if (!targetMint?.mintUrl?.trim()) {
+			return handleError({ e: 'targetMint is invalid' })
+		}
+		if (!tokenInfo) {
+			return handleError({ e: 'tokenInfo is undefined' })
+		}
+		if (tokenInfo.mints.length !== 1) {
+			return handleError({ e: 'Auto-mint-swap currently only supports a single source mint.' })
+		}
+		// TODO this process can take a while, we need to add it as pending transaction
+		const { payResult, requestTokenResult } = await fullAutoMintSwap(tokenInfo, targetMint.mintUrl)
+		if (!payResult || !requestTokenResult) {
+			return handleError({ e: 'payResult or requestTokenResult is undefined' })
+		}
+		// add as history entry (multimint swap)
+		await addToHistory({
+			amount: -tokenInfo.value - (payResult.realFee ?? 0),
+			fee: payResult.realFee,
+			type: 3,
+			value: requestTokenResult.invoice?.pr || '',
+			mints: [mint.mintUrl],
+			recipient: targetMint?.mintUrl || ''
+		})
+		navigation.navigate('success', {
+			amount: tokenInfo.value,
+			fee: payResult.realFee,
+			isMelt: true
+		})
 	}
 
 	const handleSendingEcash = async () => {
@@ -274,12 +315,15 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		if (isSwap) {
 			return void handleSwap()
 		}
+		if (isAutoSwap) {
+			return void handleAutoSwap()
+		}
 		if (isSendEcash) {
 			return void handleSendingEcash()
 		}
 		void handleMinting()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isMelt, isSwap, isZap, payZap, isSendEcash])
+	}, [isMelt, isSwap, isZap, payZap, isSendEcash, isAutoSwap])
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
 	useEffect(() => {

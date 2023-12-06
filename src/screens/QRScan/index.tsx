@@ -25,7 +25,7 @@ import { s, ScaledSheet } from 'react-native-size-matters'
 import QRMarker from './Marker'
 
 export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
-	const { mint, balance } = route.params
+	const { mint, balance, isPayment } = route.params
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
@@ -100,7 +100,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		if (isNProfile(data)) {
 			try {
 				const res = nip19.decode(data)?.data
-				return navigation.navigate('npub confirm', { hex: res.pubkey })
+				return navigation.navigate('npub confirm', { hex: res.pubkey, isPayment })
 			} catch (e) {
 				return openPromptAutoClose({ msg: t('unknownType') + ` "${data}"` })
 			}
@@ -108,7 +108,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		const npub = isNpubQR(data)
 		if (npub) {
 			const hex = nip19.decode(npub)?.data
-			return navigation.navigate('npub confirm', { hex })
+			return navigation.navigate('npub confirm', { hex, isPayment })
 		}
 		// handle mint urls
 		if (isUrl(data) && new URL(data).protocol === 'https:') {
@@ -168,13 +168,13 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 						</TouchableOpacity>
 					}
 					<TouchableOpacity
-						style={styles.actionLeft}
+						style={[styles.action, styles.left]}
 						onPress={() => setFlash(prev => !prev)}
 					>
 						<FlashlightOffIcon width={s(30)} height={s(30)} color={flash ? mainColors.WARN : mainColors.WHITE} />
 					</TouchableOpacity>
 					<TouchableOpacity
-						style={styles.actionRight}
+						style={[styles.action, styles.right]}
 						onPress={() => navigation.goBack()}
 					>
 						<CloseIcon width={s(30)} height={s(30)} color={mainColors.WHITE} />
@@ -217,20 +217,20 @@ const styles = ScaledSheet.create({
 		color: mainColors.WHITE,
 		textAlign: 'center',
 	},
-	actionLeft: {
+	action: {
 		position: 'absolute',
 		bottom: '40@vs',
-		left: '40@s',
 		backgroundColor: 'rgba(0,0,0,.5)',
-		padding: '20@s',
-		borderRadius: '40@s',
+		width: '60@s',
+		height: '60@s',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: '30@s',
 	},
-	actionRight: {
-		position: 'absolute',
-		bottom: '40@vs',
+	left: {
+		left: '40@s',
+	},
+	right: {
 		right: '40@s',
-		backgroundColor: 'rgba(0,0,0,.5)',
-		padding: '20@s',
-		borderRadius: '40@s',
 	},
 })

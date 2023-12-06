@@ -1,6 +1,5 @@
 import { CloseIcon, SearchIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
-import TxtInput from '@comps/TxtInput'
 import type { IContact } from '@model/nostr'
 import type { Nostr } from '@nostr/class/Nostr'
 import { useThemeContext } from '@src/context/Theme'
@@ -8,8 +7,8 @@ import { NS } from '@src/i18n'
 import { highlight as hi } from '@styles'
 import { createRef, type Dispatch, type SetStateAction, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { type TextInput, TouchableOpacity, View } from 'react-native'
-import { ScaledSheet } from 'react-native-size-matters'
+import { TextInput, TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import type { ISearchStates } from '.'
 
@@ -19,6 +18,7 @@ interface ISearchProps {
 	search: ISearchStates
 	setSearch: Dispatch<SetStateAction<ISearchStates>>
 	nostrRef: React.MutableRefObject<Nostr | undefined>
+	isPayment?: boolean
 }
 
 export default function Search({
@@ -26,7 +26,8 @@ export default function Search({
 	setContacts,
 	search,
 	setSearch,
-	nostrRef
+	nostrRef,
+	isPayment,
 }: ISearchProps) {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
@@ -54,19 +55,23 @@ export default function Search({
 	}, [])
 
 	return (
-		<View style={styles.inputWrap}>
-			<TxtInput
-				innerRef={inputRef}
-				keyboardType='default'
+
+		<View style={[styles.inputWrap, { paddingRight: isPayment ? s(10) : 0 }]}>
+			<TextInput
+				ref={inputRef}
+				keyboardType={'default'}
 				placeholder={t('searchContacts')}
-				value={search.input}
+				placeholderTextColor={color.INPUT_PH}
+				selectionColor={hi[highlight]}
+				cursorColor={hi[highlight]}
 				onChangeText={text => void handleOnChangeSearch(text)}
 				onSubmitEditing={() => void handleNip50Search(search.input)}
-				style={[styles.searchInput]}
+				value={search.input}
+				style={[styles.searchInput, { color: color?.TEXT, backgroundColor: color?.INPUT_BG }]}
 			/>
 			{/* Submit nip50 search */}
 			<TouchableOpacity
-				style={styles.submitSearch}
+				style={[styles.submitSearch, { right: isPayment ? s(10) : s(5) }]}
 				onPress={() => {
 					inputRef.current?.blur()
 					if (search.results.length) {
@@ -90,22 +95,26 @@ export default function Search({
 
 const styles = ScaledSheet.create({
 	inputWrap: {
-		paddingHorizontal: '20@s',
-		marginTop: '10@vs',
+		marginTop: '5@vs',
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
+		maxWidth: '100%',
+		flex: 1
 	},
 	searchInput: {
-		marginBottom: '20@vs',
+		flex: 1,
+		paddingHorizontal: '18@s',
+		borderRadius: 50,
+		fontSize: '14@vs',
+		marginBottom: '10@vs',
 		paddingLeft: '20@s',
 		paddingRight: '40@s',
 		paddingVertical: '10@vs',
 	},
 	submitSearch: {
 		position: 'absolute',
-		right: '20@s',
-		height: '42@vs',
+		height: '32@vs',
 		paddingHorizontal: '10@s',
 	},
 })

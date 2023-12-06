@@ -1,5 +1,6 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
-import Button from '@comps/Button'
+import Button, { IconBtn } from '@comps/Button'
+import { ChevronRightIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
@@ -7,16 +8,17 @@ import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import { l } from '@log'
 import type { TSelectAmountPageProps } from '@model/nav'
+import { useFocusEffect } from '@react-navigation/native'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { cleanUpNumericStr, formatSatStr, getInvoiceFromLnurl, vib } from '@util'
 import { checkFees, requestMint } from '@wallet'
-import { createRef, useEffect, useState } from 'react'
+import { createRef, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Animated, KeyboardAvoidingView, TextInput, View } from 'react-native'
-import { ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
 	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
@@ -24,8 +26,10 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	const { t } = useTranslation([NS.wallet])
 	const { color, highlight } = useThemeContext()
 	const { anim, shake } = useShakeAnimation()
-	const inputRef = createRef<TextInput>()
+	const numericInputRef = createRef<TextInput>()
+	const txtInputRef = createRef<TextInput>()
 	const [amount, setAmount] = useState('')
+	const [memo, setMemo] = useState('')
 	// invoice amount too low
 	const [err, setErr] = useState(false)
 	const [shouldEstimate, setShouldEstimate] = useState(false)
@@ -85,6 +89,8 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		return t(shouldEstimate ? 'estimateFee' : 'continue', { ns: NS.common })
 	}
 
+	const onMemoChange = useCallback((text: string) => setMemo(text), [])
+
 	const handleAmountSubmit = () => {
 		if (fee.isCalculating || balTooLow) { return }
 		const isSendingTX = isSendEcash || isMelt || isSwap
@@ -118,20 +124,12 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					recipient: lnurl
 				})
 			}
-			// optional memo
-			if (isSendEcash) {
-				return navigation.navigate('memoScreen', {
-					mint,
-					balance,
-					amount: +amount,
-					nostr,
-					isSendingWholeMintBal: !nostr && isSendingWholeMintBal()
-				})
-			}
 			return navigation.navigate('coinSelection', {
 				mint,
 				balance,
 				amount: +amount,
+				memo,
+				nostr,
 				estFee: fee.estimation,
 				isMelt,
 				isSendEcash,
@@ -144,13 +142,17 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		navigation.navigate('processing', { mint, amount: +amount })
 	}
 
-	// auto-focus numeric keyboard
-	useEffect(() => {
-		const t = setTimeout(() => {
-			inputRef.current?.focus()
-			clearTimeout(t)
-		}, 200)
-	}, [inputRef])
+	// auto-focus numeric input when the screen gains focus
+	useFocusEffect(
+		useCallback(() => {
+			const timeoutId = setTimeout(() => {
+				if (!txtInputRef.current?.isFocused()) {
+					numericInputRef.current?.focus()
+				}
+			}, 200)
+			return () => clearTimeout(timeoutId)
+		}, [txtInputRef, numericInputRef])
+	)
 
 	// check if is melting process
 	useEffect(() => setShouldEstimate(!isSendEcash), [isSendEcash])
@@ -182,11 +184,11 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
 						keyboardType='numeric'
-						ref={inputRef}
+						ref={numericInputRef}
 						placeholder='0'
+						cursorColor={hi[highlight]}
 						placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
 						style={[globals().selectAmount, { color: err ? mainColors.ERROR : hi[highlight] }]}
-						caretHidden
 						onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
 						onSubmitEditing={() => void handleAmountSubmit()}
 						value={amount}
@@ -215,15 +217,38 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			</View>
 			<KeyboardAvoidingView
 				behavior={isIOS ? 'padding' : undefined}
-				style={styles.continue}
+				style={isSendEcash ? styles.actionWrap : styles.continue}
 			>
-				<Button
-					txt={getActionBtnTxt()}
-					outlined={shouldEstimate}
-					onPress={() => void handleAmountSubmit()}
-					disabled={balTooLow}
-					icon={fee.isCalculating ? <Loading color={hi[highlight]} /> : undefined}
-				/>
+				{isSendEcash ?
+					<>
+						<TextInput
+							keyboardType='default'
+							ref={txtInputRef}
+							placeholder={t('optionalMemo', { ns: NS.common })}
+							placeholderTextColor={color.INPUT_PH}
+							selectionColor={hi[highlight]}
+							cursorColor={hi[highlight]}
+							onChangeText={onMemoChange}
+							onSubmitEditing={() => void handleAmountSubmit()}
+							maxLength={21}
+							style={[styles.memoInput, { color: color?.TEXT, backgroundColor: color?.INPUT_BG }]}
+						/>
+						<IconBtn
+							onPress={() => void handleAmountSubmit()}
+							icon={<ChevronRightIcon color={mainColors.WHITE} />}
+							size={s(55)}
+						/>
+					</>
+					:
+					<Button
+						txt={getActionBtnTxt()}
+						outlined={shouldEstimate}
+						onPress={() => void handleAmountSubmit()}
+						disabled={balTooLow}
+						icon={fee.isCalculating ? <Loading color={hi[highlight]} /> : undefined}
+					/>
+				}
+				{isIOS && <View style={{ height: isSendEcash ? vs(100) : vs(20) }} />}
 			</KeyboardAvoidingView>
 		</Screen>
 	)
@@ -290,5 +315,23 @@ const styles = ScaledSheet.create({
 	feeHint: {
 		fontSize: '10@vs',
 		marginTop: '10@vs',
+	},
+	actionWrap: {
+		flex: 1,
+		position: 'absolute',
+		bottom: '20@vs',
+		left: '20@s',
+		right: '20@s',
+		flexDirection: 'row',
+		alignItems: 'center',
+		maxWidth: '100%',
+	},
+	memoInput: {
+		flex: 1,
+		marginRight: '20@s',
+		paddingHorizontal: '18@s',
+		paddingVertical: '18@vs',
+		borderRadius: 50,
+		fontSize: '14@vs',
 	},
 })

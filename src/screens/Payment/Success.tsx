@@ -41,6 +41,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						size={s(100)}
 						hex={nostr.contact.hex}
 						uri={nostr.contact.picture}
+						isUser
 					/>
 				</View>
 				:
