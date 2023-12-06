@@ -14,7 +14,7 @@ import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { getDefaultMint } from '@store/mintStore'
 import { globals } from '@styles'
-import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, uniqByIContacts } from '@util'
+import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, isNum, uniqByIContacts } from '@util'
 import { autoMintSwap, checkFees, fullAutoMintSwap, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -139,7 +139,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				amount,
 				fee: res.realFee,
 				isMelt: true,
-				isZap
+				isZap,
+				change: isNum(estFee) && isNum(res.realFee) ?  estFee - res.realFee : undefined,
 			})
 		} catch (e) {
 			handleError({ e })
@@ -166,6 +167,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			navigation.navigate('success', {
 				amount,
 				fee: res.payResult.realFee,
+				change: isNum(estFee) && isNum(res.payResult.realFee) ?  estFee - res.payResult.realFee : undefined,
 				isMelt: true
 			})
 		} catch (e) {
@@ -183,14 +185,15 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		if (tokenInfo.mints.length !== 1) {
 			return handleError({ e: 'Auto-mint-swap currently only supports a single source mint.' })
 		}
-		// TODO this process can take a while, we need to add it as pending transaction
-		const { payResult, requestTokenResult } = await fullAutoMintSwap(tokenInfo, targetMint.mintUrl)
+		// TODO this process can take a while, we need to add it as pending transaction?
+		const { payResult, requestTokenResult, estFee } = await fullAutoMintSwap(tokenInfo, targetMint.mintUrl)
 		if (!payResult || !requestTokenResult) {
 			return handleError({ e: 'payResult or requestTokenResult is undefined' })
 		}
+		const amountSent = tokenInfo.value - estFee
 		// add as history entry (multimint swap)
 		await addToHistory({
-			amount: -tokenInfo.value - (payResult.realFee ?? 0),
+			amount: -amountSent,
 			fee: payResult.realFee,
 			type: 3,
 			value: requestTokenResult.invoice?.pr || '',
@@ -198,8 +201,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			recipient: targetMint?.mintUrl || ''
 		})
 		navigation.navigate('success', {
-			amount: tokenInfo.value,
+			amount: amountSent,
 			fee: payResult.realFee,
+			change: estFee - (payResult.realFee || 0),
 			isMelt: true
 		})
 	}
