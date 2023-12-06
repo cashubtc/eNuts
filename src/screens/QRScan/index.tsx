@@ -12,7 +12,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
-import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isUrl } from '@util'
+import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isNull, isUrl } from '@util'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
@@ -142,6 +142,10 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		}
 	}, [isFocused])
 
+	if (isNull(hasPermission)) {
+		return <View style={styles.empty} />
+	}
+
 	return (
 		<View style={[
 			globals(color).container,
@@ -200,6 +204,10 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 }
 
 const styles = ScaledSheet.create({
+	empty: {
+		flex: 1,
+		backgroundColor: mainColors.BLACK,
+	},
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',
