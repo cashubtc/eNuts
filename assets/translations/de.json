@@ -215,7 +215,7 @@
         "createLnInvoice": "Lightning Rechnung erstellen",
         "metadataCacheCleared": "Metadatencache gelöscht!",
         "imageCacheCleared": "Bildercache gelöscht!",
-        "leaveGithubStar": "Unterstützen Sie uns mit einem Github-Stern",
+        "leaveGithubStar": "Mit GitHub-Stern unterstützen",
         "alreadySpentHint": "Einige Beweise in Ihrem Guthaben wurden anderswo ausgegeben oder beansprucht. Beheben Sie dies, indem Sie sie die betroffenen Beweise unter 'Optionen' > 'Mint-Management' > 'Beweise überprüfen' löschen.",
         "newRelease": "Neue Veröffentlichung",
         "releaseNotes": "Versionshinweise",
