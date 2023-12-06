@@ -19,8 +19,8 @@ export default function BottomNav({
 	animatedBgStyles,
 	animatedPosStyles
 }: TBottomNavProps & {
-	animatedBgStyles: { backgroundColor: TInterPolation },
-	animatedPosStyles: { transform: { translateY: TInterPolation }[] }
+	animatedBgStyles?: { backgroundColor: TInterPolation },
+	animatedPosStyles?: { transform: { translateY: TInterPolation }[] }
 }) {
 	const { t } = useTranslation([NS.topNav])
 	const { color, highlight } = useThemeContext()
