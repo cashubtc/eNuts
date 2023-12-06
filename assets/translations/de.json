@@ -23,6 +23,7 @@
         "welcomeBack": "Willkommen zurück!"
     },
     "bottomNav": {
+		"wallet": "Wallet",
         "contacts": "Kontakte"
     },
     "common": {
@@ -112,7 +113,7 @@
         "noFunds": "Nicht genügend Guthaben",
         "noFundsForFee": "Nicht genug Guthaben, bitte lassen Sie Platz für eventuelle Gebühren: ~{{fee}} Sats",
         "noMint": "Keine Mint gefunden",
-        "noProofsToBackup": "Keine Proofs verfügbar für eine Sicherung.",
+        "noProofsToBackup": "Keine Beweise verfügbar für eine Sicherung.",
         "notQrCode": "Kein QR-Code!",
         "noTX": "Noch keine Transaktionen",
         "optionalMemo": "Optionales Memo",
@@ -215,7 +216,7 @@
         "metadataCacheCleared": "Metadatencache gelöscht!",
         "imageCacheCleared": "Bildercache gelöscht!",
         "leaveGithubStar": "Unterstützen Sie uns mit einem Github-Stern",
-        "alreadySpentHint": "Einige Proofs in Ihrem Guthaben wurden anderswo ausgegeben oder beansprucht. Beheben Sie dies, indem Sie sie die betroffenen Proofs unter 'Optionen' > 'Mint-Management' > 'Proofs überprüfen' löschen.",
+        "alreadySpentHint": "Einige Beweise in Ihrem Guthaben wurden anderswo ausgegeben oder beansprucht. Beheben Sie dies, indem Sie sie die betroffenen Beweise unter 'Optionen' > 'Mint-Management' > 'Beweise überprüfen' löschen.",
         "newRelease": "Neue Veröffentlichung",
         "releaseNotes": "Versionshinweise",
         "publishedOn": " veröffentlichte dies am {{date}}",
@@ -229,7 +230,7 @@
         "swapHint": "Diese Option erfordert eine Lightning-Zahlung, bringt Gebühren mit sich und kann die unbekannte Mint dennoch zur Liste hinzufügen, wenn eine Gebühren-Rückzahlung erfolgt.",
         "trustHint": "Die mit dem Token verbundene Mint wird zu Ihrer Vertrauensliste hinzugefügt.",
 		"backupQ": "Wie funktioniert es?",
-		"backupHint": "Der aktuelle Sicherungsprozess stellt eine rudimentäre Umsetzung dar. Er erstellt ein Cashu-Token aus allen Mints und zugehörige Proofs, das nach neuen Transaktionen ungültig wird. Um den Token auf einem neuen Gerät wiederherzustellen, folgen Sie dem vertrauten Beanspruchungsprozess, und der alte Kontostand wird ungültig. Vermeiden Sie es, es auf dem aktuellen Kontostand einzulösen, um Fehler vorzubeugen. Es sei darauf hingewiesen, dass wir aktiv an der Entwicklung einer Sicherungslösung mit Passphrase arbeiten, um die Sicherheit und Bequemlichkeit zu verbessern.",
+		"backupHint": "Der aktuelle Sicherungsprozess stellt eine rudimentäre Umsetzung dar. Er erstellt ein Cashu-Token aus allen Mints und zugehörige Beweise, das nach neuen Transaktionen ungültig wird. Um den Token auf einem neuen Gerät wiederherzustellen, folgen Sie dem vertrauten Beanspruchungsprozess, und der alte Kontostand wird ungültig. Vermeiden Sie es, es auf dem aktuellen Kontostand einzulösen, um Fehler vorzubeugen. Es sei darauf hingewiesen, dass wir aktiv an der Entwicklung einer Sicherungslösung mit Passphrase arbeiten, um die Sicherheit und Bequemlichkeit zu verbessern.",
 		"singleBackupHint": "Hinweis: Sie können auch eine Sicherung für eine einzelne Mint erstellen unter 'Optionen' > 'Mint Management' > 'Mint auswählen' > 'Guthabensicherung'.",
 		"noDefaultHint": "Du musst eine Standard-Mint einrichten, um einen automatischen Tausch durchzuführen."
     },
@@ -269,8 +270,8 @@
         "awaitingInvoice": "Rechnung ausstehend.",
         "backupNotCreated": "Mint-Sicherung konnte nicht erstellt werden.",
         "cashOutAmountHint": "Es können Lightning-Gebühren anfallen, daher wird eine geschätzte Gebühr hinzugefügt und eventuell zu viel gezahlte Gebühren werden erstattet.",
-        "checkProofs": "Proofs überprüfen",
-        "checkProofsQ": "Alle Proofs überprüfen?",
+        "checkProofs": "Beweise überprüfen",
+        "checkProofsQ": "Alle Beweise überprüfen?",
         "checkProofsTxt": "Dadurch wird überprüft, ob Ihre Token ausgegeben werden können und werden andernfalls gelöscht.",
         "chooseMeltMintHint": "Wählen Sie eine Mint aus, von der aus Sie Ihre Gelder abheben möchten.",
         "chooseMintHint": "Wählen Sie eine Mint aus, von der Sie Ecash erhalten möchten. Die Mint wird zum Verwalter Ihrer Gelder.",
@@ -281,12 +282,12 @@
         "customName": "Benutzerdefinierter Name",
         "cutomNameAdded": "Benutzerdefinierter Name hinzugefügt",
         "dangerZone": "Gefahrenzone",
-        "deletedProofs": "{{proofsToDel}} Proofs gelöscht.",
+        "deletedProofs": "{{proofsToDel}} Beweise gelöscht.",
         "delMint": "Mint löschen",
         "delMintSure": "Mint löschen?",
         "ecashAmountHint": "Wählen Sie den Betrag an Ecash aus, den Sie senden möchten.",
         "editMintName": "Mint Name bearbeiten",
-        "errDelProofs": "Etwas ist schief gelaufen während dem Löschen der Proofs.",
+        "errDelProofs": "Etwas ist schief gelaufen während dem Löschen der Beweise.",
         "funds": "Guthaben",
         "general": "Allgemein",
         "importantNotice": "Wichtiger Hinweis",
@@ -312,7 +313,7 @@
         "mntAlreadyAdded": "Mint bereits vorhanden",
         "noAdditional": "Diese Mint verfügt über keine zusätzlichen Informationen",
         "noInfo": "Keine Informationen verfügbar",
-        "noProofs": "Diese Mint verfügt über keine Proofs.",
+        "noProofs": "Diese Mint verfügt über keine Beweise.",
         "paymentOverview": "Zahlungsübersicht",
         "processingPaymentByMint": "Die Mint bearbeitet die Zahlung gemäß Ihrem Antrag",
         "processingSwap": "Verarbeitung eines Multimint-Swaps gemäß Ihrem Antrag",
@@ -366,6 +367,7 @@
         "payLNInvoice": "Lightning Rechnung bezahlen",
         "receive": "Empfangen",
         "send": "Senden",
-        "sent": "Ausgezahlt"
+        "sent": "Ausgezahlt",
+		"proofs": "Beweise"
     }
 }

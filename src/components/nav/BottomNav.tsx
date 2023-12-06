@@ -45,7 +45,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 			>
 				<WalletIcon width={s(26)} height={s(26)} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
-					txt='Wallet'
+					txt={t('wallet', { ns: NS.bottomNav })}
 					styles={[styles.iconTxt, {
 						color: isWalletRelatedScreen ? hi[highlight] : color.TEXT,
 						fontWeight: isWalletRelatedScreen ? '500' : '400'

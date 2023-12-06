@@ -23,6 +23,7 @@
         "welcomeBack": "¡Bienvenido de nuevo!"
     },
     "bottomNav": {
+		"wallet": "Cartera",
         "contacts": "Contactos"
     },
     "common": {
@@ -365,6 +366,7 @@
         "payInvoice": "Pagar recibo",
         "payLNInvoice": "Pagar recibo Lightning",
         "receive": "Recibir",
-        "send": "Enviar"
+        "send": "Enviar",
+		"proofs": "Pruebas"
     }
 }

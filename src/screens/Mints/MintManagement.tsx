@@ -259,7 +259,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 						/>
 						{/* Proof list */}
 						<MintOption
-							txt='Proofs'
+							txt={t('proofs', { ns: NS.wallet })}
 							onPress={() => {
 								if (route.params.amount < 1) {
 									openPromptAutoClose({ msg: t('noProofs', { ns: NS.mints }) })

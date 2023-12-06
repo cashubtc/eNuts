@@ -23,6 +23,7 @@
         "welcomeBack": "Üdv újra!"
     },
     "bottomNav": {
+		"wallet": "Tárca",
         "contacts": "Névjegyzék"
     },
     "common": {
@@ -365,6 +366,7 @@
         "payInvoice": "Számla fizetése",
         "payLNInvoice": "Lightning számla fizetése",
         "receive": "Fogad",
-        "send": "Küld"
+        "send": "Küld",
+		"proofs": "Bizonylatok"
     }
 }

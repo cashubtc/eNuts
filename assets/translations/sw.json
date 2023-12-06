@@ -23,6 +23,7 @@
         "welcomeBack": "Karibu tena!"
     },
     "bottomNav": {
+		"wallet": "Pochi",
         "contacts": "Mawasiliano"
     },
     "common": {
@@ -365,6 +366,7 @@
         "payInvoice": "Lipa ankara",
         "payLNInvoice": "Lipa ankara ya Lightning",
         "receive": "Pokea",
-        "send": "Tuma"
+        "send": "Tuma",
+		"proofs": "uthibitisho"
     }
 }
