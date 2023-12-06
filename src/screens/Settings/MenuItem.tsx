@@ -31,7 +31,7 @@ export default function SettingsMenuItem({ txt, icon, onPress, hasSeparator, has
 				</View>
 				{hasChevron && <ChevronRightIcon color={color.TEXT} />}
 			</TouchableOpacity>
-			{hasSeparator && <Separator style={[{ marginBottom: vs(15) }]} />}
+			{hasSeparator && <Separator style={[styles.separator]} />}
 		</>
 	)
 }
@@ -44,4 +44,8 @@ const styles = ScaledSheet.create({
 	settingTxt: {
 		marginLeft: '15@s',
 	},
+	separator: {
+		marginBottom: '15@vs',
+		marginTop: '3@vs',
+	}
 })

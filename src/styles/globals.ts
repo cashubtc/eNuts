@@ -71,7 +71,7 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.cre
 		backgroundColor: color?.DRAWER,
 		paddingHorizontal: '20@s',
 		paddingTop: '20@vs',
-		paddingBottom: 0,
+		paddingBottom: '5@vs',
 		marginBottom: '20@vs',
 	},
 	wrapRow: {
