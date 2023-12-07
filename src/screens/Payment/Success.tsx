@@ -8,7 +8,7 @@ import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { l } from '@src/logger'
-import { formatSatStr, vib } from '@util'
+import { formatSatStr, isNum, vib } from '@util'
 import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,7 +17,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
-	const { amount, memo, fee, mint, isClaim, isMelt, isZap, nostr, isScanned } = route.params
+	const {
+		amount,
+		memo,
+		fee,
+		change,
+		mint,
+		isClaim,
+		isMelt,
+		isZap,
+		nostr,
+		isScanned,
+	} = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const insets = useSafeAreaInsets()
@@ -83,18 +94,10 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				</View>
 				{isMelt && amount &&
 					<View style={styles.meltWrap}>
-						<View style={styles.meltOverview}>
-							<Txt txt={t('paidOut', { ns: NS.wallet })} styles={[styles.meltTxt]} />
-							<Txt txt={formatSatStr(amount)} styles={[styles.meltTxt]} />
-						</View>
-						<View style={styles.meltOverview}>
-							<Txt txt={t('fee')} styles={[styles.meltTxt]} />
-							<Txt txt={formatSatStr(fee || 0)} styles={[styles.meltTxt]} />
-						</View>
-						<View style={styles.meltOverview}>
-							<Txt txt={t('totalInclFee')} styles={[styles.meltTxt]} />
-							<Txt txt={formatSatStr(amount + (fee || 0))} styles={[styles.meltTxt]} />
-						</View>
+						<Details key={t('paidOut', { ns: NS.wallet })} value={formatSatStr(amount)} />
+						<Details key={t('fee')} value={formatSatStr(fee || 0)} />
+						<Details key={t('totalInclFee')} value={formatSatStr(amount + (fee || 0))} />
+						{isNum(change) && <Details key={t('change')} value={formatSatStr(change)} />}
 					</View>
 				}
 			</View>
@@ -134,6 +137,15 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				loop={false}
 				style={styles.confetti}
 			/>
+		</View>
+	)
+}
+
+function Details({ key, value }: { key: string, value: string }) {
+	return (
+		<View style={styles.meltOverview}>
+			<Txt txt={key} styles={[styles.meltTxt]} />
+			<Txt txt={value} styles={[styles.meltTxt]} />
 		</View>
 	)
 }

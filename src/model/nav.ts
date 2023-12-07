@@ -164,6 +164,7 @@ export type RootStackParamList = {
 		isZap?: boolean
 		nostr?: INostrSendData
 		isScanned?: boolean
+		change?: number
 	}
 	mintmanagement: {
 		mint: IMintUrl

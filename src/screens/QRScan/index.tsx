@@ -11,8 +11,9 @@ import { useIsFocused } from '@react-navigation/core'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { getDefaultMint } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
-import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isUrl } from '@util'
+import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isNull, isStr, isUrl } from '@util'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
@@ -48,17 +49,16 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const handleCashuToken = async (data: string) => {
 		const info = getTokenInfo(data)
 		if (!info) {
-			openPromptAutoClose({ msg: t('invalidOrSpent') })
-			return
+			return openPromptAutoClose({ msg: t('invalidOrSpent') })
 		}
 		// save token info in state
 		setTokenInfo(info)
 		// check if user wants to trust the token mint
+		const defaultM = await getDefaultMint()
 		const userMints = await getMintsUrls()
-		if (!hasTrustedMint(userMints, info.mints)) {
+		if (!hasTrustedMint(userMints, info.mints) || (isStr(defaultM) && !info.mints.includes(defaultM))) {
 			// ask user for permission if token mint is not in his mint list
-			setTrustModal(true)
-			return
+			return setTrustModal(true)
 		}
 		navigation.navigate('qr processing', { tokenInfo: info, token: data })
 	}
@@ -70,8 +70,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			openPromptAutoClose({ msg: t('invalidToken') })
 			stopLoading()
 			// close modal
-			setTrustModal(false)
-			return
+			return setTrustModal(false)
 		}
 		for (const mint of tokenInfo.mints) {
 			// eslint-disable-next-line no-await-in-loop
@@ -142,6 +141,10 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		}
 	}, [isFocused])
 
+	if (isNull(hasPermission)) {
+		return <View style={styles.empty} />
+	}
+
 	return (
 		<View style={[
 			globals(color).container,
@@ -200,6 +203,10 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 }
 
 const styles = ScaledSheet.create({
+	empty: {
+		flex: 1,
+		backgroundColor: mainColors.BLACK,
+	},
 	container: {
 		paddingTop: 0,
 		alignItems: 'center',

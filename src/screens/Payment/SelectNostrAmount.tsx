@@ -10,6 +10,7 @@ import ProfileBanner from '@screens/Addressbook/Contact/Banner'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { getNostrUsername, truncateNpub } from '@src/nostr/util'
 import { getColor } from '@src/styles/colors'
 import { globals, highlight as hi, mainColors } from '@styles'
@@ -61,6 +62,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 	useFocusEffect(
 		useCallback(() => {
 			const timeoutId = setTimeout(() => {
+				l('txtInputRef.current?.isFocused(): ', txtInputRef.current?.isFocused())
 				if (!txtInputRef.current?.isFocused()) {
 					numericInputRef.current?.focus()
 				}
@@ -136,6 +138,7 @@ export default function SelectNostrAmountScreen({ navigation, route }: TSelectNo
 			>
 				<TextInput
 					keyboardType='default'
+					ref={txtInputRef}
 					placeholder={t('optionalMemo', { ns: NS.common })}
 					placeholderTextColor={color.INPUT_PH}
 					selectionColor={hi[highlight]}

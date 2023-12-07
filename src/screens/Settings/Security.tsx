@@ -55,7 +55,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		<Screen
 			screenName={t('security', { ns: NS.topNav })}
 			withBackBtn
-			handlePress={() => navigation.navigate('Settings')}
+			handlePress={() => navigation.navigate('General settings')}
 		>
 			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>

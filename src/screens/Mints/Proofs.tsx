@@ -6,14 +6,17 @@ import type { TMintProofsPageProps } from '@model/nav'
 import { ProofListHeader, ProofRow } from '@screens/Payment/Send/ProofList'
 import { FlashList } from '@shopify/flash-list'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { globals } from '@styles'
 import { getMintCurrentKeySetId } from '@wallet'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function MintProofsPage({ navigation, route }: TMintProofsPageProps) {
 	const { color } = useThemeContext()
+	const { t } = useTranslation([NS.wallet])
 	const [proofs, setProofs] = useState<Proof[]>([])
 	const [mintKeysetId, setMintKeysetId] = useState('')
 	// initiate proofs & get the active keysetid of a mint once on initial render to compare with the proof keysets in the list
@@ -30,7 +33,7 @@ export default function MintProofsPage({ navigation, route }: TMintProofsPagePro
 
 	return (
 		<Screen
-			screenName='Proofs'
+			screenName={t('proofs')}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>

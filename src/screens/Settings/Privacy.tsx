@@ -70,6 +70,7 @@ const styles = ScaledSheet.create({
 		marginLeft: '15@s'
 	},
 	separator: {
-		marginBottom: '15@vs'
+		marginBottom: '15@vs',
+		marginTop: '3@vs',
 	}
 })

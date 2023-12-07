@@ -1,4 +1,4 @@
-import { IncomingArrowIcon, OutgoingArrowIcon, SwapCurrencyIcon } from '@comps/Icons'
+import { IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
@@ -32,13 +32,10 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 		return item.amount < 0 ? mainColors.ERROR : mainColors.VALID
 	}
 
-	const getIcon = () => {
-		if (item.type === 3) { return <SwapCurrencyIcon width={16} height={16} color={color.TEXT} /> }
-		return item.amount < 0 ?
-			<OutgoingArrowIcon color={color.TEXT} />
-			:
-			<IncomingArrowIcon color={color.TEXT} />
-	}
+	const getIcon = () => item.amount < 0 ?
+		<OutgoingArrowIcon color={color.TEXT} />
+		:
+		<IncomingArrowIcon color={color.TEXT} />
 
 	return (
 		<TouchableOpacity
@@ -58,7 +55,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			<View style={[styles.amount, { top: isNum(item.fee) ? 0 : vs(10) }]}>
 				<Txt
 					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.type === 3 ? Math.abs(item.amount) : item.amount, 'standard')}`}
-					styles={[{ color: getTxColor(), marginBottom: vs(5) }]}
+					styles={[{ color: getTxColor(), marginBottom: vs(5), textAlign: 'right' }]}
 				/>
 				{isNum(item.fee) &&
 					<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>

@@ -1,4 +1,4 @@
-import { AboutIcon, BookIcon, EyeClosedIcon, HeartIcon, LockIcon, MintBoardIcon, OptionsIcon, ReadmeIcon, ReleaseTagIcon } from '@comps/Icons'
+import { AboutIcon, HeartIcon, MintBoardIcon, OptionsIcon, ReadmeIcon, ReleaseTagIcon } from '@comps/Icons'
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
@@ -6,7 +6,6 @@ import { appVersion } from '@consts/env'
 import { BottomModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { useNostrContext } from '@src/context/Nostr'
 import { useReleaseContext } from '@src/context/Release'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -26,7 +25,6 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { isOutdated } = useReleaseContext()
 	const [confirmReset, setConfirmReset] = useState(false)
 	const [zapModal, setZapModal] = useState(false)
-	const { nostr } = useNostrContext()
 
 	const handleReset = async () => {
 		try {
@@ -57,29 +55,6 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						hasSeparator
 						hasChevron
 					/>
-					<MenuItem
-						txt={t('security', { ns: NS.topNav })}
-						icon={<LockIcon color={color.TEXT} />}
-						onPress={() => navigation.navigate('Security settings')}
-						hasSeparator
-						hasChevron
-					/>
-					<MenuItem
-						txt={t('privacy', { ns: NS.topNav })}
-						icon={<EyeClosedIcon color={color.TEXT} />}
-						onPress={() => navigation.navigate('Privacy settings')}
-						hasSeparator
-						hasChevron
-					/>
-					{nostr.nutPub.length > 0 &&
-						<MenuItem
-							txt={t('contacts', { ns: NS.bottomNav })}
-							icon={<BookIcon color={color.TEXT} />}
-							onPress={() => navigation.navigate('Contacts settings')}
-							hasSeparator
-							hasChevron
-						/>
-					}
 					<MenuItem
 						txt={t('about', { ns: NS.topNav })}
 						icon={<AboutIcon color={color.TEXT} />}
