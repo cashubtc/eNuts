@@ -8,15 +8,16 @@ import { addMint } from '@db'
 import { l } from '@log'
 import type { ITokenInfo } from '@model'
 import type { IContact, INostrDm } from '@model/nostr'
+import { getNostrUsername, truncateStr } from '@nostr/util'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { getNostrUsername, truncateStr } from '@src/nostr/util'
 import { addToHistory } from '@store/latestHistoryEntries'
+import { getDefaultMint } from '@store/mintStore'
 import { updateNostrRedeemed } from '@store/nostrDms'
 import { highlight as hi, mainColors } from '@styles'
-import { formatMintUrl, formatSatStr } from '@util'
+import { formatMintUrl, formatSatStr, isStr } from '@util'
 import { claimToken } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
@@ -56,11 +57,11 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 	const handleRedeem = async () => {
 		if (!info) { return }
 		startLoading()
-		// check for unknown mint
-		if (!mints.includes(info.mints[0] || '')) {
+		const defaultM = await getDefaultMint()
+		// check if user wants to trust the token mint
+		if (!mints.includes(info.mints[0] || '') || (isStr(defaultM) && !info.mints.includes(defaultM))) {
 			// show trust modal
-			setTrustModal(true)
-			return
+			return setTrustModal(true)
 		}
 		await receiveToken()
 	}
@@ -85,8 +86,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 			if (!success) {
 				openPromptAutoClose({ msg: t('invalidOrSpent') })
 				await handleStoreRedeemed()
-				stopLoading()
-				return
+				return stopLoading()
 			}
 			// add as history entry (receive ecash from nostr)
 			await addToHistory({

@@ -232,7 +232,7 @@
 		"backupQ": "Wie funktioniert es?",
 		"backupHint": "Der aktuelle Sicherungsprozess stellt eine rudimentäre Umsetzung dar. Er erstellt ein Cashu-Token aus allen Mints und zugehörige Beweise, das nach neuen Transaktionen ungültig wird. Um den Token auf einem neuen Gerät wiederherzustellen, folgen Sie dem vertrauten Beanspruchungsprozess, und der alte Kontostand wird ungültig. Vermeiden Sie es, es auf dem aktuellen Kontostand einzulösen, um Fehler vorzubeugen. Es sei darauf hingewiesen, dass wir aktiv an der Entwicklung einer Sicherungslösung mit Passphrase arbeiten, um die Sicherheit und Bequemlichkeit zu verbessern.",
 		"singleBackupHint": "Hinweis: Sie können auch eine Sicherung für eine einzelne Mint erstellen unter 'Optionen' > 'Mint Management' > 'Mint auswählen' > 'Guthabensicherung'.",
-		"noDefaultHint": "Du musst eine Standard-Mint einrichten, um einen automatischen Tausch durchzuführen."
+		"noDefaultHint": "Sie müssen eine Standard-Mint einrichten, um einen automatischen Tausch durchzuführen."
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",

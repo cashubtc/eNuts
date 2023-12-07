@@ -4,7 +4,8 @@ import { l } from '@log'
 import type { ITokenInfo } from '@model'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { getStrFromClipboard, hasTrustedMint, isCashuToken, sleep } from '@util'
+import { getDefaultMint } from '@store/mintStore'
+import { getStrFromClipboard, hasTrustedMint, isCashuToken, isStr, sleep } from '@util'
 import { isTokenSpendable } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
@@ -32,9 +33,12 @@ const useFocusClaim = () => {
 			const info = getTokenInfo(cleanedClipboard)
 			if (!info) { return false }
 			// check if mint is a trusted one
+			const defaultM = await getDefaultMint()
 			const userMints = await getMintsUrls()
 			// do not claim from clipboard when app comes to the foreground if mint from token is not trusted
-			if (!hasTrustedMint(userMints, info.mints)) { return false }
+			if (!hasTrustedMint(userMints, info.mints)|| (isStr(defaultM) && !info.mints.includes(defaultM))) {
+				return false
+			}
 			// check if token is spendable
 			try {
 				const isSpendable = await isTokenSpendable(cleanedClipboard)

@@ -26,9 +26,9 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
 					<MenuItem
-						txt={t('security', { ns: NS.topNav })}
-						icon={<LockIcon color={color.TEXT} />}
-						onPress={() => navigation.navigate('Security settings')}
+						txt={t('display', { ns: NS.topNav })}
+						icon={<PaletteIcon color={color.TEXT} />}
+						onPress={() => navigation.navigate('Display settings')}
 						hasSeparator
 						hasChevron
 					/>
@@ -36,6 +36,13 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 						txt={t('privacy', { ns: NS.topNav })}
 						icon={<EyeClosedIcon color={color.TEXT} />}
 						onPress={() => navigation.navigate('Privacy settings')}
+						hasSeparator
+						hasChevron
+					/>
+					<MenuItem
+						txt={t('security', { ns: NS.topNav })}
+						icon={<LockIcon color={color.TEXT} />}
+						onPress={() => navigation.navigate('Security settings')}
 						hasSeparator
 						hasChevron
 					/>
@@ -48,13 +55,6 @@ export default function GeneralSettings({ navigation, route }: TGeneralSettingsP
 							hasChevron
 						/>
 					}
-					<MenuItem
-						txt={t('display', { ns: NS.topNav })}
-						icon={<PaletteIcon color={color.TEXT} />}
-						onPress={() => navigation.navigate('Display settings')}
-						hasSeparator
-						hasChevron
-					/>
 					<MenuItem
 						txt={t('language', { ns: NS.topNav })}
 						icon={<LanguageIcon color={color.TEXT} />}

@@ -25,7 +25,7 @@ import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
-import { saveDefaultOnInit } from '@store/mintStore'
+import { getDefaultMint, saveDefaultOnInit } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
 import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice, isStr } from '@util'
 import { claimToken, getMintsForPayment } from '@wallet'
@@ -128,9 +128,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		}
 		// save token info in state
 		setTokenInfo(tokenInfo)
+		const defaultM = await getDefaultMint()
 		// check if user wants to trust the token mint
 		const userMints = await getMintsUrls()
-		if (!hasTrustedMint(userMints, tokenInfo.mints)) {
+		if (!hasTrustedMint(userMints, tokenInfo.mints) || (isStr(defaultM) && !tokenInfo.mints.includes(defaultM))) {
 			closeOptsModal()
 			// ask user for permission if token mint is not in his mint list
 			const t = setTimeout(() => {
@@ -180,6 +181,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		if (token.length) { return }
 		startLoading()
 		const clipboard = await getStrFromClipboard()
+		l({ clipboard })
 		if (!clipboard?.length || !isCashuToken(clipboard)) {
 			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			closeOptsModal()
