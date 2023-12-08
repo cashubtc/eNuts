@@ -236,7 +236,7 @@ export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: strin
 			proofs
 		)
 		l('[fullAutoMintSwap]', { payResult, requestTokenResult })
-		return { payResult, requestTokenResult, estFee }
+		return { payResult, requestTokenResult, estFeeResp: estFee }
 	} catch (e) {
 		return { payResult: undefined, requestTokenResult: undefined }
 	}
