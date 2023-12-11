@@ -186,11 +186,11 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			return handleError({ e: 'Auto-mint-swap currently only supports a single source mint.' })
 		}
 		// TODO this process can take a while, we need to add it as pending transaction?
-		const { payResult, requestTokenResult, estFee } = await fullAutoMintSwap(tokenInfo, targetMint.mintUrl)
+		const { payResult, requestTokenResult, estFeeResp } = await fullAutoMintSwap(tokenInfo, targetMint.mintUrl)
 		if (!payResult || !requestTokenResult) {
 			return handleError({ e: 'payResult or requestTokenResult is undefined' })
 		}
-		const amountSent = tokenInfo.value - estFee
+		const amountSent = tokenInfo.value - estFeeResp
 		// add as history entry (multimint swap)
 		await addToHistory({
 			amount: -amountSent,
@@ -203,7 +203,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		navigation.navigate('success', {
 			amount: amountSent,
 			fee: payResult.realFee,
-			change: estFee - (payResult.realFee || 0),
+			change: estFeeResp - (payResult.realFee || 0),
 			isMelt: true
 		})
 	}

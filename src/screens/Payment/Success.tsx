@@ -94,10 +94,10 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				</View>
 				{isMelt && amount &&
 					<View style={styles.meltWrap}>
-						<Details key={t('paidOut', { ns: NS.wallet })} value={formatSatStr(amount)} />
-						<Details key={t('fee')} value={formatSatStr(fee || 0)} />
-						<Details key={t('totalInclFee')} value={formatSatStr(amount + (fee || 0))} />
-						{isNum(change) && <Details key={t('change')} value={formatSatStr(change)} />}
+						<Details txt={t('paidOut', { ns: NS.wallet })} value={formatSatStr(amount)} />
+						<Details txt={t('fee')} value={formatSatStr(fee || 0)} />
+						<Details txt={t('totalInclFee')} value={formatSatStr(amount + (fee || 0))} />
+						{isNum(change) && <Details txt={t('change')} value={formatSatStr(change)} />}
 					</View>
 				}
 			</View>
@@ -141,10 +141,10 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	)
 }
 
-function Details({ key, value }: { key: string, value: string }) {
+function Details({ txt, value }: { txt: string, value: string }) {
 	return (
 		<View style={styles.meltOverview}>
-			<Txt txt={key} styles={[styles.meltTxt]} />
+			<Txt txt={txt} styles={[styles.meltTxt]} />
 			<Txt txt={value} styles={[styles.meltTxt]} />
 		</View>
 	)

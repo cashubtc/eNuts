@@ -60,7 +60,7 @@ export interface ISearchStates {
 	hasResults: boolean
 }
 
-const marginBottom = vs(70)
+const marginBottom = isIOS ? vs(45) : vs(70)
 const marginBottomPayment = isIOS ? vs(20) : 0
 
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning

@@ -1,5 +1,6 @@
 import { BookIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
+import { isIOS } from '@consts'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -51,7 +52,7 @@ export default function BottomNav({
 			<Animated.View
 				style={[
 					styles.bottomNav,
-					{ paddingBottom: vs(10) },
+					{ paddingBottom: isIOS ? vs(25) : vs(10) },
 					animatedBgStyles,
 					animatedPosStyles
 				]}>

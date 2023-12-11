@@ -196,7 +196,7 @@ export async function autoMintSwap(
 	fee: number,
 	proofs: Proof[] = []
 ): Promise<{ payResult: { result?: PayLnInvoiceResponse, fee?: number, realFee?: number, error?: unknown }; requestTokenResult: { success: boolean; invoice?: IInvoice | null } }> {
-	if (!isNum(fee) || fee <= 0) { fee = await checkFees(destMintUrl, (await requestMint(destMintUrl, amount)).pr) }
+	if (!isNum(fee) || fee <= 0) { fee = await checkFees(srcMintUrl, (await requestMint(destMintUrl, amount)).pr) }
 	l('[autoMintSwap]', { fee, amount, srcMintUrl, destMintUrl })
 	if (!amount || !isNum(amount) || isNaN(amount) || !isFinite(amount) || amount <= 0) {
 		throw new Error('Swap Error: not enough funds')
@@ -221,21 +221,22 @@ export async function autoMintSwap(
 export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: string) {
 	l('[fullAutoMintSwap] ', { tokenInfo, destMintUrl })
 	try {
+		const srcMintUrl = tokenInfo.mints[0]
 		const invoice = await requestMint(destMintUrl, tokenInfo.value)
-		const estFee = await checkFees(destMintUrl, invoice.pr)
+		const estFee = await checkFees(srcMintUrl, invoice.pr)
 		const proofs: Proof[] = []
 		for (const t of tokenInfo.decoded.token) {
 			proofs.push(...t.proofs)
 		}
 		const { payResult, requestTokenResult } = await autoMintSwap(
-			tokenInfo.mints[0],
+			srcMintUrl,
 			destMintUrl,
 			tokenInfo.value - estFee,
 			estFee,
 			proofs
 		)
 		l('[fullAutoMintSwap]', { payResult, requestTokenResult })
-		return { payResult, requestTokenResult, estFee }
+		return { payResult, requestTokenResult, estFeeResp: estFee }
 	} catch (e) {
 		return { payResult: undefined, requestTokenResult: undefined }
 	}
