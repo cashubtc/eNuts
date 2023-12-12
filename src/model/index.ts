@@ -1,7 +1,7 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
 import type { HighlightKey } from '@styles'
 import type { ExpoConfig } from 'expo/config'
-import type { SQLStmtCb, SQLStmtErrCb, WebSQLDatabase } from 'expo-sqlite'
+import type { SQLStmtCb, SQLStmtErrCb } from 'expo-sqlite'
 
 export interface IExpoConfig extends ExpoConfig {
 	extra?: {
@@ -109,22 +109,22 @@ export interface IInvoice {
 	time: number,
 	mintUrl: string
 }
-export interface IOpenDBParams {
-	name: string,
-	version?: string,
-	description?: string,
-	size?: number,
-	callback?: ((db: WebSQLDatabase) => void)
-}
-export interface IOpenDB {
-	(
-		name: string,
-		version?: string,
-		description?: string,
-		size?: number,
-		callback?: ((db: WebSQLDatabase) => void)
-	): WebSQLDatabase
-}
+// export interface IOpenDBParams {
+// 	name: string,
+// 	version?: string,
+// 	description?: string,
+// 	size?: number,
+// 	callback?: ((db: WebSQLDatabase) => void)
+// }
+// export interface IOpenDB {
+// 	(
+// 		name: string,
+// 		version?: string,
+// 		description?: string,
+// 		size?: number,
+// 		callback?: ((db: WebSQLDatabase) => void)
+// 	): WebSQLDatabase
+// }
 export type QueryArgs = (number | string | null)[]
 export interface ITx<T = unknown> {
 	sql: string,
