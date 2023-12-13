@@ -204,7 +204,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			amount: amountSent,
 			fee: payResult.realFee,
 			change: estFeeResp - (payResult.realFee || 0),
-			isMelt: true
+			isAutoSwap,
 		})
 	}
 

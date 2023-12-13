@@ -161,6 +161,7 @@ export type RootStackParamList = {
 		memo?: string
 		isClaim?: boolean
 		isMelt?: boolean
+		isAutoSwap?: boolean
 		isZap?: boolean
 		nostr?: INostrSendData
 		isScanned?: boolean

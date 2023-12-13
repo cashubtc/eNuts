@@ -232,7 +232,8 @@
 		"backupQ": "Hogyan működik?",
 		"backupHint": "A jelenlegi biztonsági másolat folyamata egy kezdetleges megoldás. Egy Cashu token létrehozása történik a verdék bizonylatai alapján amely érvénytelen lesz egy új tranzakció után. A token helyreállításához egy másik eszközön kövesd az ismert átvételi folyamatot és a régi egyenleg érvénytelen lesz. Kerüld el a beváltást a jelenlegi egyenleged helyére, hogy a hibákat elkerüljük. Fontos megjegyezni, hogy aktívan dolgozunk egy seed-en alapuló biztonsági mentés kifejlesztésén a megnövelt biztonság és kényelem érdekében.",
 		"singleBackupHint": "Megjegyzés: Készíthetsz biztonsági másolatot egy verde bizonylatairól külön a 'Beállítások' > 'Verdék kezelése' > 'Válassz verdét' > 'Tőke biztonsági mentése' menüpont alatt.",
-		"noDefaultHint": "Be kell állítanod egy alapértelmezett verdét az automatikus cseréhez."
+		"noDefaultHint": "Be kell állítanod egy alapértelmezett verdét az automatikus cseréhez.",
+		"autoSwapSuccess": "Csere sikeres!"
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",
@@ -367,6 +368,7 @@
 		"payLNInvoice": "Lightning számla fizetése",
 		"receive": "Fogad",
 		"send": "Küld",
-		"proofs": "Bizonylatok"
+		"proofs": "Bizonylatok",
+		"swapped": "Kicserélt"
 	}
 }

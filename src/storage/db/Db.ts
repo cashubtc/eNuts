@@ -1,5 +1,5 @@
 
-import type { IOpenDB, IOpenDBParams, ITx, QueryArgs } from '@model'
+import type { ITx, QueryArgs } from '@model'
 import { isFunc, isObj, isStr, sleep } from '@util'
 import type {
 	Query,
@@ -22,26 +22,26 @@ type ExecResult<T> = ResultSetErr | ResultSet<T> | undefined
 export class Db {
 	public db: WebSQLDatabase
 	public constructor(db: WebSQLDatabase)
-	public constructor(
-		openDbFn: IOpenDB,
-		{
-			name,
-			version = '1.0',
-			description = name,
-			size = 1,
-			callback
-		}: IOpenDBParams
-	)
+	// public constructor(
+	// 	openDbFn: IOpenDB,
+	// 	{
+	// 		name,
+	// 		// version = '1.0',
+	// 		// description = name,
+	// 		// size = 1,
+	// 		callback
+	// 	}: IOpenDBParams
+	// )
 	public constructor(...args: unknown[]) {
 		if (args.length === 1 && isWebSQLDatabase(args[0])) {
 			this.db = args[0]
 			return
 		}
-		if (args.length === 2 && isFunc(args[0])) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			this.db = args[0](args[1] as IOpenDBParams)
-			return
-		}
+		// if (args.length === 2 && isFunc(args[0])) {
+		// 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		// 	this.db = args[0](args[1] as IOpenDBParams)
+		// 	return
+		// }
 		throw new Error('Db constructor error')
 	}
 	public static async reset(db: Db, newDB: WebSQLDatabase) {

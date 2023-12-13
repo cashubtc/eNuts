@@ -25,6 +25,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		mint,
 		isClaim,
 		isMelt,
+		isAutoSwap,
 		isZap,
 		nostr,
 		isScanned,
@@ -63,13 +64,16 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					{nostr ?
 						<>{formatSatStr(amount || 0)} {t('nostrPaymentSuccess')}</>
 						:
-						isMelt || isZap ?
+						(isMelt && !isAutoSwap) || isZap ?
 							t('paymentSuccess')
 							:
-							!nostr ?
-								<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
+							isAutoSwap ?
+								t('autoSwapSuccess')
 								:
-								null
+								!nostr ?
+									<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
+									:
+									null
 					}
 				</Text>
 				{memo &&
@@ -92,9 +96,9 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						style={{ width: s(120) }}
 					/>
 				</View>
-				{isMelt && amount &&
+				{(isMelt || isAutoSwap) && amount &&
 					<View style={styles.meltWrap}>
-						<Details txt={t('paidOut', { ns: NS.wallet })} value={formatSatStr(amount)} />
+						<Details txt={t(isAutoSwap ? 'swapped' : 'paidOut', { ns: NS.wallet })} value={formatSatStr(amount)} />
 						<Details txt={t('fee')} value={formatSatStr(fee || 0)} />
 						<Details txt={t('totalInclFee')} value={formatSatStr(amount + (fee || 0))} />
 						{isNum(change) && <Details txt={t('change')} value={formatSatStr(change)} />}

@@ -232,7 +232,8 @@
 		"backupQ": "Comment ça fonctionne?",
 		"backupHint": "Le processus de sauvegarde actuel représente une implémentation rudimentaire. Il crée un token Cashu à partir des mints et des preuves, qui devient invalide après de nouvelles transactions. Pour restaurer le token sur un nouvel appareil, suivez le processus de réclamation habituel et l'ancien solde devient invalide. Évitez de le racheter sur le solde actuel pour éviter les erreurs. Il est à noter que nous travaillons activement sur le développement d'une solution de sauvegarde par phrase semence pour une sécurité et une commodité accrues.",
 		"singleBackupHint": "Remarque : Vous pouvez également effectuer une sauvegarde pour une seule mint sous 'Options' > 'Paramètres des mints' > 'Sélectionner une mint' > 'Sauvegarde des fonds'.",
-		"noDefaultHint": "Vous devez configurer une mint par défaut pour effectuer un échange automatique."
+		"noDefaultHint": "Vous devez configurer une mint par défaut pour effectuer un échange automatique.",
+		"autoSwapSuccess": "Échange réussi!"
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",
@@ -368,6 +369,7 @@
 		"payLNInvoice": "Payer une facture Lightning",
 		"receive": "Recevoir",
 		"send": "Envoyer",
-		"proofs": "Preuves"
+		"proofs": "Preuves",
+		"swapped": "Échangé"
 	}
 }
