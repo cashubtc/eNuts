@@ -1,5 +1,6 @@
 import { BackspaceIcon, CheckmarkIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
+import { getColor } from '@styles/colors'
 import { getPinpadBg, mainColors } from '@styles'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
@@ -21,7 +22,7 @@ interface IPinPadProps {
 }
 
 export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, handleInput }: IPinPadProps) {
-	const { highlight } = useThemeContext()
+	const { color, highlight } = useThemeContext()
 	// should pad input be disabled
 	const shouldDisablePad = (val: number) => (
 		mismatch ||
@@ -51,15 +52,15 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, ha
 							style={[styles.numWrap, pad.n < 10 ? { backgroundColor: getPinpadBg(highlight) } : {}]}
 							disabled={shouldDisablePad(pad.n)}
 						>
-							{pad.n === 10 ? <BackspaceIcon width={s(32)} height={s(32)} color={mainColors.WHITE} /> // backspace
-								: pad.n === 11 ? <CheckmarkIcon width={s(32)} height={s(32)} color={shouldDisableSubmit() ? mainColors.GREY : mainColors.WHITE} /> // submit
+							{pad.n === 10 ? <BackspaceIcon width={s(32)} height={s(32)} color={getColor(highlight, color)} /> // backspace
+								: pad.n === 11 ? <CheckmarkIcon width={s(32)} height={s(32)} color={shouldDisableSubmit() ? mainColors.GREY : getColor(highlight, color)} /> // submit
 									: // number pads
 									<>
-										<Text style={styles.num}>
+										<Text style={[styles.num, { color: getColor(highlight, color) }]}>
 											{pad.n}
 										</Text>
 										{pad.t &&
-											<Text style={styles.char}>
+											<Text style={[styles.char, { color: getColor(highlight, color) }]}>
 												{pad.t}
 											</Text>
 										}
@@ -91,10 +92,9 @@ const styles = ScaledSheet.create({
 	num: {
 		fontSize: '24@vs',
 		fontWeight: '300',
-		color: mainColors.WHITE,
 	},
 	char: {
 		fontSize: '8@vs',
-		color: mainColors.WHITE,
+		marginTop: '-4@vs',
 	},
 })
