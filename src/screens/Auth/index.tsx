@@ -10,6 +10,7 @@ import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { highlight as hi, mainColors } from '@styles'
+import { getColor } from '@styles/colors'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
@@ -25,7 +26,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
 	const { t } = useTranslation([NS.common])
 	const { anim, shake } = useShakeAnimation()
-	const { highlight } = useThemeContext()
+	const { color, highlight } = useThemeContext()
 	// PIN mismatch context
 	const { attempts, setAttempts } = useContext(PinCtx)
 	// auth state
@@ -235,16 +236,16 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			]}
 		>
 			{success ?
-				<UnlockIcon width={s(40)} height={s(40)} color={mainColors.WHITE} />
+				<UnlockIcon width={s(40)} height={s(40)} color={getColor(highlight, color)} />
 				:
 				<>
 					{attempts.locked && !isConfirm && <View />}
 					<View style={styles.lockWrap}>
 						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
-							<LockIcon width={s(30)} height={s(30)} color={mainColors.WHITE} />
+							<LockIcon width={s(30)} height={s(30)} color={getColor(highlight, color)} />
 						</Animated.View>
 						{!shouldEdit && !shouldRemove && auth.length > 0 &&
-							<Txt txt={t('walletLocked')} bold styles={[styles.lockTxt]} />
+							<Txt txt={t('walletLocked')} bold styles={[styles.lockTxt, { color: getColor(highlight, color) }]} />
 						}
 						{attempts.locked && !isConfirm &&
 							<Text style={styles.lockedTime}>
@@ -257,12 +258,12 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 						:
 						<View style={styles.bottomSection}>
 							{attempts.mismatch &&
-							<Txt
-								txt={t('pinMismatch', { ns: NS.auth })}
-								bold
-								error
-								styles={[styles.mismatch]}
-							/>
+								<Txt
+									txt={t('pinMismatch', { ns: NS.auth })}
+									bold
+									error
+									styles={[styles.mismatch]}
+								/>
 							}
 							{shouldShowPinSection() ?
 								<Animated.View style={{ transform: [{ translateX: anim.current }] }}>
@@ -327,7 +328,6 @@ const styles = ScaledSheet.create({
 	lockTxt: {
 		marginTop: '10@vs',
 		marginBottom: '20@vs',
-		color: mainColors.WHITE
 	},
 	bottomSection: {
 		justifyContent: 'center',
