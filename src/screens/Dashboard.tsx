@@ -309,6 +309,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		const focusHandler = navigation.addListener('focus', async () => {
 			if (animationEnded.current) {
 				const t = setTimeout(() => {
+					l('animate transition back to normal dashboard')
 					animateTransition()
 					clearTimeout(t)
 				}, 200)
