@@ -233,7 +233,8 @@
 		"backupHint": "The existing backup process represents a rudimentary implementation. It creates a Cashu token from mints and proofs which becomes invalid after new transactions. To restore the token on a new device, follow the familiar claiming process and the old balance becomes invalid. Avoid redeeming on top of the current balance to prevent errors. It's worth mentioning that we're actively engaged in developing a seed phrase backup solution for enhanced security and convenience.",
 		"singleBackupHint": "Note: You can also create a backup for a single mint under 'Options' > 'Mint management' > 'Select mint' > 'Backup funds'.",
 		"noDefaultHint": "You need to setup a default mint to perform an auto swap.",
-		"autoSwapSuccess": "Swap successful!"
+		"autoSwapSuccess": "Swap successful!",
+		"noReleaseData": "Release data not available"
 	},
 	"error": {
 		"checkSpendableErr": "Error while checking if token is spendable",

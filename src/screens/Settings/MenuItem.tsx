@@ -12,21 +12,23 @@ interface IMenuItemProps {
 	icon: React.ReactElement
 	hasSeparator?: boolean
 	hasChevron?: boolean
+	disabled?: boolean
 }
 
-export default function SettingsMenuItem({ txt, icon, onPress, hasSeparator, hasChevron }: IMenuItemProps) {
+export default function SettingsMenuItem({ txt, icon, onPress, hasSeparator, hasChevron, disabled }: IMenuItemProps) {
 	const { color } = useThemeContext()
 	return (
 		<>
 			<TouchableOpacity
 				style={[globals().wrapRow, { paddingBottom: vs(15) }]}
 				onPress={onPress}
+				disabled={disabled}
 			>
 				<View style={styles.setting}>
 					{icon}
 					<Txt
 						txt={txt}
-						styles={[styles.settingTxt]}
+						styles={[styles.settingTxt, { color: disabled ? color.TEXT_SECONDARY : color.TEXT }]}
 					/>
 				</View>
 				{hasChevron && <ChevronRightIcon color={color.TEXT} />}

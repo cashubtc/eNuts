@@ -1,4 +1,4 @@
-import { AboutIcon, HeartIcon, MintBoardIcon, OptionsIcon, ReadmeIcon, ReleaseTagIcon } from '@comps/Icons'
+import { AboutIcon, ConnectionErrorIcon, HeartIcon, MintBoardIcon, OptionsIcon, ReadmeIcon, ReleaseTagIcon } from '@comps/Icons'
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
@@ -22,7 +22,7 @@ import MenuItem from './MenuItem'
 export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const { isOutdated } = useReleaseContext()
+	const { info, isOutdated } = useReleaseContext()
 	const [confirmReset, setConfirmReset] = useState(false)
 	const [zapModal, setZapModal] = useState(false)
 
@@ -63,10 +63,14 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						hasChevron
 					/>
 					<MenuItem
-						txt={isOutdated ? t('newRelease') : t('releaseNotes')}
-						icon={isOutdated ? <ReleaseTagIcon color={mainColors.VALID} /> : <ReadmeIcon color={color.TEXT} />}
-						onPress={() => navigation.navigate('release')}
-						hasChevron
+						txt={!info ? t('noReleaseData') : isOutdated ? t('newRelease') : t('releaseNotes')}
+						icon={!info ? <ConnectionErrorIcon color={mainColors.WARN} /> : isOutdated ? <ReleaseTagIcon color={mainColors.VALID} /> : <ReadmeIcon color={color.TEXT} />}
+						onPress={() => {
+							if (!info) { return }
+							navigation.navigate('release')
+						}}
+						disabled={!info}
+						hasChevron={!!info}
 						hasSeparator
 					/>
 					<MenuItem

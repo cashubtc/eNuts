@@ -233,7 +233,8 @@
 		"backupHint": "Prosesi ya sasa ya kurejesha inawakilisha utekelezaji wa msingi. Inaunda ishara ya Cashu kutoka kwa pesa na ushahidi ambayo inakuwa batili baada ya shughuli mpya. Ili kurejesha ishara kwenye kifaa kipya, fuata mchakato wa kudai unaofahamika na salio la zamani linakuwa batili. Epuka kurejesha juu ya salio la sasa ili kuepuka makosa. Ni vyema kutaja kwamba tunafanya kazi kwa bidii kwenye suluhisho la kurejesha kwa neno la mbegu kwa usalama na urahisi ulioimarishwa.",
 		"singleBackupHint": "Angalia: Unaweza pia kuunda chelezo kwa mshona moja chini ya 'Chaguo' > 'Usimamizi wa sarafu' > 'Chagua sarafu' > 'Hifadhi pesa'.",
 		"noDefaultHint": "Unahitaji kuweka kalibu ya kufanya ubadilishaji wa moja kwa moja.",
-		"autoSwapSuccess": "Kubadilishana kufanikiwa!"
+		"autoSwapSuccess": "Kubadilishana kufanikiwa!",
+		"noReleaseData": "Hakuna data ya toleo"
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",
