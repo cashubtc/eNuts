@@ -1,7 +1,7 @@
 import { BackspaceIcon, CheckmarkIcon } from '@comps/Icons'
 import { useThemeContext } from '@src/context/Theme'
-import { getColor } from '@styles/colors'
 import { getPinpadBg, mainColors } from '@styles'
+import { getColor } from '@styles/colors'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
