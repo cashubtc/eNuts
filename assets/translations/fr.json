@@ -263,7 +263,8 @@
 		"swapHint": "Ce choix nécessite un paiement Lightning et peut entraîner des frais associés.",
 		"trustHint": "La menthe associée au jeton sera ajoutée à votre liste de confiance.",
 		"noDefaultHint": "Vous devez configurer une mint par défaut pour effectuer un échange automatique.",
-		"autoSwapSuccess": "Échange réussi!"
+		"autoSwapSuccess": "Échange réussi!",
+		"noReleaseData": "Donnée de version indisponible"
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

@@ -1,3 +1,4 @@
+import { l } from '@log'
 import type { GithubLatest } from '@model/github'
 import { extractVersion, getLatestVersion } from '@util/github'
 import { createContext, useContext, useEffect, useState } from 'react'
@@ -10,10 +11,15 @@ const useRelease = () => {
 
 	useEffect(() => {
 		void (async () => {
-			const releaseInfo = await getLatestVersion()
-			setInfo(releaseInfo)
-			const latest = extractVersion(releaseInfo.tag_name)
-			setIsOutdated(latest !== version)
+			try {
+				const releaseInfo = await getLatestVersion()
+				if (!releaseInfo) { return l('[useRelease] no release info') }
+				setInfo(releaseInfo)
+				const latest = extractVersion(releaseInfo.tag_name)
+				setIsOutdated(latest !== version)
+			} catch (error) {
+				l('[useRelease] error', error)
+			}
 		})()
 	}, [])
 

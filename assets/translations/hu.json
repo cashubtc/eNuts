@@ -263,7 +263,8 @@
 		"swapHint": "Ez az opció egy Lightning-fizetést igényel ami költségekkel jár, és még akkor is hozzáadhatja az ismeretlen verdét a listádhoz, ha költségvisszatérítésre kerül sor.",
 		"trustHint": "A tokenhez kapcsolódó verde hozzá lesz adva a megbízott listához.",
 		"noDefaultHint": "Be kell állítanod egy alapértelmezett verdét az automatikus cseréhez.",
-		"autoSwapSuccess": "Csere sikeres!"
+		"autoSwapSuccess": "Csere sikeres!",
+		"noReleaseData": "Nincs elérhető verzió információ"
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",
