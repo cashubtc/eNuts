@@ -9,7 +9,7 @@ import { STORE_KEYS } from '@store/consts'
 import { highlight as hi } from '@styles'
 import { isStr } from '@util'
 import { useTranslation } from 'react-i18next'
-import { Animated, SafeAreaView, TouchableOpacity } from 'react-native'
+import { Animated, TouchableOpacity } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 type TInterPolation = Animated.AnimatedInterpolation<string | number>
@@ -48,60 +48,58 @@ export default function BottomNav({
 		route.name === 'Contacts settings'
 
 	return (
-		<SafeAreaView>
-			<Animated.View
-				style={[
-					styles.bottomNav,
-					{ paddingBottom: isIOS ? vs(25) : vs(10) },
-					animatedBgStyles,
-					animatedPosStyles
-				]}>
-				<TouchableOpacity
-					style={styles.navIcon}
-					onPress={() => void handleNav('dashboard')}
-					disabled={isWalletRelatedScreen}
-				>
-					<WalletIcon width={s(26)} height={s(26)} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
-					<Txt
-						txt={t('wallet', { ns: NS.bottomNav })}
-						styles={[styles.iconTxt, {
-							color: isWalletRelatedScreen ? hi[highlight] : color.TEXT,
-							fontWeight: isWalletRelatedScreen ? '500' : '400'
-						}]}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={styles.navIcon}
-					onPress={() => void handleNav('Address book')}
-					disabled={route.name === 'Address book'}
-				>
-					<BookIcon width={s(26)} height={s(26)} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
-					<Txt
-						txt={t('contacts', { ns: NS.bottomNav })}
-						styles={[
-							styles.iconTxt, {
-								color: route.name === 'Address book' ? hi[highlight] : color.TEXT,
-								fontWeight: route.name === 'Address book' ? '500' : '400'
-							}
-						]}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={styles.navIcon}
-					onPress={() => void handleNav('Settings')}
-					disabled={isSettingsRelatedScreen}
-				>
-					<SettingsIcon width={s(26)} height={s(26)} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
-					<Txt
-						txt={t('settings')}
-						styles={[styles.iconTxt, {
-							color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT,
-							fontWeight: isSettingsRelatedScreen ? '500' : '400'
-						}]}
-					/>
-				</TouchableOpacity>
-			</Animated.View>
-		</SafeAreaView>
+		<Animated.View
+			style={[
+				styles.bottomNav,
+				{ paddingBottom: isIOS ? vs(25) : vs(5) },
+				animatedBgStyles,
+				animatedPosStyles
+			]}>
+			<TouchableOpacity
+				style={styles.navIcon}
+				onPress={() => void handleNav('dashboard')}
+				disabled={isWalletRelatedScreen}
+			>
+				<WalletIcon width={s(26)} height={s(26)} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
+				<Txt
+					txt={t('wallet', { ns: NS.bottomNav })}
+					styles={[styles.iconTxt, {
+						color: isWalletRelatedScreen ? hi[highlight] : color.TEXT,
+						fontWeight: isWalletRelatedScreen ? '500' : '400'
+					}]}
+				/>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.navIcon}
+				onPress={() => void handleNav('Address book')}
+				disabled={route.name === 'Address book'}
+			>
+				<BookIcon width={s(26)} height={s(26)} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
+				<Txt
+					txt={t('contacts', { ns: NS.bottomNav })}
+					styles={[
+						styles.iconTxt, {
+							color: route.name === 'Address book' ? hi[highlight] : color.TEXT,
+							fontWeight: route.name === 'Address book' ? '500' : '400'
+						}
+					]}
+				/>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.navIcon}
+				onPress={() => void handleNav('Settings')}
+				disabled={isSettingsRelatedScreen}
+			>
+				<SettingsIcon width={s(26)} height={s(26)} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
+				<Txt
+					txt={t('settings')}
+					styles={[styles.iconTxt, {
+						color: isSettingsRelatedScreen ? hi[highlight] : color.TEXT,
+						fontWeight: isSettingsRelatedScreen ? '500' : '400'
+					}]}
+				/>
+			</TouchableOpacity>
+		</Animated.View>
 	)
 }
 
@@ -122,6 +120,6 @@ const styles = ScaledSheet.create({
 	},
 	iconTxt: {
 		fontSize: '12@vs',
-		marginTop: '4@vs',
+		marginTop: '2@vs',
 	}
 })
