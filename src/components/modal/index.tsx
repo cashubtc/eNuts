@@ -12,7 +12,7 @@ interface IMyModalProps {
 	success?: boolean
 	hasNoPadding?: boolean
 	close?: () => void
-	children: React.ReactNode
+	children: JSX.Element | JSX.Element[]
 }
 
 export default function MyModal({

@@ -56,7 +56,7 @@ const PromptCtx = createContext<usePromptType>({
 
 export const usePromptContext = () => useContext(PromptCtx)
 
-export const PromptProvider = ({ children }: { children: React.ReactNode }) => (
+export const PromptProvider = ({ children }: { children: JSX.Element }) => (
 	<PromptCtx.Provider value={usePrompt()} >
 		{children}
 	</PromptCtx.Provider>
