@@ -230,7 +230,7 @@ function _App() {
 	)
 }
 
-function NavContainer({ children }: { children: JSX.Element | JSX.Element[] }) {
+function NavContainer({ children }: { children: React.ReactNode }) {
 	const navigation = useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null)
 	const { theme } = useThemeContext()
 

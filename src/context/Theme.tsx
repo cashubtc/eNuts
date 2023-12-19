@@ -85,7 +85,7 @@ const ThemeContext = createContext<useThemeType>({
 
 export const useThemeContext = () => useContext(ThemeContext)
 
-export const ThemeProvider = ({ children }: { children: JSX.Element }) => (
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => (
 	<ThemeContext.Provider value={useTheme()} >
 		{children}
 	</ThemeContext.Provider>
