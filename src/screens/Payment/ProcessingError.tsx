@@ -30,7 +30,7 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 			<View />
 			<View style={styles.setion}>
 				<ExclamationIcon width={s(60)} height={s(60)} color={mainColors.ERROR} />
-				<Txt txt={route.params.errorMsg} bold center styles={[{ color: mainColors.ERROR, marginVertical: vs(15), fontSize: vs(18) }]} />
+				<Txt txt={route.params.errorMsg} bold center styles={[styles.errMsg]} />
 				{!route.params.scan && route.params.errorMsg !== alreadySpentErr &&
 					<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('tryLater')} />
 				}
@@ -38,20 +38,22 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 					<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('alreadySpentHint')} />
 				}
 			</View>
-			{route.params.scan &&
-				<>
-					<Button
-						txt={t('scanAgain')}
-						onPress={() => navigation.navigate('qr scan', {})}
-					/>
-					<View style={{ marginVertical: vs(10) }} />
-				</>
-			}
-			<Button
-				outlined={route.params.scan}
-				txt={t('backToDashboard')}
-				onPress={() => navigation.navigate('dashboard')}
-			/>
+			<View style={globals().fullWidth}>
+				{route.params.scan &&
+					<>
+						<Button
+							txt={t('scanAgain')}
+							onPress={() => navigation.navigate('qr scan', {})}
+						/>
+						<View style={{ marginVertical: vs(10) }} />
+					</>
+				}
+				<Button
+					outlined={route.params.scan}
+					txt={t('backToDashboard')}
+					onPress={() => navigation.navigate('dashboard')}
+				/>
+			</View>
 		</View>
 	)
 }
@@ -65,6 +67,11 @@ const styles = ScaledSheet.create({
 	},
 	setion: {
 		alignItems: 'center',
+	},
+	errMsg: {
+		color: mainColors.ERROR,
+		marginVertical: '15@vs',
+		fontSize: '18@vs',
 	},
 	hint: {
 		fontSize: '14@vs',
