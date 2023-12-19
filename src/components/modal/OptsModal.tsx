@@ -126,7 +126,7 @@ const styles = ScaledSheet.create({
 		width: '100%',
 	},
 	iconContainer: {
-		minWidth: '10%',
+		minWidth: '11%',
 	},
 	txtWrap: {
 		width: '90%',
