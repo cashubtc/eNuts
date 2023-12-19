@@ -4,7 +4,7 @@ import { globals } from '@styles'
 import { View } from 'react-native'
 
 interface IContainerProps {
-	children: React.ReactNode
+	children: JSX.Element | JSX.Element[]
 	screenName?: string
 	withBackBtn?: boolean
 	withCancelBtn?: boolean

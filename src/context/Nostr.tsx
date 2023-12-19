@@ -128,7 +128,7 @@ const NostrContext = createContext<useNostrType>({
 
 export const useNostrContext = () => useContext(NostrContext)
 
-export const NostrProvider = ({ children }: { children: React.ReactNode }) => (
+export const NostrProvider = ({ children }: { children: JSX.Element }) => (
 	<NostrContext.Provider value={useNostr()} >
 		{children}
 	</NostrContext.Provider>

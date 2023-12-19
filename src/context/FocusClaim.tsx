@@ -108,7 +108,7 @@ const FocusClaimCtx = createContext<useFocusClaimType>({
 
 export const useFocusClaimContext = () => useContext(FocusClaimCtx)
 
-export const FocusClaimProvider = ({ children }: { children: React.ReactNode }) => (
+export const FocusClaimProvider = ({ children }: { children: JSX.Element }) => (
 	<FocusClaimCtx.Provider value={useFocusClaim()} >
 		{children}
 	</FocusClaimCtx.Provider>

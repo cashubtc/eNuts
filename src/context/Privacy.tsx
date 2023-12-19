@@ -81,7 +81,7 @@ const PrivacyContext = createContext<usePrivacyType>({
 
 export const usePrivacyContext = () => useContext(PrivacyContext)
 
-export const PrivacyProvider = ({ children }: { children: React.ReactNode }) => (
+export const PrivacyProvider = ({ children }: { children: JSX.Element }) => (
 	<PrivacyContext.Provider value={usePrivacy()} >
 		{children}
 	</PrivacyContext.Provider>
