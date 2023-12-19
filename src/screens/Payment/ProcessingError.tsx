@@ -73,6 +73,11 @@ const styles = ScaledSheet.create({
 	setion: {
 		alignItems: 'center',
 	},
+	errMsg: {
+		color: mainColors.ERROR,
+		marginVertical: '15@vs',
+		fontSize: '18@vs',
+	},
 	hint: {
 		fontSize: '14@vs',
 		marginTop: '10@vs',
