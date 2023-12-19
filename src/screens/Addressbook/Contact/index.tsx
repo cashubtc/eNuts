@@ -225,7 +225,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 }
 
 interface ISmallBtnProps {
-	children: JSX.Element
+	children: React.ReactNode
 	onPress: () => void
 }
 

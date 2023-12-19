@@ -41,7 +41,7 @@ const ReleaseCtx = createContext<useReleaseType>({
 
 export const useReleaseContext = () => useContext(ReleaseCtx)
 
-export const ReleaseProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => (
+export const ReleaseProvider = ({ children }: { children: React.ReactNode }) => (
 	<ReleaseCtx.Provider value={useRelease()} >
 		{children}
 	</ReleaseCtx.Provider>

@@ -29,7 +29,7 @@ const KeyboardCtx = createContext<useKeyboardType>({
 
 export const useKeyboardCtx = () => useContext(KeyboardCtx)
 
-export const KeyboardProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => (
+export const KeyboardProvider = ({ children }: { children: React.ReactNode }) => (
 	<KeyboardCtx.Provider value={useKeyboard()}>
 		{children}
 	</KeyboardCtx.Provider>
