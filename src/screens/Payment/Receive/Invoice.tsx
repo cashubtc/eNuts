@@ -72,7 +72,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					value: paymentRequest,
 					mints: [mintUrl],
 				})
-				clearInvoiceInterval
+				clearInvoiceInterval()
 				navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
 				return
 			}
