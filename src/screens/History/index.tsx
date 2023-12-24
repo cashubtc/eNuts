@@ -4,19 +4,14 @@ import { BottomModal } from '@comps/modal/Question'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
-import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { FlashList } from '@shopify/flash-list'
-import { useFocusClaimContext } from '@src/context/FocusClaim'
-import { usePromptContext } from '@src/context/Prompt'
+import { useHistoryContext } from '@src/context/History'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { store } from '@src/storage/store'
-import { STORE_KEYS } from '@store/consts'
-import { getHistory, historyStore } from '@store/HistoryStore'
 import { globals } from '@styles'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -28,39 +23,22 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const { claimed } = useFocusClaimContext()
-	const [data, setData] = useState<Record<string, IHistoryEntry[]>>({})
-	const { openPromptAutoClose } = usePromptContext()
+	const { history, hasEntries, deleteHistory } = useHistoryContext()
 	const [confirm, setConfirm] = useState(false)
 
-	const hasEntries = Object.keys(data).length > 0
-
 	const handleDeleteHistory = async () => {
-		const success = await historyStore.clear()
-		await store.delete(STORE_KEYS.latestHistory)
-		setData({})
-		openPromptAutoClose({
-			msg: success ? t('historyDeleted') : t('delHistoryErr'),
-			success
-		})
+		await deleteHistory()
 		setConfirm(false)
 	}
 
-	// update history after claiming from clipboard when the app comes to the foreground
-	useEffect(() => {
-		void (async () => {
-			setData(await getHistory())
-		})()
-	}, [claimed])
-
 	// update history after navigating to this page
-	useEffect(() => {
-		// eslint-disable-next-line @typescript-eslint/no-misused-promises
-		const focusHandler = navigation.addListener('focus', async () => {
-			setData(await getHistory())
-		})
-		return focusHandler
-	}, [navigation])
+	// useEffect(() => {
+	// 	// eslint-disable-next-line @typescript-eslint/no-misused-promises
+	// 	const focusHandler = navigation.addListener('focus', async () => {
+	// 		setData(await getHistory())
+	// 	})
+	// 	return focusHandler
+	// }, [navigation])
 
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? insets.bottom : 0 }]}>
@@ -82,7 +60,7 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 			<View style={styles.listWrap}>
 				{/* History list grouped by settled date */}
 				<FlashList
-					data={Object.entries(data)}
+					data={Object.entries(history)}
 					estimatedItemSize={100}
 					renderItem={data => (
 						<>

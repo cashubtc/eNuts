@@ -99,8 +99,8 @@ export interface IHistoryEntry {
 	preImage?: string,
 	fee?: number,
 	isSpent?: boolean 	// is token spendable
+	isPending?: boolean // is LN invoice pending
 }
-
 
 export interface IInvoice {
 	pr: string,

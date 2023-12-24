@@ -9,6 +9,7 @@ import { NavigationContainer, NavigationContainerRef } from '@react-navigation/n
 import { CustomErrorBoundary } from '@screens/ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from '@screens/ErrorScreen/ErrorDetails'
 import { FocusClaimProvider } from '@src/context/FocusClaim'
+import { HistoryProvider } from '@src/context/History'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { NostrProvider } from '@src/context/Nostr'
 import { PinCtx } from '@src/context/Pin'
@@ -207,17 +208,19 @@ function _App() {
 								<NavContainer>
 									<FocusClaimProvider >
 										<PromptProvider>
-											<KeyboardProvider>
-												<Navigator
-													shouldOnboard={shouldOnboard}
-													pinHash={auth.pinHash}
-													bgAuth={bgAuth}
-													setBgAuth={setBgAuth}
-												/>
-												<StatusBar style="auto" />
-												<ClipboardModal />
-												<Toaster />
-											</KeyboardProvider>
+											<HistoryProvider>
+												<KeyboardProvider>
+													<Navigator
+														shouldOnboard={shouldOnboard}
+														pinHash={auth.pinHash}
+														bgAuth={bgAuth}
+														setBgAuth={setBgAuth}
+													/>
+													<StatusBar style="auto" />
+													<ClipboardModal />
+													<Toaster />
+												</KeyboardProvider>
+											</HistoryProvider>
 										</PromptProvider>
 									</FocusClaimProvider>
 								</NavContainer>

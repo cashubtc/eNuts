@@ -8,12 +8,10 @@ import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { truncateStr } from '@nostr/util'
+import { useHistoryContext } from '@src/context/History'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
-import { historyStore } from '@store'
-import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, getLnInvoiceInfo, isNum, isUndef } from '@util'
@@ -23,7 +21,6 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
-
 
 const initialCopyState = {
 	value: false,
@@ -46,6 +43,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		isSpent
 	} = route.params.entry
 	const { color } = useThemeContext()
+	const { addHistoryEntry, updateHistoryEntry } = useHistoryContext()
 	const [copy, setCopy] = useState(initialCopyState)
 	const [spent, setSpent] = useState(isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -107,7 +105,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		const isSpendable = await isTokenSpendable(value)
 		setSpent(!isSpendable)
 		// update history item
-		await historyStore.updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: !isSpendable })
+		await updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: !isSpendable })
 		stopLoading()
 	}
 
@@ -121,9 +119,9 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			return
 		}
 		// entry.isSpent can only be false here and is not undefined anymore
-		await historyStore.updateHistoryEntry({ ...route.params.entry, isSpent: false }, { ...route.params.entry, isSpent: true })
+		await updateHistoryEntry({ ...route.params.entry, isSpent: false }, { ...route.params.entry, isSpent: true })
 		setSpent(true)
-		await addToHistory({ ...route.params.entry, amount: Math.abs(route.params.entry.amount), isSpent: true })
+		await addHistoryEntry({ ...route.params.entry, amount: Math.abs(route.params.entry.amount), isSpent: true })
 		stopLoading()
 		openPromptAutoClose({
 			msg: t(
@@ -159,16 +157,14 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 
 	// used in interval to check if token is spent while qr sheet is open
 	const checkPayment = async () => {
-		l('checking if token has been spent')
-		l('checking if token has been spent promise')
 		const isSpendable = await isTokenSpendable(value)
 		setSpent(!isSpendable)
 		if (!isSpendable) {
 			clearTokenInterval()
 			setQr({ ...qr, open: false })
-			openPromptAutoClose({ msg: t('isSpent', { ns: NS.history }), success: true })
 			// update history item
-			await historyStore.updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: true })
+			await updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: true })
+			openPromptAutoClose({ msg: t('isSpent', { ns: NS.history }), success: true })
 		}
 	}
 

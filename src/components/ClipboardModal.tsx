@@ -2,10 +2,10 @@ import { getEncodedToken } from '@cashu/cashu-ts'
 import { type RootStackParamList } from '@model/nav'
 import { type NavigationProp, useNavigation } from '@react-navigation/core'
 import { useFocusClaimContext } from '@src/context/FocusClaim'
+import { useHistoryContext } from '@src/context/History'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { addToHistory } from '@store/latestHistoryEntries'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, isErr } from '@util'
 import { claimToken } from '@wallet'
@@ -26,6 +26,7 @@ export default function ClipboardModal() {
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
 	const { tokenInfo, claimOpen, setClaimOpen, setClaimed, closeModal } = useFocusClaimContext()
+	const { addHistoryEntry } = useHistoryContext()
 	const { loading, startLoading, stopLoading } = useLoading()
 	const { openPromptAutoClose } = usePromptContext()
 
@@ -57,7 +58,7 @@ export default function ClipboardModal() {
 		stopLoading()
 		setClaimOpen(false)
 		// add as history entry (receive ecash)
-		await addToHistory({
+		await addHistoryEntry({
 			amount: info.value,
 			type: 1,
 			value: encoded,
