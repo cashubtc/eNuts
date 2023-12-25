@@ -234,7 +234,9 @@
 		"singleBackupHint": "Angalia: Unaweza pia kuunda chelezo kwa mshona moja chini ya 'Chaguo' > 'Usimamizi wa sarafu' > 'Chagua sarafu' > 'Hifadhi pesa'.",
 		"noDefaultHint": "Unahitaji kuweka kalibu ya kufanya ubadilishaji wa moja kwa moja.",
 		"autoSwapSuccess": "Kubadilishana kufanikiwa!",
-		"noReleaseData": "Hakuna data ya toleo"
+		"noReleaseData": "Hakuna data ya toleo",
+		"paidInvoice": "{{ count }} ankara imelipwa kwa jumla ya {{ total }} Sats",
+		"paidInvoices": "Bilansi ya ankara {{ count }} zimelipwa kwa jumla ya {{ total }} Sats"
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

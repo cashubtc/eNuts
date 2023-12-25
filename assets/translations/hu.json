@@ -234,7 +234,9 @@
 		"singleBackupHint": "Megjegyzés: Készíthetsz biztonsági másolatot egy verde bizonylatairól külön a 'Beállítások' > 'Verdék kezelése' > 'Válassz verdét' > 'Tőke biztonsági mentése' menüpont alatt.",
 		"noDefaultHint": "Be kell állítanod egy alapértelmezett verdét az automatikus cseréhez.",
 		"autoSwapSuccess": "Csere sikeres!",
-		"noReleaseData": "Nincs elérhető verzió információ"
+		"noReleaseData": "Nincs elérhető verzió információ",
+		"paidInvoice": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
+		"paidInvoices": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben"
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",

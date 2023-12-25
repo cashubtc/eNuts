@@ -246,7 +246,9 @@
 		"stackNA": "Pile d'erreur non disponible",
 		"generalMeltingErr": "La mint n'a pas pu trouver un itinéraire de paiement Lightning approprié vers votre nœud.",
 		"invoiceFromLnurlError": "Impossible de créer une facture à l'aide de votre LNURL.",
-		"invoiceScanError": "Impossible de lire la facture à partir du code QR."
+		"invoiceScanError": "Impossible de lire la facture à partir du code QR.",
+		"paidInvoice": "{{ count }} facture a été payée pour un montant total de {{ total }} Sats",
+		"paidInvoices": "{{ count }} factures ont été payées pour un montant total de {{ total }} Sats"
 	},
 	"history": {
 		"checkSpent": "Vérifier si le token a été dépensé",

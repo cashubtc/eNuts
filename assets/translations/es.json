@@ -234,7 +234,9 @@
 		"singleBackupHint": "Nota: También puedes crear una copia de seguridad para una única ceca bajo 'Opciones' > 'Gestión de ceca' > 'Seleccionar ceca' > 'Reserva de fondos'.",
 		"noDefaultHint": "Necesitas configurar una ceca predeterminada para realizar un intercambio automático.",
 		"autoSwapSuccess": "¡Intercambio exitoso!",
-		"noReleaseData": "No hay datos de versión"
+		"noReleaseData": "No hay datos de versión",
+		"paidInvoice": "Se ha pagado {{ count }} factura con un importe total de {{ total }} Sats",
+		"paidInvoices": "Se han pagado {{ count }} facturas con un importe total de {{ total }} Sats"
 	},
 	"error": {
 		"checkSpendableErr": "Error al comprobar si el token puede ser gastado",

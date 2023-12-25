@@ -112,6 +112,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				txt={t('cancel')}
 				handlePress={() => {
 					clearInvoiceInterval()
+					
 					navigation.navigate('dashboard')
 				}}
 			/>
