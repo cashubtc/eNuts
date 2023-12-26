@@ -6,6 +6,7 @@ import {
 	addMints,
 	addToken,
 	addTransaction,
+	deleteTransactions,
 	delInvoice,
 	getAllInvoices,
 	getBalance,
@@ -162,5 +163,8 @@ describe('test db helper', () => {
 		})
 		const newEntries = await getTransactions()
 		expect(newEntries).toHaveLength(3)
+		// check deleting entries
+		await deleteTransactions()
+		expect(await getTransactions()).toHaveLength(0)
 	})
 })
