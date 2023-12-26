@@ -1,10 +1,11 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
 import { CashuMint, deriveKeysetId, getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
-import type { IContact, IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
-import { arrToChunks, isObj } from '@util'
+import type { IContact, IHistoryEntry, IHistoryEntryResp, IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
+import { arrToChunks, getHistoryGroupDate, isNum, isObj } from '@util'
 import * as SQLite from 'expo-sqlite'
 
+import { cTo, toJson } from '../store/utils'
 import { Db } from './Db'
 import { tables } from './sql/table'
 import { views } from './sql/view'
@@ -210,8 +211,8 @@ export async function getMints(): Promise<IMint[]> {
 	return result
 }
 /**
- * get all unique mint urls in db 
- * 
+ * get all unique mint urls in db
+ *
  *	if asObj is false or undefined, returns array of strings
 
  * @export
@@ -220,8 +221,8 @@ export async function getMints(): Promise<IMint[]> {
  */
 export async function getMintsUrls(asObj?: false): Promise<string[]>
 /**
- * get all unique mint urls in db 
- * 
+ * get all unique mint urls in db
+ *
  *	if asObj is true, returns array of objects with key mintUrl
 
  * @deprecated  this overload will be removed in the future
@@ -309,7 +310,7 @@ export async function getPreferences(): Promise<IPreferences> {
 }
 export async function setPreferences(p: IPreferences) {
 	const x = await db.execInsert<IPreferences>(
-		'INSERT OR REPLACE INTO preferences (id, theme,darkmode,formatBalance) VALUES (?, ?,?, ?)',
+		'INSERT OR REPLACE INTO preferences (id, theme,darkmode,formatBalance) VALUES (?, ?, ?, ?)',
 		[1, p.theme, p.darkmode.toString(), p.formatBalance.toString()]
 	)
 	return x.rowsAffected === 1
@@ -318,7 +319,7 @@ export async function setPreferences(p: IPreferences) {
 // ################################ Invoices ################################
 export async function addInvoice({ pr, hash, amount, mintUrl }: Omit<IInvoice, 'time'>) {
 	const result = await db.execInsert<IInvoice>(
-		'INSERT OR IGNORE INTO invoices (amount,pr,hash,mintUrl) VALUES (?, ?, ?,?)',
+		'INSERT OR IGNORE INTO invoices (amount,pr,hash,mintUrl) VALUES (?, ?, ?, ?)',
 		[amount, pr, hash, mintUrl]
 	)
 	l('[addInvoice]', result, { pr, hash, amount, mintUrl })
@@ -380,7 +381,79 @@ export async function delContact(id: number) {
 	return result.rowsAffected === 1
 }
 
+// ################################ Transactions (History) ################################
+// TODO add tests
+export async function migrateTransactions(data: IHistoryEntry[]) {
+	if (!data || !data.length) { return }
+	for (let i = 0; i < data.length; i++) {
+		const item = data[i]
+		// eslint-disable-next-line no-await-in-loop
+		await db.execInsert(
+			'INSERT INTO transactions (amount, type, timestamp, value, mints, sender, recipient, preImage, fee, isSpent, isPending) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+			[item.amount, item.type, item.timestamp, item.value, toJson(item.mints), item.sender ?? '', item.recipient ?? '', item.preImage ?? '', item.fee ?? 0, item.isSpent ? 1 : 0, item.isPending ? 1 : 0]
+		)
+	}
+}
 
+export async function getTransactions(limit?: number): Promise<IHistoryEntry[]> {
+	let query = 'SELECT * FROM transactions ORDER BY timestamp DESC'
+	const params = []
+	if (isNum(limit)) {
+		query += ' LIMIT ?'
+		params.push(limit)
+	}
+	const result = await db.all<IHistoryEntryResp>(query, params)
+	return result.map(x => ({
+		...x,
+		mints: cTo(x.mints),
+		isPending: !!x.isPending,
+		isSpent: !!x.isSpent,
+	}))
+}
+
+export async function addTransaction(tx: IHistoryEntry) {
+	const result = await db.execInsert(
+		'INSERT INTO transactions (amount, type, timestamp, value, mints, sender, recipient, preImage, fee, isSpent, isPending) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+		[tx.amount, tx.type, tx.timestamp, tx.value, JSON.stringify(tx.mints), tx.sender ?? '', tx.recipient ?? '', tx.preImage ?? '', tx.fee ?? 0, tx.isSpent ? 1 : 0, tx.isPending ? 1 : 0]
+	)
+	l('[addTransaction]', result, tx)
+	return result.rowsAffected === 1
+}
+
+export async function updatePendingTransactionByInvoice(invoice: string) {
+	const result = await db.execTx(
+		'UPDATE transactions SET isPending = 1 WHERE value = ?',
+		[invoice]
+	)
+	l('[updatePendingTransactionByInvoice]', result, { invoice })
+	return result.rowsAffected === 1
+}
+
+export async function updateUnspentTxById(id?: number, isSpent?: boolean) {
+	if (!isNum(id)) { return }
+	const result = await db.execTx(
+		`UPDATE transactions SET isSpent = ${isSpent ? 1 : 0} WHERE id = ?`,
+		[id]
+	)
+	l('[updateUnspentTxById]', result, { id })
+	return result.rowsAffected === 1
+}
+
+export function deleteTransactions() {
+	return db.execTx('DELETE from transactions', [])
+}
+
+export function groupEntries(history: IHistoryEntry[]) {
+	return groupBy(history, i => getHistoryGroupDate(new Date(i.timestamp * 1000)))
+}
+
+// https://stackoverflow.com/questions/42136098/array-groupby-in-typescript
+function groupBy(arr: IHistoryEntry[], key: (i: IHistoryEntry) => string) {
+	return arr.reduce((groups, item) => {
+		(groups[key(item)] ??= []).push(item)
+		return groups
+	}, {} as Record<string, IHistoryEntry[]>)
+}
 
 // ################################ Drops ################################
 export function dropProofs() {
@@ -402,6 +475,7 @@ export async function dropAll() {
 			dropTable('mintKeys'),
 			dropTable('proofs'),
 			dropTable('invoices'),
+			dropTable('transactions'),
 		])
 	} catch (e) {
 		// ignore

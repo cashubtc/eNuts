@@ -13,6 +13,7 @@ import { useHistoryContext } from '@src/context/History'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { updatePendingTransactionByInvoice } from '@src/storage/db'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
 import { formatMintUrl, formatSeconds, isErr, openUrl, share } from '@util'
@@ -29,7 +30,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const { color, highlight } = useThemeContext()
 	const {
 		addHistoryEntry,
-		updateHistoryEntry,
 		startGlobalInvoiceInterval,
 	} = useHistoryContext()
 	const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -45,7 +45,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 
 	const handlePaidInvoice = async (entry: IHistoryEntry) => {
 		clearInvoiceInterval()
-		await updateHistoryEntry(entry, { ...entry, isPending: false })
+		await updatePendingTransactionByInvoice(entry.value)
 		navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
 	}
 

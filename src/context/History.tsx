@@ -1,13 +1,12 @@
 /* eslint-disable no-await-in-loop */
 
-import { delInvoice, getAllInvoices } from '@db'
+import { addTransaction, deleteTransactions, delInvoice, getAllInvoices, getTransactions, groupEntries, migrateTransactions, updatePendingTransactionByInvoice } from '@db'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'
 import { NS } from '@src/i18n'
 import { historyStore, store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { getHistory, getHistoryEntriesByInvoices, getHistoryEntryByInvoice } from '@store/HistoryStore'
-import { addToHistory, getLatestHistory, updateHistory } from '@store/latestHistoryEntries'
+import { getHistoryEntriesByInvoices } from '@store/HistoryStore'
 import { decodeLnInvoice } from '@util'
 import { requestToken } from '@wallet'
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
@@ -41,9 +40,20 @@ const useHistory = () => {
 	}
 
 	const setHistoryEntries = async () => {
-		const [all, latest] = await Promise.all([getHistory(), getLatestHistory()])
-		setHistory(all)
-		setLatestHistory(latest.reverse())
+		const allOld = await historyStore.getHistory({ order: 'DESC', start: 0, count: -1, orderBy: 'insertionOrder' })
+		// migrate historyStore into sqlite table if needed
+		if (allOld.length) {
+			await migrateTransactions(allOld)
+			// delete old historyStore
+			await historyStore.clear(),
+			await store.delete(STORE_KEYS.latestHistory)
+		}
+		const all = await getTransactions()
+		const latest = await getTransactions(3)
+		l({ all, latest })
+		// const [all, latest] = await Promise.all([getHistory(), getLatestHistory()])
+		setHistory(groupEntries(all))
+		setLatestHistory(latest)
 	}
 
 	const handlePendingInvoices = async () => {
@@ -60,10 +70,7 @@ const useHistory = () => {
 				if (success) {
 					paid.count++
 					paid.amount += invoice.amount
-					const entry = getHistoryEntryByInvoice(allHisoryEntries.current, invoice.pr)
-					if (entry) {
-						await updateHistoryEntry(entry, { ...entry, isPending: false })
-					}
+					await updatePendingTransactionByInvoice(invoice.pr)
 					// TODO update balance
 					await delInvoice(invoice.hash)
 					continue
@@ -84,26 +91,18 @@ const useHistory = () => {
 	}
 
 	const addHistoryEntry = async (entry: Omit<IHistoryEntry, 'timestamp'>) => {
-		const resp = await addToHistory(entry)
-		await setHistoryEntries()
-		return resp
-	}
-
-	const updateHistoryEntry = async (oldEntry: IHistoryEntry, newEntry: IHistoryEntry) => {
-		await updateHistory(oldEntry, newEntry)
-		await setHistoryEntries()
+		const item = { ...entry, timestamp: Math.ceil(Date.now() / 1000) }
+		await addTransaction(item)
+		return item
 	}
 
 	const deleteHistory = async () => {
-		const [success] = await Promise.all([
-			historyStore.clear(),
-			store.delete(STORE_KEYS.latestHistory),
-		])
+		await deleteTransactions()
 		setHistory({})
 		setLatestHistory([])
 		openPromptAutoClose({
-			msg: success ? t('historyDeleted') : t('delHistoryErr'),
-			success
+			msg: t('historyDeleted'),
+			success: true
 		})
 	}
 
@@ -121,7 +120,6 @@ const useHistory = () => {
 		latestHistory,
 		hasEntries,
 		addHistoryEntry,
-		updateHistoryEntry,
 		deleteHistory,
 		startGlobalInvoiceInterval,
 	}
@@ -146,8 +144,6 @@ const HistoryCtx = createContext<useHistoryType>({
 		isSpent: false,
 		isPending: false
 	}),
-	// eslint-disable-next-line no-return-await, @typescript-eslint/await-thenable
-	updateHistoryEntry: async () => await l(''),
 	// eslint-disable-next-line no-return-await, @typescript-eslint/await-thenable
 	deleteHistory: async () => await l(''),
 	startGlobalInvoiceInterval: () => l(''),

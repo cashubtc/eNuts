@@ -89,6 +89,7 @@ export interface IProofSelection extends Proof {
  * 3 = multimint swap
  */
 export interface IHistoryEntry {
+	id?: number
 	amount: number
 	type: 1 | 2 | 3
 	timestamp: number
@@ -102,6 +103,21 @@ export interface IHistoryEntry {
 	isPending?: boolean // is LN invoice pending
 }
 
+export interface IHistoryEntryResp {
+	id: number
+	amount: number
+	type: 1 | 2 | 3
+	timestamp: number
+	value: string		// Lightning invoice or encoded Cashu token
+	mints: string 		// mints involved
+	sender?: string 	// sender (nostr username)
+	recipient?: string 	// recipient (nostr username)
+	preImage?: string,
+	fee?: number,
+	isSpent?: number 	// is token spendable
+	isPending?: number 	// is LN invoice pending
+}
+
 export interface IInvoice {
 	pr: string,
 	hash: string,
@@ -109,22 +125,7 @@ export interface IInvoice {
 	time: number,
 	mintUrl: string
 }
-// export interface IOpenDBParams {
-// 	name: string,
-// 	version?: string,
-// 	description?: string,
-// 	size?: number,
-// 	callback?: ((db: WebSQLDatabase) => void)
-// }
-// export interface IOpenDB {
-// 	(
-// 		name: string,
-// 		version?: string,
-// 		description?: string,
-// 		size?: number,
-// 		callback?: ((db: WebSQLDatabase) => void)
-// 	): WebSQLDatabase
-// }
+
 export type QueryArgs = (number | string | null)[]
 export interface ITx<T = unknown> {
 	sql: string,

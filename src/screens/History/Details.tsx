@@ -8,10 +8,10 @@ import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { truncateStr } from '@nostr/util'
-import { useHistoryContext } from '@src/context/History'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { updateUnspentTxById } from '@src/storage/db'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, getLnInvoiceInfo, isNum, isUndef } from '@util'
@@ -41,10 +41,10 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		recipient,
 		fee,
 		isSpent,
-		isPending
+		isPending,
+		id
 	} = route.params.entry
 	const { color } = useThemeContext()
-	const { addHistoryEntry, updateHistoryEntry } = useHistoryContext()
 	const [copy, setCopy] = useState(initialCopyState)
 	const [spent, setSpent] = useState(isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -106,7 +106,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		const isSpendable = await isTokenSpendable(value)
 		setSpent(!isSpendable)
 		// update history item
-		await updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: !isSpendable })
+		await updateUnspentTxById(id, !isSpendable)
 		stopLoading()
 	}
 
@@ -116,13 +116,10 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		if (!success) {
 			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			setSpent(true)
-			stopLoading()
-			return
+			return stopLoading()
 		}
-		// entry.isSpent can only be false here and is not undefined anymore
-		await updateHistoryEntry({ ...route.params.entry, isSpent: false }, { ...route.params.entry, isSpent: true })
+		await updateUnspentTxById(id, true)
 		setSpent(true)
-		await addHistoryEntry({ ...route.params.entry, amount: Math.abs(route.params.entry.amount), isSpent: true })
 		stopLoading()
 		openPromptAutoClose({
 			msg: t(
@@ -164,7 +161,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			clearTokenInterval()
 			setQr({ ...qr, open: false })
 			// update history item
-			await updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: true })
+			await updateUnspentTxById(id, true)
 			openPromptAutoClose({ msg: t('isSpent', { ns: NS.history }), success: true })
 		}
 	}
