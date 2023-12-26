@@ -5,7 +5,6 @@ import Loading from '@comps/Loading'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
 import { _testmintUrl, isIOS } from '@consts'
-import { getAllInvoices } from '@db'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'
 import type { TMintInvoicePageProps } from '@model/nav'
@@ -31,6 +30,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const {
 		addHistoryEntry,
 		updateHistoryEntry,
+		startGlobalInvoiceInterval,
 	} = useHistoryContext()
 	const intervalRef = useRef<NodeJS.Timeout | null>(null)
 	const [expire, setExpire] = useState(expiry)
@@ -43,31 +43,21 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 		}
 	}
 
+	const handlePaidInvoice = async (entry: IHistoryEntry) => {
+		clearInvoiceInterval()
+		await updateHistoryEntry(entry, { ...entry, isPending: false })
+		navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
+	}
+
 	const handlePayment = async (entry: IHistoryEntry) => {
 		try {
-			const allInvoices = (await getAllInvoices()).map(i => i.pr)
 			const { success } = await requestToken(mintUrl, amount, hash)
-			/*
-			it is possible that success is false but invoice has
-			been paid and token have been issued due to the double
-			check in the background...(requestTokenLoop())
-			So we check if the invoice is in the db and if it is
-			not then we check if the invoice has expired and if
-			it has not then we assume that the invoice has been
-			paid and token have been issued.
-			*/
-			if (success || (!allInvoices.includes(paymentRequest) && expire > 0)) {
-				// update the pending history entry
-				await updateHistoryEntry(entry, { ...entry, isPending: false })
-				clearInvoiceInterval()
-				navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
+			if (success) {
+				await handlePaidInvoice(entry)
 			}
 		} catch (e) {
 			if (isErr(e) && e.message === 'tokens already issued for this invoice.') {
-				// update the pending history entry
-				await updateHistoryEntry(entry, { ...entry, isPending: false })
-				clearInvoiceInterval()
-				return navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
+				await handlePaidInvoice(entry)
 			}
 			setPaid('unpaid')
 		}
@@ -77,8 +67,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	useEffect(() => {
 		const timeLeft = Math.ceil((expiryTime - Date.now()) / 1000)
 		if (timeLeft < 0 || paid === 'paid') {
-			setExpire(0)
-			return
+			return setExpire(0)
 		}
 		if (expire && expire > 0) {
 			setTimeout(() => setExpire(timeLeft - 1), 1000)
@@ -97,6 +86,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				mints: [mintUrl],
 				isPending: true
 			})
+			// start checking for payment in 3s intervals
 			intervalRef.current = setInterval(() => {
 				void handlePayment(entry)
 			}, 3000)
@@ -111,8 +101,10 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				screenName={t('payInvoice', { ns: NS.wallet })}
 				txt={t('cancel')}
 				handlePress={() => {
+					// clear interval for current invoice check
 					clearInvoiceInterval()
-					
+					// start global invoice check
+					startGlobalInvoiceInterval()
 					navigation.navigate('dashboard')
 				}}
 			/>

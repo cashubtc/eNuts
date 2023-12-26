@@ -1,4 +1,4 @@
-import type { IHistoryEntry, IKeyValuePair } from '@model'
+import type { IHistoryEntry, IInvoice, IKeyValuePair } from '@model'
 import { getHistoryGroupDate } from '@util'
 
 import { type ISelectParams, StoreBase } from './StoreBase'
@@ -85,6 +85,15 @@ export const historyStore = new HistoryStore()
 export async function getHistory({ order = 'DESC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}) {
 	const history = await historyStore.getHistory({ order, start, count, orderBy })
 	return groupEntries(history)
+}
+
+export function getHistoryEntryByInvoice(entries:IHistoryEntry[], invoice: string) {
+	return entries.find(i => i.value === invoice)
+}
+
+export async function getHistoryEntriesByInvoices(invoices: IInvoice[]) {
+	const history = await historyStore.getHistory()
+	return history.filter(h => invoices.map(i => i.pr).includes(h.value))
 }
 
 function groupEntries(history: IHistoryEntry[]) {

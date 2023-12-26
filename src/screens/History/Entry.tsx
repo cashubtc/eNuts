@@ -1,4 +1,4 @@
-import { IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
+import { ClockIcon, IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { IHistoryEntry } from '@model'
 import type { THistoryPageProps } from '@model/nav'
@@ -35,7 +35,12 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	const getIcon = () => item.amount < 0 ?
 		<OutgoingArrowIcon color={color.TEXT} />
 		:
-		<IncomingArrowIcon color={color.TEXT} />
+		item.isPending ?
+			<View style={styles.clockIconWrap}>
+				<ClockIcon color={color.TEXT} />
+			</View>
+			:
+			<IncomingArrowIcon color={color.TEXT} />
 
 	return (
 		<TouchableOpacity
@@ -78,6 +83,9 @@ const styles = ScaledSheet.create({
 	infoWrap: {
 		alignItems: 'center',
 		paddingBottom: '10@vs',
+	},
+	clockIconWrap: {
+		marginLeft: '-5@s',
 	},
 	placeholder: {
 		width: '30@s',

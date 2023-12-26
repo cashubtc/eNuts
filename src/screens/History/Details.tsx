@@ -40,7 +40,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		sender,
 		recipient,
 		fee,
-		isSpent
+		isSpent,
+		isPending
 	} = route.params.entry
 	const { color } = useThemeContext()
 	const { addHistoryEntry, updateHistoryEntry } = useHistoryContext()
@@ -199,6 +200,9 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<View style={{ marginBottom: insets.bottom, paddingTop: vs(10) }}>
 					<View style={styles.topSection}>
+						{isPending &&
+							<Txt txt='Pending payment' />
+						}
 						<Text style={[styles.amount, { color: getTxColor() }]}>
 							{getAmount()}
 						</Text>
@@ -336,11 +340,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 								</TouchableOpacity>
 								<Separator />
 								{/* LN payment fees */}
-								<View style={styles.entryInfo}>
-									<Txt txt={t('fee')} />
-									<Txt txt={formatSatStr(isNum(fee) ? fee : 0)} />
-								</View>
-								<Separator />
+								{!isPending &&
+									<>
+										<View style={styles.entryInfo}>
+											<Txt txt={t('fee')} />
+											<Txt txt={formatSatStr(isNum(fee) ? fee : 0)} />
+										</View>
+										<Separator />
+									</>
+								}
 							</>
 						}
 						{/* QR code */}
