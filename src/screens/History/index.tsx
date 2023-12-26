@@ -31,15 +31,6 @@ export default function HistoryPage({ navigation, route }: THistoryPageProps) {
 		setConfirm(false)
 	}
 
-	// update history after navigating to this page
-	// useEffect(() => {
-	// 	// eslint-disable-next-line @typescript-eslint/no-misused-promises
-	// 	const focusHandler = navigation.addListener('focus', async () => {
-	// 		setData(await getHistory())
-	// 	})
-	// 	return focusHandler
-	// }, [navigation])
-
 	return (
 		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? insets.bottom : 0 }]}>
 			<TopNav

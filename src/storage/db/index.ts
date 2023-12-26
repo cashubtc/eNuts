@@ -422,7 +422,7 @@ export async function addTransaction(tx: IHistoryEntry) {
 
 export async function updatePendingTransactionByInvoice(invoice: string) {
 	const result = await db.execTx(
-		'UPDATE transactions SET isPending = 1 WHERE value = ?',
+		'UPDATE transactions SET isPending = 0 WHERE value = ?',
 		[invoice]
 	)
 	l('[updatePendingTransactionByInvoice]', result, { invoice })

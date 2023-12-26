@@ -1,15 +1,12 @@
 import { ClockIcon, EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
-// import type { IHistoryEntry } from '@model'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import EntryTime from '@screens/History/entryTime'
 import { useHistoryContext } from '@src/context/History'
-// import { useFocusClaimContext } from '@src/context/FocusClaim'
 import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-// import { getLatestHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi } from '@styles'
 import { getColor } from '@styles/colors'
 import { formatBalance, formatInt, formatSatStr, isBool } from '@util'
@@ -30,8 +27,6 @@ interface IBalanceProps {
 export default function Balance({ balance, nav }: IBalanceProps) {
 	const { t } = useTranslation([NS.common])
 	const { pref, color, highlight } = useThemeContext()
-	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
-	// const { claimed } = useFocusClaimContext()
 	const { hidden, handleLogoPress } = usePrivacyContext()
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
 	const { latestHistory } = useHistoryContext()
@@ -48,10 +43,6 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 		if (type === 2) { return 'Lightning' }
 		return t('swap')
 	}
-
-	// useEffect(() => {
-	// 	void setHistoryEntries()
-	// }, [claimed])
 
 	return (
 		<View style={[
@@ -91,7 +82,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			{latestHistory.length > 0 && !hidden.txs &&
 				latestHistory.map(h => (
 					<HistoryEntry
-						key={h.timestamp}
+						key={h.id}
 						icon={
 							h.isPending ?
 								<ClockIcon color={color.TEXT} />

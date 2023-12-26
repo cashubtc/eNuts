@@ -1,5 +1,4 @@
-import type { IHistoryEntry, IInvoice, IKeyValuePair } from '@model'
-import { getHistoryGroupDate } from '@util'
+import type { IHistoryEntry, IKeyValuePair } from '@model'
 
 import { type ISelectParams, StoreBase } from './StoreBase'
 import { getDb } from './utils'
@@ -9,6 +8,7 @@ import { getDb } from './utils'
  *
  * @class HistoryStore
  * @extends {StoreBase}
+ * @deprecated use queries for db table 'transactions' instead
  */
 class HistoryStore extends StoreBase {
 	#idx = -1
@@ -39,6 +39,7 @@ class HistoryStore extends StoreBase {
 	 * add history entry
 	 * @param entry
 	 * @returns Promise<void>
+	 * @deprecated use queries for db table 'transactions' instead
 	 */
 	public async add(entry: IHistoryEntry): Promise<void> {
 		await this.#init()
@@ -48,6 +49,7 @@ class HistoryStore extends StoreBase {
 	/**
 	 * get history entries
 	 * @returns Promise<IHistoryEntry[]>
+	 * @deprecated use queries for db table 'transactions' instead
 	 */
 	public async getHistory({ order = 'DESC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<IHistoryEntry[]> {
 		await this.#init()
@@ -56,17 +58,22 @@ class HistoryStore extends StoreBase {
 	/**
 	 * get history entries with keys
 	 * @returns Promise<IKeyValuePair<IHistoryEntry>[]>
+	 * @deprecated use queries for db table 'transactions' instead
 	 */
 	public async getHistoryWithKeys({ order = 'DESC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<IKeyValuePair<IHistoryEntry>[]> {
 		await this.#init()
 		return super.getObjsAll<IHistoryEntry>({ order, start, count, orderBy })
 	}
+	/**
+	 * @deprecated use queries for db table 'transactions' instead
+	 */
 	public updateHistoryEntry(oldEntry: IHistoryEntry, newEntry: IHistoryEntry) {
 		return super.updateObjByValue(oldEntry, newEntry)
 	}
 	/**
 	 * clear history
 	 * @returns Promise<void>
+	 * @deprecated use queries for db table 'transactions' instead
 	 */
 	public async clear(): Promise<boolean> {
 		await this.#init()
@@ -81,29 +88,3 @@ class HistoryStore extends StoreBase {
 }
 
 export const historyStore = new HistoryStore()
-
-export async function getHistory({ order = 'DESC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}) {
-	const history = await historyStore.getHistory({ order, start, count, orderBy })
-	return groupEntries(history)
-}
-
-export function getHistoryEntryByInvoice(entries:IHistoryEntry[], invoice: string) {
-	return entries.find(i => i.value === invoice)
-}
-
-export async function getHistoryEntriesByInvoices(invoices: IInvoice[]) {
-	const history = await historyStore.getHistory()
-	return history.filter(h => invoices.map(i => i.pr).includes(h.value))
-}
-
-function groupEntries(history: IHistoryEntry[]) {
-	return groupBy(history, i => getHistoryGroupDate(new Date(i.timestamp * 1000)))
-}
-
-// https://stackoverflow.com/questions/42136098/array-groupby-in-typescript
-function groupBy(arr: IHistoryEntry[], key: (i: IHistoryEntry) => string) {
-	return arr.reduce((groups, item) => {
-		(groups[key(item)] ??= []).push(item)
-		return groups
-	}, {} as Record<string, IHistoryEntry[]>)
-}

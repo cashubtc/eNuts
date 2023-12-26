@@ -4,12 +4,18 @@ import { historyStore, store } from '.'
 import { STORE_KEYS } from './consts'
 
 // 3 latest txs
+/**
+ * @deprecated use getTransactions(limit) instead
+ */
 export async function getLatestHistory() {
 	const stored = await store.getObj<IHistoryEntry[]>(STORE_KEYS.latestHistory)
 	return !stored ? [] : stored
 }
 
 // 3 latest txs
+/**
+ * @deprecated use updatePendingTransactionByInvoice(invoice) instead
+ */
 export async function updateLatestHistory(newEntry: IHistoryEntry) {
 	const stored = await getLatestHistory()
 	if (!stored.length) {
@@ -25,6 +31,9 @@ export async function updateLatestHistory(newEntry: IHistoryEntry) {
 }
 
 // all txs
+/**
+ * @deprecated use addTransaction(newTx) instead
+ */
 export async function addToHistory(entry: Omit<IHistoryEntry, 'timestamp'>) {
 	const item = { ...entry, timestamp: Math.ceil(Date.now() / 1000) }
 	// complete history
@@ -34,6 +43,9 @@ export async function addToHistory(entry: Omit<IHistoryEntry, 'timestamp'>) {
 	return item
 }
 
+/**
+ * @deprecated use updatePendingTransactionByInvoice(invoice) instead
+ */
 export async function updateHistory(oldEntry: IHistoryEntry, newEntry: IHistoryEntry) {
 	await historyStore.updateHistoryEntry(oldEntry, newEntry)
 	const stored = await getLatestHistory()
