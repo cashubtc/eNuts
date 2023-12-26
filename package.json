@@ -82,7 +82,8 @@
 		"react-native-svg": "13.9.0",
 		"react-native-url-polyfill": "^2.0.0",
 		"sentry-expo": "~7.1.1",
-		"text-encoding-polyfill": "^0.6.7"
+		"text-encoding-polyfill": "^0.6.7",
+		"use-count-up": "^3.0.1"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.23.6",
