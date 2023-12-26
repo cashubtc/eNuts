@@ -31,7 +31,7 @@ const useHistory = () => {
 	const startGlobalInvoiceInterval = () => {
 		intervalRef.current = setInterval(() => {
 			void handlePendingInvoices()
-		}, 5000)
+		}, 3000)
 	}
 
 	const clearInvoiceInterval = () => {
