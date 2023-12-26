@@ -203,7 +203,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				<View style={{ marginBottom: insets.bottom, paddingTop: vs(10) }}>
 					<View style={styles.topSection}>
 						{isPending &&
-							<Txt txt='Pending payment' />
+							<Txt txt={t('paymentPending')} />
 						}
 						<Text style={[styles.amount, { color: getTxColor() }]}>
 							{getAmount()}
