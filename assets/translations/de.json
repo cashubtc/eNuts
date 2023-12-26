@@ -68,7 +68,6 @@
 		"default": "Standard",
 		"delHistory": "Verlauf löschen",
 		"factoryReset": "Wallet zurücksetzen",
-		"delHistoryErr": "Verlauf konnte nicht gelöscht werden",
 		"delHistoryQ": "Verlauf löschen?",
 		"resetQ": "Wallet zurücksetzen?",
 		"delHistoryTxt": "Die Daten können nachträglich nicht wiederhergestellt werden.",

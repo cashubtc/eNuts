@@ -68,7 +68,6 @@
 		"default": "Default",
 		"delHistory": "Delete history",
 		"factoryReset": "Factory reset",
-		"delHistoryErr": "Could not delete the history.",
 		"delHistoryQ": "Delete history?",
 		"resetQ": "Reset your wallet?",
 		"delHistoryTxt": "The data can not be retrieved afterwards.",

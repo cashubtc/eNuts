@@ -15,15 +15,15 @@ describe('Basic test of the Txt.tsx component', () => {
 	beforeEach(() => jest.clearAllMocks())
 	// Start tests
 	it('renders the expected string', () => {
-		render(<Balance balance={69} />)
-		const textElement = screen.getByText('69')
+		render(<Balance />)
+		const textElement = screen.getByText('0')
 		expect(textElement).toBeDefined()
 	})
 	it('updates the balance format state on press', () => {
-		render(<Balance balance={69} />)
-		const touchableElement = screen.getByText('69')
+		render(<Balance />)
+		const touchableElement = screen.getByText('0')
 		// Simulate press event
 		fireEvent.press(touchableElement)
-		expect(touchableElement.props.children).toBe('0.00000069')
+		expect(touchableElement.props.children).toBe('0.00000000')
 	})
 })

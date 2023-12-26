@@ -68,7 +68,6 @@
 		"default": "Alapértelmezett",
 		"delHistory": "Előzmények eltávolítása",
 		"factoryReset": "Gyári visszaállítás",
-		"delHistoryErr": "Előzmények eltávolítása sikertelen.",
 		"delHistoryQ": "Eltávolítod az előzményeket?",
 		"resetQ": "Visszaállítod a tárcát?",
 		"delHistoryTxt": "Az adatok helyreállítása ezután nem lehetséges.",

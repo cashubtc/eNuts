@@ -68,7 +68,6 @@
 		"default": "Por defecto",
 		"delHistory": "Eliminar historial",
 		"factoryReset": "Restablecer configuración de fábrica",
-		"delHistoryErr": "No se pudo eliminar el historial.",
 		"delHistoryQ": "¿Eliminar historial?",
 		"resetQ": "¿Restablecer la cartera?",
 		"delHistoryTxt": "Los datos no podrán recuperarse después.",

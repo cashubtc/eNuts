@@ -68,7 +68,6 @@
 		"default": "Par défaut",
 		"delHistory": "Supprimer l'historique",
 		"factoryReset": "Réinitialisation",
-		"delHistoryErr": "Impossible de supprimer l'historique.",
 		"resetQ": "Réinitialiser?",
 		"delHistoryQ": "Supprimer l'historique?",
 		"delHistoryTxt": "Les données ne pourront pas être récupérées ultérieurement.",
@@ -234,7 +233,9 @@
 		"singleBackupHint": "Remarque : Vous pouvez également effectuer une sauvegarde pour une seule mint sous 'Options' > 'Paramètres des mints' > 'Sélectionner une mint' > 'Sauvegarde des fonds'.",
 		"noDefaultHint": "Vous devez configurer une mint par défaut pour effectuer un échange automatique.",
 		"autoSwapSuccess": "Échange réussi!",
-		"noReleaseData": "Donnée de version indisponible"
+		"noReleaseData": "Donnée de version indisponible",
+		"paidInvoice": "{{ count }} facture a été payée pour un montant total de {{ total }} Sats",
+		"paidInvoices": "{{ count }} factures ont été payées pour un montant total de {{ total }} Sats"
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",
@@ -246,9 +247,7 @@
 		"stackNA": "Pile d'erreur non disponible",
 		"generalMeltingErr": "La mint n'a pas pu trouver un itinéraire de paiement Lightning approprié vers votre nœud.",
 		"invoiceFromLnurlError": "Impossible de créer une facture à l'aide de votre LNURL.",
-		"invoiceScanError": "Impossible de lire la facture à partir du code QR.",
-		"paidInvoice": "{{ count }} facture a été payée pour un montant total de {{ total }} Sats",
-		"paidInvoices": "{{ count }} factures ont été payées pour un montant total de {{ total }} Sats"
+		"invoiceScanError": "Impossible de lire la facture à partir du code QR."
 	},
 	"history": {
 		"checkSpent": "Vérifier si le token a été dépensé",
