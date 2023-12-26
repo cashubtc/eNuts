@@ -3,11 +3,12 @@ import useCopy from '@comps/hooks/Copy'
 import { CopyIcon, ShareIcon } from '@comps/Icons'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
-import { updateUnspentTxById } from '@db'
 import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { preventBack } from '@nav/utils'
 import { isIOS } from '@src/consts'
+import { useBalanceContext } from '@src/context/Balance'
+import { useHistoryContext } from '@src/context/History'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { store } from '@store'
@@ -28,6 +29,8 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	const { id, value, amount } = route.params.entry
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
+	const { updateSpentHistoryEntry } = useHistoryContext()
+	const { updateBalance } = useBalanceContext()
 	const [error, setError] = useState({ msg: '', open: false })
 	const [spent, setSpent] = useState(false)
 	const { copied, copy } = useCopy()
@@ -45,7 +48,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 		if (!isSpendable) {
 			clearTokenInterval()
 			// update history item
-			await updateUnspentTxById(id, true)
+			await updateSpentHistoryEntry(id, true)
 		}
 	}
 
@@ -64,6 +67,8 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 
 	// auto check payment in intervals
 	useEffect(() => {
+		// update balance
+		void updateBalance()
 		intervalRef.current = setInterval(() => {
 			void checkPayment()
 		}, 3000)

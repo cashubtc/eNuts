@@ -3,7 +3,6 @@ import type { IHistoryEntry } from '@model'
 import { historyStore, store } from '.'
 import { STORE_KEYS } from './consts'
 
-// 3 latest txs
 /**
  * @deprecated use getTransactions(limit) instead
  */
@@ -12,7 +11,6 @@ export async function getLatestHistory() {
 	return !stored ? [] : stored
 }
 
-// 3 latest txs
 /**
  * @deprecated use updatePendingTransactionByInvoice(invoice) instead
  */
@@ -30,7 +28,6 @@ export async function updateLatestHistory(newEntry: IHistoryEntry) {
 	)
 }
 
-// all txs
 /**
  * @deprecated use addTransaction(newTx) instead
  */
@@ -38,7 +35,6 @@ export async function addToHistory(entry: Omit<IHistoryEntry, 'timestamp'>) {
 	const item = { ...entry, timestamp: Math.ceil(Date.now() / 1000) }
 	// complete history
 	await historyStore.add(item)
-	// latest 3 history entries // TODO provide a historyStore method to retreive the 3 latest entries
 	await updateLatestHistory(item)
 	return item
 }

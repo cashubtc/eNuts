@@ -57,12 +57,12 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 				</Text>
 			</View>
 			<View style={styles.placeholder} />
-			<View style={[styles.amount, { top: isNum(item.fee) ? 0 : vs(10) }]}>
+			<View style={[styles.amount, { top: isNum(item.fee) && item.fee > 0 ? 0 : vs(10) }]}>
 				<Txt
 					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.type === 3 ? Math.abs(item.amount) : item.amount, 'standard')}`}
 					styles={[{ color: getTxColor(), marginBottom: vs(5), textAlign: 'right' }]}
 				/>
-				{isNum(item.fee) &&
+				{isNum(item.fee) && item.fee > 0 &&
 					<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>
 						{t('fee', { ns: NS.common })}: {item.fee}
 					</Text>

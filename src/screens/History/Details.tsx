@@ -8,10 +8,10 @@ import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { truncateStr } from '@nostr/util'
+import { useHistoryContext } from '@src/context/History'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { updateUnspentTxById } from '@src/storage/db'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, getLnInvoiceInfo, isNum, isUndef } from '@util'
@@ -45,6 +45,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		id
 	} = route.params.entry
 	const { color } = useThemeContext()
+	const { addHistoryEntry, updateSpentHistoryEntry } = useHistoryContext()
 	const [copy, setCopy] = useState(initialCopyState)
 	const [spent, setSpent] = useState(isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -106,7 +107,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		const isSpendable = await isTokenSpendable(value)
 		setSpent(!isSpendable)
 		// update history item
-		await updateUnspentTxById(id, !isSpendable)
+		await updateSpentHistoryEntry(id, !isSpendable)
 		stopLoading()
 	}
 
@@ -118,9 +119,11 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			setSpent(true)
 			return stopLoading()
 		}
-		await updateUnspentTxById(id, true)
+		await updateSpentHistoryEntry(id, success)
 		setSpent(true)
 		stopLoading()
+		// add a new entry to history (user has claimed token back)
+		await addHistoryEntry({ ...route.params.entry, amount: Math.abs(route.params.entry.amount), isSpent: true })
 		openPromptAutoClose({
 			msg: t(
 				'claimSuccess',
@@ -161,7 +164,9 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			clearTokenInterval()
 			setQr({ ...qr, open: false })
 			// update history item
-			await updateUnspentTxById(id, true)
+			await updateSpentHistoryEntry(id, true)
+			// add a new entry to history (user has claimed token back)
+			await addHistoryEntry({ ...route.params.entry, amount: Math.abs(route.params.entry.amount), isSpent: true })
 			openPromptAutoClose({ msg: t('isSpent', { ns: NS.history }), success: true })
 		}
 	}

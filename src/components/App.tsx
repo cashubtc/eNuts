@@ -8,6 +8,7 @@ import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { CustomErrorBoundary } from '@screens/ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from '@screens/ErrorScreen/ErrorDetails'
+import { BalanceProvider } from '@src/context/Balance'
 import { FocusClaimProvider } from '@src/context/FocusClaim'
 import { HistoryProvider } from '@src/context/History'
 import { KeyboardProvider } from '@src/context/Keyboard'
@@ -204,23 +205,25 @@ function _App() {
 						<ReleaseProvider>
 							<NostrProvider>
 								<NavContainer>
-									<FocusClaimProvider >
-										<PromptProvider>
-											<HistoryProvider>
-												<KeyboardProvider>
-													<Navigator
-														shouldOnboard={shouldOnboard}
-														pinHash={auth.pinHash}
-														bgAuth={bgAuth}
-														setBgAuth={setBgAuth}
-													/>
-													<StatusBar style="auto" />
-													<ClipboardModal />
-													<Toaster />
-												</KeyboardProvider>
-											</HistoryProvider>
-										</PromptProvider>
-									</FocusClaimProvider>
+									<BalanceProvider>
+										<FocusClaimProvider>
+											<PromptProvider>
+												<HistoryProvider>
+													<KeyboardProvider>
+														<Navigator
+															shouldOnboard={shouldOnboard}
+															pinHash={auth.pinHash}
+															bgAuth={bgAuth}
+															setBgAuth={setBgAuth}
+														/>
+														<StatusBar style="auto" />
+														<ClipboardModal />
+														<Toaster />
+													</KeyboardProvider>
+												</HistoryProvider>
+											</PromptProvider>
+										</FocusClaimProvider>
+									</BalanceProvider>
 								</NavContainer>
 							</NostrProvider>
 						</ReleaseProvider>

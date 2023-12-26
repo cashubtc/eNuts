@@ -2,7 +2,7 @@
 /* eslint-disable require-await */
 /* eslint-disable no-await-in-loop */
 
-import { addTransaction, deleteTransactions, delInvoice, getAllInvoices, getTransactions, groupEntries, migrateTransactions, updatePendingTransactionByInvoice } from '@db'
+import { addTransaction, deleteTransactions, delInvoice, getAllInvoices, getTransactions, groupEntries, migrateTransactions, updatePendingTransactionByInvoice, updateUnspentTxById } from '@db'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'
 import { NS } from '@src/i18n'
@@ -13,6 +13,7 @@ import { requestToken } from '@wallet'
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useBalanceContext } from './Balance'
 import { useFocusClaimContext } from './FocusClaim'
 import { usePromptContext } from './Prompt'
 
@@ -23,6 +24,7 @@ const useHistory = () => {
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
 	const { openPromptAutoClose } = usePromptContext()
+	const { updateBalance } = useBalanceContext()
 	const intervalRef = useRef<NodeJS.Timeout | null>(null)
 	const hasEntries = useMemo(() => Object.keys(history).length > 0, [history])
 
@@ -86,18 +88,24 @@ const useHistory = () => {
 		const item = { ...entry, timestamp: Math.ceil(Date.now() / 1000) }
 		await addTransaction(item)
 		await setHistoryEntries()
-		// TODO update balance
+		await updateBalance()
 		return item
 	}
 
 	const updateHistoryEntry = async (invoice: string) => {
 		await updatePendingTransactionByInvoice(invoice)
 		await setHistoryEntries()
-		// TODO update balance
+		await updateBalance()
+	}
+
+	const updateSpentHistoryEntry = async (id?: number, isSpent?: boolean) => {
+		await updateUnspentTxById(id, isSpent)
+		await updateBalance()
 	}
 
 	const deleteHistory = async () => {
 		await deleteTransactions()
+		await setHistoryEntries()
 		openPromptAutoClose({
 			msg: t('historyDeleted'),
 			success: true
@@ -119,6 +127,7 @@ const useHistory = () => {
 		hasEntries,
 		addHistoryEntry,
 		updateHistoryEntry,
+		updateSpentHistoryEntry,
 		deleteHistory,
 		startGlobalInvoiceInterval,
 	}
@@ -144,6 +153,7 @@ const HistoryCtx = createContext<useHistoryType>({
 		isPending: false
 	}),
 	updateHistoryEntry: async () => l(''),
+	updateSpentHistoryEntry: async () => l(''),
 	deleteHistory: async () => l(''),
 	startGlobalInvoiceInterval: () => l(''),
 })
