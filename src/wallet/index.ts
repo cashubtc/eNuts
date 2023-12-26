@@ -9,7 +9,7 @@ import {
 import { _testmintUrl } from '@consts'
 import {
 	addInvoice, addMint, addToken, deleteProofs,
-	delInvoice, getAllInvoices, getInvoice,
+	delInvoice, getInvoice,
 	getMintsBalances, getMintsUrls
 } from '@db'
 import { l } from '@log'
@@ -124,7 +124,6 @@ export async function requestMint(mintUrl: string, amount: number): Promise<Requ
 	const wallet = await getWallet(mintUrl)
 	const result = await wallet.requestMint(amount)
 	await addInvoice({ amount, mintUrl, ...result })
-	runRequestTokenLoop()
 	l('[requestMint]', { result, mintUrl, amount })
 	return result
 }
@@ -271,30 +270,29 @@ export async function getHighestBalMint() {
 	return { mints, highestBalance, highestBalanceMint }
 }
 
-let isRequestTokenLoopRunning = false
-let loopHandel: NodeJS.Timeout
-export function runRequestTokenLoop(): void {
-	// eslint-disable-next-line @typescript-eslint/no-misused-promises
-	loopHandel = setTimeout(requestTokenLoop, 60000)
-}
+// let isRequestTokenLoopRunning = false
+// let loopHandel: NodeJS.Timeout
+// export function runRequestTokenLoop(): void {
+// 	// eslint-disable-next-line @typescript-eslint/no-misused-promises
+// 	loopHandel = setTimeout(requestTokenLoop, 60000)
+// }
 
-async function requestTokenLoop(): Promise<void> {
-	if (isRequestTokenLoopRunning) { return }
-	isRequestTokenLoopRunning = true
-	const invoices = await getAllInvoices()
-	if (!invoices.length) {
-		clearTimeout(loopHandel)
-	}
-	for (const invoice of invoices) {
-		try {
-			// eslint-disable-next-line no-await-in-loop
-			await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
-			// TODO notify user and add history entry
-		} catch (_) {/* ignore */ }
-		const { expiry } = decodeLnInvoice(invoice.pr)
-		const date = new Date((invoice.time * 1000) + (expiry * 1000)).getTime()
-		// eslint-disable-next-line no-await-in-loop
-		if (Date.now() > date) { await delInvoice(invoice.hash) }
-	}
-	isRequestTokenLoopRunning = false
-}
+// async function requestTokenLoop(): Promise<void> {
+// 	if (isRequestTokenLoopRunning) { return }
+// 	isRequestTokenLoopRunning = true
+// 	const invoices = await getAllInvoices()
+// 	if (!invoices.length) {
+// 		clearTimeout(loopHandel)
+// 	}
+// 	for (const invoice of invoices) {
+// 		try {
+// 			// eslint-disable-next-line no-await-in-loop
+// 			await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
+// 		} catch (_) {/* ignore */ }
+// 		const { expiry } = decodeLnInvoice(invoice.pr)
+// 		const date = new Date((invoice.time * 1000) + (expiry * 1000)).getTime()
+// 		// eslint-disable-next-line no-await-in-loop
+// 		if (Date.now() > date) { await delInvoice(invoice.hash) }
+// 	}
+// 	isRequestTokenLoopRunning = false
+// }

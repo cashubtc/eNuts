@@ -23,7 +23,6 @@ import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { dark, light } from '@styles'
 import { isErr, isNull, isStr } from '@util'
 import { routingInstrumentation } from '@util/crashReporting'
-import { runRequestTokenLoop } from '@wallet'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useRef, useState } from 'react'
@@ -100,7 +99,6 @@ function _App() {
 	const initDB = async () => {
 		try {
 			await initDb()
-			runRequestTokenLoop()
 		} catch (e) {
 			l(isErr(e) ? e.message : 'Error while initiating the database.')
 			alert(t('dbErr'))
