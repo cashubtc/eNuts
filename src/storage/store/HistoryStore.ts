@@ -87,4 +87,7 @@ class HistoryStore extends StoreBase {
 	public close(): void { return super.close() }
 }
 
+/**
+ * @deprecated use queries for db table 'transactions' instead
+ */
 export const historyStore = new HistoryStore()

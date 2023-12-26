@@ -18,6 +18,9 @@ export const STORE_KEYS = {
 	defaultMint: 'MINT_STORE=|:|=default_mint',
 	hiddenBal: 'privacy_balance',
 	hiddenTxs: 'privacy_txs',
+	/**
+	 * @deprecated use queries for db table 'transactions' instead
+	 */
 	latestHistory: 'history_latest',
 	createdToken: 'createdToken',
 	favs: 'nostr_favs',
