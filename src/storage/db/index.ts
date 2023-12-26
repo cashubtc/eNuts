@@ -382,7 +382,7 @@ export async function delContact(id: number) {
 }
 
 // ################################ Transactions (History) ################################
-// TODO add tests
+
 export async function migrateTransactions(data: IHistoryEntry[]) {
 	if (!data || !data.length) { return }
 	for (let i = 0; i < data.length; i++) {

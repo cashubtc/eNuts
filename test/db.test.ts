@@ -5,15 +5,21 @@ import {
 	addMint,
 	addMints,
 	addToken,
+	addTransaction,
 	delInvoice,
 	getAllInvoices,
 	getBalance,
 	getInvoice,
 	getMints,
 	getMintsBalances,
+	getTransactions,
 	hasMints,
-	initDb
+	initDb,
+	migrateTransactions,
+	updatePendingTransactionByInvoice
 } from '@db'
+import { historyStore } from '@src/storage/store'
+import { addToHistory } from '@store/latestHistoryEntries'
 
 
 
@@ -117,5 +123,44 @@ describe('test db helper', () => {
 			{ mintUrl: 'mint3-noProofs', amount: 0, name: '' },
 		])
 		expect(await getBalance()).toBe(6)
+	})
+	test('migration from hitoryStore to db', async () => {
+		// add history entry to old store
+		for (let i = 0; i < 2; i++) {
+			// eslint-disable-next-line no-await-in-loop
+			await addToHistory({
+				amount: 100 + i,
+				type: 2,
+				value: `lnbc1000n1p0${i}`,
+				mints: ['https://testnut.cashu.space'],
+				isPending: true
+			})
+		}
+		// migrate
+		await migrateTransactions(await historyStore.getHistory())
+		await historyStore.clear()
+		// check if old store is empty
+		expect(await historyStore.getHistory()).toStrictEqual([])
+		// check if data has been migrated
+		expect(await getTransactions()).toHaveLength(2)
+		// check if data is updated correctly
+		await updatePendingTransactionByInvoice('lnbc1000n1p00')
+		const updated = await getTransactions()
+		expect(updated[1].isPending).toBe(false)
+		expect(updated[0].isPending).toBe(true)
+		// check if data limit is working
+		const limited = await getTransactions(1)
+		expect(limited).toHaveLength(1)
+		// check adding new entry
+		await addTransaction({
+			amount: 10,
+			type: 2,
+			value: 'lnbc1000n1p0new',
+			mints: ['https://testnut.cashu.space'],
+			isPending: true,
+			timestamp: Math.ceil(Date.now() / 1000)
+		})
+		const newEntries = await getTransactions()
+		expect(newEntries).toHaveLength(3)
 	})
 })
