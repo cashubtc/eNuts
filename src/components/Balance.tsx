@@ -49,8 +49,9 @@ export default function Balance({ nav }: IBalanceProps) {
 	}
 
 	useEffect(() => {
-		if (oldBal.current === balance) { return }
+		if (oldBal.current === balance || hidden.balance) { return }
 		diff.current = Math.abs(balance - oldBal.current)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [balance])
 
 	return (
@@ -74,7 +75,7 @@ export default function Balance({ nav }: IBalanceProps) {
 							start={oldBal.current}
 							end={balance}
 							duration={1.5}
-							isCounting
+							isCounting={!hidden.balance}
 							decimalPlaces={0}
 							formatter={value => formatSats ? formatBalance(Math.trunc(value)) : formatInt(Math.trunc(value))}
 							onComplete={() => { oldBal.current = balance }}
