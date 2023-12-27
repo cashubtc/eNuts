@@ -68,7 +68,6 @@
 		"default": "Standard",
 		"delHistory": "Verlauf löschen",
 		"factoryReset": "Wallet zurücksetzen",
-		"delHistoryErr": "Verlauf konnte nicht gelöscht werden",
 		"delHistoryQ": "Verlauf löschen?",
 		"resetQ": "Wallet zurücksetzen?",
 		"delHistoryTxt": "Die Daten können nachträglich nicht wiederhergestellt werden.",
@@ -234,7 +233,9 @@
 		"singleBackupHint": "Hinweis: Sie können auch eine Sicherung für eine einzelne Mint erstellen unter 'Optionen' > 'Mint Management' > 'Mint auswählen' > 'Guthabensicherung'.",
 		"noDefaultHint": "Sie müssen eine Standard-Mint einrichten, um einen automatischen Tausch durchzuführen.",
 		"autoSwapSuccess": "Tausch erfolgreich!",
-		"noReleaseData": "Keine Versionsdaten verfügbar"
+		"noReleaseData": "Keine Versionsdaten verfügbar",
+		"paidInvoice": "{{ count }} Rechnung wurde mit einem Gesamtbetrag von {{ total }} Sats bezahlt",
+		"paidInvoices": "{{ count }} Rechnungen wurden mit einem Gesamtbetrag von {{ total }} Sats bezahlt"
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",

@@ -8,7 +8,9 @@ import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { CustomErrorBoundary } from '@screens/ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from '@screens/ErrorScreen/ErrorDetails'
+import { BalanceProvider } from '@src/context/Balance'
 import { FocusClaimProvider } from '@src/context/FocusClaim'
+import { HistoryProvider } from '@src/context/History'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { NostrProvider } from '@src/context/Nostr'
 import { PinCtx } from '@src/context/Pin'
@@ -22,7 +24,6 @@ import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { dark, light } from '@styles'
 import { isErr, isNull, isStr } from '@util'
 import { routingInstrumentation } from '@util/crashReporting'
-import { runRequestTokenLoop } from '@wallet'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useRef, useState } from 'react'
@@ -99,7 +100,6 @@ function _App() {
 	const initDB = async () => {
 		try {
 			await initDb()
-			runRequestTokenLoop()
 		} catch (e) {
 			l(isErr(e) ? e.message : 'Error while initiating the database.')
 			alert(t('dbErr'))
@@ -205,21 +205,25 @@ function _App() {
 						<ReleaseProvider>
 							<NostrProvider>
 								<NavContainer>
-									<FocusClaimProvider >
-										<PromptProvider>
-											<KeyboardProvider>
-												<Navigator
-													shouldOnboard={shouldOnboard}
-													pinHash={auth.pinHash}
-													bgAuth={bgAuth}
-													setBgAuth={setBgAuth}
-												/>
-												<StatusBar style="auto" />
-												<ClipboardModal />
-												<Toaster />
-											</KeyboardProvider>
-										</PromptProvider>
-									</FocusClaimProvider>
+									<BalanceProvider>
+										<FocusClaimProvider>
+											<PromptProvider>
+												<HistoryProvider>
+													<KeyboardProvider>
+														<Navigator
+															shouldOnboard={shouldOnboard}
+															pinHash={auth.pinHash}
+															bgAuth={bgAuth}
+															setBgAuth={setBgAuth}
+														/>
+														<StatusBar style="auto" />
+														<ClipboardModal />
+														<Toaster />
+													</KeyboardProvider>
+												</HistoryProvider>
+											</PromptProvider>
+										</FocusClaimProvider>
+									</BalanceProvider>
 								</NavContainer>
 							</NostrProvider>
 						</ReleaseProvider>

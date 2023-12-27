@@ -1,9 +1,6 @@
-
-
-
 const createProofsTable = `
 CREATE TABLE IF NOT EXISTS proofs (
-	id TEXT NOT NULL,   
+	id TEXT NOT NULL,
 	amount INT NOT NULL,
 	secret TEXT PRIMARY KEY NOT NULL,
 	C TEXT NOT NULL
@@ -29,7 +26,6 @@ CREATE TABLE IF NOT EXISTS mintKeys (
 	id TEXT NOT NULL,
 	amount INTEGER NOT NULL,
 	pubkey TEXT NOT NULL,
-
 	UNIQUE (id, pubkey)
 );
 `
@@ -42,7 +38,6 @@ CREATE TABLE IF NOT EXISTS invoices (
 	mintUrl TEXT NOT NULL
 );
 `
-// preferences
 const createPreferencesTable = `
 CREATE TABLE IF NOT EXISTS preferences (
 	id integer PRIMARY KEY ,
@@ -59,6 +54,22 @@ CREATE TABLE IF NOT EXISTS contacts (
 	isOwner Bool Default False
 );
 `
+const createTransactionsTable = `
+CREATE TABLE IF NOT EXISTS transactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    amount INTEGER NOT NULL,
+    type INTEGER NOT NULL,
+    timestamp INTEGER NOT NULL,
+    value TEXT NOT NULL,
+    mints TEXT NOT NULL,
+    sender TEXT,
+    recipient TEXT,
+    preImage TEXT,
+    fee INTEGER,
+    isSpent INTEGER,
+    isPending INTEGER
+);
+`
 export const tables: readonly string[] = [
 	createProofsTable,
 	createProofsUsedTable,
@@ -66,5 +77,6 @@ export const tables: readonly string[] = [
 	createMintKeysTable,
 	createInvoicesTable,
 	createPreferencesTable,
-	createContactsTable
+	createContactsTable,
+	createTransactionsTable
 ]

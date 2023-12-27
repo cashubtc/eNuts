@@ -3,7 +3,7 @@ import { mainColors } from '@src/styles'
 import { TouchableOpacity } from 'react-native'
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ScaledSheet, vs } from 'react-native-size-matters'
+import { ScaledSheet } from 'react-native-size-matters'
 
 import Txt from './Txt'
 
@@ -17,7 +17,7 @@ export default function Toaster() {
 			exiting={FadeOutUp}
 			style={[
 				styles.container,
-				{ backgroundColor: prompt.success ? mainColors.VALID : mainColors.ERROR, top: insets.top + vs(20) }
+				{ backgroundColor: prompt.success ? mainColors.VALID : mainColors.ERROR, top: insets.top }
 			]}
 		>
 			<TouchableOpacity
@@ -52,5 +52,6 @@ const styles = ScaledSheet.create({
 	txt: {
 		fontSize: '16@vs',
 		color: mainColors.WHITE,
+		textAlign: 'center',
 	},
 })

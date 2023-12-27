@@ -590,6 +590,14 @@ export function ConnectionErrorIcon({ width, height, color }: TIconProps) {
 		</Svg>
 	)
 }
+export function ClockIcon({ width, height, color }: TIconProps) {
+	return (
+		<Svg width={width || 24} height={height || 24} viewBox="0 0 24 24" fill="none">
+			<Path d="M12.5 11.5H16.5V12.5H11.5V7.5H12.5V11.5Z" fill={color} />
+			<Path fillRule="evenodd" clipRule="evenodd" d="M2.5 12C2.5 6.7533 6.7533 2.5 12 2.5C17.2467 2.5 21.5 6.7533 21.5 12C21.5 17.2467 17.2467 21.5 12 21.5C6.7533 21.5 2.5 17.2467 2.5 12ZM12 3.5C7.30558 3.5 3.5 7.30558 3.5 12C3.5 16.6944 7.30558 20.5 12 20.5C16.6944 20.5 20.5 16.6944 20.5 12C20.5 7.30558 16.6944 3.5 12 3.5Z" fill={color} />
+		</Svg>
+	)
+}
 const styles = StyleSheet.create({
 	nostrIcon: {
 		marginLeft: -5

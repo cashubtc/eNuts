@@ -6,12 +6,11 @@ import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import { pool } from '@nostr/class/Pool'
 import { getNostrUsername } from '@nostr/util'
+import { useHistoryContext } from '@src/context/History'
 import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { addLnPaymentToHistory } from '@store/HistoryStore'
-import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { getDefaultMint } from '@store/mintStore'
 import { globals } from '@styles'
 import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, isNum, uniqByIContacts } from '@util'
@@ -31,6 +30,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const { color } = useThemeContext()
 	const { setNostr } = useNostrContext()
 	const { clearUrl } = useInitialURL()
+	const { addHistoryEntry } = useHistoryContext()
 	const {
 		mint,
 		tokenInfo,
@@ -118,20 +118,12 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				return handleError({ e: isErr(res.error) ? res.error : undefined })
 			}
 			// payment success, add as history entry
-			await addLnPaymentToHistory(
-				res,
-				[mint.mintUrl],
-				-amount,
-				target
-			)
-			// update latest 3 history entries
-			await updateLatestHistory({
-				amount: -amount,
-				fee: res.realFee,
+			await addHistoryEntry({
+				amount,
 				type: 2,
-				value: target,
+				value: invoice,
 				mints: [mint.mintUrl],
-				timestamp: Math.ceil(Date.now() / 1000)
+				fee: res?.realFee,
 			})
 			// reset zap deep link
 			clearUrl()
@@ -156,7 +148,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			// TODO this process can take a while, we need to add it as pending transaction
 			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0, proofs)
 			// add as history entry (multimint swap)
-			await addToHistory({
+			await addHistoryEntry({
 				amount: -amount,
 				fee: res.payResult.realFee,
 				type: 3,
@@ -192,7 +184,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 		const amountSent = tokenInfo.value - estFeeResp
 		// add as history entry (multimint swap)
-		await addToHistory({
+		await addHistoryEntry({
 			amount: -amountSent,
 			fee: payResult.realFee,
 			type: 3,
@@ -212,7 +204,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
 			// add as history entry (send ecash)
-			const entry = await addToHistory({
+			const entry = await addHistoryEntry({
 				amount: -amount,
 				type: 1,
 				value: token,

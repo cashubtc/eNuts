@@ -7,9 +7,11 @@ import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { preventBack } from '@nav/utils'
 import { isIOS } from '@src/consts'
+import { useBalanceContext } from '@src/context/Balance'
+import { useHistoryContext } from '@src/context/History'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { historyStore, store } from '@store'
+import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatSatStr, share, vib } from '@util'
@@ -24,9 +26,11 @@ import { s, ScaledSheet, vs } from 'react-native-size-matters'
  * The page that shows the created Cashu token that can be scanned, copied or shared
  */
 export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
-	const { value, amount } = route.params.entry
+	const { id, value, amount } = route.params.entry
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
+	const { updateSpentHistoryEntry } = useHistoryContext()
+	const { updateBalance } = useBalanceContext()
 	const [error, setError] = useState({ msg: '', open: false })
 	const [spent, setSpent] = useState(false)
 	const { copied, copy } = useCopy()
@@ -44,7 +48,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 		if (!isSpendable) {
 			clearTokenInterval()
 			// update history item
-			await historyStore.updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: true })
+			await updateSpentHistoryEntry(id, true)
 		}
 	}
 
@@ -63,6 +67,8 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 
 	// auto check payment in intervals
 	useEffect(() => {
+		// update balance
+		void updateBalance()
 		intervalRef.current = setInterval(() => {
 			void checkPayment()
 		}, 3000)

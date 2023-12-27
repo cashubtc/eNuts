@@ -29,11 +29,7 @@ const useRelease = () => {
 	}
 }
 type useReleaseType = ReturnType<typeof useRelease>
-/**
- * A state that indicates if a cashu token has been claimed from
- * clipboard after the app comes to the foreground.
- * It is used to re-render the total balance after claiming
- */
+
 const ReleaseCtx = createContext<useReleaseType>({
 	info: undefined,
 	isOutdated: false,

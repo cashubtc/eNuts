@@ -5,9 +5,9 @@ import { isIOS } from '@consts'
 import type { TBeforeRemoveEvent, TSuccessPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
+import { useBalanceContext } from '@src/context/Balance'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
 import { formatSatStr, isNum, vib } from '@util'
 import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
@@ -32,9 +32,14 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	} = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
+	const { updateBalance } = useBalanceContext()
 	const insets = useSafeAreaInsets()
 
-	useEffect(() => vib(400), [])
+	useEffect(() => {
+		vib(400)
+		void updateBalance()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
 	useEffect(() => {
@@ -42,8 +47,6 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		navigation.addListener('beforeRemove', backHandler)
 		return () => navigation.removeListener('beforeRemove', backHandler)
 	}, [navigation])
-
-	l({ amount, memo, fee, mint, isClaim, isMelt, nostr, isScanned })
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
