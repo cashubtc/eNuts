@@ -235,7 +235,10 @@
 		"autoSwapSuccess": "Csere sikeres!",
 		"noReleaseData": "Nincs elérhető verzió információ",
 		"paidInvoice": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
-		"paidInvoices": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben"
+		"paidInvoices": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
+		"limitBal": "Egyenleg túllépve",
+		"limitBalHint": "A biztonság érdekében a béta fázis alatt 100 000 Sats egyenlegkorlát van beállítva. Feloldhatja ezt a korlátot, ha megérti a kockázatokat.",
+		"unlockLimit": "Korlát feloldása"
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",

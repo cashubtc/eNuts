@@ -235,7 +235,10 @@
 		"autoSwapSuccess": "Tausch erfolgreich!",
 		"noReleaseData": "Keine Versionsdaten verfügbar",
 		"paidInvoice": "{{ count }} Rechnung wurde mit einem Gesamtbetrag von {{ total }} Sats bezahlt",
-		"paidInvoices": "{{ count }} Rechnungen wurden mit einem Gesamtbetrag von {{ total }} Sats bezahlt"
+		"paidInvoices": "{{ count }} Rechnungen wurden mit einem Gesamtbetrag von {{ total }} Sats bezahlt",
+		"limitBal": "Guthabenlimit",
+		"limitBalHint": "Aus Sicherheitsgründen wird Während der Beta-Phase ein Saldo-Limit von 100.000 Sats festgelegt. Sie können dieses Limit aufheben, wenn Sie die Risiken verstehen.",
+		"unlockLimit": "Limit aufheben"
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",

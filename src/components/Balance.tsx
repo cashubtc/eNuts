@@ -74,7 +74,7 @@ export default function Balance({ nav }: IBalanceProps) {
 							key={balance}
 							start={oldBal.current}
 							end={balance}
-							duration={1.5}
+							duration={diff.current < 100 ? .4 : 1.5}
 							isCounting={!hidden.balance}
 							decimalPlaces={0}
 							formatter={value => formatSats ? formatBalance(Math.trunc(value)) : formatInt(Math.trunc(value))}

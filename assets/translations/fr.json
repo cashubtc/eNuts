@@ -235,7 +235,10 @@
 		"autoSwapSuccess": "Échange réussi!",
 		"noReleaseData": "Donnée de version indisponible",
 		"paidInvoice": "{{ count }} facture a été payée pour un montant total de {{ total }} Sats",
-		"paidInvoices": "{{ count }} factures ont été payées pour un montant total de {{ total }} Sats"
+		"paidInvoices": "{{ count }} factures ont été payées pour un montant total de {{ total }} Sats",
+		"limitBal": "Limite de solde",
+		"limitBalHint": "Une limite de solde de 100 000 Sats est définie pour des raisons de sécurité pendant la phase bêta. Vous pouvez lever cette limite si vous comprenez les risques.",
+		"unlockLimit": "Lever la limite"
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

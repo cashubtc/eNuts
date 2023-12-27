@@ -18,6 +18,7 @@ export const STORE_KEYS = {
 	defaultMint: 'MINT_STORE=|:|=default_mint',
 	hiddenBal: 'privacy_balance',
 	hiddenTxs: 'privacy_txs',
+	mintLimit: 'mint_limit',
 	/**
 	 * @deprecated use queries for db table 'transactions' instead
 	 */

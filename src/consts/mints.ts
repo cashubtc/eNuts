@@ -7,3 +7,4 @@ export const mintUrl = __DEV__ ? _testmintUrl : ENUTS_MINT
 export const DONATION_ADDR = 'zap@agron.dev'
 
 export const defaultMints: Readonly<IMintBalWithName[]> = [{ mintUrl, amount: 0, customName }] as const
+export const MINT_BALANCE_LIMIT = 100_000

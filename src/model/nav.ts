@@ -25,7 +25,9 @@ export type RootStackParamList = {
 	Settings: undefined
 	release: undefined
 	'General settings': undefined
-	'Security settings': undefined
+	'Security settings': {
+		isUnlocking?: boolean
+	} | undefined
 	'Privacy settings': undefined
 	'Display settings': undefined
 	'Language settings': undefined

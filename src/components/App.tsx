@@ -109,18 +109,20 @@ function _App() {
 	// init stored data
 	const initData = async () => {
 		try {
-			const [lang, balances, balance] = await Promise.all([
+			const [lang, balances, balance, hasMintBalanceLimit] = await Promise.all([
 				// preferred language
 				store.get(STORE_KEYS.lang),
 				// balances
 				getMintsBalances(),
 				getBalance(),
+				store.get(STORE_KEYS.mintLimit)
 			])
 			if (lang?.length) {
 				await i18n.changeLanguage(lang)
 			}
 			const mintBalsTotal = (balances).reduce((acc, cur) => acc + cur.amount, 0)
 			if (mintBalsTotal !== balance) { await addAllMintIds() }
+			if (!isStr(hasMintBalanceLimit)) { await store.set(STORE_KEYS.mintLimit, '1') }
 		} catch (e) {
 			l(isErr(e) ? e.message : 'Error while initiating the user app configuration.')
 		} finally {

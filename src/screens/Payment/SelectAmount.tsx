@@ -1,7 +1,9 @@
+import ActionButtons from '@comps/ActionButtons'
 import { useShakeAnimation } from '@comps/animation/Shake'
 import Button, { IconBtn } from '@comps/Button'
-import { ChevronRightIcon } from '@comps/Icons'
+import { ChevronRightIcon, ExclamationIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
+import MyModal from '@comps/modal'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
@@ -9,11 +11,14 @@ import { isIOS } from '@consts'
 import { l } from '@log'
 import type { TSelectAmountPageProps } from '@model/nav'
 import { useFocusEffect } from '@react-navigation/native'
+import { MINT_BALANCE_LIMIT } from '@src/consts/mints'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { cleanUpNumericStr, formatSatStr, getInvoiceFromLnurl, vib } from '@util'
+import { cleanUpNumericStr, formatSatStr, getInvoiceFromLnurl, isStr, vib } from '@util'
 import { checkFees, requestMint } from '@wallet'
 import { createRef, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -34,6 +39,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	const [err, setErr] = useState(false)
 	const [shouldEstimate, setShouldEstimate] = useState(false)
 	const [fee, setFee] = useState({ estimation: 0, isCalculating: false })
+	const [limitModalVisible, setLimitModalVisible] = useState(false)
 
 	const balTooLow = (isMelt || isSwap) && +amount + fee.estimation > balance
 
@@ -91,7 +97,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 
 	const onMemoChange = useCallback((text: string) => setMemo(text), [])
 
-	const handleAmountSubmit = () => {
+	const handleAmountSubmit = async () => {
 		if (fee.isCalculating || balTooLow) { return }
 		const isSendingTX = isSendEcash || isMelt || isSwap
 		// error & shake animation if amount === 0 or greater than mint balance
@@ -137,6 +143,11 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				targetMint,
 				recipient: lnurl
 			})
+		}
+		// check for mint balance limit
+		const limit = await store.get(STORE_KEYS.mintLimit)
+		if (isStr(limit) && limit === '1' && +amount + balance > MINT_BALANCE_LIMIT) {
+			return setLimitModalVisible(true)
 		}
 		// request new token from mint
 		navigation.navigate('processing', { mint, amount: +amount })
@@ -250,6 +261,26 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				}
 				{isIOS && <View style={{ height: isSendEcash ? vs(100) : vs(20) }} />}
 			</KeyboardAvoidingView>
+			<MyModal type='bottom' visible={limitModalVisible} >
+				<View style={styles.iconWrap}>
+					<ExclamationIcon width={s(50)} height={s(50)} color={mainColors.WARN} />
+				</View>
+				<Txt txt={t('limitBal', { ns: NS.common })} styles={[globals(color).modalHeader]} />
+				<Txt txt={t('limitBalHint', { ns: NS.common })} styles={[globals(color).modalTxt]} />
+				{/* t('limitBalHint', { ns: NS.common }) */}
+				<ActionButtons
+					topBtnTxt='OK'
+					topBtnAction={() => {
+						setLimitModalVisible(false)
+						navigation.navigate('dashboard')
+					}}
+					bottomBtnTxt={t('unlockLimit', { ns: NS.common })}
+					bottomBtnAction={() => {
+						setLimitModalVisible(false)
+						navigation.navigate('Security settings', { isUnlocking: true })
+					}}
+				/>
+			</MyModal>
 		</Screen>
 	)
 }
@@ -334,4 +365,7 @@ const styles = ScaledSheet.create({
 		borderRadius: 50,
 		fontSize: '14@vs',
 	},
+	iconWrap: {
+		marginBottom: '10@vs'
+	}
 })

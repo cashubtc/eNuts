@@ -1,5 +1,7 @@
-import { FlagIcon, KeyIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
+import { ExclamationIcon, FlagIcon, KeyIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
+import Separator from '@comps/Separator'
+import Toggle from '@comps/Toggle'
 import Txt from '@comps/Txt'
 import { appVersion } from '@consts/env'
 import { getProofs } from '@db'
@@ -9,14 +11,14 @@ import BottomNav from '@nav/BottomNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { secureStore } from '@store'
-import { SECURESTORE_KEY } from '@store/consts'
+import { secureStore, store } from '@store'
+import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
-import { isNull } from '@util'
+import { isNull, isStr } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
-import { s } from 'react-native-size-matters'
+import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import MenuItem from './MenuItem'
 
@@ -25,6 +27,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	const { color } = useThemeContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const [pin, setPin] = useState<string | null>(null)
+	const [hasLimit, setHasLimit] = useState(true)
 	const handleBackup = async () => {
 		try {
 			const proofs = await getProofs()
@@ -42,7 +45,18 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		const pinHash = await secureStore.get(SECURESTORE_KEY)
 		setPin(isNull(pinHash) ? '' : pinHash)
 	}
-	useEffect(() => void handlePin(), [])
+	const handleLimit = async () => {
+		await store.set(STORE_KEYS.mintLimit, hasLimit ? '0' : '1')
+		setHasLimit(prev => !prev)
+	}
+	useEffect(() => {
+		void handlePin()
+		void (async () => {
+			const limit = await store.get(STORE_KEYS.mintLimit)
+			if (!isStr(limit)) { return }
+			setHasLimit(limit === '1')
+		})()
+	}, [])
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const focusHandler = navigation.addListener('focus', async () => {
@@ -55,10 +69,26 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		<Screen
 			screenName={t('security', { ns: NS.topNav })}
 			withBackBtn
-			handlePress={() => navigation.navigate('General settings')}
+			handlePress={() => {
+				if (route.params?.isUnlocking) { return navigation.goBack() }
+				navigation.navigate('General settings')
+			}}
 		>
 			<ScrollView alwaysBounceVertical={false}>
 				<View style={globals(color).wrapContainer}>
+					<View style={[globals().wrapRow, { paddingBottom: vs(15) }]}>
+						<View style={styles.setting}>
+							<ExclamationIcon width={20} height={20} color={color.TEXT} />
+							<Txt
+								txt={t('limitBal')}
+								styles={[styles.settingTxt, { color: color.TEXT }]}
+							/>
+						</View>
+						<View style={styles.toggleWrap}>
+							<Toggle value={hasLimit} onChange={() => void handleLimit()} />
+						</View>
+					</View>
+					<Separator style={[styles.separator]} />
 					{pin ?
 						<>
 							<MenuItem
@@ -94,3 +124,20 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		</Screen>
 	)
 }
+
+const styles = ScaledSheet.create({
+	setting: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	settingTxt: {
+		marginLeft: '15@s',
+	},
+	separator: {
+		marginBottom: '15@vs',
+		marginTop: '3@vs',
+	},
+	toggleWrap: {
+		marginRight: '-10@s'
+	}
+})

@@ -235,7 +235,10 @@
 		"autoSwapSuccess": "Swap successful!",
 		"noReleaseData": "Release data not available",
 		"paidInvoice": "{{ count }} invoice has been paid with a total amount of {{ total }} Sats",
-		"paidInvoices": "{{ count }} invoices have been paid with a total amount of {{ total }} Sats"
+		"paidInvoices": "{{ count }} invoices have been paid with a total amount of {{ total }} Sats",
+		"limitBal": "Limit balance",
+		"limitBalHint": "A balance limit of 100,000 Sats is set for safety during the beta phase. You can unlock this limit if you understand the risks.",
+		"unlockLimit": "Unlock limit"
 	},
 	"error": {
 		"checkSpendableErr": "Error while checking if token is spendable",
