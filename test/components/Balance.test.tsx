@@ -24,6 +24,6 @@ describe('Basic test of the Txt.tsx component', () => {
 		const touchableElement = screen.getByText('0')
 		// Simulate press event
 		fireEvent.press(touchableElement)
-		expect(touchableElement.props.children).toBe('0.00000000')
+		expect(screen.getByText('0.00000000')).toBeDefined()
 	})
 })
