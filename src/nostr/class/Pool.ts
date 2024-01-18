@@ -163,7 +163,7 @@ class Pool {
 		try {
 			const relays = this.#relaysClean(relayUrls)
 			// TODO update the pool to return a promise
-			this.#pool?.publish(relays, validated)
+			void this.#pool?.publish(relays, validated)
 			return true
 		} catch (e) {
 			l({ publishError: isErr(e) ? e.message : 'Publish error' })
