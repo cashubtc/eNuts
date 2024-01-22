@@ -1,0 +1,41 @@
+# unlock.yaml
+
+appId: com.agron.enuts.dev
+onFlowComplete:
+  - runFlow: newMint.yaml
+---
+# close app
+- stopApp:
+    label: "Running unlock.yaml now. Closing app..."
+# re-launch app
+- launchApp:
+    label: "Re-launching app to test PIN unlock..."
+# make sure the pin prompt is displayed
+- assertVisible: "Welcome back!"
+# test wrong pin
+# - repeat:
+#     times: 3
+#     label: "Typing a wrong PIN 3 times to lock the wallet"
+#     commands:
+#       - tapOn: "4"
+#       - tapOn: "3"
+#       - tapOn: "2"
+#       - tapOn: "1"
+#       - tapOn:
+#           id: "11"
+# - assertVisible:
+#     text: "Wallet locked"
+#     label: "Check that the wallet is locked"
+# # now the wallet is locked for 1min
+# - extendedWaitUntil:
+#     visible: "Welcome back!" # waits until the text "Welcome back!" is visible again
+#     timeout: 65000
+#     label: "Waiting for 60s until wallet is unlocked again"
+# the wallet should be unlocked now
+- tapOn: "1"
+- tapOn: "2"
+- tapOn: "3"
+- tapOn: "4"
+- tapOn:
+    id: "11"
+    label: "Test suites of unlock.yaml passed!"

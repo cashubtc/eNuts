@@ -1,0 +1,10 @@
+# createToken.yaml
+
+# This testnut flow is just a temporary playground
+appId: com.agron.enuts.dev
+name: "Running createToken.yaml now..."
+# onFlowComplete:
+#     - runFlow: createToken.yaml
+---
+- tapOn:
+    id: "wallet-Send"

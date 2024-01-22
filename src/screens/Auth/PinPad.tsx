@@ -47,6 +47,7 @@ export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, ha
 					{row.map(pad => (
 						<TouchableOpacity
 							key={`${i}${pad.n}`}
+							testID={pad.n.toString()}
 							onPress={() => void handleInput(pad.n)}
 							style={[styles.numWrap, pad.n < 10 ? { backgroundColor: getPinpadBg(highlight) } : {}]}
 							disabled={shouldDisablePad(pad.n)}

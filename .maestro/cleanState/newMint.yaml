@@ -1,0 +1,99 @@
+# newMint.yaml
+
+# This testnut flow is just a temporary playground
+appId: com.agron.enuts.dev
+name: "Running newMint.yaml now..."
+onFlowComplete:
+    - runFlow: createToken.yaml
+---
+- assertVisible:
+    text: "Get started"
+# add testnut mint
+- tapOn:
+    text: "Add mint URL"
+    label: "Focusing text input and typing an invalid mint URL"
+- assertVisible: "Add a new mint"
+# focus text input
+- tapOn: "Mint URL"
+- assertVisible:
+    text: "Mint URL"
+    focused: true
+# type invalid URL
+- inputText: "testnut"
+- tapOn: "Add mint"
+- assertVisible:
+    text: "Network request failed"
+    label: "Checking that the invalid URL error message is displayed"
+# type in valid testnut URL
+- tapOn: "Mint URL"
+# https://maestro.mobile.dev/api-reference/commands/erasetext
+- eraseText
+- inputText:
+    text: ${output.main.mints.testnut}
+    label: "Typi${output.main.mints.testnut}ng a valid testnut URL"
+- tapOn: "Add mint"
+- assertVisible: "Mint added!"
+# mint fake Ecash
+- tapOn: "Yes"
+# navigates to the invoice amount screen
+- assertVisible:
+    text: "Create invoice"
+    label: "Checking that the invoice amount screen is displayed"
+# make sure amount input is focused
+- assertVisible:
+    id: "amountInput"
+    focused: true
+# test bad case with empty input
+- tapOn:
+    text: "Continue"
+    label: "Testing the continue button with empty input"
+- assertVisible: "Create invoice"
+- inputText: "100"
+- tapOn:
+    text: "Continue"
+    label: "Testing the continue button with a valid amount"
+- extendedWaitUntil:
+    visible: "100 Sats minted!"
+    timeout: 10000
+# User can navigate back to the dashboard by pressing the "Back to dashboard" button
+- tapOn:
+    text: "Back to dashboard"
+    label: "Navigating back to the dashboard"
+- assertVisible:
+    text: "Send"
+    label: "Checking that the dashboard is displayed"
+- assertVisible: "Scan"
+- assertVisible:
+    text: "Receive"
+# Check first history entry
+- assertVisible: "Lightning"
+- assertVisible: "+100 Sats"
+- tapOn:
+    text: "Lightning"
+    label: "Checking that the history entry is a Lightning transaction"
+# Check Transaction details
+- assertVisible: "Lightning invoice"
+- assertVisible: "Settle time"
+- assertVisible: "Invoice"
+- assertVisible: "Payment hash"
+- assertVisible: "Fee"
+- assertVisible: "Show QR code"
+# Check the mint management screen
+- tapOn:
+    id: ${output.main.navBackBtn}
+- tapOn:
+    id: ${output.main.nav.options}
+- tapOn: "Mint management"
+- assertVisible: "Mints"
+- tapOn: ${output.main.mints.testnut}
+- assertVisible: "Balance"
+- repeat:
+    times: 2
+    commands:
+      - tapOn:
+          id: ${output.main.navBackBtn}
+- tapOn:
+    id: ${output.main.nav.wallet}
+# add the eNuts mint
+# - tapOn: "Use the eNuts mint"
+# - assertVisible: "Mint added!"

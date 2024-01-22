@@ -60,6 +60,7 @@ export default function TopNav({
 			<View style={styles.wrap}>
 				{withBackBtn && !txt?.length &&
 					<TouchableOpacity
+						testID='navBackBtn'
 						onPress={handlePress}
 						style={styles.backiconWrap}
 					>

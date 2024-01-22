@@ -57,6 +57,7 @@ export default function BottomNav({
 					animatedPosStyles
 				]}>
 				<TouchableOpacity
+					testID='navWallet'
 					style={styles.navIcon}
 					onPress={() => void handleNav('dashboard')}
 					disabled={isWalletRelatedScreen}
@@ -71,6 +72,7 @@ export default function BottomNav({
 					/>
 				</TouchableOpacity>
 				<TouchableOpacity
+					testID='navContacts'
 					style={styles.navIcon}
 					onPress={() => void handleNav('Address book')}
 					disabled={route.name === 'Address book'}
@@ -87,6 +89,7 @@ export default function BottomNav({
 					/>
 				</TouchableOpacity>
 				<TouchableOpacity
+					testID='navOptions'
 					style={styles.navIcon}
 					onPress={() => void handleNav('Settings')}
 					disabled={isSettingsRelatedScreen}

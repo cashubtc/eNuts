@@ -183,6 +183,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			<View style={[styles.overviewWrap, { marginTop: isMelt || isSwap ? 0 : vs(20) }]}>
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
+						testID='amountInput'
 						keyboardType='numeric'
 						ref={numericInputRef}
 						placeholder='0'

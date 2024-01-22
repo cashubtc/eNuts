@@ -1,0 +1,88 @@
+# init.yaml
+
+# MAESTRO commands: https://maestro.mobile.dev/api-reference/commands
+
+# TODO use different images for different app states
+# TODO test in different locales: https://maestro.mobile.dev/advanced/testing-in-different-locales
+
+appId: com.agron.enuts.dev
+# https://maestro.mobile.dev/cli/tags
+tags:
+  - clean-state-build
+onFlowComplete:
+  - runFlow: unlock.yaml
+---
+- launchApp:
+    # this will start the app with a clean state, showing the onboarding screen
+    clearState: true
+    label: 'Starting app...'
+- runScript: ../main.js
+# make sure the onboarding screen is displayed
+- assertVisible: ${output.main.onboarding.header1}
+# test onboarding screen
+- tapOn: ${output.main.onboarding.nextBtn}
+- assertVisible: ${output.main.onboarding.header2}
+- swipe:
+    direction: LEFT
+- assertVisible: ${output.main.onboarding.header3}
+- swipe:
+    direction: RIGHT
+- assertVisible: ${output.main.onboarding.header2}
+- tapOn:
+    text: ${output.main.onboarding.skipBtn}
+    label: "Skipped onboarding after successfully swiping through the screens"
+# setup a pin
+- assertVisible:
+    id: "11"
+    enabled: false
+    label: "Check that the PIN confirm button is disabled"
+- tapOn: "1"
+- tapOn: "2"
+- tapOn: "3"
+# delete 1 char
+- tapOn:
+    id: "10"
+    label: "Delete 1 char"
+- tapOn: "3"
+- tapOn: "4"
+- assertVisible:
+    id: "11"
+    enabled: true
+    label: "Check that the PIN confirm button is enabled"
+# confirm input
+- tapOn:
+    id: "11"
+    label: "Confirm PIN input after min. 4 chars"
+# check confirm pin screen is visible
+- assertVisible: "Please confirm your PIN."
+- assertVisible: "Back"
+# go back and re-type pin
+- tapOn:
+    text: ${output.main.onboarding.backBtn}
+    label: "Test the back button"
+- assertVisible:
+    id: "11"
+    enabled: false
+- tapOn: "1"
+- tapOn: "2"
+- tapOn: "3"
+- tapOn: "4"
+- tapOn:
+    id: "11"
+# confirm with wrong PIN
+- tapOn: "1"
+- tapOn: "3"
+- tapOn: "2"
+- tapOn: "4"
+- tapOn:
+    id: "11"
+    label: "Test wrong PIN confirmation"
+- assertVisible: "Please confirm your PIN."
+- tapOn: "1"
+- tapOn: "2"
+- tapOn: "3"
+- tapOn: "4"
+- tapOn:
+    id: "11"
+    label: "Test suites of init.yaml passed!"
+# at this point, the pin should be set

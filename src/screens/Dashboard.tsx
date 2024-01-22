@@ -465,7 +465,7 @@ interface IActionBtnsProps {
 
 function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 	return (
-		<View style={styles.btnWrap}>
+		<View style={styles.btnWrap} testID={`wallet-${txt}`}>
 			<IconBtn
 				icon={icon}
 				size={vs(60)}
