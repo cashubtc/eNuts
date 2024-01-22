@@ -72,7 +72,8 @@ const config: ExpoConfig = {
 		['expo-barcode-scanner', { cameraPermission }],
 		['expo-camera', { cameraPermission }],
 		'sentry-expo',
-		'expo-updates'
+		'expo-updates',
+		'@config-plugins/detox'
 	],
 	ios: {
 		supportsTablet: false,

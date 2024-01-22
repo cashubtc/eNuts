@@ -10,6 +10,7 @@ dist/
 dev/
 ./dev/sqlite
 *.db
+artifacts/
 
 # Test
 .jest/
