@@ -39,7 +39,7 @@
 		"android": "expo run:android"
 	},
 	"dependencies": {
-		"@cashu/cashu-ts": "^0.8.1",
+		"@cashu/cashu-ts": "^0.9.0",
 		"@react-native-community/netinfo": "9.3.10",
 		"@react-navigation/core": "^6.4.10",
 		"@react-navigation/native": "^6.1.9",
