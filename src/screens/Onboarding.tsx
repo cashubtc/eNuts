@@ -11,7 +11,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 	const { t } = useTranslation([NS.common])
 	return (
 		<Onboarding
-			onDone={() => navigation.navigate('auth', { pinHash: '' })}
+			onDone={() => navigation.navigate('Seed', { comingFromOnboarding: true })} /* navigation.navigate('auth', { pinHash: '' }) */
 			pages={[
 				{
 					backgroundColor: H_Colors.Default,
@@ -39,7 +39,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 			subTitleStyles={styles.subTitle}
 			nextLabel={t('next')}
 			skipLabel={t('skip')}
-			onSkip={() => navigation.navigate('auth', { pinHash: '' })}
+			onSkip={() => navigation.navigate('Seed', { comingFromOnboarding: true })} /* navigation.navigate('auth', { pinHash: '' }) */
 		/>
 	)
 }

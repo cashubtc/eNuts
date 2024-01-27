@@ -34,6 +34,7 @@ import NpubConfirmScreen from '@screens/QRScan/NpubConfirm'
 import QRProcessingScreen from '@screens/QRScan/QRProcessing'
 import ScanSuccessScreen from '@screens/QRScan/ScanSuccess'
 import ReleaseScreen from '@screens/Release'
+import SeedScreen from '@screens/Seed'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
 import BackupPage from '@screens/Settings/Backup'
@@ -178,6 +179,7 @@ export default function Navigator({
 				<Stack.Screen name='Advanced settings' component={AdvancedFunctionScreen} />
 				<Stack.Screen name='About settings' component={AboutSettings} />
 				<Stack.Screen name='BackupPage' component={BackupPage} />
+				<Stack.Screen name='Seed' component={SeedScreen} />
 			</Stack.Navigator>
 		</View>
 	)

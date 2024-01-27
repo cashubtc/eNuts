@@ -204,6 +204,9 @@ export type RootStackParamList = {
 		isUser?: boolean
 		userProfile?: IContact // the user profile
 	}
+	Seed: {
+		comingFromOnboarding?: boolean
+	} | undefined
 }
 
 export type TRouteString = 'dashboard' | 'mints' | 'Address book' | 'Settings'
@@ -250,6 +253,7 @@ export type TAboutSettingsPageProps = NativeStackScreenProps<RootStackParamList,
 export type TBackupPageProps = NativeStackScreenProps<RootStackParamList, 'BackupPage'>
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
+export type ISeedPageProps = NativeStackScreenProps<RootStackParamList, 'Seed'>
 export type TBottomNavProps =
 	TNostrOnboardingPageProps |
 	TDashboardPageProps |

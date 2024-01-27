@@ -23,6 +23,10 @@ export const STORE_KEYS = {
 	favs: 'nostr_favs',
 	lud16: 'nostr_lud16',
 	nostrReseted: 'nostr_reseted',
+	restoreCounter: 'restore_counter',
+	// secure store keys
+	mnemonic: 'mnemonic',
+	seed: 'seed',
 }
 
 export const SECURESTORE_KEY = 'auth_pin'

@@ -23,6 +23,30 @@ import { getProofsToUse } from './util'
 const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
 const wallets: { [mintUrl: string]: CashuWallet } = {}
 
+/*
+	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#restore
+	Methods that accept the counter parameter for restore:
+
+	- constructor
+	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#constructor
+
+	- wallet.receive
+	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#receive
+
+	- wallet.requestTokens
+	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#requestTokens
+
+	- wallet.send
+	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#send
+
+	- wallet.payLnInvoice
+	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#payLnInvoice
+
+	-------------------------------- NOT USED ----------------------------------------
+	- wallet.receiveTokenEntry
+	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#receiveTokenEntry
+*/
+
 function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string): void {
 	if (!keySetId) { keySetId = deriveKeysetId(keys) }
 	if (!_mintKeysMap[mintUrl]) { _mintKeysMap[mintUrl] = {} }
@@ -38,6 +62,37 @@ async function getWallet(mintUrl: string): Promise<CashuWallet> {
 	const mint = new CashuMint(mintUrl)
 	l({ mint })
 	const keys = await mint.getKeys()
+
+	// let wallet: CashuWallet
+	// let mnemonic: string | undefined | null
+	// let seed = await getSeed()
+	// l({ savedSeed: seed })
+	// if (!seed) {
+	// 	// check if mnemonic has been saved before
+	// 	mnemonic = await getMnemonic()
+	// 	l({ savedMnemonic: mnemonic })
+	// 	if (!isStr(mnemonic)) {
+	// 		mnemonic = generateMnemonic()
+	// 		l({ newGeneratedMnemonic: mnemonic })
+	// 		if (mnemonic) {
+	// 			await saveMnemonic(mnemonic)
+	// 			seed = deriveSeedFromMnemonic(mnemonic)
+	// 			if (seed) {
+	// 				await saveSeed(seed)
+	// 				wallet = new CashuWallet(mint, keys, seed)
+	// 				_setKeys(mintUrl, keys)
+	// 				wallets[mintUrl] = wallet
+	// 				return wallet
+	// 			}
+	// 			wallet = new CashuWallet(mint, keys, seed)
+	// 			_setKeys(mintUrl, keys)
+	// 			wallets[mintUrl] = wallet
+	// 			return wallet
+	// 		}
+	// 	}
+	// 	seed = deriveSeedFromMnemonic(mnemonic)
+	// }
+
 	const wallet = new CashuWallet(mint, keys)
 	_setKeys(mintUrl, keys)
 	wallets[mintUrl] = wallet
