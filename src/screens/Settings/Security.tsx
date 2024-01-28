@@ -9,7 +9,6 @@ import BottomNav from '@nav/BottomNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
@@ -89,7 +88,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 						/>
 					}
 					<MenuItem
-						txt={hasSeed ? 'Restore Wallet' : 'Seed Backup'}
+						txt={hasSeed ? 'Recover Existing Wallet' : 'Seed Backup'}
 						icon={
 							hasSeed ?
 								<BackupIcon width={s(22)} height={s(22)} color={color.TEXT} />
@@ -98,7 +97,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 						}
 						onPress={() => {
 							if (hasSeed) {
-								return l('restore wallet')
+								return navigation.navigate('Recover')
 							}
 							navigation.navigate('Seed')
 						}}

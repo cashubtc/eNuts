@@ -77,6 +77,8 @@ function _App() {
 	// initial auth state
 	const [auth, setAuth] = useState<INavigatorProps>({ pinHash: '' })
 	const [shouldOnboard, setShouldOnboard] = useState(false)
+	const [hasSeed, setHasSeed] = useState(false)
+	const [sawSeedUpdate, setSawSeedUpdate] = useState(false)
 	// app was longer than 5 mins in the background
 	const [bgAuth, setBgAuth] = useState(false)
 	// PIN mismatch state
@@ -130,12 +132,16 @@ function _App() {
 
 	// init auth data
 	const initAuth = async () => {
-		const [pinHash, onboard] = await Promise.all([
+		const [pinHash, onboard, sawSeed, counter] = await Promise.all([
 			secureStore.get(SECURESTORE_KEY),
-			store.get(STORE_KEYS.explainer)
+			store.get(STORE_KEYS.explainer),
+			store.get(STORE_KEYS.sawSeedUpdate),
+			store.get(STORE_KEYS.restoreCounter),
 		])
 		setAuth({ pinHash: isNull(pinHash) ? '' : pinHash })
 		setShouldOnboard(onboard && onboard === '1' ? false : true)
+		setSawSeedUpdate(sawSeed && sawSeed === '1' ? true : false)
+		setHasSeed(!!counter)
 		// check for pin attempts and app locked state
 		await handlePinForeground()
 	}
@@ -213,6 +219,8 @@ function _App() {
 													pinHash={auth.pinHash}
 													bgAuth={bgAuth}
 													setBgAuth={setBgAuth}
+													hasSeed={hasSeed}
+													sawSeedUpdate={sawSeedUpdate}
 												/>
 												<StatusBar style="auto" />
 												<ClipboardModal />

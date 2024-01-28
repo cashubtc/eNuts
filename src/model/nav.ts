@@ -207,6 +207,19 @@ export type RootStackParamList = {
 	Seed: {
 		comingFromOnboarding?: boolean
 	} | undefined
+	'Seed Update': undefined
+	Recover: undefined
+	Mnemonic: {
+		comingFromOnboarding?: boolean
+	}
+	'Confirm Mnemonic': {
+		mnemonic: string[]
+		comingFromOnboarding?: boolean
+	}
+	Deriving: {
+		mnemonic: string[]
+		comingFromOnboarding?: boolean
+	}
 }
 
 export type TRouteString = 'dashboard' | 'mints' | 'Address book' | 'Settings'
@@ -254,6 +267,11 @@ export type TBackupPageProps = NativeStackScreenProps<RootStackParamList, 'Backu
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
 export type ISeedPageProps = NativeStackScreenProps<RootStackParamList, 'Seed'>
+export type ISeedUpdatePageProps = NativeStackScreenProps<RootStackParamList, 'Seed Update'>
+export type IRecoverPageProps = NativeStackScreenProps<RootStackParamList, 'Recover'>
+export type IMnemonicPageProps = NativeStackScreenProps<RootStackParamList, 'Mnemonic'>
+export type IConfirmMnemonicPageProps = NativeStackScreenProps<RootStackParamList, 'Confirm Mnemonic'>
+export type IDerivingPageProps = NativeStackScreenProps<RootStackParamList, 'Deriving'>
 export type TBottomNavProps =
 	TNostrOnboardingPageProps |
 	TDashboardPageProps |
@@ -277,6 +295,8 @@ export interface INavigatorProps {
 	bgAuth?: boolean
 	shouldOnboard?: boolean
 	setBgAuth?: (val: boolean) => void
+	hasSeed?: boolean
+	sawSeedUpdate?: boolean
 }
 export type TBeforeRemoveEvent = EventArg<'beforeRemove', true, {
 	action: Readonly<{

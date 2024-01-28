@@ -21,6 +21,7 @@ import PinHint from './Hint'
 import PinDots from './PinDots'
 import PinPad from './PinPad'
 
+// TODO redirect to seed update screen
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
 	const { t } = useTranslation([NS.common])

@@ -4,6 +4,7 @@ import { createNativeStackNavigator, type NativeStackNavigationProp } from '@rea
 import AddressbookPage from '@screens/Addressbook'
 import ContactPage from '@screens/Addressbook/Contact'
 import AuthPage from '@screens/Auth'
+import ConfirmMnemonicScreen from '@screens/ConfirmMnemonic'
 import Dashboard from '@screens/Dashboard'
 import { Disclaimer } from '@screens/Disclaimer'
 import HistoryPage from '@screens/History'
@@ -13,6 +14,7 @@ import MintInfoPage from '@screens/Mints/Info'
 import MintBackup from '@screens/Mints/MintBackup'
 import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
+import MnemonicScreen from '@screens/Mnemonic'
 import NostrOnboardingScreen from '@screens/NostrOnboarding'
 import OnboardingScreen from '@screens/Onboarding'
 import ProcessingScreen from '@screens/Payment/Processing'
@@ -33,8 +35,10 @@ import MintConfirmScreen from '@screens/QRScan/MintConfirm'
 import NpubConfirmScreen from '@screens/QRScan/NpubConfirm'
 import QRProcessingScreen from '@screens/QRScan/QRProcessing'
 import ScanSuccessScreen from '@screens/QRScan/ScanSuccess'
+import RecoverScreen from '@screens/Recover'
 import ReleaseScreen from '@screens/Release'
 import SeedScreen from '@screens/Seed'
+import SeedUpdateScreen from '@screens/SeedUpdate'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
 import BackupPage from '@screens/Settings/Backup'
@@ -57,7 +61,9 @@ export default function Navigator({
 	pinHash,
 	bgAuth,
 	shouldOnboard,
-	setBgAuth
+	setBgAuth,
+	hasSeed,
+	sawSeedUpdate,
 }: INavigatorProps) {
 
 	const { color } = useThemeContext()
@@ -70,6 +76,7 @@ export default function Navigator({
 		// initial onboarding
 		if (shouldOnboard) { return 'onboarding' }
 		// no previous pin setup && onboarding done
+		if (!hasSeed && !sawSeedUpdate) { return 'Seed Update' }
 		return 'dashboard'
 	}
 
@@ -180,6 +187,10 @@ export default function Navigator({
 				<Stack.Screen name='About settings' component={AboutSettings} />
 				<Stack.Screen name='BackupPage' component={BackupPage} />
 				<Stack.Screen name='Seed' component={SeedScreen} />
+				<Stack.Screen name='Seed Update' component={SeedUpdateScreen} />
+				<Stack.Screen name='Recover' component={RecoverScreen} />
+				<Stack.Screen name='Mnemonic' component={MnemonicScreen} />
+				<Stack.Screen name='Confirm Mnemonic' component={ConfirmMnemonicScreen} />
 			</Stack.Navigator>
 		</View>
 	)

@@ -2,6 +2,7 @@ import { generateNewMnemonic, getEncodedToken, type Proof, type Token } from '@c
 import { l } from '@log'
 import { STORE_KEYS } from '@store/consts'
 import { SecureStore } from '@store/SecureStore'
+import { Buffer } from 'buffer/'
 import { SHA256 } from 'crypto-js'
 
 import { getMintByKeySetId, getProofs, getProofsByMintUrl } from '.'
@@ -126,50 +127,3 @@ export async function getSeedHash() {
 		throw new Error('[getSeedHash] error')
 	}
 }
-
-
-/*
-
-// check "wantSeed" flag (null | 0 | 1)
-
-// if null
-	// prompt user to choose between "yes" and "no"
-
-// if 0
-	// start wallet without seed
-
-// if 1
-	// check for saved counter
-	    // if isNum(counter)
-			// start wallet
-		// if !isNum(counter)
-			// generate new seed
-			// save seed
-			// TODO set counter / migrate old wallets
-			// start wallet
-
-*/
-
-
-
-/* export async function initSeedBackup() {
-	try {
-		const seed = await getSeed()
-
-
-
-		const mnemonic = await getMnemonic()
-		if (!mnemonic) {
-			l('[initSeed] found no mnemonic. Generating new one...')
-			const newMnemonic = generateMnemonic()
-			if (!newMnemonic) { throw new Error('initSeedBackup error') }
-			await saveMnemonic(newMnemonic)
-			
-
-		}
-		
-	} catch (e) {
-		l('[initSeed] error', { e })
-		throw new Error('[initSeed] error')
-	}
-} */

@@ -23,6 +23,7 @@ export const STORE_KEYS = {
 	favs: 'nostr_favs',
 	lud16: 'nostr_lud16',
 	nostrReseted: 'nostr_reseted',
+	sawSeedUpdate: 'saw_seed_update',
 	restoreCounter: 'restore_counter',
 	// secure store keys
 	mnemonic: 'mnemonic',
