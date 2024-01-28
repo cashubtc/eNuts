@@ -19,7 +19,11 @@ export function preventBack(e: TBeforeRemoveEvent, dispatch: (action: any) => vo
 		||
 		(e.data.action.payload && 'name' in e.data.action.payload && e.data.action.payload.name === 'Security settings')
 		||
+		(e.data.action.payload && 'name' in e.data.action.payload && e.data.action.payload.name === 'General settings')
+		||
 		(e.data.action.payload && 'name' in e.data.action.payload && e.data.action.payload.name === 'Address book')
+		||
+		(e.data.action.payload && 'name' in e.data.action.payload && e.data.action.payload.name === 'Seed')
 	) {
 		dispatch(e.data.action)
 	}

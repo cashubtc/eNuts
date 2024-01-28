@@ -1,9 +1,10 @@
-import { SwapIcon } from '@comps/Icons'
+import { BackupIcon, BoltIcon, LeafIcon, LeftArrow } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { ISeedPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { l } from '@src/logger'
+import { H_Colors } from '@src/styles/colors'
 import { mainColors } from '@styles'
 import { SafeAreaView, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
@@ -14,50 +15,57 @@ import { s, ScaledSheet, vs } from 'react-native-size-matters'
 // TODO Seed screen from options
 // TODO Restore screen
 
-export default function SeedScreen({ navigation, route }: ISeedPageProps) {
+export default function SeedScreen({ navigation, route: { params } }: ISeedPageProps) {
 
 	const { color } = useThemeContext()
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
-			<View style={{ height: '50%', alignItems: 'center', justifyContent: 'center' }}>
+			<View style={{ height: '40%', alignItems: 'center', justifyContent: 'center' }}>
 				<Txt
-					txt='Wallet setup'
-					styles={[{ fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: s(20) }]}
+					txt='Seed Backup'
+					styles={[{ fontSize: 36, textAlign: 'center', marginBottom: s(20) }]}
 				/>
 			</View>
-
+			{!params?.comingFromOnboarding &&
+				<TouchableOpacity
+					style={{ padding: s(20) }}
+					onPress={() => navigation.navigate('Security settings')}
+				>
+					<LeftArrow color={color.TEXT} />
+				</TouchableOpacity>
+			}
 			<View style={[styles.wrapContainer, { backgroundColor: color.DRAWER }]}>
 				<TouchableOpacity
 					onPress={() => l('new wallet with seed')}
 				>
 					<View style={styles.action}>
 						<View style={{ minWidth: s(40) }}>
-							<SwapIcon width={s(22)} height={s(22)} color={mainColors.ZAP} />
+							<LeafIcon width={s(22)} height={s(22)} color={mainColors.VALID} />
 						</View>
 						<View>
-							<Txt txt='New wallet with seed' bold />
+							<Txt txt='Secure Wallet' bold />
 							<Txt
-								txt='Generate a backup seed and create a new wallet.'
+								txt='Generate and write down a backup seed to secure your wallet.'
 								styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
 							/>
 						</View>
 					</View>
 				</TouchableOpacity>
 				<Separator style={[styles.separator]} />
-				{route.params?.comingFromOnboarding &&
+				{params?.comingFromOnboarding &&
 					<>
 						<TouchableOpacity
 							onPress={() => navigation.navigate('auth', { pinHash: '' })}
 						>
 							<View style={styles.action}>
 								<View style={{ minWidth: s(40) }}>
-									<SwapIcon width={s(22)} height={s(22)} color={mainColors.ZAP} />
+									<BoltIcon width={s(25)} height={s(25)} color={H_Colors.Sky} />
 								</View>
 								<View>
-									<Txt txt='New wallet without seed' bold />
+									<Txt txt='Quick Wallet' bold />
 									<Txt
-										txt='Create a new wallet without a backup seed. You can generate a seed later.'
+										txt='Create a new wallet instantly. Backup seed can be generated later.'
 										styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
 									/>
 								</View>
@@ -71,12 +79,12 @@ export default function SeedScreen({ navigation, route }: ISeedPageProps) {
 				>
 					<View style={styles.action}>
 						<View style={{ minWidth: s(40) }}>
-							<SwapIcon width={s(22)} height={s(22)} color={mainColors.ZAP} />
+							<BackupIcon width={s(21)} height={s(21)} color={H_Colors.Nuts} />
 						</View>
 						<View>
-							<Txt txt='Restore wallet' bold />
+							<Txt txt='Recover Existing Wallet' bold />
 							<Txt
-								txt='Restore your wallet using a backup seed.'
+								txt='Use a backup seed to restore your wallet.'
 								styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
 							/>
 						</View>

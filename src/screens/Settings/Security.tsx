@@ -1,4 +1,4 @@
-import { FlagIcon, KeyIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
+import { BackupIcon, FlagIcon, KeyIcon, LeafIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import { appVersion } from '@consts/env'
@@ -9,8 +9,9 @@ import BottomNav from '@nav/BottomNav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { secureStore } from '@store'
-import { SECURESTORE_KEY } from '@store/consts'
+import { l } from '@src/logger'
+import { secureStore, store } from '@store'
+import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
 import { isNull } from '@util'
 import { useEffect, useState } from 'react'
@@ -25,6 +26,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 	const { color } = useThemeContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const [pin, setPin] = useState<string | null>(null)
+	const [hasSeed, setHasSeed] = useState(false)
 	const handleBackup = async () => {
 		try {
 			const proofs = await getProofs()
@@ -38,15 +40,19 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 			openPromptAutoClose({ msg: t('backupErr') })
 		}
 	}
-	const handlePin = async () => {
+	const init = async () => {
 		const pinHash = await secureStore.get(SECURESTORE_KEY)
+		const restoreCounter = await store.get(STORE_KEYS.restoreCounter)
 		setPin(isNull(pinHash) ? '' : pinHash)
+		setHasSeed(!!restoreCounter)
 	}
-	useEffect(() => void handlePin(), [])
+	useEffect(() => {
+		void init()
+	}, [])
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const focusHandler = navigation.addListener('focus', async () => {
-			await handlePin()
+			await init()
 		})
 		return focusHandler
 	}, [navigation])
@@ -82,6 +88,22 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 							hasSeparator
 						/>
 					}
+					<MenuItem
+						txt={hasSeed ? 'Restore Wallet' : 'Seed Backup'}
+						icon={
+							hasSeed ?
+								<BackupIcon width={s(22)} height={s(22)} color={color.TEXT} />
+								:
+								<LeafIcon width={s(22)} height={s(22)} color={color.TEXT} />
+						}
+						onPress={() => {
+							if (hasSeed) {
+								return l('restore wallet')
+							}
+							navigation.navigate('Seed')
+						}}
+						hasSeparator
+					/>
 					<MenuItem
 						txt={t('createBackup')}
 						icon={<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />}
