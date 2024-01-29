@@ -25,10 +25,15 @@ const wallets: { [mintUrl: string]: CashuWallet } = {}
 
 /*
 	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#restore
-	Methods that accept the counter parameter for restore:
 
 	- constructor
+	-> new CashuWallet(mint, keys?, mnemonicOrSeed?): CashuWallet
+	-> Seed is saved in "SecureStore.get(STORE_KEYS.seed)"
 	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#constructor
+
+	----------------------------------------------------------------------------------
+
+	Methods that accept the counter parameter for restore:
 
 	- wallet.receive
 	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#receive
@@ -42,9 +47,6 @@ const wallets: { [mintUrl: string]: CashuWallet } = {}
 	- wallet.payLnInvoice
 	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#payLnInvoice
 
-	-------------------------------- NOT USED ----------------------------------------
-	- wallet.receiveTokenEntry
-	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#receiveTokenEntry
 */
 
 function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string): void {
