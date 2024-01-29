@@ -28,7 +28,7 @@ const wallets: { [mintUrl: string]: CashuWallet } = {}
 
 	- constructor
 	-> new CashuWallet(mint, keys?, mnemonicOrSeed?): CashuWallet
-	-> Seed is saved in "SecureStore.get(STORE_KEYS.seed)"
+	-> Seed is optional and saved in "SecureStore.get(STORE_KEYS.seed)"
 	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#constructor
 
 	----------------------------------------------------------------------------------
