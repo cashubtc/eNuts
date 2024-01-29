@@ -28,7 +28,7 @@ const wallets: { [mintUrl: string]: CashuWallet } = {}
 
 	- constructor
 	-> new CashuWallet(mint, keys?, mnemonicOrSeed?): CashuWallet
-	-> Seed is optional and saved in "SecureStore.get(STORE_KEYS.seed)"
+	-> getSeed() - saveSeed(seed) in "/src/storage/db/backup.ts"
 	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#constructor
 
 	----------------------------------------------------------------------------------
@@ -63,39 +63,9 @@ async function getWallet(mintUrl: string): Promise<CashuWallet> {
 	if (wallets[mintUrl]) { return wallets[mintUrl] }
 	const mint = new CashuMint(mintUrl)
 	l({ mint })
+	// const seed = await getSeed()
 	const keys = await mint.getKeys()
-
-	// let wallet: CashuWallet
-	// let mnemonic: string | undefined | null
-	// let seed = await getSeed()
-	// l({ savedSeed: seed })
-	// if (!seed) {
-	// 	// check if mnemonic has been saved before
-	// 	mnemonic = await getMnemonic()
-	// 	l({ savedMnemonic: mnemonic })
-	// 	if (!isStr(mnemonic)) {
-	// 		mnemonic = generateMnemonic()
-	// 		l({ newGeneratedMnemonic: mnemonic })
-	// 		if (mnemonic) {
-	// 			await saveMnemonic(mnemonic)
-	// 			seed = deriveSeedFromMnemonic(mnemonic)
-	// 			if (seed) {
-	// 				await saveSeed(seed)
-	// 				wallet = new CashuWallet(mint, keys, seed)
-	// 				_setKeys(mintUrl, keys)
-	// 				wallets[mintUrl] = wallet
-	// 				return wallet
-	// 			}
-	// 			wallet = new CashuWallet(mint, keys, seed)
-	// 			_setKeys(mintUrl, keys)
-	// 			wallets[mintUrl] = wallet
-	// 			return wallet
-	// 		}
-	// 	}
-	// 	seed = deriveSeedFromMnemonic(mnemonic)
-	// }
-
-	const wallet = new CashuWallet(mint, keys)
+	const wallet = new CashuWallet(mint, keys/* seed */)
 	_setKeys(mintUrl, keys)
 	wallets[mintUrl] = wallet
 	return wallet
