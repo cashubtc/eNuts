@@ -27,6 +27,7 @@
 		"contacts": "Contactos"
 	},
 	"common": {
+		"copy": "Copiar",
 		"recoveryHint": "Escribe o pega tu mnemotecnia de 12 palabras en el orden correcto, separadas por espacios en blanco.",
 		"walletRecovery": "Recuperación",
 		"walletRecoveryHint": "Utiliza una copia de seguridad de la semilla para restaurar tu cartera.",

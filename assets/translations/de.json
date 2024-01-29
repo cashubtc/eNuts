@@ -27,6 +27,7 @@
 		"contacts": "Kontakte"
 	},
 	"common": {
+		"copy": "Kopieren",
 		"recoveryHint": "Schreiben oder fügen Sie Ihren 12-Wort-Mnemonic in der richtigen Reihenfolge ein, getrennt durch Leerzeichen.",
 		"walletRecovery": "Wallet-Wiederherstellung",
 		"walletRecoveryHint": "Verwenden Sie ein Seed-Backup, um Ihre Wallet wiederherzustellen.",

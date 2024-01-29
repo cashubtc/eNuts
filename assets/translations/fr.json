@@ -27,6 +27,7 @@
 		"contacts": "Contacts"
 	},
 	"common": {
+		"copy": "Copier",
 		"recoveryHint": "Écrivez ou collez votre mnémonique de 12 mots dans le bon ordre, séparés par des espaces.",
 		"walletRecovery": "Récupération du wallet",
 		"walletRecoveryHint": "Utilisez une sauvegarde pour restaurer votre portefeuille.",

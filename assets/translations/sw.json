@@ -27,6 +27,7 @@
 		"contacts": "Mawasiliano"
 	},
 	"common": {
+		"copy": "Nakili",
 		"recoveryHint": "Andika au weka neno lako la kumbukumbu la maneno 12 kwa mpangilio sahihi, likitenganishwa na nafasi.",
 		"walletRecovery": "Kurejesha pochi",
 		"walletRecoveryHint": "Tumia hifadhi ya mbegu kurudisha pochi yako.",

@@ -27,6 +27,7 @@
 		"contacts": "Contacts"
 	},
 	"common": {
+		"copy": "Copy",
 		"recoveryHint": "Write or paste your 12-word mnemonic in the right order, separated by blank spaces.",
 		"walletRecovery": "Wallet Recovery",
 		"walletRecoveryHint": "Use a backup seed to restore your wallet.",

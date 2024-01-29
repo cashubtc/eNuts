@@ -27,6 +27,7 @@
 		"contacts": "Névjegyzék"
 	},
 	"common": {
+		"copy": "Másolás",
 		"recoveryHint": "Irja be vagy illessze be a 12 szavas emlékeztetőjét a megfelelő sorrendben, szóközökkel elválasztva.",
 		"walletRecovery": "Tárca helyreállítása",
 		"walletRecoveryHint": "Használd a magmentési kulcsot a pénztárcád helyreállításához.",

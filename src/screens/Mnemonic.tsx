@@ -57,19 +57,19 @@ export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 							<Txt
 								bold
 								txt={`${index + 1}. `}
-								styles={[{ fontSize: 18, color: mainColors.WHITE }]}
+								styles={[{ color: mainColors.WHITE }]}
 							/>
 							<Txt
 								bold
 								txt={item}
-								styles={[{ fontSize: 18, color: mainColors.WHITE }]}
+								styles={[{ color: mainColors.WHITE }]}
 							/>
 						</View>
 					)}
 				/>
 			</View>
 			<Button
-				txt={copied ? 'Copied!' : 'Copy'}
+				txt={copied ? t('copied') : t('copy')}
 				onPress={() => void handleCopyMnemonic()}
 			/>
 			<View style={styles.actionWrap}>
@@ -98,11 +98,12 @@ export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 const styles = ScaledSheet.create({
 	headerWrap: {
 		padding: '20@s',
+		paddingTop: isIOS ? '20@s' : '40@s',
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	header: {
-		fontSize: '36@s',
+		fontSize: '32@s',
 		textAlign: 'center',
 		marginBottom: 0
 	},
@@ -128,6 +129,6 @@ const styles = ScaledSheet.create({
 		padding: '10@s',
 		rowGap: '10@s',
 		borderRadius: '10@s',
-		marginBottom: '10@s'
+		marginBottom: '20@s'
 	},
 })
