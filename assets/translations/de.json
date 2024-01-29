@@ -35,7 +35,7 @@
 		"secureWallet": "Sichere Wallet",
 		"secureWalletHint": "Generieren Sie und notieren Sie ein Seed-Backup, um Ihre Wallet zu sichern.",
 		"quickWallet": "Schnelle Wallet",
-		"quickWalletHint": "Erstellen Sie sofort eine neue Wallet. Der Backup-Seed kann später generiert werden.",
+		"quickWalletHint": "Erstellen Sie sofort eine neue Wallet. Der Seed-Backup kann später generiert werden.",
 		"skipSeedHint": "Sie können diesen Prozess überspringen und später ein Seed-Backup generieren.",
 		"mnemonicHint": "Die Seed-Phrase wird nie wieder angezeigt. Schreiben Sie sie auf und teilen Sie sie niemals mit jemandem.",
 		"confirmMnemonicErr": "Falsches Wort! Stellen Sie sicher, dass Sie Ihre Seed-Phrase korrekt und in der richtigen Reihenfolge aufschreiben.",

@@ -15,7 +15,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 			pages={[
 				{
 					backgroundColor: H_Colors.Default,
-					image: <Logo size={s(180)} />,
+					image: <Logo size={s(130)} />,
 					title: 'eNuts & Ecash',
 					subtitle: t('explainer1'),
 				},
@@ -48,13 +48,13 @@ const styles = ScaledSheet.create({
 	title: { fontSize: '28@vs', fontWeight: '500' },
 	subTitle: { fontSize: '16@vs' },
 	cashuImg: {
-		width: '200@s',
-		height: '200@vs',
+		width: '130@s',
+		height: '130@vs',
 		resizeMode: 'contain'
 	},
 	sendReceiveImg: {
-		width: '380@s',
-		height: '250@vs',
+		width: '300@s',
+		height: '170@vs',
 		resizeMode: 'contain'
 	}
 })
