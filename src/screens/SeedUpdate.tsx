@@ -1,25 +1,28 @@
-import { BoltIcon, LeafIcon } from '@comps/Icons'
+import { ExitIcon, LeafIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { ISeedUpdatePageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { store } from '@src/storage/store'
 import { STORE_KEYS } from '@src/storage/store/consts'
 import { mainColors } from '@styles'
 import { H_Colors } from '@styles/colors'
+import { useTranslation } from 'react-i18next'
 import { SafeAreaView, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SeedUpdateScreen({ navigation }: ISeedUpdatePageProps) {
 
+	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
-			<View style={{ height: '40%', alignItems: 'center', justifyContent: 'center' }}>
+			<View style={styles.header}>
 				<Txt
-					txt='Seed Backup'
-					styles={[{ fontSize: 36, textAlign: 'center', marginBottom: s(20) }]}
+					txt={t('seedBackup')}
+					styles={[styles.headerTxt]}
 				/>
 			</View>
 			<View style={[styles.wrapContainer, { backgroundColor: color.DRAWER }]}>
@@ -30,13 +33,13 @@ export default function SeedUpdateScreen({ navigation }: ISeedUpdatePageProps) {
 					}}
 				>
 					<View style={styles.action}>
-						<View style={{ minWidth: s(40) }}>
+						<View style={styles.optionIcon}>
 							<LeafIcon width={s(22)} height={s(22)} color={mainColors.VALID} />
 						</View>
 						<View>
-							<Txt txt='Secure Wallet' bold />
+							<Txt txt={t('secureWallet')} bold />
 							<Txt
-								txt='Generate and write down a seed backup to secure your wallet. Recommended.'
+								txt={t('secureWalletHint')}
 								styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
 							/>
 						</View>
@@ -50,13 +53,13 @@ export default function SeedUpdateScreen({ navigation }: ISeedUpdatePageProps) {
 					}}
 				>
 					<View style={styles.action}>
-						<View style={{ minWidth: s(40) }}>
-							<BoltIcon width={s(25)} height={s(25)} color={H_Colors.Sky} />
+						<View style={styles.optionIcon}>
+							<ExitIcon color={H_Colors.Sky} />
 						</View>
 						<View>
-							<Txt txt='Will do later' bold />
+							<Txt txt={t('willDoLater')} bold />
 							<Txt
-								txt='You can skip this process and generated a seed backup later.'
+								txt={t('skipSeedHint')}
 								styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
 							/>
 						</View>
@@ -73,6 +76,19 @@ const styles = ScaledSheet.create({
 		paddingVertical: '20@vs',
 		marginBottom: '20@vs',
 		paddingRight: '40@s',
+	},
+	header: {
+		height: '40%',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	headerTxt: {
+		fontSize: '36@s',
+		textAlign: 'center',
+		marginBottom: '20@s'
+	},
+	optionIcon: {
+		minWidth: '40@s',
 	},
 	action: {
 		flexDirection: 'row',

@@ -88,7 +88,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 						/>
 					}
 					<MenuItem
-						txt={hasSeed ? 'Recover Existing Wallet' : 'Seed Backup'}
+						txt={hasSeed ? t('walletRecovery') : t('seedBackup')}
 						icon={
 							hasSeed ?
 								<BackupIcon width={s(22)} height={s(22)} color={color.TEXT} />

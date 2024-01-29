@@ -14,7 +14,7 @@ import { globals } from '@styles'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, Text, type TextInput, TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import { ScaledSheet } from 'react-native-size-matters'
 
 export default function RecoverScreen({ navigation }: IRecoverPageProps) {
 
@@ -53,25 +53,26 @@ export default function RecoverScreen({ navigation }: IRecoverPageProps) {
 
 	return (
 		<Screen
-			screenName='Seed Recovery'
+			screenName={t('walletRecovery')}
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<View style={{ flex: 1, justifyContent: 'space-between' }}>
-				<Txt txt='Enter or paste your 12-word mnemonic, separated by spaces.' styles={[styles.hint]} bold />
+			<View style={styles.container}>
+				<Txt txt={t('recoveryHint')} styles={[styles.hint]} bold />
 				<KeyboardAvoidingView
 					behavior={isIOS ? 'padding' : undefined}
 					style={styles.actionWrap}
 				>
 					<View style={{ position: 'relative' }}>
 						<TxtInput
+							multiline
 							innerRef={inputRef}
-							placeholder='12-word mnemonic'
+							placeholder={t('12WordMnemonic')}
 							onChangeText={text => setInput(text)}
 							onSubmitEditing={() => void handleBtnPress()}
 							autoFocus
 							ms={200}
-							style={{ paddingRight: s(90) }}
+							style={[styles.multilineInput]}
 						/>
 						{/* Paste / Clear Input */}
 						<TouchableOpacity
@@ -85,7 +86,7 @@ export default function RecoverScreen({ navigation }: IRecoverPageProps) {
 					</View>
 					<Button
 						disabled={!input.length}
-						txt='Start recovery'
+						txt={t('confirm')}
 						onPress={() => void handleBtnPress()}
 						icon={loading ? <Loading size={20} /> : undefined}
 					/>
@@ -97,6 +98,10 @@ export default function RecoverScreen({ navigation }: IRecoverPageProps) {
 }
 
 const styles = ScaledSheet.create({
+	container: {
+		flex: 1,
+		justifyContent: 'space-between'
+	},
 	wrapContainer: {
 		borderRadius: 20,
 		paddingVertical: '20@vs',
@@ -122,11 +127,21 @@ const styles = ScaledSheet.create({
 	},
 	pasteInputTxtWrap: {
 		position: 'absolute',
-		right: '10@s',
-		top: '10@vs',
+		left: 0,
+		right: 0,
+		marginLeft: 'auto',
+		marginRight: 'auto',
+		bottom: '10@vs',
 		padding: '10@s',
+		borderBottomLeftRadius: 25,
+		borderBottomRightRadius: 25,
 	},
 	placeholder: {
 		height: '100@vs',
+	},
+	multilineInput: {
+		height: '120@s',
+		borderRadius: 25,
+		paddingBottom: '40@s'
 	}
 })

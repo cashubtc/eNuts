@@ -9,15 +9,18 @@ import { saveSeed } from '@db/backup'
 import type { IConfirmMnemonicPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getPinpadBg, mainColors } from '@styles'
 import { createRef, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, type TextInput, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMnemonicPageProps) {
 
+	const { t } = useTranslation([NS.common])
 	const { highlight } = useThemeContext()
 	const [input, setInput] = useState('')
 	const inputRef = createRef<TextInput>()
@@ -29,7 +32,7 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 		if (!input.length || loading) { return }
 		if (input !== route.params.mnemonic[randomInt]) {
 			openPromptAutoClose({
-				msg: 'Wrong word! Please make sure to write down your seed phrase correctly in the right order.',
+				msg: t('confirmMnemonicErr'),
 				success: false,
 				ms: 5000,
 			})
@@ -42,7 +45,7 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 		await store.set(STORE_KEYS.restoreCounter, '0')
 		// TODO initialize cashu wallet using the saved seed
 		stopLoading()
-		openPromptAutoClose({ msg: 'Seed recovery enabled!', success: true })
+		openPromptAutoClose({ msg: t('seedEnabled'), success: true })
 		if (route.params.comingFromOnboarding) {
 			return navigation.navigate('auth', { pinHash: '' })
 		}
@@ -59,23 +62,11 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 	}, [])
 
 	return (
-		<Screen
-			screenName='Confirm Seed'
-			noIcons
-		>
+		<Screen noIcons screenName={t('confirm')}>
 			<View style={{ flex: 1, justifyContent: 'space-between' }}>
 				<View style={{ alignItems: 'center' }}>
-					<Txt txt='Please confirm your seed by typing in the correct word.' styles={[styles.hint]} bold />
-					<View
-						style={{
-							backgroundColor: getPinpadBg(highlight),
-							padding: s(10),
-							borderRadius: s(10),
-							width: '50%',
-							flexDirection: 'row',
-							alignItems: 'center',
-						}}
-					>
+					<Txt txt={t('confirmSeed')} styles={[styles.hint]} bold />
+					<View style={[styles.seedWord, { backgroundColor: getPinpadBg(highlight) }]}>
 						<Txt
 							bold
 							txt={`${randomInt + 1}. `}
@@ -88,7 +79,7 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 						/>
 					</View>
 					<TxtButton
-						txt='Show seed again'
+						txt={t('showSeed')}
 						onPress={() => navigation.goBack()}
 						style={[{ marginTop: s(-10) }]}
 					/>
@@ -106,8 +97,8 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 						ms={200}
 					/>
 					<Button
-						disabled={!input.length}
-						txt={loading ? 'Confirming...' : 'Confirm'}
+						disabled={!input.length || loading}
+						txt={t('confirm')}
 						onPress={() => void handleConfirm()}
 					/>
 					{isIOS && <View style={styles.placeholder} />}
@@ -127,5 +118,12 @@ const styles = ScaledSheet.create({
 	},
 	placeholder: {
 		height: '100@vs',
-	}
+	},
+	seedWord: {
+		padding: '10@s',
+		borderRadius: '10@s',
+		width: '50%',
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
 })

@@ -6,13 +6,16 @@ import { isIOS } from '@consts'
 import { generateMnemonic } from '@db/backup'
 import type { IMnemonicPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { getPinpadBg, mainColors } from '@styles'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FlatList, SafeAreaView, View } from 'react-native'
-import { s } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 
+	const { t } = useTranslation([NS.common])
 	const { highlight } = useThemeContext()
 	const [mnemonic, setMnemonic] = useState<string>()
 	const { copy, copied } = useCopy()
@@ -30,29 +33,26 @@ export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: mainColors.VALID }}>
-			<View style={{ padding: s(20), alignItems: 'center', justifyContent: 'center' }}>
+			<View style={styles.headerWrap}>
 				<Txt
-					txt='Seed Phrase'
-					styles={[{ fontSize: 36, textAlign: 'center', marginBottom: 0, color: mainColors.WHITE }]}
+					txt={t('seedBackup')}
+					styles={[styles.header, { color: mainColors.WHITE }]}
 				/>
 			</View>
-			<View style={{ paddingHorizontal: s(20) }}>
+			<View style={styles.content}>
 				<FlatList
 					data={mnemonic?.split(' ')}
 					numColumns={2}
 					keyExtractor={(_item, index) => index.toString()}
 					renderItem={({ item, index }) => (
 						<View
-							style={{
-								backgroundColor: getPinpadBg(highlight),
-								padding: s(10),
-								marginBottom: s(10),
-								marginRight: index % 2 === 0 ? s(10) : 0,
-								borderRadius: s(10),
-								width: '48%',
-								flexDirection: 'row',
-								alignItems: 'center',
-							}}
+							style={[
+								styles.mnemonicWord,
+								{
+									backgroundColor: getPinpadBg(highlight),
+									marginRight: index % 2 === 0 ? s(10) : 0
+								}
+							]}
 						>
 							<Txt
 								bold
@@ -72,25 +72,62 @@ export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 				txt={copied ? 'Copied!' : 'Copy'}
 				onPress={() => void handleCopyMnemonic()}
 			/>
-			<View style={{ position: 'absolute', bottom: isIOS ? s(40) : s(20), width: '100%', paddingHorizontal: s(20) }}>
-				<View style={{ alignItems: 'center', padding: s(10), rowGap: s(10), backgroundColor: getPinpadBg(highlight), borderRadius: s(10), marginBottom: s(20) }}>
+			<View style={styles.actionWrap}>
+				<View style={[styles.warnContainer, { backgroundColor: getPinpadBg(highlight) }]}>
 					<ExclamationIcon color={mainColors.ERROR} />
 					<Txt
 						center
 						bold
-						txt='The seed phrase will never be shown again. Write it down and never share it with anyone.'
+						txt={t('mnemonicHint')}
 						styles={[{ color: mainColors.WHITE }]}
 					/>
 				</View>
 				<Button
 					border
-					txt='Continue'
+					txt={t('continue')}
 					onPress={() => {
 						if (!mnemonic) { return }
-						navigation.navigate('Confirm Mnemonic', { mnemonic: mnemonic.split(' ')})
+						navigation.navigate('Confirm Mnemonic', { mnemonic: mnemonic.split(' ') })
 					}}
 				/>
 			</View>
 		</SafeAreaView>
 	)
 }
+
+const styles = ScaledSheet.create({
+	headerWrap: {
+		padding: '20@s',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	header: {
+		fontSize: '36@s',
+		textAlign: 'center',
+		marginBottom: 0
+	},
+	content: {
+		paddingHorizontal: '20@s',
+	},
+	mnemonicWord: {
+		padding: '10@s',
+		marginBottom: '10@s',
+		borderRadius: '10@s',
+		width: '48%',
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	actionWrap: {
+		position: 'absolute',
+		bottom: isIOS ? '40@s' : '20@s',
+		width: '100%',
+		paddingHorizontal: '20@s'
+	},
+	warnContainer: {
+		alignItems: 'center',
+		padding: '10@s',
+		rowGap: '10@s',
+		borderRadius: '10@s',
+		marginBottom: '10@s'
+	},
+})
