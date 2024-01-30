@@ -12,12 +12,13 @@ import {
 	delInvoice, getAllInvoices, getInvoice,
 	getMintsBalances, getMintsUrls
 } from '@db'
+import { getCounter, getSeed, incrementCounter } from '@db/backup'
 import { l } from '@log'
 import type { IInvoice, ITokenInfo } from '@model'
 import { getCustomMintNames } from '@store/mintStore'
 import { decodeLnInvoice, isCashuToken, isNum } from '@util'
 
-import { sumProofsValue } from './proofs'
+import { sumProofsValue, sumTokenProofs } from './proofs'
 import { getProofsToUse } from './util'
 
 const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
@@ -63,9 +64,9 @@ async function getWallet(mintUrl: string): Promise<CashuWallet> {
 	if (wallets[mintUrl]) { return wallets[mintUrl] }
 	const mint = new CashuMint(mintUrl)
 	l({ mint })
-	// const seed = await getSeed()
+	const seed = await getSeed()
 	const keys = await mint.getKeys()
-	const wallet = new CashuWallet(mint, keys/* seed */)
+	const wallet = new CashuWallet(mint, keys, seed)
 	_setKeys(mintUrl, keys)
 	wallets[mintUrl] = wallet
 	return wallet
@@ -130,22 +131,29 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
 	const mintUrls = tokenEntries.map(x => x.mint).filter(x => x)
 	if (!mintUrls?.length) { return false }
 	const wallet = await getWallet(mintUrls[0])
-	const { token, tokensWithErrors, newKeys } = await wallet.receive(encodedToken)
-	if (newKeys) { _setKeys(mintUrls[0], newKeys) }
-	l('[claimToken]', { token, tokensWithErrors }, getEncodedToken(token))
-	await addToken(token)
-	if (tokensWithErrors) {
-		if (await isTokenSpendable(getEncodedToken(tokensWithErrors))) {
-			l('[claimToken][tokensWithErrors]', tokensWithErrors)
-			await addToken(tokensWithErrors)
+	const counter = await getCounter()
+	try {
+		const { token, tokensWithErrors, newKeys } = await wallet.receive(encodedToken, undefined, counter)
+		if (newKeys) { _setKeys(mintUrls[0], newKeys) }
+		l('[claimToken]', { token, tokensWithErrors }, getEncodedToken(token))
+		await addToken(token)
+		if (tokensWithErrors) {
+			if (await isTokenSpendable(getEncodedToken(tokensWithErrors))) {
+				l('[claimToken][tokensWithErrors]', tokensWithErrors)
+				await addToken(tokensWithErrors)
+			}
 		}
+		for (const mint of mintUrls) {
+			// eslint-disable-next-line no-await-in-loop
+			await addMint(mint)
+		}
+		if (!token?.token?.length) { return false }
+		await incrementCounter(sumTokenProofs(token))
+		return true
+	} catch (e) {
+		l('[claimToken] error', { e })
+		return false
 	}
-	for (const mint of mintUrls) {
-		// eslint-disable-next-line no-await-in-loop
-		await addMint(mint)
-	}
-	if (!token?.token?.length) { return false }
-	return true
 }
 export async function requestMint(mintUrl: string, amount: number): Promise<RequestMintResponse> {
 	const wallet = await getWallet(mintUrl)
@@ -158,11 +166,18 @@ export async function requestMint(mintUrl: string, amount: number): Promise<Requ
 export async function requestToken(mintUrl: string, amount: number, hash: string): Promise<{ success: boolean; invoice: IInvoice | null | undefined }> {
 	const invoice = await getInvoice(hash)
 	const wallet = await getWallet(mintUrl)
-	const { proofs, newKeys } = await wallet.requestTokens(amount, hash)
-	l('[requestToken]', { proofs, mintUrl, amount, hash })
-	if (newKeys) { _setKeys(mintUrl, newKeys) }
-	await addToken({ token: [{ mint: mintUrl, proofs }] })
-	await delInvoice(hash)
+	const counter = await getCounter()
+	try {
+		const { proofs, newKeys } = await wallet.requestTokens(amount, hash, undefined, counter)
+		l('[requestToken]', { proofs, mintUrl, amount, hash })
+		if (newKeys) { _setKeys(mintUrl, newKeys) }
+		await addToken({ token: [{ mint: mintUrl, proofs }] })
+		await delInvoice(hash)
+		await incrementCounter(proofs.length)
+	} catch (e) {
+		l('[requestToken] error: ', e)
+		return { success: false, invoice }
+	}
 	return { success: true, invoice }
 }
 
@@ -175,15 +190,18 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 		const { proofsToUse } = await getProofsToUse(mintUrl, amountToPay)
 		proofs = proofsToUse
 	}
-	if (sumProofsValue(proofs) > amountToPay) {
-		l('[payLnInvoce] use send ', { amountToPay, amount, fee, proofs: sumProofsValue(proofs) })
-		const { send, returnChange, newKeys } = await wallet.send(amountToPay, proofs)
-		if (newKeys) { _setKeys(mintUrl, newKeys) }
-		if (returnChange?.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
-		if (send?.length) { await deleteProofs(proofs) }
-		proofs = send
-	}
 	try {
+		if (sumProofsValue(proofs) > amountToPay) {
+			l('[payLnInvoce] use send ', { amountToPay, amount, fee, proofs: sumProofsValue(proofs) })
+			const counter = await getCounter()
+			const { send, returnChange, newKeys } = await wallet.send(amountToPay, proofs, undefined, counter)
+			if (newKeys) { _setKeys(mintUrl, newKeys) }
+			if (returnChange?.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
+			if (send?.length) { await deleteProofs(proofs) }
+			// await incrementCounter()
+			proofs = send
+		}
+		// pray to god
 		l({ fee, sum: sumProofsValue(proofs) })
 		const result = await wallet.payLnInvoice(invoice, proofs, fee)
 		if (result?.newKeys) { _setKeys(mintUrl, result.newKeys) }
