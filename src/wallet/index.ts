@@ -69,6 +69,7 @@ async function getWallet(mintUrl: string): Promise<CashuWallet> {
 	const mint = new CashuMint(mintUrl)
 	l({ mint })
 	const seed = await getSeed()
+	l({ seedBeforeNewWallet: seed })
 	const keys = await mint.getKeys()
 	const wallet = new CashuWallet(mint, keys, seed)
 	_setKeys(mintUrl, keys)
@@ -296,7 +297,7 @@ export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: strin
 	}
 }
 
-export async function recoverWallet(mintUrl: string, mnemonic: string) {
+export async function restoreWallet(mintUrl: string, mnemonic: string) {
 	try {
 		const mint = new CashuMint(mintUrl)
 		l({ mint })
@@ -309,6 +310,7 @@ export async function recoverWallet(mintUrl: string, mnemonic: string) {
 		// TODO test
 		const resp = await wallet.restore(0, 10)
 		l('[recoverWallet] wallet.restore response: ', { resp })
+		// TODO check for proofs spent
 		return resp
 	} catch (e) {
 		l('[recoverWallet] error', { e })
@@ -329,7 +331,9 @@ export async function incrementCounterByMintUrl(mintUrl: string, count: number) 
 		}
 		const parsedCounters = cTo<ICounters>(counters)
 		const keysetId = await getMintCurrentKeySetId(mintUrl)
+		l('[before increment] ', { keysetId, counter: parsedCounters[keysetId] })
 		parsedCounters[keysetId] = (parsedCounters[keysetId] || 0) + count
+		l('[after increment] ', { keysetId, counter: parsedCounters[keysetId] })
 		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
 	} catch (e) {
 		l('[incrementCounterByKeysetId] Error during counter increment: ', e)
@@ -340,18 +344,21 @@ export async function incrementCounterByMintUrl(mintUrl: string, count: number) 
 export async function getCounterByMintUrl(mintUrl: string) {
 	try {
 		const counters = await store.get(STORE_KEYS.restoreCounter)
-		if (!counters) { return }
-		const parsedCounters = cTo<ICounters>(counters)
 		const keysetId = await getMintCurrentKeySetId(mintUrl)
-		if (!parsedCounters[keysetId]) {
-			parsedCounters[keysetId] = 0
+		if (!counters) {
+			// store counters for current keyset of mint url passed as param
+			await store.set(STORE_KEYS.restoreCounter, toJson({ [keysetId]: 0 }))
+			return 0
 		}
+		const parsedCounters = cTo<ICounters>(counters)
+		l('[getCounterByMintUrl] ', { storedCounters: parsedCounters })
+		if (!parsedCounters[keysetId]) { parsedCounters[keysetId] = 0 }
 		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
-		l('[getCounterByKeysetId] ', { keysetId, counter: parsedCounters[keysetId] })
+		l('[getCounterByMintUrl] ', { keysetId, counter: parsedCounters[keysetId] })
 		return parsedCounters[keysetId]
 	} catch (e) {
-		l('[getCounterByKeysetId] Error while getCounter: ', e)
-		throw Error('[getCounterByKeysetId] Error while getCounter')
+		l('[getCounterByMintUrl] Error while getCounter: ', e)
+		throw Error('[getCounterByMintUrl] Error while getCounter')
 	}
 }
 
