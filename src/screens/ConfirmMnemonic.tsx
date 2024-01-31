@@ -5,7 +5,7 @@ import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
-import { saveSeed } from '@db/backup'
+import { saveMnemonic, saveSeed } from '@db/backup'
 import type { IConfirmMnemonicPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
@@ -39,7 +39,9 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 			return setInput('')
 		}
 		startLoading()
-		const seed = deriveSeedFromMnemonic(route.params.mnemonic.join(' '))
+		const mnemonic = route.params.mnemonic.join(' ')
+		await saveMnemonic(mnemonic)
+		const seed = deriveSeedFromMnemonic(mnemonic)
 		await saveSeed(seed)
 		// create counter in store for seed recovery
 		await store.set(STORE_KEYS.restoreCounter, '0')

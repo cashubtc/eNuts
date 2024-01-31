@@ -9,14 +9,16 @@ import type { IRecoverPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { l } from '@src/logger'
-import { getStrFromClipboard } from '@src/util'
 import { globals } from '@styles'
+import { getStrFromClipboard } from '@util'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, Text, type TextInput, TouchableOpacity, View } from 'react-native'
-import { ScaledSheet } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
-export default function RecoverScreen({ navigation }: IRecoverPageProps) {
+export default function RecoverScreen({ navigation, route }: IRecoverPageProps) {
+
+	l({ recoveryMintUrl: route.params.mintUrl })
 
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
@@ -26,9 +28,9 @@ export default function RecoverScreen({ navigation }: IRecoverPageProps) {
 	const inputRef = createRef<TextInput>()
 
 	const handleBtnPress = () => {
-		if (loading) { return }
-		// TODO navigate to loading screen and send restore request
-		l('request seed recovery', input)
+		if (loading || !input.length) { return }
+		l('request seed recovery. User input mnemonic: ', input)
+		navigation.navigate('Recovering', { mintUrl: route.params.mintUrl, mnemonic: input })
 	}
 
 	const handleInputLabelPress = async () => {
@@ -58,11 +60,8 @@ export default function RecoverScreen({ navigation }: IRecoverPageProps) {
 			handlePress={() => navigation.goBack()}
 		>
 			<View style={styles.container}>
-				<Txt txt={t('recoveryHint')} styles={[styles.hint]} bold />
-				<KeyboardAvoidingView
-					behavior={isIOS ? 'padding' : undefined}
-					style={styles.actionWrap}
-				>
+				<View style={{ paddingHorizontal: s(20) }}>
+					<Txt txt={t('recoveryHint')} styles={[styles.hint]} bold />
 					<View style={{ position: 'relative' }}>
 						<TxtInput
 							multiline
@@ -84,6 +83,11 @@ export default function RecoverScreen({ navigation }: IRecoverPageProps) {
 							</Text>
 						</TouchableOpacity>
 					</View>
+				</View>
+				<KeyboardAvoidingView
+					behavior={isIOS ? 'padding' : undefined}
+					style={styles.actionWrap}
+				>
 					<Button
 						disabled={!input.length}
 						txt={t('confirm')}
@@ -119,7 +123,6 @@ const styles = ScaledSheet.create({
 		marginTop: '20@vs'
 	},
 	hint: {
-		paddingHorizontal: '20@s',
 		marginBottom: '20@vs',
 	},
 	actionWrap: {

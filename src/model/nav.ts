@@ -208,7 +208,10 @@ export type RootStackParamList = {
 		comingFromOnboarding?: boolean
 	} | undefined
 	'Seed Update': undefined
-	Recover: undefined
+	'Select recovery mint': undefined
+	Recover: {
+		mintUrl: string
+	}
 	Mnemonic: {
 		comingFromOnboarding?: boolean
 	}
@@ -219,6 +222,10 @@ export type RootStackParamList = {
 	Deriving: {
 		mnemonic: string[]
 		comingFromOnboarding?: boolean
+	}
+	Recovering: {
+		mintUrl: string
+		mnemonic: string
 	}
 }
 
@@ -272,6 +279,8 @@ export type IRecoverPageProps = NativeStackScreenProps<RootStackParamList, 'Reco
 export type IMnemonicPageProps = NativeStackScreenProps<RootStackParamList, 'Mnemonic'>
 export type IConfirmMnemonicPageProps = NativeStackScreenProps<RootStackParamList, 'Confirm Mnemonic'>
 export type IDerivingPageProps = NativeStackScreenProps<RootStackParamList, 'Deriving'>
+export type IRecoveringPageProps = NativeStackScreenProps<RootStackParamList, 'Recovering'>
+export type ISelectRecoveryMintPageProps = NativeStackScreenProps<RootStackParamList, 'Select recovery mint'>
 export type TBottomNavProps =
 	TNostrOnboardingPageProps |
 	TDashboardPageProps |

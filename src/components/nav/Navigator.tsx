@@ -36,9 +36,11 @@ import NpubConfirmScreen from '@screens/QRScan/NpubConfirm'
 import QRProcessingScreen from '@screens/QRScan/QRProcessing'
 import ScanSuccessScreen from '@screens/QRScan/ScanSuccess'
 import RecoverScreen from '@screens/Recover'
+import RecoveringScreen from '@screens/Recovering'
 import ReleaseScreen from '@screens/Release'
 import SeedScreen from '@screens/Seed'
 import SeedUpdateScreen from '@screens/SeedUpdate'
+import SelectRecoveryMintScreen from '@screens/SelectRecoveryMint'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
 import BackupPage from '@screens/Settings/Backup'
@@ -191,6 +193,8 @@ export default function Navigator({
 				<Stack.Screen name='Recover' component={RecoverScreen} />
 				<Stack.Screen name='Mnemonic' component={MnemonicScreen} />
 				<Stack.Screen name='Confirm Mnemonic' component={ConfirmMnemonicScreen} />
+				<Stack.Screen name='Recovering' component={RecoveringScreen} />
+				<Stack.Screen name='Select recovery mint' component={SelectRecoveryMintScreen} />
 			</Stack.Navigator>
 		</View>
 	)

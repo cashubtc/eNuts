@@ -1,5 +1,6 @@
 import {
 	CashuMint, CashuWallet, deriveKeysetId,
+	deriveSeedFromMnemonic,
 	getDecodedToken,
 	getEncodedToken,
 	type GetInfoResponse, type MintKeys,
@@ -12,9 +13,12 @@ import {
 	delInvoice, getAllInvoices, getInvoice,
 	getMintsBalances, getMintsUrls
 } from '@db'
-import { getCounter, getSeed, incrementCounter } from '@db/backup'
+import { getSeed } from '@db/backup'
 import { l } from '@log'
 import type { IInvoice, ITokenInfo } from '@model'
+import { store } from '@src/storage/store'
+import { STORE_KEYS } from '@src/storage/store/consts'
+import { cTo, toJson } from '@src/storage/store/utils'
 import { getCustomMintNames } from '@store/mintStore'
 import { decodeLnInvoice, isCashuToken, isNum } from '@util'
 
@@ -131,7 +135,7 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
 	const mintUrls = tokenEntries.map(x => x.mint).filter(x => x)
 	if (!mintUrls?.length) { return false }
 	const wallet = await getWallet(mintUrls[0])
-	const counter = await getCounter()
+	const counter = await getCounterByMintUrl(mintUrls[0])
 	try {
 		const { token, tokensWithErrors, newKeys } = await wallet.receive(encodedToken, undefined, counter)
 		if (newKeys) { _setKeys(mintUrls[0], newKeys) }
@@ -148,7 +152,7 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
 			await addMint(mint)
 		}
 		if (!token?.token?.length) { return false }
-		await incrementCounter(sumTokenProofs(token))
+		await incrementCounterByMintUrl(mintUrls[0], sumTokenProofs(token))
 		return true
 	} catch (e) {
 		l('[claimToken] error', { e })
@@ -166,14 +170,14 @@ export async function requestMint(mintUrl: string, amount: number): Promise<Requ
 export async function requestToken(mintUrl: string, amount: number, hash: string): Promise<{ success: boolean; invoice: IInvoice | null | undefined }> {
 	const invoice = await getInvoice(hash)
 	const wallet = await getWallet(mintUrl)
-	const counter = await getCounter()
+	const counter = await getCounterByMintUrl(mintUrl)
 	try {
 		const { proofs, newKeys } = await wallet.requestTokens(amount, hash, undefined, counter)
 		l('[requestToken]', { proofs, mintUrl, amount, hash })
 		if (newKeys) { _setKeys(mintUrl, newKeys) }
 		await addToken({ token: [{ mint: mintUrl, proofs }] })
 		await delInvoice(hash)
-		await incrementCounter(proofs.length)
+		await incrementCounterByMintUrl(mintUrl, proofs.length)
 	} catch (e) {
 		l('[requestToken] error: ', e)
 		return { success: false, invoice }
@@ -193,17 +197,19 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 	try {
 		if (sumProofsValue(proofs) > amountToPay) {
 			l('[payLnInvoce] use send ', { amountToPay, amount, fee, proofs: sumProofsValue(proofs) })
-			const counter = await getCounter()
+			const counter = await getCounterByMintUrl(mintUrl)
 			const { send, returnChange, newKeys } = await wallet.send(amountToPay, proofs, undefined, counter)
 			if (newKeys) { _setKeys(mintUrl, newKeys) }
 			if (returnChange?.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
-			if (send?.length) { await deleteProofs(proofs) }
-			// await incrementCounter()
+			if (send?.length) {
+				await deleteProofs(proofs)
+				await incrementCounterByMintUrl(mintUrl, send.length)
+			}
 			proofs = send
 		}
-		// pray to god
 		l({ fee, sum: sumProofsValue(proofs) })
-		const result = await wallet.payLnInvoice(invoice, proofs, fee)
+		const counter = await getCounterByMintUrl(mintUrl)
+		const result = await wallet.payLnInvoice(invoice, proofs, fee, counter)
 		if (result?.newKeys) { _setKeys(mintUrl, result.newKeys) }
 		if (result?.change?.length) { await addToken({ token: [{ mint: mintUrl, proofs: result.change }] }) }
 		if (result.isPaid) { await deleteProofs(proofs) }
@@ -212,6 +218,7 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 			l('######################################## ERROR ####################################')
 			l({ result, fee, realFee, amountToPay, amount, proofs: sumProofsValue(proofs) })
 		}
+		await incrementCounterByMintUrl(mintUrl, proofs.length)
 		return { result, fee, realFee }
 	} catch (error) {
 		await addToken({ token: [{ mint: mintUrl, proofs }] })
@@ -225,12 +232,14 @@ export async function sendToken(mintUrl: string, amount: number, memo: string, p
 		const { proofsToUse } = await getProofsToUse(mintUrl, amount)
 		proofs = proofsToUse
 	}
+	const counter = await getCounterByMintUrl(mintUrl)
 	// will throw if not enough proofs are available
-	const { send, returnChange, newKeys } = await wallet.send(amount, proofs)
+	const { send, returnChange, newKeys } = await wallet.send(amount, proofs, undefined, counter)
 	if (newKeys) { _setKeys(mintUrl, newKeys) }
 	// add change back to db
 	if (returnChange?.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
 	await deleteProofs(proofs)
+	await incrementCounterByMintUrl(mintUrl, send.length)
 	return getEncodedToken({ token: [{ mint: mintUrl, proofs: send }], memo: memo.length > 0 ? memo : 'Sent via eNuts.' })
 }
 
@@ -284,6 +293,65 @@ export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: strin
 		return { payResult, requestTokenResult, estFeeResp: estFee }
 	} catch (e) {
 		return { payResult: undefined, requestTokenResult: undefined }
+	}
+}
+
+export async function recoverWallet(mintUrl: string, mnemonic: string) {
+	try {
+		const mint = new CashuMint(mintUrl)
+		l({ mint })
+		const seed = deriveSeedFromMnemonic(mnemonic)
+		const keys = await mint.getKeys()
+		l({ keysBeforeRestore: keys })
+		const wallet = new CashuWallet(mint, keys, seed)
+		_setKeys(mintUrl, keys)
+		wallets[mintUrl] = wallet
+		// TODO test
+		const resp = await wallet.restore(0, 10)
+		l('[recoverWallet] wallet.restore response: ', { resp })
+		return resp
+	} catch (e) {
+		l('[recoverWallet] error', { e })
+	}
+}
+
+interface ICounters {
+	[key: string]: number
+}
+
+export async function incrementCounterByMintUrl(mintUrl: string, count: number) {
+	try {
+		const seed = await getSeed()
+		if (!seed) { return }
+		const counters = await store.get(STORE_KEYS.restoreCounter)
+		if (!counters) {
+			throw new Error('Seed is available but counters have not been set!')
+		}
+		const parsedCounters = cTo<ICounters>(counters)
+		const keysetId = await getMintCurrentKeySetId(mintUrl)
+		parsedCounters[keysetId] = (parsedCounters[keysetId] || 0) + count
+		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
+	} catch (e) {
+		l('[incrementCounterByKeysetId] Error during counter increment: ', e)
+		throw new Error('[incrementCounterByKeysetId] Error during counter increment')
+	}
+}
+
+export async function getCounterByMintUrl(mintUrl: string) {
+	try {
+		const counters = await store.get(STORE_KEYS.restoreCounter)
+		if (!counters) { return }
+		const parsedCounters = cTo<ICounters>(counters)
+		const keysetId = await getMintCurrentKeySetId(mintUrl)
+		if (!parsedCounters[keysetId]) {
+			parsedCounters[keysetId] = 0
+		}
+		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
+		l('[getCounterByKeysetId] ', { keysetId, counter: parsedCounters[keysetId] })
+		return parsedCounters[keysetId]
+	} catch (e) {
+		l('[getCounterByKeysetId] Error while getCounter: ', e)
+		throw Error('[getCounterByKeysetId] Error while getCounter')
 	}
 }
 

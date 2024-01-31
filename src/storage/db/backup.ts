@@ -5,7 +5,6 @@ import { SecureStore } from '@store/SecureStore'
 import { Buffer } from 'buffer/'
 import { SHA256 } from 'crypto-js'
 
-import { store } from '../store'
 import { getMintByKeySetId, getProofs, getProofsByMintUrl } from '.'
 
 async function _backUpToken(proofs: Proof[]) {
@@ -126,32 +125,5 @@ export async function getSeedHash() {
 	} catch (e) {
 		l('[getSeedHash] error', { e })
 		throw new Error('[getSeedHash] error')
-	}
-}
-
-export async function incrementCounter(count: number) {
-	try {
-		const seed = await getSeed()
-		if (!seed) { return }
-		const counter = await store.get(STORE_KEYS.restoreCounter)
-		if (!counter) {
-			throw new Error('Seed is available but counter is not set!')
-		}
-		await store.set(STORE_KEYS.restoreCounter, `${+counter + count}`)
-
-	} catch (e) {
-		l('[incrementCounter] Error during counter increment: ', { e })
-		throw Error('[incrementCounter] Error during counter increment: ')
-	}
-}
-
-export async function getCounter() {
-	try {
-		const counter = await store.get(STORE_KEYS.restoreCounter)
-		if (!counter) { return }
-		return +counter
-	} catch (e) {
-		l('[getCounter] Error while getCounter: ', { e })
-		throw Error('[getCounter] Error while getCounter')
 	}
 }
