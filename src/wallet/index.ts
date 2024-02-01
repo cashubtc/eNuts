@@ -205,7 +205,7 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 			if (returnChange?.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
 			if (send?.length) {
 				await deleteProofs(proofs)
-				await incrementCounterByMintUrl(mintUrl, send.length)
+				await incrementCounterByMintUrl(mintUrl, send.length + returnChange.length)
 			}
 			proofs = send
 		}
@@ -220,7 +220,7 @@ export async function payLnInvoice(mintUrl: string, invoice: string, fee: number
 			l('######################################## ERROR ####################################')
 			l({ result, fee, realFee, amountToPay, amount, proofs: sumProofsValue(proofs) })
 		}
-		await incrementCounterByMintUrl(mintUrl, proofs.length)
+		await incrementCounterByMintUrl(mintUrl, proofs.length + result.change.length)
 		return { result, fee, realFee }
 	} catch (error) {
 		await addToken({ token: [{ mint: mintUrl, proofs }] })
@@ -241,7 +241,7 @@ export async function sendToken(mintUrl: string, amount: number, memo: string, p
 	// add change back to db
 	if (returnChange?.length) { await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] }) }
 	await deleteProofs(proofs)
-	await incrementCounterByMintUrl(mintUrl, send.length)
+	await incrementCounterByMintUrl(mintUrl, send.length + returnChange.length)
 	return getEncodedToken({ token: [{ mint: mintUrl, proofs: send }], memo: memo.length > 0 ? memo : 'Sent via eNuts.' })
 }
 
@@ -313,11 +313,15 @@ async function restoreInterval(wallet: CashuWallet) {
 			overshoot++
 			return restoreInterval(wallet)
 		}
-		return {
+		const returnVal = {
 			proofs: restoredProofs,
 			lastCount: to,
 			newKeys: resp.newKeys,
 		}
+		overshoot = 0
+		from = 0
+		to = RESTORE_INTERVAL + 1
+		return returnVal
 	} catch (e) {
 		l('[restoreInterval] error', { e })
 	}
