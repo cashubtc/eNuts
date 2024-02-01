@@ -60,6 +60,7 @@
 		"cashOutFromMint": "Retirar efectivo de la ceca",
 		"change": "Cambiar",
 		"claimed": "reclamado",
+		"restored": "restaurado",
 		"claimSuccess": "Reclamado {{amount}} Sats:\n{{mintUrl}}\nNota: {{memo}}",
 		"claimToken": "Reclamar token",
 		"clear": "Limpiar",

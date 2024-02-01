@@ -1,4 +1,3 @@
-import type { Proof } from '@cashu/cashu-ts'
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import type { IRecoveringPageProps } from '@model/nav'
@@ -6,22 +5,24 @@ import { useThemeContext } from '@src/context/Theme'
 import { l } from '@src/logger'
 import { restoreWallet } from '@src/wallet'
 import { globals } from '@styles'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
-export default function RecoveringScreen({ route }: IRecoveringPageProps) {
+export default function RecoveringScreen({ navigation, route }: IRecoveringPageProps) {
 
 	const { color } = useThemeContext()
 
-	const [recoveredProofs, setRecoveredProofs] = useState<Proof[]>()
-
 	const handleRecovery = async () => {
 		const { mintUrl, mnemonic } = route.params
+		// TODO UI error handling
 		try {
-			const resp = await restoreWallet(mintUrl, mnemonic)
-			setRecoveredProofs(resp?.proofs)
-			// TODO handle recoverWallet response
+			const proofs = await restoreWallet(mintUrl, mnemonic)
+			navigation.navigate('success', {
+				mint: mintUrl,
+				amount: proofs?.reduce((r, c) => r + c.amount, 0),
+				isRestored: true,
+			})
 		} catch (e) {
 			l('[handleRecovery] error: ', e)
 		}
@@ -44,15 +45,6 @@ export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 				styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
 				txt='Please do not close the app during the process. This may take a few seconds...'
 			/>
-			{recoveredProofs && recoveredProofs.length > 0 &&
-				recoveredProofs.map((proof, i) => (
-					<Txt
-						key={i}
-						styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-						txt={`Recovered proof ${i + 1}: ${proof.amount}`}
-					/>
-				))
-			}
 		</View>
 	)
 }

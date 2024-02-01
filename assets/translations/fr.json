@@ -60,6 +60,7 @@
 		"cashOutFromMint": "Retirer de la mint",
 		"change": "Changer",
 		"claimed": "récupéré",
+		"restored": "restauré",
 		"claimSuccess": "{{amount}} Sats récupérés:\n{{mintUrl}}\nNote: {{memo}}",
 		"claimToken": "Obtenir le token",
 		"clear": "Effacer",

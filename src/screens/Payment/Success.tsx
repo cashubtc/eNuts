@@ -29,6 +29,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		isZap,
 		nostr,
 		isScanned,
+		isRestored,
 	} = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
@@ -70,10 +71,13 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 							isAutoSwap ?
 								t('autoSwapSuccess')
 								:
-								!nostr ?
-									<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
+								isRestored ?
+									<>{formatSatStr(amount || 0)} {t('restored')}!</>
 									:
-									null
+									!nostr ?
+										<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
+										:
+										null
 					}
 				</Text>
 				{memo &&

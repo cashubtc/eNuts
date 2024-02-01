@@ -60,6 +60,7 @@
 		"cashOutFromMint": "Cash out from mint",
 		"change": "Change",
 		"claimed": "claimed",
+		"restored": "restored",
 		"claimSuccess": "Claimed {{amount}} Sats:\n{{mintUrl}}\nMemo: {{memo}}",
 		"claimToken": "Claim token",
 		"clear": "Clear",

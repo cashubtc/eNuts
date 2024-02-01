@@ -60,6 +60,7 @@
 		"cashOutFromMint": "Kutoa pesa kutoka sarafu",
 		"change": "Badilisha",
 		"claimed": "imewezeshwa",
+		"restored": "imehifadhiwa",
 		"claimSuccess": "Imewezeshwa {{amount}} Sats:\n{{mintUrl}}\nMaelezo: {{memo}}",
 		"claimToken": "Imewezesha kijenzi",
 		"clear": "Ondoa",

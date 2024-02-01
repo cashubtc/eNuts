@@ -8,12 +8,13 @@ import {
 	type RequestMintResponse
 } from '@cashu/cashu-ts'
 import { _testmintUrl } from '@consts'
+import { RESTORE_INTERVAL } from '@consts/mints'
 import {
 	addInvoice, addMint, addToken, deleteProofs,
 	delInvoice, getAllInvoices, getInvoice,
 	getMintsBalances, getMintsUrls
 } from '@db'
-import { getSeed } from '@db/backup'
+import { getSeed, saveSeed } from '@db/backup'
 import { l } from '@log'
 import type { IInvoice, ITokenInfo } from '@model'
 import { store } from '@src/storage/store'
@@ -297,23 +298,60 @@ export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: strin
 	}
 }
 
+let overshoot = 0
+let from = 0
+let to = RESTORE_INTERVAL
+const restoredProofs: Proof[] = []
+
+async function restoreInterval(wallet: CashuWallet) {
+	try {
+		const resp = await wallet.restore(from, to)
+		if (resp.proofs.length || overshoot < 2) {
+			restoredProofs.push(...resp.proofs)
+			from += RESTORE_INTERVAL
+			to += RESTORE_INTERVAL
+			overshoot++
+			return restoreInterval(wallet)
+		}
+		return {
+			proofs: restoredProofs,
+			lastCount: to,
+			newKeys: resp.newKeys,
+		}
+	} catch (e) {
+		l('[restoreInterval] error', { e })
+	}
+}
+
 export async function restoreWallet(mintUrl: string, mnemonic: string) {
 	try {
 		const mint = new CashuMint(mintUrl)
-		l({ mint })
 		const seed = deriveSeedFromMnemonic(mnemonic)
 		const keys = await mint.getKeys()
-		l({ keysBeforeRestore: keys })
 		const wallet = new CashuWallet(mint, keys, seed)
 		_setKeys(mintUrl, keys)
 		wallets[mintUrl] = wallet
 		// TODO test
-		const resp = await wallet.restore(0, 10)
+		// TODO get previous keysets from mint and try to restore from them
+		// const resp = await wallet.restore(0, RESTORE_INTERVAL)
+		const resp = await restoreInterval(wallet)
+		if (!resp) {
+			l('[restoreWallet] restore interval did not return a proper object!')
+			throw new Error('[restoreWallet] restore interval did not return a proper object!')
+		}
 		l('[recoverWallet] wallet.restore response: ', { resp })
-		// TODO check for proofs spent
-		return resp
+		const proofsSpent = await wallet.checkProofsSpent(resp.proofs)
+		l('[recoverWallet] checkProofsSpent response: ', { proofsSpent })
+		const proofs = resp.proofs.filter(x => !proofsSpent.map(y => y.secret).includes(x.secret))
+		if (resp.newKeys) { _setKeys(mintUrl, resp.newKeys) }
+		await addToken({ token: [{ mint: mintUrl, proofs }] })
+		await saveSeed(seed)
+		// adds counter if not exists
+		await getCounterByMintUrl(mintUrl)
+		await incrementCounterByMintUrl(mintUrl, resp.lastCount)
+		return proofs
 	} catch (e) {
-		l('[recoverWallet] error', { e })
+		l('[restoreWallet] error', { e })
 	}
 }
 

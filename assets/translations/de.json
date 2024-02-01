@@ -60,6 +60,7 @@
 		"cashOutFromMint": "Mint Auszahlung",
 		"change": "Rückgeld",
 		"claimed": "beansprucht",
+		"restored": "wiederhergestellt",
 		"claimSuccess": "{{amount}} Sats erhalten:\n{{mintUrl}}\nMemo: {{memo}}",
 		"claimToken": "Token in Anspruch nehmen",
 		"clear": "Löschen",

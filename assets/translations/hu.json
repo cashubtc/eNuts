@@ -60,6 +60,7 @@
 		"cashOutFromMint": "Kifizetés kérése a verdétől",
 		"change": "Visszajáró",
 		"claimed": "átvéve",
+		"restored": "visszaállítva",
 		"claimSuccess": "Átvéve {{amount}} Sat:\n{{mintUrl}}\nMegj.: {{memo}}",
 		"claimToken": "Token átvétele",
 		"clear": "Törlés",
