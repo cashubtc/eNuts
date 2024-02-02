@@ -5,11 +5,11 @@ import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
-import { saveMnemonic, saveSeed } from '@db/backup'
 import type { IConfirmMnemonicPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { saveSeed } from '@store/restore'
 import { getPinpadBg, mainColors } from '@styles'
 import { createRef, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -38,7 +38,6 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 		}
 		startLoading()
 		const mnemonic = route.params.mnemonic.join(' ')
-		await saveMnemonic(mnemonic)
 		const seed = deriveSeedFromMnemonic(mnemonic)
 		await saveSeed(seed)
 		stopLoading()

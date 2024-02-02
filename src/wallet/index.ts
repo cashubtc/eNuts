@@ -8,23 +8,24 @@ import {
 	type RequestMintResponse
 } from '@cashu/cashu-ts'
 import { _testmintUrl } from '@consts'
-import { RESTORE_INTERVAL } from '@consts/mints'
 import {
 	addInvoice, addMint, addToken, deleteProofs,
 	delInvoice, getAllInvoices, getInvoice,
 	getMintsBalances, getMintsUrls
 } from '@db'
-import { getSeed, saveSeed } from '@db/backup'
 import { l } from '@log'
 import type { IInvoice, ITokenInfo } from '@model'
-import { store } from '@src/storage/store'
-import { STORE_KEYS } from '@src/storage/store/consts'
-import { cTo, toJson } from '@src/storage/store/utils'
 import { getCustomMintNames } from '@store/mintStore'
+import { getCounterByMintUrl, getSeed, incrementCounterByMintUrl } from '@store/restore'
 import { decodeLnInvoice, isCashuToken, isNum } from '@util'
 
 import { sumProofsValue, sumTokenProofs } from './proofs'
 import { getProofsToUse } from './util'
+
+interface IGetSeedWallet {
+	mintUrl: string
+	mnemonic: string
+}
 
 const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
 const wallets: { [mintUrl: string]: CashuWallet } = {}
@@ -55,7 +56,7 @@ const wallets: { [mintUrl: string]: CashuWallet } = {}
 
 */
 
-function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string): void {
+export function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string): void {
 	if (!keySetId) { keySetId = deriveKeysetId(keys) }
 	if (!_mintKeysMap[mintUrl]) { _mintKeysMap[mintUrl] = {} }
 	if (!_mintKeysMap[mintUrl][keySetId]) {
@@ -76,6 +77,16 @@ async function getWallet(mintUrl: string): Promise<CashuWallet> {
 	_setKeys(mintUrl, keys)
 	wallets[mintUrl] = wallet
 	return wallet
+}
+
+export async function getSeedWalletByMnemonic({ mintUrl, mnemonic }: IGetSeedWallet) {
+	const mint = new CashuMint(mintUrl)
+	const seed = deriveSeedFromMnemonic(mnemonic)
+	const keys = await mint.getKeys()
+	const wallet = new CashuWallet(mint, keys, seed)
+	_setKeys(mintUrl, keys)
+	wallets[mintUrl] = wallet
+	return { wallet, seed }
 }
 
 async function getCurrentKeySetId(mintUrl: string): Promise<string> {
@@ -295,112 +306,6 @@ export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: strin
 		return { payResult, requestTokenResult, estFeeResp: estFee }
 	} catch (e) {
 		return { payResult: undefined, requestTokenResult: undefined }
-	}
-}
-
-let overshoot = 0
-let from = 0
-let to = RESTORE_INTERVAL
-const restoredProofs: Proof[] = []
-
-async function restoreInterval(wallet: CashuWallet) {
-	try {
-		const resp = await wallet.restore(from, to)
-		if (resp.proofs.length || overshoot < 2) {
-			restoredProofs.push(...resp.proofs)
-			from += RESTORE_INTERVAL
-			to += RESTORE_INTERVAL
-			overshoot++
-			return restoreInterval(wallet)
-		}
-		const returnVal = {
-			proofs: restoredProofs,
-			lastCount: to,
-			newKeys: resp.newKeys,
-		}
-		overshoot = 0
-		from = 0
-		to = RESTORE_INTERVAL + 1
-		return returnVal
-	} catch (e) {
-		l('[restoreInterval] error', { e })
-	}
-}
-
-export async function restoreWallet(mintUrl: string, mnemonic: string) {
-	try {
-		const mint = new CashuMint(mintUrl)
-		const seed = deriveSeedFromMnemonic(mnemonic)
-		const keys = await mint.getKeys()
-		const wallet = new CashuWallet(mint, keys, seed)
-		_setKeys(mintUrl, keys)
-		wallets[mintUrl] = wallet
-		// TODO test
-		// TODO get previous keysets from mint and try to restore from them
-		// const resp = await wallet.restore(0, RESTORE_INTERVAL)
-		const resp = await restoreInterval(wallet)
-		if (!resp) {
-			l('[restoreWallet] restore interval did not return a proper object!')
-			throw new Error('[restoreWallet] restore interval did not return a proper object!')
-		}
-		l('[recoverWallet] wallet.restore response: ', { resp })
-		const proofsSpent = await wallet.checkProofsSpent(resp.proofs)
-		l('[recoverWallet] checkProofsSpent response: ', { proofsSpent })
-		const proofs = resp.proofs.filter(x => !proofsSpent.map(y => y.secret).includes(x.secret))
-		if (resp.newKeys) { _setKeys(mintUrl, resp.newKeys) }
-		await addToken({ token: [{ mint: mintUrl, proofs }] })
-		await saveSeed(seed)
-		// adds counter if not exists
-		await getCounterByMintUrl(mintUrl)
-		await incrementCounterByMintUrl(mintUrl, resp.lastCount)
-		return proofs
-	} catch (e) {
-		l('[restoreWallet] error', { e })
-	}
-}
-
-interface ICounters {
-	[key: string]: number
-}
-
-export async function incrementCounterByMintUrl(mintUrl: string, count: number) {
-	try {
-		const seed = await getSeed()
-		if (!seed) { return }
-		const counters = await store.get(STORE_KEYS.restoreCounter)
-		if (!counters) {
-			throw new Error('Seed is available but counters have not been set!')
-		}
-		const parsedCounters = cTo<ICounters>(counters)
-		const keysetId = await getMintCurrentKeySetId(mintUrl)
-		l('[before increment] ', { keysetId, counter: parsedCounters[keysetId] })
-		parsedCounters[keysetId] = (parsedCounters[keysetId] || 0) + count
-		l('[after increment] ', { keysetId, counter: parsedCounters[keysetId] })
-		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
-	} catch (e) {
-		l('[incrementCounterByKeysetId] Error during counter increment: ', e)
-		throw new Error('[incrementCounterByKeysetId] Error during counter increment')
-	}
-}
-
-export async function getCounterByMintUrl(mintUrl: string) {
-	try {
-		const counters = await store.get(STORE_KEYS.restoreCounter)
-		const keysetId = await getMintCurrentKeySetId(mintUrl)
-		if (!counters) {
-			// store counters for current keyset of mint url passed as param
-			await store.set(STORE_KEYS.restoreCounter, toJson({ [keysetId]: 0 }))
-			return 0
-		}
-		const parsedCounters = cTo<ICounters>(counters)
-		l('[getCounterByMintUrl] ', { storedCounters: parsedCounters })
-		if (!parsedCounters[keysetId]) { parsedCounters[keysetId] = 0 }
-		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
-		l('[getCounterByMintUrl] ', { keysetId, counter: parsedCounters[keysetId] })
-		return parsedCounters[keysetId]
-	} catch (e) {
-		l('[getCounterByMintUrl] Error while getCounter: ', e)
-		throw Error('[getCounterByMintUrl] Error while getCounter')
 	}
 }
 
