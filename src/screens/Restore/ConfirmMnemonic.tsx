@@ -1,5 +1,5 @@
 import { deriveSeedFromMnemonic } from '@cashu/cashu-ts'
-import Button, { TxtButton } from '@comps/Button'
+import Button from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
@@ -10,16 +10,15 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { saveSeed } from '@store/restore'
-import { getPinpadBg, mainColors } from '@styles'
 import { createRef, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, type TextInput, View } from 'react-native'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import { ScaledSheet } from 'react-native-size-matters'
 
 export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMnemonicPageProps) {
 
 	const { t } = useTranslation([NS.common])
-	const { highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	const [input, setInput] = useState('')
 	const inputRef = createRef<TextInput>()
 	const { openPromptAutoClose } = usePromptContext()
@@ -58,27 +57,26 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 	}, [])
 
 	return (
-		<Screen noIcons screenName={t('confirm')}>
+		<Screen
+			withBackBtn
+			handlePress={() => navigation.goBack()}
+			screenName={t('confirm')}
+		>
 			<View style={{ flex: 1, justifyContent: 'space-between' }}>
+				<Txt txt={t('confirmSeed')} styles={[styles.hint]} bold />
 				<View style={{ alignItems: 'center' }}>
-					<Txt txt={t('confirmSeed')} styles={[styles.hint]} bold />
-					<View style={[styles.seedWord, { backgroundColor: getPinpadBg(highlight) }]}>
+					<View style={[styles.seedWord, { backgroundColor: color.DRAWER }]}>
 						<Txt
 							bold
 							txt={`${randomInt + 1}. `}
-							styles={[{ fontSize: 18, color: mainColors.WHITE }]}
+							styles={[{ fontSize: 18, color: color.TEXT }]}
 						/>
 						<Txt
 							bold
 							txt=' ???'
-							styles={[{ fontSize: 18, color: mainColors.WHITE }]}
+							styles={[{ fontSize: 18, color: color.TEXT_SECONDARY }]}
 						/>
 					</View>
-					<TxtButton
-						txt={t('showSeed')}
-						onPress={() => navigation.goBack()}
-						style={[{ marginTop: s(-10) }]}
-					/>
 				</View>
 				<KeyboardAvoidingView
 					behavior={isIOS ? 'padding' : undefined}
@@ -111,6 +109,7 @@ const styles = ScaledSheet.create({
 	},
 	actionWrap: {
 		paddingHorizontal: '20@s',
+		marginBottom: isIOS ? '0@s' : '20@s',
 	},
 	placeholder: {
 		height: '100@vs',

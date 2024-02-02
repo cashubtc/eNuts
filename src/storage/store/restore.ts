@@ -3,6 +3,7 @@ import { getMintCurrentKeySetId } from '@src/wallet'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { cTo, toJson } from '@store/utils'
+import { Buffer } from 'buffer/'
 
 import { SecureStore } from './SecureStore'
 

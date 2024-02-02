@@ -1,4 +1,4 @@
-import Button from '@comps/Button'
+import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
 import { ExclamationIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
@@ -6,7 +6,7 @@ import { isIOS } from '@consts'
 import type { IMnemonicPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { getPinpadBg, mainColors } from '@styles'
+import { mainColors } from '@styles'
 import { generateMnemonic } from '@wallet/restore'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,7 +16,7 @@ import { s, ScaledSheet } from 'react-native-size-matters'
 export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 
 	const { t } = useTranslation([NS.common])
-	const { highlight } = useThemeContext()
+	const { color } = useThemeContext()
 	const [mnemonic, setMnemonic] = useState<string>()
 	const { copy, copied } = useCopy()
 
@@ -32,13 +32,7 @@ export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 	}, [])
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: mainColors.VALID }}>
-			<View style={styles.headerWrap}>
-				<Txt
-					txt={t('seedBackup')}
-					styles={[styles.header, { color: mainColors.WHITE }]}
-				/>
-			</View>
+		<SafeAreaView style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
 			<View style={styles.content}>
 				<FlatList
 					data={mnemonic?.split(' ')}
@@ -49,41 +43,28 @@ export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 							style={[
 								styles.mnemonicWord,
 								{
-									backgroundColor: getPinpadBg(highlight),
+									backgroundColor: color.DRAWER,
 									marginRight: index % 2 === 0 ? s(10) : 0
 								}
 							]}
 						>
-							<Txt
-								bold
-								txt={`${index + 1}. `}
-								styles={[{ color: mainColors.WHITE }]}
-							/>
-							<Txt
-								bold
-								txt={item}
-								styles={[{ color: mainColors.WHITE }]}
-							/>
+							<Txt bold txt={`${index + 1}. `} />
+							<Txt bold txt={item} />
 						</View>
 					)}
 				/>
 			</View>
-			<Button
+			<TxtButton
 				txt={copied ? t('copied') : t('copy')}
 				onPress={() => void handleCopyMnemonic()}
 			/>
 			<View style={styles.actionWrap}>
-				<View style={[styles.warnContainer, { backgroundColor: getPinpadBg(highlight) }]}>
+				<View style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}>
 					<ExclamationIcon color={mainColors.ERROR} />
-					<Txt
-						center
-						bold
-						txt={t('mnemonicHint')}
-						styles={[{ color: mainColors.WHITE }]}
-					/>
+					<Txt center bold txt={t('mnemonicHint')} />
 				</View>
 				<Button
-					border
+					outlined
 					txt={t('continue')}
 					onPress={() => {
 						if (!mnemonic) { return }
@@ -96,18 +77,8 @@ export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 }
 
 const styles = ScaledSheet.create({
-	headerWrap: {
-		padding: '20@s',
-		paddingTop: isIOS ? '20@s' : '40@s',
-		alignItems: 'center',
-		justifyContent: 'center'
-	},
-	header: {
-		fontSize: '32@s',
-		textAlign: 'center',
-		marginBottom: 0
-	},
 	content: {
+		marginTop: `${isIOS ? 20 : 60}@s`,
 		paddingHorizontal: '20@s',
 	},
 	mnemonicWord: {

@@ -30,32 +30,6 @@ interface IGetSeedWallet {
 const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
 const wallets: { [mintUrl: string]: CashuWallet } = {}
 
-/*
-	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#restore
-
-	- constructor
-	-> new CashuWallet(mint, keys?, mnemonicOrSeed?): CashuWallet
-	-> getSeed() - saveSeed(seed) in "/src/storage/db/backup.ts"
-	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#constructor
-
-	----------------------------------------------------------------------------------
-
-	Methods that accept the counter parameter for restore:
-
-	- wallet.receive
-	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#receive
-
-	- wallet.requestTokens
-	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#requestTokens
-
-	- wallet.send
-	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#send
-
-	- wallet.payLnInvoice
-	https://cashubtc.github.io/cashu-ts/docs/classes/CashuWallet.html#payLnInvoice
-
-*/
-
 export function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string): void {
 	if (!keySetId) { keySetId = deriveKeysetId(keys) }
 	if (!_mintKeysMap[mintUrl]) { _mintKeysMap[mintUrl] = {} }

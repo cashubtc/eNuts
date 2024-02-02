@@ -6,6 +6,17 @@ import { getCounterByMintUrl, incrementCounterByMintUrl, saveSeed } from '@store
 
 import { _setKeys, getSeedWalletByMnemonic } from '.'
 
+export function generateMnemonic(): string | undefined {
+	try {
+		const mnemonic = generateNewMnemonic()
+		l('[generateMnemonic] ', { mnemonic })
+		return mnemonic
+	} catch (e) {
+		l('[generateMnemonic] error', { e })
+		throw new Error('generateMnemonic error')
+	}
+}
+
 export async function restoreWallet(mintUrl: string, mnemonic: string) {
 	try {
 		// TODO test
@@ -29,17 +40,6 @@ export async function restoreWallet(mintUrl: string, mnemonic: string) {
 		return proofs
 	} catch (e) {
 		l('[restoreWallet] error', { e })
-	}
-}
-
-export function generateMnemonic(): string | undefined {
-	try {
-		const mnemonic = generateNewMnemonic()
-		l('[generateMnemonic] ', { mnemonic })
-		return mnemonic
-	} catch (e) {
-		l('[generateMnemonic] error', { e })
-		throw new Error('generateMnemonic error')
 	}
 }
 
