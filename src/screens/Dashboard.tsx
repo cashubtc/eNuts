@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { useTransitionAnimation } from '@comps/animation/QrTransition'
 import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
@@ -32,24 +31,15 @@ import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation([NS.common])
-	// qr screen transition
-	const {
-		animatedBgStyles,
-		animatedPosStyles,
-		animatedOpacityStyles,
-		animatedMarginStyles,
-		animationEnded,
-		animateTransition,
-	} = useTransitionAnimation()
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url, clearUrl } = useInitialURL()
 	// Theme
-	const { highlight } = useThemeContext()
+	const { color, highlight } = useThemeContext()
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
 	// Nostr
@@ -307,12 +297,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// get balance after navigating to this page
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', async () => {
-			if (animationEnded.current) {
-				const t = setTimeout(() => {
-					animateTransition()
-					clearTimeout(t)
-				}, 200)
-			}
 			const data = await Promise.all([
 				getBalance(),
 				hasMints()
@@ -332,50 +316,48 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}, [navigation])
 
 	return (
-		<Animated.View style={[styles.container, animatedBgStyles]}>
-			<Animated.View style={animatedMarginStyles}>
-				{/* Balance, Disclaimer & History */}
-				<Balance balance={balance} nav={navigation} />
-				{/* Receive/send/mints buttons */}
-				<View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
-					{/* Send button or add first mint */}
-					{hasMint ?
-						<ActionBtn
-							icon={<SendIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
-							txt={t('send', { ns: NS.wallet })}
-							color={hi[highlight]}
-							onPress={() => setModal(prev => ({ ...prev, sendOpts: true }))}
-						/>
-						:
-						<ActionBtn
-							icon={<PlusIcon width={s(36)} height={vs(36)} color={hi[highlight]} />}
-							txt='Mint'
-							color={hi[highlight]}
-							onPress={() => setModal(prev => ({ ...prev, mint: true }))}
-						/>
-					}
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+			{/* Balance, Disclaimer & History */}
+			<Balance balance={balance} nav={navigation} />
+			{/* Receive/send/mints buttons */}
+			<View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
+				{/* Send button or add first mint */}
+				{hasMint ?
 					<ActionBtn
-						icon={<ScanQRIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
-						txt={t('scan')}
+						icon={<SendIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
+						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
-						onPress={() => animateTransition()}
+						onPress={() => setModal(prev => ({ ...prev, sendOpts: true }))}
 					/>
+					:
 					<ActionBtn
-						icon={<ReceiveIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
-						txt={t('receive', { ns: NS.wallet })}
+						icon={<PlusIcon width={s(36)} height={vs(36)} color={hi[highlight]} />}
+						txt='Mint'
 						color={hi[highlight]}
-						onPress={() => {
-							if (!hasMint) {
-								// try to claim from clipboard to avoid receive-options-modal to popup and having to press again
-								return handleClaimBtnPress()
-							}
-							setModal(prev => ({ ...prev, receiveOpts: true }))
-						}}
+						onPress={() => setModal(prev => ({ ...prev, mint: true }))}
 					/>
-				</View>
-			</Animated.View>
+				}
+				<ActionBtn
+					icon={<ScanQRIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
+					txt={t('scan')}
+					color={hi[highlight]}
+					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
+				/>
+				<ActionBtn
+					icon={<ReceiveIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
+					txt={t('receive', { ns: NS.wallet })}
+					color={hi[highlight]}
+					onPress={() => {
+						if (!hasMint) {
+							// try to claim from clipboard to avoid receive-options-modal to popup and having to press again
+							return handleClaimBtnPress()
+						}
+						setModal(prev => ({ ...prev, receiveOpts: true }))
+					}}
+				/>
+			</View>
 			{/* beta warning */}
-			<Animated.View style={[styles.hintWrap, animatedOpacityStyles]}>
+			<View style={styles.hintWrap}>
 				<TouchableOpacity
 					onPress={() => navigation.navigate('disclaimer')}
 					style={styles.betaHint}
@@ -384,13 +366,11 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginHorizontal: s(10) }]} />
 					<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
 				</TouchableOpacity>
-			</Animated.View>
+			</View>
 			{/* Bottom nav icons */}
 			<BottomNav
 				navigation={navigation}
 				route={route}
-				animatedBgStyles={animatedBgStyles}
-				animatedPosStyles={animatedPosStyles}
 			/>
 			{/* Question modal for mint trusting */}
 			{trustModal &&
@@ -451,7 +431,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					void store.set(STORE_KEYS.nostrReseted, '1')
 				}}
 			/>
-		</Animated.View>
+		</View>
 	)
 }
 

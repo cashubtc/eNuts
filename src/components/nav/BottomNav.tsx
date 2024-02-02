@@ -9,20 +9,10 @@ import { STORE_KEYS } from '@store/consts'
 import { highlight as hi } from '@styles'
 import { isStr } from '@util'
 import { useTranslation } from 'react-i18next'
-import { Animated, SafeAreaView, TouchableOpacity } from 'react-native'
+import { SafeAreaView, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
-type TInterPolation = Animated.AnimatedInterpolation<string | number>
-
-export default function BottomNav({
-	navigation,
-	route,
-	animatedBgStyles,
-	animatedPosStyles
-}: TBottomNavProps & {
-	animatedBgStyles?: { backgroundColor: TInterPolation },
-	animatedPosStyles?: { transform: { translateY: TInterPolation }[] }
-}) {
+export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { t } = useTranslation([NS.topNav])
 	const { color, highlight } = useThemeContext()
 
@@ -49,12 +39,10 @@ export default function BottomNav({
 
 	return (
 		<SafeAreaView>
-			<Animated.View
+			<View
 				style={[
 					styles.bottomNav,
 					{ paddingBottom: isIOS ? vs(25) : vs(10) },
-					animatedBgStyles,
-					animatedPosStyles
 				]}>
 				<TouchableOpacity
 					style={styles.navIcon}
@@ -100,7 +88,7 @@ export default function BottomNav({
 						}]}
 					/>
 				</TouchableOpacity>
-			</Animated.View>
+			</View>
 		</SafeAreaView>
 	)
 }

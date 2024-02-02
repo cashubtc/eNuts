@@ -130,8 +130,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						if (prevRoute?.name === 'auth' && prevRoute.params?.pinHash) {
 							// @ts-expect-error navigation type is not complete
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-							navigation.navigate('auth', { pinHash: prevRoute.params.pinHash })
-							return
+							return navigation.navigate('auth', { pinHash: prevRoute.params.pinHash })
 						}
 						navigation.navigate('dashboard')
 					}}
