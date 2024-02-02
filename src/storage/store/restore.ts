@@ -3,7 +3,6 @@ import { getMintCurrentKeySetId } from '@src/wallet'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { cTo, toJson } from '@store/utils'
-import { SHA256 } from 'crypto-js'
 
 import { SecureStore } from './SecureStore'
 
@@ -75,67 +74,5 @@ export async function getSeed() {
 	} catch (e) {
 		l('[getSeed] error', { e })
 		throw new Error('[getSeed] error')
-	}
-}
-
-// not used yet
-export async function saveMnemonic(mnemonic: string) {
-	try {
-		await SecureStore.set(STORE_KEYS.mnemonic, mnemonic)
-		l('[saveMnemonic] ', { mnemonic })
-	} catch (e) {
-		l('[saveMnemonic] error', { e })
-		throw new Error('[saveMnemonic] error')
-	}
-}
-
-// not used yet
-export async function getMnemonic() {
-	try {
-		const mnemonic = await SecureStore.get(STORE_KEYS.mnemonic)
-		l('[getMnemonic] ', { mnemonic })
-		return mnemonic
-	} catch (e) {
-		l('[getMnemonic] error', { e })
-		throw new Error('[getMnemonic] error')
-	}
-}
-
-// not used yet
-export async function deleteMnemonic() {
-	try {
-		await SecureStore.delete(STORE_KEYS.mnemonic)
-		l('[deleteMnemonic] ')
-	} catch (e) {
-		l('[deleteMnemonic] error', { e })
-		throw new Error('[deleteMnemonic] error')
-	}
-}
-
-// not used yet
-export async function deleteSeed() {
-	try {
-		await SecureStore.delete(STORE_KEYS.seed)
-		l('[deleteSeed] ')
-	} catch (e) {
-		l('[deleteSeed] error', { e })
-		throw new Error('[deleteSeed] error')
-	}
-}
-
-// not used yet
-export async function getSeedHash() {
-	try {
-		const seed = await getSeed()
-		if (!seed) { return }
-		// TODO provide global TextDecoder
-		const seedString = new TextDecoder().decode(seed)
-		// eslint-disable-next-line new-cap
-		const hash = SHA256(seedString).toString()
-		l('[getSeedHash] ', { hash })
-		return hash
-	} catch (e) {
-		l('[getSeedHash] error', { e })
-		throw new Error('[getSeedHash] error')
 	}
 }
