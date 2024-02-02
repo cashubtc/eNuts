@@ -29,7 +29,7 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 
 	const handleConfirm = async () => {
 		if (!input.length || loading) { return }
-		if (input !== route.params.mnemonic[randomInt]) {
+		if (input.trim() !== route.params.mnemonic[randomInt]) {
 			openPromptAutoClose({
 				msg: t('confirmMnemonicErr'),
 				success: false,
