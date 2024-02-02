@@ -167,6 +167,7 @@ export type RootStackParamList = {
 		isScanned?: boolean
 		isRestored?: boolean
 		change?: number
+		comingFromOnboarding?: boolean
 	}
 	mintmanagement: {
 		mint: IMintUrl
@@ -209,9 +210,12 @@ export type RootStackParamList = {
 		comingFromOnboarding?: boolean
 	} | undefined
 	'Seed Update': undefined
-	'Select recovery mint': undefined
+	'Select recovery mint': {
+		comingFromOnboarding?: boolean
+	}
 	Recover: {
 		mintUrl: string
+		comingFromOnboarding?: boolean
 	}
 	Mnemonic: {
 		comingFromOnboarding?: boolean
@@ -227,6 +231,7 @@ export type RootStackParamList = {
 	Recovering: {
 		mintUrl: string
 		mnemonic: string
+		comingFromOnboarding?: boolean
 	}
 }
 

@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { FlatList, SafeAreaView, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
-export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
+export default function MnemonicScreen({ navigation, route }: IMnemonicPageProps) {
 
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
@@ -68,7 +68,10 @@ export default function MnemonicScreen({ navigation }: IMnemonicPageProps) {
 					txt={t('continue')}
 					onPress={() => {
 						if (!mnemonic) { return }
-						navigation.navigate('Confirm Mnemonic', { mnemonic: mnemonic.split(' ') })
+						navigation.navigate('Confirm Mnemonic', {
+							mnemonic: mnemonic.split(' '),
+							comingFromOnboarding: route.params?.comingFromOnboarding
+						})
 					}}
 				/>
 			</View>

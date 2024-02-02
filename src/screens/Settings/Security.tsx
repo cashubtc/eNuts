@@ -98,7 +98,9 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 						onPress={() => {
 							if (hasSeed) {
 								// TODO skip mint selection if only one mint
-								return navigation.navigate('Select recovery mint')
+								return navigation.navigate('Select recovery mint', {
+									comingFromOnboarding: false
+								})
 							}
 							navigation.navigate('Seed')
 						}}

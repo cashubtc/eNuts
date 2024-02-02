@@ -123,6 +123,9 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				<Button
 					txt={t('backToDashboard')}
 					onPress={() => {
+						if (route.params?.comingFromOnboarding) {
+							return navigation.navigate('auth', { pinHash: '' })
+						}
 						const routes = navigation.getState()?.routes
 						const prevRoute = routes[routes.length - 2]
 						// if user comes from auth screen, navigate back to auth

@@ -83,7 +83,7 @@ const styles = ScaledSheet.create({
 		justifyContent: 'center'
 	},
 	headerTxt: {
-		fontSize: '36@s',
+		fontSize: '30@s',
 		textAlign: 'center',
 		marginBottom: '20@s'
 	},

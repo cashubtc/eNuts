@@ -22,6 +22,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 				mint: mintUrl,
 				amount: proofs?.reduce((r, c) => r + c.amount, 0),
 				isRestored: true,
+				comingFromOnboarding: route.params.comingFromOnboarding,
 			})
 		} catch (e) {
 			l('[handleRecovery] error: ', e)

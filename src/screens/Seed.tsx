@@ -81,7 +81,10 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 				<TouchableOpacity
 					onPress={() => {
 						void store.set(STORE_KEYS.sawSeedUpdate, '1')
-						navigation.navigate('Select recovery mint')
+						// TODO skip mint selection if only one mint
+						navigation.navigate('Select recovery mint', {
+							comingFromOnboarding: params?.comingFromOnboarding
+						})
 					}}
 				>
 					<View style={styles.action}>
