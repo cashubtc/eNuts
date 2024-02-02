@@ -5,6 +5,7 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import { getMintsUrls } from '@db'
 import type { ISelectRecoveryMintPageProps } from '@model/nav'
+import { isIOS } from '@src/consts'
 import { mintUrl } from '@src/consts/mints'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -15,6 +16,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
+
+// TODO provide text input for custom mint url
 
 export default function SelectRecoveryMintScreen({ navigation }: ISelectRecoveryMintPageProps) {
 
@@ -115,7 +118,7 @@ const styles = ScaledSheet.create({
 	btn: {
 		position: 'absolute',
 		right: 0,
-		bottom: 0,
+		bottom: isIOS ? '0@s' : '20@s',
 		left: 0,
 	},
 	btnWrap: {
