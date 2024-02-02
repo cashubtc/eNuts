@@ -37,6 +37,7 @@ export async function restoreWallet(mintUrl: string, mnemonic: string) {
 		// adds counter if not exists
 		await getCounterByMintUrl(mintUrl)
 		await incrementCounterByMintUrl(mintUrl, resp.lastCount)
+		resetRestoreVars()
 		return proofs
 	} catch (e) {
 		l('[restoreWallet] error', { e })
@@ -48,6 +49,13 @@ let from = 0
 let to = RESTORE_INTERVAL
 const restoredProofs: Proof[] = []
 
+function resetRestoreVars() {
+	overshoot = 0
+	from = 0
+	to = RESTORE_INTERVAL
+	restoredProofs.length = 0
+}
+
 async function restoreInterval(wallet: CashuWallet) {
 	try {
 		const { proofs, newKeys } = await wallet.restore(from, to)
@@ -58,16 +66,11 @@ async function restoreInterval(wallet: CashuWallet) {
 			overshoot++
 			return restoreInterval(wallet)
 		}
-		const returnVal = {
+		return {
 			proofs: restoredProofs,
-			lastCount: to,
 			newKeys,
+			lastCount: to
 		}
-		restoredProofs.length = 0
-		from = 0
-		to = RESTORE_INTERVAL + 1
-		overshoot = 0
-		return returnVal
 	} catch (e) {
 		l('[restoreInterval] error', { e })
 	}

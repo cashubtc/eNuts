@@ -9,6 +9,8 @@ import type { IConfirmMnemonicPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { saveSeed } from '@store/restore'
 import { createRef, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -41,6 +43,7 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 		await saveSeed(seed)
 		stopLoading()
 		openPromptAutoClose({ msg: t('seedEnabled'), success: true })
+		await store.set(STORE_KEYS.restoreCounter, '')
 		if (route.params.comingFromOnboarding) {
 			return navigation.navigate('auth', { pinHash: '' })
 		}

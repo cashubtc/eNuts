@@ -12,7 +12,7 @@ import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
-import { isNull } from '@util'
+import { isNull, isStr } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
@@ -43,7 +43,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 		const pinHash = await secureStore.get(SECURESTORE_KEY)
 		const restoreCounter = await store.get(STORE_KEYS.restoreCounter)
 		setPin(isNull(pinHash) ? '' : pinHash)
-		setHasSeed(!!restoreCounter)
+		setHasSeed(isStr(restoreCounter))
 	}
 	useEffect(() => {
 		void init()
