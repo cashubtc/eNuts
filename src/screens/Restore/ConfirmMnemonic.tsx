@@ -78,7 +78,7 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 			handlePress={() => navigation.goBack()}
 			screenName={t('confirm')}
 		>
-			<View style={{ flex: 1, justifyContent: 'space-between' }}>
+			<View style={styles.content}>
 				<Txt txt={t('confirmSeed')} styles={[styles.hint]} bold />
 				<View style={{ alignItems: 'center' }}>
 					<View style={[styles.seedWord, { backgroundColor: color.DRAWER }]}>
@@ -119,6 +119,10 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 }
 
 const styles = ScaledSheet.create({
+	content: {
+		flex: 1,
+		justifyContent: 'space-between'
+	},
 	hint: {
 		paddingHorizontal: '20@s',
 		marginBottom: '20@vs',

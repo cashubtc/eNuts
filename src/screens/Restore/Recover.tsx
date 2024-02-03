@@ -5,7 +5,6 @@ import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
-import { l } from '@log'
 import type { IRecoverPageProps } from '@model/nav'
 import { NS } from '@src/i18n'
 import { createRef, useEffect, useState } from 'react'
@@ -22,7 +21,6 @@ export default function RecoverScreen({ navigation, route }: IRecoverPageProps) 
 
 	const handleBtnPress = () => {
 		if (loading || !input.length) { return }
-		l('request seed recovery. User input mnemonic: ', input)
 		navigation.navigate('Recovering', {
 			mintUrl: route.params.mintUrl,
 			mnemonic: input,

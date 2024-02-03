@@ -30,7 +30,7 @@ export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 				styles={[styles.warn, { color: mainColors.WARN }]}
 				txt='Please do not close the app during the process.'
 			/>
-			<View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+			<View style={styles.progress}>
 				<Txt
 					bold
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
@@ -41,7 +41,7 @@ export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 					txt={`${from} to ${to}`}
 				/>
 			</View>
-			<View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+			<View style={styles.progress}>
 				<Txt
 					bold
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
@@ -56,7 +56,7 @@ export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 				<Txt
 					bold
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-					txt={`Almost done. Safety check ${overshoot}/${RESTORE_OVERSHOOT}`}
+					txt={`Almost done... Safety check ${overshoot}/${RESTORE_OVERSHOOT}`}
 				/>
 			}
 		</View>
@@ -82,5 +82,11 @@ const styles = ScaledSheet.create({
 	hint: {
 		fontSize: '12@s',
 		marginTop: '10@s',
+	},
+	progress: {
+		width: '100%',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between'
 	}
 })
