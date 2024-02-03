@@ -11,10 +11,9 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
-// recommend and check 20% battery
-// recommend and check WIFI connection
-// warn beta disclaimer
-// not responsible for loss of tokens
+// TODO
+// check 20% battery
+// check WIFI connection
 
 export default function RestoreWarningScreen({ navigation, route }: IRestoreWarningPageProps) {
 	const { color } = useThemeContext()
