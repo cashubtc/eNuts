@@ -142,6 +142,7 @@ export type RootStackParamList = {
 		mint?: IMintUrl
 		amount?: number
 		scan?: boolean
+		comingFromOnboarding?: boolean
 		errorMsg: string
 	},
 	mintInvoice: {

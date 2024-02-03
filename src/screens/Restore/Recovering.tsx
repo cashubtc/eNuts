@@ -2,8 +2,10 @@ import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import { getBalance } from '@db'
 import type { IRecoveringPageProps } from '@model/nav'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { l } from '@src/logger'
+import { isErr } from '@src/util'
 import { globals } from '@styles'
 import { restoreWallet } from '@wallet/restore'
 import { useEffect } from 'react'
@@ -12,18 +14,20 @@ import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function RecoveringScreen({ navigation, route }: IRecoveringPageProps) {
 
+	const { mintUrl, mnemonic, comingFromOnboarding } = route.params
+	// TODO show restore progress
 	const { color } = useThemeContext()
+	const { openPromptAutoClose } = usePromptContext()
 
 	const handleRecovery = async () => {
-
-		// TODO show restore progress
-		const { mintUrl, mnemonic } = route.params
-
 		try {
 			const proofs = await restoreWallet(mintUrl, mnemonic)
 			if (!proofs?.length) {
-				// TODO navigate to specific screen
-				return
+				openPromptAutoClose({ msg: 'Found no proofs to restore the wallet', success: false })
+				if (comingFromOnboarding) {
+					return navigation.navigate('auth', { pinHash: '' })
+				}
+				return navigation.navigate('dashboard')
 			}
 			const bal = await getBalance()
 			// TODO add to history
@@ -31,11 +35,14 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 				mint: mintUrl,
 				amount: bal,
 				isRestored: true,
-				comingFromOnboarding: route.params.comingFromOnboarding,
+				comingFromOnboarding,
 			})
 		} catch (e) {
 			l('[handleRecovery] error: ', e)
-			// TODO navigate to specific screen
+			navigation.navigate('processingError', {
+				errorMsg: isErr(e) ? e.message : 'An error occurred while restoring your wallet',
+				comingFromOnboarding,
+			})
 		}
 	}
 
