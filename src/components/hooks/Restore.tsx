@@ -76,7 +76,6 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 		}
 		const restoreWallet = async (mintUrl: string, mnemonic: string) => {
 			try {
-				// TODO test
 				const { wallet, seed } = await getSeedWalletByMnemonic({ mintUrl, mnemonic })
 				// TODO get previous keysets from mint and try to restore from them
 				const resp = await restoreInterval(wallet, 0, RESTORE_INTERVAL)
@@ -116,7 +115,8 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 				if (proofs.length) {
 					l('[restoreInterval] restored proofs: ', { from, to, proofsLength: proofs.length })
 					restoredProofs.push(...proofs)
-					return restoreInterval(wallet, from, to, restoredProofs)
+					overshoot = 0
+					return restoreInterval(wallet, from, to, restoredProofs, overshoot)
 				}
 				if (overshoot < RESTORE_OVERSHOOT) {
 					l('[restoreInterval] no proofs to restore! overshooting now: ', { from, to, proofsLength: proofs.length, overshoot })

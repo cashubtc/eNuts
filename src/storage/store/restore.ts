@@ -9,28 +9,8 @@ import { SecureStore } from './SecureStore'
 
 // This is a simple counter that is used to keep track of the number of proofs per keysetId.
 
-interface ICounters {
+export interface ICounters {
 	[key: string]: number
-}
-
-export async function incrementCounterByMintUrl(mintUrl: string, count: number) {
-	try {
-		const seed = await getSeed()
-		if (!seed) { return }
-		const counters = await store.get(STORE_KEYS.restoreCounter)
-		if (!counters) {
-			throw new Error('Seed is available but counters have not been set!')
-		}
-		const parsedCounters = cTo<ICounters>(counters)
-		const keysetId = await getMintCurrentKeySetId(mintUrl)
-		l('[before increment] ', { keysetId, counter: parsedCounters[keysetId] })
-		parsedCounters[keysetId] = (parsedCounters[keysetId] || 0) + count
-		l('[after increment] ', { keysetId, counter: parsedCounters[keysetId] })
-		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
-	} catch (e) {
-		l('[incrementCounterByKeysetId] Error during counter increment: ', e)
-		throw new Error('[incrementCounterByKeysetId] Error during counter increment')
-	}
 }
 
 export async function getCounterByMintUrl(mintUrl: string) {
@@ -51,6 +31,26 @@ export async function getCounterByMintUrl(mintUrl: string) {
 	} catch (e) {
 		l('[getCounterByMintUrl] Error while getCounter: ', e)
 		throw Error('[getCounterByMintUrl] Error while getCounter')
+	}
+}
+
+export async function incrementCounterByMintUrl(mintUrl: string, count: number) {
+	try {
+		const seed = await getSeed()
+		if (!seed) { return }
+		const counters = await store.get(STORE_KEYS.restoreCounter)
+		if (!counters) {
+			throw new Error('Seed is available but counters have not been set!')
+		}
+		const parsedCounters = cTo<ICounters>(counters)
+		const keysetId = await getMintCurrentKeySetId(mintUrl)
+		l('[before increment] ', { keysetId, counter: parsedCounters[keysetId] })
+		parsedCounters[keysetId] = (parsedCounters[keysetId] || 0) + count
+		l('[after increment] ', { keysetId, counter: parsedCounters[keysetId] })
+		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
+	} catch (e) {
+		l('[incrementCounterByKeysetId] Error during counter increment: ', e)
+		throw new Error('[incrementCounterByKeysetId] Error during counter increment')
 	}
 }
 
