@@ -44,7 +44,7 @@ export default function SelectRecoveryMintScreen({ navigation, route }: ISelectR
 			withBackBtn
 			handlePress={() => navigation.goBack()}
 		>
-			<Txt txt='Please select the mint that will be used to restore your funds.' styles={[styles.hint]} bold />
+			<Txt txt={t('selectRestoreMint')} styles={[styles.hint]} bold />
 			{userMints.length > 0 ?
 				<ScrollView alwaysBounceVertical={false} style={{ marginBottom: s(90) }}>
 					<View style={[globals(color).wrapContainer, { paddingBottom: s(20) }]}>

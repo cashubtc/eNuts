@@ -4,14 +4,18 @@ import Txt from '@comps/Txt'
 import type { IRecoveringPageProps } from '@model/nav'
 import { RESTORE_OVERSHOOT } from '@src/consts/mints'
 import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
 import { formatSatStr } from '@src/util'
 import { globals, mainColors } from '@styles'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 
 	const { mintUrl, mnemonic, comingFromOnboarding } = route.params
+
+	const { t } = useTranslation([NS.common])
 	// Seed recovery process in useRestore hook
 	const { proofs, from, to, overshoot } = useRestore({ mintUrl, mnemonic, comingFromOnboarding })
 
@@ -22,30 +26,30 @@ export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 			<Loading size={s(35)} />
 			<Txt
 				styles={[styles.descText]}
-				txt='Recovering your wallet...'
+				txt={t('recoveringWallet')}
 			/>
 			<Txt
 				bold
 				center
 				styles={[styles.warn, { color: mainColors.WARN }]}
-				txt='Please do not close the app during the process.'
+				txt={t('dontClose')}
 			/>
 			<View style={styles.progress}>
 				<Txt
 					bold
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-					txt='Restore cycle'
+					txt={t('cycle')}
 				/>
 				<Txt
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-					txt={`${from} to ${to}`}
+					txt={`${from} ${t('to')} ${to}`}
 				/>
 			</View>
 			<View style={styles.progress}>
 				<Txt
 					bold
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-					txt='Restored proofs'
+					txt={t('restored')}
 				/>
 				<Txt
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
@@ -56,7 +60,8 @@ export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 				<Txt
 					bold
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-					txt={`Almost done... Safety check ${overshoot}/${RESTORE_OVERSHOOT}`}
+					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+					txt={`${t('doneSafety')} ${overshoot}/${RESTORE_OVERSHOOT}`}
 				/>
 			}
 		</View>

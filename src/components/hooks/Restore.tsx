@@ -5,11 +5,13 @@ import { l } from '@log'
 import type { RootStackParamList } from '@model/nav'
 import { type NavigationProp, useNavigation } from '@react-navigation/core'
 import { usePromptContext } from '@src/context/Prompt'
+import { NS } from '@src/i18n'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getCounterByMintUrl, incrementCounterByMintUrl, saveSeed } from '@store/restore'
 import { isErr } from '@util'
 import { _setKeys, getSeedWalletByMnemonic } from '@wallet'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type StackNavigation = NavigationProp<RootStackParamList>
 
@@ -31,6 +33,7 @@ const defaultRestoreState = {
 export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRestoreProps) {
 
 	const navigation = useNavigation<StackNavigation>()
+	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 
 	const [restored, setRestored] = useState({ ...defaultRestoreState })
@@ -41,7 +44,7 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				const proofs = await restoreWallet(mintUrl, mnemonic)
 				if (!proofs?.length) {
-					openPromptAutoClose({ msg: 'Found no proofs to restore the wallet', success: false })
+					openPromptAutoClose({ msg: t('noProofsRestored'), success: false })
 					setRestored({ ...defaultRestoreState })
 					if (comingFromOnboarding) {
 						return navigation.navigate('auth', { pinHash: '' })
@@ -66,7 +69,7 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 				l('[handleRecovery] error: ', e)
 				setRestored({ ...defaultRestoreState })
 				navigation.navigate('processingError', {
-					errorMsg: isErr(e) ? e.message : 'An error occurred while restoring your wallet',
+					errorMsg: isErr(e) ? e.message : t('restoreErr'),
 					comingFromOnboarding,
 				})
 			}
@@ -127,7 +130,7 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 			}
 		}
 		void restore()
-	}, [comingFromOnboarding, mintUrl, mnemonic, navigation, openPromptAutoClose])
+	}, [comingFromOnboarding, mintUrl, mnemonic, navigation, openPromptAutoClose, t])
 
 	return { ...restored }
 }
