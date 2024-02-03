@@ -104,7 +104,7 @@
 		"restoreWifiHint": "Azt javasoljuk, hogy a helyreállítási folyamat során használjon stabil Wi-Fi kapcsolatot, hogy elkerülje a megszakításokat és biztosítsa a gyors és biztonságos helyreállítást.",
 		"restoreForeground": "Tartsa az alkalmazást az előtérben.",
 		"restoreForegroundHint": "Kérjük, tartsa az alkalmazást az előtérben, és ne zárja be a helyreállítási folyamat során, hogy elkerülje a megszakításokat.",
-		"seedMigrationHint": "Ha van egyenlege, hozzon létre és igényeljen saját token-t a kívánt veretéssel a seed generálása után. Ismételje meg ezt minden veretéssel, amelyet biztonságba szeretne helyezni.",
+		"seedMigrationHint": "A mag minden veremhez alkalmazható, amellyel kapcsolatba lép, így jegyezze fel a gyakran használt veremek URL-jét. Ha van egyenlege, hozzon létre és igényeljen saját token-t a kívánt veretéssel a seed generálása után. Ismételje meg ezt minden veretéssel, amelyet biztonságba szeretne helyezni.",
 		"english": "Angol",
 		"swahili": "Szuahéli",
 		"spanish": "Spanyol",

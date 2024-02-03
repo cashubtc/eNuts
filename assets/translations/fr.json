@@ -103,7 +103,7 @@
 		"restoreWifiHint": "Nous vous recommandons d'utiliser une connexion Wi-Fi stable pour le processus de récupération afin d'éviter toute interruption et d'assurer une récupération rapide et sécurisée.",
 		"restoreForeground": "Gardez l'application au premier plan.",
 		"restoreForegroundHint": "Veuillez garder l'application au premier plan et ne pas la fermer pendant le processus de récupération pour éviter toute interruption.",
-		"seedMigrationHint": "Si vous avez un solde, créez et revendiquez un token avec la mint désirée après avoir généré une graine. Répétez pour chaque mint que vous souhaitez sauvegarder.",
+		"seedMigrationHint": "La graine s'applique à toutes les mints, donc notez les URL des mint que vous utilisez fréquemment. Si vous avez un solde, créez et revendiquez un token avec la mint désirée après avoir généré une graine. Répétez pour chaque mint que vous souhaitez sauvegarder.",
 		"ecashPayment": "Paiement Ecash",
 		"english": "Anglais",
 		"spanish": "Espagnol",
