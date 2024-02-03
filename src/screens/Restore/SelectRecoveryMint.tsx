@@ -91,7 +91,7 @@ export default function SelectRecoveryMintScreen({ navigation, route }: ISelectR
 					</View>
 					{!isCustomMint &&
 						<TxtButton
-							txt='Add Mint URL'
+							txt={t('addNewMint', { ns: NS.mints })}
 							onPress={() => setIsCustomMint(true)}
 						/>
 					}
