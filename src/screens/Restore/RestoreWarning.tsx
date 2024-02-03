@@ -28,12 +28,6 @@ export default function RestoreWarningScreen({ navigation, route }: IRestoreWarn
 			<ScrollView style={styles.scrollContainer} alwaysBounceVertical={false}>
 				<View style={styles.container}>
 					<View style={{ marginHorizontal: s(20) }}>
-						{/* beta */}
-						<View style={{ alignItems: 'center', padding: s(30), paddingBottom: s(20) }}>
-							<ExclamationIcon width={s(36)} height={s(36)} color={mainColors.WARN} />
-						</View>
-						<Txt center txt={t('enutsDisclaimer')} bold styles={[styles.header, { color: color.TEXT }]} />
-						<Txt center txt={t('restoreDisclaimer', { ns: NS.common })} styles={[{ color: color.TEXT_SECONDARY, marginBottom: s(20) }]} />
 						{/* battery */}
 						<View style={{ alignItems: 'center', padding: s(30), paddingBottom: s(12) }}>
 							<BatteryChargingIcon width={s(52)} height={s(52)} color={mainColors.BLUE} />
@@ -52,6 +46,12 @@ export default function RestoreWarningScreen({ navigation, route }: IRestoreWarn
 						</View>
 						<Txt center txt={t('restoreForeground', { ns: NS.common })} bold styles={[styles.header, { color: color.TEXT }]} />
 						<Txt center txt={t('restoreForegroundHint', { ns: NS.common })} styles={[{ color: color.TEXT_SECONDARY, marginBottom: s(20) }]} />
+						{/* beta */}
+						<View style={{ alignItems: 'center', padding: s(30), paddingBottom: s(20) }}>
+							<ExclamationIcon width={s(36)} height={s(36)} color={mainColors.WARN} />
+						</View>
+						<Txt center txt={t('enutsDisclaimer')} bold styles={[styles.header, { color: color.TEXT }]} />
+						<Txt center txt={t('restoreDisclaimer', { ns: NS.common })} styles={[{ color: color.TEXT_SECONDARY, marginBottom: s(20) }]} />
 					</View>
 				</View>
 				<View style={{ paddingHorizontal: s(20), paddingBottom: s(20) }}>
