@@ -8,4 +8,4 @@ export const DONATION_ADDR = 'zap@agron.dev'
 
 export const defaultMints: Readonly<IMintBalWithName[]> = [{ mintUrl, amount: 0, customName }] as const
 
-export const RESTORE_INTERVAL = 25
+export const RESTORE_INTERVAL = 50

@@ -19,7 +19,7 @@ import { s, ScaledSheet } from 'react-native-size-matters'
 
 // TODO provide text input for custom mint url
 
-export default function SelectRecoveryMintScreen({ navigation }: ISelectRecoveryMintPageProps) {
+export default function SelectRecoveryMintScreen({ navigation, route }: ISelectRecoveryMintPageProps) {
 
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
@@ -72,7 +72,12 @@ export default function SelectRecoveryMintScreen({ navigation }: ISelectRecovery
 				<View style={styles.btnWrap}>
 					<Button
 						txt={t('continue')}
-						onPress={() => navigation.navigate('Recover', { mintUrl: selectedMint })}
+						onPress={() => {
+							navigation.navigate('Recover', {
+								mintUrl: selectedMint,
+								comingFromOnboarding: route.params.comingFromOnboarding
+							})
+						}}
 					/>
 				</View>
 			</View>

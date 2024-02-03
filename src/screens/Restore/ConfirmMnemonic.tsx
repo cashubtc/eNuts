@@ -17,6 +17,18 @@ import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, type TextInput, View } from 'react-native'
 import { ScaledSheet } from 'react-native-size-matters'
 
+/*
+
+manual test cases:
+---
+* Start new wallet with seed: confirm mnemonic, set pin, add mint, mint, send, receive, melt, restore
+
+* Start new wallet without seed: skip pin, add mint, activate seed, mint, send, receive, restore
+* Start new wallet with recovery: paste seed, restore, set pin, send, receive, melt, mint, restore
+* Start new quick wallet, skip pin, skip mint, restore, send, receive, melt, mint, restore
+
+*/
+
 export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMnemonicPageProps) {
 
 	const { t } = useTranslation([NS.common])

@@ -4,6 +4,7 @@ import Txt from '@comps/Txt'
 import type { ISeedPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { store } from '@src/storage/store'
 import { STORE_KEYS } from '@src/storage/store/consts'
 import { mainColors } from '@styles'
@@ -81,6 +82,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 				<TouchableOpacity
 					onPress={() => {
 						void store.set(STORE_KEYS.sawSeedUpdate, '1')
+						l('route.params?.comingFromOnboarding', params?.comingFromOnboarding)
 						// TODO skip mint selection if only one mint
 						navigation.navigate('Select recovery mint', {
 							comingFromOnboarding: params?.comingFromOnboarding

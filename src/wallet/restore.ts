@@ -22,50 +22,51 @@ export async function restoreWallet(mintUrl: string, mnemonic: string) {
 		// TODO test
 		const { wallet, seed } = await getSeedWalletByMnemonic({ mintUrl, mnemonic })
 		// TODO get previous keysets from mint and try to restore from them
-		const resp = await restoreInterval(wallet)
+		const resp = await restoreInterval(wallet, 0, RESTORE_INTERVAL)
 		if (!resp) {
 			l('[restoreWallet] restore interval did not return a proper object!')
 			throw new Error('[restoreWallet] restore interval did not return a proper object!')
 		}
-		l('[recoverWallet] wallet.restore response: ', { resp })
-		const proofsSpent = await wallet.checkProofsSpent(resp.proofs)
-		l('[recoverWallet] checkProofsSpent response: ', { proofsSpent })
-		const proofs = resp.proofs.filter(x => !proofsSpent.map(y => y.secret).includes(x.secret))
-		if (resp.newKeys) { _setKeys(mintUrl, resp.newKeys) }
-		await addToken({ token: [{ mint: mintUrl, proofs }] })
 		await saveSeed(seed)
 		// adds counter if not exists
 		await getCounterByMintUrl(mintUrl)
-		await incrementCounterByMintUrl(mintUrl, resp.lastCount)
-		resetRestoreVars()
+		if (!resp.proofs.length) {
+			l('[restoreWallet] no proofs found during the restore process!')
+			return []
+		}
+		const proofsSpent = await wallet.checkProofsSpent(resp.proofs)
+		const proofs = resp.proofs.filter(p => !proofsSpent.map(x => x.secret).includes(p.secret))
+		if (resp.newKeys) { _setKeys(mintUrl, resp.newKeys) }
+		await addToken({ token: [{ mint: mintUrl, proofs }] })
+		await incrementCounterByMintUrl(mintUrl, resp.lastCount + 1)
 		return proofs
 	} catch (e) {
 		l('[restoreWallet] error', { e })
 	}
 }
 
-let overshoot = 0
-let from = 0
-let to = RESTORE_INTERVAL
-const restoredProofs: Proof[] = []
-
-function resetRestoreVars() {
-	overshoot = 0
-	from = 0
-	to = RESTORE_INTERVAL
-	restoredProofs.length = 0
-}
-
-async function restoreInterval(wallet: CashuWallet) {
+async function restoreInterval(
+	wallet: CashuWallet,
+	from: number,
+	to: number,
+	restoredProofs: Proof[] = [],
+	overshoot: number = 0
+) {
 	try {
 		const { proofs, newKeys } = await wallet.restore(from, to)
-		if (proofs.length || overshoot < 2) {
+		if (proofs.length) {
+			l('[restoreInterval] restored proofs: ', { from, to, proofsLength: proofs.length })
 			restoredProofs.push(...proofs)
 			from += RESTORE_INTERVAL
 			to += RESTORE_INTERVAL
-			overshoot++
-			return restoreInterval(wallet)
+			return restoreInterval(wallet, from, to, restoredProofs)
 		}
+		if (overshoot < 1) {
+			l('[restoreInterval] no proofs to restore! overshooting now: ', { from, to, proofsLength: proofs.length, overshoot })
+			overshoot++
+			return restoreInterval(wallet, from, to, restoredProofs, overshoot)
+		}
+		l('[restoreInterval] no proofs to restore! overshooting limit reached: ', { from, to, proofsLength: proofs.length, overshoot })
 		return {
 			proofs: restoredProofs,
 			newKeys,

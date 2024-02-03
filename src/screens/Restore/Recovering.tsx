@@ -1,5 +1,6 @@
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
+import { getBalance } from '@db'
 import type { IRecoveringPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { l } from '@src/logger'
@@ -18,9 +19,14 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 		// TODO UI error handling
 		try {
 			const proofs = await restoreWallet(mintUrl, mnemonic)
+			if (!proofs?.length) {
+				// TODO navigate to specific screen
+				return
+			}
+			const bal = await getBalance()
 			navigation.navigate('success', {
 				mint: mintUrl,
-				amount: proofs?.reduce((r, c) => r + c.amount, 0),
+				amount: bal,
 				isRestored: true,
 				comingFromOnboarding: route.params.comingFromOnboarding,
 			})

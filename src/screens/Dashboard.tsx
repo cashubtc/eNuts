@@ -87,9 +87,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}
 
 	// navigates to the mint list page
-	const handleMintModal = async (forEnutsMint = false) => {
+	const handleMintModal = (forEnutsMint = false) => {
 		setModal(prev => ({ ...prev, mint: false }))
-		await store.set(STORE_KEYS.explainer, '1')
 		navigation.navigate('mints', { defaultMint: forEnutsMint, newMint: !forEnutsMint })
 	}
 
@@ -99,10 +98,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		} catch (e) {
 			// TODO update error message: Mint could not be added, please add a different one or try again later.
 			openPromptAutoClose({ msg: isErr(e) ? e.message : t('smthWrong') })
-			await handleMintModal(false)
-			return
+			return handleMintModal(false)
 		}
-		await handleMintModal(true)
+		handleMintModal(true)
 	}
 
 	// This function is only called if the mint of the received token is available as trusted in user DB
