@@ -19,8 +19,6 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
-// TODO provide text input for custom mint url
-
 export default function SelectRecoveryMintScreen({ navigation, route }: ISelectRecoveryMintPageProps) {
 
 	const { t } = useTranslation([NS.common])
