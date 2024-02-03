@@ -1,6 +1,6 @@
 import type { CashuWallet, MintKeys, Proof } from '@cashu/cashu-ts'
 import { RESTORE_INTERVAL, RESTORE_OVERSHOOT } from '@consts/mints'
-import { addToken, getBalance } from '@db'
+import { addToken, getMintBalance } from '@db'
 import { l } from '@log'
 import type { RootStackParamList } from '@model/nav'
 import { type NavigationProp, useNavigation } from '@react-navigation/core'
@@ -51,7 +51,7 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 					}
 					return navigation.navigate('dashboard')
 				}
-				const bal = await getBalance()
+				const bal = await getMintBalance(mintUrl)
 				await addToHistory({
 					mints: [mintUrl],
 					amount: bal,
