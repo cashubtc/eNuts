@@ -1,12 +1,13 @@
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
 import { getBalance } from '@db'
+import { l } from '@log'
 import type { IRecoveringPageProps } from '@model/nav'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
-import { l } from '@src/logger'
-import { isErr } from '@src/util'
+import { addToHistory } from '@store/latestHistoryEntries'
 import { globals } from '@styles'
+import { isErr } from '@util'
 import { restoreWallet } from '@wallet/restore'
 import { useEffect } from 'react'
 import { View } from 'react-native'
@@ -30,7 +31,12 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 				return navigation.navigate('dashboard')
 			}
 			const bal = await getBalance()
-			// TODO add to history
+			await addToHistory({
+				mints: [mintUrl],
+				amount: bal,
+				type: 4,
+				value: '',
+			})
 			navigation.navigate('success', {
 				mint: mintUrl,
 				amount: bal,
