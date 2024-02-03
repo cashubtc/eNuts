@@ -1,5 +1,5 @@
 import { type CashuWallet, generateNewMnemonic, type Proof } from '@cashu/cashu-ts'
-import { RESTORE_INTERVAL } from '@consts/mints'
+import { RESTORE_INTERVAL, RESTORE_OVERSHOOT } from '@consts/mints'
 import { addToken } from '@db'
 import { l } from '@log'
 import { getCounterByMintUrl, incrementCounterByMintUrl, saveSeed } from '@store/restore'
@@ -54,24 +54,20 @@ async function restoreInterval(
 ) {
 	try {
 		const { proofs, newKeys } = await wallet.restore(from, to)
+		from += RESTORE_INTERVAL
+		to += RESTORE_INTERVAL
 		if (proofs.length) {
-			l('[restoreInterval] restored proofs: ', { from, to, proofsLength: proofs.length })
+			// l('[restoreInterval] restored proofs: ', { from, to, proofsLength: proofs.length })
 			restoredProofs.push(...proofs)
-			from += RESTORE_INTERVAL
-			to += RESTORE_INTERVAL
 			return restoreInterval(wallet, from, to, restoredProofs)
 		}
-		if (overshoot < 1) {
-			l('[restoreInterval] no proofs to restore! overshooting now: ', { from, to, proofsLength: proofs.length, overshoot })
+		if (overshoot < RESTORE_OVERSHOOT) {
+			// l('[restoreInterval] no proofs to restore! overshooting now: ', { from, to, proofsLength: proofs.length, overshoot })
 			overshoot++
 			return restoreInterval(wallet, from, to, restoredProofs, overshoot)
 		}
-		l('[restoreInterval] no proofs to restore! overshooting limit reached: ', { from, to, proofsLength: proofs.length, overshoot })
-		return {
-			proofs: restoredProofs,
-			newKeys,
-			lastCount: to
-		}
+		// l('[restoreInterval] no proofs to restore! overshooting limit reached: ', { from, to, restoredProofs: restoredProofs.length, overshoot })
+		return { proofs: restoredProofs, newKeys, lastCount: to }
 	} catch (e) {
 		l('[restoreInterval] error', { e })
 	}

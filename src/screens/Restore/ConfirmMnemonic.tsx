@@ -21,11 +21,12 @@ import { ScaledSheet } from 'react-native-size-matters'
 
 manual test cases:
 ---
-* Start new wallet with seed: confirm mnemonic, set pin, add mint, mint, send, receive, melt, restore
-
-* Start new wallet without seed: skip pin, add mint, activate seed, mint, send, receive, restore
-* Start new wallet with recovery: paste seed, restore, set pin, send, receive, melt, mint, restore
-* Start new quick wallet, skip pin, skip mint, restore, send, receive, melt, mint, restore
+[OK] * Start new seed wallet: confirm mnemonic, set pin, add mint, mint, send, receive, melt, restore
+[OK] * Start new quick wallet: skip pin, add mint, activate seed, mint, send, receive, restore
+[OK] * Start new recovery wallet: paste seed, restore, set pin, send, receive, melt, mint, restore
+[OK] * Start new quick wallet, skip pin, skip mint, restore, send, receive, melt, mint, restore
+[  ] * ...
+[  ] * ...
 
 */
 
