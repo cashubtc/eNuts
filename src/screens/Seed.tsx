@@ -24,6 +24,11 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 					txt={t('seedBackup')}
 					styles={[styles.headerTxt]}
 				/>
+				<Txt
+					center
+					txt={t('seedMigrationHint')}
+					styles={[{ fontSize: vs(13), color: color.TEXT_SECONDARY, marginBottom: s(-30) }]}
+				/>
 			</View>
 			{!params?.comingFromOnboarding &&
 				<TouchableOpacity
@@ -112,7 +117,8 @@ const styles = ScaledSheet.create({
 	header: {
 		height: '40%',
 		alignItems: 'center',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		paddingHorizontal: '20@s',
 	},
 	headerTxt: {
 		fontSize: '30@s',

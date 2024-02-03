@@ -103,6 +103,7 @@
 		"restoreWifiHint": "We recommend that you use a stable Wi-Fi connection for the recovery process to avoid any interruptions and to ensure a fast and secure recovery.",
 		"restoreForeground": "Keep the app in the foreground.",
 		"restoreForegroundHint": "Please keep the app in the foreground and do not close it during the recovery process to avoid any interruptions.",
+		"seedMigrationHint": "If you have a balance but no seed yet, create a token from a desired mint and self-claim it after generating a new seed. Repeat for each mint you wish to backup.",
 		"ecashPayment": "Ecash payment",
 		"english": "English",
 		"swahili": "Swahili",

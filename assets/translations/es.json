@@ -103,6 +103,7 @@
 		"restoreWifiHint": "Recomendamos que utilice una conexión Wi-Fi estable para el proceso de recuperación para evitar cualquier interrupción y garantizar una recuperación rápida y segura.",
 		"restoreForeground": "Mantén la aplicación en primer plano.",
 		"restoreForegroundHint": "Por favor, mantenga la aplicación en primer plano y no la cierre durante el proceso de recuperación para evitar cualquier interrupción.",
+		"seedMigrationHint": "Si tienes saldo, crea y reclama un token con la acuñación deseada después de generar una semilla. Repite para cada acuñación que desees respaldar.",
 		"ecashPayment": "Pagar Ecash",
 		"english": "Inglés",
 		"spanish": "Español",

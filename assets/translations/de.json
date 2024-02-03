@@ -103,6 +103,7 @@
 		"restoreWifiHint": "Wir empfehlen, dass Sie für den Wiederherstellungsprozess eine stabile Wi-Fi-Verbindung verwenden, um Unterbrechungen zu vermeiden und eine schnelle und sichere Wiederherstellung zu gewährleisten.",
 		"restoreForeground": "Halten Sie die App im Vordergrund.",
 		"restoreForegroundHint": "Bitte halten Sie die App im Vordergrund und schließen Sie sie während des Wiederherstellungsprozesses nicht, um Unterbrechungen zu vermeiden.",
+		"seedMigrationHint": "Wenn Sie bereits Guthaben haben, jedoch noch kein Seed, erstellen Sie nach dem Generieren eines neuen Seeds einen Token und beanspruchen Sie ihn selbst mit der gewünschten Mint. Wiederholen Sie diesen Vorgang für jede Mint, die Sie sichern möchten.",
 		"ecashPayment": "Ecash Zahlung",
 		"english": "Englisch",
 		"spanish": "Spanisch",
