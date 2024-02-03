@@ -1,61 +1,21 @@
+import { useRestore } from '@comps/hooks/Restore'
 import Loading from '@comps/Loading'
 import Txt from '@comps/Txt'
-import { getBalance } from '@db'
-import { l } from '@log'
 import type { IRecoveringPageProps } from '@model/nav'
-import { usePromptContext } from '@src/context/Prompt'
+import { RESTORE_OVERSHOOT } from '@src/consts/mints'
 import { useThemeContext } from '@src/context/Theme'
-import { addToHistory } from '@store/latestHistoryEntries'
-import { globals } from '@styles'
-import { isErr } from '@util'
-import { restoreWallet } from '@wallet/restore'
-import { useEffect } from 'react'
+import { formatSatStr } from '@src/util'
+import { globals, mainColors } from '@styles'
 import { View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
-export default function RecoveringScreen({ navigation, route }: IRecoveringPageProps) {
+export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 
 	const { mintUrl, mnemonic, comingFromOnboarding } = route.params
-	// TODO show restore progress
+	// Seed recovery process in useRestore hook
+	const { proofs, from, to, overshoot } = useRestore({ mintUrl, mnemonic, comingFromOnboarding })
+
 	const { color } = useThemeContext()
-	const { openPromptAutoClose } = usePromptContext()
-
-	const handleRecovery = async () => {
-		try {
-			const proofs = await restoreWallet(mintUrl, mnemonic)
-			if (!proofs?.length) {
-				openPromptAutoClose({ msg: 'Found no proofs to restore the wallet', success: false })
-				if (comingFromOnboarding) {
-					return navigation.navigate('auth', { pinHash: '' })
-				}
-				return navigation.navigate('dashboard')
-			}
-			const bal = await getBalance()
-			await addToHistory({
-				mints: [mintUrl],
-				amount: bal,
-				type: 4,
-				value: '',
-			})
-			navigation.navigate('success', {
-				mint: mintUrl,
-				amount: bal,
-				isRestored: true,
-				comingFromOnboarding,
-			})
-		} catch (e) {
-			l('[handleRecovery] error: ', e)
-			navigation.navigate('processingError', {
-				errorMsg: isErr(e) ? e.message : 'An error occurred while restoring your wallet',
-				comingFromOnboarding,
-			})
-		}
-	}
-
-	// TODO translate
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(() => void handleRecovery(), [])
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
@@ -65,10 +25,40 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 				txt='Recovering your wallet...'
 			/>
 			<Txt
+				bold
 				center
-				styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-				txt='Please do not close the app during the process. This may take a few seconds...'
+				styles={[styles.warn, { color: mainColors.WARN }]}
+				txt='Please do not close the app during the process.'
 			/>
+			<View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+				<Txt
+					bold
+					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+					txt='Restore cycle'
+				/>
+				<Txt
+					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+					txt={`${from} to ${to}`}
+				/>
+			</View>
+			<View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+				<Txt
+					bold
+					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+					txt='Restored proofs'
+				/>
+				<Txt
+					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+					txt={`${proofs.length} (${formatSatStr(proofs.reduce((acc, p) => acc + p.amount, 0))})`}
+				/>
+			</View>
+			{overshoot > 0 &&
+				<Txt
+					bold
+					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+					txt={`Almost done. Safety check ${overshoot}/${RESTORE_OVERSHOOT}`}
+				/>
+			}
 		</View>
 	)
 }
@@ -81,11 +71,16 @@ const styles = ScaledSheet.create({
 		paddingHorizontal: '20@s',
 	},
 	descText: {
-		marginTop: '20@vs',
+		marginTop: '20@s',
 		textAlign: 'center',
+		fontSize: '20@s',
+	},
+	warn: {
+		marginTop: '10@s',
+		marginBottom: '40@s',
 	},
 	hint: {
-		fontSize: '12@vs',
-		marginTop: '10@vs',
+		fontSize: '12@s',
+		marginTop: '10@s',
 	}
 })

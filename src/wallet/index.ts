@@ -1,6 +1,7 @@
 import {
 	CashuMint, CashuWallet, deriveKeysetId,
 	deriveSeedFromMnemonic,
+	generateNewMnemonic,
 	getDecodedToken,
 	getEncodedToken,
 	type GetInfoResponse, type MintKeys,
@@ -29,6 +30,17 @@ interface IGetSeedWallet {
 
 const _mintKeysMap: { [mintUrl: string]: { [keySetId: string]: MintKeys } } = {}
 const wallets: { [mintUrl: string]: CashuWallet } = {}
+
+export function generateMnemonic(): string | undefined {
+	try {
+		const mnemonic = generateNewMnemonic()
+		l('[generateMnemonic] ', { mnemonic })
+		return mnemonic
+	} catch (e) {
+		l('[generateMnemonic] error', { e })
+		throw new Error('generateMnemonic error')
+	}
+}
 
 export function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string): void {
 	if (!keySetId) { keySetId = deriveKeysetId(keys) }
