@@ -58,22 +58,19 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 		// Allow user to submit URL without "https://" and add it ourself if not available
 		const submitted = normalizeMintUrl(input)
 		if (!submitted?.length) {
-			openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
-			return
+			return openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
 		}
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === submitted)) {
-				openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
-				return
+				return openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
 			}
 			// add mint url to db
 			await addMint(submitted)
 			setSelectedMint({ mintUrl: submitted })
 		} catch (e) {
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
-			return
+			return openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
 		}
 		setNewMintModal(false)
 		openTopUpModal()
@@ -90,8 +87,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			// prompt error
 			openPromptAutoClose({ msg: t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
 			setTrustModalOpen(false)
-			l(e)
-			return
+			return l(e)
 		}
 		setTrustModalOpen(false)
 		openTopUpModal()

@@ -34,18 +34,13 @@ export default function SelectRecoveryMintScreen({ navigation, route }: ISelectR
 	const handleMintInput = async () => {
 		// Allow user to submit URL without "https://" and add it ourself if not available
 		const submitted = normalizeMintUrl(input)
-		if (!submitted?.length) {
-			openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
-			setIsCustomMint(false)
-			return
-		}
+		if (!submitted?.length) { return setIsCustomMint(false) }
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === submitted)) {
 				openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
-				setIsCustomMint(false)
-				return
+				return setIsCustomMint(false)
 			}
 			// add mint url to db
 			await addMint(submitted)
@@ -116,7 +111,7 @@ export default function SelectRecoveryMintScreen({ navigation, route }: ISelectR
 						/>
 					}
 					<Button
-						txt={isCustomMint ? t('confirm') : t('continue')}
+						txt={isCustomMint ? !input.length ? t('cancel') : t('confirm') : t('continue')}
 						onPress={() => {
 							if (isCustomMint) {
 								return void handleMintInput()
