@@ -234,6 +234,9 @@ export type RootStackParamList = {
 		mnemonic: string
 		comingFromOnboarding?: boolean
 	}
+	'Restore warning': {
+		comingFromOnboarding?: boolean
+	}
 }
 
 export type TRouteString = 'dashboard' | 'mints' | 'Address book' | 'Settings'
@@ -288,6 +291,7 @@ export type IConfirmMnemonicPageProps = NativeStackScreenProps<RootStackParamLis
 export type IDerivingPageProps = NativeStackScreenProps<RootStackParamList, 'Deriving'>
 export type IRecoveringPageProps = NativeStackScreenProps<RootStackParamList, 'Recovering'>
 export type ISelectRecoveryMintPageProps = NativeStackScreenProps<RootStackParamList, 'Select recovery mint'>
+export type IRestoreWarningPageProps = NativeStackScreenProps<RootStackParamList, 'Restore warning'>
 export type TBottomNavProps =
 	TNostrOnboardingPageProps |
 	TDashboardPageProps |

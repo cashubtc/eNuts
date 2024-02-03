@@ -38,6 +38,7 @@ import ConfirmMnemonicScreen from '@screens/Restore/ConfirmMnemonic'
 import MnemonicScreen from '@screens/Restore/Mnemonic'
 import RecoverScreen from '@screens/Restore/Recover'
 import RecoveringScreen from '@screens/Restore/Recovering'
+import RestoreWarningScreen from '@screens/Restore/RestoreWarning'
 import SelectRecoveryMintScreen from '@screens/Restore/SelectRecoveryMint'
 import SeedScreen from '@screens/Seed'
 import SeedUpdateScreen from '@screens/SeedUpdate'
@@ -195,6 +196,7 @@ export default function Navigator({
 				<Stack.Screen name='Confirm Mnemonic' component={ConfirmMnemonicScreen} />
 				<Stack.Screen name='Recovering' component={RecoveringScreen} />
 				<Stack.Screen name='Select recovery mint' component={SelectRecoveryMintScreen} />
+				<Stack.Screen name='Restore warning' component={RestoreWarningScreen} />
 			</Stack.Navigator>
 		</View>
 	)
