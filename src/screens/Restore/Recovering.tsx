@@ -15,8 +15,10 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 	const { color } = useThemeContext()
 
 	const handleRecovery = async () => {
+
+		// TODO show restore progress
 		const { mintUrl, mnemonic } = route.params
-		// TODO UI error handling
+
 		try {
 			const proofs = await restoreWallet(mintUrl, mnemonic)
 			if (!proofs?.length) {
@@ -24,6 +26,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 				return
 			}
 			const bal = await getBalance()
+			// TODO add to history
 			navigation.navigate('success', {
 				mint: mintUrl,
 				amount: bal,
@@ -32,13 +35,14 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 			})
 		} catch (e) {
 			l('[handleRecovery] error: ', e)
+			// TODO navigate to specific screen
 		}
 	}
 
-	useEffect(() => {
-		void handleRecovery()
+	// TODO translate
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	useEffect(() => void handleRecovery(), [])
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
