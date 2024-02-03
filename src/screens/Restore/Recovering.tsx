@@ -11,6 +11,10 @@ import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
+// TODO
+// show internet connection status
+// show different quotes messages during the process
+
 export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 
 	const { mintUrl, mnemonic, comingFromOnboarding } = route.params
@@ -27,12 +31,6 @@ export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 			<Txt
 				styles={[styles.descText]}
 				txt={t('recoveringWallet')}
-			/>
-			<Txt
-				bold
-				center
-				styles={[styles.warn, { color: mainColors.WARN }]}
-				txt={t('dontClose')}
 			/>
 			<View style={styles.progress}>
 				<Txt
@@ -56,14 +54,13 @@ export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 					txt={`${proofs.length} (${formatSatStr(proofs.reduce((acc, p) => acc + p.amount, 0))})`}
 				/>
 			</View>
-			{overshoot > 0 &&
-				<Txt
-					bold
-					styles={[styles.hint, { color: color.TEXT_SECONDARY, marginTop: s(40) }]}
-					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-					txt={`${t('doneSafety')} ${overshoot}/${RESTORE_OVERSHOOT}`}
-				/>
-			}
+			<Txt
+				center
+				bold={overshoot > 0}
+				styles={[styles.hint, { color: overshoot > 0 ? mainColors.VALID : mainColors.WARN, marginTop: s(40) }]}
+				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+				txt={overshoot > 0 ? `${t('doneSafety')} ${overshoot}/${RESTORE_OVERSHOOT}` : t('dontClose')}
+			/>
 		</View>
 	)
 }
@@ -77,6 +74,7 @@ const styles = ScaledSheet.create({
 	},
 	descText: {
 		marginTop: '20@s',
+		marginBottom: '30@s',
 		textAlign: 'center',
 		fontSize: '20@s',
 	},
