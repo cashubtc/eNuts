@@ -59,7 +59,7 @@ export default function RecoveringScreen({ route }: IRecoveringPageProps) {
 			{overshoot > 0 &&
 				<Txt
 					bold
-					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+					styles={[styles.hint, { color: color.TEXT_SECONDARY, marginTop: s(40) }]}
 					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 					txt={`${t('doneSafety')} ${overshoot}/${RESTORE_OVERSHOOT}`}
 				/>

@@ -88,7 +88,7 @@ const styles = ScaledSheet.create({
 		padding: '10@s',
 		marginBottom: '10@s',
 		borderRadius: '10@s',
-		width: '48%',
+		width: '48.5%',
 		flexDirection: 'row',
 		alignItems: 'center',
 	},

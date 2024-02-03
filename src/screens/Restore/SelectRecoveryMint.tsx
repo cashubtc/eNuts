@@ -1,17 +1,19 @@
-import Button from '@comps/Button'
+import Button, { TxtButton } from '@comps/Button'
 import RadioBtn from '@comps/RadioBtn'
 import Screen from '@comps/Screen'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
+import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import { mintUrl } from '@consts/mints'
-import { getMintsUrls } from '@db'
+import { addMint, getMintsUrls } from '@db'
 import type { ISelectRecoveryMintPageProps } from '@model/nav'
+import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getDefaultMint } from '@store/mintStore'
 import { globals } from '@styles'
-import { formatMintUrl, isStr } from '@util'
+import { formatMintUrl, isErr, isStr, normalizeMintUrl } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, TouchableOpacity, View } from 'react-native'
@@ -23,9 +25,40 @@ export default function SelectRecoveryMintScreen({ navigation, route }: ISelectR
 
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
+	const { openPromptAutoClose } = usePromptContext()
 
 	const [userMints, setUserMints] = useState<string[]>([])
 	const [selectedMint, setSelectedMint] = useState('')
+	const [isCustomMint, setIsCustomMint] = useState(false)
+	const [input, setInput] = useState('')
+
+	// adds a mint via input
+	const handleMintInput = async () => {
+		// Allow user to submit URL without "https://" and add it ourself if not available
+		const submitted = normalizeMintUrl(input)
+		if (!submitted?.length) {
+			openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
+			setIsCustomMint(false)
+			return
+		}
+		try {
+			// check if mint is already in db
+			const mints = await getMintsUrls(true)
+			if (mints.some(m => m.mintUrl === submitted)) {
+				openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
+				setIsCustomMint(false)
+				return
+			}
+			// add mint url to db
+			await addMint(submitted)
+			setUserMints([...userMints, submitted])
+			setSelectedMint(submitted)
+			setIsCustomMint(false)
+		} catch (e) {
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
+			setIsCustomMint(false)
+		}
+	}
 
 	useEffect(() => {
 		void (async () => {
@@ -58,6 +91,12 @@ export default function SelectRecoveryMintScreen({ navigation, route }: ISelectR
 							/>
 						))}
 					</View>
+					{!isCustomMint &&
+						<TxtButton
+							txt='Add Mint URL'
+							onPress={() => setIsCustomMint(true)}
+						/>
+					}
 				</ScrollView>
 				:
 				<View>
@@ -70,9 +109,20 @@ export default function SelectRecoveryMintScreen({ navigation, route }: ISelectR
 			}
 			<View style={[styles.btn, { backgroundColor: color.BACKGROUND }]}>
 				<View style={styles.btnWrap}>
+					{isCustomMint &&
+						<TxtInput
+							placeholder='Mint URL'
+							onChangeText={text => setInput(text)}
+							onSubmitEditing={() => void handleMintInput()}
+							autoFocus
+						/>
+					}
 					<Button
-						txt={t('continue')}
+						txt={isCustomMint ? t('confirm') : t('continue')}
 						onPress={() => {
+							if (isCustomMint) {
+								return void handleMintInput()
+							}
 							navigation.navigate('Recover', {
 								mintUrl: selectedMint,
 								comingFromOnboarding: route.params.comingFromOnboarding
