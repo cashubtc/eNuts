@@ -29,7 +29,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 					styles={[styles.headerTxt]}
 				/>
 			</View>
-			<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+			<View style={styles.headerActions}>
 				{!params?.comingFromOnboarding && params?.sawSeedUpdate ?
 					<TouchableOpacity
 						style={styles.navIcon}
@@ -168,6 +168,11 @@ const styles = ScaledSheet.create({
 	headerTxt: {
 		fontSize: '30@s',
 		textAlign: 'center',
+	},
+	headerActions: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between'
 	},
 	navIcon: {
 		padding: '20@s',
