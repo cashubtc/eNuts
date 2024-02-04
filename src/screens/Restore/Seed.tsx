@@ -47,6 +47,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 				</TouchableOpacity>
 			</View>
 			<View style={[styles.wrapContainer, { backgroundColor: color.DRAWER }]}>
+				{/* secure wallet */}
 				<TouchableOpacity
 					onPress={() => {
 						void store.set(STORE_KEYS.sawSeedUpdate, '1')
@@ -67,6 +68,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 					</View>
 				</TouchableOpacity>
 				<Separator style={[styles.separator]} />
+				{/* quick wallet */}
 				{params?.comingFromOnboarding &&
 					<>
 						<TouchableOpacity
@@ -91,6 +93,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 						<Separator style={[styles.separator]} />
 					</>
 				}
+				{/* wallet recovery */}
 				<TouchableOpacity
 					onPress={() => {
 						void store.set(STORE_KEYS.sawSeedUpdate, '1')
@@ -110,6 +113,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 						</View>
 					</View>
 				</TouchableOpacity>
+				{/* skip seed setup */}
 				{!params?.sawSeedUpdate && !params?.comingFromOnboarding &&
 					<>
 						<Separator style={[styles.separator]} />

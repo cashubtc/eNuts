@@ -36,6 +36,7 @@ export type RootStackParamList = {
 		pinHash: string
 		shouldEdit?: boolean
 		shouldRemove?: boolean
+		sawSeedUpdate?: boolean
 	}
 	selectMint: {
 		mints: IMintUrl[]

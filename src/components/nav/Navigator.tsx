@@ -73,10 +73,10 @@ export default function Navigator({
 	const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 
 	const getInitialRoute = () => {
-		// a pin has been setup previously
-		if (pinHash || bgAuth) { return 'auth' }
 		// initial onboarding
 		if (shouldOnboard) { return 'onboarding' }
+		// a pin has been setup previously
+		if (pinHash || bgAuth) { return 'auth' }
 		// no previous pin setup && onboarding done
 		if (!hasSeed && !sawSeedUpdate) { return 'Seed' }
 		return 'dashboard'
@@ -149,7 +149,7 @@ export default function Navigator({
 				<Stack.Screen
 					name='auth'
 					component={AuthPage}
-					initialParams={{ pinHash }}
+					initialParams={{ pinHash, sawSeedUpdate }}
 					options={{ gestureEnabled: false }}
 				/>
 				{/* sendable token created page */}
@@ -191,7 +191,10 @@ export default function Navigator({
 				<Stack.Screen
 					name='Seed'
 					component={SeedScreen}
-					initialParams={{ sawSeedUpdate: sawSeedUpdate }}
+					initialParams={{
+						sawSeedUpdate: sawSeedUpdate,
+						comingFromOnboarding: false,
+					}}
 				/>
 				<Stack.Screen name='Recover' component={RecoverScreen} />
 				<Stack.Screen name='Mnemonic' component={MnemonicScreen} />
