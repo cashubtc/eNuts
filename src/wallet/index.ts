@@ -299,6 +299,8 @@ export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: strin
 
 export async function getCounterByMintUrl(mintUrl: string) {
 	try {
+		const seed = await getSeed()
+		if (!seed) { return }
 		const counters = await store.get(STORE_KEYS.restoreCounter)
 		const keysetId = await getMintCurrentKeySetId(mintUrl)
 		if (!counters) {
@@ -323,11 +325,11 @@ export async function incrementCounterByMintUrl(mintUrl: string, count: number) 
 		const seed = await getSeed()
 		if (!seed) { return }
 		const counters = await store.get(STORE_KEYS.restoreCounter)
+		const keysetId = await getMintCurrentKeySetId(mintUrl)
 		if (!counters) {
-			throw new Error('Seed is available but counters have not been set!')
+			return store.set(STORE_KEYS.restoreCounter, toJson({ [keysetId]: count }))
 		}
 		const parsedCounters = cTo<ICounters>(counters)
-		const keysetId = await getMintCurrentKeySetId(mintUrl)
 		l('[before increment] ', { keysetId, counter: parsedCounters[keysetId] })
 		parsedCounters[keysetId] = (parsedCounters[keysetId] || 0) + count
 		l('[after increment] ', { keysetId, counter: parsedCounters[keysetId] })
