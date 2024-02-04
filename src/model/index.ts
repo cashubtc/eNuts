@@ -1,4 +1,4 @@
-import type { Proof, Token } from '@cashu/cashu-ts'
+import type { PayLnInvoiceResponse, Proof, Token } from '@cashu/cashu-ts'
 import type { HighlightKey } from '@styles'
 import type { ExpoConfig } from 'expo/config'
 import type { SQLStmtCb, SQLStmtErrCb } from 'expo-sqlite'
@@ -167,4 +167,12 @@ export interface IOpenPromptAutoCloseProps {
 
 export interface ICounters {
 	[key: string]: number
+}
+
+export type TPayLnInvoiceReturnType = Promise<{ result?: PayLnInvoiceResponse, fee?: number, realFee?: number, error?: unknown }>
+
+export type TRequestTokenReturnType = Promise<{ success: boolean; invoice: IInvoice | null | undefined }>
+
+export interface ISecret {
+	secret: string
 }

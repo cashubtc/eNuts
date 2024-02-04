@@ -15,7 +15,7 @@ import {
 	getMintsBalances, getMintsUrls
 } from '@db'
 import { l } from '@log'
-import type { ICounters, IInvoice, ITokenInfo } from '@model'
+import type { ICounters, IInvoice, ISecret, ITokenInfo, TPayLnInvoiceReturnType, TRequestTokenReturnType } from '@model'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
@@ -114,7 +114,7 @@ export async function isTokenSpendable(token: string): Promise<boolean> {
 	} catch (_) { return false }
 }
 
-export async function checkProofsSpent(mintUrl: string, toCheck: { secret: string }[]): Promise<{ secret: string }[]> {
+export async function checkProofsSpent(mintUrl: string, toCheck: ISecret[]): Promise<ISecret[]> {
 	return (await getWallet(mintUrl)).checkProofsSpent(toCheck)
 }
 
@@ -122,6 +122,7 @@ export async function checkFees(mintUrl: string, invoice: string): Promise<numbe
 	const { fee } = await CashuMint.checkFees(mintUrl, { pr: invoice })
 	return fee
 }
+
 export async function claimToken(encodedToken: string): Promise<boolean> {
 	encodedToken = isCashuToken(encodedToken) || ''
 	if (!encodedToken?.trim()) { return false }
@@ -157,6 +158,7 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
 		return false
 	}
 }
+
 export async function requestMint(mintUrl: string, amount: number): Promise<RequestMintResponse> {
 	const wallet = await getWallet(mintUrl)
 	const result = await wallet.requestMint(amount)
@@ -165,7 +167,8 @@ export async function requestMint(mintUrl: string, amount: number): Promise<Requ
 	l('[requestMint]', { result, mintUrl, amount })
 	return result
 }
-export async function requestToken(mintUrl: string, amount: number, hash: string): Promise<{ success: boolean; invoice: IInvoice | null | undefined }> {
+
+export async function requestToken(mintUrl: string, amount: number, hash: string): TRequestTokenReturnType {
 	const invoice = await getInvoice(hash)
 	const wallet = await getWallet(mintUrl)
 	const counter = await getCounterByMintUrl(mintUrl)
@@ -183,7 +186,7 @@ export async function requestToken(mintUrl: string, amount: number, hash: string
 	return { success: true, invoice }
 }
 
-export async function payLnInvoice(mintUrl: string, invoice: string, fee: number, proofs: Proof[] = []): Promise<{ result?: PayLnInvoiceResponse, fee?: number, realFee?: number, error?: unknown }> {
+export async function payLnInvoice(mintUrl: string, invoice: string, fee: number, proofs: Proof[] = []): TPayLnInvoiceReturnType {
 	const wallet = await getWallet(mintUrl)
 	const { amount } = decodeLnInvoice(invoice)
 	if (!amount) { throw new Error('bad invoice amount') }
