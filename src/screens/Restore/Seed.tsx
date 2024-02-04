@@ -1,4 +1,6 @@
-import { BackupIcon, BoltIcon, LeafIcon, LeftArrow } from '@comps/Icons'
+import { TxtButton } from '@comps/Button'
+import { BackupIcon, BoltIcon, InfoIcon, LeafIcon, LeftArrow } from '@comps/Icons'
+import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { ISeedPageProps } from '@model/nav'
@@ -6,16 +8,18 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { mainColors } from '@styles'
+import { globals, mainColors } from '@styles'
 import { H_Colors } from '@styles/colors'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SafeAreaView, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SeedScreen({ navigation, route: { params } }: ISeedPageProps) {
 
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
+	const [infoOpen, setInfoOpen] = useState(false)
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
@@ -24,20 +28,24 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 					txt={t('seedBackup')}
 					styles={[styles.headerTxt]}
 				/>
-				<Txt
-					center
-					txt={t('seedMigrationHint')}
-					styles={[{ fontSize: vs(13), color: color.TEXT_SECONDARY, marginBottom: s(-30) }]}
-				/>
 			</View>
-			{!params?.comingFromOnboarding &&
+			<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+				{!params?.comingFromOnboarding ?
+					<TouchableOpacity
+						style={styles.navIcon}
+						onPress={() => navigation.navigate('Security settings')}
+					>
+						<LeftArrow color={color.TEXT} />
+					</TouchableOpacity>
+					: <View />
+				}
 				<TouchableOpacity
 					style={styles.navIcon}
-					onPress={() => navigation.navigate('Security settings')}
+					onPress={() => setInfoOpen(true)}
 				>
-					<LeftArrow color={color.TEXT} />
+					<InfoIcon color={color.TEXT} />
 				</TouchableOpacity>
-			}
+			</View>
 			<View style={[styles.wrapContainer, { backgroundColor: color.DRAWER }]}>
 				<TouchableOpacity
 					onPress={() => {
@@ -103,6 +111,19 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 					</View>
 				</TouchableOpacity>
 			</View>
+			<MyModal type='bottom' animation='slide' visible={infoOpen} close={() => setInfoOpen(false)} >
+				<Text style={globals(color).modalHeader}>
+					{t('seedBackup')}
+				</Text>
+				<Text style={[globals(color).modalTxt, { marginHorizontal: 0 }]}>
+					{t('seedMigrationHint')}
+				</Text>
+				<TxtButton
+					txt='OK'
+					onPress={() => setInfoOpen(false)}
+					style={[{ paddingBottom: s(20), marginTop: s(-20) }]}
+				/>
+			</MyModal>
 		</SafeAreaView>
 	)
 }
@@ -123,7 +144,6 @@ const styles = ScaledSheet.create({
 	headerTxt: {
 		fontSize: '30@s',
 		textAlign: 'center',
-		marginBottom: '20@s'
 	},
 	navIcon: {
 		padding: '20@s',
