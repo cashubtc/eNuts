@@ -76,8 +76,8 @@ export async function getSeedWalletByMnemonic({ mintUrl, mnemonic }: IGetSeedWal
 }
 
 async function getCurrentKeySetId(mintUrl: string): Promise<string> {
-	const wallet = await getWallet(mintUrl)
-	l({ wallet })
+	// const wallet = await getWallet(mintUrl)
+	// l({ wallet })
 	const keys = await (await getWallet(mintUrl)).mint.getKeys()
 	const keySetId = deriveKeysetId(keys)
 	_setKeys(mintUrl, keys, keySetId)
