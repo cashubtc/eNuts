@@ -99,7 +99,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 							if (hasSeed) {
 								return navigation.navigate('Restore warning', { comingFromOnboarding: false })
 							}
-							navigation.navigate('Seed', { comingFromOnboarding: false })
+							navigation.navigate('Seed', { comingFromOnboarding: false, sawSeedUpdate: true })
 						}}
 						hasSeparator
 					/>
