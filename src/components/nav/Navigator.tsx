@@ -40,7 +40,6 @@ import RecoverScreen from '@screens/Restore/Recover'
 import RecoveringScreen from '@screens/Restore/Recovering'
 import RestoreWarningScreen from '@screens/Restore/RestoreWarning'
 import SeedScreen from '@screens/Restore/Seed'
-import SeedUpdateScreen from '@screens/Restore/SeedUpdate'
 import SelectRecoveryMintScreen from '@screens/Restore/SelectRecoveryMint'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
@@ -79,7 +78,7 @@ export default function Navigator({
 		// initial onboarding
 		if (shouldOnboard) { return 'onboarding' }
 		// no previous pin setup && onboarding done
-		if (!hasSeed && !sawSeedUpdate) { return 'Seed Update' }
+		if (!hasSeed && !sawSeedUpdate) { return 'Seed' }
 		return 'dashboard'
 	}
 
@@ -189,8 +188,11 @@ export default function Navigator({
 				<Stack.Screen name='Advanced settings' component={AdvancedFunctionScreen} />
 				<Stack.Screen name='About settings' component={AboutSettings} />
 				<Stack.Screen name='BackupPage' component={BackupPage} />
-				<Stack.Screen name='Seed' component={SeedScreen} />
-				<Stack.Screen name='Seed Update' component={SeedUpdateScreen} />
+				<Stack.Screen
+					name='Seed'
+					component={SeedScreen}
+					initialParams={{ sawSeedUpdate: sawSeedUpdate }}
+				/>
 				<Stack.Screen name='Recover' component={RecoverScreen} />
 				<Stack.Screen name='Mnemonic' component={MnemonicScreen} />
 				<Stack.Screen name='Confirm Mnemonic' component={ConfirmMnemonicScreen} />

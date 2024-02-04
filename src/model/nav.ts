@@ -209,8 +209,8 @@ export type RootStackParamList = {
 	}
 	Seed: {
 		comingFromOnboarding?: boolean
+		sawSeedUpdate?: boolean
 	} | undefined
-	'Seed Update': undefined
 	'Select recovery mint': {
 		comingFromOnboarding?: boolean
 	}
@@ -284,7 +284,6 @@ export type TBackupPageProps = NativeStackScreenProps<RootStackParamList, 'Backu
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
 export type ISeedPageProps = NativeStackScreenProps<RootStackParamList, 'Seed'>
-export type ISeedUpdatePageProps = NativeStackScreenProps<RootStackParamList, 'Seed Update'>
 export type IRecoverPageProps = NativeStackScreenProps<RootStackParamList, 'Recover'>
 export type IMnemonicPageProps = NativeStackScreenProps<RootStackParamList, 'Mnemonic'>
 export type IConfirmMnemonicPageProps = NativeStackScreenProps<RootStackParamList, 'Confirm Mnemonic'>

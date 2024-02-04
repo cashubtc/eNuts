@@ -1,5 +1,5 @@
 import { TxtButton } from '@comps/Button'
-import { BackupIcon, BoltIcon, InfoIcon, LeafIcon, LeftArrow } from '@comps/Icons'
+import { BackupIcon, BoltIcon, ExitIcon, InfoIcon, LeafIcon, LeftArrow } from '@comps/Icons'
 import MyModal from '@comps/modal'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
@@ -30,7 +30,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 				/>
 			</View>
 			<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-				{!params?.comingFromOnboarding ?
+				{!params?.comingFromOnboarding && params?.sawSeedUpdate ?
 					<TouchableOpacity
 						style={styles.navIcon}
 						onPress={() => navigation.navigate('Security settings')}
@@ -110,6 +110,30 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 						</View>
 					</View>
 				</TouchableOpacity>
+				{!params?.sawSeedUpdate && !params?.comingFromOnboarding &&
+					<>
+						<Separator style={[styles.separator]} />
+						<TouchableOpacity
+							onPress={() => {
+								void store.set(STORE_KEYS.sawSeedUpdate, '1')
+								navigation.navigate('dashboard')
+							}}
+						>
+							<View style={styles.action}>
+								<View style={styles.optionIcon}>
+									<ExitIcon color={H_Colors.Sky} />
+								</View>
+								<View>
+									<Txt txt={t('willDoLater')} bold />
+									<Txt
+										txt={t('skipSeedHint')}
+										styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
+									/>
+								</View>
+							</View>
+						</TouchableOpacity>
+					</>
+				}
 			</View>
 			<MyModal type='bottom' animation='slide' visible={infoOpen} close={() => setInfoOpen(false)} >
 				<Text style={globals(color).modalHeader}>
