@@ -15,15 +15,18 @@ import {
 	getMintsBalances, getMintsUrls
 } from '@db'
 import { l } from '@log'
-import type { IInvoice, ITokenInfo } from '@model'
+import type { ICounters, IInvoice, ITokenInfo } from '@model'
+import { store } from '@store'
+import { STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
-import { getCounterByMintUrl, getSeed, incrementCounterByMintUrl } from '@store/restore'
+import { getSeed } from '@store/restore'
+import { cTo, toJson } from '@store/utils'
 import { decodeLnInvoice, isCashuToken, isNum } from '@util'
 
 import { sumProofsValue, sumTokenProofs } from './proofs'
 import { getProofsToUse } from './util'
 
-interface IGetSeedWallet {
+interface IGetSeedWalletParams {
 	mintUrl: string
 	mnemonic: string
 }
@@ -55,9 +58,7 @@ export function _setKeys(mintUrl: string, keys: MintKeys, keySetId?: string): vo
 async function getWallet(mintUrl: string): Promise<CashuWallet> {
 	if (wallets[mintUrl]) { return wallets[mintUrl] }
 	const mint = new CashuMint(mintUrl)
-	l({ mint })
 	const seed = await getSeed()
-	l({ seedBeforeNewWallet: seed })
 	const keys = await mint.getKeys()
 	const wallet = new CashuWallet(mint, keys, seed)
 	_setKeys(mintUrl, keys)
@@ -65,7 +66,7 @@ async function getWallet(mintUrl: string): Promise<CashuWallet> {
 	return wallet
 }
 
-export async function getSeedWalletByMnemonic({ mintUrl, mnemonic }: IGetSeedWallet) {
+export async function getSeedWalletByMnemonic({ mintUrl, mnemonic }: IGetSeedWalletParams) {
 	const mint = new CashuMint(mintUrl)
 	const seed = deriveSeedFromMnemonic(mnemonic)
 	const keys = await mint.getKeys()
@@ -76,8 +77,6 @@ export async function getSeedWalletByMnemonic({ mintUrl, mnemonic }: IGetSeedWal
 }
 
 async function getCurrentKeySetId(mintUrl: string): Promise<string> {
-	// const wallet = await getWallet(mintUrl)
-	// l({ wallet })
 	const keys = await (await getWallet(mintUrl)).mint.getKeys()
 	const keySetId = deriveKeysetId(keys)
 	_setKeys(mintUrl, keys, keySetId)
@@ -295,19 +294,46 @@ export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: strin
 	}
 }
 
-// This won't work if the source mint is not in our db
-/* export async function fullAutoMintSwap(srcMintUrl: string, destMintUrl: string, fee: number) {
-	let amount = await getMintBalance(srcMintUrl)
-	let result = await autoMintSwap(srcMintUrl, destMintUrl, amount, fee)
-	amount = await getMintBalance(srcMintUrl)
-	l('[fullAutoMintSwap]', result, 'srcMint new Bal:', amount)
-	if (amount <= 0) { return { result } }
+export async function getCounterByMintUrl(mintUrl: string) {
 	try {
-		result = await autoMintSwap(srcMintUrl, destMintUrl, amount, fee)
-		l('[fullAutoMintSwap][round: 2]', result)
-	} catch (error) { return { result, error } }
-	return { result }
-} */
+		const counters = await store.get(STORE_KEYS.restoreCounter)
+		const keysetId = await getMintCurrentKeySetId(mintUrl)
+		if (!counters) {
+			// store counters for current keyset of mint url passed as param
+			await store.set(STORE_KEYS.restoreCounter, toJson({ [keysetId]: 0 }))
+			return 0
+		}
+		const parsedCounters = cTo<ICounters>(counters)
+		l('[getCounterByMintUrl] ', { storedCounters: parsedCounters })
+		if (!parsedCounters[keysetId]) { parsedCounters[keysetId] = 0 }
+		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
+		l('[getCounterByMintUrl] ', { keysetId, counter: parsedCounters[keysetId] })
+		return parsedCounters[keysetId]
+	} catch (e) {
+		l('[getCounterByMintUrl] Error while getCounter: ', e)
+		throw Error('[getCounterByMintUrl] Error while getCounter')
+	}
+}
+
+export async function incrementCounterByMintUrl(mintUrl: string, count: number) {
+	try {
+		const seed = await getSeed()
+		if (!seed) { return }
+		const counters = await store.get(STORE_KEYS.restoreCounter)
+		if (!counters) {
+			throw new Error('Seed is available but counters have not been set!')
+		}
+		const parsedCounters = cTo<ICounters>(counters)
+		const keysetId = await getMintCurrentKeySetId(mintUrl)
+		l('[before increment] ', { keysetId, counter: parsedCounters[keysetId] })
+		parsedCounters[keysetId] = (parsedCounters[keysetId] || 0) + count
+		l('[after increment] ', { keysetId, counter: parsedCounters[keysetId] })
+		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
+	} catch (e) {
+		l('[incrementCounterByKeysetId] Error during counter increment: ', e)
+		throw new Error('[incrementCounterByKeysetId] Error during counter increment')
+	}
+}
 
 // get mints for send/receive process
 export async function getMintsForPayment() {

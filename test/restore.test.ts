@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
 import type { MintKeys, Proof } from '@cashu/cashu-ts'
 import { RESTORE_INTERVAL, RESTORE_OVERSHOOT } from '@consts/mints'
+import { ICounters } from '@src/model'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { ICounters } from '@store/restore'
 import { cTo, toJson } from '@store/utils'
 
 type TRestoreInterval = { proofs: Proof[]; newKeys?: MintKeys; lastCount: number } | undefined
@@ -159,19 +158,17 @@ describe('test restore', () => {
 			from += RESTORE_INTERVAL
 			to += RESTORE_INTERVAL
 			if (proofs?.length) {
-				console.log('[restoreInterval] restored proofs: ', { from, to, proofsLength: proofs.length })
 				restoredProofs.push(...proofs)
 				overshoot = 0
 				return restoreInterval(from, to, restoredProofs, overshoot, cycle, withGap)
 			}
 			if (overshoot < RESTORE_OVERSHOOT) {
-				console.log('[restoreInterval] no proofs to restore! overshooting now: ', { from, to, proofsLength: proofs?.length, overshoot })
 				overshoot++
 				return restoreInterval(from, to, restoredProofs, overshoot, cycle, withGap)
 			}
-			console.log('[restoreInterval] no proofs to restore! overshooting limit reached: ', { from, to, restoredProofs: restoredProofs.length, overshoot })
 			return { proofs: restoredProofs, newKeys, lastCount: to }
 		} catch (e) {
+			// eslint-disable-next-line no-console
 			console.log('[restoreInterval] error', { e })
 		}
 	}
@@ -198,14 +195,12 @@ describe('test restore', () => {
 
 	test('restore', () => {
 		const resp = restoreInterval(0, RESTORE_INTERVAL, [], 0, 0)
-		console.log('[restore test] resp: ', resp)
 		expect(resp?.proofs.length).toBe(4)
 		expect(resp?.lastCount).toBe(300)
 	})
 
 	test('restore with gaps (mints responds with empty proofs for 2 cycles)', () => {
 		const resp = restoreInterval(0, RESTORE_INTERVAL, [], 0, 0, true)
-		console.log('[restore with gaps test] resp: ', resp)
 		expect(resp?.proofs.length).toBe(6)
 		expect(resp?.lastCount).toBe(450)
 	})

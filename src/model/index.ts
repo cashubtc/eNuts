@@ -164,3 +164,7 @@ export interface IOpenPromptAutoCloseProps {
 	success?: boolean
 	ms?: number
 }
+
+export interface ICounters {
+	[key: string]: number
+}
