@@ -136,7 +136,7 @@ const styles = ScaledSheet.create({
 		paddingRight: '40@s',
 	},
 	header: {
-		height: '40%',
+		height: '35%',
 		alignItems: 'center',
 		justifyContent: 'center',
 		paddingHorizontal: '20@s',
