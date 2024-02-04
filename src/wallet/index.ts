@@ -336,7 +336,7 @@ export async function incrementCounterByMintUrl(mintUrl: string, count: number) 
 		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
 	} catch (e) {
 		l('[incrementCounterByKeysetId] Error during counter increment: ', e)
-		throw new Error('[incrementCounterByKeysetId] Error during counter increment')
+		throw Error('[incrementCounterByKeysetId] Error during counter increment')
 	}
 }
 
