@@ -140,7 +140,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				fee: res.realFee,
 				isMelt: true,
 				isZap,
-				change: isNum(estFee) && isNum(res.realFee) ?  estFee - res.realFee : undefined,
+				change: isNum(estFee) && isNum(res.realFee) ? estFee - res.realFee : undefined,
 			})
 		} catch (e) {
 			handleError({ e })
@@ -167,7 +167,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			navigation.navigate('success', {
 				amount,
 				fee: res.payResult.realFee,
-				change: isNum(estFee) && isNum(res.payResult.realFee) ?  estFee - res.payResult.realFee : undefined,
+				change: isNum(estFee) && isNum(res.payResult.realFee) ? estFee - res.payResult.realFee : undefined,
 				isMelt: true
 			})
 		} catch (e) {
@@ -339,11 +339,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<Loading size={s(35)} nostr={!!nostr} />
-			<Txt
-				styles={[styles.descText]}
-				txt={t(processingTxt)}
-			/>
+			<Txt styles={[styles.descText]} txt={t(processingTxt)} />
 			<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
+			<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('dontClose', { ns: NS.common })} />
 		</View>
 	)
 }
