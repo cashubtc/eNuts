@@ -339,9 +339,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<Loading size={s(35)} nostr={!!nostr} />
-			<Txt styles={[styles.descText]} txt={t(processingTxt)} />
-			<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
-			<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('dontClose', { ns: NS.common })} />
+			<Txt center styles={[styles.descText]} txt={t(processingTxt)} />
+			<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
+			<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('dontClose', { ns: NS.common })} />
 		</View>
 	)
 }
