@@ -85,11 +85,6 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 							navigation.navigate('Seed', { comingFromOnboarding: false, sawSeedUpdate: true })
 						}}
 					/>
-					{/* <MenuItem
-						txt={t('createBackup')}
-						icon={<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-						onPress={() => void handleBackup()}
-					/> */}
 				</View>
 				<Txt txt={appVersion} bold center />
 			</ScrollView>
