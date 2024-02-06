@@ -179,10 +179,6 @@ export type RootStackParamList = {
 	'mint info': {
 		mintUrl: string
 	}
-	'mint backup': {
-		token: string
-		mintUrl: string
-	}
 	'mint proofs': {
 		mintUrl: string
 	}
@@ -193,9 +189,6 @@ export type RootStackParamList = {
 	}
 	'history entry details': {
 		entry: IHistoryEntry
-	}
-	BackupPage: {
-		token: string
 	}
 	'Address book'?: {
 		isMelt?: boolean
@@ -267,7 +260,6 @@ export type TSuccessPageProps = NativeStackScreenProps<RootStackParamList, 'succ
 export type TMintsPageProps = NativeStackScreenProps<RootStackParamList, 'mints', 'MyStack'>
 export type TMintManagementPageProps = NativeStackScreenProps<RootStackParamList, 'mintmanagement', 'MyStack'>
 export type TMintInfoPageProps = NativeStackScreenProps<RootStackParamList, 'mint info', 'MyStack'>
-export type TMintBackupPageProps = NativeStackScreenProps<RootStackParamList, 'mint backup', 'MyStack'>
 export type TMintProofsPageProps = NativeStackScreenProps<RootStackParamList, 'mint proofs', 'MyStack'>
 export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr scan', 'MyStack'>
 export type THistoryPageProps = NativeStackScreenProps<RootStackParamList, 'history', 'MyStack'>
@@ -282,7 +274,6 @@ export type TNostrSettingsPageProps = NativeStackScreenProps<RootStackParamList,
 export type TLanguageSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Language settings'>
 export type TAdvancedSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Advanced settings'>
 export type TAboutSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'About settings'>
-export type TBackupPageProps = NativeStackScreenProps<RootStackParamList, 'BackupPage'>
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
 export type ISeedPageProps = NativeStackScreenProps<RootStackParamList, 'Seed'>
@@ -302,7 +293,6 @@ export type TBottomNavProps =
 	THistoryEntryPageProps |
 	TMintProofsPageProps |
 	TAddressBookPageProps |
-	TBackupPageProps |
 	TSettingsPageProps |
 	TGeneralSettingsPageProps |
 	TSecuritySettingsPageProps |

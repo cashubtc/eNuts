@@ -1,12 +1,9 @@
-import { BackupIcon, FlagIcon, KeyIcon, LeafIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
+import { BackupIcon, FlagIcon, KeyIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import { appVersion } from '@consts/env'
-import { getProofs } from '@db'
-import { getBackUpToken } from '@db/backup'
 import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
@@ -23,22 +20,8 @@ import MenuItem from './MenuItem'
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const { openPromptAutoClose } = usePromptContext()
 	const [pin, setPin] = useState<string | null>(null)
 	const [hasSeed, setHasSeed] = useState(false)
-	const handleBackup = async () => {
-		try {
-			const proofs = await getProofs()
-			if (!proofs.length) {
-				openPromptAutoClose({ msg: t('noProofsToBackup') })
-				return
-			}
-			const token = await getBackUpToken()
-			navigation.navigate('BackupPage', { token })
-		} catch (e) {
-			openPromptAutoClose({ msg: t('backupErr') })
-		}
-	}
 	const init = async () => {
 		const pinHash = await secureStore.get(SECURESTORE_KEY)
 		const restoreCounter = await store.get(STORE_KEYS.restoreCounter)
@@ -93,7 +76,7 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 							hasSeed ?
 								<BackupIcon width={s(22)} height={s(22)} color={color.TEXT} />
 								:
-								<LeafIcon width={s(22)} height={s(22)} color={color.TEXT} />
+								<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />
 						}
 						onPress={() => {
 							if (hasSeed) {
@@ -103,11 +86,11 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 						}}
 						hasSeparator
 					/>
-					<MenuItem
+					{/* <MenuItem
 						txt={t('createBackup')}
 						icon={<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />}
 						onPress={() => void handleBackup()}
-					/>
+					/> */}
 				</View>
 				<Txt txt={appVersion} bold center />
 			</ScrollView>

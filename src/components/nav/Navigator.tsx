@@ -10,7 +10,6 @@ import HistoryPage from '@screens/History'
 import DetailsPage from '@screens/History/Details'
 import Mints from '@screens/Mints'
 import MintInfoPage from '@screens/Mints/Info'
-import MintBackup from '@screens/Mints/MintBackup'
 import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
 import NostrOnboardingScreen from '@screens/NostrOnboarding'
@@ -43,7 +42,6 @@ import SeedScreen from '@screens/Restore/Seed'
 import SelectRecoveryMintScreen from '@screens/Restore/SelectRecoveryMint'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
-import BackupPage from '@screens/Settings/Backup'
 import ContactsSettings from '@screens/Settings/Contacts'
 import GeneralSettings from '@screens/Settings/General'
 import AdvancedFunctionScreen from '@screens/Settings/General/Advanced'
@@ -170,7 +168,6 @@ export default function Navigator({
 				<Stack.Screen name='mints' component={Mints} />
 				<Stack.Screen name='mintmanagement' component={MintManagement} />
 				<Stack.Screen name='mint info' component={MintInfoPage} />
-				<Stack.Screen name='mint backup' component={MintBackup} />
 				<Stack.Screen name='mint proofs' component={MintProofsPage} />
 				<Stack.Screen name='qr scan' component={QRScanPage} />
 				<Stack.Screen name='history' component={HistoryPage} />
@@ -187,7 +184,6 @@ export default function Navigator({
 				<Stack.Screen name='Language settings' component={LanguageSettings} />
 				<Stack.Screen name='Advanced settings' component={AdvancedFunctionScreen} />
 				<Stack.Screen name='About settings' component={AboutSettings} />
-				<Stack.Screen name='BackupPage' component={BackupPage} />
 				<Stack.Screen
 					name='Seed'
 					component={SeedScreen}

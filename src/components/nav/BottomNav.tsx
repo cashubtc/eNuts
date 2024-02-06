@@ -33,7 +33,6 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		route.name === 'General settings' ||
 		route.name === 'Display settings' ||
 		route.name === 'Security settings' ||
-		route.name === 'BackupPage' ||
 		route.name === 'Privacy settings' ||
 		route.name === 'Contacts settings'
 
