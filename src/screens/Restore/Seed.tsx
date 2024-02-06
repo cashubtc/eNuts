@@ -121,7 +121,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 					</View>
 				</TouchableOpacity>
 				{/* skip seed setup */}
-				{!params?.comingFromOnboarding && !params?.hasSeed &&
+				{!params?.comingFromOnboarding && !params?.hasSeed && !params?.sawSeedUpdate &&
 					<>
 						<Separator style={[styles.separator]} />
 						<TouchableOpacity
