@@ -192,6 +192,7 @@ const styles = ScaledSheet.create({
 	},
 	separator: {
 		width: '100%',
-		marginTop: '20@vs'
+		marginTop: '20@vs',
+		marginHorizontal: '20@s',
 	}
 })
