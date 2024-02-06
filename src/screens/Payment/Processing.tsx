@@ -307,24 +307,15 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 	// start payment process
 	useEffect(() => {
+
 		if (isZap) {
-			if (payZap) {
-				return void handleMelting()
-			}
+			if (payZap) { return void handleMelting() }
 			return void handleZap()
 		}
-		if (isMelt) {
-			return void handleMelting()
-		}
-		if (isSwap) {
-			return void handleSwap()
-		}
-		if (isAutoSwap) {
-			return void handleAutoSwap()
-		}
-		if (isSendEcash) {
-			return void handleSendingEcash()
-		}
+		if (isMelt) { return void handleMelting() }
+		if (isSwap) { return void handleSwap() }
+		if (isAutoSwap) { return void handleAutoSwap() }
+		if (isSendEcash) { return void handleSendingEcash() }
 		void handleMinting()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMelt, isSwap, isZap, payZap, isSendEcash, isAutoSwap])
