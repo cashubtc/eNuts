@@ -46,7 +46,7 @@
 		"mnemonicHint": "Die Seed-Phrase wird nie wieder angezeigt. Schreiben Sie sie auf und teilen Sie sie niemals mit jemandem.",
 		"confirmMnemonicErr": "Falsches Wort! Stellen Sie sicher, dass Sie Ihre Seed-Phrase korrekt und in der richtigen Reihenfolge aufschreiben.",
 		"selectRestoreMint": "Bitte wählen Sie die Mint aus, die zur Wiederherstellung Ihrer Mittel verwendet wird.",
-		"recoveringWallet": "Ihre Wallet wird wiederhergestellt...",
+		"recoveringWallet": "Die Mint stellt Ihr Guthaben wieder her...",
 		"seedEnabled": "Seed-Wiederherstellung aktiviert!",
 		"confirmSeed": "Bestätigen Sie bitte Ihren Seed, indem Sie das richtige Wort eingeben.",
 		"aboutToLeaveTo": "Sie sind im Begriff die App zu verlassen",

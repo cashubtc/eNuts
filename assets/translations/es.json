@@ -46,7 +46,7 @@
 		"mnemonicHint": "La frase de semilla nunca se mostrará de nuevo. Escríbela y nunca la compartas con nadie.",
 		"confirmMnemonicErr": "¡Palabra incorrecta! Asegúrate de escribir correctamente tu frase de semilla en el orden correcto.",
 		"selectRestoreMint": "Por favor, seleccione la ceca que se utilizará para restaurar sus fondos.",
-		"recoveringWallet": "Recuperando tu cartera...",
+		"recoveringWallet": "La ceca está restaurando sus fondos...",
 		"seedEnabled": "¡Recuperación de semilla habilitada!",
 		"confirmSeed": "Por favor, confirma tu semilla escribiendo la palabra correcta.",
 		"aboutToLeaveTo": "Estás a punto de salir",

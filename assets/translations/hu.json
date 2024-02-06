@@ -46,7 +46,7 @@
 		"mnemonicHint": "A magfrázis soha nem jelenik meg újra. Írd le és soha ne oszd meg senkivel.",
 		"confirmMnemonicErr": "Rossz szó! Győződj meg róla, hogy a magfrázisodat helyesen jegyzed le a megfelelő sorrendben.",
 		"selectRestoreMint": "Kérjük, válassza ki azt a pénzverdét, amelyet az alapjainak helyreállítására fogunk használni.",
-		"recoveringWallet": "Pénztárcájának helyreállítása...",
+		"recoveringWallet": "A pénzverde visszaállítja az ön forrásait...",
 		"seedEnabled": "Magmentési kulcs helyreállítás engedélyezve!",
 		"confirmSeed": "Kérjük, erősítsd meg a magmentésed a helyes szó begépelésével.",
 		"aboutToLeaveTo": "Épp kilépni készülsz",

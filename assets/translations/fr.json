@@ -46,7 +46,7 @@
 		"mnemonicHint": "La phrase ne sera jamais affichée à nouveau. Notez-la et ne la partagez jamais avec personne.",
 		"confirmMnemonicErr": "Mauvais mot ! Assurez-vous de noter correctement votre phrase dans le bon ordre.",
 		"selectRestoreMint": "Veuillez sélectionner la Mint qui sera utilisée pour restaurer vos fonds.",
-		"recoveringWallet": "Récupération de votre wallet...",
+		"recoveringWallet": "La Mint est en train de restaurer vos fonds...",
 		"seedEnabled": "Récupération de la graine activée!",
 		"confirmSeed": "Veuillez confirmer votre graine en tapant le mot correct.",
 		"aboutToLeaveTo": "Vous êtes sur le point de quitter",

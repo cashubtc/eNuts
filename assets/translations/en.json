@@ -46,7 +46,7 @@
 		"mnemonicHint": "The seed phrase will never be shown again. Write it down and never share it with anyone.",
 		"confirmMnemonicErr": "Wrong word! Please make sure to write down your seed phrase correctly in the right order.",
 		"selectRestoreMint": "Please select the mint that will be used to restore your funds.",
-		"recoveringWallet": "Recovering your wallet...",
+		"recoveringWallet": "The mint is restoring your funds...",
 		"seedEnabled": "Seed recovery enabled!",
 		"confirmSeed": "Please confirm your seed by typing the correct word.",
 		"aboutToLeaveTo": "You are about to leave",
