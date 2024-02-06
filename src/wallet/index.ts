@@ -37,7 +37,6 @@ const wallets: { [mintUrl: string]: CashuWallet } = {}
 export function generateMnemonic(): string | undefined {
 	try {
 		const mnemonic = generateNewMnemonic()
-		l('[generateMnemonic] ', { mnemonic })
 		return mnemonic
 	} catch (e) {
 		l('[generateMnemonic] error', { e })
