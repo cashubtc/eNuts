@@ -54,10 +54,12 @@ export default function MnemonicScreen({ navigation, route }: IMnemonicPageProps
 					)}
 				/>
 			</View>
-			<TxtButton
-				txt={copied ? t('copied') : t('copy')}
-				onPress={() => void handleCopyMnemonic()}
-			/>
+			{__DEV__ &&
+				<TxtButton
+					txt={copied ? t('copied') : t('copy')}
+					onPress={() => void handleCopyMnemonic()}
+				/>
+			}
 			<View style={styles.actionWrap}>
 				<View style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}>
 					<ExclamationIcon color={mainColors.ERROR} />
@@ -100,7 +102,7 @@ const styles = ScaledSheet.create({
 	},
 	warnContainer: {
 		alignItems: 'center',
-		padding: '10@s',
+		padding: '20@s',
 		rowGap: '10@s',
 		borderRadius: '10@s',
 		marginBottom: '20@s'
