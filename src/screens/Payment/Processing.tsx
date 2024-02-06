@@ -281,7 +281,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			const { mints, highestBalance, highestBalanceMint } = await getHighestBalMint()
 			// if highest balance + estFee is sufficient, use it
 			if (highestBalanceMint) {
-				// TODO need to handle the case where the highest balance mint is not reachable?
 				const estFee = await checkFees(highestBalanceMint.mintUrl, recipient)
 				if (highestBalance + estFee >= amount) {
 					return navigation.navigate('coinSelection', {

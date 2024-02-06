@@ -211,6 +211,7 @@ export type RootStackParamList = {
 	Seed: {
 		comingFromOnboarding?: boolean
 		sawSeedUpdate?: boolean
+		hasSeed?: boolean
 	} | undefined
 	'Select recovery mint': {
 		comingFromOnboarding?: boolean

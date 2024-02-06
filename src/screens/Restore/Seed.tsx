@@ -6,6 +6,7 @@ import Txt from '@comps/Txt'
 import type { ISeedPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { l } from '@src/logger'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, mainColors } from '@styles'
@@ -20,6 +21,12 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const [infoOpen, setInfoOpen] = useState(false)
+
+	l({
+		sawSeedUpdate: params?.sawSeedUpdate,
+		comingFromOnboarding: params?.comingFromOnboarding,
+		hasSeed: params?.hasSeed,
+	})
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
@@ -69,7 +76,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 				</TouchableOpacity>
 				<Separator style={[styles.separator]} />
 				{/* quick wallet */}
-				{params?.comingFromOnboarding &&
+				{params?.comingFromOnboarding && !params?.hasSeed &&
 					<>
 						<TouchableOpacity
 							onPress={() => {
@@ -114,7 +121,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 					</View>
 				</TouchableOpacity>
 				{/* skip seed setup */}
-				{!params?.sawSeedUpdate &&
+				{!params?.comingFromOnboarding && !params?.hasSeed &&
 					<>
 						<Separator style={[styles.separator]} />
 						<TouchableOpacity

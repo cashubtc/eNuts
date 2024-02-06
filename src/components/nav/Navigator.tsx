@@ -194,6 +194,7 @@ export default function Navigator({
 					initialParams={{
 						sawSeedUpdate: sawSeedUpdate,
 						comingFromOnboarding: false,
+						hasSeed: hasSeed,
 					}}
 				/>
 				<Stack.Screen name='Recover' component={RecoverScreen} />
