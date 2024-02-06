@@ -84,7 +84,6 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 							}
 							navigation.navigate('Seed', { comingFromOnboarding: false, sawSeedUpdate: true })
 						}}
-						hasSeparator
 					/>
 					{/* <MenuItem
 						txt={t('createBackup')}
