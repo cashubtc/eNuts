@@ -139,8 +139,7 @@ class Pool {
 				}
 			)
 			if (!sub) {
-				l('[metadataSub] sub is null')
-				return
+				return l('[metadataSub] sub is null')
 			}
 			// this.#subs.add(sub)
 			sub?.on('eose', () => {
