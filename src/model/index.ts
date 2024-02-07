@@ -165,10 +165,6 @@ export interface IOpenPromptAutoCloseProps {
 	ms?: number
 }
 
-export interface ICounters {
-	[key: string]: number
-}
-
 export type TPayLnInvoiceReturnType = Promise<{ result?: PayLnInvoiceResponse, fee?: number, realFee?: number, error?: unknown }>
 
 export type TRequestTokenReturnType = Promise<{ success: boolean; invoice: IInvoice | null | undefined }>

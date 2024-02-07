@@ -132,16 +132,16 @@ function _App() {
 
 	// init auth data
 	const initAuth = async () => {
-		const [pinHash, onboard, sawSeed, counter] = await Promise.all([
+		const [pinHash, onboard, sawSeed, seed] = await Promise.all([
 			secureStore.get(SECURESTORE_KEY),
 			store.get(STORE_KEYS.explainer),
 			store.get(STORE_KEYS.sawSeedUpdate),
-			store.get(STORE_KEYS.restoreCounter),
+			store.get(STORE_KEYS.hasSeed),
 		])
 		setAuth({ pinHash: isNull(pinHash) ? '' : pinHash })
 		setShouldOnboard(onboard && onboard === '1' ? false : true)
 		setSawSeedUpdate(sawSeed && sawSeed === '1' ? true : false)
-		setHasSeed(!!counter)
+		setHasSeed(!!seed)
 		// check for pin attempts and app locked state
 		await handlePinForeground()
 	}

@@ -24,7 +24,7 @@ export const STORE_KEYS = {
 	lud16: 'nostr_lud16',
 	nostrReseted: 'nostr_reseted',
 	sawSeedUpdate: 'saw_seed_update',
-	restoreCounter: 'restore_counter',
+	hasSeed: 'has_seed',
 	// secure store keys
 	mnemonic: 'mnemonic',
 	seed: 'seed',

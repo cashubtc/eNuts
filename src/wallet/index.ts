@@ -15,12 +15,10 @@ import {
 	getMintsBalances, getMintsUrls
 } from '@db'
 import { l } from '@log'
-import type { ICounters, IInvoice, ISecret, ITokenInfo, TPayLnInvoiceReturnType, TRequestTokenReturnType } from '@model'
+import type { IInvoice, ISecret, ITokenInfo, TPayLnInvoiceReturnType, TRequestTokenReturnType } from '@model'
 import { store } from '@store'
-import { STORE_KEYS } from '@store/consts'
 import { getCustomMintNames } from '@store/mintStore'
 import { getSeed } from '@store/restore'
-import { cTo, toJson } from '@store/utils'
 import { decodeLnInvoice, isCashuToken, isNum } from '@util'
 
 import { sumProofsValue, sumTokenProofs } from './proofs'
@@ -300,19 +298,19 @@ export async function getCounterByMintUrl(mintUrl: string) {
 	try {
 		const seed = await getSeed()
 		if (!seed) { return }
-		const counters = await store.get(STORE_KEYS.restoreCounter)
+		// TODO do not call getMintCurrentKeySetId() every time. find a faster way to get keysetId
 		const keysetId = await getMintCurrentKeySetId(mintUrl)
-		if (!counters) {
+		const storeKey = `${mintUrl}:${keysetId}`
+		const counter = await store.get(storeKey)
+		if (!counter) {
 			// store counters for current keyset of mint url passed as param
-			await store.set(STORE_KEYS.restoreCounter, toJson({ [keysetId]: 0 }))
+			await store.set(storeKey, '0')
 			return 0
 		}
-		const parsedCounters = cTo<ICounters>(counters)
-		l('[getCounterByMintUrl] ', { storedCounters: parsedCounters })
-		if (!parsedCounters[keysetId]) { parsedCounters[keysetId] = 0 }
-		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
-		l('[getCounterByMintUrl] ', { keysetId, counter: parsedCounters[keysetId] })
-		return parsedCounters[keysetId]
+		l('[getCounterByMintUrl] ', { mintUrl, keysetId, storedCounter: counter })
+		// await store.set(storeKey, counter)
+		l('[getCounterByMintUrl] ', { keysetId, counter: counter })
+		return +counter
 	} catch (e) {
 		l('[getCounterByMintUrl] Error while getCounter: ', e)
 		throw Error('[getCounterByMintUrl] Error while getCounter')
@@ -323,16 +321,15 @@ export async function incrementCounterByMintUrl(mintUrl: string, count: number) 
 	try {
 		const seed = await getSeed()
 		if (!seed) { return }
-		const counters = await store.get(STORE_KEYS.restoreCounter)
+		// TODO do not call getMintCurrentKeySetId() every time. find a faster way to get keysetId
 		const keysetId = await getMintCurrentKeySetId(mintUrl)
-		if (!counters) {
-			return store.set(STORE_KEYS.restoreCounter, toJson({ [keysetId]: count }))
-		}
-		const parsedCounters = cTo<ICounters>(counters)
-		l('[before increment] ', { keysetId, counter: parsedCounters[keysetId] })
-		parsedCounters[keysetId] = (parsedCounters[keysetId] || 0) + count
-		l('[after increment] ', { keysetId, counter: parsedCounters[keysetId] })
-		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
+		const storeKey = `${mintUrl}:${keysetId}`
+		const counter = await store.get(storeKey)
+		if (!counter) { return store.set(storeKey, `${count}`) }
+		l('[before increment] ', { keysetId, counter })
+		const newCounter = +counter + count
+		l('[after increment] ', { keysetId, newCounter })
+		await store.set(storeKey, `${newCounter}`)
 	} catch (e) {
 		l('[incrementCounterByKeysetId] Error during counter increment: ', e)
 		throw Error('[incrementCounterByKeysetId] Error during counter increment')

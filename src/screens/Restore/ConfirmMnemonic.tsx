@@ -56,7 +56,7 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 		await saveSeed(seed)
 		stopLoading()
 		openPromptAutoClose({ msg: t('seedEnabled'), success: true })
-		await store.set(STORE_KEYS.restoreCounter, '')
+		await store.set(STORE_KEYS.hasSeed, '1')
 		if (route.params.comingFromOnboarding) {
 			return navigation.navigate('auth', { pinHash: '' })
 		}

@@ -1,16 +1,12 @@
 import type { MintKeys, Proof } from '@cashu/cashu-ts'
 import { RESTORE_INTERVAL, RESTORE_OVERSHOOT } from '@consts/mints'
-import { ICounters } from '@src/model'
 import { store } from '@store'
-import { STORE_KEYS } from '@store/consts'
-import { cTo, toJson } from '@store/utils'
 
 type TRestoreInterval = { proofs: Proof[]; newKeys?: MintKeys; lastCount: number } | undefined
 
-
 describe('test restore', () => {
 	// eslint-disable-next-line @typescript-eslint/await-thenable
-	afterAll(async () => { await store.delete(STORE_KEYS.restoreCounter) })
+	afterAll(async () => { await store.clear() })
 
 	const mints = [
 		{ mintUrl: 'mint1-2Ids', id: 'mint1-id1' },
@@ -173,24 +169,24 @@ describe('test restore', () => {
 		}
 	}
 
+	const storeKey = `${mints[0].mintUrl}:${mints[0].id}`
+
 	test('creates and returns new counter', async () => {
-		let counters = await store.get(STORE_KEYS.restoreCounter)
-		if (!counters) {
-			await store.set(STORE_KEYS.restoreCounter, toJson({ [mints[0].id]: 0 }))
-			counters = await store.get(STORE_KEYS.restoreCounter)
+		let counter = await store.get(storeKey)
+		if (!counter) {
+			await store.set(storeKey, '0')
+			counter = await store.get(storeKey)
 		}
-		const parsedCounters = cTo<ICounters>(counters || '')
-		expect(parsedCounters[mints[0].id]).toBe(0)
+		expect(counter).toBe('0')
 	})
 
 	test('increments counter', async () => {
 		const count = 5
-		const counters = await store.get(STORE_KEYS.restoreCounter)
-		const parsedCounters = cTo<ICounters>(counters || '')
-		const keysetId = mints[0].id
-		parsedCounters[keysetId] = (parsedCounters[keysetId] || 0) + count
-		await store.set(STORE_KEYS.restoreCounter, toJson(parsedCounters))
-		expect(parsedCounters[keysetId]).toBe(5)
+		const counters = await store.get(storeKey)
+		if (!counters) { return }
+		const newCounter = +counters + count
+		await store.set(storeKey, `${newCounter}`)
+		expect(newCounter).toBe(5)
 	})
 
 	test('restore', () => {
