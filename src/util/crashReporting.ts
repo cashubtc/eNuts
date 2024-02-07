@@ -21,6 +21,7 @@ export function initCrashReporting() {
 			autoSessionTracking: true,
 		})
 	}
+	require('@util/promise')
 }
 
 /**

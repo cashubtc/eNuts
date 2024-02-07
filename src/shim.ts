@@ -14,6 +14,7 @@ if (typeof global?.Crypto === 'undefined' &&
 	// @ts-expect-error
 	global.crypto = c
 }
+
 /* if (typeof Buffer === 'undefined') {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-var-requires
 	global.Buffer = require('buffer/').Buffer as typeof import('buffer').Buffer
