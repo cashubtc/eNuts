@@ -1,4 +1,4 @@
-import { BackupIcon, FlagIcon, KeyIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
+import { FlagIcon, KeyIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import { appVersion } from '@consts/env'
@@ -71,18 +71,14 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 						/>
 					}
 					<MenuItem
-						txt={hasSeed ? t('walletRecovery') : t('seedBackup')}
-						icon={
-							hasSeed ?
-								<BackupIcon width={s(22)} height={s(22)} color={color.TEXT} />
-								:
-								<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />
-						}
+						txt={t('seedBackup')}
+						icon={<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />}
 						onPress={() => {
-							if (hasSeed) {
-								return navigation.navigate('Restore warning', { comingFromOnboarding: false })
-							}
-							navigation.navigate('Seed', { comingFromOnboarding: false, sawSeedUpdate: true })
+							void navigation.navigate('Seed', {
+								comingFromOnboarding: false,
+								sawSeedUpdate: true,
+								hasSeed,
+							})
 						}}
 					/>
 				</View>
