@@ -161,8 +161,6 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 
 	// used in interval to check if token is spent while qr sheet is open
 	const checkPayment = async () => {
-		l('checking if token has been spent')
-		l('checking if token has been spent promise')
 		const isSpendable = await isTokenSpendable(value)
 		setSpent(!isSpendable)
 		if (!isSpendable) {
