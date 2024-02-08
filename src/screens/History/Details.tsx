@@ -58,6 +58,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const tokenMemo = useMemo(() => !isLn.current && type !== txType.RESTORE ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history }), [t, value, type])
 	const { openPromptAutoClose } = usePromptContext()
 	const [customMints, setCustomMints] = useState([{ mintUrl: '', customName: '' }])
+	const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
 	useEffect(() => {
 		void (async () => {
@@ -157,6 +158,40 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		if (tokenMemo) { return tokenMemo }
 		return t('noMemo', { ns: NS.history })
 	}
+
+	// used in interval to check if token is spent while qr sheet is open
+	const checkPayment = async () => {
+		const isSpendable = await isTokenSpendable(value)
+		setSpent(!isSpendable)
+		if (!isSpendable) {
+			clearTokenInterval()
+			setQr({ ...qr, open: false })
+			openPromptAutoClose({ msg: t('isSpent', { ns: NS.history }), success: true })
+			// update history item
+			await historyStore.updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: true })
+		}
+	}
+
+	const startTokenInterval = () => {
+		if (spent) { return }
+		intervalRef.current = setInterval(() => {
+			void checkPayment()
+		}, 3000)
+	}
+
+	const clearTokenInterval = () => {
+		if (intervalRef.current) {
+			clearInterval(intervalRef.current)
+		}
+	}
+
+	// auto check payment in intervals
+	useEffect(() => {
+		if (!qr.open || spent) { return clearTokenInterval() }
+		startTokenInterval()
+		return () => clearTokenInterval()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [qr.open])
 
 	return (
 		<View style={[globals(color).container, styles.container]}>

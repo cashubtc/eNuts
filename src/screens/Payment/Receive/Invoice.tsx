@@ -72,7 +72,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 					value: paymentRequest,
 					mints: [mintUrl],
 				})
-				clearInvoiceInterval
+				clearInvoiceInterval()
 				navigation.navigate('success', { amount, mint: formatMintUrl(mintUrl) })
 				return
 			}
@@ -112,7 +112,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				txt={t('cancel')}
 				handlePress={() => void handlePayment(true)}
 			/>
-
 			<View style={styles.content}>
 				<QR
 					size={vs(250)}

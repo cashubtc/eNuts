@@ -263,7 +263,8 @@
 		"swapHint": "Esta opción requiere un pago Lightning, implica una tarifa y aún puede agregar la ceca desconocida a la lista si se produce un reembolso de tarifa.",
 		"trustHint": "La ceca asociada al token se añadirá a tu lista de confianza.",
 		"noDefaultHint": "Necesitas configurar una ceca predeterminada para realizar un intercambio automático.",
-		"autoSwapSuccess": "¡Intercambio exitoso!"
+		"autoSwapSuccess": "¡Intercambio exitoso!",
+		"noReleaseData": "No hay datos de versión"
 	},
 	"error": {
 		"checkSpendableErr": "Error al comprobar si el token puede ser gastado",

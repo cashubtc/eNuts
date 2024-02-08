@@ -263,7 +263,8 @@
 		"swapHint": "This option requires a Lightning payment, involves fees, and may still add the unknown mint to the list if a fee refund occurs.",
 		"trustHint": "The mint associated with the token will be added to your trusted list.",
 		"noDefaultHint": "You need to setup a default mint to perform an auto swap.",
-		"autoSwapSuccess": "Swap successful!"
+		"autoSwapSuccess": "Swap successful!",
+		"noReleaseData": "Release data not available"
 	},
 	"error": {
 		"checkSpendableErr": "Error while checking if token is spendable",

@@ -178,7 +178,7 @@ const styles = ScaledSheet.create({
 	board: {
 		borderBottomLeftRadius: 50,
 		borderBottomRightRadius: 50,
-		paddingHorizontal: '30@s',
+		paddingHorizontal: '20@s',
 		paddingTop: '40@vs',
 		paddingBottom: '50@vs',
 		minHeight: '50%'
