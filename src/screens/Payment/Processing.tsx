@@ -140,7 +140,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				fee: res.realFee,
 				isMelt: true,
 				isZap,
-				change: isNum(estFee) && isNum(res.realFee) ?  estFee - res.realFee : undefined,
+				change: isNum(estFee) && isNum(res.realFee) ? estFee - res.realFee : undefined,
 			})
 		} catch (e) {
 			handleError({ e })
@@ -167,7 +167,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			navigation.navigate('success', {
 				amount,
 				fee: res.payResult.realFee,
-				change: isNum(estFee) && isNum(res.payResult.realFee) ?  estFee - res.payResult.realFee : undefined,
+				change: isNum(estFee) && isNum(res.payResult.realFee) ? estFee - res.payResult.realFee : undefined,
 				isMelt: true
 			})
 		} catch (e) {
@@ -281,7 +281,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			const { mints, highestBalance, highestBalanceMint } = await getHighestBalMint()
 			// if highest balance + estFee is sufficient, use it
 			if (highestBalanceMint) {
-				// TODO need to handle the case where the highest balance mint is not reachable?
 				const estFee = await checkFees(highestBalanceMint.mintUrl, recipient)
 				if (highestBalance + estFee >= amount) {
 					return navigation.navigate('coinSelection', {
@@ -307,24 +306,15 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 	// start payment process
 	useEffect(() => {
+
 		if (isZap) {
-			if (payZap) {
-				return void handleMelting()
-			}
+			if (payZap) { return void handleMelting() }
 			return void handleZap()
 		}
-		if (isMelt) {
-			return void handleMelting()
-		}
-		if (isSwap) {
-			return void handleSwap()
-		}
-		if (isAutoSwap) {
-			return void handleAutoSwap()
-		}
-		if (isSendEcash) {
-			return void handleSendingEcash()
-		}
+		if (isMelt) { return void handleMelting() }
+		if (isSwap) { return void handleSwap() }
+		if (isAutoSwap) { return void handleAutoSwap() }
+		if (isSendEcash) { return void handleSendingEcash() }
 		void handleMinting()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMelt, isSwap, isZap, payZap, isSendEcash, isAutoSwap])
@@ -339,11 +329,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<Loading size={s(35)} nostr={!!nostr} />
-			<Txt
-				styles={[styles.descText]}
-				txt={t(processingTxt)}
-			/>
-			<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
+			<Txt center styles={[styles.descText]} txt={t(processingTxt)} />
+			<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
+			<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('dontClose', { ns: NS.common })} />
 		</View>
 	)
 }

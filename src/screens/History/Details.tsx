@@ -11,6 +11,7 @@ import { truncateStr } from '@nostr/util'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { txType } from '@src/model'
 import { historyStore } from '@store'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames } from '@store/mintStore'
@@ -50,11 +51,11 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	const { loading, startLoading, stopLoading } = useLoading()
 	const [qr, setQr] = useState({ open: false, error: false })
 	const isPayment = useRef(amount < 0)
-	const isLn = useRef(type === 2 || type === 3)
+	const isLn = useRef(type > txType.SEND_RECEIVE && type < txType.RESTORE)
 	const LNstr = useRef(t(isPayment.current ? 'lnPayment' : 'lnInvoice'))
 	const Ecash = useRef(t('ecashPayment'))
 	const { hash, memo } = useMemo(() => isLn.current ? getLnInvoiceInfo(value) : { hash: '', memo: '' }, [value])
-	const tokenMemo = useMemo(() => !isLn.current ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history }), [t, value])
+	const tokenMemo = useMemo(() => !isLn.current && type !== txType.RESTORE ? getDecodedToken(value).memo : t('noMemo', { ns: NS.history }), [t, value, type])
 	const { openPromptAutoClose } = usePromptContext()
 	const [customMints, setCustomMints] = useState([{ mintUrl: '', customName: '' }])
 
@@ -66,17 +67,18 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}, [mints])
 
 	const getTxColor = () => {
-		if (type === 3) { return color.TEXT }
+		if (type === txType.SWAP || type === txType.RESTORE) { return color.TEXT }
 		return amount < 0 ? mainColors.ERROR : mainColors.VALID
 	}
 
 	const getScreenName = () => {
-		if (type === 3) { return t('multimintSwap') }
+		if (type === txType.SWAP) { return t('multimintSwap') }
+		if (type === txType.RESTORE) { return t('seedBackup') }
 		return isLn.current ? LNstr.current : Ecash.current
 	}
 
 	const getAmount = () => {
-		if (type === 3) { return `${formatInt(Math.abs(amount))}` }
+		if (type === txType.SWAP || type === txType.RESTORE) { return `${formatInt(Math.abs(amount))}` }
 		return `${amount > 0 ? '+' : ''}${formatInt(amount)}`
 	}
 
@@ -151,6 +153,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			if (memo === 'enuts') { return 'Cashu deposit' }
 			return memo
 		}
+		if (type === txType.RESTORE) { return t('seedBackup', { ns: NS.common }) }
 		if (tokenMemo) { return tokenMemo }
 		return t('noMemo', { ns: NS.history })
 	}
@@ -185,7 +188,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							<>
 								<View style={styles.entryInfo}>
 									<Txt txt={t('recipient')} />
-									<Txt txt={type === 3 ? formatMintUrl(recipient) : truncateStr(recipient)} />
+									<Txt txt={type === txType.SWAP ? formatMintUrl(recipient) : truncateStr(recipient)} />
 								</View>
 								<Separator />
 							</>
@@ -218,33 +221,37 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							<Txt txt={isLn.current ? 'Mint' : 'Mints'} />
 							<Txt txt={customMints.map(m => m.customName.length ? m.customName : formatMintUrl(m.mintUrl)).join(', ')} />
 						</View>
-						<Separator />
 						{/* cashu token or ln invoice */}
-						<TouchableOpacity
-							style={styles.entryInfo}
-							onPress={() => {
-								if (!value.length || copy.value) { return }
-								void copyValue()
-							}}
-						>
-							<Txt txt={isLn.current ? t('invoice') : 'Token'} />
-							<View style={styles.copyWrap}>
-								<Txt
-									txt={value.length ? `${value.slice(0, 16)}...` : t('n/a')}
-									styles={[styles.infoValue, value.length > 0 ? styles.mr10 : {}]}
-								/>
-								{value.length > 0 &&
-									<>
-										{copy.value ?
-											<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
-											:
-											<CopyIcon width={s(19)} height={vs(21)} color={color.TEXT} />
+						{type < txType.RESTORE &&
+							<>
+								<Separator />
+								<TouchableOpacity
+									style={styles.entryInfo}
+									onPress={() => {
+										if (!value.length || copy.value) { return }
+										void copyValue()
+									}}
+								>
+									<Txt txt={isLn.current ? t('invoice') : 'Token'} />
+									<View style={styles.copyWrap}>
+										<Txt
+											txt={value.length ? `${value.slice(0, 16)}...` : t('n/a')}
+											styles={[styles.infoValue, value.length > 0 ? styles.mr10 : {}]}
+										/>
+										{value.length > 0 &&
+											<>
+												{copy.value ?
+													<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
+													:
+													<CopyIcon width={s(19)} height={vs(21)} color={color.TEXT} />
+												}
+											</>
 										}
-									</>
-								}
-							</View>
-						</TouchableOpacity>
-						<Separator />
+									</View>
+								</TouchableOpacity>
+								<Separator />
+							</>
+						}
 						{/* check is token spendable */}
 						{isPayment.current && !isLn.current &&
 							<>
@@ -310,13 +317,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 							</>
 						}
 						{/* QR code */}
-						<TouchableOpacity
-							style={styles.entryInfo}
-							onPress={handleQR}
-						>
-							<Txt txt={t('showQr', { ns: NS.history })} />
-							<QRIcon width={s(17)} height={vs(17)} color={color.TEXT} />
-						</TouchableOpacity>
+						{type < txType.RESTORE &&
+							<TouchableOpacity
+								style={styles.entryInfo}
+								onPress={handleQR}
+							>
+								<Txt txt={t('showQr', { ns: NS.history })} />
+								<QRIcon width={s(17)} height={vs(17)} color={color.TEXT} />
+							</TouchableOpacity>
+						}
 					</View>
 				</View>
 			</ScrollView >

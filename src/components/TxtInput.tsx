@@ -14,6 +14,8 @@ interface ITxtInputProps {
 	ms?: number
 	maxLength?: number
 	value?: string
+	multiline?: boolean
+	numberOfLines?: number
 	style?: StyleProp<TextStyle>
 }
 
@@ -27,6 +29,8 @@ export default function TxtInput({
 	ms,
 	maxLength,
 	value,
+	multiline,
+	numberOfLines,
 	style
 }: ITxtInputProps) {
 	const { color, highlight } = useThemeContext()
@@ -52,6 +56,8 @@ export default function TxtInput({
 			onSubmitEditing={onSubmitEditing}
 			maxLength={maxLength}
 			value={value}
+			multiline={multiline}
+			numberOfLines={numberOfLines}
 			style={[globals(color).input, { marginBottom: vs(20) }, style]}
 		/>
 	)

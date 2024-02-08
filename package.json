@@ -11,7 +11,7 @@
 		"ts:check": "npx tsc",
 		"dep:update": "npx -y npm-check-updates --pre -u -u && npm i && npm audit fix || true && npx expo@latest install --fix && npm run lint",
 		"dep:check": "npx -y depcheck@latest",
-		"fmtJson": "npx prettier *.json assets/translations/*.json .github/workflows/*.yml --write --use-tabs --tab-width 4",
+		"fmtJson": "npx prettier assets/translations/*.json .github/workflows/*.yml --write --use-tabs --tab-width 4",
 		"expo:i:check": "npx expo@latest install --check",
 		"expo:i:fix": "npx expo@latest install --fix",
 		"expo:doc": "npx -y expo-doctor@latest",
@@ -39,7 +39,7 @@
 		"android": "expo run:android"
 	},
 	"dependencies": {
-		"@cashu/cashu-ts": "^0.8.1",
+		"@cashu/cashu-ts": "^0.9.0",
 		"@react-native-community/netinfo": "9.3.10",
 		"@react-navigation/core": "^6.4.10",
 		"@react-navigation/native": "^6.1.9",
@@ -152,7 +152,7 @@
 		"blind-signatures",
 		"lightning-network"
 	],
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"license": "AGPL-3.0-only",
 	"bugs": {
 		"url": "https://github.com/cashubtc/eNuts/issues"

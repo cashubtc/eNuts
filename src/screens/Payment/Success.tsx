@@ -29,6 +29,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		isZap,
 		nostr,
 		isScanned,
+		isRestored,
 	} = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
@@ -70,10 +71,13 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 							isAutoSwap ?
 								t('autoSwapSuccess')
 								:
-								!nostr ?
-									<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
+								isRestored ?
+									<>{formatSatStr(amount || 0)} {t('restored')}!</>
 									:
-									null
+									!nostr ?
+										<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
+										:
+										null
 					}
 				</Text>
 				{memo &&
@@ -119,6 +123,9 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				<Button
 					txt={t('backToDashboard')}
 					onPress={() => {
+						if (route.params?.comingFromOnboarding) {
+							return navigation.navigate('auth', { pinHash: '' })
+						}
 						const routes = navigation.getState()?.routes
 						const prevRoute = routes[routes.length - 2]
 						// if user comes from auth screen, navigate back to auth
@@ -126,8 +133,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						if (prevRoute?.name === 'auth' && prevRoute.params?.pinHash) {
 							// @ts-expect-error navigation type is not complete
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-							navigation.navigate('auth', { pinHash: prevRoute.params.pinHash })
-							return
+							return navigation.navigate('auth', { pinHash: prevRoute.params.pinHash })
 						}
 						navigation.navigate('dashboard')
 					}}

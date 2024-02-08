@@ -1,6 +1,6 @@
-import { EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
+import { CheckmarkIcon, EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
-import type { IHistoryEntry } from '@model'
+import { type IHistoryEntry, TTXType,txType } from '@model'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import EntryTime from '@screens/History/entryTime'
@@ -47,10 +47,11 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 		void setPreferences({ ...pref, formatBalance: !formatSats })
 	}
 
-	const getTxTypeStr = (type: number) => {
-		if (type === 1) { return 'Ecash' }
-		if (type === 2) { return 'Lightning' }
-		return t('swap')
+	const getTxTypeStr = (type: TTXType) => {
+		if (type === txType.SEND_RECEIVE) { return 'Ecash' }
+		if (type === txType.LIGHTNING) { return 'Lightning' }
+		if (type === txType.SWAP) { return t('swap') }
+		return t('seedBackup')
 	}
 
 	useEffect(() => {
@@ -109,12 +110,15 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 				history.map(h => (
 					<HistoryEntry
 						key={h.timestamp}
-						icon={h.type === 2 || h.type === 3 ?
+						icon={h.type === txType.LIGHTNING || h.type === txType.SWAP ?
 							<ZapIcon width={s(28)} height={s(28)} color={getColor(highlight, color)} />
 							:
-							<EcashIcon color={getColor(highlight, color)} />
+							h.type === txType.RESTORE ?
+								<CheckmarkIcon color={getColor(highlight, color)} />
+								:
+								<EcashIcon color={getColor(highlight, color)} />
 						}
-						isSwap={h.type === 3}
+						isSwap={h.type === txType.SWAP}
 						txType={getTxTypeStr(h.type)}
 						timestamp={h.timestamp}
 						amount={h.amount}

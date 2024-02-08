@@ -15,6 +15,8 @@ const alreadySpentErr = 'Token already spent.'
 
 export default function ProcessingErrorScreen({ navigation, route }: TProcessingErrorPageProps) {
 
+	const { scan, comingFromOnboarding, errorMsg } = route.params
+
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 
@@ -30,15 +32,15 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 			<View />
 			<View style={styles.setion}>
 				<ExclamationIcon width={s(60)} height={s(60)} color={mainColors.ERROR} />
-				<Txt txt={route.params.errorMsg} bold center styles={[{ color: mainColors.ERROR, marginVertical: vs(15), fontSize: vs(18) }]} />
-				{!route.params.scan && route.params.errorMsg !== alreadySpentErr &&
+				<Txt txt={errorMsg} bold center styles={[{ color: mainColors.ERROR, marginVertical: vs(15), fontSize: vs(18) }]} />
+				{!scan && errorMsg !== alreadySpentErr &&
 					<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('tryLater')} />
 				}
-				{route.params.errorMsg === alreadySpentErr &&
+				{errorMsg === alreadySpentErr &&
 					<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('alreadySpentHint')} />
 				}
 			</View>
-			{route.params.scan &&
+			{scan &&
 				<>
 					<Button
 						txt={t('scanAgain')}
@@ -48,9 +50,14 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 				</>
 			}
 			<Button
-				outlined={route.params.scan}
+				outlined={scan}
 				txt={t('backToDashboard')}
-				onPress={() => navigation.navigate('dashboard')}
+				onPress={() => {
+					if (comingFromOnboarding) {
+						return navigation.navigate('auth', { pinHash: '' })
+					}
+					navigation.navigate('dashboard')
+				}}
 			/>
 		</View>
 	)

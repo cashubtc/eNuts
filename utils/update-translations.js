@@ -15,12 +15,11 @@ const loadJSON = (filename) => {
 }
 
 // paste unused keys from the jest test output here
-const unusedKeys = []
+const unusedKeys = ['createBackup']
 
 const updateTranslationFiles = (unusedKeys) => {
 	const translationDir = path.resolve(__dirname, tlPath)
-	const files = fs.readdirSync(translationDir)
-	files.forEach((file) => {
+	fs.readdirSync(translationDir).forEach((file) => {
 		const filePath = path.join(translationDir, file)
 		const translationData = loadJSON(filePath)
 		for (const namespaceKey of Object.keys(translationData)) {
@@ -31,8 +30,7 @@ const updateTranslationFiles = (unusedKeys) => {
 				}
 			}
 		}
-		const updatedContent = JSON.stringify(translationData, null, 4)
-		fs.writeFileSync(filePath, updatedContent, 'utf-8')
+		fs.writeFileSync(filePath, JSON.stringify(translationData, null, 4), 'utf-8')
 	})
 	console.log('Translation files updated successfully.')
 }

@@ -2,15 +2,12 @@ import { FlagIcon, KeyIcon, PenIcon, TrashbinIcon } from '@comps/Icons'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
 import { appVersion } from '@consts/env'
-import { getProofs } from '@db'
-import { getBackUpToken } from '@db/backup'
 import type { TSecuritySettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { secureStore } from '@store'
-import { SECURESTORE_KEY } from '@store/consts'
+import { secureStore, store } from '@store'
+import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { globals } from '@styles'
 import { isNull } from '@util'
 import { useEffect, useState } from 'react'
@@ -23,30 +20,21 @@ import MenuItem from './MenuItem'
 export default function SecuritySettings({ navigation, route }: TSecuritySettingsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const { openPromptAutoClose } = usePromptContext()
 	const [pin, setPin] = useState<string | null>(null)
-	const handleBackup = async () => {
-		try {
-			const proofs = await getProofs()
-			if (!proofs.length) {
-				openPromptAutoClose({ msg: t('noProofsToBackup') })
-				return
-			}
-			const token = await getBackUpToken()
-			navigation.navigate('BackupPage', { token })
-		} catch (e) {
-			openPromptAutoClose({ msg: t('backupErr') })
-		}
-	}
-	const handlePin = async () => {
+	const [hasSeed, setHasSeed] = useState(false)
+	const init = async () => {
 		const pinHash = await secureStore.get(SECURESTORE_KEY)
+		const seed = await store.get(STORE_KEYS.hasSeed)
 		setPin(isNull(pinHash) ? '' : pinHash)
+		setHasSeed(!!seed)
 	}
-	useEffect(() => void handlePin(), [])
+	useEffect(() => {
+		void init()
+	}, [])
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const focusHandler = navigation.addListener('focus', async () => {
-			await handlePin()
+			await init()
 		})
 		return focusHandler
 	}, [navigation])
@@ -83,9 +71,15 @@ export default function SecuritySettings({ navigation, route }: TSecuritySetting
 						/>
 					}
 					<MenuItem
-						txt={t('createBackup')}
+						txt={t('seedBackup')}
 						icon={<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-						onPress={() => void handleBackup()}
+						onPress={() => {
+							void navigation.navigate('Seed', {
+								comingFromOnboarding: false,
+								sawSeedUpdate: true,
+								hasSeed,
+							})
+						}}
 					/>
 				</View>
 				<Txt txt={appVersion} bold center />

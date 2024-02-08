@@ -22,3 +22,7 @@ export function sumTokenValue(token: Token) {
 export function sumProofsValue(proofs: Proof[]) {
 	return proofs.reduce((r, c) => r + c.amount, 0)
 }
+
+export function sumTokenProofs(token: Token) {
+	return token.token.reduce((r, c) => r + c.proofs.length, 0)
+}

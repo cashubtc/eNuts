@@ -17,7 +17,7 @@ interface IPinPadProps {
 	confirmInput: number[]
 	isConfirm: boolean
 	mismatch: boolean
-	handleInput: (val: number) => Promise<void>
+	handleInput: (val: number) => void
 }
 
 export default function PinPad({ pinInput, confirmInput, isConfirm, mismatch, handleInput }: IPinPadProps) {

@@ -21,6 +21,7 @@ import PinHint from './Hint'
 import PinDots from './PinDots'
 import PinPad from './PinPad'
 
+// TODO redirect to seed update screen
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
 	const { t } = useTranslation([NS.common])
@@ -48,8 +49,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const handleDelete = () => {
 		// handle delete the confirmation pin input
 		if (isConfirm) {
-			setConfirmInput(prev => prev.slice(0, -1))
-			return
+			return setConfirmInput(prev => prev.slice(0, -1))
 		}
 		// else: handle delete the initial pin input
 		setPinInput(prev => prev.slice(0, -1))
@@ -102,8 +102,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		if (auth.length) {
 			// user is providing a wrong pin
 			if (hash256(pinInput.join('')) !== auth) {
-				await handlePinMismatch()
-				return
+				return handlePinMismatch()
 			}
 			// user wants to delete his PIN
 			if (shouldRemove) {
@@ -120,21 +119,19 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			])
 			resetStates()
 			// User wants to edit his PIN, do not navigate away, just update the state as he had no PIN so he can enter a new PIN
-			if (shouldEdit) {
-				setAuth('')
-				return
-			}
+			if (shouldEdit) { return setAuth('') }
 			setSuccess(true)
-			navigation.navigate(shouldRemove ? 'Security settings' : 'dashboard')
-			return
+			if (!route.params.sawSeedUpdate) {
+				return navigation.navigate('Seed')
+			}
+			return navigation.navigate(shouldRemove ? 'Security settings' : 'dashboard')
 		}
 		// user is submitting a pin confirmation
 		if (isConfirm) {
 			const pinStr = pinInput.join('')
 			// mismatch while confirming pin
 			if (pinStr !== confirmInput.join('')) {
-				await handlePinMismatch()
-				return
+				return handlePinMismatch()
 			}
 			// else: PIN confirm is matching
 			const hash = hash256(pinStr)
@@ -145,29 +142,25 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			resetStates()
 			setSuccess(true)
 			setAuth(hash)
-			navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
-			return
+			return navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
 		}
 		// else: bring user in the confirm state after entering his first pin in setup
 		setIsConfirm(true)
 	}
 
 	// handle pad press
-	const handleInput = async (val: number) => {
+	const handleInput = (val: number) => {
 		// backspace
 		if (val === 10) {
-			handleDelete()
-			return
+			return handleDelete()
 		}
 		// submit pin
 		if (val === 11) {
-			await handleSubmit()
-			return
+			return handleSubmit()
 		}
 		// set pin-confirm input on initial setup
 		if (isConfirm) {
-			setConfirmInput(prev => [...prev, val])
-			return
+			return setConfirmInput(prev => [...prev, val])
 		}
 		// set pin input
 		setPinInput(prev => [...prev, val])
@@ -178,13 +171,11 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		if (isConfirm) {
 			setIsConfirm(false)
 			setConfirmInput([])
-			setPinInput([])
-			return
+			return setPinInput([])
 		}
 		// skip pin setup
 		await store.set(STORE_KEYS.pinSkipped, '1')
 		navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
-
 	}
 
 	// conditional rendering dots of pin input
@@ -283,7 +274,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 									confirmInput={confirmInput}
 									isConfirm={isConfirm}
 									mismatch={attempts.mismatch}
-									handleInput={handleInput}
+									handleInput={val => void handleInput(val)}
 								/>
 								{/* skip or go back from confirm */}
 								{!auth.length && !shouldEdit &&

@@ -10,7 +10,6 @@ import HistoryPage from '@screens/History'
 import DetailsPage from '@screens/History/Details'
 import Mints from '@screens/Mints'
 import MintInfoPage from '@screens/Mints/Info'
-import MintBackup from '@screens/Mints/MintBackup'
 import MintManagement from '@screens/Mints/MintManagement'
 import MintProofsPage from '@screens/Mints/Proofs'
 import NostrOnboardingScreen from '@screens/NostrOnboarding'
@@ -34,9 +33,15 @@ import NpubConfirmScreen from '@screens/QRScan/NpubConfirm'
 import QRProcessingScreen from '@screens/QRScan/QRProcessing'
 import ScanSuccessScreen from '@screens/QRScan/ScanSuccess'
 import ReleaseScreen from '@screens/Release'
+import ConfirmMnemonicScreen from '@screens/Restore/ConfirmMnemonic'
+import MnemonicScreen from '@screens/Restore/Mnemonic'
+import RecoverScreen from '@screens/Restore/Recover'
+import RecoveringScreen from '@screens/Restore/Recovering'
+import RestoreWarningScreen from '@screens/Restore/RestoreWarning'
+import SeedScreen from '@screens/Restore/Seed'
+import SelectRecoveryMintScreen from '@screens/Restore/SelectRecoveryMint'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
-import BackupPage from '@screens/Settings/Backup'
 import ContactsSettings from '@screens/Settings/Contacts'
 import GeneralSettings from '@screens/Settings/General'
 import AdvancedFunctionScreen from '@screens/Settings/General/Advanced'
@@ -56,7 +61,9 @@ export default function Navigator({
 	pinHash,
 	bgAuth,
 	shouldOnboard,
-	setBgAuth
+	setBgAuth,
+	hasSeed,
+	sawSeedUpdate,
 }: INavigatorProps) {
 
 	const { color } = useThemeContext()
@@ -64,11 +71,12 @@ export default function Navigator({
 	const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'success', 'MyStack'>>()
 
 	const getInitialRoute = () => {
-		// a pin has been setup previously
-		if (pinHash || bgAuth) { return 'auth' }
 		// initial onboarding
 		if (shouldOnboard) { return 'onboarding' }
+		// a pin has been setup previously
+		if (pinHash || bgAuth) { return 'auth' }
 		// no previous pin setup && onboarding done
+		if (!hasSeed && !sawSeedUpdate) { return 'Seed' }
 		return 'dashboard'
 	}
 
@@ -139,7 +147,7 @@ export default function Navigator({
 				<Stack.Screen
 					name='auth'
 					component={AuthPage}
-					initialParams={{ pinHash }}
+					initialParams={{ pinHash, sawSeedUpdate }}
 					options={{ gestureEnabled: false }}
 				/>
 				{/* sendable token created page */}
@@ -160,7 +168,6 @@ export default function Navigator({
 				<Stack.Screen name='mints' component={Mints} />
 				<Stack.Screen name='mintmanagement' component={MintManagement} />
 				<Stack.Screen name='mint info' component={MintInfoPage} />
-				<Stack.Screen name='mint backup' component={MintBackup} />
 				<Stack.Screen name='mint proofs' component={MintProofsPage} />
 				<Stack.Screen name='qr scan' component={QRScanPage} />
 				<Stack.Screen name='history' component={HistoryPage} />
@@ -177,7 +184,21 @@ export default function Navigator({
 				<Stack.Screen name='Language settings' component={LanguageSettings} />
 				<Stack.Screen name='Advanced settings' component={AdvancedFunctionScreen} />
 				<Stack.Screen name='About settings' component={AboutSettings} />
-				<Stack.Screen name='BackupPage' component={BackupPage} />
+				<Stack.Screen
+					name='Seed'
+					component={SeedScreen}
+					initialParams={{
+						sawSeedUpdate: sawSeedUpdate,
+						comingFromOnboarding: false,
+						hasSeed: hasSeed,
+					}}
+				/>
+				<Stack.Screen name='Recover' component={RecoverScreen} />
+				<Stack.Screen name='Mnemonic' component={MnemonicScreen} />
+				<Stack.Screen name='Confirm Mnemonic' component={ConfirmMnemonicScreen} />
+				<Stack.Screen name='Recovering' component={RecoveringScreen} />
+				<Stack.Screen name='Select recovery mint' component={SelectRecoveryMintScreen} />
+				<Stack.Screen name='Restore warning' component={RestoreWarningScreen} />
 			</Stack.Navigator>
 		</View>
 	)
