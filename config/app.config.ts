@@ -82,7 +82,7 @@ const config: ExpoConfig = {
 		config: {
 			usesNonExemptEncryption: false
 		},
-		bundleIdentifier: 'com.agron.enuts'
+		bundleIdentifier: 'xyz.elliptica.enuts'
 	},
 	android: {
 		icon: './assets/app-icon-android-legacy.png',
@@ -90,7 +90,7 @@ const config: ExpoConfig = {
 			foregroundImage: './assets/app-icon-android-adaptive-foreground.png',
 			backgroundImage: './assets/app-icon-android-adaptive-background.png'
 		},
-		package: `com.agron.enuts${!IS_PROD ? `.${_appVariant}` : ''}`
+		package: `xyz.elliptica.enuts${!IS_PROD ? `.${_appVariant}` : ''}`
 	},
 	web: {
 		favicon: './assets/favicon.png'
