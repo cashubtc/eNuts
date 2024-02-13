@@ -3,7 +3,7 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { AboutIcon, ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import OptsModal from '@comps/modal/OptsModal'
 import { PromptModal } from '@comps/modal/Prompt'
@@ -25,13 +25,13 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getDefaultMint, saveDefaultOnInit } from '@store/mintStore'
-import { highlight as hi, mainColors } from '@styles'
+import { highlight as hi } from '@styles'
 import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice, isStr } from '@util'
 import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TouchableOpacity, View } from 'react-native'
+import { View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
@@ -355,7 +355,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				/>
 			</View>
 			{/* beta warning */}
-			<View style={styles.hintWrap}>
+			{/* <View style={styles.hintWrap}>
 				<TouchableOpacity
 					onPress={() => navigation.navigate('disclaimer')}
 					style={styles.betaHint}
@@ -364,7 +364,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginHorizontal: s(10) }]} />
 					<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
 				</TouchableOpacity>
-			</View>
+			</View> */}
 			{/* Bottom nav icons */}
 			<BottomNav
 				navigation={navigation}
@@ -483,7 +483,7 @@ const styles = ScaledSheet.create({
 		alignItems: 'center',
 		marginBottom: '50@vs',
 	},
-	betaHint: {
+	/* betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		paddingHorizontal: '10@s',
@@ -492,5 +492,5 @@ const styles = ScaledSheet.create({
 		borderStyle: 'dashed',
 		borderColor: mainColors.WARN,
 		borderRadius: '50@s',
-	}
+	} */
 })

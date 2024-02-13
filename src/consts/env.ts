@@ -69,4 +69,4 @@ export const isTestMode = (typeof __TEST__ === 'boolean' && __TEST__)
 	|| process?.env?.NODE_ENV === 'test' || config?.extra?.NODE_ENV === 'test'
 
 export const isIOS = Platform.OS === 'ios'
-export const appVersion = `eNuts v${version}-beta`
+export const appVersion = `eNuts v${version}`

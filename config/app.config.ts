@@ -44,7 +44,7 @@ const IS_DEV = _appVariant === 'dev'
 const IS_PREVIEW = _appVariant === 'preview'
 const IS_PROD = _appVariant === 'prod'
 
-const cameraPermission = 'Allow eNuts to access camera.'
+const cameraPermission = 'eNuts requires access to your camera to scan QR codes for wallet transactions.'
 
 const config: ExpoConfig = {
 	experiments: { tsconfigPaths: true },

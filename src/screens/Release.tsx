@@ -50,7 +50,7 @@ export default function ReleaseScreen({ navigation }: TReleasePageProps) {
 				<View style={styles.badgeWrap}>
 					{isOutdated &&
 						<>
-							<Badge txt={`v${version}-beta`} color={mainColors.WARN} />
+							<Badge txt={`v${version}`} color={mainColors.WARN} />
 							<View style={styles.chevronWrap}>
 								<ChevronRightIcon width={8} height={15} color={color.TEXT} />
 							</View>
