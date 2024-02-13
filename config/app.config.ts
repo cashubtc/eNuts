@@ -83,7 +83,7 @@ const config: ExpoConfig = {
 			usesNonExemptEncryption: false
 		},
 		bundleIdentifier: 'xyz.elliptica.enuts',
-		buildNumber: '2'
+		buildNumber: '3'
 	},
 	android: {
 		icon: './assets/app-icon-android-legacy.png',
