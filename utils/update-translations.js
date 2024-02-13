@@ -15,7 +15,7 @@ const loadJSON = (filename) => {
 }
 
 // paste unused keys from the jest test output here
-const unusedKeys = ['createBackup']
+const unusedKeys = ['newRelease', 'releaseNotes', 'publishedOn', 'openOnTestflight', 'downloadApk', 'showOnGithub', 'hideReleaseNotes', 'noReleaseData']
 
 const updateTranslationFiles = (unusedKeys) => {
 	const translationDir = path.resolve(__dirname, tlPath)
