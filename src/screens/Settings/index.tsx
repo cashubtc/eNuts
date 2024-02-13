@@ -2,7 +2,7 @@ import { AboutIcon, ConnectionErrorIcon, HeartIcon, MintBoardIcon, OptionsIcon, 
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
-import { appVersion } from '@consts/env'
+import { appVersion, isIOS } from '@consts/env'
 import { BottomModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -73,12 +73,14 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						hasChevron={!!info}
 						hasSeparator
 					/>
-					<MenuItem
-						txt={t('donateLn')}
-						icon={<HeartIcon color={color.TEXT} />}
-						onPress={() => setZapModal(true)}
-						hasSeparator={__DEV__}
-					/>
+					{!isIOS &&
+						<MenuItem
+							txt={t('donateLn')}
+							icon={<HeartIcon color={color.TEXT} />}
+							onPress={() => setZapModal(true)}
+							hasSeparator={__DEV__}
+						/>
+					}
 					{__DEV__ &&
 						<MenuItem
 							txt={t('factoryReset')}
