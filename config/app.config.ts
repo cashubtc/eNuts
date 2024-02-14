@@ -74,8 +74,15 @@ const config: ExpoConfig = {
 		'expo-localization',
 		['expo-barcode-scanner', { cameraPermission }],
 		['expo-camera', { cameraPermission }],
-		'sentry-expo',
-		'expo-updates'
+		[
+			'@sentry/react-native/expo',
+			{
+				organization: process?.env?.SENTRY_ORG, // || 'sentry org slug, or use the `SENTRY_ORG` environment variable',
+				project: process?.env?.SENTRY_PROJECT , // || 'sentry project name, or use the `SENTRY_PROJECT` environment variable',
+				dsn: process?.env?.SENTRY_DSN , // || 'sentry dsn, or use the `SENTRY_DSN` environment variable',
+				authToken: process?.env?.SENTRY_AUTH_TOKEN , // || 'sentry auth token, or use the `SENTRY_AUTH_TOKEN` environment variable',
+			}
+		]
 	],
 	ios: {
 		supportsTablet: false,
@@ -96,9 +103,6 @@ const config: ExpoConfig = {
 		},
 		package: `xyz.elliptica.enuts${!IS_PROD ? `.${_appVariant}` : ''}`
 	},
-	web: {
-		favicon: './assets/favicon.png'
-	},
 	extra: {
 		eas: { projectId: 'edb75ccd-71ac-4934-9147-baf1c7f2b068' },
 		DEBUG: process?.env?.DEBUG,
@@ -107,25 +111,8 @@ const config: ExpoConfig = {
 		NODE_ENV_SHORT: _nodeEnvShort,
 		SENTRY_DSN: process?.env?.SENTRY_DSN,
 		SENTRY_ORG: process?.env?.SENTRY_ORG,
-		SENTRY_PROJECT: process?.env?.SENTRY_PROJECT
-	},
-	hooks: {
-		postPublish: [
-			{
-				file: 'sentry-expo/upload-sourcemaps',
-				config: {
-					organization: process?.env?.SENTRY_ORG,
-					project: process?.env?.SENTRY_PROJECT
-				}
-			}
-		]
-	},
-	updates: {
-		enabled: false,
-		url: 'https://u.expo.dev/edb75ccd-71ac-4934-9147-baf1c7f2b068'
-	},
-	runtimeVersion: {
-		policy: 'sdkVersion'
+		SENTRY_PROJECT: process?.env?.SENTRY_PROJECT,
+		SENTRY_AUTH_TOKEN: process?.env?.SENTRY_AUTH_TOKEN
 	}
 }
 

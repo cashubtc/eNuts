@@ -157,15 +157,16 @@ class Pool {
 		}
 	}
 	#publishEventToPool(event: EventTemplate<4>, sk: string, relayUrls?: string[]) {
+		if (typeof this.#pool?.publish !== 'function') { return Promise.resolve(false) }
 		const validated = this.#validate(event, sk)
-		if (!validated) { return false }
+		if (!validated) { return Promise.resolve(false) }
 		try {
 			const relays = this.#relaysClean(relayUrls)
-			void this.#pool?.publish(relays, validated)
-			return true
+			return Promise.allSettled(this.#pool.publish(relays, validated))
+				.then(x => !!x.filter(x => x.status === 'fulfilled' && x.value).length)
 		} catch (e) {
 			l({ publishError: isErr(e) ? e.message : 'Publish error' })
-			return false
+			return Promise.resolve(false)
 		}
 	}
 	async publishEvent({ nostr, amount, token }: IPublishEventProps) {
@@ -185,7 +186,7 @@ class Pool {
 		const relaysToPublish = [...userRelays, ...defaultRelays]
 		const recipientRelays = await this.#getRelaysByHex(nostr.contact.hex, relaysToPublish)
 		const allRelays = [...recipientRelays, ...relaysToPublish].filter(hasRelayValidPrefix)
-		const published = this.#publishEventToPool(event, sk, allRelays)
+		const published = await this.#publishEventToPool(event, sk, allRelays)
 		if (!published) { return false }
 		// save recipient hex to get the conversation later on
 		await updateNostrDmUsers(nostr.contact)

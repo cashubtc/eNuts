@@ -1,13 +1,13 @@
 import { env } from '@consts'
 import { FiveMins } from '@consts/time'
 import { addAllMintIds, getBalance, getMintsBalances, initDb } from '@db'
-import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import type { INavigatorProps } from '@model/nav'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { CustomErrorBoundary } from '@screens/ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from '@screens/ErrorScreen/ErrorDetails'
+import * as Sentry from '@sentry/react-native'
 import { FocusClaimProvider } from '@src/context/FocusClaim'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { NostrProvider } from '@src/context/Nostr'
@@ -29,7 +29,6 @@ import { useTranslation } from 'react-i18next'
 import { AppState, LogBox } from 'react-native'
 import { MenuProvider } from 'react-native-popup-menu'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import * as Sentry from 'sentry-expo'
 
 import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
@@ -49,8 +48,7 @@ interface ILockData {
 l('[APP] Starting app...')
 
 void SplashScreen.preventAutoHideAsync()
-
-export default function App() {
+function App(_: { exp: Record<string, unknown>}  ) {
 	if (!env?.SENTRY_DSN) {
 		return (
 			<SafeAreaProvider>
@@ -61,7 +59,7 @@ export default function App() {
 		)
 	}
 	// Create the error boundary...
-	const ErrorBoundary = Sentry.Native.ErrorBoundary
+	const ErrorBoundary = Sentry.ErrorBoundary
 	// Uses the Sentry error boundary component which posts the errors to our Sentry account
 	return (
 		<SafeAreaProvider>
@@ -71,6 +69,7 @@ export default function App() {
 		</SafeAreaProvider>
 	)
 }
+export default Sentry.wrap(App)
 
 function _App() {
 	// initial auth state
@@ -124,8 +123,6 @@ function _App() {
 			if (mintBalsTotal !== balance) { await addAllMintIds() }
 		} catch (e) {
 			l(isErr(e) ? e.message : 'Error while initiating the user app configuration.')
-		} finally {
-			await fsInfo()
 		}
 	}
 

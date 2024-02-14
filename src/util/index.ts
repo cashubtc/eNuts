@@ -1,5 +1,4 @@
-import { getDecodedLnInvoice, getDecodedToken } from '@cashu/cashu-ts'
-import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
+import { decodeInvoice, getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
 import type { ILnUrl, IMintBalWithName, IProofSelection } from '@model'
 import { IContact } from '@src/model/nostr'
@@ -8,29 +7,17 @@ import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
 
 import { getLanguageCode } from './localization'
-import { isArr, isBuf, isNum, isStr } from './typeguards'
+import { isArr, isStr } from './typeguards'
 
 export { isArr, isArrOf, isArrOfNonNullable, isArrOfNum, isArrOfObj, isArrOfStr, isBool, isBuf, isErr, isFunc, isNonNullable, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
 
-export function rndInt(min: number, max: number) { // min and max included
-	return Math.floor(Math.random() * (max - min + 1) + min)
-}
+export function unixTimestamp() { return Math.ceil(new Date().getTime() / 1000) }
 
 /**
  * Return the unique values found in the passed iterable
  */
 export function uniq<T extends string | number | bigint | boolean | symbol>(iter: Iterable<T>) {
 	return [...new Set(iter)]
-}
-
-export function uniqBy<T extends object, TK extends keyof T>(iter: Iterable<T>, key: TK) {
-	// l()
-	const o = [...iter].reduce<{ [k: string | number | symbol]: T }>((acc, cur) => {
-		acc[cur[key] as string | number | symbol] = cur
-		return acc
-	}, {})
-	// l({o})
-	return Object.values<T>(o)
 }
 
 export function uniqByIContacts(iter: Iterable<IContact>, key: keyof IContact) {
@@ -48,34 +35,7 @@ export function uniqByIContacts(iter: Iterable<IContact>, key: keyof IContact) {
 	// l({o})
 	return Object.values(o)
 }
-/* export function uniqBy<T extends object, TK extends keyof T>(iter: T[], key: TK & TTK<T, TK>) {
-	const o = [...iter].reduce<{ [k: PropertyKey]: T }>((acc, cur) => {
-		const k = cur[key]
-		switch (typeof k) {
-			case 'string':
-			case 'number':
-			case 'symbol': {
-				acc[k] = cur
-				return acc
-			}
-			default: return acc
-		}
-	}, {})
-	return Object.values<T>(o)
-}  */
 export function clearArr<T extends U[], U>(array: T) { array.length = 0 }
-
-/**
- * Removes an entry from an array while maintaining element order.
- *
- * @param arr - The array from which the entry should be removed.
- * @param idx - The index of the entry to be removed.
- */
-export function rmArrEntry<T extends U[], U>(arr: T, idx: number) {
-	if (idx < 0 || idx >= arr.length) { return }
-	arr[idx] = arr[arr.length - 1]
-	arr.pop()
-}
 
 export function sleep(ms: number) { return new Promise<void>(resolve => setTimeout(resolve, ms)) }
 
@@ -239,7 +199,7 @@ export function isLnInvoice(str: string) {
 		str = str.slice(prefix.length).trim()
 	})
 	if (!str) { return }
-	try { getDecodedLnInvoice(str.trim()) } catch (_) { return }
+	try { decodeInvoice(str.trim()) } catch (_) { return }
 	return str.trim()
 }
 
@@ -268,26 +228,19 @@ export function getLnInvoiceInfo(invoice: string) {
 	return { ...x, hash: x.paymentHash, memo: x.memo }
 }
 
-function getFromSection<T>(sections: ISectionEntry[], name: string, fn: (v: unknown) => boolean, toNum = false) {
-	const section = sections.find(s => s?.name === name && s?.value && fn(s.value))
-	return section?.value ?
-		toNum ? +section.value as T : section.value as T
-		: undefined
-}
-
 export function decodeLnInvoice(invoice: string) {
-	const x = getDecodedLnInvoice(invoice)
+	const x = decodeInvoice(invoice)
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const amount = getFromSection<number>(x.sections, 'amount', (v: unknown) => isStr(v) && isNum(+v), true)!
+	const amount = x.amountInMSats
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const timestamp = getFromSection<number>(x.sections, 'timestamp', isNum)!
+	const timestamp = x.timestamp
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const expiry = getFromSection<number>(x.sections, 'expiry', isNum)!
+	const expiry = x.expiry
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const memo = getFromSection<string>(x.sections, 'description', isStr) || ''
+	const memo = x.memo
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const paymentHash = getFromSection<Buffer>(x.sections, 'payment_hash', isBuf)?.toString('hex') || ''
-	const timePassed = Math.ceil(Date.now() / 1000) - timestamp
+	const paymentHash = x.paymentHash
+	const timePassed = unixTimestamp() - timestamp
 	const timeLeft = expiry - timePassed
 	return {
 		decoded: x,
