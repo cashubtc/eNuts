@@ -74,13 +74,14 @@ const config: ExpoConfig = {
 		'expo-localization',
 		['expo-barcode-scanner', { cameraPermission }],
 		['expo-camera', { cameraPermission }],
+		'expo-secure-store',
 		[
 			'@sentry/react-native/expo',
 			{
 				organization: process?.env?.SENTRY_ORG, // || 'sentry org slug, or use the `SENTRY_ORG` environment variable',
-				project: process?.env?.SENTRY_PROJECT , // || 'sentry project name, or use the `SENTRY_PROJECT` environment variable',
-				dsn: process?.env?.SENTRY_DSN , // || 'sentry dsn, or use the `SENTRY_DSN` environment variable',
-				authToken: process?.env?.SENTRY_AUTH_TOKEN , // || 'sentry auth token, or use the `SENTRY_AUTH_TOKEN` environment variable',
+				project: process?.env?.SENTRY_PROJECT, // || 'sentry project name, or use the `SENTRY_PROJECT` environment variable',
+				dsn: process?.env?.SENTRY_DSN, // || 'sentry dsn, or use the `SENTRY_DSN` environment variable',
+				authToken: process?.env?.SENTRY_AUTH_TOKEN, // || 'sentry auth token, or use the `SENTRY_AUTH_TOKEN` environment variable',
 			}
 		]
 	],
