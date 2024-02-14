@@ -57,8 +57,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						txt={t('about', { ns: NS.topNav })}
 						icon={<AboutIcon color={color.TEXT} />}
 						onPress={() => navigation.navigate('About settings')}
-						hasSeparator
-						hasChevron
+						hasSeparator={__DEV__}
 					/>
 					{!isIOS &&
 						<MenuItem
