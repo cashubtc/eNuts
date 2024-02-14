@@ -1,21 +1,21 @@
 
 
 import { env, isReactNativeDevMode } from '@consts'
+import * as Sentry from '@sentry/react-native'
 import type { ErrorInfo } from 'react'
-import * as Sentry from 'sentry-expo'
 
 /**
  *  This is where you put your crash reporting service initialization code to call in `./app/app.tsx`
  */
-export let routingInstrumentation:Sentry.Native.ReactNavigationInstrumentation
+export let routingInstrumentation:Sentry.ReactNavigationInstrumentation
 export function initCrashReporting() {
 	if (env.SENTRY_DSN) {
 		// Construct a new instrumentation instance. This is needed to communicate between the integration and React
-		const routingInstrumentation = new Sentry.Native.RoutingInstrumentation()
+		const routingInstrumentation = new Sentry.RoutingInstrumentation()
 		Sentry.init({
 			dsn: env.SENTRY_DSN,
-			integrations: [new Sentry.Native.ReactNativeTracing({routingInstrumentation})],
-			enableInExpoDevelopment: true,
+			integrations: [new Sentry.ReactNativeTracing({routingInstrumentation})],
+			// enableInExpoDevelopment: true,
 			debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
 			tracesSampleRate: 1.0,
 			autoSessionTracking: true,
@@ -49,5 +49,5 @@ export function reportCrash(error: Error, errInfo: ErrorInfo, type: ErrorType = 
 		console.error(error, errInfo)
 		// eslint-disable-next-line no-console
 		console.log(message, type)
-	} else if (env.SENTRY_DSN) { Sentry.Native.captureException(error) }
+	} else if (env.SENTRY_DSN) { Sentry.captureException(error) }
 }
