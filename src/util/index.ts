@@ -2,7 +2,6 @@ import { decodeInvoice, getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
 import type { ILnUrl, IMintBalWithName, IProofSelection } from '@model'
 import { IContact } from '@src/model/nostr'
-import { Buffer } from 'buffer/'
 import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
 
