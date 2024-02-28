@@ -157,6 +157,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 						flashMode={flash ? FlashMode.torch : FlashMode.off}
 						style={StyleSheet.absoluteFill}
 						ratio={'16:9'}
+						// eslint-disable-next-line @typescript-eslint/no-misused-promises
 						onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
 					/>
 					<QRMarker size={300} color={scanned ? mainColors.GREY : mainColors.WHITE} />
