@@ -2,7 +2,7 @@ import { AboutIcon, HeartIcon, MintBoardIcon, OptionsIcon } from '@comps/Icons'
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
-import { appVersion, isIOS } from '@consts/env'
+import { appVersion, env, isIOS } from '@consts/env'
 import { BottomModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
@@ -59,7 +59,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						onPress={() => navigation.navigate('About settings')}
 						hasSeparator={__DEV__}
 					/>
-					{!isIOS &&
+					{(__DEV__ || env.isExpoBeta || !isIOS) &&
 						<MenuItem
 							txt={t('donateLn')}
 							icon={<HeartIcon color={color.TEXT} />}
