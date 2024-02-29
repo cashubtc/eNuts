@@ -66,6 +66,7 @@
 		"expo-status-bar": "~1.6.0",
 		"expo-updates": "~0.18.17",
 		"i18next": "^23.7.8",
+		"js-lnurl": "^0.6.0",
 		"lottie-react-native": "5.1.6",
 		"nostr-tools": "^1.17.0",
 		"react": "^18.2.0",
