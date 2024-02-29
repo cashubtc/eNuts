@@ -12,7 +12,7 @@ import { useInitialURL } from '@src/context/Linking'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { formatInt, formatMintUrl, formatSatStr, getSelectedAmount, isLnurl, isNum } from '@util'
+import { formatInt, formatMintUrl, formatSatStr, getSelectedAmount, isLnurlAddress, isNum } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
@@ -60,7 +60,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 
 	const getRecipient = () => {
 		if (recipient) {
-			return !isLnurl(recipient) ? truncateStr(recipient, 16) : recipient
+			return !isLnurlAddress(recipient) ? truncateStr(recipient, 16) : recipient
 		}
 		const npub = npubEncode(nostr?.contact?.hex ?? '')
 		const receiverName = getNostrUsername(nostr?.contact)

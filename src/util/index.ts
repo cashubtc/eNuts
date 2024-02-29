@@ -164,7 +164,7 @@ export function vib(pattern?: number | number[]) {
 	Vibration.vibrate(pattern)
 }
 
-export function isLnurl(addr: string) {
+export function isLnurlAddress(addr: string) {
 	const [user, host] = addr.split('@')
 	return addr.includes('.')
 		&& addr.split('@').length === 2
@@ -182,7 +182,7 @@ export function hasTrustedMint(uMints: ({ mintUrl: string } | string)[], tMints:
 
 export async function getInvoiceFromLnurl(address: string, amount: number) {
 	try {
-		if (!isLnurl(address)) { throw new Error('invalid address') }
+		if (!isLnurlAddress(address)) { throw new Error('invalid address') }
 		const [user, host] = address.split('@')
 		amount *= 1000
 		const resp = await fetch(`https://${host}/.well-known/lnurlp/${user}`)

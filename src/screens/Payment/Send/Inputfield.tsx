@@ -10,7 +10,7 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { decodeLnInvoice, getStrFromClipboard, isErr, isLnInvoice, isLnurl, openUrl } from '@util'
+import { decodeLnInvoice, getStrFromClipboard, isErr, isLnInvoice, isLnurlAddress, openUrl } from '@util'
 import { checkFees } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -43,7 +43,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		if (!clipboard) { return }
 		setInput(clipboard)
 		// pasted LNURL address which does not need decoding
-		if (isLnurl(clipboard)) { return }
+		if (isLnurlAddress(clipboard)) { return }
 		// pasted LN invoice
 		await handleInvoicePaste(clipboard)
 	}
@@ -73,7 +73,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 				openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 		}
 		// user pasted a LNURL, we need to get the amount by the user
-		if (isLnurl(input)) {
+		if (isLnurlAddress(input)) {
 			return navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: input })
 		}
 		// not enough funds

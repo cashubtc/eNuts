@@ -14,6 +14,7 @@ import { NS } from '@src/i18n'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
 import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isNull, isStr, isUrl } from '@util'
+import { isLnurlEncoded } from '@util/lnurl'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
@@ -112,6 +113,11 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		// handle mint urls
 		if (isUrl(data) && new URL(data).protocol === 'https:') {
 			return navigation.navigate('mint confirm', { mintUrl: data })
+		}
+		// handle LNURL
+		if (isLnurlEncoded(data)) {
+			// TODO decode and handle lnurl
+			return
 		}
 		// handle LN invoice
 		try {
