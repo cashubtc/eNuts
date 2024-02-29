@@ -29,6 +29,18 @@
 				"buildType": "apk"
 			}
 		},
+		"beta": {
+			"channel": "beta",
+			"ios": {
+				"resourceClass": "m-medium"
+			},
+			"android": {
+				"buildType": "apk"
+			},
+			"env": {
+				"APP_VARIANT": "beta"
+			}
+		},
 		"production": {
 			"channel": "production",
 			"ios": {
