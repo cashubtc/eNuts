@@ -3,12 +3,12 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import { ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import OptsModal from '@comps/modal/OptsModal'
 import { PromptModal } from '@comps/modal/Prompt'
 import Txt from '@comps/Txt'
-import { _testmintUrl } from '@consts'
+import { _testmintUrl, env } from '@consts'
 import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
@@ -25,13 +25,13 @@ import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getDefaultMint, saveDefaultOnInit } from '@store/mintStore'
-import { highlight as hi } from '@styles'
+import { highlight as hi, mainColors } from '@styles'
 import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice, isStr } from '@util'
 import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
@@ -355,16 +355,17 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				/>
 			</View>
 			{/* beta warning */}
-			{/* <View style={styles.hintWrap}>
-				<TouchableOpacity
-					onPress={() => navigation.navigate('disclaimer')}
-					style={styles.betaHint}
-				>
-					<AboutIcon width={s(20)} height={vs(20)} color={mainColors.WARN} />
-					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginHorizontal: s(10) }]} />
-					<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
-				</TouchableOpacity>
-			</View> */}
+			{(env.isExpoBeta || __DEV__) &&
+				<View style={styles.hintWrap}>
+					<TouchableOpacity
+						onPress={() => navigation.navigate('disclaimer')}
+						style={styles.betaHint}
+					>
+						<Txt txt='BETA' styles={[{ color: mainColors.WARN, marginRight: s(10) }]} />
+						<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
+					</TouchableOpacity>
+				</View>
+			}
 			{/* Bottom nav icons */}
 			<BottomNav
 				navigation={navigation}
@@ -483,14 +484,14 @@ const styles = ScaledSheet.create({
 		alignItems: 'center',
 		marginBottom: '50@vs',
 	},
-	/* betaHint: {
+	betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingHorizontal: '10@s',
+		paddingHorizontal: '20@s',
 		paddingVertical: '10@vs',
 		borderWidth: 1,
 		borderStyle: 'dashed',
 		borderColor: mainColors.WARN,
 		borderRadius: '50@s',
-	} */
+	}
 })

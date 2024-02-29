@@ -17,7 +17,7 @@ const isReactNativeDevMode = typeof __DEV__ === 'boolean' && __DEV__
 
 export { isExpo, isExpoDev, isExpoProd, isReactNativeDevMode }
 
-type AppVariant = 'preview' | 'prod' | 'dev' | undefined
+type AppVariant = 'preview' | 'beta' | 'prod' | 'dev' | undefined
 
 function nodeEnvShort(): 'test' | AppVariant {
 	if (!process?.env?.NODE_ENV) {
@@ -28,6 +28,7 @@ function nodeEnvShort(): 'test' | AppVariant {
 	if (process?.env?.NODE_ENV === 'development') { return 'dev' }
 	if (process?.env?.NODE_ENV === 'test') { return 'test' }
 	if (process?.env?.NODE_ENV === 'preview') { return 'preview' }
+	if (process?.env?.NODE_ENV === 'beta') { return 'beta' }
 }
 
 function appVariant(): AppVariant {
@@ -38,6 +39,7 @@ function appVariant(): AppVariant {
 	if (process?.env?.APP_VARIANT === 'prod') { return 'prod' }
 	if (process?.env?.APP_VARIANT === 'dev') { return 'dev' }
 	if (process?.env?.APP_VARIANT === 'preview') { return 'preview' }
+	if (process?.env?.APP_VARIANT === 'beta') { return 'beta' }
 }
 
 const config: Readonly<IExpoConfig | undefined | null> = Consts?.expoConfig
@@ -57,6 +59,7 @@ export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string 
 
 	isExpo,
 	isExpoDev,
+	isExpoBeta: process?.env?.APP_VARIANT === 'beta' || config?.extra?.APP_VARIANT === 'beta' || appVariant() === 'beta',
 	isExpoProd,
 	isReactNativeDevMode,
 } as const
@@ -69,4 +72,4 @@ export const isTestMode = (typeof __TEST__ === 'boolean' && __TEST__)
 	|| process?.env?.NODE_ENV === 'test' || config?.extra?.NODE_ENV === 'test'
 
 export const isIOS = Platform.OS === 'ios'
-export const appVersion = `eNuts v${version}`
+export const appVersion = `eNuts v${version}${env.isExpoBeta ? '-beta' : ''}`
