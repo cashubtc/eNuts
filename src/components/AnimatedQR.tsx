@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import QRCode, { QRCodeProps } from "react-native-qrcode-svg";
-import { UR, UREncoder } from "@gandlaf21/bc-ur";
-import { Buffer } from "buffer";
-import { s } from "react-native-size-matters";
-import { mainColors } from "@src/styles";
+import { UR, UREncoder } from '@gandlaf21/bc-ur'
+import { mainColors } from '@src/styles'
+import { Buffer } from 'buffer'
+import { useEffect, useRef, useState } from 'react'
+import QRCode, { QRCodeProps } from 'react-native-qrcode-svg'
+import { s } from 'react-native-size-matters'
 
 export interface AnimatedQR extends QRCodeProps {
 	value: string;
@@ -22,7 +22,7 @@ export function AnimatedQR({
 	onError
 
 }: AnimatedQR) {
-	const [part, setPart] = useState<string>("");
+	const [part, setPart] = useState<string>('')
 
 	const firstSeqNum = 0
 	const ur = UR.fromBuffer(Buffer.from(value))
@@ -30,20 +30,18 @@ export function AnimatedQR({
 
 
 	useEffect(() => {
-		// @ts-ignore
-		let timer: NodeJS.Timeout;
+		let timer: NodeJS.Timeout
 		if (value) {
 			timer = setInterval(() => {
 				setPart(encoder.current.nextPart())
-				// console.log(part)
-			}, interval);
+			}, interval)
 		}
 		return () => {
 			if (timer) {
-				clearInterval(timer);
+				clearInterval(timer)
 			}
-		};
-	}, [value, chunkLength, interval]);
+		}
+	}, [value, chunkLength, interval])
 	return (
 		<QRCode
 			value={part}
@@ -55,5 +53,5 @@ export function AnimatedQR({
 			logoMargin={s(6)}
 			onError={onError}
 		/>
-	);
+	)
 }
