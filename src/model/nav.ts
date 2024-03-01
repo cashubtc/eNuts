@@ -23,7 +23,6 @@ export type RootStackParamList = {
 		newMint?: boolean
 	} | undefined
 	Settings: undefined
-	release: undefined
 	'General settings': undefined
 	'Security settings': undefined
 	'Privacy settings': undefined
@@ -265,7 +264,6 @@ export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr sc
 export type THistoryPageProps = NativeStackScreenProps<RootStackParamList, 'history', 'MyStack'>
 export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 'history entry details', 'MyStack'>
 export type TSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Settings'>
-export type TReleasePageProps = NativeStackScreenProps<RootStackParamList, 'release'>
 export type TGeneralSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'General settings'>
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
 export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>

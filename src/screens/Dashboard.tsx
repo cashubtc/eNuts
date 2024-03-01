@@ -3,12 +3,12 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { AboutIcon, ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import { ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import OptsModal from '@comps/modal/OptsModal'
 import { PromptModal } from '@comps/modal/Prompt'
 import Txt from '@comps/Txt'
-import { _testmintUrl } from '@consts'
+import { _testmintUrl, env } from '@consts'
 import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
@@ -355,16 +355,17 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				/>
 			</View>
 			{/* beta warning */}
-			<View style={styles.hintWrap}>
-				<TouchableOpacity
-					onPress={() => navigation.navigate('disclaimer')}
-					style={styles.betaHint}
-				>
-					<AboutIcon width={s(20)} height={vs(20)} color={mainColors.WARN} />
-					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginHorizontal: s(10) }]} />
-					<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
-				</TouchableOpacity>
-			</View>
+			{(env.isExpoBeta || __DEV__) &&
+				<View style={styles.hintWrap}>
+					<TouchableOpacity
+						onPress={() => navigation.navigate('disclaimer')}
+						style={styles.betaHint}
+					>
+						<Txt txt='BETA' styles={[{ color: mainColors.WARN, marginRight: s(10) }]} />
+						<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
+					</TouchableOpacity>
+				</View>
+			}
 			{/* Bottom nav icons */}
 			<BottomNav
 				navigation={navigation}
@@ -486,7 +487,7 @@ const styles = ScaledSheet.create({
 	betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingHorizontal: '10@s',
+		paddingHorizontal: '20@s',
 		paddingVertical: '10@vs',
 		borderWidth: 1,
 		borderStyle: 'dashed',

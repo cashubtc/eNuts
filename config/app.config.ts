@@ -3,7 +3,7 @@ import type { ExpoConfig } from 'expo/config'
 
 import { version } from './../package.json'
 
-type AppVariant = 'preview' | 'prod' | 'dev' | undefined
+type AppVariant = 'preview' | 'beta' | 'prod' | 'dev' | undefined
 
 function nodeEnvShort(): 'test' | AppVariant {
 	if (!process?.env?.NODE_ENV) {
@@ -14,6 +14,7 @@ function nodeEnvShort(): 'test' | AppVariant {
 	if (process?.env?.NODE_ENV === 'development') { return 'dev' }
 	if (process?.env?.NODE_ENV === 'test') { return 'test' }
 	if (process?.env?.NODE_ENV === 'preview') { return 'preview' }
+	if (process?.env?.NODE_ENV === 'beta') { return 'beta' }
 }
 
 function appVariant(): AppVariant {
@@ -24,6 +25,7 @@ function appVariant(): AppVariant {
 	if (process?.env?.APP_VARIANT === 'prod') { return 'prod' }
 	if (process?.env?.APP_VARIANT === 'dev') { return 'dev' }
 	if (process?.env?.APP_VARIANT === 'preview') { return 'preview' }
+	if (process?.env?.APP_VARIANT === 'beta') { return 'beta' }
 }
 
 const _appVariant = appVariant() || process?.env?.APP_VARIANT || 'dev'
@@ -39,12 +41,13 @@ try {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-const IS_DEV = _appVariant === 'dev'
+// const IS_DEV = _appVariant === 'dev'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-const IS_PREVIEW = _appVariant === 'preview'
+// const IS_PREVIEW = _appVariant === 'preview'
+const IS_BETA = _appVariant === 'beta'
 const IS_PROD = _appVariant === 'prod'
 
-const cameraPermission = 'Allow eNuts to access camera.'
+const cameraPermission = 'eNuts requires access to your camera to scan QR codes for wallet transactions.'
 
 const config: ExpoConfig = {
 	experiments: { tsconfigPaths: true },
@@ -56,7 +59,7 @@ const config: ExpoConfig = {
 		'ios',
 		'android',
 	],
-	version: `${version}${!IS_PROD ? `-${_appVariant}` : ''}`,
+	version: `${version}${!IS_PROD && !IS_BETA ? `-${_appVariant}` : ''}`,
 	scheme: ['cashu', 'lightning'],
 	orientation: 'portrait',
 	icon: './assets/app-icon-all.png',
@@ -82,7 +85,8 @@ const config: ExpoConfig = {
 		config: {
 			usesNonExemptEncryption: false
 		},
-		bundleIdentifier: 'com.agron.enuts'
+		bundleIdentifier: 'xyz.elliptica.enuts',
+		buildNumber: '1'
 	},
 	android: {
 		icon: './assets/app-icon-android-legacy.png',
@@ -90,7 +94,7 @@ const config: ExpoConfig = {
 			foregroundImage: './assets/app-icon-android-adaptive-foreground.png',
 			backgroundImage: './assets/app-icon-android-adaptive-background.png'
 		},
-		package: `com.agron.enuts${!IS_PROD ? `.${_appVariant}` : ''}`
+		package: `xyz.elliptica.enuts${!IS_PROD ? `.${_appVariant}` : ''}`
 	},
 	web: {
 		favicon: './assets/favicon.png'
