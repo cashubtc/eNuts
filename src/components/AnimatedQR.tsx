@@ -4,6 +4,7 @@ import { Buffer } from 'buffer'
 import { useEffect, useRef, useState } from 'react'
 import QRCode, { QRCodeProps } from 'react-native-qrcode-svg'
 import { s } from 'react-native-size-matters'
+import Txt from './Txt'
 
 export interface AnimatedQR extends QRCodeProps {
 	value: string;
@@ -34,6 +35,7 @@ export function AnimatedQR({
 		if (value) {
 			timer = setInterval(() => {
 				setPart(encoder.current.nextPart())
+				console.log(part)
 			}, interval)
 		}
 		return () => {
@@ -41,17 +43,20 @@ export function AnimatedQR({
 				clearInterval(timer)
 			}
 		}
-	}, [value, chunkLength, interval])
+	}, [value, chunkLength, interval, part])
 	return (
-		<QRCode
-			value={part}
-			size={size}
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			logo={require('@assets/app-qr-icon.png')}
-			logoBorderRadius={10}
-			logoBackgroundColor={mainColors.WHITE}
-			logoMargin={s(6)}
-			onError={onError}
-		/>
+		<>
+		<Txt txt={part}></Txt>
+		</>
+		// <QRCode
+		// 	value={part}
+		// 	size={size}
+		// 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		// 	logo={require('@assets/app-qr-icon.png')}
+		// 	logoBorderRadius={10}
+		// 	logoBackgroundColor={mainColors.WHITE}
+		// 	logoMargin={s(6)}
+		// 	onError={onError}
+		// />
 	)
 }

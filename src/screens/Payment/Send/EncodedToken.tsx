@@ -1,7 +1,7 @@
-import { AnimatedQR } from '@comps/AnimatedQR'
 import Button from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
 import { CopyIcon, ShareIcon } from '@comps/Icons'
+import QR from '@comps/QR'
 import Txt from '@comps/Txt'
 import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
@@ -112,9 +112,8 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 						{error.open ?
 							<Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
 							:
-							<AnimatedQR
+							<QR
 								interval={200}
-								chunkLength={100}
 								size={s(280)}
 								value={value}
 								onError={() => setError({ msg: t('bigQrMsg'), open: true })}
