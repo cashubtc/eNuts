@@ -1,3 +1,4 @@
+import { AnimatedQR } from '@comps/AnimatedQR'
 import Button from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
 import { CopyIcon, ShareIcon } from '@comps/Icons'
@@ -112,7 +113,9 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 						{error.open ?
 							<Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
 							:
-							<QR
+							<AnimatedQR
+								interval={200}
+								chunkLength={100}
 								size={s(280)}
 								value={value}
 								onError={() => setError({ msg: t('bigQrMsg'), open: true })}
