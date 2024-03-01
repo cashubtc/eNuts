@@ -44,6 +44,7 @@ try {
 // const IS_DEV = _appVariant === 'dev'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 // const IS_PREVIEW = _appVariant === 'preview'
+const IS_BETA = _appVariant === 'beta'
 const IS_PROD = _appVariant === 'prod'
 
 const cameraPermission = 'eNuts requires access to your camera to scan QR codes for wallet transactions.'
@@ -58,7 +59,7 @@ const config: ExpoConfig = {
 		'ios',
 		'android',
 	],
-	version: `${version}${!IS_PROD ? `-${_appVariant}` : ''}`,
+	version: `${version}${!IS_PROD && !IS_BETA ? `-${_appVariant}` : ''}`,
 	scheme: ['cashu', 'lightning'],
 	orientation: 'portrait',
 	icon: './assets/app-icon-all.png',
@@ -85,7 +86,7 @@ const config: ExpoConfig = {
 			usesNonExemptEncryption: false
 		},
 		bundleIdentifier: 'xyz.elliptica.enuts',
-		buildNumber: '5'
+		buildNumber: '1'
 	},
 	android: {
 		icon: './assets/app-icon-android-legacy.png',

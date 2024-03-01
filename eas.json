@@ -55,6 +55,7 @@
 		}
 	},
 	"submit": {
-		"production": {}
+		"production": {},
+		"beta": {}
 	}
 }
