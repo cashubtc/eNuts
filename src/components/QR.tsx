@@ -10,16 +10,18 @@ import { s, ScaledSheet } from 'react-native-size-matters'
 import useCopy from './hooks/Copy'
 import { CheckmarkIcon, CopyIcon } from './Icons'
 import Txt from './Txt'
+import { AnimatedQR } from './AnimatedQR'
 
 interface QRProps {
 	size: number
 	value: string
 	isInvoice?: boolean
 	truncateNum?: number
+	interval?: number
 	onError: () => void
 }
 
-export default function QR({ size, value, isInvoice, truncateNum, onError }: QRProps) {
+export default function QR({ size, value, isInvoice, truncateNum, onError,interval=100 }: QRProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const { copied, copy } = useCopy()
@@ -27,7 +29,9 @@ export default function QR({ size, value, isInvoice, truncateNum, onError }: QRP
 	return (
 		<TouchableOpacity onPress={() => void copy(str)}>
 			<View style={styles.qrWrap}>
-				<QRCode
+				<AnimatedQR
+					interval={interval}
+					chunkLength={100}
 					size={size}
 					value={str}
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

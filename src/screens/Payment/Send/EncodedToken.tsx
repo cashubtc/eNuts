@@ -113,6 +113,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 							<Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
 							:
 							<QR
+								interval={200}
 								size={s(280)}
 								value={value}
 								onError={() => setError({ msg: t('bigQrMsg'), open: true })}
