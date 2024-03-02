@@ -17,16 +17,14 @@
 **eNuts** is a strictly typed mobile [**Cashu**](https://github.com/cashubtc) wallet that has Lightning support and can connect to multiple mints. The [**Nostr**](https://nostr-resources.com/) integration allows seemless transactions between you and your contacts. We aim to provide a great user experience by implementing features that make the usage of Ecash easier and safer at the same time. The [**cashu-ts**](https://github.com/cashubtc/cashu-ts) library and SQLite are used to manage the Cashu related features. This project is in early stage and we **strongly** encourage you to exercise caution and only use it for **experimental** or **educational** purposes. Read more about Cashu at [https://docs.cashu.space/](https://docs.cashu.space/) or learn more about eNuts via the [**eNuts website**](https://enuts.cash/get-started)
 
 <a href="https://apps.apple.com/de/app/enuts/id6477824421">
-    <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FappStore.91dc53dd.webp&w=3840&q=75" width="130" height="42">
+    <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FappStore.91dc53dd.webp&w=3840&q=75" width="160" height="52">
 </a>
 
 ## Contents
 
 - ⚠️ [Disclaimer](#%EF%B8%8F-disclaimer)
-- 🥜 [Implemented NUTs](#-implemented-nuts)
-- 📋 [Requirements](#-requirements)
-- 🚀 [Getting started](#-getting-started)
 - 👏 [Contribute](#-contribute)
+- 🥜 [Implemented NUTs](#-implemented-nuts)
 - 🎉 [Releases](#-releases)
 - 🔐 [Verify releases](#-verify-releases)
 - 📄 [License](#-license)
@@ -41,20 +39,24 @@ The entire db (database) layer of this system has not fully undergone thorough t
 
 The untested db layer poses potential risks and uncertainties, including but not limited to:
 
-- **Data integrity**  
+- **Data integrity**
 There is a possibility of data corruption, loss, or inconsistency due to unverified interactions with the db layer.
-- **Performance issues**  
+- **Performance issues**
 The untested db layer might have suboptimal performance characteristics, such as slow query execution or inefficient resource utilization.
-- **Compatibility problems**  
+- **Compatibility problems**
 Interoperability issues might arise when integrating with other components or services that rely on the db layer.
-- **Security vulnerabilities**  
+- **Security vulnerabilities**
 The untested db layer might contain security weaknesses, exposing sensitive information or allowing unauthorized access.
 
 Remember that the use of this untested db layer is entirely at your discretion, and the developers, contributors, or maintainers of this software cannot be held liable for any damages, losses, or adverse effects arising from its usage. If you choose to proceed with the untested db layer, exercise extreme caution and consider seeking expert advice or assistance to mitigate potential risks effectively.
 
-Please note that this disclaimer should be taken seriously and should not be ignored or underestimated. We appreciate your interest in this project and will continue to work on improving it.
+Please note that this disclaimer should be taken seriously and should not be ignored or underestimated. We appreciate your interest in this project and will continue to work on improving it. Should you identify a security vulnerability, we kindly ask you to consult our [security policy](https://github.com/cashubtc/eNuts/blob/main/SECURITY.md).
 
 Thank you for your understanding.
+
+## 👏 Contribute
+
+The main purpose of this repository is to continue evolving and pushing the adoption of Ecash for Bitcoin using the Cashu protocol. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bug fixes and improvements. Read more on [how to contribute](https://github.com/cashubtc/eNuts/blob/main/CONTRIBUTING.md).
 
 ## 🥜 Implemented NUTs
 
@@ -72,48 +74,6 @@ The NUT documents (**N**otation, **U**sage and **T**erminology) each specify par
 - [x] [NUT-09](https://github.com/cashubtc/nuts/blob/main/09.md)
 - [ ] [NUT-10](https://github.com/cashubtc/nuts/blob/main/10.md)
 - [ ] [NUT-11](https://github.com/cashubtc/nuts/blob/main/11.md)
-
-## 📋 Requirements
-
-- eNuts is built using the managed workflow provided by Expo, so the easiest way to run a development environment is their [Expo Go](https://expo.dev/client) app.
-- NodeJS 16 or higher.
-
-## 🚀 Getting started
-
-1. Fork this repository and create a local clone.
-2. Navigate inside the repository and run `npm i`
-3. Start the Expo dev server by running `npm run start`
-4. Download the [Expo Go](https://expo.dev/client) app.
-    - **Android users**: Scan the QR code provided by your terminal using the Expo-go app
-    - **iOS users**: Press on the local dev server shown in the Expo-go app or scan the QR code using your camera app.
-5. A browser tab will be opened. Press the "Expo Go" button in the bottom of the page.
-6. eNuts will be bundled up and will run on your device.
-
-**Tip**
-
-- Perform a factory reset to start as a "new user" anytime under `Settings/Factory reset` (Dev mode only)
-
-**Troubleshooting**
-
-- If you see this build error: `[GraphQL] Entity not authorized` in you terminal, you can simply remove the following line from the `config/app.config.ts` file:
-
-```javascript
-// Unauthorized error related to the project ID used in the expo organization for eNuts
-// If you are not a member of the organization, you will encounter the build error.
-{
-  ...
-  extra: {
-    // Delete the following line to fix the issue:
-    eas: { projectId: 'edb75ccd-71ac-4934-9147-baf1c7f2b068' },
-    ...
-  }
-  ...
-}
-```
-
-## 👏 Contribute
-
-The main purpose of this repository is to continue evolving and pushing the adoption of Ecash for Bitcoin using the Cashu protocol. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bug fixes and improvements. Read more on [how to contribute](https://github.com/cashubtc/eNuts/blob/main/CONTRIBUTING.md).
 
 ## 🎉 Releases
 
