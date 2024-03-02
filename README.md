@@ -3,10 +3,12 @@
     <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhero.110e6c49.png&w=3840&q=100" style="max-width:660px; width: 100%; height: auto;">
   </p>
   <h2>eNuts – A Cashu wallet for Android and iOS</h2>
-  <a href="https://apps.apple.com/de/app/enuts/id6477824421">
-    <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FappStore.91dc53dd.webp&w=3840&q=75" width="160" height="52">
-  </a>
-  <div style="display: flex; align-items: center; justify-content: center; margin-top: 20px">
+  <p>
+    <a href="https://apps.apple.com/de/app/enuts/id6477824421">
+      <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FappStore.91dc53dd.webp&w=3840&q=75" width="160" height="52">
+    </a>
+  </p>
+  <div style="display: flex; align-items: center; justify-content: center;">
 
   [![Website eNuts](https://img.shields.io/badge/Website-eNuts-%230088cc?style=plastic&logo=WebMoney&logoColor=white&labelColor=%23666&color=%235DB075)](https://www.enuts.cash)
   [![codecov](https://codecov.io/gh/cashubtc/eNuts/branch/main/graph/badge.svg?token=MGBC95KGHQ)](https://codecov.io/gh/cashubtc/eNuts)
