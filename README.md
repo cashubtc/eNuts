@@ -1,6 +1,6 @@
 <div align="center">
   <p>
-    <img src="https://i.imgur.com/yVlwtmz.jpeg">
+    <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhero.110e6c49.png&w=3840&q=100" width="660" height="500">
   </p>
   <h2>eNuts – A Cashu wallet for Android and iOS</h2>
   <div style="display: flex; align-items: center; justify-content: center">
@@ -14,12 +14,11 @@
   </div>
 </div>
 
-**eNuts** is a strictly typed mobile [**Cashu**](https://github.com/cashubtc) wallet that has Lightning support and can connect to multiple mints. The [**Nostr**](https://nostr-resources.com/) integration allows seemless transactions between you and your contacts. We aim to provide a great user experience by implementing features that make the usage of Ecash easier and safer at the same time. The [**cashu-ts**](https://github.com/cashubtc/cashu-ts) library and SQLite are used to manage the Cashu related features. This project is in early stage and we **strongly** encourage you to exercise caution and only use it for **experimental** or **educational** purposes. Read more about Cashu at [https://docs.cashu.space/](https://docs.cashu.space/) or learn more about eNuts via the **eNuts website** at [https://www.enuts.cash/](https://www.enuts.cash/)
+**eNuts** is a strictly typed mobile [**Cashu**](https://github.com/cashubtc) wallet that has Lightning support and can connect to multiple mints. The [**Nostr**](https://nostr-resources.com/) integration allows seemless transactions between you and your contacts. We aim to provide a great user experience by implementing features that make the usage of Ecash easier and safer at the same time. The [**cashu-ts**](https://github.com/cashubtc/cashu-ts) library and SQLite are used to manage the Cashu related features. This project is in early stage and we **strongly** encourage you to exercise caution and only use it for **experimental** or **educational** purposes. Read more about Cashu at [https://docs.cashu.space/](https://docs.cashu.space/) or learn more about eNuts via the [**eNuts website**](https://enuts.cash/get-started)
 
-## 🐿️ Join the research and development groups
-
-[![Cashu R&D](https://img.shields.io/badge/Cashu_R&D-Telegram-0088cc.svg)](https://t.me/CashuBTC)
-[![eNuts R&D](https://img.shields.io/badge/eNuts_R&D-Telegram-0088cc.svg)](https://t.me/eNutsWallet)
+<a href="https://apps.apple.com/de/app/enuts/id6477824421">
+    <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FappStore.91dc53dd.webp&w=3840&q=75" width="130" height="42">
+</a>
 
 ## Contents
 
