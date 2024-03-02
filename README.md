@@ -1,6 +1,6 @@
 <div align="center">
   <p>
-    <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhero.110e6c49.png&w=3840&q=100" width="660" height="500">
+    <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhero.110e6c49.png&w=3840&q=100" style="max-width:660px; width: 100%; height: auto;">
   </p>
   <h2>eNuts – A Cashu wallet for Android and iOS</h2>
   <div style="display: flex; align-items: center; justify-content: center">
