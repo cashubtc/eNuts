@@ -28,6 +28,8 @@ If you are eager to start contributing code right away, we have a list of [good 
 
 ## 🚀 Getting started
 
+The [**cashu-ts**](https://github.com/cashubtc/cashu-ts) library and SQLite are used to manage the Cashu related features.
+
 1. Fork this repository and create a local clone.
 2. Navigate inside the repository and run `npm i`
 3. Start the Expo dev server by running `npm run start`
