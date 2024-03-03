@@ -3,8 +3,11 @@
 // require('dotenv').config()
 // init sentry and crash reporting
 require('./util/crashReporting').initCrashReporting()
-// dont touch this
-// import 'expo-dev-client'
+
+if (typeof __DEV__ !== 'undefined' && __DEV__) {
+	// dont touch this
+	require('expo-dev-client')()
+}
 import './shim'
 import './i18n'
 
