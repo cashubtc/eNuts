@@ -80,7 +80,6 @@
 		"react-native-svg": "14.1.0",
 		"text-encoding-polyfill": "^0.6.7"
 	},
-	"description": "A Cashu wallet for Android and iOS",
 	"devDependencies": {
 		"@babel/core": "^7.24.0",
 		"@babel/plugin-proposal-private-methods": "^7.18.6",
