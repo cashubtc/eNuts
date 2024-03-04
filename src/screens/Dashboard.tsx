@@ -330,7 +330,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					:
 					<ActionBtn
 						icon={<PlusIcon width={s(36)} height={vs(36)} color={hi[highlight]} />}
-						txt='Mint'
+						txt={t('mint', { ns: NS.wallet })}
 						color={hi[highlight]}
 						onPress={() => setModal(prev => ({ ...prev, mint: true }))}
 					/>
