@@ -10,6 +10,7 @@ import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { highlight as hi, mainColors } from '@styles'
+import { getColor } from '@styles/colors'
 import { formatSeconds, vib } from '@util'
 import { hash256 } from '@util/crypto'
 import { useContext, useEffect, useState } from 'react'
@@ -21,11 +22,12 @@ import PinHint from './Hint'
 import PinDots from './PinDots'
 import PinPad from './PinPad'
 
+// TODO redirect to seed update screen
 export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const { pinHash, shouldEdit, shouldRemove } = route.params
 	const { t } = useTranslation([NS.common])
 	const { anim, shake } = useShakeAnimation()
-	const { highlight } = useThemeContext()
+	const { color, highlight } = useThemeContext()
 	// PIN mismatch context
 	const { attempts, setAttempts } = useContext(PinCtx)
 	// auth state
@@ -48,8 +50,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 	const handleDelete = () => {
 		// handle delete the confirmation pin input
 		if (isConfirm) {
-			setConfirmInput(prev => prev.slice(0, -1))
-			return
+			return setConfirmInput(prev => prev.slice(0, -1))
 		}
 		// else: handle delete the initial pin input
 		setPinInput(prev => prev.slice(0, -1))
@@ -102,8 +103,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		if (auth.length) {
 			// user is providing a wrong pin
 			if (hash256(pinInput.join('')) !== auth) {
-				await handlePinMismatch()
-				return
+				return handlePinMismatch()
 			}
 			// user wants to delete his PIN
 			if (shouldRemove) {
@@ -120,21 +120,19 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			])
 			resetStates()
 			// User wants to edit his PIN, do not navigate away, just update the state as he had no PIN so he can enter a new PIN
-			if (shouldEdit) {
-				setAuth('')
-				return
-			}
+			if (shouldEdit) { return setAuth('') }
 			setSuccess(true)
-			navigation.navigate(shouldRemove ? 'Security settings' : 'dashboard')
-			return
+			if (!route.params.sawSeedUpdate) {
+				return navigation.navigate('Seed')
+			}
+			return navigation.navigate(shouldRemove ? 'Security settings' : 'dashboard')
 		}
 		// user is submitting a pin confirmation
 		if (isConfirm) {
 			const pinStr = pinInput.join('')
 			// mismatch while confirming pin
 			if (pinStr !== confirmInput.join('')) {
-				await handlePinMismatch()
-				return
+				return handlePinMismatch()
 			}
 			// else: PIN confirm is matching
 			const hash = hash256(pinStr)
@@ -145,29 +143,25 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			resetStates()
 			setSuccess(true)
 			setAuth(hash)
-			navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
-			return
+			return navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
 		}
 		// else: bring user in the confirm state after entering his first pin in setup
 		setIsConfirm(true)
 	}
 
 	// handle pad press
-	const handleInput = async (val: number) => {
+	const handleInput = (val: number) => {
 		// backspace
 		if (val === 10) {
-			handleDelete()
-			return
+			return handleDelete()
 		}
 		// submit pin
 		if (val === 11) {
-			await handleSubmit()
-			return
+			return handleSubmit()
 		}
 		// set pin-confirm input on initial setup
 		if (isConfirm) {
-			setConfirmInput(prev => [...prev, val])
-			return
+			return setConfirmInput(prev => [...prev, val])
 		}
 		// set pin input
 		setPinInput(prev => [...prev, val])
@@ -178,13 +172,11 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		if (isConfirm) {
 			setIsConfirm(false)
 			setConfirmInput([])
-			setPinInput([])
-			return
+			return setPinInput([])
 		}
 		// skip pin setup
 		await store.set(STORE_KEYS.pinSkipped, '1')
 		navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
-
 	}
 
 	// conditional rendering dots of pin input
@@ -235,16 +227,16 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			]}
 		>
 			{success ?
-				<UnlockIcon width={s(40)} height={s(40)} color={mainColors.WHITE} />
+				<UnlockIcon width={s(40)} height={s(40)} color={getColor(highlight, color)} />
 				:
 				<>
 					{attempts.locked && !isConfirm && <View />}
 					<View style={styles.lockWrap}>
 						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
-							<LockIcon width={s(30)} height={s(30)} color={mainColors.WHITE} />
+							<LockIcon width={s(30)} height={s(30)} color={getColor(highlight, color)} />
 						</Animated.View>
 						{!shouldEdit && !shouldRemove && auth.length > 0 &&
-							<Txt txt={t('walletLocked')} bold styles={[styles.lockTxt]} />
+							<Txt txt={t('walletLocked')} bold styles={[styles.lockTxt, { color: getColor(highlight, color) }]} />
 						}
 						{attempts.locked && !isConfirm &&
 							<Text style={styles.lockedTime}>
@@ -257,12 +249,12 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 						:
 						<View style={styles.bottomSection}>
 							{attempts.mismatch &&
-							<Txt
-								txt={t('pinMismatch', { ns: NS.auth })}
-								bold
-								error
-								styles={[styles.mismatch]}
-							/>
+								<Txt
+									txt={t('pinMismatch', { ns: NS.auth })}
+									bold
+									error
+									styles={[styles.mismatch]}
+								/>
 							}
 							{shouldShowPinSection() ?
 								<Animated.View style={{ transform: [{ translateX: anim.current }] }}>
@@ -283,7 +275,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 									confirmInput={confirmInput}
 									isConfirm={isConfirm}
 									mismatch={attempts.mismatch}
-									handleInput={handleInput}
+									handleInput={val => void handleInput(val)}
 								/>
 								{/* skip or go back from confirm */}
 								{!auth.length && !shouldEdit &&
@@ -327,7 +319,6 @@ const styles = ScaledSheet.create({
 	lockTxt: {
 		marginTop: '10@vs',
 		marginBottom: '20@vs',
-		color: mainColors.WHITE
 	},
 	bottomSection: {
 		justifyContent: 'center',

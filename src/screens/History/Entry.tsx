@@ -1,6 +1,6 @@
 import { IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
-import type { IHistoryEntry } from '@model'
+import { type IHistoryEntry,txType } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -22,13 +22,14 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	const { color, highlight } = useThemeContext()
 
 	const getTxTypeStr = () => {
-		if (item.type === 1) { return 'Ecash' }
-		if (item.type === 2) { return 'Lightning' }
-		return t('swap', { ns: NS.common })
+		if (item.type === txType.SEND_RECEIVE) { return 'Ecash' }
+		if (item.type === txType.LIGHTNING) { return 'Lightning' }
+		if (item.type === txType.SWAP) { return t('swap', { ns: NS.common }) }
+		return t('seedBackup', { ns: NS.common })
 	}
 
 	const getTxColor = () => {
-		if (item.type === 3) { return color.TEXT }
+		if (item.type === txType.SWAP || item.type === txType.RESTORE) { return color.TEXT }
 		return item.amount < 0 ? mainColors.ERROR : mainColors.VALID
 	}
 
@@ -54,7 +55,7 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			<View style={styles.placeholder} />
 			<View style={[styles.amount, { top: isNum(item.fee) ? 0 : vs(10) }]}>
 				<Txt
-					txt={`${item.amount > 0 ? '+' : ''}${formatSatStr(item.type === 3 ? Math.abs(item.amount) : item.amount, 'standard')}`}
+					txt={`${item.amount > 0 && item.type < txType.SWAP ? '+' : ''}${formatSatStr(item.type === txType.SWAP || item.type === txType.RESTORE ? Math.abs(item.amount) : item.amount, 'standard')}`}
 					styles={[{ color: getTxColor(), marginBottom: vs(5), textAlign: 'right' }]}
 				/>
 				{isNum(item.fee) &&

@@ -8,6 +8,9 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) => ScaledSheet.cre
 		paddingTop: '90@vs',
 		backgroundColor: color?.BACKGROUND
 	},
+	fullWidth: {
+		width: '100%',
+	},
 	txt: {
 		fontSize: '14@vs',
 		color: color?.TEXT

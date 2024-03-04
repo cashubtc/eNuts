@@ -23,7 +23,6 @@ export type RootStackParamList = {
 		newMint?: boolean
 	} | undefined
 	Settings: undefined
-	release: undefined
 	'General settings': undefined
 	'Security settings': undefined
 	'Privacy settings': undefined
@@ -36,6 +35,7 @@ export type RootStackParamList = {
 		pinHash: string
 		shouldEdit?: boolean
 		shouldRemove?: boolean
+		sawSeedUpdate?: boolean
 	}
 	selectMint: {
 		mints: IMintUrl[]
@@ -142,6 +142,7 @@ export type RootStackParamList = {
 		mint?: IMintUrl
 		amount?: number
 		scan?: boolean
+		comingFromOnboarding?: boolean
 		errorMsg: string
 	},
 	mintInvoice: {
@@ -165,7 +166,9 @@ export type RootStackParamList = {
 		isZap?: boolean
 		nostr?: INostrSendData
 		isScanned?: boolean
+		isRestored?: boolean
 		change?: number
+		comingFromOnboarding?: boolean
 	}
 	mintmanagement: {
 		mint: IMintUrl
@@ -173,10 +176,6 @@ export type RootStackParamList = {
 		remainingMints: IMintUrl[]
 	}
 	'mint info': {
-		mintUrl: string
-	}
-	'mint backup': {
-		token: string
 		mintUrl: string
 	}
 	'mint proofs': {
@@ -190,9 +189,6 @@ export type RootStackParamList = {
 	'history entry details': {
 		entry: IHistoryEntry
 	}
-	BackupPage: {
-		token: string
-	}
 	'Address book'?: {
 		isMelt?: boolean
 		mint: IMintUrl
@@ -203,6 +199,37 @@ export type RootStackParamList = {
 		contact?: IContact // the contact in users contact list
 		isUser?: boolean
 		userProfile?: IContact // the user profile
+	}
+	Seed: {
+		comingFromOnboarding?: boolean
+		sawSeedUpdate?: boolean
+		hasSeed?: boolean
+	} | undefined
+	'Select recovery mint': {
+		comingFromOnboarding?: boolean
+	}
+	Recover: {
+		mintUrl: string
+		comingFromOnboarding?: boolean
+	}
+	Mnemonic: {
+		comingFromOnboarding?: boolean
+	}
+	'Confirm Mnemonic': {
+		mnemonic: string[]
+		comingFromOnboarding?: boolean
+	}
+	Deriving: {
+		mnemonic: string[]
+		comingFromOnboarding?: boolean
+	}
+	Recovering: {
+		mintUrl: string
+		mnemonic: string
+		comingFromOnboarding?: boolean
+	}
+	'Restore warning': {
+		comingFromOnboarding?: boolean
 	}
 }
 
@@ -232,13 +259,11 @@ export type TSuccessPageProps = NativeStackScreenProps<RootStackParamList, 'succ
 export type TMintsPageProps = NativeStackScreenProps<RootStackParamList, 'mints', 'MyStack'>
 export type TMintManagementPageProps = NativeStackScreenProps<RootStackParamList, 'mintmanagement', 'MyStack'>
 export type TMintInfoPageProps = NativeStackScreenProps<RootStackParamList, 'mint info', 'MyStack'>
-export type TMintBackupPageProps = NativeStackScreenProps<RootStackParamList, 'mint backup', 'MyStack'>
 export type TMintProofsPageProps = NativeStackScreenProps<RootStackParamList, 'mint proofs', 'MyStack'>
 export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr scan', 'MyStack'>
 export type THistoryPageProps = NativeStackScreenProps<RootStackParamList, 'history', 'MyStack'>
 export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 'history entry details', 'MyStack'>
 export type TSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Settings'>
-export type TReleasePageProps = NativeStackScreenProps<RootStackParamList, 'release'>
 export type TGeneralSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'General settings'>
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
 export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>
@@ -247,9 +272,16 @@ export type TNostrSettingsPageProps = NativeStackScreenProps<RootStackParamList,
 export type TLanguageSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Language settings'>
 export type TAdvancedSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Advanced settings'>
 export type TAboutSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'About settings'>
-export type TBackupPageProps = NativeStackScreenProps<RootStackParamList, 'BackupPage'>
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
+export type ISeedPageProps = NativeStackScreenProps<RootStackParamList, 'Seed'>
+export type IRecoverPageProps = NativeStackScreenProps<RootStackParamList, 'Recover'>
+export type IMnemonicPageProps = NativeStackScreenProps<RootStackParamList, 'Mnemonic'>
+export type IConfirmMnemonicPageProps = NativeStackScreenProps<RootStackParamList, 'Confirm Mnemonic'>
+export type IDerivingPageProps = NativeStackScreenProps<RootStackParamList, 'Deriving'>
+export type IRecoveringPageProps = NativeStackScreenProps<RootStackParamList, 'Recovering'>
+export type ISelectRecoveryMintPageProps = NativeStackScreenProps<RootStackParamList, 'Select recovery mint'>
+export type IRestoreWarningPageProps = NativeStackScreenProps<RootStackParamList, 'Restore warning'>
 export type TBottomNavProps =
 	TNostrOnboardingPageProps |
 	TDashboardPageProps |
@@ -259,7 +291,6 @@ export type TBottomNavProps =
 	THistoryEntryPageProps |
 	TMintProofsPageProps |
 	TAddressBookPageProps |
-	TBackupPageProps |
 	TSettingsPageProps |
 	TGeneralSettingsPageProps |
 	TSecuritySettingsPageProps |
@@ -273,6 +304,8 @@ export interface INavigatorProps {
 	bgAuth?: boolean
 	shouldOnboard?: boolean
 	setBgAuth?: (val: boolean) => void
+	hasSeed?: boolean
+	sawSeedUpdate?: boolean
 }
 export type TBeforeRemoveEvent = EventArg<'beforeRemove', true, {
 	action: Readonly<{

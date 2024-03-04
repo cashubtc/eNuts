@@ -1,16 +1,15 @@
-import { AboutIcon, HeartIcon, MintBoardIcon, OptionsIcon, ReadmeIcon, ReleaseTagIcon } from '@comps/Icons'
+import { AboutIcon, HeartIcon, MintBoardIcon, OptionsIcon } from '@comps/Icons'
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
-import { appVersion } from '@consts/env'
+import { appVersion, env, isIOS } from '@consts/env'
 import { BottomModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
-import { useReleaseContext } from '@src/context/Release'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { dropAllData } from '@src/storage/dev'
-import { globals, mainColors } from '@styles'
+import { globals } from '@styles'
 import * as Updates from 'expo-updates'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -22,7 +21,6 @@ import MenuItem from './MenuItem'
 export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
-	const { isOutdated } = useReleaseContext()
 	const [confirmReset, setConfirmReset] = useState(false)
 	const [zapModal, setZapModal] = useState(false)
 
@@ -59,22 +57,16 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						txt={t('about', { ns: NS.topNav })}
 						icon={<AboutIcon color={color.TEXT} />}
 						onPress={() => navigation.navigate('About settings')}
-						hasSeparator
-						hasChevron
-					/>
-					<MenuItem
-						txt={isOutdated ? t('newRelease') : t('releaseNotes')}
-						icon={isOutdated ? <ReleaseTagIcon color={mainColors.VALID} /> : <ReadmeIcon color={color.TEXT} />}
-						onPress={() => navigation.navigate('release')}
-						hasChevron
-						hasSeparator
-					/>
-					<MenuItem
-						txt={t('donateLn')}
-						icon={<HeartIcon color={color.TEXT} />}
-						onPress={() => setZapModal(true)}
 						hasSeparator={__DEV__}
 					/>
+					{(__DEV__ || env.isExpoBeta || !isIOS) &&
+						<MenuItem
+							txt={t('donateLn')}
+							icon={<HeartIcon color={color.TEXT} />}
+							onPress={() => setZapModal(true)}
+							hasSeparator={__DEV__}
+						/>
+					}
 					{__DEV__ &&
 						<MenuItem
 							txt={t('factoryReset')}

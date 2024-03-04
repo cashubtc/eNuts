@@ -3,7 +3,7 @@ import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
 import { l } from '@log'
 import type { ILnUrl, IMintBalWithName, IProofSelection } from '@model'
 import { IContact } from '@src/model/nostr'
-import type { Buffer } from 'buffer/'
+import { Buffer } from 'buffer/'
 import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
 
@@ -381,7 +381,23 @@ export function formatSatStr(
 }
 
 export function getUnixTimestampFromDaysAgo(days: number) {
-	const date = new Date()
-	date.setDate(date.getDate() - days)
-	return Math.floor(date.getTime() / 1000)
+	const oneDayInMs = 24 * 60 * 60 * 1000
+	return Math.ceil(getUnixTimestamp() - days * oneDayInMs)
+}
+
+export function getUnixTimestamp() {
+	return Math.ceil(new Date().getTime() / 1000)
+}
+
+export function withTimeout<T>(promis: Promise<T>, ms: number) {
+	return Promise.race([
+		promis,
+		timeout<T>(ms),
+	])
+}
+
+export async function timeout<T>(ms = 1000) {
+	if (ms < 0) { return {} as unknown as T }// should never happen
+	await sleep(ms)
+	throw new Error(`promise was timed out in ${ms} ms, by withTimeout`)
 }
