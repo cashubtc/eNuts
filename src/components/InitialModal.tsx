@@ -18,7 +18,10 @@ export default function InitialModal({ visible, onConfirm, onCancel }: IInitialM
 	const { color, highlight } = useThemeContext()
 	return (
 		<MyModal type='bottom' animation='slide' visible={visible} close={onCancel}>
-			<Text style={globals(color, highlight).modalHeader}>
+			<Text
+				style={globals(color, highlight).modalHeader}
+				testID='initial-modal-header'
+			>
 				{t('getStarted')}
 			</Text>
 			<Text style={globals(color, highlight).modalTxt}>

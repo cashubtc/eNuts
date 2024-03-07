@@ -4,8 +4,9 @@ module.exports = {
 		level: process.env.CI ? 'debug' : undefined
 	},
 	testRunner: {
-		$0: 'jest',
+		// $0: 'jest',
 		args: {
+			$0: 'jest',
 			config: 'test/e2e/jest.config.js',
 			_: ['e2e']
 		}
@@ -25,7 +26,7 @@ module.exports = {
 		},
 		'android.release': {
 			type: 'android.apk',
-			build: 'cd android && gradlew clean assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..',
+			build: 'cd android && gradlew clean :app:assembleRelease :app:assembleAndroidTest -DtestBuildType=release && cd ..',
 			binaryPath: 'android/app/build/outputs/apk/release/app-release.apk'
 		},
 	},

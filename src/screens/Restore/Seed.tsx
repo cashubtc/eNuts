@@ -100,6 +100,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 								void store.set(STORE_KEYS.sawSeedUpdate, '1')
 								navigation.navigate('auth', { pinHash: '' })
 							}}
+							testID='create-quick-wallet'
 						>
 							<View style={styles.action}>
 								<View style={styles.optionIcon}>
