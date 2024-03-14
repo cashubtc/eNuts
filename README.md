@@ -65,7 +65,7 @@ The main purpose of this repository is to continue evolving and pushing the adop
 * Report bugs
 * Recommend eNuts to friends and family
 * Write translations
-* Passionate about design? Explore our (Figma)[https://www.figma.com/file/GWk1KbXXSUvd7sEHlFKBvD/eNuts?type=design&node-id=472-11122], suggest tweaks, or bring your own designs to the table!
+* Passionate about design? Explore our [Figma](https://www.figma.com/file/GWk1KbXXSUvd7sEHlFKBvD/eNuts?type=design&node-id=472-11122), suggest tweaks, or bring your own designs to the table!
 
 ## 🎉 Releases
 
