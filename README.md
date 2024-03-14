@@ -19,15 +19,13 @@
   </div>
 </div>
 
-**eNuts** is a strictly typed mobile [**Cashu**](https://github.com/cashubtc) wallet that has Lightning support and can connect to multiple mints. The [**Nostr**](https://nostr-resources.com/) integration allows seemless transactions between you and your contacts. We aim to provide a great user experience by implementing features that make the usage of Ecash easier and safer at the same time. This project is in early stage and we **strongly** encourage you to exercise caution and only use it for **experimental** or **educational** purposes. Read more about Cashu at [https://docs.cashu.space/](https://docs.cashu.space/) or learn more about eNuts via the [**eNuts website**](https://enuts.cash/get-started)
+**eNuts** is a strictly typed mobile [**Cashu**](https://github.com/cashubtc) wallet that has Lightning support and can connect to multiple mints. The [**Nostr**](https://nostr-resources.com/) integration allows seemless transactions between you and your contacts. We aim to provide a great user experience by implementing features that make the usage of Ecash easier and safer at the same time. This project is in early stage and we **strongly** encourage you to exercise caution and only use it for **experimental** or **educational** purposes. Read more about Cashu at [**https://docs.cashu.space/**](https://docs.cashu.space/) or learn more about eNuts via the [**eNuts website**](https://enuts.cash/get-started)
 
 ## Contents
 
 - ⚠️ [Disclaimer](#%EF%B8%8F-disclaimer)
 - 👏 [Contribute](#-contribute)
-- 🥜 [Implemented NUTs](#-implemented-nuts)
 - 🎉 [Releases](#-releases)
-- 🔐 [Verify releases](#-verify-releases)
 - 📄 [License](#-license)
 
 ## ⚠️ Disclaimer
@@ -57,64 +55,19 @@ Thank you for your understanding.
 
 ## 👏 Contribute
 
-The main purpose of this repository is to continue evolving and pushing the adoption of Ecash for Bitcoin using the Cashu protocol. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bug fixes and improvements. Read more on [how to contribute](https://github.com/cashubtc/eNuts/blob/main/CONTRIBUTING.md).
+The main purpose of this repository is to continue evolving and pushing the adoption of Ecash for Bitcoin using the Cashu protocol. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bug fixes and improvements. Read more on [how to contribute](https://github.com/cashubtc/eNuts/blob/main/CONTRIBUTING.md). Here's how you can swiftly show your support:
 
-## 🥜 Implemented NUTs
-
-The NUT documents (**N**otation, **U**sage and **T**erminology) each specify parts of the Cashu protocol.
-
-- [x] [NUT-00](https://github.com/cashubtc/nuts/blob/main/00.md)
-- [x] [NUT-01](https://github.com/cashubtc/nuts/blob/main/01.md)
-- [x] [NUT-02](https://github.com/cashubtc/nuts/blob/main/02.md)
-- [x] [NUT-03](https://github.com/cashubtc/nuts/blob/main/03.md)
-- [x] [NUT-04](https://github.com/cashubtc/nuts/blob/main/04.md)
-- [x] [NUT-05](https://github.com/cashubtc/nuts/blob/main/05.md)
-- [x] [NUT-06](https://github.com/cashubtc/nuts/blob/main/06.md)
-- [x] [NUT-07](https://github.com/cashubtc/nuts/blob/main/07.md)
-- [x] [NUT-08](https://github.com/cashubtc/nuts/blob/main/08.md)
-- [x] [NUT-09](https://github.com/cashubtc/nuts/blob/main/09.md)
-- [ ] [NUT-10](https://github.com/cashubtc/nuts/blob/main/10.md)
-- [ ] [NUT-11](https://github.com/cashubtc/nuts/blob/main/11.md)
+* Star the project on GitHub
+* Leave a review on the app store or Google Play
+* Share feedback and ideas with us
+* Report bugs
+* Recommend eNuts to friends and family
+* Write translations
+* Passionate about design? Explore our (Figma)[https://www.figma.com/file/GWk1KbXXSUvd7sEHlFKBvD/eNuts?type=design&node-id=472-11122], suggest tweaks, or bring your own designs to the table!
 
 ## 🎉 Releases
 
 [https://github.com/cashubtc/eNuts/releases](https://github.com/cashubtc/eNuts/releases)
-
-## 🔐 Verify releases
-
-A verification process adds an extra layer of security to our releases. It's important to verify the integrity of software you download to ensure that the files are those originally posted by the maintainers. You should both check that the hashes of your files match those on the signed list, and that the signature on the list is valid.
-
-**Download the Release APK:**
-- Go to the [release](https://github.com/cashubtc/eNuts/releases) section of this repository.
-- Download the APK file you want to verify.
-
-**Download Verification Files:**
-In the same release section, locate and download the following verification files:
-- `chosen_app_version.apk.sig` (Detached signature for the APK)
-- `hash_list.txt` (List of hash values for all releases)
-- `gpg_key.asc` (Our GPG public key)
-
-**Import the GPG Public Key:**
-Import our GPG public key using the following command:
-```bash
-gpg --import gpg_key.asc
-```
-
-**Verify the Detached Signature:**
- Run the following command to verify the detached signature:
-```bash
-gpg --verify chosen_app_version.apk.sig chosen_app_version.apk
-```
-
-**Verify the Hash Value:**
-- Open the `hash_list.txt` file and locate the hash value associated with the downloaded APK file.
-- Calculate the hash value of your downloaded APK file using a hash tool, for example, sha256sum:
-```bash
-sha256sum chosen_app_version.apk
-```
-- Compare the calculated hash value with the one in the `hash_list.txt` file.
-
-If the verification process is successful, you can be confident that the release is authentic and hasn't been tampered with. If you encounter any issues or have questions, please [contact us](https://t.me/eNutsWallet).
 
 ## 📄 License
 
