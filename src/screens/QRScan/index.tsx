@@ -14,7 +14,7 @@ import { NS } from '@src/i18n'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
 import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isNull, isStr, isUrl } from '@util'
-import { isLnurlOrAddress } from '@util/lnurl'
+import { decodeUrlOrAddress, extractLnurlAddress, isLnurlOrAddress } from '@util/lnurl'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
@@ -64,6 +64,35 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		navigation.navigate('qr processing', { tokenInfo: info, token: data })
 	}
 
+	const handleLnurlAddress = async (data: string) => {
+		const address = decodeUrlOrAddress(data)
+		if (!address) {
+			// TODO add error message
+			return
+		}
+		const lnurl = extractLnurlAddress(address)
+		// user has not selected the mint yet (Immediatly scanned a QR code)
+		if (!mint || !balance) {
+			const mintsWithBal = await getMintsBalances()
+			const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
+			const nonEmptyMint = mintsWithBal.filter(m => m.amount > 0)
+			// user has no funds
+			if (!nonEmptyMint.length) {
+				// user is redirected to the mint selection screen where he gets an appropriate message
+				return navigation.navigate('selectMint', {
+					mints,
+					mintsWithBal,
+					isMelt: true,
+					allMintsEmpty: true,
+					scanned: true
+				})
+			}
+			const mintUsing = mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' }
+			return navigation.navigate('selectAmount', { mint: mintUsing, balance: nonEmptyMint[0].amount, isMelt: true, lnurl })
+		}
+		return navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl })
+	}
+
 	const handleTrustModal = async () => {
 		if (loading) { return }
 		startLoading()
@@ -83,7 +112,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		navigation.navigate('qr processing', { tokenInfo, token })
 	}
 
-	const handleBarCodeScanned = async ({ type, data }: { type: string, data: string }) => {
+	const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {
 		setScanned(true)
 		const bcType = isIOS ? 'org.iso.QRCode' : +QRType
 		// early return if barcode is not a QR
@@ -116,26 +145,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		}
 		// handle LNURL
 		if (isLnurlOrAddress(data)) {
-			if (!mint || !balance) {
-				// user has not selected the mint yet (Pressed scan QR and scanned a Lightning invoice)
-				const mintsWithBal = await getMintsBalances()
-				const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
-				const nonEmptyMint = mintsWithBal.filter(m => m.amount > 0)
-				// user has no funds
-				if (!nonEmptyMint.length) {
-					// user is redirected to the mint selection screen where he gets an appropriate message
-					return navigation.navigate('selectMint', {
-						mints,
-						mintsWithBal,
-						isMelt: true,
-						allMintsEmpty: true,
-						scanned: true
-					})
-				}
-				const mintUsing = mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' }
-				return navigation.navigate('selectAmount', { mint: mintUsing, balance: nonEmptyMint[0].amount, isMelt: true, lnurl: data })
-			}
-			return navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: data })
+			return handleLnurlAddress(data)
 		}
 		// handle LN invoice
 		try {

@@ -181,6 +181,13 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				/>
 			}
 			<View style={[styles.overviewWrap, { marginTop: isMelt || isSwap ? 0 : vs(20) }]}>
+				{lnurl && lnurl.length > 0 &&
+					<Txt
+						txt={lnurl}
+						bold
+						styles={[styles.sats, { color: color.TEXT_SECONDARY, marginBottom: vs(5), fontSize: s(10) }]}
+					/>
+				}
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
 						keyboardType='numeric'

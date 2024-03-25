@@ -1,4 +1,5 @@
 import { bech32 } from 'bech32'
+import { Buffer } from 'buffer/'
 
 import { isUrl } from '.'
 
@@ -105,4 +106,12 @@ export const decodeUrlOrAddress = (lnUrlOrAddress: string): string | null => {
 		return `${protocol}://${domain}/.well-known/lnurlp/${username}`
 	}
 	return parseLnurlp(lnUrlOrAddress)
+}
+
+export function extractLnurlAddress(url: string): string {
+	const urlObj = new URL(url)
+	const domain = urlObj.hostname
+	const pathSegments = urlObj.pathname.split('/')
+	const username = pathSegments[pathSegments.length - 1]
+	return `${username}@${domain}`
 }
