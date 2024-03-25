@@ -2,27 +2,13 @@ import { decodeInvoice, getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
 import type { ILnUrl, IMintBalWithName, IProofSelection } from '@model'
 import { IContact } from '@src/model/nostr'
-import { bech32 } from 'bech32'
 import { Buffer } from 'buffer/'
 import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
 
+import { decodeUrlOrAddress, isLnurlOrAddress } from './lnurl'
 import { getLanguageCode } from './localization'
 import { isArr, isStr } from './typeguards'
-
-const LNURL_REGEX =
-  /^(?:http.*[&?]lightning=|lightning:)?(lnurl[0-9]{1,}[02-9ac-hj-np-z]+)/
-
-const LN_ADDRESS_REGEX =
-  /^((?:[^<>()[\]\\.,;:\s@"]+(?:\.[^<>()[\]\\.,;:\s@"]+)*)|(?:".+"))@((?:\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(?:(?:[a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-const LNURLP_REGEX =
-	/^lnurlp:\/\/([\w-]+\.)+[\w-]+(:\d{1,5})?(\/[\w-./?%&=]*)?$/
-	
-export interface LightningAddress {
-		username: string
-		domain: string
-}	
 
 export { isArr, isArrOf, isArrOfNonNullable, isArrOfNum, isArrOfObj, isArrOfStr, isBool, isBuf, isErr, isFunc, isNonNullable, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
 
@@ -139,110 +125,6 @@ export function vib(pattern?: number | number[]) {
 	Vibration.vibrate(pattern)
 }
 
-export function isLnurlOrAddress(lnUrlOrAddress: string) {
-
-	const address = parseLightningAddress(lnUrlOrAddress)
-	if (address) {
-		const { username, domain } = address
-		const protocol = domain.match(/\.onion$/) ? 'http' : 'https'
-		return isUrl(`${protocol}://${domain}/.well-known/lnurlp/${username}`)
-	}
-
-	const bech32Url:string | null = parseLnUrl(lnUrlOrAddress)
-	if (bech32Url) {return true}
-
-	const lnurlp = parseLnurlp(lnUrlOrAddress)
-	if (lnurlp) {return true}
-
-	return false
-
-}
-
-/**
- * Parse an url and return a bech32 encoded url (lnurl)
- * @method parseLnUrl
- * @param  url string to parse
- * @return  bech32 encoded url (lnurl) or null if is an invalid url
- */
-export const parseLnUrl = (url: string): string | null => {
-	if (!url) {return null}
-	const result = LNURL_REGEX.exec(url.toLowerCase())
-	return result ? result[1] : null
-}
-
-  
-/**
-   * Verify if a string is a lightning adress
-   * @method isLightningAddress
-   * @param  address string to validate
-   * @return  true if is a lightning address
-   */
-export const isLightningAddress = (address: string): boolean => {
-	if (!address) {return false}
-	return LN_ADDRESS_REGEX.test(address)
-}
-  
-/**
-   * Parse an address and return username and domain
-   * @method parseLightningAddress
-   * @param  address string to parse
-   * @return  LightningAddress { username, domain }
-   */
-export const parseLightningAddress = (
-	address: string
-): LightningAddress | null => {
-	if (!address) {return null}
-	const result = LN_ADDRESS_REGEX.exec(address)
-	return result ? { username: result[1], domain: result[2] } : null
-}
-  
-/**
-   * Verify if a string is a lnurlp url
-   * @method isLnurlp
-   * @param  url string to validate
-   * @return  true if is a lnurlp url
-   */
-export const isLnurlp = (url: string): boolean => {
-	if (!url) {return false}
-	return LNURLP_REGEX.test(url)
-}
-  
-/**
-   * Parse a lnurlp url and return an url with the proper protocol
-   * @method parseLnurlp
-   * @param  url string to parse
-   * @return  url (http or https) or null if is an invalid lnurlp
-   */
-export const parseLnurlp = (url: string): string | null => {
-	if (!url) {return null}
-  
-	const parsedUrl = url.toLowerCase()
-	if (!LNURLP_REGEX.test(parsedUrl)) {return null}
-  
-	const protocol = parsedUrl.includes('.onion') ? 'http://' : 'https://'
-	return parsedUrl.replace('lnurlp://', protocol)
-}
-
-export const decodeUrlOrAddress = (lnUrlOrAddress: string): string | null => {
-
-	const bech32Url = parseLnUrl(lnUrlOrAddress)
-	if (bech32Url) {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-		const decoded = bech32.decode(bech32Url, 20000)
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-		return Buffer.from(bech32.fromWords(decoded.words)).toString()
-	}
-  
-	const address = parseLightningAddress(lnUrlOrAddress)
-	if (address) {
-		const { username, domain } = address
-		const protocol = domain.match(/\.onion$/) ? 'http' : 'https'
-		return `${protocol}://${domain}/.well-known/lnurlp/${username}`
-	}
-  
-	return parseLnurlp(lnUrlOrAddress)
-}
-
 export function hasTrustedMint(userMints: string[], tokenMints: string[]): boolean
 
 export function hasTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]): boolean
@@ -257,12 +139,11 @@ export async function getInvoiceFromLnurl(lnUrlOrAddress: string, amount: number
 		lnUrlOrAddress = lnTrim(lnUrlOrAddress)
 		if (!isLnurlOrAddress(lnUrlOrAddress)) { throw new Error('invalid address') }
 		const url = decodeUrlOrAddress(lnUrlOrAddress)
-		if (!url || !isUrl(url)) {throw new Error('Invalid lnUrlOrAddress')}
+		if (!url || !isUrl(url)) { throw new Error('Invalid lnUrlOrAddress') }
 		amount *= 1000
 		const resp = await fetch(url)
 		const { tag, callback, minSendable, maxSendable } = await resp.json<ILnUrl>()
 		// const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json<ILnUrl>()
-
 		if (tag === 'payRequest' && minSendable <= amount && amount <= maxSendable) {
 			const resp = await fetch(`${callback}?amount=${amount}`)
 			const { pr } = await resp.json<{ pr: string }>()
@@ -295,7 +176,7 @@ export function isCashuToken(token: string) {
 	return token.trim()
 }
 
-export function lnTrim(str:string) {
+export function lnTrim(str: string) {
 	if (!str || !isStr(str)) { return '' }
 	str = str.trim().toLowerCase()
 	const uriPrefixes = [
@@ -314,8 +195,6 @@ export function lnTrim(str:string) {
 		str = str.slice(prefix.length).trim()
 	})
 	return str.trim()
-
-
 }
 
 export function isLnInvoice(str: string) {
