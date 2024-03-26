@@ -1,3 +1,5 @@
+import type { ILnUrlPayRequest } from '@model'
+import { cTo } from '@store/utils'
 import { bech32 } from 'bech32'
 import { Buffer } from 'buffer/'
 
@@ -18,15 +20,23 @@ export interface LightningAddress {
 }
 
 export function isLnurlOrAddress(lnUrlOrAddress: string) {
-	const address = parseLightningAddress(lnUrlOrAddress)
+	return (isLnurl(lnUrlOrAddress) || isLnurlAddress(lnUrlOrAddress))
+}
+
+export function isLnurlAddress(str: string) {
+	const address = parseLightningAddress(str)
 	if (address) {
 		const { username, domain } = address
 		const protocol = domain.match(/\.onion$/) ? 'http' : 'https'
 		return isUrl(`${protocol}://${domain}/.well-known/lnurlp/${username}`)
 	}
-	const bech32Url: string | null = parseLnUrl(lnUrlOrAddress)
+	return false
+}
+
+export function isLnurl(str: string) {
+	const bech32Url: string | null = parseLnUrl(str)
 	if (bech32Url) { return true }
-	const lnurlp = parseLnurlp(lnUrlOrAddress)
+	const lnurlp = parseLnurlp(str)
 	if (lnurlp) { return true }
 	return false
 }
@@ -108,10 +118,17 @@ export const decodeUrlOrAddress = (lnUrlOrAddress: string): string | null => {
 	return parseLnurlp(lnUrlOrAddress)
 }
 
-export function extractLnurlAddress(url: string): string {
-	const urlObj = new URL(url)
-	const domain = urlObj.hostname
-	const pathSegments = urlObj.pathname.split('/')
-	const username = pathSegments[pathSegments.length - 1]
-	return `${username}@${domain}`
+export function getLnurlData(url?: string): Promise<ILnUrlPayRequest> | null {
+	if (!url) { return null }
+	return fetch(url).then(res => res.json())
+}
+
+export function getLnurlIdentifierFromMetadata(metadata: string) {
+	try {
+		const parsed = cTo<string[][]>(metadata)
+		const identidier = parsed.find(([key]) => key === 'text/identifier')?.[1]
+		return identidier ?? 'Identifier not found'
+	} catch (e) {
+		return 'Error: Identifier not found'
+	}
 }

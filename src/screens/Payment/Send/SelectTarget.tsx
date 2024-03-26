@@ -59,7 +59,7 @@ export default function SelectTargetScreen({ navigation, route }: TSelectTargetP
 													mint,
 													balance,
 													isMelt: true,
-													lnurl: lud16
+													lnurl: { userInput: lud16 }
 												})
 											}}
 											hasSeparator

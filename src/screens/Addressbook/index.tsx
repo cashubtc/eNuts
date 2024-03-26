@@ -295,8 +295,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				openPromptAutoClose({ msg: t('receiverNoLnurl', { ns: NS.addrBook }) })
 				return
 			}
-			navigation.navigate('selectAmount', { isMelt, lnurl: contact.lud16, mint, balance })
-			return
+			return navigation.navigate('selectAmount', { isMelt, lnurl: { userInput: contact.lud16 }, mint, balance })
 		}
 		if (!nostrRef.current) { return }
 		// mint has already been selected

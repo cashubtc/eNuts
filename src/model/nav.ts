@@ -1,12 +1,18 @@
 import type { EventArg } from '@react-navigation/core'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-import type { IHistoryEntry, IMintUrl, IMintWithBalance, IProofSelection, ITokenInfo } from '.'
+import type { IHistoryEntry, ILnUrlPayRequest, IMintUrl, IMintWithBalance, IProofSelection, ITokenInfo } from '.'
 import type { HexKey, IContact } from './nostr'
 
 export interface INostrSendData {
 	senderName: string
 	contact?: IContact
+}
+
+interface ILnurlNavData {
+	userInput: string
+	url?: string
+	data?: ILnUrlPayRequest
 }
 /**
  * Stack Navigator
@@ -48,6 +54,7 @@ export type RootStackParamList = {
 		invoice?: string
 		invoiceAmount?: number
 		estFee?: number
+		lnurl?: ILnurlNavData
 		scanned?: boolean
 	},
 	selectTarget: {
@@ -74,7 +81,7 @@ export type RootStackParamList = {
 		nostr?: INostrSendData
 		isSwap?: boolean
 		balance: number
-		lnurl?: string
+		lnurl?: ILnurlNavData
 		targetMint?: IMintUrl
 	}
 	selectNostrAmount: {
@@ -123,6 +130,12 @@ export type RootStackParamList = {
 			mint?: IMintUrl
 			balance?: number
 			amount: number
+		}
+		lnurl?: {
+			mint?: IMintUrl
+			balance?: number
+			url: string
+			data: string
 		}
 	}
 	'mint confirm': {
