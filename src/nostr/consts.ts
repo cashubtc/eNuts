@@ -1,5 +1,5 @@
-import { Npub } from '@src/model/nostr'
-import { isUrl } from '@src/util'
+import type { Npub } from '@model/nostr'
+import { isUrl } from '@util/lnurl'
 
 import { normalizeURL } from './util'
 

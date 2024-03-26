@@ -6,7 +6,7 @@ import { Buffer } from 'buffer/'
 import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
 
-import { decodeUrlOrAddress, isLnurlOrAddress } from './lnurl'
+import { decodeUrlOrAddress, isLnurlOrAddress, isUrl } from './lnurl'
 import { getLanguageCode } from './localization'
 import { isArr, isStr } from './typeguards'
 
@@ -93,11 +93,6 @@ export function isToday(someDate: Date) {
 
 export function getHistoryGroupDate(date: Date) {
 	return isToday(date) ? 'Today' : getShortDateStr(date)
-}
-
-export function isUrl(url: string) {
-	try { return !!new URL(url) } catch { /* ignore*/ }
-	return false
 }
 
 export function formatMintUrl(url: string) {
