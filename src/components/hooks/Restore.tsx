@@ -18,25 +18,26 @@ type StackNavigation = NavigationProp<RootStackParamList>
 type TRestoreInterval = Promise<{ proofs: Proof[]; newKeys?: MintKeys; lastCount: number } | undefined>
 
 interface IUseRestoreProps {
+	from?: number
+	to?: number
 	mintUrl: string
+	keysetId: string
 	mnemonic: string
 	comingFromOnboarding?: boolean
 }
 
-const defaultRestoreState = {
-	proofs: [] as Proof[],
-	from: 0,
-	to: RESTORE_INTERVAL,
-	overshoot: 0,
-}
-
-export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRestoreProps) {
+export function useRestore({ from, to, mintUrl, keysetId, mnemonic, comingFromOnboarding }: IUseRestoreProps) {
 
 	const navigation = useNavigation<StackNavigation>()
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
 
-	const [restored, setRestored] = useState({ ...defaultRestoreState })
+	const [restored, setRestored] = useState({
+		proofs: [] as Proof[],
+		start: from ?? 0,
+		end: to ?? RESTORE_INTERVAL,
+		overshoot: 0,
+	})
 
 	useEffect(() => {
 		const restore = async () => {
@@ -45,7 +46,12 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 				const proofs = await restoreWallet(mintUrl, mnemonic)
 				if (!proofs?.length) {
 					openPromptAutoClose({ msg: t('noProofsRestored'), success: false })
-					setRestored({ ...defaultRestoreState })
+					setRestored({
+						proofs: [] as Proof[],
+						start: from ?? 0,
+						end: to ?? RESTORE_INTERVAL,
+						overshoot: 0,
+					})
 					if (comingFromOnboarding) {
 						return navigation.navigate('auth', { pinHash: '' })
 					}
@@ -58,7 +64,12 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 					type: 4,
 					value: '',
 				})
-				setRestored({ ...defaultRestoreState })
+				setRestored({
+					proofs: [] as Proof[],
+					start: from ?? 0,
+					end: to ?? RESTORE_INTERVAL,
+					overshoot: 0,
+				})
 				navigation.navigate('success', {
 					mint: mintUrl,
 					amount: bal,
@@ -67,7 +78,12 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 				})
 			} catch (e) {
 				l('[handleRecovery] error: ', e)
-				setRestored({ ...defaultRestoreState })
+				setRestored({
+					proofs: [] as Proof[],
+					start: from ?? 0,
+					end: to ?? RESTORE_INTERVAL,
+					overshoot: 0,
+				})
 				navigation.navigate('processingError', {
 					errorMsg: isErr(e) ? e.message : t('restoreErr'),
 					comingFromOnboarding,
@@ -77,8 +93,7 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 		const restoreWallet = async (mintUrl: string, mnemonic: string) => {
 			try {
 				const { wallet, seed } = await getSeedWalletByMnemonic({ mintUrl, mnemonic })
-				// TODO get previous keysets from mint and try to restore from them
-				const resp = await restoreInterval(wallet, 0, RESTORE_INTERVAL)
+				const resp = await restoreInterval(wallet, from ?? 0, to ?? RESTORE_INTERVAL)
 				if (!resp) {
 					l('[restoreWallet] restore interval did not return a proper object!')
 					throw new Error('[restoreWallet] restore interval did not return a proper object!')
@@ -102,29 +117,29 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 		}
 		const restoreInterval = async (
 			wallet: CashuWallet,
-			from: number,
-			to: number,
+			start: number,
+			end: number,
 			restoredProofs: Proof[] = [],
 			overshoot: number = 0
 		): TRestoreInterval => {
 			try {
-				setRestored({ proofs: restoredProofs, from, to, overshoot })
-				const { proofs, newKeys } = await wallet.restore(from, to)
-				from += RESTORE_INTERVAL
-				to += RESTORE_INTERVAL
+				setRestored({ proofs: restoredProofs, start, end, overshoot })
+				const { proofs, newKeys } = await wallet.restore(start, end, keysetId)
+				start += RESTORE_INTERVAL
+				end += RESTORE_INTERVAL
 				if (proofs.length) {
 					l('[restoreInterval] restored proofs: ', { from, to, proofsLength: proofs.length })
 					restoredProofs.push(...proofs)
 					overshoot = 0
-					return restoreInterval(wallet, from, to, restoredProofs, overshoot)
+					return restoreInterval(wallet, start, end, restoredProofs, overshoot)
 				}
 				if (overshoot < RESTORE_OVERSHOOT) {
 					l('[restoreInterval] no proofs to restore! overshooting now: ', { from, to, proofsLength: proofs.length, overshoot })
 					overshoot++
-					return restoreInterval(wallet, from, to, restoredProofs, overshoot)
+					return restoreInterval(wallet, start, end, restoredProofs, overshoot)
 				}
 				l('[restoreInterval] no proofs to restore! overshooting limit reached: ', { from, to, restoredProofs: restoredProofs.length, overshoot })
-				return { proofs: restoredProofs, newKeys, lastCount: to }
+				return { proofs: restoredProofs, newKeys, lastCount: end }
 			} catch (e) {
 				l('[restoreInterval] error', { e })
 			}

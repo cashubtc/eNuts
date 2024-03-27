@@ -7,6 +7,7 @@ import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import type { IRecoverPageProps } from '@model/nav'
 import { NS } from '@src/i18n'
+import { getMintCurrentKeySetId } from '@src/wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, type TextInput, View } from 'react-native'
@@ -19,10 +20,12 @@ export default function RecoverScreen({ navigation, route }: IRecoverPageProps) 
 	const { loading } = useLoading()
 	const inputRef = createRef<TextInput>()
 
-	const handleBtnPress = () => {
+	const handleBtnPress = async () => {
 		if (loading || !input.length) { return }
+		const keysetId = await getMintCurrentKeySetId(route.params.mintUrl)
 		navigation.navigate('Recovering', {
 			mintUrl: route.params.mintUrl,
+			keysetId,
 			mnemonic: input,
 			comingFromOnboarding: route.params.comingFromOnboarding,
 		})

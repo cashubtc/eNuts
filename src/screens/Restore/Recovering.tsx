@@ -15,11 +15,11 @@ import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function RecoveringScreen({ navigation, route }: IRecoveringPageProps) {
 
-	const { mintUrl, mnemonic, comingFromOnboarding } = route.params
+	const { from, to, mintUrl, keysetId, mnemonic, comingFromOnboarding } = route.params
 
 	const { t } = useTranslation([NS.common])
 	// Seed recovery process in useRestore hook
-	const { proofs, from, to, overshoot } = useRestore({ mintUrl, mnemonic, comingFromOnboarding })
+	const { proofs, start, end, overshoot } = useRestore({ from, to, mintUrl, keysetId, mnemonic, comingFromOnboarding })
 
 	const { color } = useThemeContext()
 
@@ -37,6 +37,24 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 				styles={[styles.descText]}
 				txt={t('recoveringWallet')}
 			/>
+			<Txt
+				center
+				bold={overshoot > 0}
+				styles={[styles.hint, { color: overshoot > 0 ? mainColors.VALID : mainColors.WARN, marginBottom: s(40) }]}
+				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+				txt={overshoot > 0 ? `${t('doneSafety')} ${overshoot}/${RESTORE_OVERSHOOT}` : t('dontClose')}
+			/>
+			<View style={styles.progress}>
+				<Txt
+					bold
+					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+					txt='Keyset-ID'
+				/>
+				<Txt
+					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+					txt={keysetId}
+				/>
+			</View>
 			<View style={styles.progress}>
 				<Txt
 					bold
@@ -45,7 +63,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 				/>
 				<Txt
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-					txt={`${from} ${t('to')} ${to}`}
+					txt={`${start} ${t('to')} ${end}`}
 				/>
 			</View>
 			<View style={styles.progress}>
@@ -56,16 +74,10 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 				/>
 				<Txt
 					styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-					txt={`${proofs.length} (${formatSatStr(proofs.reduce((acc, p) => acc + p.amount, 0))})`}
+					txt={`${proofs.length} ${t('proofs', { ns: NS.wallet })} (${formatSatStr(proofs.reduce((acc, p) => acc + p.amount, 0))})`}
 				/>
 			</View>
-			<Txt
-				center
-				bold={overshoot > 0}
-				styles={[styles.hint, { color: overshoot > 0 ? mainColors.VALID : mainColors.WARN, marginTop: s(40) }]}
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-				txt={overshoot > 0 ? `${t('doneSafety')} ${overshoot}/${RESTORE_OVERSHOOT}` : t('dontClose')}
-			/>
+
 		</View>
 	)
 }
@@ -78,18 +90,13 @@ const styles = ScaledSheet.create({
 		paddingHorizontal: '20@s',
 	},
 	descText: {
-		marginTop: '20@s',
-		marginBottom: '30@s',
+		marginVertical: '20@s',
 		textAlign: 'center',
 		fontSize: '20@s',
 	},
-	warn: {
-		marginTop: '10@s',
-		marginBottom: '40@s',
-	},
 	hint: {
-		fontSize: '12@s',
-		marginTop: '10@s',
+		fontSize: '14@s',
+		marginBottom: '10@s',
 	},
 	progress: {
 		width: '100%',

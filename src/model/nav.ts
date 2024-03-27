@@ -236,7 +236,10 @@ export type RootStackParamList = {
 		comingFromOnboarding?: boolean
 	}
 	Recovering: {
+		from?: number
+		to?: number
 		mintUrl: string
+		keysetId: string
 		mnemonic: string
 		comingFromOnboarding?: boolean
 	}
