@@ -17,19 +17,6 @@ import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, type TextInput, View } from 'react-native'
 import { ScaledSheet } from 'react-native-size-matters'
 
-/*
-
-manual test cases:
----
-[OK] * Start new seed wallet: confirm mnemonic, set pin, add mint, mint, send, receive, melt, restore
-[OK] * Start new quick wallet: skip pin, add mint, activate seed, mint, send, receive, restore
-[OK] * Start new recovery wallet: paste seed, restore, set pin, send, receive, melt, mint, restore
-[OK] * Start new quick wallet, skip pin, skip mint, restore, send, receive, melt, mint, restore
-[  ] * ...
-[  ] * ...
-
-*/
-
 export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMnemonicPageProps) {
 
 	const { t } = useTranslation([NS.common])
@@ -103,6 +90,7 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 						placeholder={`Seed (${randomInt + 1}.)`}
 						onChangeText={text => setInput(text)}
 						onSubmitEditing={() => void handleConfirm()}
+						autoCapitalize='none'
 						autoFocus
 						ms={200}
 					/>
