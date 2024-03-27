@@ -83,7 +83,8 @@ const config: ExpoConfig = {
 				dsn: process?.env?.SENTRY_DSN, // || 'sentry dsn, or use the `SENTRY_DSN` environment variable',
 				authToken: process?.env?.SENTRY_AUTH_TOKEN, // || 'sentry auth token, or use the `SENTRY_AUTH_TOKEN` environment variable',
 			}
-		]
+		],
+		'@config-plugins/detox'
 	],
 	ios: {
 		supportsTablet: false,
