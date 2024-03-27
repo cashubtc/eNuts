@@ -6,7 +6,7 @@ require('./util/crashReporting').initCrashReporting()
 
 if (typeof __DEV__ !== 'undefined' && __DEV__) { // eslint-disable-line no-undef
 	// dont touch this
-	require('expo-dev-client')()
+	require('expo-dev-client')
 }
 import './shim'
 import './i18n'
