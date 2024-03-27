@@ -318,7 +318,7 @@
 		"invoiceHint": "Ez eltarthat pár másodpercig...",
 		"lowBal": "Verde egyenlege túl alacsony!",
 		"meltAddressbookHint": "Válaszd ki a saját LNURL-ed vagy bármelyik névjegyed a fizetés fogadójának.",
-		"meltInputHint": "Hozz létre egy Lightning számlát vagy illessz be egy LNURL-t a bemeneti mezőbe.",
+		"meltInputHint": "Illessze be a Lightning számlát, az LN-URL vagy a Lightning címet.",
 		"meltScanQRHint": "Hozz létre egy Lightning számlát egy másik eszközön és csak olvasd be.",
 		"meltSwapHint": "Válassz egy másik verdét a listádról a fizetés fogadójának.",
 		"copyShareToken": "Másol & megosztás",

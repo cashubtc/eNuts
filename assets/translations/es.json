@@ -318,7 +318,7 @@
 		"invoiceHint": "Esto puede llevar unos segundos...",
 		"lowBal": "¡Saldo de la ceca muy bajo!",
 		"meltAddressbookHint": "Elige tu propia LNURL o cualquier otro contacto como receptor del pago.",
-		"meltInputHint": "Crea un recibo Lightning o pega una LNURL en el campo de entrada.",
+		"meltInputHint": "Pega la factura de Lightning, la LN-URL o la dirección de Lightning.",
 		"meltScanQRHint": "Crea un recibo Lightning con otro dispositivo y simplemente escanéalo.",
 		"meltSwapHint": "Elige otra ceca de tu lista de confianza como receptora del pago.",
 		"copyShareToken": "Copiar y compartir rápido",
