@@ -13,10 +13,6 @@ import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
-// TODO
-// show internet connection status
-// show different quotes messages during the process
-
 export default function RecoveringScreen({ navigation, route }: IRecoveringPageProps) {
 
 	const { mintUrl, mnemonic, comingFromOnboarding } = route.params
