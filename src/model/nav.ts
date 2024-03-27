@@ -83,6 +83,7 @@ export type RootStackParamList = {
 		balance: number
 		lnurl?: ILnurlNavData
 		targetMint?: IMintUrl
+		scanned?: boolean
 	}
 	selectNostrAmount: {
 		mint: IMintUrl
@@ -125,6 +126,7 @@ export type RootStackParamList = {
 	'qr processing': {
 		tokenInfo?: ITokenInfo
 		token?: string
+		scanned?: boolean
 		ln?: {
 			invoice: string
 			mint?: IMintUrl

@@ -120,7 +120,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			if (!decoded) {
 				return openPromptAutoClose({ msg: t('unknownType') + ` - decoded LNURL: "${decoded}"` })
 			}
-			return navigation.navigate('qr processing', { lnurl: { data, mint, balance, url: decoded } })
+			return navigation.navigate('qr processing', { lnurl: { data, mint, balance, url: decoded }, scanned: true })
 		}
 		// handle LN invoice
 		try {

@@ -22,7 +22,7 @@ import { Animated, KeyboardAvoidingView, TextInput, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
-	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
+	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint, scanned } = route.params
 	const { openPromptAutoClose } = usePromptContext()
 	const { t } = useTranslation([NS.wallet])
 	const { color, highlight } = useThemeContext()
@@ -171,7 +171,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		<Screen
 			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
-			handlePress={() => navigation.goBack()}
+			handlePress={() => scanned ? navigation.navigate('qr scan', {}) : navigation.goBack()}
 			mintBalance={balance}
 			disableMintBalance={isMelt || isSwap}
 			handleMintBalancePress={() => setAmount(`${balance}`)}

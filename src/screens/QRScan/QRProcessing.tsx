@@ -20,7 +20,7 @@ import { ScaledSheet } from 'react-native-size-matters'
 export default function QRProcessingScreen({ navigation, route }: TQRProcessingPageProps) {
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
-	const { tokenInfo, token, ln, lnurl } = route.params
+	const { tokenInfo, token, ln, lnurl, scanned } = route.params
 
 	const getProcessingtxt = () => {
 		if (token && tokenInfo) { return 'claiming' }
@@ -84,6 +84,7 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 					mint: lnurl?.mint,
 					balance: lnurl?.balance,
 					isMelt: true,
+					scanned,
 					lnurl: {
 						userInput: lnurl.data,
 						url: lnurl.url,
@@ -103,7 +104,7 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 					mintsWithBal,
 					isMelt: true,
 					allMintsEmpty: true,
-					scanned: true,
+					scanned,
 					lnurl: {
 						userInput: lnurl.data,
 						url: lnurl.url,
@@ -129,6 +130,7 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 					mint: nonEmptyMint[0],
 					balance: nonEmptyMint[0].amount,
 					isMelt: true,
+					scanned,
 					lnurl: {
 						userInput: lnurl.data,
 						url: lnurl.url,
@@ -143,7 +145,7 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 					mintsWithBal,
 					allMintsEmpty: !nonEmptyMint.length,
 					isMelt: true,
-					scanned: true,
+					scanned,
 					lnurl: {
 						userInput: lnurl.data,
 						url: lnurl.url,
