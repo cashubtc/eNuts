@@ -1,14 +1,17 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
+// https://docs.expo.dev/guides/using-sentry/#update-metro-configuration
 
-import { getDefaultConfig } from '@expo/metro-config'
+// This replaces `const { getDefaultConfig } = require('expo/metro-config');`
+import { getSentryExpoConfig } from '@sentry/react-native/metro'
 import { readdirSync } from 'fs'
-// import { mergeConfig } from 'metro-config'
 import { join, resolve } from 'path'
+
 
 const root = resolve(join(__dirname, '..', ''))
 const assertDir = resolve(join(root, 'assets'))
 
-export const config = getDefaultConfig(root)
+// This replaces const config = getDefaultConfig(root)
+export const config = getSentryExpoConfig(root) 
 
 const assetExts = [...new Set([
 	...config?.resolver?.assetExts ?? [],
@@ -19,4 +22,3 @@ const assetExts = [...new Set([
 ])]
 if (config.resolver?.assetExts) { config.resolver.assetExts = assetExts }
 
-// config mergeConfig(config, { resolver: { ...config.resolver, assetExts } })

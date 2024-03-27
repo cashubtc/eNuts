@@ -89,7 +89,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				amount,
 				hash: resp.hash,
 				expiry: decoded.expiry,
-				paymentRequest: decoded.decoded.paymentRequest
+				paymentRequest: resp.pr,
 			})
 		} catch (e) {
 			handleError({ e })

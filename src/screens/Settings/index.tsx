@@ -10,7 +10,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { dropAllData } from '@src/storage/dev'
 import { globals } from '@styles'
-import * as Updates from 'expo-updates'
+// import * as Updates from 'expo-updates'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, View } from 'react-native'
@@ -29,7 +29,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 			await dropAllData()
 		} catch (e) {/* ignore */ }
 		setConfirmReset(false)
-		void Updates.reloadAsync()
+		// void Updates.reloadAsync()
 	}
 
 	return (
