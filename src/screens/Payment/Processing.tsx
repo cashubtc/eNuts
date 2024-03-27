@@ -10,11 +10,12 @@ import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { isLnurlOrAddress } from '@src/util/lnurl'
 import { addLnPaymentToHistory } from '@store/HistoryStore'
 import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
 import { getDefaultMint } from '@store/mintStore'
 import { globals } from '@styles'
-import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurlOrAddress, isNum, uniqByIContacts } from '@util'
+import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isNum, uniqByIContacts } from '@util'
 import { autoMintSwap, checkFees, fullAutoMintSwap, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -98,7 +99,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 	const handleMelting = async () => {
 		let invoice = ''
-		// recipient can be a LNURL (address) or a LN invoice
+		// recipient can be a LNURL or a LN invoice
 		if (recipient?.length && isLnurlOrAddress(recipient)) {
 			try {
 				invoice = await getInvoiceFromLnurl(recipient, +amount)

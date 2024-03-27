@@ -318,7 +318,7 @@
 		"invoiceHint": "This can take a few seconds...",
 		"lowBal": "Mint balance too low!",
 		"meltAddressbookHint": "Choose your own LNURL or any other contact as a payment receiver.",
-		"meltInputHint": "Create a Lightning invoice or paste a LNURL into an input field.",
+		"meltInputHint": "Paste Lightning invoice, LN-URL or Lightning address.",
 		"meltScanQRHint": "Create a Lightning invoice with another device and simply scan it.",
 		"meltSwapHint": "Pick another mint from your trusted list as the payment receiver.",
 		"copyShareToken": "Copy & quickshare",

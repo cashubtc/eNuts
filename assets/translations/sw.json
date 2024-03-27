@@ -318,7 +318,7 @@
 		"invoiceHint": "Hii inaweza kuchukua sekunde kadhaa...",
 		"lowBal": "Salio la sarafu limepungua sana!",
 		"meltAddressbookHint": "Chagua LNURL yako mwenyewe au mawasiliano mengine yoyote kama mpokeaji wa malipo.",
-		"meltInputHint": "Unda ankara ya Lightning au weka LNURL kwenye uga wa kuingiza.",
+		"meltInputHint": "Weka ankara ya Lightning, LN-URL au anwani ya Lightning.",
 		"meltScanQRHint": "Unda ankara ya Lightning kwa kutumia kifaa kingine na ui-scan tu.",
 		"meltSwapHint": "Chagua sarafu nyingine kutoka kwa orodha yako ya sarafu za kuaminika kama mpokeaji wa malipo.",
 		"copyShareToken": "Nakili & Shiriki kwa haraka",

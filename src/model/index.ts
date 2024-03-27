@@ -30,6 +30,15 @@ export interface ILnUrl {
 	callback: string
 	pr: string
 }
+
+// TODO This interface is missing some properties?
+export interface ILnUrlPayRequest {
+	tag: string
+	cb: string
+	minSendable: number
+	maxSendable: number
+	metadata: string
+}
 export interface IMint {
 	id: string
 	mintUrl: string

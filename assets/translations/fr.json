@@ -318,7 +318,7 @@
 		"invoiceHint": "Cela peut prendre quelques secondes...",
 		"lowBal": "Solde trop bas!",
 		"meltAddressbookHint": "Sélectionnez votre propre LNURL ou tout autre contact comme destinataire du paiement.",
-		"meltInputHint": "Créez une facture Lightning ou insérez une LNURL valide.",
+		"meltInputHint": "Collez une facture Lightning, LN-URL ou l'adresse Lightning.",
 		"meltScanQRHint": "Créez une facture Lightning avec un autre appareil et scannez-la simplement.",
 		"meltSwapHint": "Sélectionnez une autre mint de votre liste de confiance comme destinataire du paiement.",
 		"copyShareToken": "Copier et partager",

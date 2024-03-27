@@ -7,6 +7,7 @@ import { preventBack } from '@nav/utils'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { isErr } from '@src/util'
+import { getLnurlData } from '@src/util/lnurl'
 import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
@@ -19,7 +20,7 @@ import { ScaledSheet } from 'react-native-size-matters'
 export default function QRProcessingScreen({ navigation, route }: TQRProcessingPageProps) {
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
-	const { tokenInfo, token, ln } = route.params
+	const { tokenInfo, token, ln, lnurl, scanned } = route.params
 
 	const getProcessingtxt = () => {
 		if (token && tokenInfo) { return 'claiming' }
@@ -56,37 +57,40 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 		})
 	}
 
-	const handleInvoice = async () => {
-		if (!ln) {
-			navigation.navigate('processingError', {
+	// TODO clean up code duplications
+	const handleLnurl = async () => {
+		if (!lnurl) {
+			return navigation.navigate('processingError', {
 				errorMsg: t('invoiceScanError', { ns: NS.error }),
 				scan: true
 			})
-			return
 		}
-		const { invoice, mint, balance, amount } = ln
 		try {
-			// user already has selected the mint in the previous screens
-			if (mint && balance) {
-				// check if invoice amount is higher than the selected mint balance to avoid navigating
-				const estFee = await checkFees(mint.mintUrl, invoice)
-				if (amount + estFee > balance) {
-					navigation.navigate('processingError', {
-						errorMsg: t('noFundsForFee', { ns: NS.common, fee: estFee }),
-						scan: true
-					})
-					return
-				}
-				navigation.navigate('coinSelection', {
-					mint,
-					balance,
-					amount,
-					estFee,
-					recipient: invoice,
-					isMelt: true,
-					scanned: true
+			const lnurlData = await getLnurlData(lnurl?.url)
+			if (!lnurlData) {
+				return navigation.navigate('processingError', {
+					errorMsg: 'Could not fetch data from lnurl',
+					scan: true
 				})
-				return
+			}
+			if (lnurlData.tag !== 'payRequest') {
+				return navigation.navigate('processingError', {
+					errorMsg: 'Only LNURL pay requests are currently supported',
+					scan: true
+				})
+			}
+			if (lnurl?.mint && lnurl?.balance) {
+				return navigation.navigate('selectAmount', {
+					mint: lnurl?.mint,
+					balance: lnurl?.balance,
+					isMelt: true,
+					scanned,
+					lnurl: {
+						userInput: lnurl.data,
+						url: lnurl.url,
+						data: lnurlData
+					},
+				})
 			}
 			// user has not selected the mint yet (Pressed scan QR and scanned a Lightning invoice)
 			const mintsWithBal = await getMintsBalances()
@@ -95,7 +99,111 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 			// user has no funds
 			if (!nonEmptyMint.length) {
 				// user is redirected to the mint selection screen where he gets an appropriate message
+				return navigation.navigate('selectMint', {
+					mints,
+					mintsWithBal,
+					isMelt: true,
+					allMintsEmpty: true,
+					scanned,
+					lnurl: {
+						userInput: lnurl.data,
+						url: lnurl.url,
+						data: lnurlData
+					},
+				})
+			}
+			if (nonEmptyMint.length === 1 && nonEmptyMint[0].amount * 1000 < lnurlData.minSendable) {
+				return navigation.navigate('processingError', {
+					errorMsg: 'No enough funds for the minimum sendable amount',
+					scan: true
+				})
+			}
+			// user has funds, select his first mint for the case that he has only one
+			if (nonEmptyMint.length === 1) {
+				if (nonEmptyMint[0].amount * 1000 < lnurlData.minSendable) {
+					return navigation.navigate('processingError', {
+						errorMsg: 'No enough funds for the minimum sendable amount',
+						scan: true
+					})
+				}
+				return navigation.navigate('selectAmount', {
+					mint: nonEmptyMint[0],
+					balance: nonEmptyMint[0].amount,
+					isMelt: true,
+					scanned,
+					lnurl: {
+						userInput: lnurl.data,
+						url: lnurl.url,
+						data: lnurlData
+					},
+				})
+			}
+			if (mintsWithBal.some(m => m.amount * 1000 > lnurlData.minSendable)) {
+				// user needs to select mint from which he wants to pay
 				navigation.navigate('selectMint', {
+					mints,
+					mintsWithBal,
+					allMintsEmpty: !nonEmptyMint.length,
+					isMelt: true,
+					scanned,
+					lnurl: {
+						userInput: lnurl.data,
+						url: lnurl.url,
+						data: lnurlData
+					},
+				})
+			} else {
+				navigation.navigate('processingError', {
+					errorMsg: t('noFunds', { ns: NS.common }),
+					scan: true
+				})
+			}
+
+		} catch (e) {
+			navigation.navigate('processingError', {
+				errorMsg: isErr(e) ? e.message : 'Could not fetch data from lnurl',
+				scan: true
+			})
+		}
+	}
+
+	const handleInvoice = async () => {
+		if (!ln) {
+			return navigation.navigate('processingError', {
+				errorMsg: t('invoiceScanError', { ns: NS.error }),
+				scan: true
+			})
+		}
+		const { invoice, mint, balance, amount } = ln
+		try {
+			// user already has selected the mint in the previous screens
+			if (mint && balance) {
+				// check if invoice amount is higher than the selected mint balance to avoid navigating
+				const estFee = await checkFees(mint.mintUrl, invoice)
+				if (amount + estFee > balance) {
+					return navigation.navigate('processingError', {
+						errorMsg: t('noFundsForFee', { ns: NS.common, fee: estFee }),
+						scan: true
+					})
+				}
+				return navigation.navigate('coinSelection', {
+					mint,
+					balance,
+					amount,
+					estFee,
+					recipient: invoice,
+					isMelt: true,
+					scanned: true
+				})
+			}
+			// user has not selected the mint yet (Pressed scan QR and scanned a Lightning invoice)
+			const mintsWithBal = await getMintsBalances()
+			const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
+			const nonEmptyMint = mintsWithBal.filter(m => m.amount > 0)
+			// user has no funds
+			if (!nonEmptyMint.length) {
+				// user is redirected to the mint selection screen where he gets an appropriate message
+				return navigation.navigate('selectMint', {
 					mints,
 					mintsWithBal,
 					isMelt: true,
@@ -104,28 +212,25 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 					allMintsEmpty: true,
 					scanned: true
 				})
-				return
 			}
 			// user has funds, select his first mint for the case that he has only one
 			const mintUsing = mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' }
 			const estFee = await checkFees(mintUsing.mintUrl, ln.invoice)
 			if (nonEmptyMint.length === 1 && amount + estFee > nonEmptyMint[0].amount) {
-				navigation.navigate('processingError', {
+				return navigation.navigate('processingError', {
 					errorMsg: t('noFundsForFee', { ns: NS.common, fee: estFee }),
 					scan: true
 				})
-				return
 			}
 			// user has only 1 mint with enough balance, he can directly navigate to the payment overview page
 			if (nonEmptyMint.length === 1) {
 				if (nonEmptyMint[0].amount < amount + estFee) {
-					navigation.navigate('processingError', {
+					return navigation.navigate('processingError', {
 						errorMsg: t('noFunds', { ns: NS.common }),
 						scan: true
 					})
-					return
 				}
-				navigation.navigate('coinSelection', {
+				return navigation.navigate('coinSelection', {
 					mint: mintUsing,
 					balance: nonEmptyMint[0].amount,
 					amount,
@@ -134,7 +239,6 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 					isMelt: true,
 					scanned: true
 				})
-				return
 			}
 			if (mintsWithBal.some(m => m.amount >= amount + estFee)) {
 				// user needs to select mint from which he wants to pay the invoice
@@ -165,8 +269,10 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 	// start process
 	useEffect(() => {
 		if (token && tokenInfo) {
-			void receiveToken()
-			return
+			return void receiveToken()
+		}
+		if (lnurl) {
+			return void handleLnurl()
 		}
 		void handleInvoice()
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -318,7 +318,7 @@
 		"invoiceHint": "Das kann einige Sekunden dauern...",
 		"lowBal": "Kein Guthaben verfügbar",
 		"meltAddressbookHint": "Wählen Sie Ihre eigene LNURL oder einen anderen Kontakt als Zahlungsempfänger aus.",
-		"meltInputHint": "Erstellen Sie eine Lightning-Rechnung oder geben Sie eine LNURL ein.",
+		"meltInputHint": "Fügen Sie eine Lightning-Rechnung, LNURL oder Lightning Adresse ein.",
 		"meltScanQRHint": "Erstellen Sie eine Lightning-Rechnung mit einem anderen Gerät und scannen Sie sie einfach.",
 		"meltSwapHint": "Wählen Sie eine andere Mint aus Ihrer vertrauenswürdigen Liste als Zahlungsempfänger aus.",
 		"copyShareToken": "Kopieren & teilen",
