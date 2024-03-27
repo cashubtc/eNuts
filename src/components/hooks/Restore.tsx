@@ -130,7 +130,8 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 			}
 		}
 		void restore()
-	}, [comingFromOnboarding, mintUrl, mnemonic, navigation, openPromptAutoClose, t])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	return { ...restored }
 }
