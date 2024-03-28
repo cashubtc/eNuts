@@ -1,0 +1,5 @@
+# https://remarkablemark.org/blog/2023/02/18/how-to-run-react-native-detox-tests-on-github-actions/
+
+name: e2e-android
+on: push
+jobs:
