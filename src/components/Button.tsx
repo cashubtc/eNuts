@@ -24,6 +24,7 @@ export default function Button({ txt, onPress, border, outlined, filled, disable
 		<SafeAreaView style={styles.safeArea}>
 			<TouchableOpacity
 				accessibilityRole='button'
+				testID={`${txt}-modal-button`}
 				activeOpacity={.5}
 				disabled={disabled}
 				style={[
@@ -105,6 +106,7 @@ export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITx
 			style={[styles.copyTxt, ...(style || [])]}
 			onPress={onPress}
 			disabled={disabled}
+			testID={`${txt}-pin-button`}
 		>
 			<Txt
 				txt={txt}

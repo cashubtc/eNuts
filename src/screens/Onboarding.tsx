@@ -1,11 +1,12 @@
 import Logo from '@comps/Logo'
+import Txt from '@comps/Txt'
 import type { TOnboardingPageProps } from '@model/nav'
 import { NS } from '@src/i18n'
 import { store } from '@src/storage/store'
 import { STORE_KEYS } from '@src/storage/store/consts'
 import { H_Colors } from '@styles/colors'
 import { useTranslation } from 'react-i18next'
-import { Image } from 'react-native'
+import { Image, TouchableOpacity } from 'react-native'
 import Onboarding from 'react-native-onboarding-swiper'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
@@ -46,6 +47,15 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 			nextLabel={t('next')}
 			skipLabel={t('skip')}
 			onSkip={() => void handleDone()}
+			DoneButtonComponent={() => (
+				<TouchableOpacity
+					onPress={() => void handleDone()}
+					style={{ marginRight: s(20) }}
+					testID='onboarding-done'
+				>
+					<Txt txt={t('next')} />
+				</TouchableOpacity>
+			)}
 		/>
 	)
 }
