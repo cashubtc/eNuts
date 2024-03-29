@@ -78,7 +78,7 @@ jobs:
 
 
       build:
-        name: build-for-android-base-composite
+        name: build-for-android-base-
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
@@ -128,3 +128,28 @@ jobs:
             
             - name: PreBuild Android
               run: npx expo prebuild -p android --clean
+
+            - name: make gradlew executable
+              run: chmod +x ./android/gradlew
+
+            - name: Build android APK
+              run: | 
+                cd ./android && ./gradlew assembleRelease --no-daemon --stacktrace
+                find . -type f -name '*.apk' 2>/dev/null
+                cd ${{ env.GITHUB_WORKSPACE }}
+              shell: bash
+
+            - name: Save Cache
+              id: cache-save
+              uses: actions/cache/save@v4
+              with:
+                path: |
+                  ~/**/*android*
+                  ~/*android*
+                  ~/**/*gradle*
+                  ~/*gradle*
+                  **/node_modules
+                  ./node_modules
+                  **/android
+                  ./android
+                key: ${{ runner.os }}-android-build
