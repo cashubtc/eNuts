@@ -181,7 +181,7 @@ const styles = ScaledSheet.create({
 		paddingHorizontal: '20@s',
 		paddingTop: '40@s',
 		paddingBottom: '50@s',
-		minHeight: '50%'
+		minHeight: '55%'
 	},
 	balanceWrap: {
 		alignItems: 'center',
