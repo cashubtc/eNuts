@@ -307,15 +307,15 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
 						onPress={() => {
-							setModal(prev => ({ ...prev, sendOpts: true }))
-							// navigation.navigate('Recovering', {
-							// 	from: 500,
-							// 	to: 550,
-							// 	mintUrl: 'https://testnut.cashu.space',
-							// 	keysetId: 'asfdafh8u2h3',
-							// 	mnemonic: '',
-							// 	comingFromOnboarding: false,
-							// })
+							// setModal(prev => ({ ...prev, sendOpts: true }))
+							navigation.navigate('Recovering', {
+								from: 500,
+								to: 550,
+								mintUrl: 'https://testnut.cashu.space',
+								keysetId: 'asfdafh8u2h3',
+								mnemonic: '',
+								comingFromOnboarding: false,
+							})
 						}}
 					/>
 					:
@@ -325,6 +325,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						color={hi[highlight]}
 						onPress={() => {
 							navigation.navigate('mints')
+							// navigation.navigate('Recovering', {
+							// 	from: 500,
+							// 	to: 550,
+							// 	mintUrl: 'https://testnut.cashu.space',
+							// 	keysetId: 'asfdafh8u2h3',
+							// 	mnemonic: '',
+							// 	comingFromOnboarding: false,
+							// })
 						}}
 					/>
 				}
