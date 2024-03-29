@@ -1,8 +1,12 @@
 name: Build-for-android-production
 
 on:
-  push :
-    branches : [release]
+    push:
+        branches: [main, dev]
+    pull_request:
+        # types: [opened, reopened]
+        # types: [opened, synchronize, edited, ready_for_review]
+        
 env:
     EXPO_NO_TELEMETRY: 1
     SENTRY_DISABLE_AUTO_UPLOAD: true
