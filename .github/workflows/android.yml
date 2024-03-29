@@ -143,19 +143,15 @@ jobs:
 
             - name: Get device name
               id: device-name
-              run:
-                  echo "::set-output name=DEVICE_NAME::$(node -e "console.log(require('./detox.config.js').devices.emulator.device.avdName)")"
-                  # run: echo "::set-output name=DEVICE_NAME::$(adb devices | grep emulator | cut -f1)"
+              run: echo "::set-output name=DEVICE_NAME::$(node -e "console.log(require('./detox.config.js').devices.emulator.device.avdName)")"
 
             - name: Detox test
-              # uses: wixplosives/detox-action@v2
               uses: reactivecircus/android-emulator-runner@v2
               with:
                   api-level: 33
                   arch: x86_64
                   avd-name: ${{ steps.device-name.outputs.DEVICE_NAME }}
                   emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-                  # emulator-build: stable
                   script: npm run detox:test:android:ci
 
             - name: Save Cache
