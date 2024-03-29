@@ -244,7 +244,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 					{attempts.locked && !isConfirm ?
 						<View />
 						:
-						<View style={{width: '100%', paddingHorizontal: s(20), backgroundColor: 'red'}}>
+						<View style={styles.content}>
 							<View style={styles.pinText}>
 								{attempts.mismatch &&
 									<Txt
@@ -309,7 +309,6 @@ const styles = ScaledSheet.create({
 	container: {
 		flex: 1,
 		alignItems: 'center',
-		// paddingHorizontal: '20@s',
 	},
 	lockWrap: {
 		alignItems: 'center',
@@ -318,6 +317,10 @@ const styles = ScaledSheet.create({
 	lockTxt: {
 		marginTop: '10@vs',
 		marginBottom: '20@vs',
+	},
+	content: {
+		width: '100%',
+		paddingHorizontal: '20@s'
 	},
 	mismatch: {
 		marginVertical: '10@vs',
