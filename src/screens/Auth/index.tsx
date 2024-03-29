@@ -244,7 +244,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 					{attempts.locked && !isConfirm ?
 						<View />
 						:
-						<View>
+						<View style={{width: '100%', paddingHorizontal: s(20), backgroundColor: 'red'}}>
 							<View style={styles.pinText}>
 								{attempts.mismatch &&
 									<Txt
@@ -268,7 +268,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 								}
 							</View>
 							{/* number pad */}
-							<View style={styles.test}>
+							<View style={styles.pinpadWrap}>
 								<PinPad
 									pinInput={pinInput}
 									confirmInput={confirmInput}
@@ -309,7 +309,7 @@ const styles = ScaledSheet.create({
 	container: {
 		flex: 1,
 		alignItems: 'center',
-		paddingHorizontal: '20@s',
+		// paddingHorizontal: '20@s',
 	},
 	lockWrap: {
 		alignItems: 'center',
@@ -334,7 +334,7 @@ const styles = ScaledSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	test: {
+	pinpadWrap: {
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginBottom: '20@vs',
