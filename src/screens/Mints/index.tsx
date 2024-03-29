@@ -196,7 +196,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 					txt={t('addNewMint', { ns: NS.mints })}
 					hintComponent={
 						<TxtButton
-							txt='Find a mint'
+							txt={t('findMint')}
 							onPress={() => void openUrl(BITCOIN_MINTS_URL)?.catch(e =>
 								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 							}

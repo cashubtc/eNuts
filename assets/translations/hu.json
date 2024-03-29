@@ -29,6 +29,7 @@
     "common": {
         "copy": "Másolás",
         "cycle": "Ciklus",
+        "findMint": "Verde keresése",
         "manualCounterIncrease": "Számlálók növelése",
         "manualCounterIncreaseHint": "A számlálók automatikusan növekednek minden tranzakció után, de ritka esetekben ez hibához vezethet, ami problémákat okozhat a helyreállítási folyamat során. A számlálók manuális növelése megoldhatja ezt az állapotot.",
         "increaseCounterHint": "Biztosan növelni szeretnéd a számlálókat? Ezt csak akkor szabad megtenni, ha biztos vagy benne, hogy a számlálók nincsenek szinkronban.",

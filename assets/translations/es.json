@@ -29,6 +29,7 @@
     "common": {
         "copy": "Copiar",
         "cycle": "Ciclo",
+        "findMint": "Buscar ceca",
         "manualCounterIncrease": "Incrementar contadores",
         "manualCounterIncreaseHint": "Los contadores se incrementan automáticamente después de cada transacción, pero en casos raros, esto puede fallar, lo que lleva a errores durante el proceso de restauración. Elevar manualmente los contadores puede resolver el estado.",
         "increaseCounterHint": "¿Estás seguro de que quieres incrementar los contadores? Esto solo debe hacerse si estás seguro de que los contadores no están sincronizados.",

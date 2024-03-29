@@ -29,6 +29,7 @@
     "common": {
         "copy": "Copy",
         "cycle": "Cycle",
+        "findMint": "Find a mint",
         "manualCounterIncrease": "Increase counters",
         "manualCounterIncreaseHint": "The counters increment automatically after each transaction, but in rare cases, this may fail, leading to errors during the restoration process. Manually raising the counters can resolve the state.",
         "increaseCounterHint": "Are you sure you want to increase the counters? This should only be done if you are sure that the counters are out of sync.",

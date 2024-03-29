@@ -29,6 +29,7 @@
     "common": {
         "copy": "Nakili",
         "cycle": "kurejesha",
+        "findMint": "Tafuta sarafu",
         "manualCounterIncrease": "Ongeza vitunguu",
         "manualCounterIncreaseHint": "Vitunguu huongezeka kiotomatiki baada ya kila muamala, lakini katika hali nadra, hii inaweza kushindwa, ikisababisha makosa wakati wa mchakato wa urejeshaji. Kuongeza vitunguu kwa mikono kunaweza kutatua hali hiyo.",
         "increaseCounterHint": "Una uhakika unataka kuongeza vitunguu? Hii inapaswa kufanywa tu ikiwa una uhakika kwamba vitunguu haviko kwa usawazishaji.",

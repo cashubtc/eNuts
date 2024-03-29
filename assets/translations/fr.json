@@ -29,6 +29,7 @@
     "common": {
         "copy": "Copier",
         "cycle": "Cycle",
+        "findMint": "Trouver une mint",
         "manualCounterIncrease": "Incrémenter les compteurs",
         "manualCounterIncreaseHint": "Les compteurs s'incrémentent automatiquement après chaque transaction, mais dans de rares cas, cela peut échouer, entraînant des erreurs lors du processus de restauration. L'augmentation manuelle des compteurs peut résoudre l'état.",
         "increaseCounterHint": "Êtes-vous sûr de vouloir augmenter les compteurs? Cela ne devrait être fait que si vous êtes sûr que les compteurs ne sont pas synchronisés.",
