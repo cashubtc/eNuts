@@ -4,7 +4,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { Image } from 'expo-image'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
-import { ScaledSheet,vs } from 'react-native-size-matters'
+import { ScaledSheet, vs } from 'react-native-size-matters'
 
 import { TxtButton } from './Button'
 import Txt from './Txt'
@@ -12,6 +12,7 @@ import Txt from './Txt'
 interface IEmptyProps {
 	txt: string
 	hint?: string
+	hintComponent?: React.ReactNode
 	hasOk?: boolean
 	pressable?: boolean
 	onPress?: () => void
@@ -19,7 +20,7 @@ interface IEmptyProps {
 	NativeStackNavigationProp<RootStackParamList, 'qr scan', 'MyStack'>
 }
 
-export default function Empty({ txt, hint, hasOk, pressable, onPress, nav }: IEmptyProps) {
+export default function Empty({ txt, hint, hintComponent, hasOk, pressable, onPress, nav }: IEmptyProps) {
 	const { t } = useTranslation()
 	const { color } = useThemeContext()
 	return (
@@ -31,10 +32,13 @@ export default function Empty({ txt, hint, hasOk, pressable, onPress, nav }: IEm
 				contentFit='contain'
 			/>
 			{pressable && onPress ?
-				<TxtButton
-					txt={txt}
-					onPress={onPress}
-				/>
+				<>
+					{hintComponent}
+					<TxtButton
+						txt={txt}
+						onPress={onPress}
+					/>
+				</>
 				:
 				<>
 					<Txt

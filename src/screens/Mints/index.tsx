@@ -1,5 +1,5 @@
 import ActionButtons from '@comps/ActionButtons'
-import Button, { IconBtn } from '@comps/Button'
+import Button, { IconBtn, TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, QRIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
@@ -13,13 +13,14 @@ import { BottomModal } from '@modal/Question'
 import type { IMintBalWithName, IMintUrl } from '@model'
 import type { TMintsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { BITCOIN_MINTS_URL } from '@src/consts/urls'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
-import { formatMintUrl, formatSatStr, isErr, normalizeMintUrl, sortMintsByDefault } from '@util'
+import { formatMintUrl, formatSatStr, isErr, normalizeMintUrl, openUrl, sortMintsByDefault } from '@util'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
@@ -126,8 +127,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	return (
 		<View style={[
 			globals(color).container,
-			styles.container,
-			{ justifyContent: usertMints.length ? 'flex-start' : 'center' }
+			styles.container
 		]}>
 			<TopNav
 				screenName='Mints'
@@ -194,6 +194,14 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				:
 				<Empty
 					txt={t('addNewMint', { ns: NS.mints })}
+					hintComponent={
+						<TxtButton
+							txt='Find a mint'
+							onPress={() => void openUrl(BITCOIN_MINTS_URL)?.catch(e =>
+								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+							}
+						/>
+					}
 					pressable
 					onPress={() => setNewMintModal(true)}
 				/>
@@ -304,8 +312,8 @@ export default function Mints({ navigation }: TMintsPageProps) {
 
 const styles = ScaledSheet.create({
 	container: {
-		// paddingTop: 0,
 		alignItems: 'center',
+		justifyContent: 'flex-start'
 	},
 	topSection: {
 		width: '100%',
