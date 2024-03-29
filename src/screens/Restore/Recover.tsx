@@ -57,7 +57,8 @@ export default function RecoverScreen({ navigation, route }: IRecoverPageProps) 
 						onSubmitEditing={() => void handleBtnPress()}
 						autoFocus
 						ms={200}
-						style={[styles.multilineInput]}
+						style={styles.multilineInput}
+						autoCapitalize='none'
 					/>
 				</View>
 				<KeyboardAvoidingView
@@ -101,6 +102,9 @@ const styles = ScaledSheet.create({
 	multilineInput: {
 		minHeight: '80@s',
 		borderRadius: 25,
-		padding: '10@s'
+		paddingTop: '20@s',
+		paddingRight: '20@s',
+		paddingLeft: '20@s',
+		paddingBottom: '20@s',
 	}
 })
