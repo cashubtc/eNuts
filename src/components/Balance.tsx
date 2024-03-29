@@ -15,7 +15,7 @@ import { formatBalance, formatInt, formatSatStr, isBool } from '@util'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Text, TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import { TxtButton } from './Button'
 import Logo from './Logo'
@@ -79,7 +79,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 			<TouchableOpacity
 				onPress={() => void handleLogoPress()}
 			>
-				<Logo size={hidden.balance ? s(100) : s(40)} style={{ marginTop: hidden.balance ? vs(40) : 0, marginBottom: hidden.balance ? vs(40) : vs(10) }} />
+				<Logo size={hidden.balance ? s(100) : s(40)} style={{ marginTop: hidden.balance ? s(40) : s(10), marginBottom: hidden.balance ? s(40) : s(10) }} />
 			</TouchableOpacity>
 			{/* balance */}
 			{!hidden.balance &&
@@ -131,7 +131,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					txt={t('seeFullHistory')}
 					onPress={() => nav?.navigate('history')}
 					txtColor={getColor(highlight, color)}
-					style={[{ paddingTop: vs(15), paddingBottom: hidden.txs ? vs(15) : 0 }]}
+					style={[{ paddingTop: s(15), paddingBottom: hidden.txs ? s(15) : 0 }]}
 				/>
 			}
 		</View>
@@ -163,8 +163,8 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHis
 					{icon}
 				</View>
 				<View>
-					<Txt txt={txType} styles={[{ color: getColor(highlight, color), marginBottom: vs(2) }]} />
-					<Text style={{ color: getColor(highlight, color), fontSize: vs(12) }}>
+					<Txt txt={txType} styles={[{ color: getColor(highlight, color), marginBottom: s(4) }]} />
+					<Text style={{ color: getColor(highlight, color), fontSize: s(12) }}>
 						<EntryTime from={timestamp * 1000} fallback={t('justNow')} />
 					</Text>
 				</View>
@@ -179,24 +179,24 @@ const styles = ScaledSheet.create({
 		borderBottomLeftRadius: 50,
 		borderBottomRightRadius: 50,
 		paddingHorizontal: '20@s',
-		paddingTop: '40@vs',
-		paddingBottom: '50@vs',
+		paddingTop: '40@s',
+		paddingBottom: '50@s',
 		minHeight: '50%'
 	},
 	balanceWrap: {
 		alignItems: 'center',
 		marginHorizontal: '-20@s',
-		marginBottom: '5@vs',
+		marginBottom: '10@s',
 	},
 	balAmount: {
 		alignItems: 'center',
-		fontSize: '42@vs',
+		fontSize: '42@s',
 		fontWeight: '600',
 	},
 	balAssetNameWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: '10@vs',
+		marginBottom: '10@s',
 	},
 	balAssetName: {
 		fontSize: '14@vs',
@@ -204,13 +204,13 @@ const styles = ScaledSheet.create({
 	},
 	iconWrap: {
 		minWidth: '40@s',
-		paddingTop: '3@vs',
+		paddingTop: '3@s',
 	},
 	entry: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: '6@vs',
+		paddingBottom: '6@s',
 	},
 	wrap: {
 		flexDirection: 'row',

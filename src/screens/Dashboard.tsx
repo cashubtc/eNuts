@@ -32,7 +32,7 @@ import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -322,27 +322,27 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				{/* Send button or add first mint */}
 				{hasMint ?
 					<ActionBtn
-						icon={<SendIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
+						icon={<SendIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
 						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
 						onPress={() => setModal(prev => ({ ...prev, sendOpts: true }))}
 					/>
 					:
 					<ActionBtn
-						icon={<PlusIcon width={s(36)} height={vs(36)} color={hi[highlight]} />}
+						icon={<PlusIcon width={s(36)} height={s(36)} color={hi[highlight]} />}
 						txt={t('mint')}
 						color={hi[highlight]}
 						onPress={() => setModal(prev => ({ ...prev, mint: true }))}
 					/>
 				}
 				<ActionBtn
-					icon={<ScanQRIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
+					icon={<ScanQRIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
 					txt={t('scan')}
 					color={hi[highlight]}
 					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
 				/>
 				<ActionBtn
-					icon={<ReceiveIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
+					icon={<ReceiveIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
 					txt={t('receive', { ns: NS.wallet })}
 					color={hi[highlight]}
 					onPress={() => {
@@ -446,7 +446,7 @@ function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 		<View style={styles.btnWrap}>
 			<IconBtn
 				icon={icon}
-				size={vs(60)}
+				size={s(60)}
 				outlined
 				onPress={onPress}
 				disabled={disabled}
@@ -468,27 +468,27 @@ const styles = ScaledSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		marginTop: '-30@vs',
+		marginTop: '-30@s',
 	},
 	btnWrap: {
 		alignItems: 'center',
 		minWidth: '100@s'
 	},
 	btnTxt: {
-		marginTop: '10@vs',
+		marginTop: '10@s',
 	},
 	hintWrap: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: '50@vs',
+		marginBottom: '50@s',
 	},
 	betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
 		paddingHorizontal: '20@s',
-		paddingVertical: '10@vs',
+		paddingVertical: '10@s',
 		borderWidth: 1,
 		borderStyle: 'dashed',
 		borderColor: mainColors.WARN,
