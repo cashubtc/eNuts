@@ -32,6 +32,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	const { prompt, closePrompt, openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
+	const [loading, setLoading] = useState(false)
 	// mint list
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// this state is used to determine which mint has been pressed
@@ -56,27 +57,32 @@ export default function Mints({ navigation }: TMintsPageProps) {
 
 	// adds a mint via input
 	const handleMintInput = async () => {
+		setLoading(true)
 		// Allow user to submit URL without "https://" and add it ourself if not available
 		const submitted = normalizeMintUrl(input)
 		if (!submitted?.length) {
+			setLoading(false)
 			return openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
 		}
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === submitted)) {
+				setLoading(false)
 				return openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
 			}
 			// add mint url to db
 			await addMint(submitted)
 			setSelectedMint({ mintUrl: submitted })
 		} catch (e) {
+			setLoading(false)
 			return openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
 		}
 		setNewMintModal(false)
-		openTopUpModal()
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
+		setLoading(false)
+		openTopUpModal()
 	}
 
 	// trust modal asks user for confirmation on adding a default mint to its trusted list
@@ -242,7 +248,8 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				<Button
 					txt={t('addMintBtn', { ns: NS.mints })}
 					onPress={() => void handleMintInput()}
-					disabled={!input.length}
+					disabled={!input.length || loading}
+					loading={loading}
 				/>
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
 					<Txt txt={t('cancel')} styles={[globals(color, highlight).pressTxt]} />
