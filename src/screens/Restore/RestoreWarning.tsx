@@ -11,10 +11,6 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
-// TODO
-// check 20% battery
-// check WIFI connection
-
 export default function RestoreWarningScreen({ navigation, route }: IRestoreWarningPageProps) {
 	const { color } = useThemeContext()
 	const { t } = useTranslation([NS.wallet])
@@ -27,33 +23,32 @@ export default function RestoreWarningScreen({ navigation, route }: IRestoreWarn
 			/>
 			<ScrollView style={styles.scrollContainer} alwaysBounceVertical={false}>
 				<View style={styles.container}>
-					<View style={{ marginHorizontal: s(20) }}>
+					<View style={styles.overview}>
 						{/* battery */}
-						<View style={{ alignItems: 'center', padding: s(30), paddingBottom: s(12) }}>
+						<View style={[styles.entryWrap, { paddingBottom: s(12) }]}>
 							<BatteryChargingIcon width={s(52)} height={s(52)} color={mainColors.BLUE} />
 						</View>
 						<Txt center txt={t('restoreBattery', { ns: NS.common })} bold styles={[styles.header, { color: color.TEXT }]} />
 						<Txt center txt={t('restoreBatteryHint', { ns: NS.common })} styles={[{ color: color.TEXT_SECONDARY, marginBottom: s(20) }]} />
 						{/* wifi */}
-						<View style={{ alignItems: 'center', padding: s(30), paddingBottom: s(20) }}>
+						<View style={[styles.entryWrap, { paddingBottom: s(20) }]}>
 							<HomeWifiIcon width={s(46)} height={s(46)} color={mainColors.VALID} />
 						</View>
 						<Txt center txt={t('restoreWifi', { ns: NS.common })} bold styles={[styles.header, { color: color.TEXT }]} />
 						<Txt center txt={t('restoreWifiHint', { ns: NS.common })} styles={[{ color: color.TEXT_SECONDARY, marginBottom: s(20) }]} />
 						{/* keep app open */}
-						<View style={{ alignItems: 'center', padding: s(30), paddingBottom: s(15) }}>
+						<View style={[styles.entryWrap, { paddingBottom: s(15) }]}>
 							<CloseIcon width={s(46)} height={s(46)} color={mainColors.ERROR} />
 						</View>
 						<Txt center txt={t('restoreForeground', { ns: NS.common })} bold styles={[styles.header, { color: color.TEXT }]} />
 						<Txt center txt={t('restoreForegroundHint', { ns: NS.common })} styles={[{ color: color.TEXT_SECONDARY, marginBottom: s(20) }]} />
 					</View>
 				</View>
-				<View style={{ paddingHorizontal: s(20), paddingBottom: s(20) }}>
+				<View style={styles.btnWrap}>
 					<Button
 						outlined
 						txt='OK'
 						onPress={() => {
-							// TODO skip mint selection if only one mint
 							navigation.navigate('Select recovery mint', {
 								comingFromOnboarding: route.params?.comingFromOnboarding
 							})
@@ -84,4 +79,15 @@ const styles = ScaledSheet.create({
 		right: '20@s',
 		left: '20@s',
 	},
+	overview: {
+		marginHorizontal: '20@s'
+	},
+	entryWrap: {
+		alignItems: 'center',
+		padding: '30@s',
+	},
+	btnWrap: {
+		paddingHorizontal: '20@s',
+		paddingBottom: '20@s'
+	}
 })

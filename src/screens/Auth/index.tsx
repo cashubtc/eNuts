@@ -1,6 +1,6 @@
 import { useShakeAnimation } from '@comps/animation/Shake'
 import { TxtButton } from '@comps/Button'
-import { LockIcon, UnlockIcon } from '@comps/Icons'
+import { UnlockIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { MinuteInS } from '@consts/time'
 import type { TAuthPageProps } from '@model/nav'
@@ -232,9 +232,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 				<>
 					{attempts.locked && !isConfirm && <View />}
 					<View style={styles.lockWrap}>
-						<Animated.View style={attempts.locked ? { transform: [{ translateX: anim.current }] } : {}}>
-							<LockIcon width={s(30)} height={s(30)} color={getColor(highlight, color)} />
-						</Animated.View>
 						{!shouldEdit && !shouldRemove && auth.length > 0 &&
 							<Txt txt={t('walletLocked')} bold styles={[styles.lockTxt, { color: getColor(highlight, color) }]} />
 						}
@@ -247,29 +244,31 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 					{attempts.locked && !isConfirm ?
 						<View />
 						:
-						<View style={styles.bottomSection}>
-							{attempts.mismatch &&
-								<Txt
-									txt={t('pinMismatch', { ns: NS.auth })}
-									bold
-									error
-									styles={[styles.mismatch]}
-								/>
-							}
-							{shouldShowPinSection() ?
-								<Animated.View style={{ transform: [{ translateX: anim.current }] }}>
-									<PinDots mismatch={attempts.mismatch} input={isConfirm ? confirmInput : pinInput} />
-								</Animated.View>
-								:
-								<PinHint
-									confirm={isConfirm}
-									login={auth.length > 0}
-									shouldEdit={shouldEdit}
-									shouldRemove={shouldRemove}
-								/>
-							}
+						<View style={styles.content}>
+							<View style={styles.pinText}>
+								{attempts.mismatch &&
+									<Txt
+										txt={t('pinMismatch', { ns: NS.auth })}
+										bold
+										error
+										styles={[styles.mismatch]}
+									/>
+								}
+								{shouldShowPinSection() ?
+									<Animated.View style={{ transform: [{ translateX: anim.current }] }}>
+										<PinDots mismatch={attempts.mismatch} input={isConfirm ? confirmInput : pinInput} />
+									</Animated.View>
+									:
+									<PinHint
+										confirm={isConfirm}
+										login={auth.length > 0}
+										shouldEdit={shouldEdit}
+										shouldRemove={shouldRemove}
+									/>
+								}
+							</View>
 							{/* number pad */}
-							<View>
+							<View style={styles.pinpadWrap}>
 								<PinPad
 									pinInput={pinInput}
 									confirmInput={confirmInput}
@@ -310,7 +309,6 @@ const styles = ScaledSheet.create({
 	container: {
 		flex: 1,
 		alignItems: 'center',
-		paddingHorizontal: '20@s',
 	},
 	lockWrap: {
 		alignItems: 'center',
@@ -320,10 +318,9 @@ const styles = ScaledSheet.create({
 		marginTop: '10@vs',
 		marginBottom: '20@vs',
 	},
-	bottomSection: {
-		justifyContent: 'center',
-		alignItems: 'center',
-		marginBottom: '20@vs',
+	content: {
+		width: '100%',
+		paddingHorizontal: '20@s'
 	},
 	mismatch: {
 		marginVertical: '10@vs',
@@ -335,5 +332,14 @@ const styles = ScaledSheet.create({
 	lockedTime: {
 		fontSize: '22@vs',
 		color: mainColors.WHITE
+	},
+	pinText: {
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	pinpadWrap: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginBottom: '20@vs',
 	}
 })

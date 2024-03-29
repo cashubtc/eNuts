@@ -3,8 +3,7 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
-import InitialModal from '@comps/InitialModal'
+import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import OptsModal from '@comps/modal/OptsModal'
 import { PromptModal } from '@comps/modal/Prompt'
 import Txt from '@comps/Txt'
@@ -24,15 +23,15 @@ import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
-import { getDefaultMint, saveDefaultOnInit } from '@store/mintStore'
+import { getDefaultMint } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
-import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice, isStr } from '@util'
+import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isLnInvoice, isStr } from '@util'
 import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -61,7 +60,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const [hasMint, setHasMint] = useState(false)
 	// modals
 	const [modal, setModal] = useState({
-		mint: false,
 		receiveOpts: false,
 		sendOpts: false,
 		resetNostr: false,
@@ -84,23 +82,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		}
 		// add token to db
 		await receiveToken(token)
-	}
-
-	// navigates to the mint list page
-	const handleMintModal = (forEnutsMint = false) => {
-		setModal(prev => ({ ...prev, mint: false }))
-		navigation.navigate('mints', { defaultMint: forEnutsMint, newMint: !forEnutsMint })
-	}
-
-	const handleEnutsMint = async () => {
-		try {
-			await saveDefaultOnInit()
-		} catch (e) {
-			// TODO update error message: Mint could not be added, please add a different one or try again later.
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('smthWrong') })
-			return handleMintModal(false)
-		}
-		handleMintModal(true)
 	}
 
 	// This function is only called if the mint of the received token is available as trusted in user DB
@@ -322,27 +303,31 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				{/* Send button or add first mint */}
 				{hasMint ?
 					<ActionBtn
-						icon={<SendIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
+						icon={<SendIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
 						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
-						onPress={() => setModal(prev => ({ ...prev, sendOpts: true }))}
+						onPress={() => {
+							setModal(prev => ({ ...prev, sendOpts: true }))
+						}}
 					/>
 					:
 					<ActionBtn
-						icon={<PlusIcon width={s(36)} height={vs(36)} color={hi[highlight]} />}
+						icon={<PlusIcon width={s(36)} height={s(36)} color={hi[highlight]} />}
 						txt={t('mint')}
 						color={hi[highlight]}
-						onPress={() => setModal(prev => ({ ...prev, mint: true }))}
+						onPress={() => {
+							navigation.navigate('mints')
+						}}
 					/>
 				}
 				<ActionBtn
-					icon={<ScanQRIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
+					icon={<ScanQRIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
 					txt={t('scan')}
 					color={hi[highlight]}
 					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
 				/>
 				<ActionBtn
-					icon={<ReceiveIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
+					icon={<ReceiveIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
 					txt={t('receive', { ns: NS.wallet })}
 					color={hi[highlight]}
 					onPress={() => {
@@ -361,8 +346,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						onPress={() => navigation.navigate('disclaimer')}
 						style={styles.betaHint}
 					>
-						<Txt txt='BETA' styles={[{ color: mainColors.WARN, marginRight: s(10) }]} />
-						<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
+						<Txt txt='BETA' styles={[{ color: mainColors.WARN }]} />
 					</TouchableOpacity>
 				</View>
 			}
@@ -383,12 +367,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					}}
 				/>
 			}
-			{/* Initial mint modal prompt */}
-			<InitialModal
-				visible={modal.mint}
-				onConfirm={() => void handleEnutsMint()}
-				onCancel={() => void handleMintModal()}
-			/>
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}
@@ -447,7 +425,7 @@ function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 		<View style={styles.btnWrap}>
 			<IconBtn
 				icon={icon}
-				size={vs(60)}
+				size={s(60)}
 				outlined
 				onPress={onPress}
 				disabled={disabled}
@@ -469,29 +447,31 @@ const styles = ScaledSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		marginTop: '-30@vs',
+		marginTop: '-30@s',
 	},
 	btnWrap: {
 		alignItems: 'center',
 		minWidth: '100@s'
 	},
 	btnTxt: {
-		marginTop: '10@vs',
+		marginTop: '10@s',
 	},
 	hintWrap: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: '50@vs',
+		marginBottom: '50@s',
 	},
 	betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
+		justifyContent: 'center',
 		paddingHorizontal: '20@s',
-		paddingVertical: '10@vs',
+		paddingVertical: '10@s',
 		borderWidth: 1,
 		borderStyle: 'dashed',
 		borderColor: mainColors.WARN,
 		borderRadius: '50@s',
+		minWidth: '120@s',
 	}
 })

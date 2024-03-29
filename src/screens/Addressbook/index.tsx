@@ -60,7 +60,6 @@ export interface ISearchStates {
 	hasResults: boolean
 }
 
-const marginBottom = isIOS ? vs(45) : vs(70)
 const marginBottomPayment = isIOS ? vs(20) : 0
 
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
@@ -417,7 +416,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					{contactsRef.current.length > 0 ?
 						<View style={[
 							styles.contactsWrap,
-							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : marginBottom },
+							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : vs(70) },
 						]}>
 							{search.input.length > 0 && search.results.length > 0 && search.hasResults ?
 								<FlashList

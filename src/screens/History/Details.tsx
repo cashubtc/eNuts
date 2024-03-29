@@ -22,7 +22,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 
 const initialCopyState = {
@@ -201,7 +201,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				handlePress={() => navigation.goBack()}
 			/>
 			<ScrollView showsVerticalScrollIndicator={false}>
-				<View style={{ marginBottom: insets.bottom, paddingTop: vs(10) }}>
+				<View style={{ marginBottom: insets.bottom, paddingTop: s(10) }}>
 					<View style={styles.topSection}>
 						<Text style={[styles.amount, { color: getTxColor() }]}>
 							{getAmount()}
@@ -276,9 +276,9 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 										{value.length > 0 &&
 											<>
 												{copy.value ?
-													<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
+													<CheckmarkIcon width={s(18)} height={s(20)} color={mainColors.VALID} />
 													:
-													<CopyIcon width={s(19)} height={vs(21)} color={color.TEXT} />
+													<CopyIcon width={s(19)} height={s(21)} color={color.TEXT} />
 												}
 											</>
 										}
@@ -307,7 +307,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 											onPress={() => void handleClaim()}
 										>
 											<Txt txt={t('claimToken')} />
-											{loading ? <Loading /> : <BackupIcon width={s(20)} height={vs(20)} color={color.TEXT} />}
+											{loading ? <Loading /> : <BackupIcon width={s(20)} height={s(20)} color={color.TEXT} />}
 										</TouchableOpacity>
 										<Separator />
 									</>
@@ -334,9 +334,9 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 										{hash.length > 0 &&
 											<>
 												{copy.hash ?
-													<CheckmarkIcon width={s(18)} height={vs(20)} color={mainColors.VALID} />
+													<CheckmarkIcon width={s(18)} height={s(20)} color={mainColors.VALID} />
 													:
-													<CopyIcon width={s(18)} height={vs(20)} color={color.TEXT} />
+													<CopyIcon width={s(18)} height={s(20)} color={color.TEXT} />
 												}
 											</>
 										}
@@ -358,7 +358,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 								onPress={handleQR}
 							>
 								<Txt txt={t('showQr', { ns: NS.history })} />
-								<QRIcon width={s(17)} height={vs(17)} color={color.TEXT} />
+								<QRIcon width={s(17)} height={s(17)} color={color.TEXT} />
 							</TouchableOpacity>
 						}
 					</View>
@@ -409,7 +409,7 @@ const styles = ScaledSheet.create({
 		maxWidth: '200@s',
 	},
 	amount: {
-		fontSize: '48@vs',
+		fontSize: '40@vs',
 		fontWeight: '600',
 	},
 	entryInfo: {

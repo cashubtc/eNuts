@@ -24,10 +24,7 @@ export type RootStackParamList = {
 	dashboard: undefined
 	disclaimer: undefined
 	history: undefined
-	mints: {
-		defaultMint?: boolean
-		newMint?: boolean
-	} | undefined
+	mints: undefined
 	Settings: undefined
 	'General settings': undefined
 	'Security settings': undefined

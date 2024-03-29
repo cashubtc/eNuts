@@ -208,7 +208,7 @@ const styles = ScaledSheet.create({
 		paddingHorizontal: '20@s',
 	},
 	confetti: {
-		width: '380@s',
+		width: '340@s',
 		position: 'absolute',
 		top: 0,
 		right: 0,
