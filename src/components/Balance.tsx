@@ -210,7 +210,7 @@ const styles = ScaledSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: '6@s',
+		paddingBottom: '10@s',
 	},
 	wrap: {
 		flexDirection: 'row',
