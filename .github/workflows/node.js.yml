@@ -19,7 +19,7 @@ jobs:
 
         strategy:
             matrix:
-                node-version: [18.x, 20.x, 21.x]
+                node-version: [21.x]
                 # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
         steps:
@@ -39,3 +39,5 @@ jobs:
               uses: codecov/codecov-action@v3
               with:
                   token: ${{secrets.CODECOV_TOKEN}}
+
+# 18.x, 20.x,

@@ -6,11 +6,12 @@ module.exports = {
 	testRunner: {
 		args: {
 			$0: 'jest',
-			config: 'test/e2e/jest.config.js',
+			config: './test/e2e/jest.config.ts',
 			_: ['e2e']
 		}
 	},
 	artifacts: {
+		rootDir: '.artifacts',
 		plugins: {
 			log: process.env.CI ? 'failing' : undefined,
 			screenshot: 'failing'
@@ -25,7 +26,7 @@ module.exports = {
 		},
 		'android.release': {
 			type: 'android.apk',
-			build: 'cd android && gradlew clean :app:assembleRelease :app:assembleAndroidTest -DtestBuildType=release && cd ..',
+			build: 'cd android && ./gradlew clean :app:assembleRelease :app:assembleAndroidTest -DtestBuildType=release && cd ..',
 			binaryPath: 'android/app/build/outputs/apk/release/app-release.apk'
 		},
 	},

@@ -15,6 +15,7 @@
 		"expo:i:check": "npx expo@latest install --check",
 		"expo:i:fix": "npx expo@latest install --fix",
 		"expo:doc": "npx -y expo-doctor@latest",
+		"prebuild:android": "npx expo prebuild --platform android --clean",
 		"build:dev": "npx -y eas-cli@latest build -e development -p android -m devWithDevClient --no-wait",
 		"build:preview:android": "npx -y eas-cli@latest build -e preview -p android -m manualPreview --no-wait",
 		"build:preview:ios": "npx -y eas-cli@latest build -e preview -p ios -m manualPreview --no-wait",
@@ -35,7 +36,9 @@
 		"deps:c": "npx -y madge --circular --ts-config tsconfig.json --extensions ts,tsx .",
 		"eas-build-pre-install": "# -- # echo \"require('./src/index.js')\" > index.js",
 		"update-translations": "node utils/update-translations.js",
-		"android": "expo run:android"
+		"android": "expo run:android",
+		"detox:build:android": "npx detox build -c android.emu.release",
+		"detox:test:android:ci": "npx detox test -c android.emu.release --headless --record-logs all"
 	},
 	"dependencies": {
 		"@cashu/cashu-ts": "^0.9.0",
@@ -54,7 +57,6 @@
 		"expo-clipboard": "~5.0.1",
 		"expo-constants": "~15.4.5",
 		"expo-crypto": "~12.8.1",
-		"expo-dev-client": "~3.3.9",
 		"expo-device": "~5.9.3",
 		"expo-file-system": "~16.0.7",
 		"expo-image": "~1.10.6",
