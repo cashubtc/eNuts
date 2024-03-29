@@ -47,3 +47,6 @@ artifacts/
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report/
+
+
+!.github/workflows/actions/build

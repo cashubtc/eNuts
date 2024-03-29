@@ -1,0 +1,74 @@
+name: Build-for-android-base
+
+on:
+  push :
+    branches : [release]
+env:
+    EXPO_NO_TELEMETRY: 1
+    SENTRY_DISABLE_AUTO_UPLOAD: true
+jobs:
+    Build-for-android-base:
+        name: build-for-android-base
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+                
+            - name: Restore cached Cache
+              id: cache-restore
+              uses: actions/cache/restore@v4
+              with:
+                path: |
+                  ~/**/*android*
+                  ~/*android*
+                  ~/**/*gradle*
+                  ~/*gradle*
+                  **/node_modules
+                  ./node_modules
+                  **/android
+                  ./android
+                key: ${{ runner.os }}-android-build
+                restore-keys: |
+                  ${{ runner.os }}-android-build
+                  ci-${{ runner.os }}-android-build
+
+            - uses: actions/setup-node@v4
+              with:
+                cache: 'npm'
+                cache-dependency-path: |
+                  ${{ env.GITHUB_WORKSPACE }}/package-lock.json
+
+            - uses: actions/setup-java@v4
+              with:
+                distribution: 'temurin'
+                java-version: '17' # The JDK version to make available on the path.
+                #   ${{ env.GITHUB_WORKSPACE }}/**/*gradle*
+                #   ${{ env.GITHUB_WORKSPACE }}/*gradle*
+
+            - uses: expo/expo-github-action@v8
+
+            - name: Setup Android SDK
+              uses: android-actions/setup-android@v3
+              with: 
+                packages: platform-tools platforms;android-34 build-tools;33.0.1 build-tools;34.0.0 ndk;25.1.8937393 cmake;3.22.1
+
+            - name: Install deps
+              run: npm ci
+            
+            - name: PreBuild Android
+              run: npx expo prebuild -p android --clean
+
+            - name: Save Cache
+              id: cache-save
+              uses: actions/cache/save@v4
+              with:
+                path: |
+                  ~/**/*android*
+                  ~/*android*
+                  ~/**/*gradle*
+                  ~/*gradle*
+                  **/node_modules
+                  ./node_modules
+                  **/android
+                  ./android
+                key: ${{ runner.os }}-android-build
+                
