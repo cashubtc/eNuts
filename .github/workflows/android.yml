@@ -1,0 +1,17 @@
+name: Build-for-android-production
+
+on:
+  push :
+    branches : [release]
+env:
+    EXPO_NO_TELEMETRY: 1
+    SENTRY_DISABLE_AUTO_UPLOAD: true
+jobs:
+    composite:
+        name: build-for-android-base-composite
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - run: ls -alh ./.github/
+            - id: build-base
+              uses: ./.github/workflows/actions/build

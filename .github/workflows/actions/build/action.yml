@@ -33,13 +33,13 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                cache: 'npm'
+                cache: npm
                 cache-dependency-path: |
                   ${{ env.GITHUB_WORKSPACE }}/package-lock.json
 
             - uses: actions/setup-java@v4
               with:
-                distribution: 'temurin'
+                distribution: temurin
                 java-version: '17' # The JDK version to make available on the path.
                 #   ${{ env.GITHUB_WORKSPACE }}/**/*gradle*
                 #   ${{ env.GITHUB_WORKSPACE }}/*gradle*
