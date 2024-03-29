@@ -80,7 +80,7 @@ const styles = ScaledSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-evenly',
-		marginVertical: '10@vs',
+		margin: '10@vs',
 	},
 	numWrap: {
 		width: '60@s',

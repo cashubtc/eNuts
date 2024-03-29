@@ -13,7 +13,7 @@
 		"createPin": "PIN létrehozása",
 		"editPin": "PIN szerkesztése",
 		"pinMismatch": "Helytelen PIN!",
-		"pinSetup": "Lehetőséged van PIN-t beállítani az alkalmazás védelmére.\n\nFIGYELEM: Ha elfelejted a PIN-t annak visszaállítása nem lehetséges!",
+		"pinSetup": "Lehetőséged van PIN-t beállítani az alkalmazás védelmére.",
 		"pleaseConfirm": "Kérjük erősítsd meg a PIN-t.",
 		"pleaseConfirmNewPin": "Kérjük erősítsd meg az új PIN-t.",
 		"pleaseEnter": "Kérjük add meg a PIN-t most.",

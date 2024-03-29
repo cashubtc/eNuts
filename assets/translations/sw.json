@@ -13,7 +13,7 @@
 		"createPin": "Tengeneza PIN",
 		"editPin": "Hariri PIN",
 		"pinMismatch": "PIN isiyo sahihi!",
-		"pinSetup": "Unaweza hiari kuweka PIN kwa usalama wa programu yako.\n\nTAHADHARI: Ikiwa PIN itasahaulika, kurejesha sasa haipatikani!",
+		"pinSetup": "Unaweza hiari kuweka PIN kwa usalama wa programu yako.",
 		"pleaseConfirm": "Tafadhali thibitisha PIN yako.",
 		"pleaseConfirmNewPin": "Tafadhali thibitisha PIN mpya yako.",
 		"pleaseEnter": "Tafadhali ingiza PIN yako sasa.",

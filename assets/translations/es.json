@@ -13,7 +13,7 @@
 		"createPin": "Crear PIN",
 		"editPin": "Editar PIN",
 		"pinMismatch": "¡PIN incorrecto!",
-		"pinSetup": "Puedes establecer un PIN para proteger la aplicación (opcional).\n\nADVERTENCIA: ¡Todavía no es posible restaurar si olvidas el PIN!",
+		"pinSetup": "Puedes establecer un PIN para proteger la aplicación (opcional).",
 		"pleaseConfirm": "Por favor, confirma tu PIN.",
 		"pleaseConfirmNewPin": "Por favor, confirma tu nuevo PIN.",
 		"pleaseEnter": "Por favor, introduce tu PIN.",
