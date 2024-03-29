@@ -3,7 +3,7 @@ import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
 import InitialModal from '@comps/InitialModal'
 import OptsModal from '@comps/modal/OptsModal'
 import { PromptModal } from '@comps/modal/Prompt'
@@ -361,8 +361,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						onPress={() => navigation.navigate('disclaimer')}
 						style={styles.betaHint}
 					>
-						<Txt txt='BETA' styles={[{ color: mainColors.WARN, marginRight: s(10) }]} />
-						<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
+						<Txt txt='BETA' styles={[{ color: mainColors.WARN }]} />
 					</TouchableOpacity>
 				</View>
 			}
@@ -487,11 +486,13 @@ const styles = ScaledSheet.create({
 	betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
+		justifyContent: 'center',
 		paddingHorizontal: '20@s',
 		paddingVertical: '10@vs',
 		borderWidth: 1,
 		borderStyle: 'dashed',
 		borderColor: mainColors.WARN,
 		borderRadius: '50@s',
+		minWidth: '120@s',
 	}
 })
