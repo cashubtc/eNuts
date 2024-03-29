@@ -1,5 +1,92 @@
 # https://remarkablemark.org/blog/2023/02/18/how-to-run-react-native-detox-tests-on-github-actions/
 
 name: e2e-android
-on: push
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
 jobs:
+  e2e-android:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # - name: Enable KVM
+      #   run: |
+      #     mkdir -p /etc/udev/rules.d
+      #     echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+      #     sudo udevadm control --reload-rules
+      #     sudo udevadm trigger --name-match=kvm
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          # cache: 'gradle'
+          distribution: 'temurin'
+          java-version: '17'
+
+      # - name: Gradle cache
+      #   uses: gradle/actions/setup-gradle@v3
+
+        # - name: AVD cache
+        # uses: actions/cache@v4
+        # id: avd-cache
+        # with:
+        #   path: |
+        #     ~/.android/avd/*
+        #     ~/.android/adb*
+        #   key: avd-${{ env.API_LEVEL }}
+
+        # - name: Create AVD and generate snapshot for caching
+        # if: steps.avd-cache.outputs.cache-hit != 'true'
+        # uses: reactivecircus/android-emulator-runner@v2
+        # with:
+        #   api-level: ${{ env.API_LEVEL }}
+        #   arch: ${{ env.ARCH }}
+        #   disable-animations: false
+        #   emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        #   force-avd-creation: false
+        #   script: echo 'Generated AVD snapshot for caching.'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Android prebuild
+        run: npx expo prebuild --platform android --clean
+
+        # - name: Cache Detox build
+        # id: cache-detox-build
+        # uses: actions/cache@v4
+        # with:
+        #   path: android/app/build
+        #   key: ${{ runner.os }}-detox-build
+        #   restore-keys: |
+        #     ${{ runner.os }}-detox-build
+
+      - name: Detox build
+        run: npm run detox:build:android
+
+      - name: Get device name
+        id: device-name
+        run: echo "::set-output name=DEVICE_NAME::$(node -e "console.log(require('./detox.config.js').devices.emulator.device.avdName)")"
+
+      - name: Detox test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          avd-name: ${{ steps.device-name.outputs.DEVICE_NAME }}
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: npm run detox:test:android:ci
