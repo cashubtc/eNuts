@@ -306,14 +306,18 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						icon={<SendIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
 						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
-						onPress={() => setModal(prev => ({ ...prev, sendOpts: true }))}
+						onPress={() => {
+							setModal(prev => ({ ...prev, sendOpts: true }))
+						}}
 					/>
 					:
 					<ActionBtn
 						icon={<PlusIcon width={s(36)} height={s(36)} color={hi[highlight]} />}
 						txt={t('mint')}
 						color={hi[highlight]}
-						onPress={() => navigation.navigate('mints')}
+						onPress={() => {
+							navigation.navigate('mints')
+						}}
 					/>
 				}
 				<ActionBtn
