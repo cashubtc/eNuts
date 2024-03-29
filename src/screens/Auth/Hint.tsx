@@ -46,7 +46,7 @@ export default function PinHint({ confirm, login, shouldEdit, shouldRemove }: IP
 const styles = ScaledSheet.create({
 	welcome: {
 		fontSize: '20@vs',
-		marginVertical: '20@vs',
+		marginVertical: '10@vs',
 	},
 	txt: {
 		fontSize: '12@vs',
