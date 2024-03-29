@@ -4,7 +4,6 @@ import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
 import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
-import InitialModal from '@comps/InitialModal'
 import OptsModal from '@comps/modal/OptsModal'
 import { PromptModal } from '@comps/modal/Prompt'
 import Txt from '@comps/Txt'
@@ -24,9 +23,9 @@ import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { addToHistory } from '@store/latestHistoryEntries'
-import { getDefaultMint, saveDefaultOnInit } from '@store/mintStore'
+import { getDefaultMint } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
-import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice, isStr } from '@util'
+import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isLnInvoice, isStr } from '@util'
 import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
@@ -61,7 +60,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const [hasMint, setHasMint] = useState(false)
 	// modals
 	const [modal, setModal] = useState({
-		mint: false,
 		receiveOpts: false,
 		sendOpts: false,
 		resetNostr: false,
@@ -84,23 +82,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		}
 		// add token to db
 		await receiveToken(token)
-	}
-
-	// navigates to the mint list page
-	const handleMintModal = (forEnutsMint = false) => {
-		setModal(prev => ({ ...prev, mint: false }))
-		navigation.navigate('mints', { defaultMint: forEnutsMint, newMint: !forEnutsMint })
-	}
-
-	const handleEnutsMint = async () => {
-		try {
-			await saveDefaultOnInit()
-		} catch (e) {
-			// TODO update error message: Mint could not be added, please add a different one or try again later.
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('smthWrong') })
-			return handleMintModal(false)
-		}
-		handleMintModal(true)
 	}
 
 	// This function is only called if the mint of the received token is available as trusted in user DB
@@ -332,7 +313,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						icon={<PlusIcon width={s(36)} height={s(36)} color={hi[highlight]} />}
 						txt={t('mint')}
 						color={hi[highlight]}
-						onPress={() => setModal(prev => ({ ...prev, mint: true }))}
+						onPress={() => navigation.navigate('mints')}
 					/>
 				}
 				<ActionBtn
@@ -382,12 +363,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					}}
 				/>
 			}
-			{/* Initial mint modal prompt */}
-			<InitialModal
-				visible={modal.mint}
-				onConfirm={() => void handleEnutsMint()}
-				onCancel={() => void handleMintModal()}
-			/>
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}

@@ -26,7 +26,7 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
-export default function Mints({ navigation, route }: TMintsPageProps) {
+export default function Mints({ navigation }: TMintsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { prompt, closePrompt, openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
@@ -102,24 +102,10 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	}, [])
 
 	const handleInitialRender = useCallback(async () => {
-		// user comes from dashboard and wants to add his own mint url, open prompt
-		if (route.params?.newMint) {
-			// timeout is needed on IOS only when different prompts are called synchronously
-			const t = setTimeout(() => {
-				setNewMintModal(true)
-				clearTimeout(t)
-			}, 200)
-			return
-		}
 		await handleMintsState()
 		const defaultt = await getDefaultMint()
 		setDefaultM(defaultt ?? '')
-		// this is the case when user adds the initial default mint
-		if (route.params?.defaultMint) {
-			// ask to mint new token
-			openTopUpModal()
-		}
-	}, [openTopUpModal, handleMintsState, route.params?.defaultMint, route.params?.newMint])
+	}, [handleMintsState])
 
 	// Show user mints with balances and default mint icon
 	useEffect(() => {

@@ -1,5 +1,3 @@
-import { customName, mintUrl } from '@consts/mints'
-import { addMint } from '@db'
 import { store } from '@store'
 
 import { STORE_KEYS } from './consts'
@@ -28,11 +26,4 @@ export async function getCustomMintNames<T extends { mintUrl: string }>(mints: T
 	const mintsState: (T & { customName: string })[] = mints
 		.map((m) => ({ ...m, customName: data[m.mintUrl] || '' }))
 	return mintsState
-}
-export async function saveDefaultOnInit() {
-	await Promise.all([
-		addMint(mintUrl),
-		_setMintName(mintUrl, customName),
-		setDefaultMint(mintUrl),
-	])
 }

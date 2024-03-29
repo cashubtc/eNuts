@@ -49,7 +49,7 @@ The [**cashu-ts**](https://github.com/cashubtc/cashu-ts) library and SQLite are 
 
 1. Fork this repository and create a local clone.
 2. Navigate inside the repository and run `npm i`
-3. Start the Expo dev server by running `npm run start`
+3. Start the Expo dev server by running `npm run start` or with an empty cache by running `npm run s:c`
 4. Download the [Expo Go](https://expo.dev/client) app.
     - **Android users**: Scan the QR code provided by your terminal using the Expo-go app
     - **iOS users**: Press on the local dev server shown in the Expo-go app or scan the QR code using your camera app.
