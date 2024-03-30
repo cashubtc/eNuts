@@ -86,24 +86,18 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 						if (comingFromOnboarding) {
 							return navigation.navigate('auth', { pinHash: '' })
 						}
-						return navigation.navigate('dashboard')
+						return navigation.navigate('success', {
+							mint,
+							amount,
+							isRestored: true,
+							comingFromOnboarding
+						})
 					}}
 				/>
 			</View>
 		</View>
 	)
 }
-
-/*
-
-navigation.navigate('success', {
-					mint: mintUrl,
-					amount: bal,
-					isRestored: true,
-					comingFromOnboarding,
-				})
-
-*/
 
 const styles = ScaledSheet.create({
 	container: {

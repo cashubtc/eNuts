@@ -7,7 +7,6 @@ import { preventBack } from '@nav/utils'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
 import { formatSatStr, isNum, vib } from '@util'
 import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
@@ -43,8 +42,6 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		navigation.addListener('beforeRemove', backHandler)
 		return () => navigation.removeListener('beforeRemove', backHandler)
 	}, [navigation])
-
-	l({ amount, memo, fee, mint, isClaim, isMelt, nostr, isScanned })
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>

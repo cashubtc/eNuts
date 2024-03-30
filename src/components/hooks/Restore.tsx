@@ -70,10 +70,11 @@ export function useRestore({ from, to, mintUrl, keysetId, mnemonic, comingFromOn
 					end: to ?? RESTORE_INTERVAL,
 					overshoot: 0,
 				})
-				navigation.navigate('success', {
+				navigation.navigate('restoreSuccess', {
 					mint: mintUrl,
+					keysetID: keysetId,
+					cycle: { start: restored.start, end: restored.end },
 					amount: bal,
-					isRestored: true,
 					comingFromOnboarding,
 				})
 			} catch (e) {
@@ -145,7 +146,7 @@ export function useRestore({ from, to, mintUrl, keysetId, mnemonic, comingFromOn
 			}
 		}
 		void restore()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return { ...restored }

@@ -308,13 +308,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						color={hi[highlight]}
 						onPress={() => {
 							// setModal(prev => ({ ...prev, sendOpts: true }))
-							navigation.navigate('Recovering', {
-								from: 500,
-								to: 550,
-								mintUrl: 'https://testnut.cashu.space',
-								keysetId: 'asfdafh8u2h3',
-								mnemonic: '',
-								comingFromOnboarding: false,
+							navigation.navigate('restoreSuccess', {
+								mint: 'https://testnut.cashu.space',
+								keysetID: 'jkasfhgkjg',
+								cycle: { start: 300, end: 350 },
+								amount: 100,
+								comingFromOnboarding: true,
 							})
 						}}
 					/>
@@ -324,15 +323,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						txt={t('mint')}
 						color={hi[highlight]}
 						onPress={() => {
-							navigation.navigate('mints')
-							// navigation.navigate('Recovering', {
-							// 	from: 500,
-							// 	to: 550,
-							// 	mintUrl: 'https://testnut.cashu.space',
-							// 	keysetId: 'asfdafh8u2h3',
-							// 	mnemonic: '',
-							// 	comingFromOnboarding: false,
-							// })
+							// navigation.navigate('mints')
+							navigation.navigate('restoreSuccess', {
+								mint: 'https://testnut.cashu.space',
+								keysetID: 'jkasfhgkjg',
+								cycle: { start: 300, end: 350 },
+								amount: 100,
+								comingFromOnboarding: true,
+							})
 						}}
 					/>
 				}

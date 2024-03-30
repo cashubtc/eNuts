@@ -246,6 +246,16 @@ export type RootStackParamList = {
 	'Restore warning': {
 		comingFromOnboarding?: boolean
 	}
+	restoreSuccess: {
+		amount: number
+		mint: string
+		keysetID: string
+		cycle: {
+			start: number
+			end: number
+		}
+		comingFromOnboarding?: boolean
+	}
 }
 
 export type TRouteString = 'dashboard' | 'mints' | 'Address book' | 'Settings'
@@ -297,6 +307,7 @@ export type IDerivingPageProps = NativeStackScreenProps<RootStackParamList, 'Der
 export type IRecoveringPageProps = NativeStackScreenProps<RootStackParamList, 'Recovering'>
 export type ISelectRecoveryMintPageProps = NativeStackScreenProps<RootStackParamList, 'Select recovery mint'>
 export type IRestoreWarningPageProps = NativeStackScreenProps<RootStackParamList, 'Restore warning'>
+export type IRestoreSuccessPageProps = NativeStackScreenProps<RootStackParamList, 'restoreSuccess'>
 export type TBottomNavProps =
 	TNostrOnboardingPageProps |
 	TDashboardPageProps |

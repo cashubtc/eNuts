@@ -39,6 +39,7 @@ import RecoveringScreen from '@screens/Restore/Recovering'
 import RestoreWarningScreen from '@screens/Restore/RestoreWarning'
 import SeedScreen from '@screens/Restore/Seed'
 import SelectRecoveryMintScreen from '@screens/Restore/SelectRecoveryMint'
+import RestoreSuccess from '@screens/Restore/Success'
 import Settings from '@screens/Settings'
 import AboutSettings from '@screens/Settings/About'
 import ContactsSettings from '@screens/Settings/Contacts'
@@ -197,6 +198,7 @@ export default function Navigator({
 				<Stack.Screen name='Recovering' component={RecoveringScreen} />
 				<Stack.Screen name='Select recovery mint' component={SelectRecoveryMintScreen} />
 				<Stack.Screen name='Restore warning' component={RestoreWarningScreen} />
+				<Stack.Screen name='restoreSuccess' component={RestoreSuccess} />
 			</Stack.Navigator>
 		</View>
 	)
