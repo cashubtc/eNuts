@@ -6,7 +6,9 @@ import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import type { IRecoverPageProps } from '@model/nav'
+import { RESTORE_INTERVAL } from '@src/consts/mints'
 import { NS } from '@src/i18n'
+import { getMintCurrentKeySetId } from '@src/wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardAvoidingView, type TextInput, View } from 'react-native'
@@ -19,12 +21,17 @@ export default function RecoverScreen({ navigation, route }: IRecoverPageProps) 
 	const { loading } = useLoading()
 	const inputRef = createRef<TextInput>()
 
-	const handleBtnPress = () => {
+	const handleBtnPress = async () => {
 		if (loading || !input.length) { return }
+		const keysetId = await getMintCurrentKeySetId(route.params.mintUrl)
 		navigation.navigate('Recovering', {
-			mintUrl: route.params.mintUrl,
 			mnemonic: input,
+			mintUrl: route.params.mintUrl,
+			keysetId,
+			from: 0,
+			to: RESTORE_INTERVAL,
 			comingFromOnboarding: route.params.comingFromOnboarding,
+			shouldOvershoot: true,
 		})
 	}
 
@@ -54,7 +61,8 @@ export default function RecoverScreen({ navigation, route }: IRecoverPageProps) 
 						onSubmitEditing={() => void handleBtnPress()}
 						autoFocus
 						ms={200}
-						style={[styles.multilineInput]}
+						style={styles.multilineInput}
+						autoCapitalize='none'
 					/>
 				</View>
 				<KeyboardAvoidingView
@@ -98,6 +106,9 @@ const styles = ScaledSheet.create({
 	multilineInput: {
 		minHeight: '80@s',
 		borderRadius: 25,
-		padding: '10@s'
+		paddingTop: '20@s',
+		paddingRight: '20@s',
+		paddingLeft: '20@s',
+		paddingBottom: '20@s',
 	}
 })

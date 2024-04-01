@@ -229,6 +229,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 						value={input}
 						onChangeText={setInput}
 						onSubmitEditing={() => void handleMintInput()}
+						autoCapitalize='none'
 						style={[{ paddingRight: s(55) }]}
 					/>
 					{/* scan icon */}

@@ -172,17 +172,11 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 						keyboardType='email-address'
 						placeholder={t('invoiceOrLnurl')}
 						value={input}
-						onChangeText={text => {
-							setInput(text)
-							/* Handle when the continue button is pressed
-							if (isLnInvoice(text)) {
-								void handleInvoicePaste(text)
-							}
-							*/
-						}}
+						onChangeText={text => setInput(text)}
 						onSubmitEditing={() => void handleBtnPress()}
 						autoFocus
 						ms={200}
+						autoCapitalize='none'
 						style={{ paddingRight: s(90) }}
 					/>
 					{/* Paste / Clear Input */}
