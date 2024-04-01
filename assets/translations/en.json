@@ -136,6 +136,7 @@
 		"keysetID": "Keyset ID",
 		"lnInvoice": "Lightning invoice",
 		"lnPayment": "Lightning payment",
+		"lowBalanceError": "Mint balance is not sufficiant to donate",
 		"mint": "Mint",
 		"minted": "minted",
 		"multimintSwap": "Multimint swap",

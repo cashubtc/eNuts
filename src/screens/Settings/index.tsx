@@ -2,12 +2,13 @@ import { AboutIcon, HeartIcon, MintBoardIcon, OptionsIcon } from '@comps/Icons'
 import { ZapModal } from '@comps/modal/Zap'
 import Screen from '@comps/Screen'
 import Txt from '@comps/Txt'
-import { appVersion, env, isIOS } from '@consts/env'
+import { appVersion } from '@consts/env'
 import { BottomModal } from '@modal/Question'
 import type { TSettingsPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { IZapReturnData } from '@src/model/zap'
 import { dropAllData } from '@src/storage/dev'
 import { globals } from '@styles'
 // import * as Updates from 'expo-updates'
@@ -30,6 +31,29 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 		} catch (e) {/* ignore */ }
 		setConfirmReset(false)
 		// void Updates.reloadAsync()
+	}
+
+	const handleReturnData = (returnData: IZapReturnData) => {
+		setZapModal(false)
+		if (returnData.amount > 0) {
+
+			navigation.navigate('coinSelection', {
+				mint: returnData.mintUsing,
+				balance: returnData.balance,
+				amount: returnData.amount,
+				estFee: returnData.estFee,
+				recipient: returnData.invoice,
+				isMelt: true,
+				scanned: true
+			})
+
+		}
+		
+	}
+
+
+	const handleCloseZap = () => {
+		setZapModal(false)
 	}
 
 	return (
@@ -59,14 +83,14 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						onPress={() => navigation.navigate('About settings')}
 						hasSeparator={__DEV__}
 					/>
-					{(__DEV__ || env.isExpoBeta || !isIOS) &&
-						<MenuItem
-							txt={t('donateLn')}
-							icon={<HeartIcon color={color.TEXT} />}
-							onPress={() => setZapModal(true)}
-							hasSeparator={__DEV__}
-						/>
-					}
+					
+					<MenuItem
+						txt={t('donateLn')}
+						icon={<HeartIcon color={color.TEXT} />}
+						onPress={() => setZapModal(true)}
+						hasSeparator={__DEV__}
+					/>
+					
 					{__DEV__ &&
 						<MenuItem
 							txt={t('factoryReset')}
@@ -78,7 +102,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 				<Txt txt={appVersion} bold center />
 			</ScrollView>
 			<BottomNav navigation={navigation} route={route} />
-			<ZapModal visible={zapModal} close={() => setZapModal(false)} />
+			<ZapModal visible={zapModal} close={() => handleCloseZap()} onReturnData={handleReturnData}  />
 			{/* confirm factory reset */}
 			<BottomModal
 				header={t('resetQ')}

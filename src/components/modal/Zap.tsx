@@ -7,8 +7,12 @@ import { DONATION_ADDR } from '@consts/mints'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
+import { IZapModalProps, IZapReturnData } from '@src/model/zap'
+import { getMintsBalances } from '@src/storage/db'
+import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
-import { formatSatStr, getInvoiceFromLnurl, isErr, openUrl } from '@util'
+import { formatSatStr, getInvoiceFromLnurl, isErr } from '@util'
+import { checkFees } from '@wallet'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Text, TouchableOpacity, View } from 'react-native'
@@ -16,14 +20,9 @@ import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 import MyModal from '.'
 
-interface IQuestionModalProps {
-	visible: boolean
-	close: () => void
-}
-
 interface IZap { amount: number, emoji: string, selected: boolean }
 
-export function ZapModal({ visible, close }: IQuestionModalProps) {
+export function ZapModal({ visible, close, onReturnData }: IZapModalProps) {
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const { openPromptAutoClose } = usePromptContext()
@@ -48,11 +47,48 @@ export function ZapModal({ visible, close }: IQuestionModalProps) {
 				openPromptAutoClose({ msg: 'Zap error' })
 				return
 			}
-			const invoice = await getInvoiceFromLnurl(DONATION_ADDR, zap.amount)
-			stopLoading()
+
+			try {
+
+				const invoice = await getInvoiceFromLnurl(DONATION_ADDR, zap.amount)
+				const mintsWithBal = await getMintsBalances()
+				if (mintsWithBal.length > 0 ) {
+					const mints = await getCustomMintNames(mintsWithBal.map(m => ({ mintUrl: m.mintUrl })))
+					const nonEmptyMint = mintsWithBal.filter(m => m.amount > zap.amount)
+					if (nonEmptyMint.length > 0) {
+
+						const mintUsing = mints.find(m => m.mintUrl === nonEmptyMint[0].mintUrl) || { mintUrl: 'N/A', customName: 'N/A' }
+						const estFee = await checkFees(mintUsing.mintUrl, invoice)
+
+						const returnData: IZapReturnData = {
+							invoice,
+							amount: zap.amount,
+							mintUsing,
+							estFee,
+							balance: nonEmptyMint[0].amount
+
+						}
+						onReturnData(returnData)
+
+					} else {
+						openPromptAutoClose({ msg:t('lowBalanceError')})
+					}
+					
+				} else {
+					openPromptAutoClose({ msg:t('lowBalanceError') })
+				}
+				
+			} catch (e) {
+				openPromptAutoClose({ msg: isErr(e) ? e.message : t('lowBalanceError') })
+			}
+
+			stopLoading()			
 			close()
+
+	
+			/*  commented to spend from the wallet
 			await openUrl(`lightning:${invoice}`)?.catch(e =>
-				openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+				openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') })) */
 		} catch (e) {
 			openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') })
 		}
