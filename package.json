@@ -77,7 +77,7 @@
 		"react-native-popup-menu": "^0.16.1",
 		"react-native-qrcode-svg": "^6.3.0",
 		"react-native-reanimated": "~3.6.2",
-		"react-native-safe-area-context": "4.8.2",
+		"react-native-safe-area-context": "4.9.0",
 		"react-native-screens": "~3.29.0",
 		"react-native-size-matters": "^0.4.2",
 		"react-native-svg": "14.1.0",
