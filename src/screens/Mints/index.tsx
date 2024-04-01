@@ -264,7 +264,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 			>
 				<View style={{ alignItems: 'center', justifyContent: 'center' }}>
 					<CheckCircleIcon width={50} height={50} color={mainColors.VALID} />
-					<Text style={globals(color).modalHeader}>
+					<Text style={globals(color).modalHeader} testID='new-mint-success'>
 						{t('newMintAdded', { ns: NS.mints })}
 					</Text>
 					<Txt

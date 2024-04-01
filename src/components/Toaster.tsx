@@ -23,6 +23,7 @@ export default function Toaster() {
 			<TouchableOpacity
 				onPress={closePrompt}
 				style={styles.txtWrap}
+				testID={`${prompt.success ? 'success' : 'error'}-toaster`}
 			>
 				<Txt txt={prompt.msg} styles={[styles.txt]} />
 			</TouchableOpacity>

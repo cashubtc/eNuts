@@ -422,7 +422,10 @@ interface IActionBtnsProps {
 
 function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 	return (
-		<View style={styles.btnWrap}>
+		<View
+			style={styles.btnWrap}
+			testID={`${txt}-btn`}
+		>
 			<IconBtn
 				icon={icon}
 				size={s(60)}

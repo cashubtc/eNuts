@@ -42,5 +42,12 @@ web-build/
 .*.env.*
 .env
 
+# Detox
+artifacts/
+.artifacts/
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report/
+
+
+!.github/workflows/actions/build
