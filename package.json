@@ -92,7 +92,7 @@
 		"@types/babel__core": "^7.20.5",
 		"@types/crypto-js": "^4.2.2",
 		"@types/jest": "^29.5.12",
-		"@types/node": "^20.11.30",
+		"@types/node": "^20.12.2",
 		"@types/react": "~18.2.73",
 		"@types/react-native-onboarding-swiper": "^1.1.9",
 		"@types/sqlite3": "^3.1.11",
