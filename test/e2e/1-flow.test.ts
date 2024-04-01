@@ -9,10 +9,12 @@ import { expect } from 'detox'
  * 4. Add the first default mint
  */
 
-describe('Add the default mint', () => {
+describe('Add the testnut mint', () => {
 	beforeAll(async () => {
 		await device.launchApp()
 	})
+
+	const testmint = 'testnut.cashu.space'
 
 	it('should go through the 3 onboarding screens', async () => {
 		const header1 = element(by.text('eNuts & Ecash'))
@@ -39,21 +41,42 @@ describe('Add the default mint', () => {
 	})
 
 	it('should skip PIN setup', async () => {
-		const skipBtn = element(by.id('Skip-pin-button'))
+		const skipBtn = element(by.id('Skip-button'))
 		await expect(skipBtn).toBeVisible()
 		await skipBtn.tap()
 	})
 
-	it('should add the first default mint', async () => {
+	it('should navigate to mint screen and press "Add a new mint"', async () => {
 		const header1 = element(by.text('No transactions yet'))
 		await expect(header1).toBeVisible()
 		const addMintBtn = element(by.id('Mint-btn'))
 		await expect(addMintBtn).toBeVisible()
 		await addMintBtn.tap()
-		const initialModalHeader = element(by.id('initial-modal-header'))
-		await expect(initialModalHeader).toBeVisible()
-		const addMintUrlBtn = element(by.id('Use the eNuts mint-modal-button'))
-		await addMintUrlBtn.tap()
+		const addNewMintBtn = element(by.id('Add a new mint-button'))
+		await expect(addNewMintBtn).toBeVisible()
+		await addNewMintBtn.tap()
+	})
+
+	it('BAD CASE: open the text input and type an invalid mint url', async () => {
+		const input = element(by.id('Mint URL-input'))
+		const submitBtn = element(by.id('Add mint-modal-button'))
+		await expect(input).toBeVisible()
+		await expect(submitBtn).toBeVisible()
+		await input.typeText('invalid-mint-url')
+		await submitBtn.tap()
+		const errorToaster = element(by.id('error-toaster'))
+		await expect(errorToaster).toBeVisible()
+		await errorToaster.tap()
+		await input.clearText()
+	})
+
+	it('should type the valid testnut url and submit', async () => {
+		const input = element(by.id('Mint URL-input'))
+		const submitBtn = element(by.id('Add mint-modal-button'))
+		await expect(input).toBeVisible()
+		await expect(submitBtn).toBeVisible()
+		await input.typeText(testmint)
+		await submitBtn.tap()
 		const successModalHeader = element(by.id('new-mint-success'))
 		await expect(successModalHeader).toBeVisible()
 	})

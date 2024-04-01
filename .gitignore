@@ -44,6 +44,7 @@ web-build/
 
 # Detox
 artifacts/
+.artifacts/
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report/

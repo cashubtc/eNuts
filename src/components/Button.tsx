@@ -106,7 +106,7 @@ export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITx
 			style={[styles.copyTxt, ...(style || [])]}
 			onPress={onPress}
 			disabled={disabled}
-			testID={`${txt}-pin-button`}
+			testID={`${txt}-button`}
 		>
 			<Txt
 				txt={txt}

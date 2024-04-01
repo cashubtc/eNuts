@@ -59,6 +59,7 @@ export default function TxtInput({
 			multiline={multiline}
 			numberOfLines={numberOfLines}
 			style={[globals(color).input, { marginBottom: vs(20) }, style]}
+			testID={`${placeholder}-input`}
 		/>
 	)
 }
