@@ -47,7 +47,7 @@
 		"@react-navigation/native": "^6.1.17",
 		"@react-navigation/native-stack": "^6.9.26",
 		"@sentry/react-native": "5.19.1",
-		"@shopify/flash-list": "1.6.3",
+		"@shopify/flash-list": "1.6.4",
 		"bech32": "^2.0.0",
 		"crypto-js": "4.2.0",
 		"expo": "^50.0.14",
