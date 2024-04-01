@@ -178,7 +178,6 @@ export type RootStackParamList = {
 		isZap?: boolean
 		nostr?: INostrSendData
 		isScanned?: boolean
-		isRestored?: boolean
 		change?: number
 		comingFromOnboarding?: boolean
 	}
@@ -236,17 +235,19 @@ export type RootStackParamList = {
 		comingFromOnboarding?: boolean
 	}
 	Recovering: {
-		from?: number
-		to?: number
+		from: number
+		to: number
 		mintUrl: string
 		keysetId: string
 		mnemonic: string
 		comingFromOnboarding?: boolean
+		shouldOvershoot?: boolean
 	}
 	'Restore warning': {
 		comingFromOnboarding?: boolean
 	}
 	restoreSuccess: {
+		mnemonic: string
 		amount: number
 		mint: string
 		keysetID: string

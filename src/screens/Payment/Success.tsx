@@ -28,7 +28,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		isZap,
 		nostr,
 		isScanned,
-		isRestored,
+		comingFromOnboarding
 	} = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
@@ -68,13 +68,10 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 							isAutoSwap ?
 								t('autoSwapSuccess')
 								:
-								isRestored ?
-									<>{formatSatStr(amount || 0)} {t('restored')}!</>
+								!nostr ?
+									<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
 									:
-									!nostr ?
-										<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
-										:
-										null
+									null
 					}
 				</Text>
 				{memo &&
@@ -120,7 +117,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				<Button
 					txt={t('backToDashboard')}
 					onPress={() => {
-						if (route.params?.comingFromOnboarding) {
+						if (comingFromOnboarding) {
 							return navigation.navigate('auth', { pinHash: '' })
 						}
 						const routes = navigation.getState()?.routes

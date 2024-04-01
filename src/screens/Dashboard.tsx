@@ -307,14 +307,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
 						onPress={() => {
-							// setModal(prev => ({ ...prev, sendOpts: true }))
-							navigation.navigate('restoreSuccess', {
-								mint: 'https://testnut.cashu.space',
-								keysetID: 'jkasfhgkjg',
-								cycle: { start: 300, end: 350 },
-								amount: 100,
-								comingFromOnboarding: true,
-							})
+							setModal(prev => ({ ...prev, sendOpts: true }))
+							// navigation.navigate('restoreSuccess', {
+							// 	mint: 'https://testnut.cashu.space',
+							// 	keysetID: 'jkasfhgkjg',
+							// 	cycle: { start: 300, end: 350 },
+							// 	amount: 100,
+							// 	comingFromOnboarding: true,
+							// })
 						}}
 					/>
 					:
@@ -323,14 +323,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 						txt={t('mint')}
 						color={hi[highlight]}
 						onPress={() => {
-							// navigation.navigate('mints')
-							navigation.navigate('restoreSuccess', {
-								mint: 'https://testnut.cashu.space',
-								keysetID: 'jkasfhgkjg',
-								cycle: { start: 300, end: 350 },
-								amount: 100,
-								comingFromOnboarding: true,
-							})
+							navigation.navigate('mints')
+							// navigation.navigate('restoreSuccess', {
+							// 	mint: 'https://testnut.cashu.space',
+							// 	keysetID: 'jkasfhgkjg',
+							// 	cycle: { start: 300, end: 350 },
+							// 	amount: 100,
+							// 	comingFromOnboarding: true,
+							// })
 						}}
 					/>
 				}

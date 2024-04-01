@@ -298,7 +298,6 @@ export async function getCounterByMintUrl(mintUrl: string) {
 	try {
 		const seed = await getSeed()
 		if (!seed) { return }
-		// TODO do not call getMintCurrentKeySetId() every time. find a faster way to get keysetId
 		const keysetId = await getMintCurrentKeySetId(mintUrl)
 		const storeKey = `${mintUrl}:${keysetId}`
 		const counter = await store.get(storeKey)
@@ -308,8 +307,6 @@ export async function getCounterByMintUrl(mintUrl: string) {
 			return 0
 		}
 		l('[getCounterByMintUrl] ', { mintUrl, keysetId, storedCounter: counter })
-		// await store.set(storeKey, counter)
-		l('[getCounterByMintUrl] ', { keysetId, counter: counter })
 		return +counter
 	} catch (e) {
 		l('[getCounterByMintUrl] Error while getCounter: ', e)
@@ -321,7 +318,6 @@ export async function incrementCounterByMintUrl(mintUrl: string, count: number) 
 	try {
 		const seed = await getSeed()
 		if (!seed) { return }
-		// TODO do not call getMintCurrentKeySetId() every time. find a faster way to get keysetId
 		const keysetId = await getMintCurrentKeySetId(mintUrl)
 		const storeKey = `${mintUrl}:${keysetId}`
 		const counter = await store.get(storeKey)

@@ -15,11 +15,11 @@ import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function RecoveringScreen({ navigation, route }: IRecoveringPageProps) {
 
-	const { from, to, mintUrl, keysetId, mnemonic, comingFromOnboarding } = route.params
+	const { from, to, mintUrl, keysetId, mnemonic, comingFromOnboarding, shouldOvershoot } = route.params
 
 	const { t } = useTranslation([NS.common])
 	// Seed recovery process in useRestore hook
-	const { proofs, start, end, overshoot } = useRestore({ from, to, mintUrl, keysetId, mnemonic, comingFromOnboarding })
+	const { proofs, start, end, overshoot } = useRestore({ from, to, mintUrl, keysetId, mnemonic, comingFromOnboarding, shouldOvershoot })
 
 	const { color } = useThemeContext()
 

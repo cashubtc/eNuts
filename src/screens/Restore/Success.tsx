@@ -1,20 +1,40 @@
 import Button from '@comps/Button'
+import { ChevronRightIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { IRestoreSuccessPageProps } from '@model/nav'
 import { isIOS } from '@src/consts'
+import { RESTORE_INTERVAL } from '@src/consts/mints'
 import { useThemeContext } from '@src/context/Theme'
-import { formatMintUrl, formatSatStr } from '@src/util'
 import { globals } from '@styles'
-import { View } from 'react-native'
+import { formatMintUrl, formatSatStr, vib } from '@util'
+import { useEffect } from 'react'
+import { TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPageProps) {
 
 	const insets = useSafeAreaInsets()
-	const { mint, keysetID, amount, cycle, comingFromOnboarding } = route.params
+	const { mnemonic, mint, keysetID, amount, cycle, comingFromOnboarding } = route.params
 	const { color } = useThemeContext()
+
+	const handleCycle = () => {
+		navigation.navigate('Recovering', {
+			mintUrl: mint,
+			keysetId: keysetID,
+			mnemonic,
+			comingFromOnboarding,
+			from: cycle.end,
+			to: cycle.end + RESTORE_INTERVAL
+		})
+	}
+
+	const handleKeysetId = () => {
+		// navigation.navigate('keysetId', { mint, keysetID, amount, cycle, comingFromOnboarding })
+	}
+
+	useEffect(() => vib(400), [])
 
 	return (
 		<View style={[globals(color).container, styles.container]}>
@@ -28,14 +48,12 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 				<Txt
 					center
 					txt={formatMintUrl(mint)}
+					styles={[{ color: color.TEXT_SECONDARY }]}
 				/>
 			</View>
 			<View style={[globals(color).wrapContainer, { paddingBottom: s(20) }]}>
-				<View style={{
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-				}}>
+				{/* Resored amount */}
+				<View style={styles.entry}>
 					<Txt
 						center
 						bold
@@ -47,15 +65,12 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 					/>
 				</View>
 				<Separator style={[styles.separator]} />
-				<View style={{
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-				}}>
+				{/* Keyset ID */}
+				<View style={styles.entry}>
 					<Txt
 						center
 						bold
-						txt='Keyset-ID'
+						txt='Mint Keyset-ID'
 					/>
 					<Txt
 						center
@@ -63,21 +78,41 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 					/>
 				</View>
 				<Separator style={[styles.separator]} />
-				<View style={{
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-				}}>
-					<Txt
-						center
-						bold
-						txt='Last Cycle'
-					/>
-					<Txt
-						center
-						txt={`${cycle.start} to ${cycle.end}`}
-					/>
-				</View>
+				<TouchableOpacity
+					style={styles.entry}
+					onPress={handleCycle}
+				>
+					<View>
+						<Txt
+							bold
+							txt='Continue Cycle'
+							styles={[{ marginBottom: s(5) }]}
+						/>
+						<Txt
+							txt={`Last cycle: ${cycle.start} to ${cycle.end}. If the restored amount for your current Mint Keyset-ID falls short, just ask the mint for an extra restore cycle.`}
+							styles={[{ fontSize: s(11), color: color.TEXT_SECONDARY, maxWidth: s(260) }]}
+						/>
+					</View>
+					<ChevronRightIcon width={s(16)} height={s(16)} color={color.TEXT} />
+				</TouchableOpacity>
+				<Separator style={[styles.separator]} />
+				<TouchableOpacity
+					style={styles.entry}
+					onPress={handleKeysetId}
+				>
+					<View>
+						<Txt
+							bold
+							txt='Select another Keyset-ID'
+							styles={[{ marginBottom: s(5) }]}
+						/>
+						<Txt
+							txt='Some of your balance might be tied to an old Mint Keyset-ID. Feel free to pick and restore from different Keyset-IDs.'
+							styles={[{ fontSize: s(11), color: color.TEXT_SECONDARY, maxWidth: s(260) }]}
+						/>
+					</View>
+					<ChevronRightIcon width={s(16)} height={s(16)} color={color.TEXT} />
+				</TouchableOpacity>
 			</View>
 			<View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
 				<Button
@@ -86,12 +121,7 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 						if (comingFromOnboarding) {
 							return navigation.navigate('auth', { pinHash: '' })
 						}
-						return navigation.navigate('success', {
-							mint,
-							amount,
-							isRestored: true,
-							comingFromOnboarding
-						})
+						return navigation.navigate('dashboard')
 					}}
 				/>
 			</View>
@@ -108,11 +138,12 @@ const styles = ScaledSheet.create({
 		marginBottom: '20@s',
 	},
 	header: {
-		fontSize: '28@s',
-		marginBottom: '10@s',
+		fontSize: '22@s',
+		marginBottom: '5@s',
 	},
 	separator: {
-		marginVertical: '15@vs',
+		marginTop: '15@s',
+		marginBottom: '15@s'
 	},
 	btnWrap: {
 		position: 'absolute',
@@ -121,4 +152,9 @@ const styles = ScaledSheet.create({
 		left: 0,
 		paddingHorizontal: '20@s',
 	},
+	entry: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+	}
 })

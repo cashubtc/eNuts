@@ -6,6 +6,7 @@ import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { isIOS } from '@consts'
 import type { IRecoverPageProps } from '@model/nav'
+import { RESTORE_INTERVAL } from '@src/consts/mints'
 import { NS } from '@src/i18n'
 import { getMintCurrentKeySetId } from '@src/wallet'
 import { createRef, useEffect, useState } from 'react'
@@ -24,10 +25,13 @@ export default function RecoverScreen({ navigation, route }: IRecoverPageProps) 
 		if (loading || !input.length) { return }
 		const keysetId = await getMintCurrentKeySetId(route.params.mintUrl)
 		navigation.navigate('Recovering', {
+			mnemonic: input,
 			mintUrl: route.params.mintUrl,
 			keysetId,
-			mnemonic: input,
+			from: 0,
+			to: RESTORE_INTERVAL,
 			comingFromOnboarding: route.params.comingFromOnboarding,
+			shouldOvershoot: true,
 		})
 	}
 
