@@ -4,34 +4,32 @@ import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import type { IRestoreSuccessPageProps } from '@model/nav'
 import { isIOS } from '@src/consts'
-import { RESTORE_INTERVAL } from '@src/consts/mints'
 import { useThemeContext } from '@src/context/Theme'
-import { globals } from '@styles'
+import { addToHistory } from '@store/latestHistoryEntries'
+import { globals, mainColors } from '@styles'
 import { formatMintUrl, formatSatStr, vib } from '@util'
 import { useEffect } from 'react'
 import { TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
-export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPageProps) {
+export default function RestoreOverviewScreen({ navigation, route }: IRestoreSuccessPageProps) {
 
 	const insets = useSafeAreaInsets()
-	const { mnemonic, mint, keysetID, amount, cycle, comingFromOnboarding } = route.params
+	const { mnemonic, mint, keysetID, amount, comingFromOnboarding } = route.params
 	const { color } = useThemeContext()
 
-	const handleCycle = () => {
-		navigation.navigate('Recovering', {
-			mintUrl: mint,
-			keysetId: keysetID,
-			mnemonic,
-			comingFromOnboarding,
-			from: cycle.end,
-			to: cycle.end + RESTORE_INTERVAL
+	const handleDone = async () => {
+		await addToHistory({
+			mints: [mint],
+			amount,
+			type: 4,
+			value: '',
 		})
-	}
-
-	const handleKeysetId = () => {
-		// navigation.navigate('keysetId', { mint, keysetID, amount, cycle, comingFromOnboarding })
+		if (comingFromOnboarding) {
+			return navigation.navigate('auth', { pinHash: '' })
+		}
+		return navigation.navigate('dashboard')
 	}
 
 	useEffect(() => vib(400), [])
@@ -62,6 +60,7 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 					<Txt
 						center
 						txt={formatSatStr(amount)}
+						styles={[{ color: mainColors.VALID }]}
 					/>
 				</View>
 				<Separator style={[styles.separator]} />
@@ -70,7 +69,7 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 					<Txt
 						center
 						bold
-						txt='Mint Keyset-ID'
+						txt='Keyset-ID'
 					/>
 					<Txt
 						center
@@ -80,25 +79,7 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 				<Separator style={[styles.separator]} />
 				<TouchableOpacity
 					style={styles.entry}
-					onPress={handleCycle}
-				>
-					<View>
-						<Txt
-							bold
-							txt='Continue Cycle'
-							styles={[{ marginBottom: s(5) }]}
-						/>
-						<Txt
-							txt={`Last cycle: ${cycle.start} to ${cycle.end}. If the restored amount for your current Mint Keyset-ID falls short, just ask the mint for an extra restore cycle.`}
-							styles={[{ fontSize: s(11), color: color.TEXT_SECONDARY, maxWidth: s(260) }]}
-						/>
-					</View>
-					<ChevronRightIcon width={s(16)} height={s(16)} color={color.TEXT} />
-				</TouchableOpacity>
-				<Separator style={[styles.separator]} />
-				<TouchableOpacity
-					style={styles.entry}
-					onPress={handleKeysetId}
+					onPress={() => navigation.navigate('selectKeyset', { mnemonic, mintUrl: mint, comingFromOnboarding })}
 				>
 					<View>
 						<Txt
@@ -107,7 +88,7 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 							styles={[{ marginBottom: s(5) }]}
 						/>
 						<Txt
-							txt='Some of your balance might be tied to an old Mint Keyset-ID. Feel free to pick and restore from different Keyset-IDs.'
+							txt='If the restored amount is less than expected, part of your balance could be linked to an old Keyset-ID of the mint.'
 							styles={[{ fontSize: s(11), color: color.TEXT_SECONDARY, maxWidth: s(260) }]}
 						/>
 					</View>
@@ -117,12 +98,7 @@ export default function RestoreSuccess({ navigation, route }: IRestoreSuccessPag
 			<View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
 				<Button
 					txt='Done'
-					onPress={() => {
-						if (comingFromOnboarding) {
-							return navigation.navigate('auth', { pinHash: '' })
-						}
-						return navigation.navigate('dashboard')
-					}}
+					onPress={() => void handleDone()}
 				/>
 			</View>
 		</View>

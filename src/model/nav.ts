@@ -246,7 +246,7 @@ export type RootStackParamList = {
 	'Restore warning': {
 		comingFromOnboarding?: boolean
 	}
-	restoreSuccess: {
+	restoreOverview: {
 		mnemonic: string
 		amount: number
 		mint: string
@@ -255,6 +255,11 @@ export type RootStackParamList = {
 			start: number
 			end: number
 		}
+		comingFromOnboarding?: boolean
+	}
+	selectKeyset: {
+		mnemonic: string
+		mintUrl: string
 		comingFromOnboarding?: boolean
 	}
 }
@@ -308,7 +313,8 @@ export type IDerivingPageProps = NativeStackScreenProps<RootStackParamList, 'Der
 export type IRecoveringPageProps = NativeStackScreenProps<RootStackParamList, 'Recovering'>
 export type ISelectRecoveryMintPageProps = NativeStackScreenProps<RootStackParamList, 'Select recovery mint'>
 export type IRestoreWarningPageProps = NativeStackScreenProps<RootStackParamList, 'Restore warning'>
-export type IRestoreSuccessPageProps = NativeStackScreenProps<RootStackParamList, 'restoreSuccess'>
+export type IRestoreSuccessPageProps = NativeStackScreenProps<RootStackParamList, 'restoreOverview'>
+export type ISelectKeysetPageProps = NativeStackScreenProps<RootStackParamList, 'selectKeyset'>
 export type TBottomNavProps =
 	TNostrOnboardingPageProps |
 	TDashboardPageProps |
