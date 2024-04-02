@@ -1,6 +1,0 @@
-{
-	"extends": [
-		"config:base"
-	],
-	"forkProcessing": "enabled"
-}
