@@ -109,6 +109,7 @@ const useHistory = () => {
 	}
 
 	useEffect(() => {
+		void handlePendingInvoices()
 		void setHistoryEntries()
 		// request token of pending invoices in interval until all are paid or expired
 		startGlobalInvoiceInterval()
