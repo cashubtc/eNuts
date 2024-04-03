@@ -1,6 +1,6 @@
-import { IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
+import { ClockIcon, IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
-import { type IHistoryEntry,txType } from '@model'
+import { type IHistoryEntry, txType } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -36,7 +36,12 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	const getIcon = () => item.amount < 0 ?
 		<OutgoingArrowIcon color={color.TEXT} />
 		:
-		<IncomingArrowIcon color={color.TEXT} />
+		item.isPending ?
+			<View style={styles.clockIconWrap}>
+				<ClockIcon color={color.TEXT} />
+			</View>
+			:
+			<IncomingArrowIcon color={color.TEXT} />
 
 	return (
 		<TouchableOpacity
@@ -53,17 +58,16 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 				</Text>
 			</View>
 			<View style={styles.placeholder} />
-			<View style={[styles.amount, { top: isNum(item.fee) ? 0 : vs(10) }]}>
+			<View style={[styles.amount, { top: isNum(item.fee) && item.fee > 0 ? 0 : vs(10) }]}>
 				<Txt
 					txt={`${item.amount > 0 && item.type < txType.SWAP ? '+' : ''}${formatSatStr(item.type === txType.SWAP || item.type === txType.RESTORE ? Math.abs(item.amount) : item.amount, 'standard')}`}
 					styles={[{ color: getTxColor(), marginBottom: vs(5), textAlign: 'right' }]}
 				/>
-				{isNum(item.fee) &&
+				{isNum(item.fee) && item.fee > 0 &&
 					<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>
 						{t('fee', { ns: NS.common })}: {item.fee}
 					</Text>
 				}
-
 			</View>
 		</TouchableOpacity>
 	)
@@ -86,5 +90,8 @@ const styles = ScaledSheet.create({
 	amount: {
 		position: 'absolute',
 		right: 0,
+	},
+	clockIconWrap: {
+		marginLeft: '-5@s',
 	},
 })
