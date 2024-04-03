@@ -87,7 +87,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 						key={h.timestamp}
 						icon={
 							h.isPending ?
-								<ClockIcon color={color.TEXT} />
+								<ClockIcon color={getColor(highlight, color)} />
 								:
 								h.type === txType.RESTORE ?
 									<CheckmarkIcon color={getColor(highlight, color)} />

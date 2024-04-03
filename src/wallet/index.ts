@@ -308,8 +308,6 @@ export async function getCounterByMintUrl(mintUrl: string) {
 			return 0
 		}
 		l('[getCounterByMintUrl] ', { mintUrl, keysetId, storedCounter: counter })
-		// await store.set(storeKey, counter)
-		l('[getCounterByMintUrl] ', { keysetId, counter: counter })
 		return +counter
 	} catch (e) {
 		l('[getCounterByMintUrl] Error while getCounter: ', e)

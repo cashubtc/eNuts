@@ -30,6 +30,7 @@ const useHistory = () => {
 
 	const startGlobalInvoiceInterval = () => {
 		intervalRef.current = setInterval(() => {
+			l('checking pending invoices in interval of history context')
 			void handlePendingInvoices()
 		}, MinuteInMs)
 	}

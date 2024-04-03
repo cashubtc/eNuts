@@ -88,6 +88,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			})
 			// start checking for payment in 3s intervals
 			intervalRef.current = setInterval(() => {
+				l('checking pending invoices in invoice screen')
 				void handlePayment(entry)
 			}, MinuteInMs)
 		})()
