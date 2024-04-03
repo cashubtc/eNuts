@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 
+import { MinuteInMs } from '@consts'
 import { delInvoice, getAllInvoices } from '@db'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'
@@ -16,8 +17,6 @@ import { useTranslation } from 'react-i18next'
 import { useFocusClaimContext } from './FocusClaim'
 import { usePromptContext } from './Prompt'
 
-export const INVOICE_INTERVAL = 15_000
-
 const useHistory = () => {
 	const { t } = useTranslation([NS.common])
 	const [history, setHistory] = useState<Record<string, IHistoryEntry[]>>({})
@@ -32,7 +31,7 @@ const useHistory = () => {
 	const startGlobalInvoiceInterval = () => {
 		intervalRef.current = setInterval(() => {
 			void handlePendingInvoices()
-		}, INVOICE_INTERVAL)
+		}, MinuteInMs)
 	}
 
 	const clearInvoiceInterval = () => {

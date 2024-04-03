@@ -4,12 +4,12 @@ import { ShareIcon, WalletIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
-import { _testmintUrl, isIOS } from '@consts'
+import { _testmintUrl, isIOS, MinuteInMs } from '@consts'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { INVOICE_INTERVAL, useHistoryContext } from '@src/context/History'
+import { useHistoryContext } from '@src/context/History'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -89,7 +89,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			// start checking for payment in 3s intervals
 			intervalRef.current = setInterval(() => {
 				void handlePayment(entry)
-			}, INVOICE_INTERVAL)
+			}, MinuteInMs)
 		})()
 		return () => clearInvoiceInterval()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
