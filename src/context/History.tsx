@@ -58,8 +58,8 @@ const useHistory = () => {
 		let paid = { count: 0, amount: 0 }
 		for (const invoice of invoices) {
 			try {
-				const success = await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
-				if (success.success) {
+				const { success } = await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
+				if (success) {
 					paid.count++
 					paid.amount += invoice.amount
 					const entry = getHistoryEntryByInvoice(allHisoryEntries.current, invoice.pr)
