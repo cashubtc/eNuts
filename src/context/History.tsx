@@ -8,7 +8,7 @@ import { historyStore, store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { getHistory, getHistoryEntriesByInvoices, getHistoryEntryByInvoice } from '@store/HistoryStore'
 import { addToHistory, getLatestHistory, updateHistory } from '@store/latestHistoryEntries'
-import { decodeLnInvoice } from '@util'
+import { decodeLnInvoice, formatInt } from '@util'
 import { requestToken } from '@wallet'
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -78,7 +78,7 @@ const useHistory = () => {
 		// notify user
 		if (paid.count > 0) {
 			openPromptAutoClose({
-				msg: 'Test message', // t(paid.count > 1 ? 'paidInvoices' : 'paidInvoice', { count: paid.count, total: paid.amount })
+				msg: t(paid.count > 1 ? 'paidInvoices' : 'paidInvoice', { count: paid.count, total: formatInt(paid.amount) }),
 				success: true
 			})
 			paid = { count: 0, amount: 0 }

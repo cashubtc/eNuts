@@ -250,7 +250,9 @@
 		"swapHint": "Diese Option erfordert eine Lightning-Zahlung, bringt Gebühren mit sich und kann die unbekannte Mint dennoch zur Liste hinzufügen, wenn eine Gebühren-Rückzahlung erfolgt.",
 		"trustHint": "Die mit dem Token verbundene Mint wird zu Ihrer Vertrauensliste hinzugefügt.",
 		"noDefaultHint": "Sie müssen eine Standard-Mint einrichten, um einen automatischen Tausch durchzuführen.",
-		"autoSwapSuccess": "Tausch erfolgreich!"
+		"autoSwapSuccess": "Tausch erfolgreich!",
+		"paidInvoice": "{{ count }} Rechnung wurde mit einem Gesamtbetrag von {{ total }} Sats bezahlt",
+		"paidInvoices": "{{ count }} Rechnungen wurden mit einem Gesamtbetrag von {{ total }} Sats bezahlt"
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",

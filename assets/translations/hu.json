@@ -250,7 +250,9 @@
 		"swapHint": "Ez az opció egy Lightning-fizetést igényel ami költségekkel jár, és még akkor is hozzáadhatja az ismeretlen verdét a listádhoz, ha költségvisszatérítésre kerül sor.",
 		"trustHint": "A tokenhez kapcsolódó verde hozzá lesz adva a megbízott listához.",
 		"noDefaultHint": "Be kell állítanod egy alapértelmezett verdét az automatikus cseréhez.",
-		"autoSwapSuccess": "Csere sikeres!"
+		"autoSwapSuccess": "Csere sikeres!",
+		"paidInvoice": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
+		"paidInvoices": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben"
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",
