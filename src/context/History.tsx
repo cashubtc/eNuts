@@ -16,6 +16,8 @@ import { useTranslation } from 'react-i18next'
 import { useFocusClaimContext } from './FocusClaim'
 import { usePromptContext } from './Prompt'
 
+export const INVOICE_INTERVAL = 15_000
+
 const useHistory = () => {
 	const { t } = useTranslation([NS.common])
 	const [history, setHistory] = useState<Record<string, IHistoryEntry[]>>({})
@@ -30,7 +32,7 @@ const useHistory = () => {
 	const startGlobalInvoiceInterval = () => {
 		intervalRef.current = setInterval(() => {
 			void handlePendingInvoices()
-		}, 5000)
+		}, INVOICE_INTERVAL)
 	}
 
 	const clearInvoiceInterval = () => {

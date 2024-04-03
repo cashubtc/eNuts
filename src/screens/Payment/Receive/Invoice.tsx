@@ -9,7 +9,7 @@ import { l } from '@log'
 import type { IHistoryEntry } from '@model'
 import type { TMintInvoicePageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
-import { useHistoryContext } from '@src/context/History'
+import { INVOICE_INTERVAL, useHistoryContext } from '@src/context/History'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -89,7 +89,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			// start checking for payment in 3s intervals
 			intervalRef.current = setInterval(() => {
 				void handlePayment(entry)
-			}, 3000)
+			}, INVOICE_INTERVAL)
 		})()
 		return () => clearInvoiceInterval()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
