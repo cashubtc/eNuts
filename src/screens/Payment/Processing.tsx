@@ -119,7 +119,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				return handleError({ e: isErr(res.error) ? res.error : undefined })
 			}
 			await addHistoryEntry({
-				amount,
+				amount: -amount - (isNum(res.realFee) ? res.realFee : 0),
 				type: 2,
 				value: invoice,
 				mints: [mint.mintUrl],
@@ -149,7 +149,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0, proofs)
 			// add as history entry (multimint swap)
 			await addHistoryEntry({
-				amount: -amount,
+				amount: -amount - (isNum(res.payResult.realFee) ? res.payResult.realFee : 0),
 				fee: res.payResult.realFee,
 				type: 3,
 				value: res.requestTokenResult.invoice?.pr || '',
@@ -185,7 +185,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		const amountSent = tokenInfo.value - estFeeResp
 		// add as history entry (multimint swap)
 		await addHistoryEntry({
-			amount: -amountSent,
+			amount: -amountSent - (isNum(payResult.realFee) ? payResult.realFee : 0),
 			fee: payResult.realFee,
 			type: 3,
 			value: requestTokenResult.invoice?.pr || '',
@@ -298,7 +298,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 	// start payment process
 	useEffect(() => {
-
 		if (isZap) {
 			if (payZap) { return void handleMelting() }
 			return void handleZap()
