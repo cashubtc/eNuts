@@ -1,18 +1,17 @@
-import { CheckmarkIcon, EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
+import { CheckmarkIcon, ClockIcon, EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
-import { type IHistoryEntry, TTXType,txType } from '@model'
+import { type TTXType, txType } from '@model'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import EntryTime from '@screens/History/entryTime'
-import { useFocusClaimContext } from '@src/context/FocusClaim'
+import { useHistoryContext } from '@src/context/History'
 import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { getLatestHistory } from '@store/latestHistoryEntries'
 import { globals, highlight as hi } from '@styles'
 import { getColor } from '@styles/colors'
 import { formatBalance, formatInt, formatSatStr, isBool } from '@util'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
@@ -29,16 +28,9 @@ interface IBalanceProps {
 export default function Balance({ balance, nav }: IBalanceProps) {
 	const { t } = useTranslation([NS.common])
 	const { pref, color, highlight } = useThemeContext()
-	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
-	const { claimed } = useFocusClaimContext()
 	const { hidden, handleLogoPress } = usePrivacyContext()
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
-	const [history, setHistory] = useState<IHistoryEntry[]>([])
-
-	const setHistoryEntries = async () => {
-		const stored = (await getLatestHistory()).reverse()
-		setHistory(stored)
-	}
+	const { latestHistory } = useHistoryContext()
 
 	const toggleBalanceFormat = () => {
 		setFormatSats(prev => !prev)
@@ -53,23 +45,6 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 		if (type === txType.SWAP) { return t('swap') }
 		return t('seedBackup')
 	}
-
-	useEffect(() => {
-		void setHistoryEntries()
-	}, [])
-
-	// get history after navigating to this page
-	useEffect(() => {
-		// eslint-disable-next-line @typescript-eslint/no-misused-promises
-		const focusHandler = nav?.addListener('focus', async () => {
-			await setHistoryEntries()
-		})
-		return focusHandler
-	}, [nav])
-
-	useEffect(() => {
-		void setHistoryEntries()
-	}, [claimed])
 
 	return (
 		<View style={[
@@ -100,23 +75,27 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 				</TouchableOpacity>
 			}
 			{/* No transactions yet */}
-			{!history.length &&
+			{!latestHistory.length &&
 				<View style={styles.txOverview}>
 					<Txt txt={t('noTX')} styles={[globals(color).pressTxt, { color: getColor(highlight, color) }]} />
 				</View>
 			}
 			{/* latest 3 history entries */}
-			{history.length > 0 && !hidden.txs &&
-				history.map(h => (
+			{latestHistory.length > 0 && !hidden.txs &&
+				latestHistory.map(h => (
 					<HistoryEntry
 						key={h.timestamp}
-						icon={h.type === txType.LIGHTNING || h.type === txType.SWAP ?
-							<ZapIcon width={s(28)} height={s(28)} color={getColor(highlight, color)} />
-							:
-							h.type === txType.RESTORE ?
-								<CheckmarkIcon color={getColor(highlight, color)} />
+						icon={
+							h.isPending ?
+								<ClockIcon color={color.TEXT} />
 								:
-								<EcashIcon color={getColor(highlight, color)} />
+								h.type === txType.RESTORE ?
+									<CheckmarkIcon color={getColor(highlight, color)} />
+									:
+									h.type === txType.LIGHTNING || h.type === txType.SWAP ?
+										<ZapIcon width={s(28)} height={s(28)} color={getColor(highlight, color)} />
+										:
+										<EcashIcon color={getColor(highlight, color)} />
 						}
 						isSwap={h.type === txType.SWAP}
 						txType={getTxTypeStr(h.type)}
@@ -126,7 +105,7 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					/>
 				))
 			}
-			{(history.length === 3 || (history.length > 0 && hidden.txs)) &&
+			{(latestHistory.length === 3 || (latestHistory.length > 0 && hidden.txs)) &&
 				<TxtButton
 					txt={t('seeFullHistory')}
 					onPress={() => nav?.navigate('history')}

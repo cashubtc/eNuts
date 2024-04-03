@@ -33,6 +33,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
 import Toaster from './Toaster'
+import { HistoryProvider } from '@src/context/History'
 
 LogBox.ignoreLogs(['is deprecated'])
 // LogBox.ignoreLogs([/expo-image/gmi])
@@ -48,7 +49,7 @@ interface ILockData {
 l('[APP] Starting app...')
 
 void SplashScreen.preventAutoHideAsync()
-function App(_: { exp: Record<string, unknown>}  ) {
+function App(_: { exp: Record<string, unknown> }) {
 	if (!env?.SENTRY_DSN) {
 		return (
 			<SafeAreaProvider>
@@ -208,19 +209,21 @@ function _App() {
 							<NavContainer>
 								<FocusClaimProvider >
 									<PromptProvider>
-										<KeyboardProvider>
-											<Navigator
-												shouldOnboard={shouldOnboard}
-												pinHash={auth.pinHash}
-												bgAuth={bgAuth}
-												setBgAuth={setBgAuth}
-												hasSeed={hasSeed}
-												sawSeedUpdate={sawSeedUpdate}
-											/>
-											<StatusBar style="auto" />
-											<ClipboardModal />
-											<Toaster />
-										</KeyboardProvider>
+										<HistoryProvider>
+											<KeyboardProvider>
+												<Navigator
+													shouldOnboard={shouldOnboard}
+													pinHash={auth.pinHash}
+													bgAuth={bgAuth}
+													setBgAuth={setBgAuth}
+													hasSeed={hasSeed}
+													sawSeedUpdate={sawSeedUpdate}
+												/>
+												<StatusBar style="auto" />
+												<ClipboardModal />
+												<Toaster />
+											</KeyboardProvider>
+										</HistoryProvider>
 									</PromptProvider>
 								</FocusClaimProvider>
 							</NavContainer>
