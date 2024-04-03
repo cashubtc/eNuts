@@ -46,7 +46,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		isExpired
 	} = route.params.entry
 	const { color } = useThemeContext()
-	const { addHistoryEntry, updateHistoryEntry } = useHistoryContext()
+	const { addHistoryEntry, updateHistoryEntry, checkLnPr } = useHistoryContext()
 	const [copy, setCopy] = useState(initialCopyState)
 	const [spent, setSpent] = useState(isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -69,7 +69,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}, [mints])
 
 	const getTxColor = () => {
-		if (type === txType.SWAP || type === txType.RESTORE) { return color.TEXT }
+		if (type === txType.SWAP || type === txType.RESTORE || isPending) { return color.TEXT }
 		return amount < 0 ? mainColors.ERROR : mainColors.VALID
 	}
 
@@ -160,8 +160,8 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}
 
 	// used in interval to check if token is spent while qr sheet is open
-	const checkPayment = async () => {
-		if (type === txType.SEND_RECEIVE) { return clearTokenInterval() }
+	const checkEcashPayment = async () => {
+		if (type > txType.SEND_RECEIVE) { return clearTokenInterval() }
 		const isSpendable = await isTokenSpendable(value)
 		setSpent(!isSpendable)
 		if (!isSpendable) {
@@ -173,9 +173,9 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}
 
 	const startTokenInterval = () => {
-		if (spent) { return }
+		if (spent || type > txType.SEND_RECEIVE) { return }
 		intervalRef.current = setInterval(() => {
-			void checkPayment()
+			void checkEcashPayment()
 		}, 3000)
 	}
 
@@ -221,6 +221,19 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 						}
 					</View>
 					<View style={globals(color).wrapContainer}>
+						{/* Manual check of pending invoice */}
+						{isPending && !isExpired &&
+							<>
+								<TouchableOpacity
+									style={styles.entryInfo}
+									onPress={() => void checkLnPr(value)}
+								>
+									<Txt txt={t('checkPayment')} />
+									<SearchIcon width={20} height={20} color={color.TEXT} />
+								</TouchableOpacity>
+								<Separator />
+							</>
+						}
 						{/* Settle Time */}
 						<View style={styles.entryInfo}>
 							<Txt txt={t('settleTime', { ns: NS.history })} />

@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import { delInvoice, getAllInvoices } from '@db'
+import { delInvoice, getAllInvoices, getInvoiceByPr } from '@db'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'
 import { NS } from '@src/i18n'
@@ -22,23 +22,9 @@ const useHistory = () => {
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
 	const { openPromptAutoClose } = usePromptContext()
-	// const intervalRef = useRef<NodeJS.Timeout | null>(null)
 	const allHisoryEntries = useRef<IHistoryEntry[]>([])
 	const hasEntries = useMemo(() => Object.keys(history).length > 0, [history])
-
-	// const startGlobalInvoiceInterval = () => {
-	// 	intervalRef.current = setInterval(() => {
-	// 		l('checking pending invoices in interval of history context')
-	// 		void handlePendingInvoices()
-	// 	}, MinuteInMs)
-	// }
-
-	// const clearGlobalInvoiceInterval = () => {
-	// 	if (intervalRef.current) {
-	// 		clearInterval(intervalRef.current)
-	// 		allHisoryEntries.current = []
-	// 	}
-	// }
+	const lastCalled = useRef(0)
 
 	const setHistoryEntries = async () => {
 		const [all, latest] = await Promise.all([getHistory(), getLatestHistory()])
@@ -89,6 +75,37 @@ const useHistory = () => {
 		}
 	}
 
+	const checkLnPr = async (pr: string) => {
+		const delay = 20_000
+		const now = Date.now()
+		const timeSinceLastCall = now - lastCalled.current
+		const remainingSeconds = Math.ceil((delay - timeSinceLastCall) / 1000)
+		// restrict usage to 20 seconds
+		if (timeSinceLastCall < delay) {
+			return openPromptAutoClose({ msg: `Please wait ${remainingSeconds} seconds to avoid spamming the mint.`, success: false })
+		}
+		lastCalled.current = now
+		const invoice = await getInvoiceByPr(pr)
+		const entry = getHistoryEntryByInvoice(allHisoryEntries.current, pr)
+		if (!invoice) {
+			if (entry) {
+				await updateHistoryEntry(entry, { ...entry, isExpired: true })
+			}
+			return openPromptAutoClose({ msg: t('invoiceExpired'), success: false })
+		}
+		const { success } = await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
+		if (success) {
+			openPromptAutoClose({ msg: t('paidInvoice', { count: 1, total: formatInt(invoice.amount) }), success: true })
+			if (entry) {
+				await updateHistoryEntry(entry, { ...entry, isPending: false })
+			}
+			// TODO update balance
+			await delInvoice(invoice.hash)
+		} else {
+			openPromptAutoClose({ msg: t('paymentPending'), success: false })
+		}
+	}
+
 	const addHistoryEntry = async (entry: Omit<IHistoryEntry, 'timestamp'>) => {
 		const resp = await addToHistory(entry)
 		await setHistoryEntries()
@@ -116,8 +133,6 @@ const useHistory = () => {
 	useEffect(() => {
 		void handlePendingInvoices()
 		void setHistoryEntries()
-		// request token of pending invoices in interval until all are paid or expired
-		// startGlobalInvoiceInterval()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -130,8 +145,7 @@ const useHistory = () => {
 		addHistoryEntry,
 		updateHistoryEntry,
 		deleteHistory,
-		// startGlobalInvoiceInterval,
-		// clearGlobalInvoiceInterval
+		checkLnPr
 	}
 }
 type useHistoryType = ReturnType<typeof useHistory>
@@ -158,8 +172,8 @@ const HistoryCtx = createContext<useHistoryType>({
 	updateHistoryEntry: async () => await l(''),
 	// eslint-disable-next-line no-return-await, @typescript-eslint/await-thenable
 	deleteHistory: async () => await l(''),
-	// startGlobalInvoiceInterval: () => l(''),
-	// clearGlobalInvoiceInterval: () => l('')
+	// eslint-disable-next-line no-return-await, @typescript-eslint/await-thenable
+	checkLnPr: async () => await l('')
 })
 
 export const useHistoryContext = () => useContext(HistoryCtx)

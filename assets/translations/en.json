@@ -252,7 +252,8 @@
 		"noDefaultHint": "You need to setup a default mint to perform an auto swap.",
 		"autoSwapSuccess": "Swap successful!",
 		"paidInvoice": "{{ count }} invoice has been paid with a total amount of {{ total }} Sats",
-		"paidInvoices": "{{ count }} invoices have been paid with a total amount of {{ total }} Sats"
+		"paidInvoices": "{{ count }} invoices have been paid with a total amount of {{ total }} Sats",
+		"checkPayment": "Check payment"
 	},
 	"error": {
 		"checkSpendableErr": "Error while checking if token is spendable",

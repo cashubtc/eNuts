@@ -252,7 +252,8 @@
 		"noDefaultHint": "Sie müssen eine Standard-Mint einrichten, um einen automatischen Tausch durchzuführen.",
 		"autoSwapSuccess": "Tausch erfolgreich!",
 		"paidInvoice": "{{ count }} Rechnung wurde mit einem Gesamtbetrag von {{ total }} Sats bezahlt",
-		"paidInvoices": "{{ count }} Rechnungen wurden mit einem Gesamtbetrag von {{ total }} Sats bezahlt"
+		"paidInvoices": "{{ count }} Rechnungen wurden mit einem Gesamtbetrag von {{ total }} Sats bezahlt",
+		"checkPayment": "Zahlung überprüfen"
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
