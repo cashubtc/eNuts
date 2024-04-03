@@ -8,7 +8,7 @@ import OptsModal from '@comps/modal/OptsModal'
 import { PromptModal } from '@comps/modal/Prompt'
 import Txt from '@comps/Txt'
 import { _testmintUrl, env } from '@consts'
-import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
+import { addMint, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
 import TrustMintModal from '@modal/TrustMint'
 import type { TBeforeRemoveEvent, TDashboardPageProps } from '@model/nav'
@@ -56,8 +56,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		trustModal,
 		setTrustModal
 	} = useCashuToken()
-	// Total Balance state (all mints)
-	const [balance, setBalance] = useState(0)
 	const [hasMint, setHasMint] = useState(false)
 	// modals
 	const [modal, setModal] = useState({
@@ -236,7 +234,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				}))
 				clearTimeout(t)
 			}, 1000)
-
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -244,16 +241,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// check for available mints of the user
 	useEffect(() => {
 		void (async () => {
-			const [userHasMints, explainerSeen, balance] = await Promise.all([
+			const [userHasMints, explainerSeen] = await Promise.all([
 				hasMints(),
 				store.get(STORE_KEYS.explainer),
-				getBalance(),
 			])
 			setHasMint(userHasMints)
 			setModal(prev => ({ ...prev, mint: !userHasMints && explainerSeen !== '1' }))
-			setBalance(balance)
 		})()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
 
 	// handle deep links
@@ -274,15 +268,11 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
 
-	// get balance after navigating to this page
+	// update states after navigating to this page
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', async () => {
-			const data = await Promise.all([
-				getBalance(),
-				hasMints()
-			])
-			setBalance(data[0])
-			setHasMint(data[1])
+			const data = await hasMints()
+			setHasMint(data)
 		})
 		return focusHandler
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -298,7 +288,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
 			{/* Balance, Disclaimer & History */}
-			<Balance balance={balance} nav={navigation} />
+			<Balance nav={navigation} />
 			{/* Receive/send/mints buttons */}
 			<View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
 				{/* Send button or add first mint */}

@@ -12,6 +12,7 @@ import { requestToken } from '@wallet'
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useBalanceContext } from './Balance'
 import { useFocusClaimContext } from './FocusClaim'
 import { usePromptContext } from './Prompt'
 
@@ -22,6 +23,7 @@ const useHistory = () => {
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
 	const { openPromptAutoClose } = usePromptContext()
+	const { updateBalance } = useBalanceContext()
 	const allHisoryEntries = useRef<IHistoryEntry[]>([])
 	const hasEntries = useMemo(() => Object.keys(history).length > 0, [history])
 	const lastCalled = useRef(0)
@@ -99,7 +101,6 @@ const useHistory = () => {
 			if (entry) {
 				await updateHistoryEntry(entry, { ...entry, isPending: false })
 			}
-			// TODO update balance
 			await delInvoice(invoice.hash)
 		} else {
 			openPromptAutoClose({ msg: t('paymentPending'), success: false })
@@ -109,12 +110,14 @@ const useHistory = () => {
 	const addHistoryEntry = async (entry: Omit<IHistoryEntry, 'timestamp'>) => {
 		const resp = await addToHistory(entry)
 		await setHistoryEntries()
+		await updateBalance()
 		return resp
 	}
 
 	const updateHistoryEntry = async (oldEntry: IHistoryEntry, newEntry: IHistoryEntry) => {
 		await updateHistory(oldEntry, newEntry)
 		await setHistoryEntries()
+		await updateBalance()
 	}
 
 	const deleteHistory = async () => {

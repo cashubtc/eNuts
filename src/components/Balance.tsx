@@ -4,6 +4,7 @@ import { type TTXType, txType } from '@model'
 import type { RootStackParamList } from '@model/nav'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import EntryTime from '@screens/History/entryTime'
+import { useBalanceContext } from '@src/context/Balance'
 import { useHistoryContext } from '@src/context/History'
 import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
@@ -21,15 +22,15 @@ import Logo from './Logo'
 import Txt from './Txt'
 
 interface IBalanceProps {
-	balance: number
 	nav?: NativeStackNavigationProp<RootStackParamList, 'dashboard', 'MyStack'>
 }
 
-export default function Balance({ balance, nav }: IBalanceProps) {
+export default function Balance({ nav }: IBalanceProps) {
 	const { t } = useTranslation([NS.common])
 	const { pref, color, highlight } = useThemeContext()
 	const { hidden, handleLogoPress } = usePrivacyContext()
 	const [formatSats, setFormatSats] = useState(pref?.formatBalance)
+	const { balance } = useBalanceContext()
 	const { latestHistory } = useHistoryContext()
 
 	const toggleBalanceFormat = () => {
