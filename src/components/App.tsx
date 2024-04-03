@@ -9,6 +9,7 @@ import { CustomErrorBoundary } from '@screens/ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from '@screens/ErrorScreen/ErrorDetails'
 import * as Sentry from '@sentry/react-native'
 import { FocusClaimProvider } from '@src/context/FocusClaim'
+import { HistoryProvider } from '@src/context/History'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { NostrProvider } from '@src/context/Nostr'
 import { PinCtx } from '@src/context/Pin'
@@ -33,7 +34,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
 import Toaster from './Toaster'
-import { HistoryProvider } from '@src/context/History'
 
 LogBox.ignoreLogs(['is deprecated'])
 // LogBox.ignoreLogs([/expo-image/gmi])

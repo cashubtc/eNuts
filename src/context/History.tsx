@@ -1,6 +1,4 @@
 /* eslint-disable no-await-in-loop */
-
-import { MinuteInMs } from '@consts'
 import { delInvoice, getAllInvoices } from '@db'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'
@@ -24,23 +22,23 @@ const useHistory = () => {
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
 	const { openPromptAutoClose } = usePromptContext()
-	const intervalRef = useRef<NodeJS.Timeout | null>(null)
+	// const intervalRef = useRef<NodeJS.Timeout | null>(null)
 	const allHisoryEntries = useRef<IHistoryEntry[]>([])
 	const hasEntries = useMemo(() => Object.keys(history).length > 0, [history])
 
-	const startGlobalInvoiceInterval = () => {
-		intervalRef.current = setInterval(() => {
-			l('checking pending invoices in interval of history context')
-			void handlePendingInvoices()
-		}, MinuteInMs)
-	}
+	// const startGlobalInvoiceInterval = () => {
+	// 	intervalRef.current = setInterval(() => {
+	// 		l('checking pending invoices in interval of history context')
+	// 		void handlePendingInvoices()
+	// 	}, MinuteInMs)
+	// }
 
-	const clearInvoiceInterval = () => {
-		if (intervalRef.current) {
-			clearInterval(intervalRef.current)
-			allHisoryEntries.current = []
-		}
-	}
+	// const clearGlobalInvoiceInterval = () => {
+	// 	if (intervalRef.current) {
+	// 		clearInterval(intervalRef.current)
+	// 		allHisoryEntries.current = []
+	// 	}
+	// }
 
 	const setHistoryEntries = async () => {
 		const [all, latest] = await Promise.all([getHistory(), getLatestHistory()])
@@ -50,7 +48,7 @@ const useHistory = () => {
 
 	const handlePendingInvoices = async () => {
 		const invoices = await getAllInvoices()
-		if (!invoices.length) { return clearInvoiceInterval() }
+		if (!invoices.length) { return }
 		if (!allHisoryEntries.current.length) {
 			const historyEntries = await getHistoryEntriesByInvoices(invoices)
 			allHisoryEntries.current = historyEntries
@@ -119,7 +117,7 @@ const useHistory = () => {
 		void handlePendingInvoices()
 		void setHistoryEntries()
 		// request token of pending invoices in interval until all are paid or expired
-		startGlobalInvoiceInterval()
+		// startGlobalInvoiceInterval()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -132,7 +130,8 @@ const useHistory = () => {
 		addHistoryEntry,
 		updateHistoryEntry,
 		deleteHistory,
-		startGlobalInvoiceInterval,
+		// startGlobalInvoiceInterval,
+		// clearGlobalInvoiceInterval
 	}
 }
 type useHistoryType = ReturnType<typeof useHistory>
@@ -159,7 +158,8 @@ const HistoryCtx = createContext<useHistoryType>({
 	updateHistoryEntry: async () => await l(''),
 	// eslint-disable-next-line no-return-await, @typescript-eslint/await-thenable
 	deleteHistory: async () => await l(''),
-	startGlobalInvoiceInterval: () => l(''),
+	// startGlobalInvoiceInterval: () => l(''),
+	// clearGlobalInvoiceInterval: () => l('')
 })
 
 export const useHistoryContext = () => useContext(HistoryCtx)

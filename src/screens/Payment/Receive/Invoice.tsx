@@ -30,7 +30,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 	const {
 		addHistoryEntry,
 		updateHistoryEntry,
-		startGlobalInvoiceInterval,
 	} = useHistoryContext()
 	const intervalRef = useRef<NodeJS.Timeout | null>(null)
 	const [expire, setExpire] = useState(expiry)
@@ -86,7 +85,8 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				mints: [mintUrl],
 				isPending: true
 			})
-			// start checking for payment in 3s intervals
+
+			// start checking for payment in intervals
 			intervalRef.current = setInterval(() => {
 				l('checking pending invoices in invoice screen')
 				void handlePayment(entry)
@@ -102,10 +102,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				screenName={t('payInvoice', { ns: NS.wallet })}
 				txt={t('cancel')}
 				handlePress={() => {
-					// clear interval for current invoice check
 					clearInvoiceInterval()
-					// start global invoice check
-					startGlobalInvoiceInterval()
 					navigation.navigate('dashboard')
 				}}
 			/>
