@@ -61,7 +61,7 @@
 		"back": "Volver",
 		"backToDashboard": "Volver al panel de control",
 		"balance": "Saldo",
-		"balanceAfterTX": "Saldo tras la transacción",
+		"balanceAfterTX": "Mint saldo tras la transacción",
 		"balTooLow": "Saldo insuficiente",
 		"bigQrMsg": "La cantidad de datos es demasiado grande para un código QR.",
 		"calculateFeeEst": "Calculando comisión",

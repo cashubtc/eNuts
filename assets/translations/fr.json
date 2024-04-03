@@ -61,7 +61,7 @@
 		"back": "Retour",
 		"backToDashboard": "Retour au tableau de bord",
 		"balance": "Solde",
-		"balanceAfterTX": "Solde après paiement",
+		"balanceAfterTX": "Mint solde après paiement",
 		"balTooLow": "Solde insuffisant",
 		"bigQrMsg": "La quantité de données est trop grand pour un code QR.",
 		"calculateFeeEst": "Calcul des frais",

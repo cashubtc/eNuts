@@ -61,7 +61,7 @@
 		"back": "Back",
 		"backToDashboard": "Back to dashboard",
 		"balance": "Balance",
-		"balanceAfterTX": "Balance after TX",
+		"balanceAfterTX": "Mint balance after TX",
 		"balTooLow": "Balance too low",
 		"bigQrMsg": "The amount of data is too big for a QR code.",
 		"calculateFeeEst": "Calculating fee",

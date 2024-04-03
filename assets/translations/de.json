@@ -61,7 +61,7 @@
 		"back": "Zurück",
 		"backToDashboard": "Zurück zu Wallet",
 		"balance": "Guthaben",
-		"balanceAfterTX": "Guthaben nach Zahlung",
+		"balanceAfterTX": "Mint Guthaben nach Zahlung",
 		"balTooLow": "Nicht genug Guthaben",
 		"bigQrMsg": "Die Datenmenge ist zu groß für einen QR-Code.",
 		"calculateFeeEst": "Gebühr wird geschätzt",

@@ -17,7 +17,7 @@ import { isLightningAddress } from '@util/lnurl'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
-import { ScaledSheet } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import { CoinSelectionModal, CoinSelectionResume, OverviewRow } from './ProofList'
 
@@ -141,10 +141,17 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					{isNum(estFee) && !nostr && !isSendEcash &&
 						<OverviewRow txt1={t('estimatedFees')} txt2={formatSatStr(estFee)} />
 					}
-					<OverviewRow
-						txt1={t('balanceAfterTX')}
-						txt2={estFee > 0 ? `${formatInt(balance - amount - estFee)} ${t('to')} ${formatSatStr(balance - amount)}` : `${formatSatStr(balance - amount)}`}
-					/>
+					<View>
+						<Txt
+							txt={t('balanceAfterTX')}
+							styles={[{ fontWeight: '500', marginBottom: s(5) }]}
+						/>
+						<Txt
+							txt={estFee > 0 ? `${formatInt(balance - amount - estFee)} ${t('to')} ${formatSatStr(balance - amount)}` : `${formatSatStr(balance - amount)}`}
+							styles={[{ color: color.TEXT_SECONDARY }]}
+						/>
+					</View>
+					<Separator style={[{ marginTop: s(20) }]} />
 					{memo && memo.length > 0 &&
 						<OverviewRow txt1={t('memo', { ns: NS.history })} txt2={memo} />
 					}
