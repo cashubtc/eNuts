@@ -15,6 +15,7 @@ import type { TBeforeRemoveEvent, TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { preventBack } from '@nav/utils'
 import { useFocusClaimContext } from '@src/context/FocusClaim'
+import { useHistoryContext } from '@src/context/History'
 import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
@@ -22,7 +23,6 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { addToHistory } from '@store/latestHistoryEntries'
 import { getDefaultMint } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
 import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isLnInvoice, isStr } from '@util'
@@ -46,6 +46,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
 	const { openPromptAutoClose } = usePromptContext()
+	const { addHistoryEntry } = useHistoryContext()
 	// Cashu token hook
 	const {
 		token,
@@ -131,7 +132,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			return
 		}
 		// add as history entry (receive ecash)
-		await addToHistory({
+		await addHistoryEntry({
 			amount: info.value,
 			type: 1,
 			value: encodedToken,

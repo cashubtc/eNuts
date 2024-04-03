@@ -4,11 +4,11 @@ import { getMintsBalances } from '@db'
 import { l } from '@log'
 import type { TBeforeRemoveEvent, TQRProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
+import { useHistoryContext } from '@src/context/History'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { isErr } from '@src/util'
 import { getLnurlData } from '@src/util/lnurl'
-import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals } from '@styles'
 import { checkFees, claimToken } from '@wallet'
@@ -18,9 +18,10 @@ import { View } from 'react-native'
 import { ScaledSheet } from 'react-native-size-matters'
 
 export default function QRProcessingScreen({ navigation, route }: TQRProcessingPageProps) {
+	const { tokenInfo, token, ln, lnurl, scanned } = route.params
 	const { t } = useTranslation([NS.mints])
 	const { color } = useThemeContext()
-	const { tokenInfo, token, ln, lnurl, scanned } = route.params
+	const { addHistoryEntry } = useHistoryContext()
 
 	const getProcessingtxt = () => {
 		if (token && tokenInfo) { return 'claiming' }
@@ -42,7 +43,7 @@ export default function QRProcessingScreen({ navigation, route }: TQRProcessingP
 			return
 		}
 		// add as history entry (receive ecash)
-		await addToHistory({
+		await addHistoryEntry({
 			amount: tokenInfo.value,
 			type: 1,
 			value: token,

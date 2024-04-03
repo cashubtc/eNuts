@@ -4,7 +4,7 @@ import type { TOnboardingPageProps } from '@model/nav'
 import { NS } from '@src/i18n'
 import { store } from '@src/storage/store'
 import { STORE_KEYS } from '@src/storage/store/consts'
-import { H_Colors } from '@styles/colors'
+import { H_Colors, mainColors } from '@styles/colors'
 import { useTranslation } from 'react-i18next'
 import { Image, TouchableOpacity } from 'react-native'
 import Onboarding from 'react-native-onboarding-swiper'
@@ -53,7 +53,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 					style={{ marginRight: s(20) }}
 					testID='onboarding-done'
 				>
-					<Txt txt={t('next')} />
+					<Txt txt={t('next')} styles={[{ color: mainColors.WHITE }]} />
 				</TouchableOpacity>
 			)}
 		/>

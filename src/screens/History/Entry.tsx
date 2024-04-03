@@ -1,4 +1,4 @@
-import { ClockIcon, IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
+import { ClockIcon, CloseCircleIcon, IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { type IHistoryEntry, txType } from '@model'
 import type { THistoryPageProps } from '@model/nav'
@@ -36,12 +36,15 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	const getIcon = () => item.amount < 0 ?
 		<OutgoingArrowIcon color={color.TEXT} />
 		:
-		item.isPending ?
+		item.isPending && !item.isExpired ?
 			<View style={styles.clockIconWrap}>
 				<ClockIcon color={color.TEXT} />
 			</View>
 			:
-			<IncomingArrowIcon color={color.TEXT} />
+			item.isExpired ?
+				<CloseCircleIcon color={mainColors.ERROR} />
+				:
+				<IncomingArrowIcon color={color.TEXT} />
 
 	return (
 		<TouchableOpacity
@@ -60,7 +63,12 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			<View style={styles.placeholder} />
 			<View style={[styles.amount, { top: isNum(item.fee) && item.fee > 0 ? 0 : vs(10) }]}>
 				<Txt
-					txt={`${item.amount > 0 && item.type < txType.SWAP ? '+' : ''}${formatSatStr(item.type === txType.SWAP || item.type === txType.RESTORE ? Math.abs(item.amount) : item.amount, 'standard')}`}
+					txt={
+						item.isExpired ?
+							t('expired', { ns: NS.common })
+							:
+							`${item.amount > 0 && item.type < txType.SWAP ? '+' : ''}${formatSatStr(item.type === txType.SWAP || item.type === txType.RESTORE ? Math.abs(item.amount) : item.amount, 'standard')}`
+					}
 					styles={[{ color: getTxColor(), marginBottom: vs(5), textAlign: 'right' }]}
 				/>
 				{isNum(item.fee) && item.fee > 0 &&

@@ -4,7 +4,7 @@ import { ShareIcon, WalletIcon } from '@comps/Icons'
 import Loading from '@comps/Loading'
 import QR from '@comps/QR'
 import Txt from '@comps/Txt'
-import { _testmintUrl, isIOS, MinuteInMs } from '@consts'
+import { _testmintUrl, isIOS } from '@consts'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'
 import type { TMintInvoicePageProps } from '@model/nav'
@@ -90,7 +90,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 			intervalRef.current = setInterval(() => {
 				l('checking pending invoices in invoice screen')
 				void handlePayment(entry)
-			}, MinuteInMs)
+			}, 20_000)
 		})()
 		return () => clearInvoiceInterval()
 		// eslint-disable-next-line react-hooks/exhaustive-deps

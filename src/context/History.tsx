@@ -57,12 +57,12 @@ const useHistory = () => {
 		}
 		let paid = { count: 0, amount: 0 }
 		for (const invoice of invoices) {
+			const entry = getHistoryEntryByInvoice(allHisoryEntries.current, invoice.pr)
 			try {
 				const { success } = await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
 				if (success) {
 					paid.count++
 					paid.amount += invoice.amount
-					const entry = getHistoryEntryByInvoice(allHisoryEntries.current, invoice.pr)
 					if (entry) {
 						await updateHistoryEntry(entry, { ...entry, isPending: false })
 					}
@@ -73,7 +73,13 @@ const useHistory = () => {
 			} catch (_) {/* ignore */ }
 			const { expiry } = decodeLnInvoice(invoice.pr)
 			const date = new Date((invoice.time * 1000) + (expiry * 1000)).getTime()
-			if (Date.now() > date) { await delInvoice(invoice.hash) }
+			if (Date.now() > date) {
+				l('INVOICE EXPIRED!', invoice.pr)
+				await delInvoice(invoice.hash)
+				if (entry) {
+					await updateHistoryEntry(entry, { ...entry, isExpired: true })
+				}
+			}
 		}
 		// notify user
 		if (paid.count > 0) {

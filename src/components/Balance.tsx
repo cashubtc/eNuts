@@ -1,4 +1,4 @@
-import { CheckmarkIcon, ClockIcon, EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
+import { CheckmarkIcon, ClockIcon, CloseCircleIcon, EcashIcon, SwapCurrencyIcon, ZapIcon } from '@comps/Icons'
 import { setPreferences } from '@db'
 import { type TTXType, txType } from '@model'
 import type { RootStackParamList } from '@model/nav'
@@ -86,21 +86,25 @@ export default function Balance({ balance, nav }: IBalanceProps) {
 					<HistoryEntry
 						key={h.timestamp}
 						icon={
-							h.isPending ?
+							h.isPending && !h.isExpired ?
 								<ClockIcon color={getColor(highlight, color)} />
 								:
-								h.type === txType.RESTORE ?
-									<CheckmarkIcon color={getColor(highlight, color)} />
+								h.isExpired ?
+									<CloseCircleIcon width={s(21)} height={s(21)} color={getColor(highlight, color)} />
 									:
-									h.type === txType.LIGHTNING || h.type === txType.SWAP ?
-										<ZapIcon width={s(28)} height={s(28)} color={getColor(highlight, color)} />
+									h.type === txType.RESTORE ?
+										<CheckmarkIcon color={getColor(highlight, color)} />
 										:
-										<EcashIcon color={getColor(highlight, color)} />
+										h.type === txType.LIGHTNING || h.type === txType.SWAP ?
+											<ZapIcon width={s(28)} height={s(28)} color={getColor(highlight, color)} />
+											:
+											<EcashIcon color={getColor(highlight, color)} />
 						}
 						isSwap={h.type === txType.SWAP}
 						txType={getTxTypeStr(h.type)}
 						timestamp={h.timestamp}
 						amount={h.amount}
+						isExpired={h.isExpired}
 						onPress={() => nav?.navigate('history entry details', { entry: h })}
 					/>
 				))
@@ -123,10 +127,11 @@ interface IHistoryEntryProps {
 	isSwap?: boolean
 	timestamp: number
 	amount: number
+	isExpired?: boolean
 	onPress: () => void
 }
 
-function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHistoryEntryProps) {
+function HistoryEntry({ icon, txType, isSwap, timestamp, amount, isExpired, onPress }: IHistoryEntryProps) {
 	const { t } = useTranslation([NS.history])
 	const { color, highlight } = useThemeContext()
 
@@ -148,7 +153,15 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, onPress }: IHis
 					</Text>
 				</View>
 			</View>
-			<Txt txt={getAmount()} styles={[{ color: getColor(highlight, color) }]} />
+			<Txt
+				txt={
+					isExpired ?
+						t('expired', { ns: NS.common })
+						:
+						getAmount()
+				}
+				styles={[{ color: getColor(highlight, color) }]}
+			/>
 		</TouchableOpacity>
 	)
 }

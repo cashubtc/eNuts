@@ -43,6 +43,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		fee,
 		isSpent,
 		isPending,
+		isExpired
 	} = route.params.entry
 	const { color } = useThemeContext()
 	const { addHistoryEntry, updateHistoryEntry } = useHistoryContext()
@@ -202,16 +203,22 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<View style={{ marginBottom: insets.bottom, paddingTop: s(10) }}>
 					<View style={styles.topSection}>
-						{isPending &&
+						{isPending && !isExpired &&
 							<Txt txt={t('paymentPending')} />
 						}
-						<Text style={[styles.amount, { color: getTxColor() }]}>
-							{getAmount()}
-						</Text>
-						<Txt
-							txt={formatSatStr(amount, 'standard', false)}
-							styles={[{ color: color.TEXT_SECONDARY }]}
-						/>
+						{isExpired ?
+							<Txt txt={t('invoiceExpired')} />
+							:
+							<>
+								<Text style={[styles.amount, { color: getTxColor() }]}>
+									{getAmount()}
+								</Text>
+								<Txt
+									txt={formatSatStr(amount, 'standard', false)}
+									styles={[{ color: color.TEXT_SECONDARY }]}
+								/>
+							</>
+						}
 					</View>
 					<View style={globals(color).wrapContainer}>
 						{/* Settle Time */}
