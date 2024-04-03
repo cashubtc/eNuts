@@ -5,7 +5,7 @@ import type { IHistoryEntry } from '@model'
 import { NS } from '@src/i18n'
 import { historyStore, store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { getHistory, getHistoryEntriesByInvoices, getHistoryEntryByInvoice } from '@store/HistoryStore'
+import { getHistory, getHistoryEntryByInvoice } from '@store/HistoryStore'
 import { addToHistory, getLatestHistory, updateHistory } from '@store/latestHistoryEntries'
 import { decodeLnInvoice, formatInt } from '@util'
 import { requestToken } from '@wallet'
@@ -24,7 +24,6 @@ const useHistory = () => {
 	const { claimed } = useFocusClaimContext()
 	const { openPromptAutoClose } = usePromptContext()
 	const { updateBalance } = useBalanceContext()
-	const allHisoryEntries = useRef<IHistoryEntry[]>([])
 	const hasEntries = useMemo(() => Object.keys(history).length > 0, [history])
 	const lastCalled = useRef(0)
 
@@ -37,13 +36,9 @@ const useHistory = () => {
 	const handlePendingInvoices = async () => {
 		const invoices = await getAllInvoices()
 		if (!invoices.length) { return }
-		if (!allHisoryEntries.current.length) {
-			const historyEntries = await getHistoryEntriesByInvoices(invoices)
-			allHisoryEntries.current = historyEntries
-		}
 		let paid = { count: 0, amount: 0 }
 		for (const invoice of invoices) {
-			const entry = getHistoryEntryByInvoice(allHisoryEntries.current, invoice.pr)
+			const entry = await getHistoryEntryByInvoice(invoice.pr)
 			try {
 				const { success } = await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
 				if (success) {
@@ -52,7 +47,6 @@ const useHistory = () => {
 					if (entry) {
 						await updateHistoryEntry(entry, { ...entry, isPending: false })
 					}
-					// TODO update balance
 					await delInvoice(invoice.hash)
 					continue
 				}
@@ -88,7 +82,7 @@ const useHistory = () => {
 		}
 		lastCalled.current = now
 		const invoice = await getInvoiceByPr(pr)
-		const entry = getHistoryEntryByInvoice(allHisoryEntries.current, pr)
+		const entry = await getHistoryEntryByInvoice(pr)
 		if (!invoice) {
 			if (entry) {
 				await updateHistoryEntry(entry, { ...entry, isExpired: true })

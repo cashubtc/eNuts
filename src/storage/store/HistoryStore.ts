@@ -87,8 +87,9 @@ export async function getHistory({ order = 'DESC', start = 0, count = -1, orderB
 	return groupEntries(history)
 }
 
-export function getHistoryEntryByInvoice(entries: IHistoryEntry[], invoice: string) {
-	return entries.find(i => i.value === invoice)
+export async function getHistoryEntryByInvoice(invoice: string) {
+	const history = await historyStore.getHistory()
+	return history.find(i => i.value === invoice)
 }
 
 export async function getHistoryEntriesByInvoices(invoices: IInvoice[]) {

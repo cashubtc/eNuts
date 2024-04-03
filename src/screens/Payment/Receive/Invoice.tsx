@@ -83,9 +83,9 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
 				type: 2,
 				value: paymentRequest,
 				mints: [mintUrl],
-				isPending: true
+				isPending: true,
+				isExpired: false,
 			})
-
 			// start checking for payment in intervals
 			intervalRef.current = setInterval(() => {
 				l('checking pending invoices in invoice screen')
