@@ -253,7 +253,8 @@
 		"autoSwapSuccess": "Échange réussi!",
 		"paidInvoice": "{{ count }} facture a été payée pour un montant total de {{ total }} Sats",
 		"paidInvoices": "{{ count }} factures ont été payées pour un montant total de {{ total }} Sats",
-		"checkPayment": "Vérifier le paiement"
+		"checkPayment": "Vérifier le paiement",
+		"lnPaymentSpamHint": "Veuillez attendre {{remainingSeconds}} secondes pour soulager la Mint."
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

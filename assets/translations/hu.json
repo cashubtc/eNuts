@@ -253,7 +253,8 @@
 		"autoSwapSuccess": "Csere sikeres!",
 		"paidInvoice": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
 		"paidInvoices": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
-		"checkPayment": "Fizetés ellenőrzése"
+		"checkPayment": "Fizetés ellenőrzése",
+		"lnPaymentSpamHint": "Kérjük, várjon {{remainingSeconds}} másodpercet a Mint tehermentesítése érdekében."
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",

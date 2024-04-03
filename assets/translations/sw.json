@@ -253,7 +253,8 @@
 		"autoSwapSuccess": "Kubadilishana kufanikiwa!",
 		"paidInvoice": "{{ count }} ankara imelipwa kwa jumla ya {{ total }} Sats",
 		"paidInvoices": "Bilansi ya ankara {{ count }} zimelipwa kwa jumla ya {{ total }} Sats",
-		"checkPayment": "Angalia malipo"
+		"checkPayment": "Angalia malipo",
+		"lnPaymentSpamHint": "Tafadhali subiri {{remainingSeconds}} sekunde ili kupunguza mzigo kwa Mint."
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

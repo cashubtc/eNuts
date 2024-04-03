@@ -82,7 +82,7 @@ const useHistory = () => {
 		const remainingSeconds = Math.ceil((delay - timeSinceLastCall) / 1000)
 		// restrict usage to 20 seconds
 		if (timeSinceLastCall < delay) {
-			return openPromptAutoClose({ msg: `Please wait ${remainingSeconds} seconds to avoid spamming the mint.`, success: false })
+			return openPromptAutoClose({ msg: t('lnPaymentSpamHint', { remainingSeconds }), success: false })
 		}
 		lastCalled.current = now
 		const invoice = await getInvoiceByPr(pr)
