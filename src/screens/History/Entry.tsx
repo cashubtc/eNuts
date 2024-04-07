@@ -1,6 +1,6 @@
-import { IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
+import { ClockIcon, CloseCircleIcon, IncomingArrowIcon, OutgoingArrowIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
-import { type IHistoryEntry,txType } from '@model'
+import { type IHistoryEntry, txType } from '@model'
 import type { THistoryPageProps } from '@model/nav'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -8,7 +8,7 @@ import { globals, mainColors } from '@styles'
 import { formatSatStr, isNum } from '@util'
 import { useTranslation } from 'react-i18next'
 import { Text, TouchableOpacity, View } from 'react-native'
-import { ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import EntryTime from './entryTime'
 
@@ -29,41 +29,55 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	}
 
 	const getTxColor = () => {
-		if (item.type === txType.SWAP || item.type === txType.RESTORE) { return color.TEXT }
+		if (item.type === txType.SWAP || item.type === txType.RESTORE || item.isPending || item.isExpired) { return color.TEXT }
 		return item.amount < 0 ? mainColors.ERROR : mainColors.VALID
 	}
 
 	const getIcon = () => item.amount < 0 ?
 		<OutgoingArrowIcon color={color.TEXT} />
 		:
-		<IncomingArrowIcon color={color.TEXT} />
+		item.isPending && !item.isExpired ?
+			<View style={styles.clockIconWrap}>
+				<ClockIcon color={color.TEXT} />
+			</View>
+			:
+			item.isExpired ?
+				<View style={styles.clockIconWrap}>
+					<CloseCircleIcon width={s(21)} height={s(21)} color={mainColors.ERROR} />
+				</View>
+				:
+				<IncomingArrowIcon color={color.TEXT} />
 
 	return (
 		<TouchableOpacity
 			style={styles.listItem}
 			onPress={() => nav.navigation.navigate('history entry details', { entry: item })}
 		>
-			<View style={{ paddingBottom: vs(10) }}>
+			<View style={{ paddingBottom: s(10) }}>
 				{getIcon()}
 			</View>
 			<View style={styles.infoWrap}>
-				<Txt txt={getTxTypeStr()} styles={[{ marginBottom: vs(5) }]} />
-				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: vs(12) }]}>
+				<Txt txt={getTxTypeStr()} styles={[{ marginBottom: s(5) }]} />
+				<Text style={[globals(color, highlight).txt, { color: color.TEXT_SECONDARY, fontSize: s(12) }]}>
 					<EntryTime from={item.timestamp * 1000} fallback={t('justNow')} />
 				</Text>
 			</View>
 			<View style={styles.placeholder} />
-			<View style={[styles.amount, { top: isNum(item.fee) ? 0 : vs(10) }]}>
+			<View style={[styles.amount, { top: isNum(item.fee) && item.fee > 0 ? 0 : s(10) }]}>
 				<Txt
-					txt={`${item.amount > 0 && item.type < txType.SWAP ? '+' : ''}${formatSatStr(item.type === txType.SWAP || item.type === txType.RESTORE ? Math.abs(item.amount) : item.amount, 'standard')}`}
-					styles={[{ color: getTxColor(), marginBottom: vs(5), textAlign: 'right' }]}
+					txt={
+						item.isExpired ?
+							t('expired', { ns: NS.common })
+							:
+							`${item.amount > 0 && item.type < txType.SWAP ? '+' : ''}${formatSatStr(item.type === txType.SWAP || item.type === txType.RESTORE ? Math.abs(item.amount) : item.amount, 'standard')}`
+					}
+					styles={[{ color: getTxColor(), marginBottom: s(5), textAlign: 'right' }]}
 				/>
-				{isNum(item.fee) &&
-					<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: vs(12) }}>
+				{isNum(item.fee) && item.fee > 0 &&
+					<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: s(12) }}>
 						{t('fee', { ns: NS.common })}: {item.fee}
 					</Text>
 				}
-
 			</View>
 		</TouchableOpacity>
 	)
@@ -78,7 +92,7 @@ const styles = ScaledSheet.create({
 	},
 	infoWrap: {
 		alignItems: 'center',
-		paddingBottom: '10@vs',
+		paddingBottom: '10@s',
 	},
 	placeholder: {
 		width: '30@s',
@@ -86,5 +100,8 @@ const styles = ScaledSheet.create({
 	amount: {
 		position: 'absolute',
 		right: 0,
+	},
+	clockIconWrap: {
+		marginLeft: '-5@s',
 	},
 })

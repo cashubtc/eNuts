@@ -4,9 +4,9 @@ import { addToken, getMintBalance } from '@db'
 import { l } from '@log'
 import type { RootStackParamList } from '@model/nav'
 import { type NavigationProp, useNavigation } from '@react-navigation/core'
+import { useHistoryContext } from '@src/context/History'
 import { usePromptContext } from '@src/context/Prompt'
 import { NS } from '@src/i18n'
-import { addToHistory } from '@store/latestHistoryEntries'
 import { saveSeed } from '@store/restore'
 import { isErr } from '@util'
 import { _setKeys, getCounterByMintUrl, getSeedWalletByMnemonic, incrementCounterByMintUrl } from '@wallet'
@@ -35,6 +35,7 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 	const navigation = useNavigation<StackNavigation>()
 	const { t } = useTranslation([NS.common])
 	const { openPromptAutoClose } = usePromptContext()
+	const { addHistoryEntry } = useHistoryContext()
 
 	const [restored, setRestored] = useState({ ...defaultRestoreState })
 
@@ -52,7 +53,7 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 					return navigation.navigate('dashboard')
 				}
 				const bal = await getMintBalance(mintUrl)
-				await addToHistory({
+				await addHistoryEntry({
 					mints: [mintUrl],
 					amount: bal,
 					type: 4,
@@ -130,7 +131,8 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 			}
 		}
 		void restore()
-	}, [comingFromOnboarding, mintUrl, mnemonic, navigation, openPromptAutoClose, t])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [mintUrl])
 
 	return { ...restored }
 }

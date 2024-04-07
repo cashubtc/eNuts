@@ -33,3 +33,12 @@ export async function addToHistory(entry: Omit<IHistoryEntry, 'timestamp'>) {
 	await updateLatestHistory(item)
 	return item
 }
+
+export async function updateHistory(oldEntry: IHistoryEntry, newEntry: IHistoryEntry) {
+	await historyStore.updateHistoryEntry(oldEntry, newEntry)
+	const stored = await getLatestHistory()
+	const idx = stored.findIndex(i => i.value === oldEntry.value)
+	if (idx === -1) { return }
+	stored[idx] = newEntry
+	await store.setObj(STORE_KEYS.latestHistory, stored)
+}

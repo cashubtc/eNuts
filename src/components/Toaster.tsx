@@ -25,7 +25,7 @@ export default function Toaster() {
 				style={styles.txtWrap}
 				testID={`${prompt.success ? 'success' : 'error'}-toaster`}
 			>
-				<Txt txt={prompt.msg} styles={[styles.txt]} />
+				<Txt center txt={prompt.msg} styles={[styles.txt]} />
 			</TouchableOpacity>
 		</Animated.View>
 	)

@@ -8,12 +8,11 @@ import Txt from '@comps/Txt'
 import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { truncateStr } from '@nostr/util'
+import { useHistoryContext } from '@src/context/History'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { txType } from '@src/model'
-import { historyStore } from '@store'
-import { addToHistory } from '@store/latestHistoryEntries'
 import { getCustomMintNames } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
 import { copyStrToClipboard, formatInt, formatMintUrl, formatSatStr, getLnInvoiceInfo, isNum, isUndef } from '@util'
@@ -23,7 +22,6 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { s, ScaledSheet } from 'react-native-size-matters'
-
 
 const initialCopyState = {
 	value: false,
@@ -43,9 +41,12 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		sender,
 		recipient,
 		fee,
-		isSpent
+		isSpent,
+		isPending,
+		isExpired
 	} = route.params.entry
 	const { color } = useThemeContext()
+	const { addHistoryEntry, updateHistoryEntry, checkLnPr } = useHistoryContext()
 	const [copy, setCopy] = useState(initialCopyState)
 	const [spent, setSpent] = useState(isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -68,7 +69,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}, [mints])
 
 	const getTxColor = () => {
-		if (type === txType.SWAP || type === txType.RESTORE) { return color.TEXT }
+		if (type === txType.SWAP || type === txType.RESTORE || isPending) { return color.TEXT }
 		return amount < 0 ? mainColors.ERROR : mainColors.VALID
 	}
 
@@ -108,7 +109,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		const isSpendable = await isTokenSpendable(value)
 		setSpent(!isSpendable)
 		// update history item
-		await historyStore.updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: !isSpendable })
+		await updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: !isSpendable })
 		stopLoading()
 	}
 
@@ -118,13 +119,12 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 		if (!success) {
 			openPromptAutoClose({ msg: t('invalidOrSpent') })
 			setSpent(true)
-			stopLoading()
-			return
+			return stopLoading()
 		}
 		// entry.isSpent can only be false here and is not undefined anymore
-		await historyStore.updateHistoryEntry({ ...route.params.entry, isSpent: false }, { ...route.params.entry, isSpent: true })
+		await updateHistoryEntry({ ...route.params.entry, isSpent: false }, { ...route.params.entry, isSpent: true })
 		setSpent(true)
-		await addToHistory({ ...route.params.entry, amount: Math.abs(route.params.entry.amount), isSpent: true })
+		await addHistoryEntry({ ...route.params.entry, amount: Math.abs(route.params.entry.amount), isSpent: true })
 		stopLoading()
 		openPromptAutoClose({
 			msg: t(
@@ -160,22 +160,22 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}
 
 	// used in interval to check if token is spent while qr sheet is open
-	const checkPayment = async () => {
+	const checkEcashPayment = async () => {
+		if (type > txType.SEND_RECEIVE) { return clearTokenInterval() }
 		const isSpendable = await isTokenSpendable(value)
 		setSpent(!isSpendable)
 		if (!isSpendable) {
 			clearTokenInterval()
 			setQr({ ...qr, open: false })
 			openPromptAutoClose({ msg: t('isSpent', { ns: NS.history }), success: true })
-			// update history item
-			await historyStore.updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: true })
+			await updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: true })
 		}
 	}
 
 	const startTokenInterval = () => {
-		if (spent) { return }
+		if (spent || type > txType.SEND_RECEIVE) { return }
 		intervalRef.current = setInterval(() => {
-			void checkPayment()
+			void checkEcashPayment()
 		}, 3000)
 	}
 
@@ -187,7 +187,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 
 	// auto check payment in intervals
 	useEffect(() => {
-		if (!qr.open || spent) { return clearTokenInterval() }
+		if (!qr.open || spent || type === txType.SEND_RECEIVE) { return clearTokenInterval() }
 		startTokenInterval()
 		return () => clearTokenInterval()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -203,15 +203,37 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<View style={{ marginBottom: insets.bottom, paddingTop: s(10) }}>
 					<View style={styles.topSection}>
-						<Text style={[styles.amount, { color: getTxColor() }]}>
-							{getAmount()}
-						</Text>
-						<Txt
-							txt={formatSatStr(amount, 'standard', false)}
-							styles={[{ color: color.TEXT_SECONDARY }]}
-						/>
+						{isPending && !isExpired &&
+							<Txt txt={t('paymentPending')} />
+						}
+						{isExpired ?
+							<Txt txt={t('invoiceExpired')} />
+							:
+							<>
+								<Text style={[styles.amount, { color: getTxColor() }]}>
+									{getAmount()}
+								</Text>
+								<Txt
+									txt={formatSatStr(amount, 'standard', false)}
+									styles={[{ color: color.TEXT_SECONDARY }]}
+								/>
+							</>
+						}
 					</View>
 					<View style={globals(color).wrapContainer}>
+						{/* Manual check of pending invoice */}
+						{isPending && !isExpired &&
+							<>
+								<TouchableOpacity
+									style={styles.entryInfo}
+									onPress={() => void checkLnPr(value)}
+								>
+									<Txt txt={t('checkPayment')} />
+									<SearchIcon width={20} height={20} color={color.TEXT} />
+								</TouchableOpacity>
+								<Separator />
+							</>
+						}
 						{/* Settle Time */}
 						<View style={styles.entryInfo}>
 							<Txt txt={t('settleTime', { ns: NS.history })} />
@@ -344,11 +366,15 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 								</TouchableOpacity>
 								<Separator />
 								{/* LN payment fees */}
-								<View style={styles.entryInfo}>
-									<Txt txt={t('fee')} />
-									<Txt txt={formatSatStr(isNum(fee) ? fee : 0)} />
-								</View>
-								<Separator />
+								{!isPending &&
+									<>
+										<View style={styles.entryInfo}>
+											<Txt txt={t('fee')} />
+											<Txt txt={formatSatStr(isNum(fee) ? fee : 0)} />
+										</View>
+										<Separator />
+									</>
+								}
 							</>
 						}
 						{/* QR code */}

@@ -61,7 +61,7 @@
 		"back": "Volver",
 		"backToDashboard": "Volver al panel de control",
 		"balance": "Saldo",
-		"balanceAfterTX": "Saldo tras la transacción",
+		"balanceAfterTX": "Mint saldo tras la transacción",
 		"balTooLow": "Saldo insuficiente",
 		"bigQrMsg": "La cantidad de datos es demasiado grande para un código QR.",
 		"calculateFeeEst": "Calculando comisión",
@@ -250,7 +250,11 @@
 		"swapHint": "Esta opción requiere un pago Lightning, implica una tarifa y aún puede agregar la ceca desconocida a la lista si se produce un reembolso de tarifa.",
 		"trustHint": "La ceca asociada al token se añadirá a tu lista de confianza.",
 		"noDefaultHint": "Necesitas configurar una ceca predeterminada para realizar un intercambio automático.",
-		"autoSwapSuccess": "¡Intercambio exitoso!"
+		"autoSwapSuccess": "¡Intercambio exitoso!",
+		"paidInvoice": "Se ha pagado {{ count }} factura con un importe total de {{ total }} Sats",
+		"paidInvoices": "Se han pagado {{ count }} facturas con un importe total de {{ total }} Sats",
+		"checkPayment": "Comprobar pago",
+		"lnPaymentSpamHint": "Por favor, espere {{remainingSeconds}} segundos para aliviar la Mint."
 	},
 	"error": {
 		"checkSpendableErr": "Error al comprobar si el token puede ser gastado",

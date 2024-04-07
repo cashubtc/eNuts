@@ -318,7 +318,7 @@ export async function setPreferences(p: IPreferences) {
 // ################################ Invoices ################################
 export async function addInvoice({ pr, hash, amount, mintUrl }: Omit<IInvoice, 'time'>) {
 	const result = await db.execInsert<IInvoice>(
-		'INSERT OR IGNORE INTO invoices (amount,pr,hash,mintUrl) VALUES (?, ?, ?,?)',
+		'INSERT OR IGNORE INTO invoices (amount,pr,hash,mintUrl) VALUES (?, ?, ?, ?)',
 		[amount, pr, hash, mintUrl]
 	)
 	l('[addInvoice]', result, { pr, hash, amount, mintUrl })
@@ -345,6 +345,14 @@ export async function getInvoice(hash: string) {
 		[hash]
 	)
 	l('[getInvoice]', result, { hash })
+	return result?.item?.(0)
+}
+export async function getInvoiceByPr(pr: string) {
+	const result = await db.execSelect<IInvoice>(
+		'SELECT * from invoices Where pr = ?',
+		[pr]
+	)
+	l('[getInvoice]', result, { pr })
 	return result?.item?.(0)
 }
 

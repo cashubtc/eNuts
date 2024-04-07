@@ -118,6 +118,8 @@ export interface IHistoryEntry {
 	preImage?: string,
 	fee?: number,
 	isSpent?: boolean 	// is token spendable
+	isPending?: boolean // is LN invoice pending
+	isExpired?: boolean // is LN invoice expired
 }
 
 

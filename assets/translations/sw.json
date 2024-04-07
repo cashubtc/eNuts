@@ -61,7 +61,7 @@
 		"back": "Rudi",
 		"backToDashboard": "Rudi kwenye dashibodi",
 		"balance": "Salio",
-		"balanceAfterTX": "Salio baada ya TX",
+		"balanceAfterTX": "Mint salio baada ya TX",
 		"balTooLow": "Salio ni dogo mno",
 		"bigQrMsg": "Kiasi cha data ni kikubwa sana kwa nambari ya QR.",
 		"calculateFeeEst": "Kuhesabu ada",
@@ -250,7 +250,11 @@
 		"swapHint": "Chaguo hili linahitaji malipo ya Lightning, linajumuisha ada, na linaweza bado kuongeza mint isiyojulikana kwenye orodha ikiwa kuna marejesho ya ada.",
 		"trustHint": "Minti inayohusiana na alama itaongezwa kwenye orodha yako ya kuaminika.",
 		"noDefaultHint": "Unahitaji kuweka kalibu ya kufanya ubadilishaji wa moja kwa moja.",
-		"autoSwapSuccess": "Kubadilishana kufanikiwa!"
+		"autoSwapSuccess": "Kubadilishana kufanikiwa!",
+		"paidInvoice": "{{ count }} ankara imelipwa kwa jumla ya {{ total }} Sats",
+		"paidInvoices": "Bilansi ya ankara {{ count }} zimelipwa kwa jumla ya {{ total }} Sats",
+		"checkPayment": "Angalia malipo",
+		"lnPaymentSpamHint": "Tafadhali subiri {{remainingSeconds}} sekunde ili kupunguza mzigo kwa Mint."
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

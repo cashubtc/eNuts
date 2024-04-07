@@ -61,7 +61,7 @@
 		"back": "Retour",
 		"backToDashboard": "Retour au tableau de bord",
 		"balance": "Solde",
-		"balanceAfterTX": "Solde après paiement",
+		"balanceAfterTX": "Mint solde après paiement",
 		"balTooLow": "Solde insuffisant",
 		"bigQrMsg": "La quantité de données est trop grand pour un code QR.",
 		"calculateFeeEst": "Calcul des frais",
@@ -250,7 +250,11 @@
 		"swapHint": "Ce choix nécessite un paiement Lightning et peut entraîner des frais associés.",
 		"trustHint": "La menthe associée au jeton sera ajoutée à votre liste de confiance.",
 		"noDefaultHint": "Vous devez configurer une mint par défaut pour effectuer un échange automatique.",
-		"autoSwapSuccess": "Échange réussi!"
+		"autoSwapSuccess": "Échange réussi!",
+		"paidInvoice": "{{ count }} facture a été payée pour un montant total de {{ total }} Sats",
+		"paidInvoices": "{{ count }} factures ont été payées pour un montant total de {{ total }} Sats",
+		"checkPayment": "Vérifier le paiement",
+		"lnPaymentSpamHint": "Veuillez attendre {{remainingSeconds}} secondes pour soulager la Mint."
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",
