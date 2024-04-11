@@ -21,6 +21,8 @@
 		"build:preview:ios": "npx -y eas-cli@latest build -e preview -p ios -m manualPreview --no-wait",
 		"build:prod:android": "npx -y eas-cli@latest build -e production -p android -m manualProduction --no-wait",
 		"build:prod:ios": "npx -y eas-cli@latest build -e production -p ios -m manualProduction --no-wait",
+		"build:beta:android": "npx -y eas-cli@latest build -e beta -p android -m manualBeta --no-wait",
+		"build:beta:ios": "npx -y eas-cli@latest build -e beta -p ios -m manualBeta --no-wait",
 		"build:ci:preview:android": "npx -y eas-cli@latest build --non-interactive -e preview -p android -m ciPreview --no-wait",
 		"build:ci:preview:ios": "npx -y eas-cli@latest build --non-interactive -e preview -p ios -m ciPreview --no-wait",
 		"build:ci:prod:android": "npx -y eas-cli@latest build --non-interactive -e production -p android -m ciProduction --no-wait",
@@ -81,7 +83,8 @@
 		"react-native-screens": "~3.29.0",
 		"react-native-size-matters": "^0.4.2",
 		"react-native-svg": "14.1.0",
-		"text-encoding-polyfill": "^0.6.7"
+		"text-encoding-polyfill": "^0.6.7",
+		"expo-updates": "~0.24.12"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.24.3",

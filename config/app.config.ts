@@ -60,6 +60,12 @@ const config: ExpoConfig = {
 		'android',
 	],
 	version: `${version}${!IS_PROD && !IS_BETA ? `-${_appVariant}` : ''}`,
+	updates: {
+		url: 'https://u.expo.dev/edb75ccd-71ac-4934-9147-baf1c7f2b068'
+	},
+	runtimeVersion: {
+		policy: 'appVersion'
+	},
 	scheme: ['cashu', 'lightning'],
 	orientation: 'portrait',
 	icon: './assets/app-icon-all.png',
