@@ -1,5 +1,6 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
 import { CashuMint, deriveKeysetId, getDecodedToken } from '@cashu/cashu-ts'
+import { env } from '@consts'
 import { l } from '@log'
 import type { IContact, IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
 import { arrToChunks, isObj } from '@util'
@@ -30,7 +31,7 @@ const db = new Db(SQLite.openDatabase('cashu.db'))
 
 // ################################ init DB ################################
 export async function initDb() {
-	if (process.env.NODE_ENV === 'test') {
+	if (env.NODE_ENV === 'test') {
 		l('[initDb]', 'reset DB in test mode')
 		await db.reset(SQLite.openDatabase('cashu.db'))
 	}
@@ -47,7 +48,7 @@ export async function initDb() {
 	const cmds: ITx[] = queries.map(query => ({
 		sql: query,
 		args: [],
-		errorCb: (_, error) => {
+		errorCb: (_: any, error: unknown) => {
 			l('[initDb]', query, 'DB init error!', error)
 			return true
 		},
