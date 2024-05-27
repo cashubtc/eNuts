@@ -17,7 +17,7 @@ import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isNul
 import { decodeUrlOrAddress, isLnurlOrAddress, isUrl } from '@util/lnurl'
 import { getTokenInfo } from '@wallet/proofs'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
-import { Camera, FlashMode } from 'expo-camera'
+import { Camera, FlashMode } from 'expo-camera/legacy'
 import { nip19 } from 'nostr-tools'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

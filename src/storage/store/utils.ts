@@ -1,6 +1,6 @@
 import { Db } from '@db/Db'
 import { l } from '@src/logger'
-import * as SQLite from 'expo-sqlite'
+import * as SQLite from 'expo-sqlite/legacy'
 
 
 /* const _storeDbs: { [k: string]: SimpleKeyValueStore } = {} */
