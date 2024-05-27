@@ -10,6 +10,7 @@ on:
 env:
     EXPO_NO_TELEMETRY: 1
     SENTRY_DISABLE_AUTO_UPLOAD: true
+    CI: 1
 jobs:
     build:
         name: build-android-production
@@ -55,7 +56,7 @@ jobs:
               run: npm i
 
             - name: PreBuild Android
-              run: npx expo prebuild -p android --clean --non-interactive
+              run: npx expo prebuild -p android --clean
 
             - name: make gradlew executable
               run: chmod +x ./android/gradlew
