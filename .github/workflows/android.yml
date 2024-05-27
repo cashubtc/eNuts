@@ -56,7 +56,7 @@ jobs:
               run: npm i
 
             - name: PreBuild Android
-              run: npx expo prebuild -p android --clean
+              run: npx expo prebuild -p android --clean --npm
 
             - name: make gradlew executable
               run: chmod +x ./android/gradlew
