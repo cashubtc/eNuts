@@ -52,7 +52,12 @@ jobs:
                   packages: platform-tools platforms;android-34 build-tools;33.0.1 build-tools;34.0.0 ndk;25.1.8937393 cmake;3.22.1
 
             - name: Install deps
-              run: npm ci
+              run: |
+                if [ -e package-lock.json ]; then
+                npm ci
+                else
+                npm i
+                fi
 
             - name: PreBuild Android
               run: yes | npx expo prebuild -p android --clean
