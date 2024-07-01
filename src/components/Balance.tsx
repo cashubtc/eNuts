@@ -67,10 +67,14 @@ export default function Balance({ nav }: IBalanceProps) {
 					{hidden.balance ? '****' : formatSats ? formatBalance(balance) : formatInt(balance)}
 				</Text>
 				<View style={styles.balAssetNameWrap}>
-					<Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
-						{formatSats ? 'BTC' : formatSatStr(balance, 'compact', false)}
-					</Text>
-					<SwapCurrencyIcon width={s(20)} height={s(20)} color={getColor(highlight, color)} />
+					{!hidden.balance &&
+						<>
+							<Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
+								{formatSats ? 'BTC' : formatSatStr(balance, 'compact', false)}
+							</Text>
+							<SwapCurrencyIcon width={s(20)} height={s(20)} color={getColor(highlight, color)} />
+						</>
+					}
 				</View>
 			</TouchableOpacity>
 			{/* No transactions yet */}
@@ -190,6 +194,7 @@ const styles = ScaledSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		marginBottom: '10@s',
+		minHeight: '20@s',
 	},
 	balAssetName: {
 		fontSize: '14@vs',
