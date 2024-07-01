@@ -12,7 +12,7 @@ interface IMyModalProps {
 	success?: boolean
 	hasNoPadding?: boolean
 	close?: () => void
-	onBackdropPress?: () => void
+	// onBackdropPress?: () => void
 	children: React.ReactNode
 }
 
@@ -23,7 +23,7 @@ export default function MyModal({
 	success,
 	hasNoPadding,
 	close,
-	onBackdropPress,
+	// onBackdropPress,
 	children
 }: IMyModalProps) {
 

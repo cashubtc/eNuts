@@ -125,7 +125,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			if (!route.params.sawSeedUpdate) {
 				return navigation.navigate('Seed')
 			}
-			return navigation.navigate(shouldRemove ? 'Security settings' : 'dashboard')
+			return navigation.navigate(shouldRemove ? 'Settings' : 'dashboard')
 		}
 		// user is submitting a pin confirmation
 		if (isConfirm) {
@@ -143,7 +143,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 			resetStates()
 			setSuccess(true)
 			setAuth(hash)
-			return navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
+			return navigation.navigate(shouldEdit ? 'Settings' : 'dashboard')
 		}
 		// else: bring user in the confirm state after entering his first pin in setup
 		setIsConfirm(true)
@@ -176,7 +176,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 		}
 		// skip pin setup
 		await store.set(STORE_KEYS.pinSkipped, '1')
-		navigation.navigate(shouldEdit ? 'Security settings' : 'dashboard')
+		navigation.navigate(shouldEdit ? 'Settings' : 'dashboard')
 	}
 
 	// conditional rendering dots of pin input
@@ -290,7 +290,7 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
 										txt={t('cancel')}
 										onPress={() => {
 											resetStates()
-											navigation.navigate('Security settings')
+											navigation.navigate('Settings')
 										}}
 										style={[styles.skip]}
 										txtColor={mainColors.WHITE}

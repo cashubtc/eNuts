@@ -30,7 +30,7 @@ export function Disclaimer({ navigation }: TDisclaimerPageProps) {
 					/>
 					<View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
 						<TouchableOpacity
-							onPress={() => navigation.navigate('About settings')}
+							onPress={() => navigation.navigate('Settings')}
 							style={styles.shareFeedback}
 						>
 							<Txt txt={t('shareOrReport', { ns: NS.common })} bold styles={[{ fontSize: vs(16) }]} />
