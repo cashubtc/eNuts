@@ -10,7 +10,7 @@ import { highlight as hi } from '@styles'
 import { isStr } from '@util'
 import { useTranslation } from 'react-i18next'
 import { TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { t } = useTranslation([NS.topNav])
@@ -35,7 +35,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		<View
 			style={[
 				styles.bottomNav,
-				{ paddingBottom: isIOS ? vs(25) : vs(15) },
+				{ paddingBottom: isIOS ? s(25) : s(15) },
 			]}>
 			<TouchableOpacity
 				style={styles.navIcon}
