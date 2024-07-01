@@ -203,7 +203,6 @@
 		"zapSoon": "打閃即將添加...",
 		"enutsPub": "eNuts 公鑰：",
 		"seeFullHistory": "查看完整交易歷史",
-		"hideLatestTxs": "隱藏交易",
 		"next": "繼續",
 		"skip": "跳過",
 		"donateLn": "捐贈",
@@ -254,7 +253,7 @@
 		"paidInvoice": "已支付 {{ count }} 張發票，總金額爲 {{ total }} 聰",
 		"paidInvoices": "已支付 {{ count }} 張發票，總金額爲 {{ total }} 聰",
 		"checkPayment": "檢查付款",
-		"lnPaymentSpamHint": "請等待 {{remainingSeconds}} 秒，以免對鑄幣廠造成垃圾郵件。"
+		"lnPaymentSpamHint": "請等待 {{ remainingSeconds }} 秒，以免對鑄幣廠造成垃圾郵件。"
 	},
 	"error": {
 		"checkSpendableErr": "檢查代幣是否可使用時出錯",

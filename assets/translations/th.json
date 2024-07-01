@@ -203,7 +203,6 @@
 		"zapSoon": "Zaps จะถูกเพิ่มเร็ว ๆ นี้...",
 		"enutsPub": "คีย์สาธารณะ eNuts: ",
 		"seeFullHistory": "ดูประวัติการทำธุรกรรมทั้งหมด",
-		"hideLatestTxs": "ซ่อนการทำธุรกรรม",
 		"next": "ถัดไป",
 		"skip": "ข้าม",
 		"donateLn": "บริจาค",
@@ -254,7 +253,7 @@
 		"paidInvoice": "{{ count }} ใบแจ้งหนี้ได้รับการชำระเงินด้วยจำนวนรวม {{ total }} Sats",
 		"paidInvoices": "{{ count }} ใบแจ้งหนี้ได้รับการชำระเงินด้วยจำนวนรวม {{ total }} Sats",
 		"checkPayment": "ตรวจสอบการชำระเงิน",
-		"lnPaymentSpamHint": "โปรดรอ {{remainingSeconds}} วินาทีเพื่อหลีกเลี่ยงการสแปมมิ้นต์"
+		"lnPaymentSpamHint": "โปรดรอ {{ remainingSeconds }} วินาทีเพื่อหลีกเลี่ยงการสแปมมิ้นต์"
 	},
 	"error": {
 		"checkSpendableErr": "เกิดข้อผิดพลาดขณะตรวจสอบว่า Token สามารถใช้ได้",

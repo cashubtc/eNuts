@@ -203,7 +203,6 @@
 		"zapSoon": "Zap zitaongezwa hivi karibuni...",
 		"enutsPub": "Kitufe cha umma cha eNuts: ",
 		"seeFullHistory": "Angalia historia kamili ya miamala",
-		"hideLatestTxs": "Ficha shughuli",
 		"next": "Ifuatayo",
 		"skip": "Ruka",
 		"donateLn": "Toa kwa njia",
@@ -254,7 +253,7 @@
 		"paidInvoice": "{{ count }} ankara imelipwa kwa jumla ya {{ total }} Sats",
 		"paidInvoices": "Bilansi ya ankara {{ count }} zimelipwa kwa jumla ya {{ total }} Sats",
 		"checkPayment": "Angalia malipo",
-		"lnPaymentSpamHint": "Tafadhali subiri {{remainingSeconds}} sekunde ili kupunguza mzigo kwa Mint."
+		"lnPaymentSpamHint": "Tafadhali subiri {{ remainingSeconds }} sekunde ili kupunguza mzigo kwa Mint."
 	},
 	"error": {
 		"checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",

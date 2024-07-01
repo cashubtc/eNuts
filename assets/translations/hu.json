@@ -203,7 +203,6 @@
 		"zapSoon": "Zap is érkezik hamarosan...",
 		"enutsPub": "eNuts publikus kulcs: ",
 		"seeFullHistory": "Teljes fizetési történet megjelenítése",
-		"hideLatestTxs": "Utalások elrejtése",
 		"next": "Következő",
 		"skip": "Kihagy",
 		"donateLn": "Támogatás",
@@ -254,7 +253,7 @@
 		"paidInvoice": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
 		"paidInvoices": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
 		"checkPayment": "Fizetés ellenőrzése",
-		"lnPaymentSpamHint": "Kérjük, várjon {{remainingSeconds}} másodpercet a Mint tehermentesítése érdekében."
+		"lnPaymentSpamHint": "Kérjük, várjon {{ remainingSeconds }} másodpercet a Mint tehermentesítése érdekében."
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",

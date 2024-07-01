@@ -203,7 +203,6 @@
 		"zapSoon": "Gli zap verranno aggiunti a breve...",
 		"enutsPub": "Chiave pubblica di eNuts: ",
 		"seeFullHistory": "Visualizzarere lo storico delle transazioni",
-		"hideLatestTxs": "Nascondere transazioni",
 		"next": "Prossimo",
 		"skip": "Salta",
 		"donateLn": "Dona",
@@ -254,7 +253,7 @@
 		"paidInvoice": "{{ count }} richiesta di pagamento pagata con un totale di {{ total }} Sat",
 		"paidInvoices": "{{ count }} richieste di pagamento pagate con un totale di {{ total }} Sat",
 		"checkPayment": "Controllare pagamento",
-		"lnPaymentSpamHint": "Attendere {{remainingSeconds}} secondi per evitare di sovraccaricare la mint."
+		"lnPaymentSpamHint": "Attendere {{ remainingSeconds }} secondi per evitare di sovraccaricare la mint."
 	},
 	"error": {
 		"checkSpendableErr": "Errore di verifica del token",
