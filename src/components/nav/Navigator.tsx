@@ -94,6 +94,7 @@ export default function Navigator({
 					headerShown: false,
 					animation: 'fade',
 					animationDuration,
+					navigationBarColor: color.BACKGROUND,
 				}}
 			>
 				<Stack.Screen name='selectMint' component={SelectMintScreen} />
