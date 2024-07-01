@@ -98,10 +98,10 @@ const styles = ScaledSheet.create({
 	navIcon: {
 		minWidth: '100@s',
 		alignItems: 'center',
-		marginTop: '10@vs',
+		marginTop: '10@s',
 	},
 	iconTxt: {
-		fontSize: '10@vs',
-		marginTop: '4@vs',
+		fontSize: '10@s',
+		marginTop: '4@s',
 	}
 })
