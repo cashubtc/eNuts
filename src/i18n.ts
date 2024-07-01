@@ -8,8 +8,8 @@ import it from '@assets/translations/it.json'
 import ru from '@assets/translations/ru.json'
 import sw from '@assets/translations/sw.json'
 import th from '@assets/translations/th.json'
-// zh 1
-// zh 2
+import zh_tr from '@assets/translations/zh-Hans-CN.json'
+import zh_si from '@assets/translations/zh-Hant-TW.json'
 import { l } from '@log'
 import { isErr } from '@util'
 import { getTranslationLangCode } from '@util/localization'
@@ -34,7 +34,7 @@ export enum NS {
 
 export const defaultNS = NS.common
 export const resources = {
-	en, de, fr, sw, es, hu, it, ru, th
+	en, de, fr, sw, es, hu, it, ru, th, 'zh-Hans-CN': zh_tr, 'zh-Hant-TW': zh_si
 } as const
 
 /**

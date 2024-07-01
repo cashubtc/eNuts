@@ -22,7 +22,9 @@ const langs: ILangsOpt[] = [
 	{ name: 'hungarian', code: 'hu' },
 	{ name: 'italian', code: 'it' },
 	{ name: 'russian', code: 'ru' },
-	{ name: 'thai', code: 'th' }
+	{ name: 'thai', code: 'th' },
+	{ name: 'chinese traditional', code: 'zh-Hant-TW' },
+	{ name: 'chinese simplified', code: 'zh-Hans-CN' },
 ]
 
 export default function LanguageSettings({ navigation }: TLanguageSettingsPageProps) {
