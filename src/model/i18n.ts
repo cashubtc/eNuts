@@ -20,4 +20,5 @@ export const translationLangCodes:Readonly<string[]> = [..._translationLangCodes
 export interface ILangsOpt {
 	name: TTlLangNames
 	code: TranslationLangCodes
+	flag: string
 }
