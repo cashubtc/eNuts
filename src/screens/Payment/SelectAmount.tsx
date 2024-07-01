@@ -9,6 +9,7 @@ import { isIOS } from '@consts'
 import { l } from '@log'
 import type { TSelectAmountPageProps } from '@model/nav'
 import { useFocusEffect } from '@react-navigation/native'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -26,6 +27,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 	const { openPromptAutoClose } = usePromptContext()
 	const { t } = useTranslation([NS.wallet])
 	const { color, highlight } = useThemeContext()
+	const { hidden } = usePrivacyContext()
 	const { anim, shake } = useShakeAnimation()
 	const numericInputRef = createRef<TextInput>()
 	const txtInputRef = createRef<TextInput>()
@@ -173,7 +175,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			withBackBtn
 			handlePress={() => scanned ? navigation.navigate('qr scan', {}) : navigation.goBack()}
 			mintBalance={balance}
-			disableMintBalance={isMelt || isSwap}
+			disableMintBalance={isMelt || isSwap || hidden.balance}
 			handleMintBalancePress={() => setAmount(`${balance}`)}
 		>
 			{!isMelt && !isSwap &&

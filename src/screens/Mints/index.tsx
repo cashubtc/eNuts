@@ -14,6 +14,7 @@ import type { IMintBalWithName, IMintUrl } from '@model'
 import type { TMintsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { BITCOIN_MINTS_URL } from '@src/consts/urls'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -32,6 +33,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 	const { prompt, closePrompt, openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
+	const { hidden } = usePrivacyContext()
 	const [loading, setLoading] = useState(false)
 	// mint list
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
@@ -178,7 +180,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 														marginBottom: 5
 													}}
 												>
-													{m.amount > 0 ? formatSatStr(m.amount, 'compact') : t('emptyMint')}
+													{hidden.balance ? '****' : m.amount > 0 ? formatSatStr(m.amount, 'compact') : t('emptyMint')}
 												</Text>
 											</View>
 										}

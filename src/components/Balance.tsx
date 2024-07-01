@@ -136,8 +136,9 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, isExpired, onPr
 	const { hidden } = usePrivacyContext()
 
 	const getAmount = () => {
+		if (hidden.balance) { return '****' }
 		if (isSwap) { return formatSatStr(Math.abs(amount)) }
-		return hidden.balance ? '****' : `${amount > 0 ? '+' : ''}${formatSatStr(amount)}`
+		return `${amount > 0 ? '+' : ''}${formatSatStr(amount)}`
 	}
 
 	return (

@@ -2,6 +2,7 @@ import { ClockIcon, CloseCircleIcon, IncomingArrowIcon, OutgoingArrowIcon } from
 import Txt from '@comps/Txt'
 import { type IHistoryEntry, txType } from '@model'
 import type { THistoryPageProps } from '@model/nav'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
@@ -20,6 +21,7 @@ interface IHistoryEntryProps {
 export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 	const { t } = useTranslation([NS.history])
 	const { color, highlight } = useThemeContext()
+	const { hidden } = usePrivacyContext()
 
 	const getTxTypeStr = () => {
 		if (item.type === txType.SEND_RECEIVE) { return 'Ecash' }
@@ -66,14 +68,17 @@ export default function HistoryEntry({ nav, item }: IHistoryEntryProps) {
 			<View style={[styles.amount, { top: isNum(item.fee) && item.fee > 0 ? 0 : s(10) }]}>
 				<Txt
 					txt={
-						item.isExpired ?
-							t('expired', { ns: NS.common })
+						hidden.balance ?
+							'****'
 							:
-							`${item.amount > 0 && item.type < txType.SWAP ? '+' : ''}${formatSatStr(item.type === txType.SWAP || item.type === txType.RESTORE ? Math.abs(item.amount) : item.amount, 'standard')}`
+							item.isExpired ?
+								t('expired', { ns: NS.common })
+								:
+								`${item.amount > 0 && item.type < txType.SWAP ? '+' : ''}${formatSatStr(item.type === txType.SWAP || item.type === txType.RESTORE ? Math.abs(item.amount) : item.amount, 'standard')}`
 					}
 					styles={[{ color: getTxColor(), marginBottom: s(5), textAlign: 'right' }]}
 				/>
-				{isNum(item.fee) && item.fee > 0 &&
+				{!hidden.balance && isNum(item.fee) && item.fee > 0 &&
 					<Text style={{ color: color.TEXT_SECONDARY, textAlign: 'right', fontSize: s(12) }}>
 						{t('fee', { ns: NS.common })}: {item.fee}
 					</Text>
