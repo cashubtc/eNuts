@@ -2,7 +2,7 @@ import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
 import { SafeAreaView, type StyleProp, type TextStyle, TouchableOpacity } from 'react-native'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import Loading from './Loading'
 import Txt from './Txt'
@@ -29,10 +29,10 @@ export default function Button({ txt, onPress, border, outlined, filled, disable
 				disabled={disabled}
 				style={[
 					styles.touchableOpacity,
-					{ backgroundColor: hi[highlight], paddingHorizontal: vs(18), paddingVertical: vs(18) },
+					{ backgroundColor: hi[highlight], paddingHorizontal: s(18), paddingVertical: s(18) },
 					border ? { borderWidth: 1, borderColor: mainColors.WHITE } : {},
 					filled ? { backgroundColor: mainColors.WHITE } : {},
-					outlined ? { backgroundColor: 'transparent', paddingHorizontal: vs(18), paddingVertical: vs(18), borderWidth: 1, borderColor: hi[highlight] } : {},
+					outlined ? { backgroundColor: 'transparent', paddingHorizontal: s(18), paddingVertical: s(18), borderWidth: 1, borderColor: hi[highlight] } : {},
 					disabled ? { opacity: .3 } : {}
 				]}
 				onPress={onPress}
@@ -136,8 +136,8 @@ const styles = ScaledSheet.create({
 	},
 	// txt button
 	copyTxt: {
-		paddingTop: '30@vs',
-		paddingBottom: '10@vs',
+		paddingTop: '30@s',
+		paddingBottom: '10@s',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center'
