@@ -35,7 +35,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		<View
 			style={[
 				styles.bottomNav,
-				{ paddingBottom: isIOS ? vs(25) : vs(10) },
+				{ paddingBottom: isIOS ? vs(25) : vs(15) },
 			]}>
 			<TouchableOpacity
 				style={styles.navIcon}
