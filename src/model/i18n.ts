@@ -5,10 +5,13 @@ const _tlLangNames = [
 	'swahili',
 	'spanish',
 	'hungarian',
+	'italian',
+	'russian',
+	'thai',
 ] as const
 export type TTlLangNames = typeof _tlLangNames[number]
 
-const _translationLangCodes = ['de', 'en', 'fr', 'sw', 'es', 'hu'] as const
+const _translationLangCodes = ['de', 'en', 'fr', 'sw', 'es', 'hu', 'it', 'ru', 'th'] as const
 export type TranslationLangCodes = typeof _translationLangCodes[number]
 export const translationLangCodes:Readonly<string[]> = [..._translationLangCodes]
 
