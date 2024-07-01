@@ -416,7 +416,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					{contactsRef.current.length > 0 ?
 						<View style={[
 							styles.contactsWrap,
-							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : vs(70) },
+							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : vs(60) },
 						]}>
 							{search.input.length > 0 && search.results.length > 0 && search.hasResults ?
 								<FlashList

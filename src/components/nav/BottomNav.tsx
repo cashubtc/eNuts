@@ -102,6 +102,6 @@ const styles = ScaledSheet.create({
 	},
 	iconTxt: {
 		fontSize: '10@vs',
-		marginTop: '2@vs',
+		marginTop: '4@vs',
 	}
 })
