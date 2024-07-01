@@ -130,7 +130,7 @@ const styles = ScaledSheet.create({
 	},
 	// icon button
 	iconBtn: {
-		borderWidth: 1,
+		borderWidth: 2,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
