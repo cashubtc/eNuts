@@ -89,6 +89,11 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+            - name: Disk Cleanup
+              run: |
+                  sudo apt-get clean
+                  df -h
+
             - name: Enable KVM
               run: |
                   mkdir -p /etc/udev/rules.d
