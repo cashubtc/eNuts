@@ -78,7 +78,6 @@ const config: ExpoConfig = {
 	assetBundlePatterns: ['**/*'],
 	plugins: [
 		'expo-localization',
-		['expo-barcode-scanner', { cameraPermission }],
 		['expo-camera', { cameraPermission }],
 		'expo-secure-store',
 		[

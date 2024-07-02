@@ -11,7 +11,7 @@ import type {
 	SQLStmtErrCb,
 	SQLTxErrCb,
 	WebSQLDatabase
-} from 'expo-sqlite'
+} from 'expo-sqlite/legacy'
 
 function isWebSQLDatabase(v: unknown): v is WebSQLDatabase {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -223,11 +223,15 @@ export class Db {
 			db.transaction(tx => {
 				cmds.forEach(({ sql: sqlStmt, args, cb, errorCb }) => {
 					tx.executeSql<T>(sqlStmt, args, (tx, result) => {
+						// TODO provide types to satisfy TS
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 						cb?.(tx, result)
 						endResult.push(result)
 						// l({result,sqlStmt,args})
 					}, (tx, error) => {
 						// l({error,tx})
+						// TODO provide types to satisfy TS
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 						errorCb?.(tx, error)
 						return true
 					})

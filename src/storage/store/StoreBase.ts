@@ -1,7 +1,7 @@
 import type { Db } from '@db/Db'
 import { l } from '@log'
 import type { IKeyValuePair } from '@model'
-import type { Query, SQLResultSetRowList } from 'expo-sqlite'
+import type { Query, SQLResultSetRowList } from 'expo-sqlite/legacy'
 
 import { cTo, getBlankSQLResultSetRowList, toJson } from './utils'
 

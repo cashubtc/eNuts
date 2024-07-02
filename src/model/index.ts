@@ -1,7 +1,7 @@
 import type { PayLnInvoiceResponse, Proof, Token } from '@cashu/cashu-ts'
 import type { HighlightKey } from '@styles'
 import type { ExpoConfig } from 'expo/config'
-import type { SQLStmtCb, SQLStmtErrCb } from 'expo-sqlite'
+import type { SQLStmtCb, SQLStmtErrCb } from 'expo-sqlite/legacy'
 
 export interface IExpoConfig extends ExpoConfig {
 	extra?: {

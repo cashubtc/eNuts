@@ -1,4 +1,4 @@
-import type { Query, SQLiteCb, WebSQLDatabase } from 'expo-sqlite'
+import type { Query, SQLiteCb, WebSQLDatabase } from 'expo-sqlite/legacy'
 import type { Database } from 'sqlite3'
 //import { l } from '@log';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

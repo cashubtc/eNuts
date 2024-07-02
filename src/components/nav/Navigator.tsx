@@ -164,7 +164,13 @@ export default function Navigator({
 				<Stack.Screen name='mintmanagement' component={MintManagement} />
 				<Stack.Screen name='mint info' component={MintInfoPage} />
 				<Stack.Screen name='mint proofs' component={MintProofsPage} />
-				<Stack.Screen name='qr scan' component={QRScanPage} />
+				<Stack.Screen
+					name='qr scan'
+					component={QRScanPage}
+					options={{
+						navigationBarHidden: true,
+					}}
+				/>
 				<Stack.Screen name='history' component={HistoryPage} />
 				<Stack.Screen name='history entry details' component={DetailsPage} />
 				<Stack.Screen name='Address book' component={AddressbookPage} />

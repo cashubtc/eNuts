@@ -1,5 +1,6 @@
 
 import type { IExpoConfig } from '@model'
+import { IEnv } from '@model/env'
 import { default as Consts, ExecutionEnvironment as ExecEnv } from 'expo-constants'
 import { Platform } from 'react-native'
 
@@ -19,47 +20,49 @@ export { isExpo, isExpoDev, isExpoProd, isReactNativeDevMode }
 
 type AppVariant = 'preview' | 'beta' | 'prod' | 'dev' | undefined
 
+const typedEnv = process?.env as unknown as IEnv
+
 function nodeEnvShort(): 'test' | AppVariant {
-	if (!process?.env?.NODE_ENV) {
-		process.env.NODE_ENV = 'development'
+	if (!typedEnv?.NODE_ENV) {
+		typedEnv.NODE_ENV = 'development'
 		return
 	}
-	if (process?.env?.NODE_ENV === 'production') { return 'prod' }
-	if (process?.env?.NODE_ENV === 'development') { return 'dev' }
-	if (process?.env?.NODE_ENV === 'test') { return 'test' }
-	if (process?.env?.NODE_ENV === 'preview') { return 'preview' }
-	if (process?.env?.NODE_ENV === 'beta') { return 'beta' }
+	if (typedEnv?.NODE_ENV === 'production') { return 'prod' }
+	if (typedEnv?.NODE_ENV === 'development') { return 'dev' }
+	if (typedEnv?.NODE_ENV === 'test') { return 'test' }
+	if (typedEnv?.NODE_ENV === 'preview') { return 'preview' }
+	if (typedEnv?.NODE_ENV === 'beta') { return 'beta' }
 }
 
 function appVariant(): AppVariant {
-	if (!process?.env?.APP_VARIANT) {
-		process.env.APP_VARIANT = 'dev'
+	if (!typedEnv?.APP_VARIANT) {
+		typedEnv.APP_VARIANT = 'dev'
 		return
 	}
-	if (process?.env?.APP_VARIANT === 'prod') { return 'prod' }
-	if (process?.env?.APP_VARIANT === 'dev') { return 'dev' }
-	if (process?.env?.APP_VARIANT === 'preview') { return 'preview' }
-	if (process?.env?.APP_VARIANT === 'beta') { return 'beta' }
+	if (typedEnv?.APP_VARIANT === 'prod') { return 'prod' }
+	if (typedEnv?.APP_VARIANT === 'dev') { return 'dev' }
+	if (typedEnv?.APP_VARIANT === 'preview') { return 'preview' }
+	if (typedEnv?.APP_VARIANT === 'beta') { return 'beta' }
 }
 
 const config: Readonly<IExpoConfig | undefined | null> = Consts?.expoConfig
 
 export const env/* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> */ = {
-	DEBUG: process?.env?.DEBUG || config?.extra?.DEBUG,
+	DEBUG: typedEnv?.DEBUG || config?.extra?.DEBUG,
 
-	NODE_ENV: process?.env?.NODE_ENV || config?.extra?.NODE_ENV,
+	NODE_ENV: typedEnv?.NODE_ENV || config?.extra?.NODE_ENV,
 
-	NODE_ENV_SHORT: process?.env?.NODE_ENV_SHORT || config?.extra?.NODE_ENV_SHORT || nodeEnvShort() || appVariant(),
+	NODE_ENV_SHORT: typedEnv?.NODE_ENV_SHORT || config?.extra?.NODE_ENV_SHORT || nodeEnvShort() || appVariant(),
 
-	APP_VARIANT: process?.env?.APP_VARIANT || config?.extra?.APP_VARIANT || appVariant() || nodeEnvShort(),
+	APP_VARIANT: typedEnv?.APP_VARIANT || config?.extra?.APP_VARIANT || appVariant() || nodeEnvShort(),
 
-	SENTRY_DSN: process?.env?.SENTRY_DSN
-		|| process?.env?.SENTRY_DSN
+	SENTRY_DSN: typedEnv?.SENTRY_DSN
+		|| typedEnv?.SENTRY_DSN
 		|| config?.extra?.SENTRY_DSN,
 
 	isExpo,
 	isExpoDev,
-	isExpoBeta: process?.env?.APP_VARIANT === 'beta' || config?.extra?.APP_VARIANT === 'beta' || appVariant() === 'beta',
+	isExpoBeta: typedEnv?.APP_VARIANT === 'beta' || config?.extra?.APP_VARIANT === 'beta' || appVariant() === 'beta',
 	isExpoProd,
 	isReactNativeDevMode,
 } as const
@@ -69,7 +72,7 @@ export const isTestMode = (typeof __TEST__ === 'boolean' && __TEST__)
 	|| (env?.NODE_ENV_SHORT === 'test' || env?.NODE_ENV === 'test')
 	|| (env?.APP_VARIANT === 'test' || env?.NODE_ENV === 'test')
 	|| (env?.NODE_ENV === 'test' && env?.NODE_ENV_SHORT === 'test')
-	|| process?.env?.NODE_ENV === 'test' || config?.extra?.NODE_ENV === 'test'
+	|| typedEnv?.NODE_ENV === 'test' || config?.extra?.NODE_ENV === 'test'
 
 export const isIOS = Platform.OS === 'ios'
 export const isNotIosStore = __DEV__ || env.isExpoBeta || !isIOS
