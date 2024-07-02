@@ -40,14 +40,9 @@ import RestoreWarningScreen from '@screens/Restore/RestoreWarning'
 import SeedScreen from '@screens/Restore/Seed'
 import SelectRecoveryMintScreen from '@screens/Restore/SelectRecoveryMint'
 import Settings from '@screens/Settings'
-import AboutSettings from '@screens/Settings/About'
-import ContactsSettings from '@screens/Settings/Contacts'
-import GeneralSettings from '@screens/Settings/General'
-import AdvancedFunctionScreen from '@screens/Settings/General/Advanced'
-import DisplaySettings from '@screens/Settings/General/Display'
-import LanguageSettings from '@screens/Settings/General/Language'
-import PrivacySettings from '@screens/Settings/Privacy'
-import SecuritySettings from '@screens/Settings/Security'
+import AdvancedFunctionScreen from '@screens/Settings/Advanced'
+import DisplaySettings from '@screens/Settings/Display'
+import LanguageSettings from '@screens/Settings/Language'
 import { useThemeContext } from '@src/context/Theme'
 import { useEffect } from 'react'
 import { View } from 'react-native'
@@ -99,6 +94,7 @@ export default function Navigator({
 					headerShown: false,
 					animation: 'fade',
 					animationDuration,
+					navigationBarColor: color.BACKGROUND,
 				}}
 			>
 				<Stack.Screen name='selectMint' component={SelectMintScreen} />
@@ -174,14 +170,9 @@ export default function Navigator({
 				<Stack.Screen name='Address book' component={AddressbookPage} />
 				<Stack.Screen name='Contact' component={ContactPage} />
 				<Stack.Screen name='Settings' component={Settings} />
-				<Stack.Screen name='General settings' component={GeneralSettings} />
 				<Stack.Screen name='Display settings' component={DisplaySettings} />
-				<Stack.Screen name='Security settings' component={SecuritySettings} />
-				<Stack.Screen name='Privacy settings' component={PrivacySettings} />
-				<Stack.Screen name='Contacts settings' component={ContactsSettings} />
 				<Stack.Screen name='Language settings' component={LanguageSettings} />
 				<Stack.Screen name='Advanced settings' component={AdvancedFunctionScreen} />
-				<Stack.Screen name='About settings' component={AboutSettings} />
 				<Stack.Screen
 					name='Seed'
 					component={SeedScreen}

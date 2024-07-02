@@ -111,6 +111,11 @@
 		"spanish": "Espagnol",
 		"swahili": "Swahili",
 		"hungarian": "Hongrois",
+		"italian": "Italien",
+		"russian": "Russe",
+		"thai": "Thaïlandais",
+		"chinese simplified": "Chinois (Simplifié)",
+		"chinese traditional": "Chinois (Traditionnel)",
 		"enutsRandD": "eNuts Telegram",
 		"estimatedFees": "Frais estimés",
 		"estimateFee": "Estimer les frais.",
@@ -226,7 +231,6 @@
 		"scanAnother": "Scanner un autre code QR",
 		"clearOverHere": "Tout est clair de ce côté-ci!",
 		"totalDmsReceived": "Vous avez reçu 4 Cashu token.",
-		"hideLatestTxs": "Masquer transactions",
 		"deleteNpub": "Supprimer NPUB?",
 		"delNpubHint": "Tous les contacts et les données associées seront supprimés.",
 		"addNewNpub": "Ajouter un nouveau NPUB?",
@@ -254,7 +258,7 @@
 		"paidInvoice": "{{ count }} facture a été payée pour un montant total de {{ total }} Sats",
 		"paidInvoices": "{{ count }} factures ont été payées pour un montant total de {{ total }} Sats",
 		"checkPayment": "Vérifier le paiement",
-		"lnPaymentSpamHint": "Veuillez attendre {{remainingSeconds}} secondes pour soulager la Mint."
+		"lnPaymentSpamHint": "Veuillez attendre {{ remainingSeconds }} secondes pour soulager la Mint."
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

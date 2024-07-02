@@ -5,8 +5,6 @@ const screens = [
 	'dashboard',
 	'auth',
 	'qr scan',
-	'Security settings',
-	'General settings',
 	'Address book',
 	'Seed',
 ]

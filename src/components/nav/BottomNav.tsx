@@ -10,7 +10,7 @@ import { highlight as hi } from '@styles'
 import { isStr } from '@util'
 import { useTranslation } from 'react-i18next'
 import { TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function BottomNav({ navigation, route }: TBottomNavProps) {
 	const { t } = useTranslation([NS.topNav])
@@ -29,25 +29,20 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 
 	const isWalletRelatedScreen = route.name === 'dashboard'
 
-	const isSettingsRelatedScreen = route.name === 'Settings' ||
-		route.name === 'General settings' ||
-		route.name === 'Display settings' ||
-		route.name === 'Security settings' ||
-		route.name === 'Privacy settings' ||
-		route.name === 'Contacts settings'
+	const isSettingsRelatedScreen = route.name === 'Settings' || route.name === 'Display settings'
 
 	return (
 		<View
 			style={[
 				styles.bottomNav,
-				{ paddingBottom: isIOS ? vs(25) : vs(10) },
+				{ paddingBottom: isIOS ? s(25) : s(15) },
 			]}>
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => void handleNav('dashboard')}
 				disabled={isWalletRelatedScreen}
 			>
-				<WalletIcon width={s(26)} height={s(26)} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
+				<WalletIcon width={s(22)} height={s(22)} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('wallet', { ns: NS.bottomNav })}
 					styles={[styles.iconTxt, {
@@ -61,7 +56,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				onPress={() => void handleNav('Address book')}
 				disabled={route.name === 'Address book'}
 			>
-				<BookIcon width={s(26)} height={s(26)} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
+				<BookIcon width={s(22)} height={s(22)} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('contacts', { ns: NS.bottomNav })}
 					styles={[
@@ -77,7 +72,7 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				onPress={() => void handleNav('Settings')}
 				disabled={isSettingsRelatedScreen}
 			>
-				<SettingsIcon width={s(26)} height={s(26)} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
+				<SettingsIcon width={s(22)} height={s(22)} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
 				<Txt
 					txt={t('settings')}
 					styles={[styles.iconTxt, {
@@ -103,10 +98,10 @@ const styles = ScaledSheet.create({
 	navIcon: {
 		minWidth: '100@s',
 		alignItems: 'center',
-		marginTop: '10@vs',
+		marginTop: '10@s',
 	},
 	iconTxt: {
-		fontSize: '12@vs',
-		marginTop: '2@vs',
+		fontSize: '10@s',
+		marginTop: '4@s',
 	}
 })

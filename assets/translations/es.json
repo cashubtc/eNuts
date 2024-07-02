@@ -111,6 +111,11 @@
 		"spanish": "Español",
 		"swahili": "Suajili",
 		"hungarian": "Húngaro",
+		"italian": "Italiano",
+		"russian": "Ruso",
+		"thai": "Tailandés",
+		"chinese simplified": "Chino (Simplificado)",
+		"chinese traditional": "Chino (Tradicional)",
 		"enutsRandD": "Telegram eNuts",
 		"estimatedFees": "Comisión estimada",
 		"estimateFee": "Estimar comisión",
@@ -203,7 +208,6 @@
 		"zapSoon": "Zaps, disponibles próximamente...",
 		"enutsPub": "Clave pública eNuts: ",
 		"seeFullHistory": "Ver el historial de transacciones completo",
-		"hideLatestTxs": "Esconder transacciones",
 		"next": "Siguiente",
 		"skip": "Saltar",
 		"donateLn": "Donar",
@@ -254,7 +258,7 @@
 		"paidInvoice": "Se ha pagado {{ count }} factura con un importe total de {{ total }} Sats",
 		"paidInvoices": "Se han pagado {{ count }} facturas con un importe total de {{ total }} Sats",
 		"checkPayment": "Comprobar pago",
-		"lnPaymentSpamHint": "Por favor, espere {{remainingSeconds}} segundos para aliviar la Mint."
+		"lnPaymentSpamHint": "Por favor, espere {{ remainingSeconds }} segundos para aliviar la Mint."
 	},
 	"error": {
 		"checkSpendableErr": "Error al comprobar si el token puede ser gastado",

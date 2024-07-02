@@ -26,14 +26,9 @@ export type RootStackParamList = {
 	history: undefined
 	mints: undefined
 	Settings: undefined
-	'General settings': undefined
-	'Security settings': undefined
-	'Privacy settings': undefined
 	'Display settings': undefined
 	'Language settings': undefined
 	'Advanced settings': undefined
-	'Contacts settings': undefined
-	'About settings': undefined
 	auth: {
 		pinHash: string
 		shouldEdit?: boolean
@@ -276,14 +271,9 @@ export type TQRScanPageProps = NativeStackScreenProps<RootStackParamList, 'qr sc
 export type THistoryPageProps = NativeStackScreenProps<RootStackParamList, 'history', 'MyStack'>
 export type THistoryEntryPageProps = NativeStackScreenProps<RootStackParamList, 'history entry details', 'MyStack'>
 export type TSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Settings'>
-export type TGeneralSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'General settings'>
 export type TDisplaySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Display settings'>
-export type TSecuritySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Security settings'>
-export type TPrivacySettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Privacy settings'>
-export type TNostrSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Contacts settings'>
 export type TLanguageSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Language settings'>
 export type TAdvancedSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'Advanced settings'>
-export type TAboutSettingsPageProps = NativeStackScreenProps<RootStackParamList, 'About settings'>
 export type TAddressBookPageProps = NativeStackScreenProps<RootStackParamList, 'Address book'>
 export type IContactPageProps = NativeStackScreenProps<RootStackParamList, 'Contact'>
 export type ISeedPageProps = NativeStackScreenProps<RootStackParamList, 'Seed'>
@@ -304,11 +294,7 @@ export type TBottomNavProps =
 	TMintProofsPageProps |
 	TAddressBookPageProps |
 	TSettingsPageProps |
-	TGeneralSettingsPageProps |
-	TSecuritySettingsPageProps |
 	TDisplaySettingsPageProps |
-	TPrivacySettingsPageProps |
-	TNostrSettingsPageProps |
 	IContactPageProps
 export interface INavigatorProps {
 	pinHash: string
