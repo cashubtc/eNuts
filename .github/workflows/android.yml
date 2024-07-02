@@ -89,11 +89,6 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Disk Cleanup
-              run: |
-                  sudo apt-get clean
-                  df -h
-
             - name: Enable KVM
               run: |
                   mkdir -p /etc/udev/rules.d
@@ -155,7 +150,7 @@ jobs:
               uses: reactivecircus/android-emulator-runner@v2
               with:
                   api-level: 33
-                  arch: x86_64
+                  arch: x86
                   avd-name: ${{ steps.device-name.outputs.DEVICE_NAME }}
                   emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
                   script: npm run detox:test:android:ci
