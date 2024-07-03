@@ -237,8 +237,8 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 				{/* SUPPORT US */}
 				<View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
 					<MenuItem
-						header='Support us'
-						txt='Share eNuts with someone'
+						header={t('supportUs')}
+						txt={t('shareEnuts')}
 						icon={<ShareIcon color={mainColors.VALID} />}
 						onPress={() => void share('Try out this Cashu Lightning Wallet called eNuts! https://www.enuts.cash/get-started#why-enuts', 'https://www.enuts.cash/get-started#why-enuts')}
 						hasSeparator={isNotIosStore}

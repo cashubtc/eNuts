@@ -258,7 +258,9 @@
 		"paidInvoice": "{{ count }} ใบแจ้งหนี้ได้รับการชำระเงินด้วยจำนวนรวม {{ total }} Sats",
 		"paidInvoices": "{{ count }} ใบแจ้งหนี้ได้รับการชำระเงินด้วยจำนวนรวม {{ total }} Sats",
 		"checkPayment": "ตรวจสอบการชำระเงิน",
-		"lnPaymentSpamHint": "โปรดรอ {{ remainingSeconds }} วินาทีเพื่อหลีกเลี่ยงการสแปมมิ้นต์"
+		"lnPaymentSpamHint": "โปรดรอ {{ remainingSeconds }} วินาทีเพื่อหลีกเลี่ยงการสแปมมิ้นต์",
+		"shareEnuts": "แบ่งปัน eNuts กับใครสักคน",
+		"supportUs": "สนับสนุนเรา"
 	},
 	"error": {
 		"checkSpendableErr": "เกิดข้อผิดพลาดขณะตรวจสอบว่า Token สามารถใช้ได้",
