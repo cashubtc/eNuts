@@ -109,10 +109,10 @@ jobs:
                       ./node_modules
                       **/android
                       ./android
-                  key: ${{ runner.os }}-android-build-debug
+                  key: ${{ runner.os }}-android-build-debug-new
                   restore-keys: |
-                      ${{ runner.os }}-android-build-debug
-                      ci-${{ runner.os }}-android-build-debug
+                      ${{ runner.os }}-android-build-debug-new
+                      ci-${{ runner.os }}-android-build-debug-new
 
             - uses: actions/setup-node@v4
               with:
@@ -168,4 +168,4 @@ jobs:
                       ./node_modules
                       **/android
                       ./android
-                  key: ${{ runner.os }}-android-build-debug
+                  key: ${{ runner.os }}-android-build-debug-new
