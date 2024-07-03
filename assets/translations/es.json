@@ -259,7 +259,8 @@
 		"paidInvoices": "Se han pagado {{ count }} facturas con un importe total de {{ total }} Sats",
 		"checkPayment": "Comprobar pago",
 		"lnPaymentSpamHint": "Por favor, espere {{ remainingSeconds }} segundos para aliviar la Mint.",
-		"shareEnuts": "Comparte eNuts con alguien"
+		"shareEnuts": "Comparte eNuts con alguien",
+		"supportUs": "Apóyanos"
 	},
 	"error": {
 		"checkSpendableErr": "Error al comprobar si el token puede ser gastado",

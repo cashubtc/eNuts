@@ -17,10 +17,10 @@ import { isLightningAddress } from '@util/lnurl'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
 import { CoinSelectionModal, CoinSelectionResume, OverviewRow } from './ProofList'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
 	const {
