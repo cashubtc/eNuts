@@ -232,6 +232,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				<View style={styles.wrap}>
 					<TxtInput
 						keyboardType='url'
+						autoCapitalize='none'
 						placeholder='Mint URL'
 						value={input}
 						onChangeText={setInput}
@@ -294,7 +295,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 					bottomBtnTxt={t('willDoLater')}
 					bottomBtnAction={() => {
 						setTopUpModal(false)
-						navigation.navigate('dashboard')
+						// navigation.navigate('dashboard')
 					}}
 				/>
 			</MyModal>

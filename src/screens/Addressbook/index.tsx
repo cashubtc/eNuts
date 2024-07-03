@@ -507,6 +507,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				<View style={styles.wrap}>
 					<TxtInput
 						keyboardType='default'
+						autoCapitalize='none'
 						placeholder='NPUB/HEX'
 						onChangeText={text => setInput(text)}
 						value={input}

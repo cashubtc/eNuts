@@ -99,6 +99,7 @@ export default function ConfirmMnemonicScreen({ navigation, route }: IConfirmMne
 					style={styles.actionWrap}
 				>
 					<TxtInput
+						autoCapitalize='none'
 						innerRef={inputRef}
 						placeholder={`Seed (${randomInt + 1}.)`}
 						onChangeText={text => setInput(text)}
