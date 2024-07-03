@@ -1,5 +1,5 @@
 import ActionButtons from '@comps/ActionButtons'
-import Button, { IconBtn, TxtButton } from '@comps/Button'
+import Button, { IconBtn } from '@comps/Button'
 import Empty from '@comps/Empty'
 import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, QRIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
@@ -26,7 +26,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function Mints({ navigation }: TMintsPageProps) {
 	const { t } = useTranslation([NS.common])
@@ -149,7 +149,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 						{sortMintsByDefault(usertMints, defaultMint).map((m, i) => (
 							<View key={m.mintUrl}>
 								<TouchableOpacity
-									style={[globals().wrapRow, { paddingBottom: vs(15) }]}
+									style={[globals().wrapRow, { paddingBottom: s(15) }]}
 									onPress={() => {
 										const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
 										navigation.navigate('mintmanagement', {
@@ -194,25 +194,30 @@ export default function Mints({ navigation }: TMintsPageProps) {
 										}
 									</View>
 								</TouchableOpacity>
-								{i < usertMints.length - 1 && <Separator style={[{ marginBottom: vs(15) }]} />}
+								{i < usertMints.length - 1 && <Separator style={[{ marginBottom: s(15) }]} />}
 							</View>
 						))}
 					</ScrollView>
 				</View>
 				:
-				<Empty
-					txt={t('addNewMint', { ns: NS.mints })}
-					hintComponent={
-						<TxtButton
+				<View style={styles.noMintContainer}>
+					<Empty txt={t('noMint')} />
+					<View style={styles.noMintBottomSection}>
+						<Button
+							txt={t('addNewMint', { ns: NS.mints })}
+							onPress={() => {
+								setNewMintModal(true)
+							}}
+						/>
+						<Button
+							outlined
 							txt={t('findMint')}
 							onPress={() => void openUrl(BITCOIN_MINTS_URL)?.catch(e =>
 								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 							}
 						/>
-					}
-					pressable
-					onPress={() => setNewMintModal(true)}
-				/>
+					</View>
+				</View>
 			}
 			{/* Submit new mint URL modal */}
 			<MyModal
@@ -323,6 +328,18 @@ const styles = ScaledSheet.create({
 	container: {
 		alignItems: 'center',
 		justifyContent: 'flex-start'
+	},
+	noMintContainer: {
+		flex: 1,
+		width: '100%',
+		paddingHorizontal: '20@s',
+	},
+	noMintBottomSection: {
+		position: 'absolute',
+		bottom: '20@s',
+		right: '20@s',
+		left: '20@s',
+		rowGap: '20@s',
 	},
 	topSection: {
 		width: '100%',
