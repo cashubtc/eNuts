@@ -98,7 +98,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 			screenName={t('settings', { ns: NS.topNav })}
 			noIcons
 		>
-			<ScrollView alwaysBounceVertical={false} style={{ marginBottom: s(60) }} >
+			<ScrollView alwaysBounceVertical={false}>
 				{/* MINT */}
 				<View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
 					<MenuItem
@@ -267,7 +267,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 						/>
 					</View>
 				}
-				<Txt txt={appVersion} bold center />
+				<Txt txt={appVersion} bold center styles={[{ marginBottom: s(100) }]} />
 			</ScrollView>
 			<BottomNav navigation={navigation} route={route} />
 			<ZapModal visible={zapModal} close={() => setZapModal(false)} />

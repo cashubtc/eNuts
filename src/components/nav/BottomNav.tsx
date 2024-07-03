@@ -1,4 +1,4 @@
-import { BookIcon, SettingsIcon, WalletIcon } from '@comps/Icons'
+import { BookIconNav, SettingsIcon, WalletIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import { isIOS } from '@consts'
 import type { TBottomNavProps, TRouteString } from '@model/nav'
@@ -35,14 +35,22 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 		<View
 			style={[
 				styles.bottomNav,
-				{ paddingBottom: isIOS ? s(25) : s(15) },
+				{
+					paddingBottom: isIOS ? s(25) : s(5),
+					backgroundColor: color.BACKGROUND,
+				},
 			]}>
 			<TouchableOpacity
 				style={styles.navIcon}
 				onPress={() => void handleNav('dashboard')}
 				disabled={isWalletRelatedScreen}
 			>
-				<WalletIcon width={s(22)} height={s(22)} color={isWalletRelatedScreen ? hi[highlight] : color.TEXT} />
+				<WalletIcon
+					width={s(23)}
+					height={s(23)}
+					color={isWalletRelatedScreen ? hi[highlight] : color.TEXT}
+					active={isWalletRelatedScreen}
+				/>
 				<Txt
 					txt={t('wallet', { ns: NS.bottomNav })}
 					styles={[styles.iconTxt, {
@@ -56,7 +64,12 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				onPress={() => void handleNav('Address book')}
 				disabled={route.name === 'Address book'}
 			>
-				<BookIcon width={s(22)} height={s(22)} color={route.name === 'Address book' ? hi[highlight] : color.TEXT} />
+				<BookIconNav
+					width={s(22)}
+					height={s(22)}
+					color={route.name === 'Address book' ? hi[highlight] : color.TEXT}
+					active={route.name === 'Address book'}
+				/>
 				<Txt
 					txt={t('contacts', { ns: NS.bottomNav })}
 					styles={[
@@ -72,7 +85,12 @@ export default function BottomNav({ navigation, route }: TBottomNavProps) {
 				onPress={() => void handleNav('Settings')}
 				disabled={isSettingsRelatedScreen}
 			>
-				<SettingsIcon width={s(22)} height={s(22)} color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT} />
+				<SettingsIcon
+					width={s(22)}
+					height={s(22)}
+					color={isSettingsRelatedScreen ? hi[highlight] : color.TEXT}
+					active={isSettingsRelatedScreen}
+				/>
 				<Txt
 					txt={t('settings')}
 					styles={[styles.iconTxt, {
@@ -92,16 +110,17 @@ const styles = ScaledSheet.create({
 		bottom: 0,
 		right: 0,
 		flexDirection: 'row',
-		alignItems: 'flex-start',
+		alignItems: 'center',
 		justifyContent: 'space-around',
+		paddingTop: '5@s',
 	},
 	navIcon: {
 		minWidth: '100@s',
 		alignItems: 'center',
-		marginTop: '10@s',
+		// marginTop: '10@s',
 	},
 	iconTxt: {
 		fontSize: '10@s',
-		marginTop: '4@s',
+		marginTop: '3@s',
 	}
 })
