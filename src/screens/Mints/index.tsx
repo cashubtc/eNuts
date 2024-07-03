@@ -1,5 +1,5 @@
 import ActionButtons from '@comps/ActionButtons'
-import Button, { IconBtn } from '@comps/Button'
+import Button, { IconBtn, TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, QRIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
@@ -116,6 +116,11 @@ export default function Mints({ navigation }: TMintsPageProps) {
 		setDefaultM(defaultt ?? '')
 	}, [handleMintsState])
 
+	const navToBtcMintsDotCom = () => {
+		openUrl(BITCOIN_MINTS_URL)?.catch(e =>
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+	}
+
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
 		void handleInitialRender()
@@ -198,6 +203,10 @@ export default function Mints({ navigation }: TMintsPageProps) {
 							</View>
 						))}
 					</ScrollView>
+					<TxtButton
+						txt={t('findMint')}
+						onPress={navToBtcMintsDotCom}
+					/>
 				</View>
 				:
 				<View style={styles.noMintContainer}>
@@ -212,9 +221,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 						<Button
 							outlined
 							txt={t('findMint')}
-							onPress={() => void openUrl(BITCOIN_MINTS_URL)?.catch(e =>
-								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-							}
+							onPress={navToBtcMintsDotCom}
 						/>
 					</View>
 				</View>
