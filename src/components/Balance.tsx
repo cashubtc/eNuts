@@ -117,7 +117,7 @@ export default function Balance({ nav }: IBalanceProps) {
 					txt={t('seeFullHistory')}
 					onPress={() => nav?.navigate('history')}
 					txtColor={getColor(highlight, color)}
-					style={[{ paddingTop: s(15), paddingBottom: hidden.txs ? s(15) : 0 }]}
+					style={[{ paddingTop: s(15) }]}
 				/>
 			}
 		</View>
