@@ -20,6 +20,7 @@ import { ScrollView, View } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
 import { CoinSelectionModal, CoinSelectionResume, OverviewRow } from './ProofList'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
 	const {
@@ -37,6 +38,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 		targetMint,
 		scanned
 	} = route.params
+	const insets = useSafeAreaInsets()
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 	const { url, clearUrl } = useInitialURL()
@@ -124,7 +126,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					navigation.goBack()
 				}}
 			/>
-			<ScrollView alwaysBounceVertical={false}>
+			<ScrollView alwaysBounceVertical={false} style={{ marginBottom: s(90) }}>
 				<View style={globals(color).wrapContainer}>
 					<OverviewRow txt1={t('paymentType')} txt2={t(getPaymentType())} />
 					<OverviewRow txt1={t('mint')} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
@@ -180,10 +182,21 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
 					}
 				</View>
 			</ScrollView>
-			<SwipeButton
-				txt={t(getBtnTxt())}
-				onToggle={submitPaymentReq}
-			/>
+			<View
+				style={[
+					styles.swipeContainer,
+					{
+						backgroundColor: color.BACKGROUND,
+						bottom: insets.bottom,
+					}
+				]}
+			>
+				<SwipeButton
+					txt={t(getBtnTxt())}
+					onToggle={submitPaymentReq}
+				/>
+			</View>
+
 			{/* coin selection page */}
 			{isEnabled &&
 				<CoinSelectionModal
@@ -206,5 +219,9 @@ const styles = ScaledSheet.create({
 	coinSelectionHint: {
 		fontSize: '10@vs',
 		maxWidth: '88%',
+	},
+	swipeContainer: {
+		position: 'absolute',
+		width: '100%',
 	},
 })
