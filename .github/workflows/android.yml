@@ -10,6 +10,7 @@ on:
 env:
     EXPO_NO_TELEMETRY: 1
     SENTRY_DISABLE_AUTO_UPLOAD: true
+    CI: 1
 jobs:
     build:
         name: build-android-production
@@ -52,10 +53,10 @@ jobs:
                   packages: platform-tools platforms;android-34 build-tools;33.0.1 build-tools;34.0.0 ndk;25.1.8937393 cmake;3.22.1
 
             - name: Install deps
-              run: npm ci
+              run: npm i --force
 
             - name: PreBuild Android
-              run: npx expo prebuild -p android --clean
+              run: npx expo prebuild -p android --clean --npm
 
             - name: make gradlew executable
               run: chmod +x ./android/gradlew
@@ -108,10 +109,10 @@ jobs:
                       ./node_modules
                       **/android
                       ./android
-                  key: ${{ runner.os }}-android-build-debug
+                  key: ${{ runner.os }}-android-build-debug-new
                   restore-keys: |
-                      ${{ runner.os }}-android-build-debug
-                      ci-${{ runner.os }}-android-build-debug
+                      ${{ runner.os }}-android-build-debug-new
+                      ci-${{ runner.os }}-android-build-debug-new
 
             - uses: actions/setup-node@v4
               with:
@@ -130,7 +131,7 @@ jobs:
                   packages: platform-tools platforms;android-34 build-tools;33.0.1 build-tools;34.0.0 ndk;25.1.8937393 cmake;3.22.1
 
             - name: Install deps
-              run: npm ci
+              run: npm ci --force
 
             - name: PreBuild Android
               run: npx expo prebuild -p android --clean
@@ -167,4 +168,4 @@ jobs:
                       ./node_modules
                       **/android
                       ./android
-                  key: ${{ runner.os }}-android-build-debug
+                  key: ${{ runner.os }}-android-build-debug-new
