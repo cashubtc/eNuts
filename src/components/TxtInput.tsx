@@ -17,6 +17,7 @@ interface ITxtInputProps {
 	multiline?: boolean
 	numberOfLines?: number
 	style?: StyleProp<TextStyle>
+	autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'
 }
 
 export default function TxtInput({
@@ -31,7 +32,8 @@ export default function TxtInput({
 	value,
 	multiline,
 	numberOfLines,
-	style
+	style,
+	autoCapitalize
 }: ITxtInputProps) {
 	const { color, highlight } = useThemeContext()
 	const inputRef = createRef<TextInput>()
@@ -60,6 +62,7 @@ export default function TxtInput({
 			numberOfLines={numberOfLines}
 			style={[globals(color).input, { marginBottom: vs(20) }, style]}
 			testID={`${placeholder}-input`}
+			autoCapitalize={autoCapitalize}
 		/>
 	)
 }

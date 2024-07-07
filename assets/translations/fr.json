@@ -258,7 +258,9 @@
 		"paidInvoice": "{{ count }} facture a été payée pour un montant total de {{ total }} Sats",
 		"paidInvoices": "{{ count }} factures ont été payées pour un montant total de {{ total }} Sats",
 		"checkPayment": "Vérifier le paiement",
-		"lnPaymentSpamHint": "Veuillez attendre {{ remainingSeconds }} secondes pour soulager la Mint."
+		"lnPaymentSpamHint": "Veuillez attendre {{ remainingSeconds }} secondes pour soulager la Mint.",
+		"shareEnuts": "Partagez eNuts avec quelqu'un",
+		"supportUs": "Soutenez-nous"
 	},
 	"error": {
 		"checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",

@@ -258,7 +258,9 @@
 		"paidInvoice": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
 		"paidInvoices": "{{ count }} számla kifizetésre került, összesen {{ total }} Sats összegben",
 		"checkPayment": "Fizetés ellenőrzése",
-		"lnPaymentSpamHint": "Kérjük, várjon {{ remainingSeconds }} másodpercet a Mint tehermentesítése érdekében."
+		"lnPaymentSpamHint": "Kérjük, várjon {{ remainingSeconds }} másodpercet a Mint tehermentesítése érdekében.",
+		"shareEnuts": "Oszd meg az eNuts-ot valakivel",
+		"supportUs": "Támogass minket"
 	},
 	"error": {
 		"checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",

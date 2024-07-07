@@ -104,6 +104,7 @@ export default function SelectRecoveryMintScreen({ navigation, route }: ISelectR
 				<View style={styles.btnWrap}>
 					{isCustomMint &&
 						<TxtInput
+							autoCapitalize='none'
 							placeholder='Mint URL'
 							onChangeText={text => setInput(text)}
 							onSubmitEditing={() => void handleMintInput()}

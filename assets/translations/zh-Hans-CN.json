@@ -258,7 +258,9 @@
 		"paidInvoice": "已支付 {{ count }} 张发票，总金额为 {{ total }} 聪",
 		"paidInvoices": "已支付 {{ count }} 张发票，总金额为 {{ total }} 聪",
 		"checkPayment": "检查付款",
-		"lnPaymentSpamHint": "请等待 {{ remainingSeconds }} 秒，以免对铸币厂造成垃圾邮件。"
+		"lnPaymentSpamHint": "请等待 {{ remainingSeconds }} 秒，以免对铸币厂造成垃圾邮件。",
+		"shareEnuts": "与某人分享 eNuts",
+		"supportUs": "支持我们"
 	},
 	"error": {
 		"checkSpendableErr": "检查代币是否可使用时出错",
