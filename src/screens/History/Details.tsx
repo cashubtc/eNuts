@@ -9,6 +9,7 @@ import type { THistoryEntryPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { truncateStr } from '@nostr/util'
 import { useHistoryContext } from '@src/context/History'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -47,6 +48,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	} = route.params.entry
 	const { color } = useThemeContext()
 	const { addHistoryEntry, updateHistoryEntry, checkLnPr } = useHistoryContext()
+	const { hidden } = usePrivacyContext()
 	const [copy, setCopy] = useState(initialCopyState)
 	const [spent, setSpent] = useState(isSpent)
 	const { loading, startLoading, stopLoading } = useLoading()
@@ -80,6 +82,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 	}
 
 	const getAmount = () => {
+		if (hidden.balance) { return '****' }
 		if (type === txType.SWAP || type === txType.RESTORE) { return `${formatInt(Math.abs(amount))}` }
 		return `${amount > 0 ? '+' : ''}${formatInt(amount)}`
 	}
@@ -370,7 +373,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 									<>
 										<View style={styles.entryInfo}>
 											<Txt txt={t('fee')} />
-											<Txt txt={formatSatStr(isNum(fee) ? fee : 0)} />
+											<Txt txt={hidden.balance ? '****' : formatSatStr(isNum(fee) ? fee : 0)} />
 										</View>
 										<Separator />
 									</>

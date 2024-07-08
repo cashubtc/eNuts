@@ -47,6 +47,7 @@ export default function RecoverScreen({ navigation, route }: IRecoverPageProps) 
 				<View style={{ paddingHorizontal: s(20) }}>
 					<Txt txt={t('recoveryHint')} styles={[styles.hint]} bold />
 					<TxtInput
+						autoCapitalize='none'
 						multiline
 						innerRef={inputRef}
 						placeholder={t('12WordMnemonic')}

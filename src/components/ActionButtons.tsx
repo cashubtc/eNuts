@@ -1,6 +1,6 @@
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 import Button from './Button'
 
@@ -42,7 +42,7 @@ export default function ActionButtons({
 				onPress={topBtnAction}
 				icon={topIcon}
 			/>
-			<View style={{ marginVertical: vs(10) }} />
+			<View style={{ marginVertical: s(10) }} />
 			<Button
 				txt={bottomBtnTxt}
 				outlined
@@ -61,6 +61,6 @@ const styles = ScaledSheet.create({
 	ontopOfNav: {
 		paddingLeft: '20@s',
 		paddingRight: '20@s',
-		marginBottom: '70@vs',
+		marginBottom: '60@s',
 	},
 })

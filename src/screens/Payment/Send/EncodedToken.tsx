@@ -92,12 +92,12 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 						</Text>
 						<View style={styles.successAnim}>
 							<LottieView
-								imageAssetsFolder='lottie/success'
 								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-								source={require('../../../../assets/lottie/success/success.json')}
+								source={require('../../../../assets/lottie/success.json')}
 								autoPlay
 								loop={false}
-								style={{ width: s(130) }}
+								style={styles.lottie}
+								renderMode="HARDWARE"
 							/>
 						</View>
 					</View>
@@ -184,5 +184,9 @@ const styles = ScaledSheet.create({
 	},
 	fullWidth: {
 		width: '100%',
-	}
+	},
+	lottie: {
+		width: '100@s',
+		height: '100@s'
+	},
 })

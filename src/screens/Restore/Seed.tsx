@@ -53,7 +53,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 				{!params?.comingFromOnboarding && params?.sawSeedUpdate ?
 					<TouchableOpacity
 						style={styles.navIcon}
-						onPress={() => navigation.navigate('Security settings')}
+						onPress={() => navigation.navigate('Settings')}
 					>
 						<LeftArrow color={color.TEXT} />
 					</TouchableOpacity>

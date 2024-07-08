@@ -191,6 +191,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				<View style={styles.wrap}>
 					<TxtInput
 						keyboardType='default'
+						autoCapitalize='none'
 						placeholder='NPUB/HEX'
 						onChangeText={text => setNewNpub(text)}
 						value={newNpub}

@@ -416,7 +416,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					{contactsRef.current.length > 0 ?
 						<View style={[
 							styles.contactsWrap,
-							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : vs(70) },
+							{ marginBottom: marginBottomPayment },
 						]}>
 							{search.input.length > 0 && search.results.length > 0 && search.hasResults ?
 								<FlashList
@@ -441,6 +441,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 									)}
 									ItemSeparatorComponent={() => (
 										<Separator style={[styles.contactSeparator]} />
+									)}
+									ListFooterComponent={() => (
+										<View style={{ minHeight: s(100) }} />
 									)}
 								/>
 								: search.input.length > 0 && !search.results.length && !search.hasResults ?
@@ -482,6 +485,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										ItemSeparatorComponent={() => (
 											<Separator style={[styles.contactSeparator]} />
 										)}
+										ListFooterComponent={() => (
+											<View style={{ minHeight: s(80) }} />
+										)}
 									/>
 							}
 						</View>
@@ -507,6 +513,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				<View style={styles.wrap}>
 					<TxtInput
 						keyboardType='default'
+						autoCapitalize='none'
 						placeholder='NPUB/HEX'
 						onChangeText={text => setInput(text)}
 						value={input}

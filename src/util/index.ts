@@ -351,3 +351,8 @@ export async function timeout<T>(ms = 1000) {
 	await sleep(ms)
 	throw new Error(`promise was timed out in ${ms} ms, by withTimeout`)
 }
+
+export function getFlagEmoji(code: string) {
+	const codePoints = Array.from(code.toUpperCase()).map(char => 0x1F1A5 + char.charCodeAt(0))
+	return String.fromCodePoint(...codePoints)
+}

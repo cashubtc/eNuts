@@ -39,7 +39,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 	useEffect(() => {
 		vib(400)
 		void updateBalance()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
@@ -95,12 +95,12 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				}
 				<View style={styles.successAnim}>
 					<LottieView
-						imageAssetsFolder='lottie/success'
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-						source={require('../../../assets/lottie/success/success.json')}
+						source={require('../../../assets/lottie/success.json')}
 						autoPlay
 						loop={false}
-						style={{ width: s(120) }}
+						style={styles.lottie}
+						renderMode="HARDWARE"
 					/>
 				</View>
 				{(isMelt || isAutoSwap) && amount &&
@@ -143,12 +143,12 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				/>
 			</View>
 			<LottieView
-				imageAssetsFolder='lottie/confetti'
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				source={require('../../../assets/lottie/success/confetti.json')}
+				source={require('../../../assets/lottie/confetti.json')}
 				autoPlay
 				loop={false}
 				style={styles.confetti}
+				renderMode="HARDWARE"
 			/>
 		</View>
 	)
@@ -223,5 +223,9 @@ const styles = ScaledSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginTop: '20@vs'
-	}
+	},
+	lottie: {
+		width: '100@s',
+		height: '100@s'
+	},
 })

@@ -1,5 +1,5 @@
 /* global  */
-declare module 'expo-sqlite' {
+declare module 'expo-sqlite/legacy' {
 
 
 	// @docsMissing

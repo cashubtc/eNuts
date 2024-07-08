@@ -111,6 +111,11 @@
 		"spanish": "Spanisch",
 		"swahili": "Suaheli",
 		"hungarian": "Ungarisch",
+		"italian": "Italienisch",
+		"russian": "Russisch",
+		"thai": "Thailändisch",
+		"chinese simplified": "Chinesisch (Vereinfacht)",
+		"chinese traditional": "Chinesisch (Traditionell)",
 		"enutsRandD": "eNuts Telegram",
 		"estimatedFees": "Geschätzte Gebühr",
 		"estimateFee": "Gebühren schätzen",
@@ -203,7 +208,6 @@
 		"zapSoon": "Zaps werden bald hinzugefügt...",
 		"enutsPub": "eNuts: ",
 		"seeFullHistory": "Gesamter Transaktionsverlauf",
-		"hideLatestTxs": "Transaktionen verbergen",
 		"next": "Weiter",
 		"skip": "Überspringen",
 		"donateLn": "Spenden",
@@ -254,7 +258,9 @@
 		"paidInvoice": "{{ count }} Rechnung wurde mit einem Gesamtbetrag von {{ total }} Sats bezahlt",
 		"paidInvoices": "{{ count }} Rechnungen wurden mit einem Gesamtbetrag von {{ total }} Sats bezahlt",
 		"checkPayment": "Zahlung überprüfen",
-		"lnPaymentSpamHint": "Bitte warten Sie {{remainingSeconds}} Sekunden um die Mint zu entlasten."
+		"lnPaymentSpamHint": "Bitte warten Sie {{ remainingSeconds }} Sekunden um die Mint zu entlasten.",
+		"supportUs": "Unterstütze uns",
+		"shareEnuts": "Teile eNuts mit jemandem"
 	},
 	"error": {
 		"checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",

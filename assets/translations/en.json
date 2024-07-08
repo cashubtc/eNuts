@@ -111,6 +111,11 @@
 		"swahili": "Swahili",
 		"spanish": "Spanish",
 		"hungarian": "Hungarian",
+		"italian": "Italian",
+		"russian": "Russian",
+		"thai": "Thai",
+		"chinese simplified": "Chinese (Simplified)",
+		"chinese traditional": "Chinese (Traditional)",
 		"enutsRandD": "eNuts Telegram",
 		"estimatedFees": "Estimated fees",
 		"estimateFee": "Estimate fee",
@@ -203,7 +208,6 @@
 		"zapSoon": "Zaps will be added soon...",
 		"enutsPub": "eNuts public key: ",
 		"seeFullHistory": "See full transaction history",
-		"hideLatestTxs": "Hide transactions",
 		"next": "Next",
 		"skip": "Skip",
 		"donateLn": "Donate",
@@ -254,7 +258,9 @@
 		"paidInvoice": "{{ count }} invoice has been paid with a total amount of {{ total }} Sats",
 		"paidInvoices": "{{ count }} invoices have been paid with a total amount of {{ total }} Sats",
 		"checkPayment": "Check payment",
-		"lnPaymentSpamHint": "Please wait {{remainingSeconds}} seconds to avoid spamming the mint."
+		"lnPaymentSpamHint": "Please wait {{ remainingSeconds }} seconds to avoid spamming the mint.",
+		"supportUs": "Support us",
+		"shareEnuts": "Share eNuts with someone"
 	},
 	"error": {
 		"checkSpendableErr": "Error while checking if token is spendable",

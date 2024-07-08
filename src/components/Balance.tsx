@@ -55,26 +55,28 @@ export default function Balance({ nav }: IBalanceProps) {
 			<TouchableOpacity
 				onPress={() => void handleLogoPress()}
 			>
-				<Logo size={hidden.balance ? s(100) : s(40)} style={{ marginTop: hidden.balance ? s(40) : s(10), marginBottom: hidden.balance ? s(40) : s(10) }} />
+				<Logo size={s(40)} style={{ marginTop: s(10), marginBottom: s(10) }} />
 			</TouchableOpacity>
 			{/* balance */}
-			{!hidden.balance &&
-				<TouchableOpacity
-					style={styles.balanceWrap}
-					onPress={toggleBalanceFormat}
-					disabled={hidden.balance}
-				>
-					<Text style={[styles.balAmount, { color: getColor(highlight, color) }]}>
-						{formatSats ? formatBalance(balance) : formatInt(balance)}
-					</Text>
-					<View style={styles.balAssetNameWrap}>
-						<Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
-							{formatSats ? 'BTC' : formatSatStr(balance, 'compact', false)}
-						</Text>
-						<SwapCurrencyIcon width={s(20)} height={s(20)} color={getColor(highlight, color)} />
-					</View>
-				</TouchableOpacity>
-			}
+			<TouchableOpacity
+				style={styles.balanceWrap}
+				onPress={toggleBalanceFormat}
+				disabled={hidden.balance}
+			>
+				<Text style={[styles.balAmount, { color: getColor(highlight, color) }]}>
+					{hidden.balance ? '****' : formatSats ? formatBalance(balance) : formatInt(balance)}
+				</Text>
+				<View style={styles.balAssetNameWrap}>
+					{!hidden.balance &&
+						<>
+							<Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
+								{formatSats ? 'BTC' : formatSatStr(balance, 'compact', false)}
+							</Text>
+							<SwapCurrencyIcon width={s(20)} height={s(20)} color={getColor(highlight, color)} />
+						</>
+					}
+				</View>
+			</TouchableOpacity>
 			{/* No transactions yet */}
 			{!latestHistory.length &&
 				<View style={styles.txOverview}>
@@ -82,7 +84,7 @@ export default function Balance({ nav }: IBalanceProps) {
 				</View>
 			}
 			{/* latest 3 history entries */}
-			{latestHistory.length > 0 && !hidden.txs &&
+			{latestHistory.length > 0 &&
 				latestHistory.map(h => (
 					<HistoryEntry
 						key={h.timestamp}
@@ -110,12 +112,12 @@ export default function Balance({ nav }: IBalanceProps) {
 					/>
 				))
 			}
-			{(latestHistory.length === 3 || (latestHistory.length > 0 && hidden.txs)) &&
+			{latestHistory.length === 3 &&
 				<TxtButton
 					txt={t('seeFullHistory')}
 					onPress={() => nav?.navigate('history')}
 					txtColor={getColor(highlight, color)}
-					style={[{ paddingTop: s(15), paddingBottom: hidden.txs ? s(15) : 0 }]}
+					style={[{ paddingTop: s(15) }]}
 				/>
 			}
 		</View>
@@ -135,8 +137,10 @@ interface IHistoryEntryProps {
 function HistoryEntry({ icon, txType, isSwap, timestamp, amount, isExpired, onPress }: IHistoryEntryProps) {
 	const { t } = useTranslation([NS.history])
 	const { color, highlight } = useThemeContext()
+	const { hidden } = usePrivacyContext()
 
 	const getAmount = () => {
+		if (hidden.balance) { return '****' }
 		if (isSwap) { return formatSatStr(Math.abs(amount)) }
 		return `${amount > 0 ? '+' : ''}${formatSatStr(amount)}`
 	}
@@ -190,6 +194,7 @@ const styles = ScaledSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		marginBottom: '10@s',
+		minHeight: '20@s',
 	},
 	balAssetName: {
 		fontSize: '14@vs',

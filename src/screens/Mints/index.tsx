@@ -14,6 +14,7 @@ import type { IMintBalWithName, IMintUrl } from '@model'
 import type { TMintsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { BITCOIN_MINTS_URL } from '@src/consts/urls'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -25,13 +26,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function Mints({ navigation }: TMintsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { prompt, closePrompt, openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
+	const { hidden } = usePrivacyContext()
 	const [loading, setLoading] = useState(false)
 	// mint list
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
@@ -114,6 +116,11 @@ export default function Mints({ navigation }: TMintsPageProps) {
 		setDefaultM(defaultt ?? '')
 	}, [handleMintsState])
 
+	const navToBtcMintsDotCom = () => {
+		openUrl(BITCOIN_MINTS_URL)?.catch(e =>
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+	}
+
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
 		void handleInitialRender()
@@ -147,7 +154,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 						{sortMintsByDefault(usertMints, defaultMint).map((m, i) => (
 							<View key={m.mintUrl}>
 								<TouchableOpacity
-									style={[globals().wrapRow, { paddingBottom: vs(15) }]}
+									style={[globals().wrapRow, { paddingBottom: s(15) }]}
 									onPress={() => {
 										const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
 										navigation.navigate('mintmanagement', {
@@ -178,7 +185,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 														marginBottom: 5
 													}}
 												>
-													{m.amount > 0 ? formatSatStr(m.amount, 'compact') : t('emptyMint')}
+													{hidden.balance ? '****' : m.amount > 0 ? formatSatStr(m.amount, 'compact') : t('emptyMint')}
 												</Text>
 											</View>
 										}
@@ -192,25 +199,32 @@ export default function Mints({ navigation }: TMintsPageProps) {
 										}
 									</View>
 								</TouchableOpacity>
-								{i < usertMints.length - 1 && <Separator style={[{ marginBottom: vs(15) }]} />}
+								{i < usertMints.length - 1 && <Separator style={[{ marginBottom: s(15) }]} />}
 							</View>
 						))}
 					</ScrollView>
+					<TxtButton
+						txt={t('findMint')}
+						onPress={navToBtcMintsDotCom}
+					/>
 				</View>
 				:
-				<Empty
-					txt={t('addNewMint', { ns: NS.mints })}
-					hintComponent={
-						<TxtButton
-							txt={t('findMint')}
-							onPress={() => void openUrl(BITCOIN_MINTS_URL)?.catch(e =>
-								openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-							}
+				<View style={styles.noMintContainer}>
+					<Empty txt={t('noMint')} />
+					<View style={styles.noMintBottomSection}>
+						<Button
+							txt={t('addNewMint', { ns: NS.mints })}
+							onPress={() => {
+								setNewMintModal(true)
+							}}
 						/>
-					}
-					pressable
-					onPress={() => setNewMintModal(true)}
-				/>
+						<Button
+							outlined
+							txt={t('findMint')}
+							onPress={navToBtcMintsDotCom}
+						/>
+					</View>
+				</View>
 			}
 			{/* Submit new mint URL modal */}
 			<MyModal
@@ -225,6 +239,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 				<View style={styles.wrap}>
 					<TxtInput
 						keyboardType='url'
+						autoCapitalize='none'
 						placeholder='Mint URL'
 						value={input}
 						onChangeText={setInput}
@@ -287,7 +302,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 					bottomBtnTxt={t('willDoLater')}
 					bottomBtnAction={() => {
 						setTopUpModal(false)
-						navigation.navigate('dashboard')
+						// navigation.navigate('dashboard')
 					}}
 				/>
 			</MyModal>
@@ -321,6 +336,18 @@ const styles = ScaledSheet.create({
 	container: {
 		alignItems: 'center',
 		justifyContent: 'flex-start'
+	},
+	noMintContainer: {
+		flex: 1,
+		width: '100%',
+		paddingHorizontal: '20@s',
+	},
+	noMintBottomSection: {
+		position: 'absolute',
+		bottom: '20@s',
+		right: '20@s',
+		left: '20@s',
+		rowGap: '20@s',
 	},
 	topSection: {
 		width: '100%',

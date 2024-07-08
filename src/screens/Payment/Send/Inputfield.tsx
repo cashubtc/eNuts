@@ -170,6 +170,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 					<TxtInput
 						innerRef={inputRef}
 						keyboardType='email-address'
+						autoCapitalize='none'
 						placeholder={t('invoiceOrLnurl')}
 						value={input}
 						onChangeText={text => {

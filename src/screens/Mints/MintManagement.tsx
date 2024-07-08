@@ -12,6 +12,7 @@ import MyModal from '@modal'
 import { BottomModal } from '@modal/Question'
 import type { TMintManagementPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -29,6 +30,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	// prompt modal
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
+	const { hidden } = usePrivacyContext()
 	// custom name modal
 	const [customNameOpen, setCustomNameOpen] = useState(false)
 	const [mintName, setMintName] = useState('')
@@ -150,7 +152,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 								</View>
 								<Txt txt={t('balance')} />
 							</View>
-							<Txt txt={formatSatStr(route.params.amount)} />
+							<Txt txt={hidden.balance ? '****' : formatSatStr(route.params.amount)} />
 						</View>
 						<Separator style={[styles.separator]} />
 						{/* Mint url */}
