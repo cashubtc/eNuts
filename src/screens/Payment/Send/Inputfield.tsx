@@ -10,7 +10,8 @@ import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals } from '@styles'
-import { decodeLnInvoice, getStrFromClipboard, isErr, isLnInvoice, isLnurl, openUrl } from '@util'
+import { decodeLnInvoice, getStrFromClipboard, isErr, openUrl } from '@util'
+import { decodeUrlOrAddress, getLnurlData, isLnurlOrAddress } from '@util/lnurl'
 import { checkFees } from '@wallet'
 import { createRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -43,7 +44,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		if (!clipboard) { return }
 		setInput(clipboard)
 		// pasted LNURL address which does not need decoding
-		if (isLnurl(clipboard)) { return }
+		if (isLnurlOrAddress(clipboard)) { return }
 		// pasted LN invoice
 		await handleInvoicePaste(clipboard)
 	}
@@ -65,16 +66,24 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 		}
 	}
 
-	const handleBtnPress = () => {
+	const handleBtnPress = async () => {
 		if (loading) { return }
 		// open user LN wallet
 		if (!input.length) {
 			return openUrl('lightning://')?.catch(e =>
 				openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
 		}
-		// user pasted a LNURL, we need to get the amount by the user
-		if (isLnurl(input)) {
-			return navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: input })
+		// user pasted an encoded LNURL, we need to get the amount by the user
+		if (isLnurlOrAddress(input)) {
+			const decoded = decodeUrlOrAddress(input)
+			if (!decoded) { return openPromptAutoClose({ msg: 'Could not decode LNURL!' }) }
+			try {
+				const lnurlData = await getLnurlData(decoded)
+				if (!lnurlData) { return openPromptAutoClose({ msg: 'Could not fetch data from LNURL' }) }
+				return navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: { userInput: input, url: decoded, data: lnurlData } })
+			} catch (e) {
+				return openPromptAutoClose({ msg: 'Could not fetch data from LNURL' })
+			}
 		}
 		// not enough funds
 		if (decodedAmount + estFee > balance) {
@@ -161,13 +170,16 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 					<TxtInput
 						innerRef={inputRef}
 						keyboardType='email-address'
+						autoCapitalize='none'
 						placeholder={t('invoiceOrLnurl')}
 						value={input}
 						onChangeText={text => {
 							setInput(text)
+							/* Handle when the continue button is pressed
 							if (isLnInvoice(text)) {
 								void handleInvoicePaste(text)
 							}
+							*/
 						}}
 						onSubmitEditing={() => void handleBtnPress()}
 						autoFocus

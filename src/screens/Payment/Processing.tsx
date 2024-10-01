@@ -6,15 +6,15 @@ import type { TBeforeRemoveEvent, TProcessingPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import { pool } from '@nostr/class/Pool'
 import { getNostrUsername } from '@nostr/util'
+import { useHistoryContext } from '@src/context/History'
 import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { addLnPaymentToHistory } from '@store/HistoryStore'
-import { addToHistory, updateLatestHistory } from '@store/latestHistoryEntries'
+import { isLnurlOrAddress } from '@src/util/lnurl'
 import { getDefaultMint } from '@store/mintStore'
 import { globals } from '@styles'
-import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isLnurl, isNum, uniqByIContacts } from '@util'
+import { decodeLnInvoice, getInvoiceFromLnurl, isErr, isNum, uniqByIContacts } from '@util'
 import { autoMintSwap, checkFees, fullAutoMintSwap, getHighestBalMint, payLnInvoice, requestMint, sendToken } from '@wallet'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -31,6 +31,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	const { color } = useThemeContext()
 	const { setNostr } = useNostrContext()
 	const { clearUrl } = useInitialURL()
+	const { addHistoryEntry } = useHistoryContext()
 	const {
 		mint,
 		tokenInfo,
@@ -89,7 +90,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				amount,
 				hash: resp.hash,
 				expiry: decoded.expiry,
-				paymentRequest: decoded.decoded.paymentRequest
+				paymentRequest: resp.pr,
 			})
 		} catch (e) {
 			handleError({ e })
@@ -98,8 +99,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 
 	const handleMelting = async () => {
 		let invoice = ''
-		// recipient can be a LNURL (address) or a LN invoice
-		if (recipient?.length && isLnurl(recipient)) {
+		// recipient can be a LNURL or a LN invoice
+		if (recipient?.length && isLnurlOrAddress(recipient)) {
 			try {
 				invoice = await getInvoiceFromLnurl(recipient, +amount)
 				if (!invoice?.length) {
@@ -117,21 +118,12 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				// here it could be a routing path finding issue
 				return handleError({ e: isErr(res.error) ? res.error : undefined })
 			}
-			// payment success, add as history entry
-			await addLnPaymentToHistory(
-				res,
-				[mint.mintUrl],
-				-amount,
-				target
-			)
-			// update latest 3 history entries
-			await updateLatestHistory({
-				amount: -amount,
-				fee: res.realFee,
+			await addHistoryEntry({
+				amount: -amount - (isNum(res.realFee) ? res.realFee : 0),
 				type: 2,
-				value: target,
+				value: invoice,
 				mints: [mint.mintUrl],
-				timestamp: Math.ceil(Date.now() / 1000)
+				fee: res.realFee
 			})
 			// reset zap deep link
 			clearUrl()
@@ -140,7 +132,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 				fee: res.realFee,
 				isMelt: true,
 				isZap,
-				change: isNum(estFee) && isNum(res.realFee) ?  estFee - res.realFee : undefined,
+				change: isNum(estFee) && isNum(res.realFee) ? estFee - res.realFee : undefined,
 			})
 		} catch (e) {
 			handleError({ e })
@@ -156,8 +148,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			// TODO this process can take a while, we need to add it as pending transaction
 			const res = await autoMintSwap(mint.mintUrl, targetMint.mintUrl, amount, estFee ?? 0, proofs)
 			// add as history entry (multimint swap)
-			await addToHistory({
-				amount: -amount,
+			await addHistoryEntry({
+				amount: -amount - (isNum(res.payResult.realFee) ? res.payResult.realFee : 0),
 				fee: res.payResult.realFee,
 				type: 3,
 				value: res.requestTokenResult.invoice?.pr || '',
@@ -167,7 +159,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			navigation.navigate('success', {
 				amount,
 				fee: res.payResult.realFee,
-				change: isNum(estFee) && isNum(res.payResult.realFee) ?  estFee - res.payResult.realFee : undefined,
+				change: isNum(estFee) && isNum(res.payResult.realFee) ? estFee - res.payResult.realFee : undefined,
 				isMelt: true
 			})
 		} catch (e) {
@@ -192,8 +184,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		}
 		const amountSent = tokenInfo.value - estFeeResp
 		// add as history entry (multimint swap)
-		await addToHistory({
-			amount: -amountSent,
+		await addHistoryEntry({
+			amount: -amountSent - (isNum(payResult.realFee) ? payResult.realFee : 0),
 			fee: payResult.realFee,
 			type: 3,
 			value: requestTokenResult.invoice?.pr || '',
@@ -212,7 +204,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 		try {
 			const token = await sendToken(mint.mintUrl, amount, memo || '', proofs)
 			// add as history entry (send ecash)
-			const entry = await addToHistory({
+			const entry = await addHistoryEntry({
 				amount: -amount,
 				type: 1,
 				value: token,
@@ -281,7 +273,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 			const { mints, highestBalance, highestBalanceMint } = await getHighestBalMint()
 			// if highest balance + estFee is sufficient, use it
 			if (highestBalanceMint) {
-				// TODO need to handle the case where the highest balance mint is not reachable?
 				const estFee = await checkFees(highestBalanceMint.mintUrl, recipient)
 				if (highestBalance + estFee >= amount) {
 					return navigation.navigate('coinSelection', {
@@ -308,23 +299,13 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	// start payment process
 	useEffect(() => {
 		if (isZap) {
-			if (payZap) {
-				return void handleMelting()
-			}
+			if (payZap) { return void handleMelting() }
 			return void handleZap()
 		}
-		if (isMelt) {
-			return void handleMelting()
-		}
-		if (isSwap) {
-			return void handleSwap()
-		}
-		if (isAutoSwap) {
-			return void handleAutoSwap()
-		}
-		if (isSendEcash) {
-			return void handleSendingEcash()
-		}
+		if (isMelt) { return void handleMelting() }
+		if (isSwap) { return void handleSwap() }
+		if (isAutoSwap) { return void handleAutoSwap() }
+		if (isSendEcash) { return void handleSendingEcash() }
 		void handleMinting()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMelt, isSwap, isZap, payZap, isSendEcash, isAutoSwap])
@@ -339,11 +320,9 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
 	return (
 		<View style={[globals(color).container, styles.container]}>
 			<Loading size={s(35)} nostr={!!nostr} />
-			<Txt
-				styles={[styles.descText]}
-				txt={t(processingTxt)}
-			/>
-			<Txt styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
+			<Txt center styles={[styles.descText]} txt={t(processingTxt)} />
+			<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('invoiceHint')} />
+			<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('dontClose', { ns: NS.common })} />
 		</View>
 	)
 }

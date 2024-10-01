@@ -60,12 +60,12 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 					{mintUrl ? formatMintUrl(mintUrl) : isStr(hex) ? nip19.npubEncode(hex) : 'N/A'}
 				</Text>
 				<AnimatedLottieView
-					imageAssetsFolder='lottie/success'
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					source={require('../../../assets/lottie/success/success.json')}
+					source={require('../../../assets/lottie/success.json')}
 					autoPlay
 					loop={false}
-					style={{ width: s(120) }}
+					style={styles.lottie}
+					renderMode="HARDWARE"
 				/>
 			</View>
 			<SafeAreaView style={styles.actionWrap}>
@@ -117,5 +117,9 @@ const styles = ScaledSheet.create({
 		fontSize: '14@vs',
 		textAlign: 'center',
 		fontWeight: '500',
+	},
+	lottie: {
+		width: '100@s',
+		height: '100@s'
 	},
 })

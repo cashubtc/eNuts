@@ -60,7 +60,6 @@ export interface ISearchStates {
 	hasResults: boolean
 }
 
-const marginBottom = isIOS ? vs(45) : vs(70)
 const marginBottomPayment = isIOS ? vs(20) : 0
 
 // https://github.com/nostr-protocol/nips/blob/master/04.md#security-warning
@@ -295,8 +294,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				openPromptAutoClose({ msg: t('receiverNoLnurl', { ns: NS.addrBook }) })
 				return
 			}
-			navigation.navigate('selectAmount', { isMelt, lnurl: contact.lud16, mint, balance })
-			return
+			return navigation.navigate('selectAmount', { isMelt, lnurl: { userInput: contact.lud16 }, mint, balance })
 		}
 		if (!nostrRef.current) { return }
 		// mint has already been selected
@@ -418,7 +416,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 					{contactsRef.current.length > 0 ?
 						<View style={[
 							styles.contactsWrap,
-							{ marginBottom: isKeyboardOpen || isPayment ? marginBottomPayment : marginBottom },
+							{ marginBottom: marginBottomPayment },
 						]}>
 							{search.input.length > 0 && search.results.length > 0 && search.hasResults ?
 								<FlashList
@@ -443,6 +441,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 									)}
 									ItemSeparatorComponent={() => (
 										<Separator style={[styles.contactSeparator]} />
+									)}
+									ListFooterComponent={() => (
+										<View style={{ minHeight: s(100) }} />
 									)}
 								/>
 								: search.input.length > 0 && !search.results.length && !search.hasResults ?
@@ -484,6 +485,9 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 										ItemSeparatorComponent={() => (
 											<Separator style={[styles.contactSeparator]} />
 										)}
+										ListFooterComponent={() => (
+											<View style={{ minHeight: s(80) }} />
+										)}
 									/>
 							}
 						</View>
@@ -509,6 +513,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 				<View style={styles.wrap}>
 					<TxtInput
 						keyboardType='default'
+						autoCapitalize='none'
 						placeholder='NPUB/HEX'
 						onChangeText={text => setInput(text)}
 						value={input}

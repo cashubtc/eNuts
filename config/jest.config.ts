@@ -21,7 +21,7 @@ export default (): JestConfigWithTsJest => ({
 				}]
 	},
 	resolver: 'ts-jest-resolver',
-	testRegex: 'test/.*\\.(test|spec)?\\.(ts|tsx)$',
+	testRegex: 'test/(?!e2e/).*\\.(test|spec)?\\.(ts|tsx)$',
 	// moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 	preset: 'jest-expo',
 	transformIgnorePatterns: [

@@ -1,5 +1,5 @@
 import ActionButtons from '@comps/ActionButtons'
-import Button, { IconBtn } from '@comps/Button'
+import Button, { IconBtn, TxtButton } from '@comps/Button'
 import Empty from '@comps/Empty'
 import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, QRIcon, ZapIcon } from '@comps/Icons'
 import Separator from '@comps/Separator'
@@ -13,24 +13,28 @@ import { BottomModal } from '@modal/Question'
 import type { IMintBalWithName, IMintUrl } from '@model'
 import type { TMintsPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { BITCOIN_MINTS_URL } from '@src/consts/urls'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
-import { formatMintUrl, formatSatStr, isErr, normalizeMintUrl, sortMintsByDefault } from '@util'
+import { formatMintUrl, formatSatStr, isErr, normalizeMintUrl, openUrl, sortMintsByDefault } from '@util'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
-export default function Mints({ navigation, route }: TMintsPageProps) {
+export default function Mints({ navigation }: TMintsPageProps) {
 	const { t } = useTranslation([NS.common])
 	const { prompt, closePrompt, openPromptAutoClose } = usePromptContext()
 	const { color, highlight } = useThemeContext()
 	const insets = useSafeAreaInsets()
+	const { hidden } = usePrivacyContext()
+	const [loading, setLoading] = useState(false)
 	// mint list
 	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
 	// this state is used to determine which mint has been pressed
@@ -55,30 +59,32 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 
 	// adds a mint via input
 	const handleMintInput = async () => {
+		setLoading(true)
 		// Allow user to submit URL without "https://" and add it ourself if not available
 		const submitted = normalizeMintUrl(input)
 		if (!submitted?.length) {
-			openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
-			return
+			setLoading(false)
+			return openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
 		}
 		try {
 			// check if mint is already in db
 			const mints = await getMintsUrls(true)
 			if (mints.some(m => m.mintUrl === submitted)) {
-				openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
-				return
+				setLoading(false)
+				return openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
 			}
 			// add mint url to db
 			await addMint(submitted)
 			setSelectedMint({ mintUrl: submitted })
 		} catch (e) {
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
-			return
+			setLoading(false)
+			return openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
 		}
 		setNewMintModal(false)
-		openTopUpModal()
 		const mints = await getMintsBalances()
 		setUserMints(await getCustomMintNames(mints))
+		setLoading(false)
+		openTopUpModal()
 	}
 
 	// trust modal asks user for confirmation on adding a default mint to its trusted list
@@ -90,8 +96,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			// prompt error
 			openPromptAutoClose({ msg: t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
 			setTrustModalOpen(false)
-			l(e)
-			return
+			return l(e)
 		}
 		setTrustModalOpen(false)
 		openTopUpModal()
@@ -106,24 +111,15 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	}, [])
 
 	const handleInitialRender = useCallback(async () => {
-		// user comes from dashboard and wants to add his own mint url, open prompt
-		if (route.params?.newMint) {
-			// timeout is needed on IOS only when different prompts are called synchronously
-			const t = setTimeout(() => {
-				setNewMintModal(true)
-				clearTimeout(t)
-			}, 200)
-			return
-		}
 		await handleMintsState()
 		const defaultt = await getDefaultMint()
 		setDefaultM(defaultt ?? '')
-		// this is the case when user adds the initial default mint
-		if (route.params?.defaultMint) {
-			// ask to mint new token
-			openTopUpModal()
-		}
-	}, [openTopUpModal, handleMintsState, route.params?.defaultMint, route.params?.newMint])
+	}, [handleMintsState])
+
+	const navToBtcMintsDotCom = () => {
+		openUrl(BITCOIN_MINTS_URL)?.catch(e =>
+			openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
+	}
 
 	// Show user mints with balances and default mint icon
 	useEffect(() => {
@@ -144,8 +140,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 	return (
 		<View style={[
 			globals(color).container,
-			styles.container,
-			{ justifyContent: usertMints.length ? 'flex-start' : 'center' }
+			styles.container
 		]}>
 			<TopNav
 				screenName='Mints'
@@ -159,7 +154,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 						{sortMintsByDefault(usertMints, defaultMint).map((m, i) => (
 							<View key={m.mintUrl}>
 								<TouchableOpacity
-									style={[globals().wrapRow, { paddingBottom: vs(15) }]}
+									style={[globals().wrapRow, { paddingBottom: s(15) }]}
 									onPress={() => {
 										const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
 										navigation.navigate('mintmanagement', {
@@ -190,7 +185,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 														marginBottom: 5
 													}}
 												>
-													{m.amount > 0 ? formatSatStr(m.amount, 'compact') : t('emptyMint')}
+													{hidden.balance ? '****' : m.amount > 0 ? formatSatStr(m.amount, 'compact') : t('emptyMint')}
 												</Text>
 											</View>
 										}
@@ -204,17 +199,32 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 										}
 									</View>
 								</TouchableOpacity>
-								{i < usertMints.length - 1 && <Separator style={[{ marginBottom: vs(15) }]} />}
+								{i < usertMints.length - 1 && <Separator style={[{ marginBottom: s(15) }]} />}
 							</View>
 						))}
 					</ScrollView>
+					<TxtButton
+						txt={t('findMint')}
+						onPress={navToBtcMintsDotCom}
+					/>
 				</View>
 				:
-				<Empty
-					txt={t('addNewMint', { ns: NS.mints })}
-					pressable
-					onPress={() => setNewMintModal(true)}
-				/>
+				<View style={styles.noMintContainer}>
+					<Empty txt={t('noMint')} />
+					<View style={styles.noMintBottomSection}>
+						<Button
+							txt={t('addNewMint', { ns: NS.mints })}
+							onPress={() => {
+								setNewMintModal(true)
+							}}
+						/>
+						<Button
+							outlined
+							txt={t('findMint')}
+							onPress={navToBtcMintsDotCom}
+						/>
+					</View>
+				</View>
 			}
 			{/* Submit new mint URL modal */}
 			<MyModal
@@ -229,6 +239,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				<View style={styles.wrap}>
 					<TxtInput
 						keyboardType='url'
+						autoCapitalize='none'
 						placeholder='Mint URL'
 						value={input}
 						onChangeText={setInput}
@@ -252,7 +263,8 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 				<Button
 					txt={t('addMintBtn', { ns: NS.mints })}
 					onPress={() => void handleMintInput()}
-					disabled={!input.length}
+					disabled={!input.length || loading}
+					loading={loading}
 				/>
 				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
 					<Txt txt={t('cancel')} styles={[globals(color, highlight).pressTxt]} />
@@ -267,7 +279,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 			>
 				<View style={{ alignItems: 'center', justifyContent: 'center' }}>
 					<CheckCircleIcon width={50} height={50} color={mainColors.VALID} />
-					<Text style={globals(color).modalHeader}>
+					<Text style={globals(color).modalHeader} testID='new-mint-success'>
 						{t('newMintAdded', { ns: NS.mints })}
 					</Text>
 					<Txt
@@ -290,7 +302,7 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 					bottomBtnTxt={t('willDoLater')}
 					bottomBtnAction={() => {
 						setTopUpModal(false)
-						navigation.navigate('dashboard')
+						// navigation.navigate('dashboard')
 					}}
 				/>
 			</MyModal>
@@ -322,8 +334,20 @@ export default function Mints({ navigation, route }: TMintsPageProps) {
 
 const styles = ScaledSheet.create({
 	container: {
-		// paddingTop: 0,
 		alignItems: 'center',
+		justifyContent: 'flex-start'
+	},
+	noMintContainer: {
+		flex: 1,
+		width: '100%',
+		paddingHorizontal: '20@s',
+	},
+	noMintBottomSection: {
+		position: 'absolute',
+		bottom: '20@s',
+		right: '20@s',
+		left: '20@s',
+		rowGap: '20@s',
 	},
 	topSection: {
 		width: '100%',

@@ -2,7 +2,7 @@ import { isIOS } from '@consts'
 import { useKeyboardCtx } from '@src/context/Keyboard'
 import { useThemeContext } from '@src/context/Theme'
 import { highlight as hi, HighlightKey, mainColors, Theme } from '@styles'
-import { KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native'
+import { KeyboardAvoidingView, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface IMyModalProps {
@@ -12,6 +12,7 @@ interface IMyModalProps {
 	success?: boolean
 	hasNoPadding?: boolean
 	close?: () => void
+	// onBackdropPress?: () => void
 	children: React.ReactNode
 }
 
@@ -22,11 +23,12 @@ export default function MyModal({
 	success,
 	hasNoPadding,
 	close,
+	// onBackdropPress,
 	children
 }: IMyModalProps) {
 
 	const { color, highlight } = useThemeContext()
-	const { isKeyboardOpen} = useKeyboardCtx()
+	const { isKeyboardOpen } = useKeyboardCtx()
 	const insets = useSafeAreaInsets()
 
 	const getCorrectStyle = () => {
@@ -69,14 +71,22 @@ export default function MyModal({
 					onRequestClose={close}
 					testID='testCoinSelectionModal'
 				>
-					<KeyboardAvoidingView
-						style={getCorrectStyle()}
-						behavior={isIOS ? 'height' : undefined}
+					<TouchableOpacity
+						style={styles(color, highlight).modalContainer}
+						activeOpacity={1}
+						onPressOut={close}
 					>
-						<View style={[getViewStyle(), success ? { backgroundColor: hi[highlight] } : {}]}>
-							{children}
-						</View>
-					</KeyboardAvoidingView>
+						<KeyboardAvoidingView
+							style={getCorrectStyle()}
+							behavior={isIOS ? 'height' : undefined}
+						>
+							<TouchableWithoutFeedback>
+								<View style={[getViewStyle(), success ? { backgroundColor: hi[highlight] } : {}]}>
+									{children}
+								</View>
+							</TouchableWithoutFeedback>
+						</KeyboardAvoidingView>
+					</TouchableOpacity>
 				</Modal>
 			</View>
 			: null
@@ -91,6 +101,9 @@ const styles = (pref: Theme, h: HighlightKey) => StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		backgroundColor: 'rgba(0, 0, 0, .5)',
+	},
+	modalContainer: {
+		flex: 1,
 	},
 	common: {
 		backgroundColor: pref.BACKGROUND,

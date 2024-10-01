@@ -1,20 +1,21 @@
 import { env } from '@consts'
 import { FiveMins } from '@consts/time'
 import { addAllMintIds, getBalance, getMintsBalances, initDb } from '@db'
-import { fsInfo } from '@db/fs'
 import { l } from '@log'
 import type { INavigatorProps } from '@model/nav'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { CustomErrorBoundary } from '@screens/ErrorScreen/ErrorBoundary'
 import { ErrorDetails } from '@screens/ErrorScreen/ErrorDetails'
+import * as Sentry from '@sentry/react-native'
+import { BalanceProvider } from '@src/context/Balance'
 import { FocusClaimProvider } from '@src/context/FocusClaim'
+import { HistoryProvider } from '@src/context/History'
 import { KeyboardProvider } from '@src/context/Keyboard'
 import { NostrProvider } from '@src/context/Nostr'
 import { PinCtx } from '@src/context/Pin'
 import { PrivacyProvider } from '@src/context/Privacy'
 import { PromptProvider } from '@src/context/Prompt'
-import { ReleaseProvider } from '@src/context/Release'
 import { ThemeProvider, useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { secureStore, store } from '@store'
@@ -30,7 +31,6 @@ import { useTranslation } from 'react-i18next'
 import { AppState, LogBox } from 'react-native'
 import { MenuProvider } from 'react-native-popup-menu'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import * as Sentry from 'sentry-expo'
 
 import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
@@ -50,8 +50,7 @@ interface ILockData {
 l('[APP] Starting app...')
 
 void SplashScreen.preventAutoHideAsync()
-
-export default function App() {
+function App(_: { exp: Record<string, unknown> }) {
 	if (!env?.SENTRY_DSN) {
 		return (
 			<SafeAreaProvider>
@@ -62,7 +61,7 @@ export default function App() {
 		)
 	}
 	// Create the error boundary...
-	const ErrorBoundary = Sentry.Native.ErrorBoundary
+	const ErrorBoundary = Sentry.ErrorBoundary
 	// Uses the Sentry error boundary component which posts the errors to our Sentry account
 	return (
 		<SafeAreaProvider>
@@ -72,11 +71,14 @@ export default function App() {
 		</SafeAreaProvider>
 	)
 }
+export default Sentry.wrap(App)
 
 function _App() {
 	// initial auth state
 	const [auth, setAuth] = useState<INavigatorProps>({ pinHash: '' })
 	const [shouldOnboard, setShouldOnboard] = useState(false)
+	const [hasSeed, setHasSeed] = useState(false)
+	const [sawSeedUpdate, setSawSeedUpdate] = useState(false)
 	// app was longer than 5 mins in the background
 	const [bgAuth, setBgAuth] = useState(false)
 	// PIN mismatch state
@@ -123,19 +125,21 @@ function _App() {
 			if (mintBalsTotal !== balance) { await addAllMintIds() }
 		} catch (e) {
 			l(isErr(e) ? e.message : 'Error while initiating the user app configuration.')
-		} finally {
-			await fsInfo()
 		}
 	}
 
 	// init auth data
 	const initAuth = async () => {
-		const [pinHash, onboard] = await Promise.all([
+		const [pinHash, onboard, sawSeed, seed] = await Promise.all([
 			secureStore.get(SECURESTORE_KEY),
-			store.get(STORE_KEYS.explainer)
+			store.get(STORE_KEYS.explainer),
+			store.get(STORE_KEYS.sawSeedUpdate),
+			store.get(STORE_KEYS.hasSeed),
 		])
 		setAuth({ pinHash: isNull(pinHash) ? '' : pinHash })
 		setShouldOnboard(onboard && onboard === '1' ? false : true)
+		setSawSeedUpdate(sawSeed && sawSeed === '1' ? true : false)
+		setHasSeed(!!seed)
 		// check for pin attempts and app locked state
 		await handlePinForeground()
 	}
@@ -202,27 +206,31 @@ function _App() {
 			<PinCtx.Provider value={pinData}>
 				<PrivacyProvider>
 					<MenuProvider>
-						<ReleaseProvider>
-							<NostrProvider>
-								<NavContainer>
+						<NostrProvider>
+							<NavContainer>
+								<BalanceProvider>
 									<FocusClaimProvider >
 										<PromptProvider>
-											<KeyboardProvider>
-												<Navigator
-													shouldOnboard={shouldOnboard}
-													pinHash={auth.pinHash}
-													bgAuth={bgAuth}
-													setBgAuth={setBgAuth}
-												/>
-												<StatusBar style="auto" />
-												<ClipboardModal />
-												<Toaster />
-											</KeyboardProvider>
+											<HistoryProvider>
+												<KeyboardProvider>
+													<Navigator
+														shouldOnboard={shouldOnboard}
+														pinHash={auth.pinHash}
+														bgAuth={bgAuth}
+														setBgAuth={setBgAuth}
+														hasSeed={hasSeed}
+														sawSeedUpdate={sawSeedUpdate}
+													/>
+													<StatusBar style="auto" />
+													<ClipboardModal />
+													<Toaster />
+												</KeyboardProvider>
+											</HistoryProvider>
 										</PromptProvider>
 									</FocusClaimProvider>
-								</NavContainer>
-							</NostrProvider>
-						</ReleaseProvider>
+								</BalanceProvider>
+							</NavContainer>
+						</NostrProvider>
 					</MenuProvider>
 				</PrivacyProvider>
 			</PinCtx.Provider>

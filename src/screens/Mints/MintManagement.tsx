@@ -1,18 +1,18 @@
 import Button, { TxtButton } from '@comps/Button'
 import useCopy from '@comps/hooks/Copy'
-import { AboutIcon, BitcoinIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, FlagIcon, MintBoardIcon, PenIcon, PlusIcon, QRIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
+import { AboutIcon, BitcoinIcon, CheckmarkIcon, ChevronRightIcon, CopyIcon, EyeIcon, MintBoardIcon, PenIcon, PlusIcon, QRIcon, SwapIcon, TrashbinIcon, ValidateIcon, ZapIcon } from '@comps/Icons'
 import QRModal from '@comps/QRModal'
 import Separator from '@comps/Separator'
 import Txt from '@comps/Txt'
 import TxtInput from '@comps/TxtInput'
 import { _testmintUrl, isIOS } from '@consts'
 import { deleteMint, deleteProofs, getMintsUrls, getProofsByMintUrl } from '@db'
-import { getBackUpTokenForMint } from '@db/backup'
 import { l } from '@log'
 import MyModal from '@modal'
 import { BottomModal } from '@modal/Question'
 import type { TMintManagementPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -30,6 +30,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 	// prompt modal
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
+	const { hidden } = usePrivacyContext()
 	// custom name modal
 	const [customNameOpen, setCustomNameOpen] = useState(false)
 	const [mintName, setMintName] = useState('')
@@ -92,20 +93,6 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 		})
 	}
 
-	const handleMintBackup = async () => {
-		if (route.params.amount < 1) {
-			openPromptAutoClose({ msg: t('lowBackupBal', { ns: NS.mints }) })
-			return
-		}
-		try {
-			const token = await getBackUpTokenForMint(route.params.mint?.mintUrl)
-			navigation.navigate('mint backup', { token, mintUrl: route.params.mint?.mintUrl })
-		} catch (e) {
-			l(e)
-			openPromptAutoClose({ msg: t('backupNotCreated', { ns: NS.mints }) })
-		}
-	}
-
 	const handleDefaultMint = async () => {
 		const mUrl = route.params.mint?.mintUrl
 		const defaultM = await getDefaultMint()
@@ -165,7 +152,7 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 								</View>
 								<Txt txt={t('balance')} />
 							</View>
-							<Txt txt={formatSatStr(route.params.amount)} />
+							<Txt txt={hidden.balance ? '****' : formatSatStr(route.params.amount)} />
 						</View>
 						<Separator style={[styles.separator]} />
 						{/* Mint url */}
@@ -249,13 +236,6 @@ export default function MintManagement({ navigation, route }: TMintManagementPag
 							hasSeparator
 							onPress={() => void handleMintSwap()}
 							icon={<SwapIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-						/>
-						{/* Backup mint */}
-						<MintOption
-							txt={t('mintBackup', { ns: NS.topNav })}
-							hasSeparator
-							onPress={() => void handleMintBackup()}
-							icon={<FlagIcon width={s(22)} height={s(22)} color={color.TEXT} />}
 						/>
 						{/* Proof list */}
 						<MintOption

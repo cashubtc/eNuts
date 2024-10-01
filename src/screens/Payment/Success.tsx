@@ -5,9 +5,9 @@ import { isIOS } from '@consts'
 import type { TBeforeRemoveEvent, TSuccessPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
 import ProfilePic from '@screens/Addressbook/ProfilePic'
+import { useBalanceContext } from '@src/context/Balance'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { l } from '@src/logger'
 import { formatSatStr, isNum, vib } from '@util'
 import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
@@ -29,12 +29,18 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		isZap,
 		nostr,
 		isScanned,
+		isRestored,
 	} = route.params
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
+	const { updateBalance } = useBalanceContext()
 	const insets = useSafeAreaInsets()
 
-	useEffect(() => vib(400), [])
+	useEffect(() => {
+		vib(400)
+		void updateBalance()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
 	useEffect(() => {
@@ -42,8 +48,6 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 		navigation.addListener('beforeRemove', backHandler)
 		return () => navigation.removeListener('beforeRemove', backHandler)
 	}, [navigation])
-
-	l({ amount, memo, fee, mint, isClaim, isMelt, nostr, isScanned })
 
 	return (
 		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
@@ -70,10 +74,13 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 							isAutoSwap ?
 								t('autoSwapSuccess')
 								:
-								!nostr ?
-									<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
+								isRestored ?
+									<>{formatSatStr(amount || 0)} {t('restored')}!</>
 									:
-									null
+									!nostr ?
+										<>{formatSatStr(amount || 0)} {isClaim ? t('claimed') : t('minted')}!</>
+										:
+										null
 					}
 				</Text>
 				{memo &&
@@ -88,12 +95,12 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				}
 				<View style={styles.successAnim}>
 					<LottieView
-						imageAssetsFolder='lottie/success'
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-						source={require('../../../assets/lottie/success/success.json')}
+						source={require('../../../assets/lottie/success.json')}
 						autoPlay
 						loop={false}
-						style={{ width: s(120) }}
+						style={styles.lottie}
+						renderMode="HARDWARE"
 					/>
 				</View>
 				{(isMelt || isAutoSwap) && amount &&
@@ -119,6 +126,9 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				<Button
 					txt={t('backToDashboard')}
 					onPress={() => {
+						if (route.params?.comingFromOnboarding) {
+							return navigation.navigate('auth', { pinHash: '' })
+						}
 						const routes = navigation.getState()?.routes
 						const prevRoute = routes[routes.length - 2]
 						// if user comes from auth screen, navigate back to auth
@@ -126,20 +136,19 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						if (prevRoute?.name === 'auth' && prevRoute.params?.pinHash) {
 							// @ts-expect-error navigation type is not complete
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-							navigation.navigate('auth', { pinHash: prevRoute.params.pinHash })
-							return
+							return navigation.navigate('auth', { pinHash: prevRoute.params.pinHash })
 						}
 						navigation.navigate('dashboard')
 					}}
 				/>
 			</View>
 			<LottieView
-				imageAssetsFolder='lottie/confetti'
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				source={require('../../../assets/lottie/success/confetti.json')}
+				source={require('../../../assets/lottie/confetti.json')}
 				autoPlay
 				loop={false}
 				style={styles.confetti}
+				renderMode="HARDWARE"
 			/>
 		</View>
 	)
@@ -202,7 +211,7 @@ const styles = ScaledSheet.create({
 		paddingHorizontal: '20@s',
 	},
 	confetti: {
-		width: '380@s',
+		width: '340@s',
 		position: 'absolute',
 		top: 0,
 		right: 0,
@@ -214,5 +223,9 @@ const styles = ScaledSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginTop: '20@vs'
-	}
+	},
+	lottie: {
+		width: '100@s',
+		height: '100@s'
+	},
 })

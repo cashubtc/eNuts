@@ -23,7 +23,7 @@ i18n.use(initReactI18next).init({
 // libraries to mock
 // jest.mock('react-native', () => jest.requireActual<typeof import('react-native')>('react-native'))
 
-jest.mock('expo-sqlite', () => ({
+jest.mock('expo-sqlite/legacy', () => ({
 	get openDatabase() {
 		return (_: string) => getDatabase(':memory:')
 	}

@@ -9,11 +9,11 @@ import { l } from '@log'
 import type { ITokenInfo } from '@model'
 import type { IContact, INostrDm } from '@model/nostr'
 import { getNostrUsername, truncateStr } from '@nostr/util'
+import { useHistoryContext } from '@src/context/History'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { addToHistory } from '@store/latestHistoryEntries'
 import { getDefaultMint } from '@store/mintStore'
 import { updateNostrRedeemed } from '@store/nostrDms'
 import { highlight as hi, mainColors } from '@styles'
@@ -42,6 +42,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 	const [info, setInfo] = useState<ITokenInfo | undefined>()
 	const { trustModal, setTrustModal } = useCashuToken()
 	const { loading, startLoading, stopLoading } = useLoading()
+	const { addHistoryEntry } = useHistoryContext()
 
 	const handleStoreRedeemed = async () => {
 		await updateNostrRedeemed(id)
@@ -89,7 +90,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 				return stopLoading()
 			}
 			// add as history entry (receive ecash from nostr)
-			await addToHistory({
+			await addHistoryEntry({
 				amount: info.value,
 				type: 1,
 				value: token,

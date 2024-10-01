@@ -1,21 +1,10 @@
 import { useThemeContext } from '@src/context/Theme'
-import { mainColors } from '@src/styles'
-import { highlight as hi } from '@styles/colors'
+import { highlight as hi,mainColors } from '@styles'
 import { useState } from 'react'
 import { Dimensions, View } from 'react-native'
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler'
-import Animated, {
-	Extrapolate,
-	interpolate,
-	interpolateColor,
-	runOnJS,
-	useAnimatedGestureHandler,
-	useAnimatedStyle,
-	useSharedValue,
-	withSpring
-} from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import Animated, { Extrapolation, interpolate, interpolateColor, runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import { ScaledSheet } from 'react-native-size-matters'
 
 import { ChevronRightIcon } from './Icons'
 
@@ -50,7 +39,6 @@ interface ISwipeButtonProps {
 export default function SwipeButton({ txt, onToggle }: ISwipeButtonProps) {
 
 	const { color, highlight } = useThemeContext()
-	const insets = useSafeAreaInsets()
 	const X = useSharedValue(0)
 	const [toggled, setToggled] = useState(false)
 
@@ -62,7 +50,7 @@ export default function SwipeButton({ txt, onToggle }: ISwipeButtonProps) {
 		}
 	}
 
-	// Gesture Handler Events
+	// Gesture Handler Events // TODO update this deprecated method
 	const animatedGestureHandler = useAnimatedGestureHandler({
 		onStart: (_, ctx: TGestureContext) => {
 			ctx.completed = toggled
@@ -109,26 +97,26 @@ export default function SwipeButton({ txt, onToggle }: ISwipeButtonProps) {
 				X.value * 2,
 				InterpolateXInput,
 				[1, 0],
-				Extrapolate.CLAMP,
+				Extrapolation.CLAMP,
 			),
 			transform: [{
 				translateX: interpolate(
 					X.value,
 					InterpolateXInput,
 					[0, BUTTON_WIDTH / 2 - SWIPEABLE_DIMENSIONS],
-					Extrapolate.CLAMP,
+					Extrapolation.CLAMP,
 				),
 			}],
 		})),
 	}
 
 	return (
-		<View style={{ padding: s(20), paddingBottom: insets.bottom + s(20) }}>
+		<View style={styles.container}>
 			<GestureHandlerRootView>
 				<Animated.View style={[styles.swipeCont, AnimatedStyles.swipeCont, { backgroundColor: color.INPUT_BG }]}>
 					<AnimatedView style={[AnimatedStyles.colorWave, styles.colorWave, { backgroundColor: hi[highlight] }]} />
 					<PanGestureHandler onGestureEvent={animatedGestureHandler}>
-						<Animated.View style={[styles.swipeable, AnimatedStyles.swipeable]}>
+						<Animated.View style={[styles.swipeable, AnimatedStyles.swipeable, { borderColor: color.INPUT_PH }]}>
 							<ChevronRightIcon color={mainColors.WHITE} />
 						</Animated.View>
 					</PanGestureHandler>
@@ -142,6 +130,10 @@ export default function SwipeButton({ txt, onToggle }: ISwipeButtonProps) {
 }
 
 const styles = ScaledSheet.create({
+	container: {
+		paddingHorizontal: '20@s',
+		paddingTop: '5@s',
+	},
 	swipeCont: {
 		height: BUTTON_HEIGHT,
 		width: BUTTON_WIDTH,
@@ -167,6 +159,7 @@ const styles = ScaledSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		zIndex: 3,
+		borderWidth: 5,
 	},
 	swipeText: {
 		alignSelf: 'center',

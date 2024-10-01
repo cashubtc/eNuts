@@ -7,6 +7,7 @@ import Txt from '@comps/Txt'
 import { _testmintUrl } from '@consts'
 import type { IMintBalWithName } from '@model'
 import type { TSelectMintPageProps } from '@model/nav'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
@@ -33,6 +34,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 		scanned
 	} = route.params
 	const { openPromptAutoClose } = usePromptContext()
+	const { hidden } = usePrivacyContext()
 	const insets = useSafeAreaInsets()
 	const { t } = useTranslation([NS.wallet])
 	const { color, highlight } = useThemeContext()
@@ -156,7 +158,7 @@ export default function SelectMintScreen({ navigation, route }: TSelectMintPageP
 											styles.mintAmount,
 											{ color: (isSendEcash || isMelt) && !m.amount ? color.TEXT_SECONDARY : color.TEXT, paddingBottom: vs(3) }
 										]}>
-											{formatInt(m.amount, 'compact', 'en')}
+											{hidden.balance ? '****' : formatInt(m.amount, 'compact', 'en')}
 										</Text>
 										<ZapIcon color={(isSendEcash || isMelt) && !m.amount ? color.TEXT_SECONDARY : hi[highlight]} />
 									</View>

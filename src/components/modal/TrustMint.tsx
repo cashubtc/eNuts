@@ -1,7 +1,7 @@
 import { TxtButton } from '@comps/Button'
 import { ReceiveIcon, SwapIcon } from '@comps/Icons'
+import Loading from '@comps/Loading'
 import Separator from '@comps/Separator'
-import Txt from '@comps/Txt'
 import type { ITokenInfo } from '@model'
 import type { RootStackParamList } from '@model/nav'
 import { type NavigationProp, useNavigation } from '@react-navigation/core'
@@ -82,39 +82,49 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 			</View>
 			<TouchableOpacity
 				onPress={() => void handleAutoSwap()}
-				style={{ opacity: defaultMint.length === 0 ? 0.4 : 1 }}
+				style={[styles.container, { opacity: defaultMint.length === 0 ? 0.4 : 1 }]}
 				disabled={defaultMint.length === 0}
 			>
-				<View style={styles.action}>
-					<View style={{ minWidth: s(40) }}>
-						<SwapIcon width={s(22)} height={s(22)} color={mainColors.ZAP} />
-					</View>
-					<View>
-						<Txt txt={t('autoSwapToDefaulMint')} bold />
+				<View style={styles.iconContainer}>
+					<SwapIcon width={s(22)} height={s(22)} color={mainColors.ZAP} />
+				</View>
+				<View style={styles.txtWrap}>
+					<Text style={[styles.actionText, { color: color.TEXT }]}>
+						{t('autoSwapToDefaulMint')}
+					</Text>
+					<Text style={[
+						styles.descriptionText,
+						{ color: defaultMint.length === 0 ? mainColors.WARN : color.TEXT_SECONDARY }
+					]}>
 						{defaultMint.length === 0 ?
-							<Txt
-								txt={t('noDefaultHint')}
-								styles={[{ fontSize: vs(11), color: mainColors.WARN }]}
-							/>
+							t('noDefaultHint')
 							:
-							<Txt
-								txt={t('swapHint')}
-								styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]}
-							/>
+							t('swapHint')
 						}
-					</View>
+					</Text>
 				</View>
 			</TouchableOpacity>
 			<Separator style={[styles.separator]} />
-			<TouchableOpacity onPress={handleTrustModal}>
-				<View style={styles.action}>
-					<View style={{ minWidth: s(40) }}>
+			<TouchableOpacity
+				style={styles.container}
+				onPress={handleTrustModal}
+			>
+				<View style={styles.iconContainer}>
+					{loading ?
+						<View>
+							<Loading size='small' color={mainColors.VALID} />
+						</View>
+						:
 						<ReceiveIcon width={s(26)} height={s(26)} color={mainColors.VALID} />
-					</View>
-					<View>
-						<Txt txt={loading ? t('claiming', { ns: NS.wallet }) : t('trustMintOpt')} bold />
-						<Txt styles={[{ fontSize: vs(11), color: color.TEXT_SECONDARY }]} txt={t('trustHint')} />
-					</View>
+					}
+				</View>
+				<View style={styles.txtWrap}>
+					<Text style={[styles.actionText, { color: color.TEXT }]}>
+						{loading ? t('claiming', { ns: NS.wallet }) : t('trustMintOpt')}
+					</Text>
+					<Text style={[styles.descriptionText, { color: color.TEXT_SECONDARY }]}>
+						{t('trustHint')}
+					</Text>
 				</View>
 			</TouchableOpacity>
 			<TxtButton
@@ -127,6 +137,25 @@ export default function TrustMintModal({ loading, tokenInfo, handleTrustModal, c
 }
 
 const styles = ScaledSheet.create({
+	container: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		width: '100%',
+	},
+	iconContainer: {
+		minWidth: '11%',
+	},
+	txtWrap: {
+		width: '90%',
+	},
+	actionText: {
+		fontSize: '14@vs',
+		fontWeight: '500',
+		marginBottom: '4@vs',
+	},
+	descriptionText: {
+		fontSize: '12@vs',
+	},
 	mintPrompt: {
 		fontSize: '12@vs',
 		marginBottom: '5@vs',
@@ -134,18 +163,13 @@ const styles = ScaledSheet.create({
 	tokenMintsView: {
 		marginBottom: '30@vs'
 	},
-	action: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingHorizontal: '20@s',
-		width: '100%'
-	},
 	TxtButton: {
 		paddingBottom: vs(15),
-		paddingTop: vs(35)
+		paddingTop: vs(25)
 	},
 	separator: {
 		width: '100%',
-		marginTop: vs(20)
+		marginTop: '10@vs',
+		marginBottom: '10@vs'
 	}
 })

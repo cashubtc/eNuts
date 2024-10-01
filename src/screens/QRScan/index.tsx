@@ -13,10 +13,10 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { getDefaultMint } from '@store/mintStore'
 import { globals, mainColors } from '@styles'
-import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isNull, isStr, isUrl } from '@util'
+import { decodeLnInvoice, extractStrFromURL, hasTrustedMint, isCashuToken, isStr } from '@util'
+import { decodeUrlOrAddress, isLnurlOrAddress, isUrl } from '@util/lnurl'
 import { getTokenInfo } from '@wallet/proofs'
-import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
-import { Camera, FlashMode } from 'expo-camera'
+import { CameraView, useCameraPermissions } from 'expo-camera'
 import { nip19 } from 'nostr-tools'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -31,7 +31,8 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 	const { openPromptAutoClose } = usePromptContext()
 	const { color } = useThemeContext()
 	const isFocused = useIsFocused()
-	const [hasPermission, setHasPermission] = useState<boolean | null>(null)
+	const [permission, requestPermission] = useCameraPermissions()
+	// const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 	const [scanned, setScanned] = useState(false)
 	const [flash, setFlash] = useState(false)
 	// prompt modal
@@ -113,6 +114,14 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		if (isUrl(data) && new URL(data).protocol === 'https:') {
 			return navigation.navigate('mint confirm', { mintUrl: data })
 		}
+		// handle LNURL
+		if (isLnurlOrAddress(data)) {
+			const decoded = decodeUrlOrAddress(data)
+			if (!decoded) {
+				return openPromptAutoClose({ msg: t('unknownType') + ` - decoded LNURL: "${decoded}"` })
+			}
+			return navigation.navigate('qr processing', { lnurl: { data, mint, balance, url: decoded }, scanned: true })
+		}
 		// handle LN invoice
 		try {
 			const invoice = extractStrFromURL(data) || data
@@ -126,22 +135,20 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		}
 	}
 
-	// Camera permission
-	useEffect(() => {
-		const getBarCodeScannerPermissions = async () => {
-			const { status } = await BarCodeScanner.requestPermissionsAsync()
-			setHasPermission(status === PermissionStatus.GRANTED)
-		}
-		void getBarCodeScannerPermissions()
-	}, [])
-
 	useEffect(() => {
 		if (!isFocused) {
 			setScanned(false)
 		}
 	}, [isFocused])
 
-	if (isNull(hasPermission)) {
+	useEffect(() => {
+		if (!permission || !permission.granted) {
+			void requestPermission()
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	if (!permission || !permission.granted) {
 		return <View style={styles.empty} />
 	}
 
@@ -149,15 +156,17 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 		<View style={[
 			globals(color).container,
 			styles.container,
-			isFocused && hasPermission ? { justifyContent: 'center' } : {}
+			isFocused && permission.granted ? { justifyContent: 'center' } : {}
 		]}>
-			{isFocused && hasPermission ?
+			{isFocused && permission.granted ?
 				<>
-					<Camera
-						flashMode={flash ? FlashMode.torch : FlashMode.off}
-						style={StyleSheet.absoluteFill}
-						ratio={'16:9'}
-						onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+					<CameraView
+						onBarcodeScanned={res => scanned ? undefined : void handleBarCodeScanned({ type: res.type, data: res.data })}
+						barcodeScannerSettings={{
+							barcodeTypes: ['qr'],
+						}}
+						style={StyleSheet.absoluteFillObject}
+						enableTorch={flash}
 					/>
 					<QRMarker size={300} color={scanned ? mainColors.GREY : mainColors.WHITE} />
 					{scanned &&

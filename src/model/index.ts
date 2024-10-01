@@ -1,7 +1,7 @@
-import type { Proof, Token } from '@cashu/cashu-ts'
+import type { PayLnInvoiceResponse, Proof, Token } from '@cashu/cashu-ts'
 import type { HighlightKey } from '@styles'
 import type { ExpoConfig } from 'expo/config'
-import type { SQLStmtCb, SQLStmtErrCb } from 'expo-sqlite'
+import type { SQLStmtCb, SQLStmtErrCb } from 'expo-sqlite/legacy'
 
 export interface IExpoConfig extends ExpoConfig {
 	extra?: {
@@ -29,6 +29,15 @@ export interface ILnUrl {
 	maxSendable: number
 	callback: string
 	pr: string
+}
+
+// TODO This interface is missing some properties?
+export interface ILnUrlPayRequest {
+	tag: string
+	cb: string
+	minSendable: number
+	maxSendable: number
+	metadata: string
 }
 export interface IMint {
 	id: string
@@ -82,15 +91,25 @@ export interface IProofSelection extends Proof {
 	selected: boolean
 }
 
+export enum txType {
+	SEND_RECEIVE = 1,
+	LIGHTNING = 2,
+	SWAP = 3,
+	RESTORE = 4
+}
+
+export type TTXType = txType.SEND_RECEIVE | txType.LIGHTNING | txType.SWAP | txType.RESTORE
+
 /**
  * type: 1 | 2 | 3
  * 1 = send/receive Ecash
  * 2 = LN invoice
  * 3 = multimint swap
+ * 4 = restored from backup
  */
 export interface IHistoryEntry {
 	amount: number
-	type: 1 | 2 | 3
+	type: TTXType
 	timestamp: number
 	value: string		// Lightning invoice or encoded Cashu token
 	mints: string[] 	// mints involved
@@ -99,6 +118,8 @@ export interface IHistoryEntry {
 	preImage?: string,
 	fee?: number,
 	isSpent?: boolean 	// is token spendable
+	isPending?: boolean // is LN invoice pending
+	isExpired?: boolean // is LN invoice expired
 }
 
 
@@ -153,4 +174,12 @@ export interface IOpenPromptAutoCloseProps {
 	msg: string
 	success?: boolean
 	ms?: number
+}
+
+export type TPayLnInvoiceReturnType = Promise<{ result?: PayLnInvoiceResponse, fee?: number, realFee?: number, error?: unknown }>
+
+export type TRequestTokenReturnType = Promise<{ success: boolean; invoice: IInvoice | null | undefined }>
+
+export interface ISecret {
+	secret: string
 }

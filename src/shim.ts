@@ -1,5 +1,4 @@
 // dont touch this
-import 'react-native-url-polyfill/auto'
 import 'text-encoding-polyfill'
 
 import * as c from 'expo-crypto'

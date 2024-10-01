@@ -7,9 +7,11 @@ import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from '@model/nav'
 import TopNav from '@nav/TopNav'
 import { preventBack } from '@nav/utils'
 import { isIOS } from '@src/consts'
+import { useBalanceContext } from '@src/context/Balance'
+import { useHistoryContext } from '@src/context/History'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
-import { historyStore, store } from '@store'
+import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { formatInt, formatSatStr, share, vib } from '@util'
@@ -27,6 +29,8 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 	const { value, amount } = route.params.entry
 	const { t } = useTranslation([NS.common])
 	const { color, highlight } = useThemeContext()
+	const { updateHistoryEntry } = useHistoryContext()
+	const { updateBalance } = useBalanceContext()
 	const [error, setError] = useState({ msg: '', open: false })
 	const [spent, setSpent] = useState(false)
 	const { copied, copy } = useCopy()
@@ -43,8 +47,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 		setSpent(!isSpendable)
 		if (!isSpendable) {
 			clearTokenInterval()
-			// update history item
-			await historyStore.updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: true })
+			await updateHistoryEntry(route.params.entry, { ...route.params.entry, isSpent: true })
 		}
 	}
 
@@ -63,6 +66,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 
 	// auto check payment in intervals
 	useEffect(() => {
+		void updateBalance()
 		intervalRef.current = setInterval(() => {
 			void checkPayment()
 		}, 3000)
@@ -88,12 +92,12 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 						</Text>
 						<View style={styles.successAnim}>
 							<LottieView
-								imageAssetsFolder='lottie/success'
 								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-								source={require('../../../../assets/lottie/success/success.json')}
+								source={require('../../../../assets/lottie/success.json')}
 								autoPlay
 								loop={false}
-								style={{ width: s(130) }}
+								style={styles.lottie}
+								renderMode="HARDWARE"
 							/>
 						</View>
 					</View>
@@ -180,5 +184,9 @@ const styles = ScaledSheet.create({
 	},
 	fullWidth: {
 		width: '100%',
-	}
+	},
+	lottie: {
+		width: '100@s',
+		height: '100@s'
+	},
 })

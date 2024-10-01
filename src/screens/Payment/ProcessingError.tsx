@@ -3,6 +3,7 @@ import { ExclamationIcon } from '@comps/Icons'
 import Txt from '@comps/Txt'
 import type { TBeforeRemoveEvent, TProcessingErrorPageProps } from '@model/nav'
 import { preventBack } from '@nav/utils'
+import { isIOS } from '@src/consts'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, mainColors } from '@styles'
@@ -15,6 +16,8 @@ const alreadySpentErr = 'Token already spent.'
 
 export default function ProcessingErrorScreen({ navigation, route }: TProcessingErrorPageProps) {
 
+	const { scan, comingFromOnboarding, errorMsg } = route.params
+
 	const { t } = useTranslation([NS.common])
 	const { color } = useThemeContext()
 
@@ -26,32 +29,39 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
 	}, [navigation])
 
 	return (
-		<View style={[globals(color).container, styles.container, { paddingBottom: vs(20) }]}>
+		<View style={[globals(color).container, styles.container]}>
 			<View />
-			<View style={styles.setion}>
+			<View style={styles.section}>
 				<ExclamationIcon width={s(60)} height={s(60)} color={mainColors.ERROR} />
-				<Txt txt={route.params.errorMsg} bold center styles={[{ color: mainColors.ERROR, marginVertical: vs(15), fontSize: vs(18) }]} />
-				{!route.params.scan && route.params.errorMsg !== alreadySpentErr &&
+				<Txt txt={errorMsg} bold center styles={[{ color: mainColors.ERROR, marginVertical: vs(15), fontSize: vs(18) }]} />
+				{!scan && errorMsg !== alreadySpentErr &&
 					<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('tryLater')} />
 				}
-				{route.params.errorMsg === alreadySpentErr &&
+				{errorMsg === alreadySpentErr &&
 					<Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t('alreadySpentHint')} />
 				}
 			</View>
-			{route.params.scan &&
-				<>
-					<Button
-						txt={t('scanAgain')}
-						onPress={() => navigation.navigate('qr scan', {})}
-					/>
-					<View style={{ marginVertical: vs(10) }} />
-				</>
-			}
-			<Button
-				outlined={route.params.scan}
-				txt={t('backToDashboard')}
-				onPress={() => navigation.navigate('dashboard')}
-			/>
+			<View style={{ width: '100%' }}>
+				{scan &&
+					<>
+						<Button
+							txt={t('scanAgain')}
+							onPress={() => navigation.navigate('qr scan', {})}
+						/>
+						<View style={{ marginVertical: vs(10) }} />
+					</>
+				}
+				<Button
+					outlined={scan}
+					txt={t('backToDashboard')}
+					onPress={() => {
+						if (comingFromOnboarding) {
+							return navigation.navigate('auth', { pinHash: '' })
+						}
+						navigation.navigate('dashboard')
+					}}
+				/>
+			</View>
 		</View>
 	)
 }
@@ -61,10 +71,16 @@ const styles = ScaledSheet.create({
 		paddingTop: 0,
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: '20@s',
+		paddingHorizontal: '20@s',
+		paddingBottom: isIOS ? '40@s' : '20@s',
 	},
-	setion: {
+	section: {
 		alignItems: 'center',
+	},
+	errMsg: {
+		color: mainColors.ERROR,
+		marginVertical: '15@vs',
+		fontSize: '18@vs',
 	},
 	hint: {
 		fontSize: '14@vs',

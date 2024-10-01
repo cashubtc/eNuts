@@ -1,22 +1,21 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { useTransitionAnimation } from '@comps/animation/QrTransition'
 import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
 import useCashuToken from '@comps/hooks/Token'
-import { AboutIcon, ChevronRightIcon, PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
-import InitialModal from '@comps/InitialModal'
+import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from '@comps/Icons'
+import OptsModal from '@comps/modal/OptsModal'
 import { PromptModal } from '@comps/modal/Prompt'
 import Txt from '@comps/Txt'
-import { _testmintUrl } from '@consts'
-import { addMint, getBalance, getMintsUrls, hasMints } from '@db'
+import { _testmintUrl, env } from '@consts'
+import { addMint, getMintsUrls, hasMints } from '@db'
 import { l } from '@log'
-import OptsModal from '@modal/OptsModal'
 import TrustMintModal from '@modal/TrustMint'
 import type { TBeforeRemoveEvent, TDashboardPageProps } from '@model/nav'
 import BottomNav from '@nav/BottomNav'
 import { preventBack } from '@nav/utils'
 import { useFocusClaimContext } from '@src/context/FocusClaim'
+import { useHistoryContext } from '@src/context/History'
 import { useInitialURL } from '@src/context/Linking'
 import { useNostrContext } from '@src/context/Nostr'
 import { usePromptContext } from '@src/context/Prompt'
@@ -24,32 +23,22 @@ import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'
-import { addToHistory } from '@store/latestHistoryEntries'
-import { getDefaultMint, saveDefaultOnInit } from '@store/mintStore'
+import { getDefaultMint } from '@store/mintStore'
 import { highlight as hi, mainColors } from '@styles'
-import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isErr, isLnInvoice, isStr } from '@util'
+import { extractStrFromURL, getStrFromClipboard, hasTrustedMint, isCashuToken, isLnInvoice, isStr } from '@util'
 import { claimToken, getMintsForPayment } from '@wallet'
 import { getTokenInfo } from '@wallet/proofs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Animated, TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import { TouchableOpacity, View } from 'react-native'
+import { s, ScaledSheet } from 'react-native-size-matters'
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { t } = useTranslation([NS.common])
-	// qr screen transition
-	const {
-		animatedBgStyles,
-		animatedPosStyles,
-		animatedOpacityStyles,
-		animatedMarginStyles,
-		animationEnded,
-		animateTransition,
-	} = useTransitionAnimation()
 	// The URL content that redirects to this app after clicking on it (cashu:)
 	const { url, clearUrl } = useInitialURL()
 	// Theme
-	const { highlight } = useThemeContext()
+	const { color, highlight } = useThemeContext()
 	// State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
 	const { claimed } = useFocusClaimContext()
 	// Nostr
@@ -57,6 +46,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	const { loading, startLoading, stopLoading } = useLoading()
 	// Prompt modal
 	const { openPromptAutoClose } = usePromptContext()
+	const { addHistoryEntry } = useHistoryContext()
 	// Cashu token hook
 	const {
 		token,
@@ -66,12 +56,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		trustModal,
 		setTrustModal
 	} = useCashuToken()
-	// Total Balance state (all mints)
-	const [balance, setBalance] = useState(0)
 	const [hasMint, setHasMint] = useState(false)
 	// modals
 	const [modal, setModal] = useState({
-		mint: false,
 		receiveOpts: false,
 		sendOpts: false,
 		resetNostr: false,
@@ -94,25 +81,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		}
 		// add token to db
 		await receiveToken(token)
-	}
-
-	// navigates to the mint list page
-	const handleMintModal = async (forEnutsMint = false) => {
-		setModal(prev => ({ ...prev, mint: false }))
-		await store.set(STORE_KEYS.explainer, '1')
-		navigation.navigate('mints', { defaultMint: forEnutsMint, newMint: !forEnutsMint })
-	}
-
-	const handleEnutsMint = async () => {
-		try {
-			await saveDefaultOnInit()
-		} catch (e) {
-			// TODO update error message: Mint could not be added, please add a different one or try again later.
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('smthWrong') })
-			await handleMintModal(false)
-			return
-		}
-		await handleMintModal(true)
 	}
 
 	// This function is only called if the mint of the received token is available as trusted in user DB
@@ -162,7 +130,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			return
 		}
 		// add as history entry (receive ecash)
-		await addToHistory({
+		await addHistoryEntry({
 			amount: info.value,
 			type: 1,
 			value: encodedToken,
@@ -266,7 +234,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				}))
 				clearTimeout(t)
 			}, 1000)
-
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -274,16 +241,13 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	// check for available mints of the user
 	useEffect(() => {
 		void (async () => {
-			const [userHasMints, explainerSeen, balance] = await Promise.all([
+			const [userHasMints, explainerSeen] = await Promise.all([
 				hasMints(),
 				store.get(STORE_KEYS.explainer),
-				getBalance(),
 			])
 			setHasMint(userHasMints)
 			setModal(prev => ({ ...prev, mint: !userHasMints && explainerSeen !== '1' }))
-			setBalance(balance)
 		})()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [claimed])
 
 	// handle deep links
@@ -304,21 +268,11 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url])
 
-	// get balance after navigating to this page
+	// update states after navigating to this page
 	useEffect(() => {
 		const focusHandler = navigation.addListener('focus', async () => {
-			if (animationEnded.current) {
-				const t = setTimeout(() => {
-					animateTransition()
-					clearTimeout(t)
-				}, 200)
-			}
-			const data = await Promise.all([
-				getBalance(),
-				hasMints()
-			])
-			setBalance(data[0])
-			setHasMint(data[1])
+			const data = await hasMints()
+			setHasMint(data)
 		})
 		return focusHandler
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -332,65 +286,65 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 	}, [navigation])
 
 	return (
-		<Animated.View style={[styles.container, animatedBgStyles]}>
-			<Animated.View style={animatedMarginStyles}>
-				{/* Balance, Disclaimer & History */}
-				<Balance balance={balance} nav={navigation} />
-				{/* Receive/send/mints buttons */}
-				<View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
-					{/* Send button or add first mint */}
-					{hasMint ?
-						<ActionBtn
-							icon={<SendIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
-							txt={t('send', { ns: NS.wallet })}
-							color={hi[highlight]}
-							onPress={() => setModal(prev => ({ ...prev, sendOpts: true }))}
-						/>
-						:
-						<ActionBtn
-							icon={<PlusIcon width={s(36)} height={vs(36)} color={hi[highlight]} />}
-							txt='Mint'
-							color={hi[highlight]}
-							onPress={() => setModal(prev => ({ ...prev, mint: true }))}
-						/>
-					}
+		<View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+			{/* Balance, Disclaimer & History */}
+			<Balance nav={navigation} />
+			{/* Receive/send/mints buttons */}
+			<View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
+				{/* Send button or add first mint */}
+				{hasMint ?
 					<ActionBtn
-						icon={<ScanQRIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
-						txt={t('scan')}
-						color={hi[highlight]}
-						onPress={() => animateTransition()}
-					/>
-					<ActionBtn
-						icon={<ReceiveIcon width={s(32)} height={vs(32)} color={hi[highlight]} />}
-						txt={t('receive', { ns: NS.wallet })}
+						icon={<SendIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
+						txt={t('send', { ns: NS.wallet })}
 						color={hi[highlight]}
 						onPress={() => {
-							if (!hasMint) {
-								// try to claim from clipboard to avoid receive-options-modal to popup and having to press again
-								return handleClaimBtnPress()
-							}
-							setModal(prev => ({ ...prev, receiveOpts: true }))
+							setModal(prev => ({ ...prev, sendOpts: true }))
 						}}
 					/>
-				</View>
-			</Animated.View>
+					:
+					<ActionBtn
+						icon={<PlusIcon width={s(36)} height={s(36)} color={hi[highlight]} />}
+						txt={t('mint')}
+						color={hi[highlight]}
+						onPress={() => {
+							navigation.navigate('mints')
+						}}
+					/>
+				}
+				<ActionBtn
+					icon={<ScanQRIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
+					txt={t('scan')}
+					color={hi[highlight]}
+					onPress={() => navigation.navigate('qr scan', { mint: undefined })}
+				/>
+				<ActionBtn
+					icon={<ReceiveIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
+					txt={t('receive', { ns: NS.wallet })}
+					color={hi[highlight]}
+					onPress={() => {
+						if (!hasMint) {
+							// try to claim from clipboard to avoid receive-options-modal to popup and having to press again
+							return handleClaimBtnPress()
+						}
+						setModal(prev => ({ ...prev, receiveOpts: true }))
+					}}
+				/>
+			</View>
 			{/* beta warning */}
-			<Animated.View style={[styles.hintWrap, animatedOpacityStyles]}>
-				<TouchableOpacity
-					onPress={() => navigation.navigate('disclaimer')}
-					style={styles.betaHint}
-				>
-					<AboutIcon width={s(20)} height={vs(20)} color={mainColors.WARN} />
-					<Txt txt={t('enutsBeta')} styles={[{ color: mainColors.WARN, marginHorizontal: s(10) }]} />
-					<ChevronRightIcon width={s(10)} height={vs(16)} color={mainColors.WARN} />
-				</TouchableOpacity>
-			</Animated.View>
+			{(env.isExpoBeta || __DEV__) &&
+				<View style={styles.hintWrap}>
+					<TouchableOpacity
+						onPress={() => navigation.navigate('disclaimer')}
+						style={styles.betaHint}
+					>
+						<Txt txt='BETA' styles={[{ color: mainColors.WARN }]} />
+					</TouchableOpacity>
+				</View>
+			}
 			{/* Bottom nav icons */}
 			<BottomNav
 				navigation={navigation}
 				route={route}
-				animatedBgStyles={animatedBgStyles}
-				animatedPosStyles={animatedPosStyles}
 			/>
 			{/* Question modal for mint trusting */}
 			{trustModal &&
@@ -404,12 +358,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					}}
 				/>
 			}
-			{/* Initial mint modal prompt */}
-			<InitialModal
-				visible={modal.mint}
-				onConfirm={() => void handleEnutsMint()}
-				onCancel={() => void handleMintModal()}
-			/>
 			{/* Send options */}
 			<OptsModal
 				visible={modal.sendOpts}
@@ -451,7 +399,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 					void store.set(STORE_KEYS.nostrReseted, '1')
 				}}
 			/>
-		</Animated.View>
+		</View>
 	)
 }
 
@@ -465,10 +413,13 @@ interface IActionBtnsProps {
 
 function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 	return (
-		<View style={styles.btnWrap} testID={`wallet-${txt}`}>
+		<View
+			style={styles.btnWrap}
+			testID={`${txt}-btn`}
+		>
 			<IconBtn
 				icon={icon}
-				size={vs(60)}
+				size={s(60)}
 				outlined
 				onPress={onPress}
 				disabled={disabled}
@@ -490,29 +441,31 @@ const styles = ScaledSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		marginTop: '-30@vs',
+		marginTop: '-30@s',
 	},
 	btnWrap: {
 		alignItems: 'center',
 		minWidth: '100@s'
 	},
 	btnTxt: {
-		marginTop: '10@vs',
+		marginTop: '10@s',
 	},
 	hintWrap: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: '50@vs',
+		marginBottom: '50@s',
 	},
 	betaHint: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingHorizontal: '10@s',
-		paddingVertical: '10@vs',
+		justifyContent: 'center',
+		paddingHorizontal: '20@s',
+		paddingVertical: '10@s',
 		borderWidth: 1,
 		borderStyle: 'dashed',
 		borderColor: mainColors.WARN,
 		borderRadius: '50@s',
+		minWidth: '120@s',
 	}
 })

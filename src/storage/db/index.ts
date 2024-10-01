@@ -1,9 +1,10 @@
 import type { Proof, Token } from '@cashu/cashu-ts'
 import { CashuMint, deriveKeysetId, getDecodedToken } from '@cashu/cashu-ts'
+import { env } from '@consts'
 import { l } from '@log'
 import type { IContact, IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
 import { arrToChunks, isObj } from '@util'
-import * as SQLite from 'expo-sqlite'
+import * as SQLite from 'expo-sqlite/legacy'
 
 import { Db } from './Db'
 import { tables } from './sql/table'
@@ -30,7 +31,7 @@ const db = new Db(SQLite.openDatabase('cashu.db'))
 
 // ################################ init DB ################################
 export async function initDb() {
-	if (process.env.NODE_ENV === 'test') {
+	if (env.NODE_ENV === 'test') {
 		l('[initDb]', 'reset DB in test mode')
 		await db.reset(SQLite.openDatabase('cashu.db'))
 	}
@@ -47,7 +48,7 @@ export async function initDb() {
 	const cmds: ITx[] = queries.map(query => ({
 		sql: query,
 		args: [],
-		errorCb: (_, error) => {
+		errorCb: (_: any, error: unknown) => {
 			l('[initDb]', query, 'DB init error!', error)
 			return true
 		},
@@ -318,7 +319,7 @@ export async function setPreferences(p: IPreferences) {
 // ################################ Invoices ################################
 export async function addInvoice({ pr, hash, amount, mintUrl }: Omit<IInvoice, 'time'>) {
 	const result = await db.execInsert<IInvoice>(
-		'INSERT OR IGNORE INTO invoices (amount,pr,hash,mintUrl) VALUES (?, ?, ?,?)',
+		'INSERT OR IGNORE INTO invoices (amount,pr,hash,mintUrl) VALUES (?, ?, ?, ?)',
 		[amount, pr, hash, mintUrl]
 	)
 	l('[addInvoice]', result, { pr, hash, amount, mintUrl })
@@ -345,6 +346,14 @@ export async function getInvoice(hash: string) {
 		[hash]
 	)
 	l('[getInvoice]', result, { hash })
+	return result?.item?.(0)
+}
+export async function getInvoiceByPr(pr: string) {
+	const result = await db.execSelect<IInvoice>(
+		'SELECT * from invoices Where pr = ?',
+		[pr]
+	)
+	l('[getInvoice]', result, { pr })
 	return result?.item?.(0)
 }
 

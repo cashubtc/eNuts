@@ -1,36 +1,23 @@
-import { getDecodedLnInvoice, getDecodedToken } from '@cashu/cashu-ts'
-import type { ISectionEntry } from '@gandlaf21/bolt11-decode'
+import { decodeInvoice, getDecodedToken } from '@cashu/cashu-ts'
 import { l } from '@log'
 import type { ILnUrl, IMintBalWithName, IProofSelection } from '@model'
-import { IContact } from '@src/model/nostr'
-import type { Buffer } from 'buffer/'
+import type { IContact } from '@model/nostr'
 import * as Clipboard from 'expo-clipboard'
 import { Linking, Share, Vibration } from 'react-native'
 
+import { decodeUrlOrAddress, isLnurlOrAddress, isUrl } from './lnurl'
 import { getLanguageCode } from './localization'
-import { isArr, isBuf, isNum, isStr } from './typeguards'
+import { isArr, isStr } from './typeguards'
 
 export { isArr, isArrOf, isArrOfNonNullable, isArrOfNum, isArrOfObj, isArrOfStr, isBool, isBuf, isErr, isFunc, isNonNullable, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
 
-export function rndInt(min: number, max: number) { // min and max included
-	return Math.floor(Math.random() * (max - min + 1) + min)
-}
+export function unixTimestamp() { return Math.ceil(new Date().getTime() / 1000) }
 
 /**
  * Return the unique values found in the passed iterable
  */
 export function uniq<T extends string | number | bigint | boolean | symbol>(iter: Iterable<T>) {
 	return [...new Set(iter)]
-}
-
-export function uniqBy<T extends object, TK extends keyof T>(iter: Iterable<T>, key: TK) {
-	// l()
-	const o = [...iter].reduce<{ [k: string | number | symbol]: T }>((acc, cur) => {
-		acc[cur[key] as string | number | symbol] = cur
-		return acc
-	}, {})
-	// l({o})
-	return Object.values<T>(o)
 }
 
 export function uniqByIContacts(iter: Iterable<IContact>, key: keyof IContact) {
@@ -48,34 +35,7 @@ export function uniqByIContacts(iter: Iterable<IContact>, key: keyof IContact) {
 	// l({o})
 	return Object.values(o)
 }
-/* export function uniqBy<T extends object, TK extends keyof T>(iter: T[], key: TK & TTK<T, TK>) {
-	const o = [...iter].reduce<{ [k: PropertyKey]: T }>((acc, cur) => {
-		const k = cur[key]
-		switch (typeof k) {
-			case 'string':
-			case 'number':
-			case 'symbol': {
-				acc[k] = cur
-				return acc
-			}
-			default: return acc
-		}
-	}, {})
-	return Object.values<T>(o)
-}  */
 export function clearArr<T extends U[], U>(array: T) { array.length = 0 }
-
-/**
- * Removes an entry from an array while maintaining element order.
- *
- * @param arr - The array from which the entry should be removed.
- * @param idx - The index of the entry to be removed.
- */
-export function rmArrEntry<T extends U[], U>(arr: T, idx: number) {
-	if (idx < 0 || idx >= arr.length) { return }
-	arr[idx] = arr[arr.length - 1]
-	arr.pop()
-}
 
 export function sleep(ms: number) { return new Promise<void>(resolve => setTimeout(resolve, ms)) }
 
@@ -134,11 +94,6 @@ export function getHistoryGroupDate(date: Date) {
 	return isToday(date) ? 'Today' : getShortDateStr(date)
 }
 
-export function isUrl(url: string) {
-	try { return !!new URL(url) } catch { /* ignore*/ }
-	return false
-}
-
 export function formatMintUrl(url: string) {
 	const clean = url.startsWith('http') ? url.split('://')[1] : url
 	if (clean.length < 30) { return clean }
@@ -164,13 +119,6 @@ export function vib(pattern?: number | number[]) {
 	Vibration.vibrate(pattern)
 }
 
-export function isLnurl(addr: string) {
-	const [user, host] = addr.split('@')
-	return addr.includes('.')
-		&& addr.split('@').length === 2
-		&& isUrl(`https://${host}/.well-known/lnurlp/${user}`)
-}
-
 export function hasTrustedMint(userMints: string[], tokenMints: string[]): boolean
 
 export function hasTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]): boolean
@@ -180,12 +128,14 @@ export function hasTrustedMint(uMints: ({ mintUrl: string } | string)[], tMints:
 	return uMints.some(m => tMints.includes(isStr(m) ? m : m.mintUrl))
 }
 
-export async function getInvoiceFromLnurl(address: string, amount: number) {
+export async function getInvoiceFromLnurl(lnUrlOrAddress: string, amount: number) {
 	try {
-		if (!isLnurl(address)) { throw new Error('invalid address') }
-		const [user, host] = address.split('@')
+		lnUrlOrAddress = lnTrim(lnUrlOrAddress)
+		if (!isLnurlOrAddress(lnUrlOrAddress)) { throw new Error('invalid address') }
+		const url = decodeUrlOrAddress(lnUrlOrAddress)
+		if (!url || !isUrl(url)) { throw new Error('Invalid lnUrlOrAddress') }
 		amount *= 1000
-		const resp = await fetch(`https://${host}/.well-known/lnurlp/${user}`)
+		const resp = await fetch(url)
 		const { tag, callback, minSendable, maxSendable } = await resp.json<ILnUrl>()
 		// const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json<ILnUrl>()
 		if (tag === 'payRequest' && minSendable <= amount && amount <= maxSendable) {
@@ -220,9 +170,9 @@ export function isCashuToken(token: string) {
 	return token.trim()
 }
 
-export function isLnInvoice(str: string) {
-	if (!str || !isStr(str)) { return }
-	str = str.trim()
+export function lnTrim(str: string) {
+	if (!str || !isStr(str)) { return '' }
+	str = str.trim().toLowerCase()
 	const uriPrefixes = [
 		'lightning:',
 		'lightning=',
@@ -238,8 +188,15 @@ export function isLnInvoice(str: string) {
 		if (!str.startsWith(prefix)) { return }
 		str = str.slice(prefix.length).trim()
 	})
+	return str.trim()
+}
+
+export function isLnInvoice(str: string) {
+	if (!str || !isStr(str)) { return }
+	str = lnTrim(str)
 	if (!str) { return }
-	try { getDecodedLnInvoice(str.trim()) } catch (_) { return }
+	if (isLnurlOrAddress(str.trim())) {return str.trim()}
+	try { decodeInvoice(str.trim()) } catch (_) { return }
 	return str.trim()
 }
 
@@ -268,26 +225,19 @@ export function getLnInvoiceInfo(invoice: string) {
 	return { ...x, hash: x.paymentHash, memo: x.memo }
 }
 
-function getFromSection<T>(sections: ISectionEntry[], name: string, fn: (v: unknown) => boolean, toNum = false) {
-	const section = sections.find(s => s?.name === name && s?.value && fn(s.value))
-	return section?.value ?
-		toNum ? +section.value as T : section.value as T
-		: undefined
-}
-
 export function decodeLnInvoice(invoice: string) {
-	const x = getDecodedLnInvoice(invoice)
+	const x = decodeInvoice(invoice)
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const amount = getFromSection<number>(x.sections, 'amount', (v: unknown) => isStr(v) && isNum(+v), true)!
+	const amount = x.amountInMSats
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const timestamp = getFromSection<number>(x.sections, 'timestamp', isNum)!
+	const timestamp = x.timestamp
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const expiry = getFromSection<number>(x.sections, 'expiry', isNum)!
+	const expiry = x.expiry
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const memo = getFromSection<string>(x.sections, 'description', isStr) || ''
+	const memo = x.memo
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const paymentHash = getFromSection<Buffer>(x.sections, 'payment_hash', isBuf)?.toString('hex') || ''
-	const timePassed = Math.ceil(Date.now() / 1000) - timestamp
+	const paymentHash = x.paymentHash
+	const timePassed = unixTimestamp() - timestamp
 	const timeLeft = expiry - timePassed
 	return {
 		decoded: x,
@@ -381,7 +331,28 @@ export function formatSatStr(
 }
 
 export function getUnixTimestampFromDaysAgo(days: number) {
-	const date = new Date()
-	date.setDate(date.getDate() - days)
-	return Math.floor(date.getTime() / 1000)
+	const oneDayInMs = 24 * 60 * 60 * 1000
+	return Math.ceil(getUnixTimestamp() - days * oneDayInMs)
+}
+
+export function getUnixTimestamp() {
+	return Math.ceil(new Date().getTime() / 1000)
+}
+
+export function withTimeout<T>(promis: Promise<T>, ms: number) {
+	return Promise.race([
+		promis,
+		timeout<T>(ms),
+	])
+}
+
+export async function timeout<T>(ms = 1000) {
+	if (ms < 0) { return {} as unknown as T }// should never happen
+	await sleep(ms)
+	throw new Error(`promise was timed out in ${ms} ms, by withTimeout`)
+}
+
+export function getFlagEmoji(code: string) {
+	const codePoints = Array.from(code.toUpperCase()).map(char => 0x1F1A5 + char.charCodeAt(0))
+	return String.fromCodePoint(...codePoints)
 }

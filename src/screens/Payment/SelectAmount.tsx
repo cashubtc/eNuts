@@ -9,11 +9,13 @@ import { isIOS } from '@consts'
 import { l } from '@log'
 import type { TSelectAmountPageProps } from '@model/nav'
 import { useFocusEffect } from '@react-navigation/native'
+import { usePrivacyContext } from '@src/context/Privacy'
 import { usePromptContext } from '@src/context/Prompt'
 import { useThemeContext } from '@src/context/Theme'
 import { NS } from '@src/i18n'
 import { globals, highlight as hi, mainColors } from '@styles'
-import { cleanUpNumericStr, formatSatStr, getInvoiceFromLnurl, vib } from '@util'
+import { cleanUpNumericStr, formatInt, formatSatStr, getInvoiceFromLnurl, vib } from '@util'
+import { getLnurlIdentifierFromMetadata, isLightningAddress } from '@util/lnurl'
 import { checkFees, requestMint } from '@wallet'
 import { createRef, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,10 +23,11 @@ import { Animated, KeyboardAvoidingView, TextInput, View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
 export default function SelectAmountScreen({ navigation, route }: TSelectAmountPageProps) {
-	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint } = route.params
+	const { mint, balance, lnurl, isMelt, isSendEcash, nostr, isSwap, targetMint, scanned } = route.params
 	const { openPromptAutoClose } = usePromptContext()
 	const { t } = useTranslation([NS.wallet])
 	const { color, highlight } = useThemeContext()
+	const { hidden } = usePrivacyContext()
 	const { anim, shake } = useShakeAnimation()
 	const numericInputRef = createRef<TextInput>()
 	const txtInputRef = createRef<TextInput>()
@@ -53,14 +56,14 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		return 'createInvoice'
 	}
 
-	const handleFeeEstimation = async (lnurl: string) => {
+	const handleFeeEstimation = async () => {
 		setFee(prev => ({ ...prev, isCalculating: true }))
 		try {
 			// check fee for payment to lnurl
-			if (lnurl.length) {
-				const lnurlInvoice = await getInvoiceFromLnurl(lnurl, +amount)
+			if (lnurl) {
+				const lnurlInvoice = await getInvoiceFromLnurl(lnurl.userInput, +amount)
 				if (!lnurlInvoice?.length) {
-					openPromptAutoClose({ msg: t('feeErr', { ns: NS.common, input: lnurl }) })
+					openPromptAutoClose({ msg: t('feeErr', { ns: NS.common, input: lnurl.url }) })
 					return setFee(prev => ({ ...prev, isCalculating: false }))
 				}
 				const estFee = await checkFees(mint.mintUrl, lnurlInvoice)
@@ -106,11 +109,12 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 			return
 		}
 		// estimate melting/swap fee
-		if (!isSendEcash && shouldEstimate && (lnurl?.length || isSwap)) {
-			return handleFeeEstimation(lnurl || '')
+		if (!isSendEcash && shouldEstimate && (lnurl || isSwap)) {
+			return handleFeeEstimation()
 		}
 		// send ecash / melt / swap
 		if (isSendingTX) {
+			const recipient = isLightningAddress(lnurl?.userInput || '') ? lnurl?.userInput : lnurl?.data ? getLnurlIdentifierFromMetadata(lnurl.data?.metadata) : undefined
 			// Check if user melts/swaps his whole mint balance, so there is no need for coin selection and that can be skipped here
 			if (!isSendEcash && isSendingWholeMintBal()) {
 				return navigation.navigate('processing', {
@@ -121,7 +125,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 					isSendEcash,
 					isSwap,
 					targetMint,
-					recipient: lnurl
+					recipient
 				})
 			}
 			return navigation.navigate('coinSelection', {
@@ -135,7 +139,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				isSendEcash,
 				isSwap,
 				targetMint,
-				recipient: lnurl
+				recipient
 			})
 		}
 		// request new token from mint
@@ -169,9 +173,9 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 		<Screen
 			screenName={t(getScreenName(), { ns: NS.common })}
 			withBackBtn
-			handlePress={() => navigation.goBack()}
+			handlePress={() => scanned ? navigation.navigate('qr scan', {}) : navigation.goBack()}
 			mintBalance={balance}
-			disableMintBalance={isMelt || isSwap}
+			disableMintBalance={isMelt || isSwap || hidden.balance}
 			handleMintBalancePress={() => setAmount(`${balance}`)}
 		>
 			{!isMelt && !isSwap &&
@@ -181,6 +185,21 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 				/>
 			}
 			<View style={[styles.overviewWrap, { marginTop: isMelt || isSwap ? 0 : vs(20) }]}>
+				{lnurl && (lnurl.data || lnurl.userInput) &&
+					<Txt
+						txt={
+							isLightningAddress(lnurl.userInput) ?
+								lnurl.userInput
+								:
+								lnurl.data ?
+									`${getLnurlIdentifierFromMetadata(lnurl.data.metadata)} requests ${lnurl.data.minSendable / 1000} to ${formatInt(lnurl.data.maxSendable / 1000)} Sats.`
+									:
+									''
+						}
+						bold
+						styles={[styles.sats, { marginBottom: vs(5), fontSize: s(10) }]}
+					/>
+				}
 				<Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
 					<TextInput
 						testID='amountInput'
