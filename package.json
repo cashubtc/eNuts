@@ -154,7 +154,7 @@
 		"blind-signatures",
 		"lightning-network"
 	],
-	"version": "0.5.0",
+	"version": "0.4.2",
 	"license": "AGPL-3.0-only",
 	"bugs": {
 		"url": "https://github.com/cashubtc/eNuts/issues"
