@@ -12,11 +12,11 @@ function nodeEnvShort(): 'test' | AppVariant {
 		// ENV.NODE_ENV = 'development'
 		return
 	}
-	if (ENV?.NODE_ENV === 'production') { return 'prod' }
-	if (ENV?.NODE_ENV === 'development') { return 'dev' }
-	if (ENV?.NODE_ENV === 'test') { return 'test' }
-	if (ENV?.NODE_ENV === 'preview') { return 'preview' }
-	if (ENV?.NODE_ENV === 'beta') { return 'beta' }
+	if (ENV.NODE_ENV === 'production') { return 'prod' }
+	if (ENV.NODE_ENV === 'development') { return 'dev' }
+	if (ENV.NODE_ENV === 'test') { return 'test' }
+	if (ENV.NODE_ENV === 'preview') { return 'preview' }
+	if (ENV.NODE_ENV === 'beta') { return 'beta' }
 }
 
 function appVariant(): AppVariant {
@@ -24,10 +24,10 @@ function appVariant(): AppVariant {
 		ENV.APP_VARIANT = 'dev'
 		return
 	}
-	if (ENV?.APP_VARIANT === 'prod') { return 'prod' }
-	if (ENV?.APP_VARIANT === 'dev') { return 'dev' }
-	if (ENV?.APP_VARIANT === 'preview') { return 'preview' }
-	if (ENV?.APP_VARIANT === 'beta') { return 'beta' }
+	if (ENV.APP_VARIANT === 'prod') { return 'prod' }
+	if (ENV.APP_VARIANT === 'dev') { return 'dev' }
+	if (ENV.APP_VARIANT === 'preview') { return 'preview' }
+	if (ENV.APP_VARIANT === 'beta') { return 'beta' }
 }
 
 const _appVariant = appVariant() || ENV?.APP_VARIANT || 'dev'
@@ -56,7 +56,6 @@ const config: ExpoConfig = {
 	name: `eNuts${!IS_PROD ? ` (${_appVariant})` : ''}`,
 	slug: 'enuts',
 	owner: 'enuts_wallet',
-	// privacy: 'public',
 	platforms: [
 		'ios',
 		'android',
