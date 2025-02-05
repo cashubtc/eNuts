@@ -12,7 +12,7 @@ import en from '@assets/translations/en.json'
 import { NS } from '@src/i18n'
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-process.env.NODE_ENV = 'test'
+// process.env.NODE_ENV = 'test'
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 i18n.use(initReactI18next).init({
 	lng: 'en',
@@ -24,8 +24,8 @@ i18n.use(initReactI18next).init({
 // libraries to mock
 // jest.mock('react-native', () => jest.requireActual<typeof import('react-native')>('react-native'))
 
-jest.mock('expo-sqlite/legacy', () => ({
-	get openDatabase() {
+jest.mock('expo-sqlite', () => ({
+	get openDatabaseSync() {
 		return (_: string) => getDatabase(':memory:')
 	}
 }))

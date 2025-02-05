@@ -5,11 +5,11 @@ import { version } from './../package.json'
 
 type AppVariant = 'preview' | 'beta' | 'prod' | 'dev' | undefined
 
-const ENV = process?.env as NodeJS.ProcessEnv
+const ENV = process?.env
 
 function nodeEnvShort(): 'test' | AppVariant {
 	if (!ENV?.NODE_ENV) {
-		ENV.NODE_ENV = 'development'
+		// ENV.NODE_ENV = 'development'
 		return
 	}
 	if (ENV?.NODE_ENV === 'production') { return 'prod' }
@@ -56,7 +56,7 @@ const config: ExpoConfig = {
 	name: `eNuts${!IS_PROD ? ` (${_appVariant})` : ''}`,
 	slug: 'enuts',
 	owner: 'enuts_wallet',
-	privacy: 'public',
+	// privacy: 'public',
 	platforms: [
 		'ios',
 		'android',
@@ -65,6 +65,7 @@ const config: ExpoConfig = {
 	updates: {
 		url: 'https://u.expo.dev/edb75ccd-71ac-4934-9147-baf1c7f2b068'
 	},
+	newArchEnabled: true,
 	runtimeVersion: {
 		policy: 'appVersion'
 	},

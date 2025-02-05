@@ -6,7 +6,7 @@ import type { INavigatorProps } from '@model/nav'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { CustomErrorBoundary } from '@screens/ErrorScreen/ErrorBoundary'
-import { ErrorDetails } from '@screens/ErrorScreen/ErrorDetails'
+// import { ErrorDetails } from '@screens/ErrorScreen/ErrorDetails'
 import * as Sentry from '@sentry/react-native'
 import { BalanceProvider } from '@src/context/Balance'
 import { FocusClaimProvider } from '@src/context/FocusClaim'
@@ -22,22 +22,37 @@ import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { dark, light } from '@styles'
 import { isErr, isNull, isStr } from '@util'
-import { routingInstrumentation } from '@util/crashReporting'
+// import { routingInstrumentation } from '@util/crashReporting'
 import { runRequestTokenLoop } from '@wallet'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AppState, LogBox } from 'react-native'
+import { AppState } from 'react-native'
 import { MenuProvider } from 'react-native-popup-menu'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
 import Toaster from './Toaster'
+import Txt from './Txt'
 
-LogBox.ignoreLogs(['is deprecated'])
+// LogBox.ignoreLogs(['is deprecated'])
 // LogBox.ignoreLogs([/expo-image/gmi])
+
+const navigationIntegration = Sentry.reactNavigationIntegration({
+	enableTimeToInitialDisplay: true,
+})
+
+Sentry.init({
+	dsn: env.SENTRY_DSN,
+	integrations: [navigationIntegration],
+	debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
+	tracesSampleRate: 1.0,
+	autoSessionTracking: true,
+	enableNative: true,
+})
+
 interface ILockData {
 	mismatch: boolean
 	mismatchCount: number
@@ -65,7 +80,9 @@ function App(_: { exp: Record<string, unknown> }) {
 	// Uses the Sentry error boundary component which posts the errors to our Sentry account
 	return (
 		<SafeAreaProvider>
-			<ErrorBoundary fallback={ErrorDetails}>
+			<ErrorBoundary
+				fallback={<Txt txt='Error' />}
+			>
 				<_App />
 			</ErrorBoundary>
 		</SafeAreaProvider>
@@ -246,7 +263,10 @@ function NavContainer({ children }: { children: React.ReactNode }) {
 		<NavigationContainer
 			theme={theme === 'Light' ? light : dark}
 			ref={navigation}
-			onReady={() => { routingInstrumentation?.registerNavigationContainer?.(navigation) }}
+			onReady={() => {
+				// routingInstrumentation?.registerNavigationContainer?.(navigation)
+				navigationIntegration.registerNavigationContainer(navigation)
+			}}
 		>
 			{children}
 		</NavigationContainer>

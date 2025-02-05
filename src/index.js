@@ -2,7 +2,7 @@
 
 // require('dotenv').config()
 // init sentry and crash reporting
-require('./util/crashReporting').initCrashReporting()
+// require('./util/crashReporting').initCrashReporting()
 
 // dont touch this!
 import './shim'

@@ -18,8 +18,7 @@ CREATE VIEW IF NOT EXISTS MintBalances AS
 	FROM keysetIds AS k
 	LEFT JOIN proofs AS p ON k.id = p.id
 	GROUP BY mintUrl
-;
-`
+;`
 
 export const views: readonly string[] = [
 	createBalanceView,

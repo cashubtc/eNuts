@@ -1,7 +1,6 @@
 import type { PayLnInvoiceResponse, Proof, Token } from '@cashu/cashu-ts'
 import type { HighlightKey } from '@styles'
 import type { ExpoConfig } from 'expo/config'
-import type { SQLStmtCb, SQLStmtErrCb } from 'expo-sqlite/legacy'
 
 export interface IExpoConfig extends ExpoConfig {
 	extra?: {
@@ -147,12 +146,12 @@ export interface IInvoice {
 // 	): WebSQLDatabase
 // }
 export type QueryArgs = (number | string | null)[]
-export interface ITx<T = unknown> {
-	sql: string,
-	args?: QueryArgs,
-	cb?: SQLStmtCb<T>,
-	errorCb?: SQLStmtErrCb
-}
+// export interface ITx<T = unknown> {
+// 	sql: string,
+// 	args?: QueryArgs,
+// 	cb?: SQLStmtCb<T>,
+// 	errorCb?: SQLStmtErrCb
+// }
 export interface IKeyValuePair<T> {
 	key: string,
 	value: T
@@ -183,3 +182,5 @@ export type TRequestTokenReturnType = Promise<{ success: boolean; invoice: IInvo
 export interface ISecret {
 	secret: string
 }
+
+export interface Query { sql: string; args: (number | string | null)[] }
