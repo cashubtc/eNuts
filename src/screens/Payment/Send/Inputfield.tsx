@@ -58,7 +58,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 			setEstFee(fee)
 			inputRef.current?.blur()
 			stopLoading()
-		} catch (e) {
+		} catch {
 			// invalid LN invoice
 			stopLoading()
 			openPromptAutoClose({ msg: t('invalidInvoice') })
@@ -81,7 +81,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 				const lnurlData = await getLnurlData(decoded)
 				if (!lnurlData) { return openPromptAutoClose({ msg: 'Could not fetch data from LNURL' }) }
 				return navigation.navigate('selectAmount', { mint, balance, isMelt: true, lnurl: { userInput: input, url: decoded, data: lnurlData } })
-			} catch (e) {
+			} catch {
 				return openPromptAutoClose({ msg: 'Could not fetch data from LNURL' })
 			}
 		}
@@ -107,7 +107,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 				isMelt: true,
 				recipient: input
 			})
-		} catch (e) {
+		} catch {
 			// invalid invoice
 			openPromptAutoClose({ msg: t('invalidInvoice') })
 		}

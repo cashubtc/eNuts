@@ -89,7 +89,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
 	const handleReset = async () => {
 		try {
 			await dropAllData()
-		} catch (e) {/* ignore */ }
+		} catch {/* ignore */ }
 		setConfirmReset(false)
 	}
 

@@ -410,7 +410,7 @@ export function EyeClosedIcon({ width, height, color }: TIconProps) {
 export function NostrIcon({ width, height }: { width?: number, height?: number }) {
 	return (
 		<Image
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			 
 			source={require('@assets/nostr.png')}
 			style={[{ width: width || 30, height: height || 30 }, styles.nostrIcon]}
 		/>

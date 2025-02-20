@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/require-await */
+ 
 /* eslint-disable require-await */
 import { getBalance } from '@db'
 import { l } from '@log'

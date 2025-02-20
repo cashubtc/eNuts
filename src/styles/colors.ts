@@ -48,13 +48,25 @@ const darkTheme = {
 export const light: ExtendedTheme = {
 	dark: false,
 	colors: { ...DefaultTheme.colors },
-	custom: lightTheme
+	custom: lightTheme,
+	fonts: {
+		regular: { fontFamily: '', fontWeight: 'normal' },
+		medium: { fontFamily: '', fontWeight: 'normal' },
+		bold: { fontFamily: '', fontWeight: 'normal' },
+		heavy: { fontFamily: '', fontWeight: 'normal' },
+	}
 }
 
 export const dark: ExtendedTheme = {
 	dark: true,
 	colors: { ...DefaultTheme.colors },
-	custom: darkTheme
+	custom: darkTheme,
+	fonts: {
+		regular: { fontFamily: '', fontWeight: 'normal' },
+		medium: { fontFamily: '', fontWeight: 'normal' },
+		bold: { fontFamily: '', fontWeight: 'normal' },
+		heavy: { fontFamily: '', fontWeight: 'normal' },
+	}
 }
 
 // highlight theme colors
@@ -69,7 +81,7 @@ export enum H_Colors {
 	Zap = '#FFCC00',
 }
 
-export type HighlightKey = keyof typeof H_Colors;
+export type HighlightKey = keyof typeof H_Colors
 
 // Create the highlight object with specific color keys
 export const highlight: { [key in HighlightKey]: H_Colors } = {

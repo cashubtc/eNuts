@@ -108,7 +108,7 @@ export async function isTokenSpendable(token: string): Promise<boolean> {
 			useableTokenProofs.push(...t.proofs.filter(x => !usedSecrets.includes(x.secret)))
 		}
 		return !!useableTokenProofs.length
-	} catch (_) { return false }
+	} catch { return false }
 }
 
 export async function checkProofsSpent(mintUrl: string, toCheck: ISecret[]): Promise<ISecret[]> {
@@ -289,7 +289,7 @@ export async function fullAutoMintSwap(tokenInfo: ITokenInfo, destMintUrl: strin
 		)
 		l('[fullAutoMintSwap]', { payResult, requestTokenResult })
 		return { payResult, requestTokenResult, estFeeResp: estFee }
-	} catch (e) {
+	} catch {
 		return { payResult: undefined, requestTokenResult: undefined }
 	}
 }
@@ -352,7 +352,6 @@ export async function getHighestBalMint() {
 let isRequestTokenLoopRunning = false
 let loopHandel: NodeJS.Timeout
 export function runRequestTokenLoop(): void {
-	// eslint-disable-next-line @typescript-eslint/no-misused-promises
 	loopHandel = setTimeout(requestTokenLoop, 60000)
 }
 
@@ -368,7 +367,7 @@ async function requestTokenLoop(): Promise<void> {
 			// eslint-disable-next-line no-await-in-loop
 			await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
 			// TODO notify user and add history entry
-		} catch (_) {/* ignore */ }
+		} catch {/* ignore */ }
 		const { expiry } = decodeLnInvoice(invoice.pr)
 		const date = new Date((invoice.time * 1000) + (expiry * 1000)).getTime()
 		// eslint-disable-next-line no-await-in-loop

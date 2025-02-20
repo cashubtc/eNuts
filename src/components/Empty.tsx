@@ -27,7 +27,7 @@ export default function Empty({ txt, hint, hintComponent, hasOk, pressable, onPr
 		<View style={styles.container}>
 			<Image
 				style={styles.img}
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				 
 				source={require('@assets/mixed_forest.png')}
 				contentFit='contain'
 			/>

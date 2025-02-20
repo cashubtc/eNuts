@@ -4,5 +4,5 @@ import { withProfiler } from '@sentry/react-native'
 import { registerRootComponent } from 'expo'
 
 l('AppEntryPoint')
-// eslint-disable-next-line new-cap
+ 
 registerRootComponent(withProfiler(App))

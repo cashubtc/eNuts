@@ -95,7 +95,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				}
 				<View style={styles.successAnim}>
 					<LottieView
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						 
 						source={require('../../../assets/lottie/success.json')}
 						autoPlay
 						loop={false}
@@ -135,7 +135,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 						// @ts-expect-error navigation type is not complete
 						if (prevRoute?.name === 'auth' && prevRoute.params?.pinHash) {
 							// @ts-expect-error navigation type is not complete
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+							 
 							return navigation.navigate('auth', { pinHash: prevRoute.params.pinHash })
 						}
 						navigation.navigate('dashboard')
@@ -143,7 +143,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				/>
 			</View>
 			<LottieView
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				 
 				source={require('../../../assets/lottie/confetti.json')}
 				autoPlay
 				loop={false}

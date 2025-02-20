@@ -92,7 +92,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
 						</Text>
 						<View style={styles.successAnim}>
 							<LottieView
-								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+								 
 								source={require('../../../../assets/lottie/success.json')}
 								autoPlay
 								loop={false}

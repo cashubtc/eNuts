@@ -97,7 +97,7 @@ const useNostr = () => {
 					userRelays: userRelays ?? [],
 					claimedEvtIds,
 				}))
-			} catch (e) {/* ignore */ }
+			} catch {/* ignore */ }
 		})()
 	}, [])
 
@@ -120,9 +120,9 @@ const NostrContext = createContext<useNostrType>({
 		claimedEvtIds: {},
 	},
 	setNostr: () => l(''),
-	// eslint-disable-next-line @typescript-eslint/await-thenable, no-return-await
+	// eslint-disable-next-line no-return-await
 	resetNostrData: async () => await l(''),
-	// eslint-disable-next-line @typescript-eslint/await-thenable, no-return-await
+	// eslint-disable-next-line no-return-await
 	replaceNpub: async (hex: HexKey) => await l(hex),
 })
 

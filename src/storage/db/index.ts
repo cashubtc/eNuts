@@ -305,7 +305,7 @@ export async function addAllMintIds() {
 		const ids = (await CashuMint.getKeySets(mint.mintUrl)).keysets
 		for (const id of ids) {
 			if (mints.some(x => x.id === id && x.mintUrl === mint.mintUrl)) { continue }
-			// eslint-disable-next-line no-await-in-loop
+			 
 			toDo.push({ mintUrl: mint.mintUrl, id })
 		}
 	}
@@ -481,7 +481,7 @@ export async function dropAll() {
 			dropTable('proofs'),
 			dropTable('invoices'),
 		])
-	} catch (e) {
+	} catch{
 		// ignore
 	}
 }

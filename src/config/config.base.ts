@@ -3,7 +3,7 @@ import { NativeModules } from 'react-native'
 
 function getDebugHost() {
 	try {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+		 
 		const raw = NativeModules?.SourceCode?.scriptURL as string | undefined
 		if (!raw || typeof raw !== 'string') { return }
 		const url = new URL(raw)
@@ -38,7 +38,7 @@ const BaseConfig = {
    */
 	exitRoutes: ['dashboard'],
 	env,
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	 
 	...getDebugHost() ?? {}
 } as const
 

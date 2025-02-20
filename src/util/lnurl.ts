@@ -130,7 +130,7 @@ export function getLnurlIdentifierFromMetadata(metadata: string) {
 		const parsed = JSON.parse(metadata) as string[][]
 		const identidier = parsed.find(([key]) => key === 'text/identifier')?.[1]
 		return identidier ?? 'Identifier not found'
-	} catch (e) {
+	} catch {
 		return 'Error: Identifier not found'
 	}
 }

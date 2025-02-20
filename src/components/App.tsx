@@ -70,7 +70,7 @@ function App(_: { exp: Record<string, unknown> }) {
 		return (
 			<SafeAreaProvider>
 				<CustomErrorBoundary catchErrors='always'>
-					<_App />
+					<My_App />
 				</CustomErrorBoundary>
 			</SafeAreaProvider>
 		)
@@ -83,14 +83,14 @@ function App(_: { exp: Record<string, unknown> }) {
 			<ErrorBoundary
 				fallback={<Txt txt='Error' />}
 			>
-				<_App />
+				<My_App />
 			</ErrorBoundary>
 		</SafeAreaProvider>
 	)
 }
 export default Sentry.wrap(App)
 
-function _App() {
+function My_App() {
 	// initial auth state
 	const [auth, setAuth] = useState<INavigatorProps>({ pinHash: '' })
 	const [shouldOnboard, setShouldOnboard] = useState(false)
@@ -196,7 +196,7 @@ function _App() {
 			setIsRdy(true) // APP is ready to render
 		}
 		void init()
-		// eslint-disable-next-line @typescript-eslint/no-misused-promises
+		 
 		const subscription = AppState.addEventListener('change', async nextAppState => {
 			if (
 				appState.current.match(/inactive|background/) &&

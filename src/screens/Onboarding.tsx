@@ -28,14 +28,14 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
 				},
 				{
 					backgroundColor: '#8038CA',
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					 
 					image: <Image style={styles.cashuImg} source={require('@assets/cashu.png')} />,
 					title: 'Cashu & Mints',
 					subtitle: t('explainer2'),
 				},
 				{
 					backgroundColor: H_Colors.Nuts,
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					 
 					image: <Image style={styles.sendReceiveImg} source={require('@assets/send_receive.png')} />,
 					title: t('send&receive'),
 					subtitle: t('explainer3'),

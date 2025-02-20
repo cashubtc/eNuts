@@ -19,7 +19,7 @@ export default function NostrOnboardingScreen({navigation}: TNostrOnboardingPage
 			pages={[
 				{
 					backgroundColor: H_Colors.Nostr,
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					 
 					image: <Image style={styles.nostrImg} source={require('@assets/nostr.png')} />,
 					title: t('contactsNostr'),
 					subtitle: t('nostrExplainer'),

@@ -84,7 +84,7 @@ const ContactPreview = React.memo(({
 			onSelect: () => void handleCopy(),
 			icon: <CopyIcon width={s(18)} height={vs(18)} color={color.TEXT} />,
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		 
 	]
 
 	return (

@@ -30,7 +30,6 @@ export function l(msg?: unknown, ...optionalParams: unknown[]) {
 	// eslint-disable-next-line no-console
 	console.log(`[${new Date().toLocaleTimeString()}]${fnName}`,
 		msg,
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		...optionalParams
 	)
 }
@@ -39,7 +38,6 @@ function debug(msg?: unknown, ...optionalParams: unknown[]) {
 	warn(
 		`[${callerInfo()?.name}]`,
 		msg,
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		...optionalParams
 	)
 }
@@ -59,7 +57,7 @@ export function err(msg: unknown, ...args: unknown[]) {
 export function callerInfo(skipOf = 3) {
 	skipOf = skipOf || 3
 	let eStack
-	try { eStack = new Error().stack } catch (err) { l('kaka', undefined) }
+	try { eStack = new Error().stack } catch { l('[callerInfo] bad error', undefined) }
 	// const arr = eStack?.split('at ').map(x => x?.split(' (')[0]?.split(' ('))
 	// log( arr?.slice(1,5),eStack)
 	// console.log(eStack?.split('at '), '\n', eStack?.split('at ')[skipOf])
@@ -70,7 +68,6 @@ export function callerInfo(skipOf = 3) {
 	if (error.stack) {
 		const cla = error.stack.split('\n')
 		let idx = 1
-	
 		console.log(idx, '----------------', cla[idx])
 		while (idx < cla.length && cla[idx].includes('callerInfo')) { idx++ }
 		if (idx < cla.length) {

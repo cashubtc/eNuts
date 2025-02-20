@@ -60,7 +60,6 @@ export default function ScanSuccessScreen({ navigation, route }: TScanSuccessPag
 					{mintUrl ? formatMintUrl(mintUrl) : isStr(hex) ? nip19.npubEncode(hex) : 'N/A'}
 				</Text>
 				<AnimatedLottieView
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 					source={require('../../../assets/lottie/success.json')}
 					autoPlay
 					loop={false}

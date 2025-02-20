@@ -17,7 +17,7 @@ export default function Loading({ color, size, nostr }: ILoadingProps) {
 function NostrIndicator() {
 	return (
 		<Image
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			 
 			source={require('@assets/nostrGif.gif')}
 			style={styles.nostrGif}
 		/>

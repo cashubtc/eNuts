@@ -31,7 +31,7 @@ export default function MintInfoPage({ navigation, route }: TMintInfoPageProps) 
 			try {
 				const mintInfo = await getMintInfo(route.params.mintUrl)
 				setInfo(mintInfo)
-			} catch (e) {
+			} catch {
 				// ignore mint info not available
 			}
 			stopLoading()

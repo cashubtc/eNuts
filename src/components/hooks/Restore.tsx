@@ -42,7 +42,7 @@ export function useRestore({ mintUrl, mnemonic, comingFromOnboarding }: IUseRest
 	useEffect(() => {
 		const restore = async () => {
 			try {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				 
 				const proofs = await restoreWallet(mintUrl, mnemonic)
 				if (!proofs?.length) {
 					openPromptAutoClose({ msg: t('noProofsRestored'), success: false })

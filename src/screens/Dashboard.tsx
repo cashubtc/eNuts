@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+ 
 import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
@@ -235,7 +235,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				clearTimeout(t)
 			}, 1000)
 		})()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		 
 	}, [])
 
 	// check for available mints of the user
@@ -275,7 +275,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			setHasMint(data)
 		})
 		return focusHandler
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		 
 	}, [navigation])
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
