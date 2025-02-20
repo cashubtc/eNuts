@@ -36,15 +36,13 @@ const _nodeEnvShort = nodeEnvShort()
 
 try {
 	dotenvConfig({ path: `.env${_nodeEnvShort === 'prod' ? '' : `.${nodeEnvShort()}`}` })
-} catch (e) {
+} catch {
 	try {
 		dotenvConfig({ path: `envs/.env${_nodeEnvShort === 'prod' ? '' : `.${nodeEnvShort()}`}` })
 	} catch (e) { console.log('dotenv error:', e) } // eslint-disable-line no-console
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 // const IS_DEV = _appVariant === 'dev'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 // const IS_PREVIEW = _appVariant === 'preview'
 const IS_BETA = _appVariant === 'beta'
 const IS_PROD = _appVariant === 'prod'
