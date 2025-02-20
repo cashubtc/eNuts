@@ -88,6 +88,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.26.9",
+		"@babel/plugin-proposal-private-methods": "^7.18.6",
 		"@config-plugins/detox": "^9.0.0",
 		"@eslint/compat": "^1.2.6",
 		"@eslint/eslintrc": "^3.2.0",
