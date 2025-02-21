@@ -13,7 +13,6 @@
 		"dep:check": "npx -y depcheck@latest",
 		"fmtJson": "npx prettier assets/translations/*.json .github/workflows/*.yml ./*.json --write --use-tabs --tab-width 4",
 		"expo:i:check": "npx expo@latest install --check",
-		"expo:i:fix": "npx expo@latest install --fix",
 		"expo:doc": "npx -y expo-doctor@latest",
 		"prebuild:android": "npx expo prebuild --platform android --clean",
 		"build:dev": "npx -y eas-cli@latest build -e development -p android -m devWithDevClient --no-wait",
