@@ -23,7 +23,6 @@ export default (): JestConfigWithTsJest => ({
 	resolver: 'ts-jest-resolver',
 	testRegex: 'test/(?!e2e/).*\\.(test|spec)?\\.(ts|tsx)$',
 	testPathIgnorePatterns: [
-		'/test/lang/translation.test.ts',
 		'/test/crypto.test.ts',
 		'/test/db.test.ts',
 		'/test/HistoryStore.test.ts',
@@ -73,5 +72,5 @@ export default (): JestConfigWithTsJest => ({
 	],
 	// verbose: true,
 	// setupFilesAfterEnv: [ '<rootDir>/node_modules/react-native-gesture-handler/jestSetup.js'],
-	setupFiles: ['<rootDir>/test/setup.ts'],
+	// setupFiles: ['<rootDir>/test/setup.ts'],
 })
