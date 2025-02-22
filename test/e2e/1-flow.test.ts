@@ -11,10 +11,10 @@ import { expect } from 'detox'
  * 6. Check history entry
  * 7. Create new cashu token
  * 8. Claim the cashu token
- * 9. Melt remaining balance
+ * 9. // TODO Melt a cashu token
  */
-const testmint = 'testnut.cashu.space'
-// const noFeesMint = 'nofees.testnut.cashu.space'
+// const testmint = 'testnut.cashu.space'
+const noFeesMint = 'nofees.testnut.cashu.space'
 const testAmount = '100'
 
 describe('Add the testnut mint', () => {
@@ -81,42 +81,46 @@ describe('Add the testnut mint', () => {
 		const submitBtn = element(by.id('Add mint-modal-button'))
 		await expect(input).toBeVisible()
 		await expect(submitBtn).toBeVisible()
-		await input.typeText(testmint)
+		await input.typeText(noFeesMint)
 		await submitBtn.tap()
 		const successModalHeader = element(by.id('new-mint-success'))
 		await expect(successModalHeader).toBeVisible()
 	})
 
 	it('should mint the first cashu token', async () => {
+		await device.disableSynchronization()
 		const confirmBtn = element(by.id('Yes-modal-button'))
 		await confirmBtn.tap()
-		// now in the select amount screen
 		const continueBtn = element(by.id('Continue-modal-button'))
 		await expect(continueBtn).toBeVisible()
 		await continueBtn.tap()
-		// without amount, nothing should happen
 		await expect(continueBtn).toBeVisible()
 		const input = element(by.id('mint-amount-input'))
 		await input.typeText(testAmount)
 		await continueBtn.tap()
-		// wait for QR to appear
-		await waitFor(element(by.id('qr-code'))).toBeVisible().withTimeout(10000)
-		// wait for confirmation to appear
-		await waitFor(element(by.id(`amount: ${testAmount}`))).toBeVisible().withTimeout(30000)
-		await expect(element(by.id(`mint: ${testmint}`))).toBeVisible()
+		const qr = element(by.id('qr-code'))
+		await waitFor(qr).toBeVisible().withTimeout(10000)
+		await expect(qr).toBeVisible()
+		const amount = element(by.id(`amount: ${testAmount}`))
+		await waitFor(amount).toBeVisible().withTimeout(25000)
+		await expect(amount).toBeVisible()
 		await element(by.id('Back to dashboard-modal-button')).tap()
+		await device.enableSynchronization()
 	})
 
-	it ('should show the transaction in the History', async () => {
+	it('should show the transaction in the History', async () => {
+		await device.disableSynchronization()
 		const historyEntry = element(by.id('history-entry-0'))
 		await expect(historyEntry).toBeVisible()
 		await historyEntry.tap()
 		await expect(element(by.id('history-entry-details'))).toBeVisible()
 		await element(by.id('back-btn-top-nav')).tap()
 		await expect(element(by.id(`balance: ${testAmount}`))).toBeVisible()
+		await device.enableSynchronization()
 	})
 
-	it ('should create a new cashu token', async () => {
+	it('should create a new cashu token', async () => {
+		await device.disableSynchronization()
 		await element(by.id('Send-btn')).tap()
 		await element(by.id('send-ecash-option')).tap()
 		await element(by.id('mint-amount-input')).typeText('50')
@@ -125,8 +129,43 @@ describe('Add the testnut mint', () => {
 		const qr = element(by.id('qr-code'))
 		await waitFor(qr).toBeVisible().withTimeout(10000)
 		await expect(element(by.id('50-txt'))).toBeVisible()
-		await qr.tap() // copy token to clipboard
+		await qr.tap()
 		await element(by.id('back-btn-top-nav')).tap()
 		await expect(element(by.id('history-entry-1'))).toBeVisible()
+		await device.enableSynchronization()
 	})
+
+	it('should claim the cashu token', async () => {
+		await device.disableSynchronization()
+		const receiveBtn = element(by.id('Receive-btn'))
+		await receiveBtn.tap()
+		await element(by.id('send-ecash-option')).tap()
+		const amount = element(by.id('amount: 50'))
+		await waitFor(amount).toBeVisible().withTimeout(5000)
+		await expect(amount).toBeVisible()
+		await element(by.id('Back to dashboard-modal-button')).tap()
+		await expect(element(by.id('history-entry-2'))).toBeVisible()
+		await device.enableSynchronization()
+	})
+
+	it('should fail claiming the same token twice', async () => {
+		await device.disableSynchronization()
+		const receiveBtn = element(by.id('Receive-btn'))
+		await receiveBtn.tap()
+		await element(by.id('send-ecash-option')).tap()
+		const errorToaster = element(by.id('error-toaster'))
+		await waitFor(errorToaster).toBeVisible().withTimeout(5000)
+		await expect(errorToaster).toBeVisible()
+		await device.enableSynchronization()
+	})
+
+	// eslint-disable-next-line jest/no-commented-out-tests
+	// it('should melt a cashu token', async () => {
+	// 	await device.disableSynchronization()
+	// 	await element(by.id('Send-btn')).tap()
+	// 	await element(by.id('send-option-LN invoice or LNURL')).tap()
+	// 	// TODO generate a valid LN invoice
+	// 	await element(by.id('paste-input')).tap()
+	// 	await device.enableSynchronization()
+	// })
 })

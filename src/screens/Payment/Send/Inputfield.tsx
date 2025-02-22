@@ -190,6 +190,7 @@ export default function InputfieldScreen({ navigation, route }: TMeltInputfieldP
 					<TouchableOpacity
 						style={[styles.pasteInputTxtWrap, { backgroundColor: color.INPUT_BG }]}
 						onPress={() => void handleInputLabelPress()}
+						testID='paste-input'
 					>
 						<Text style={globals(color, highlight).pressTxt}>
 							{!input.length ? t('paste') : t('clear')}
