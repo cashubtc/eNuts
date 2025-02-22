@@ -203,7 +203,7 @@ export default function DetailsPage({ navigation, route }: THistoryEntryPageProp
 				withBackBtn
 				handlePress={() => navigation.goBack()}
 			/>
-			<ScrollView showsVerticalScrollIndicator={false}>
+			<ScrollView showsVerticalScrollIndicator={false} testID='history-entry-details'>
 				<View style={{ marginBottom: insets.bottom, paddingTop: s(10) }}>
 					<View style={styles.topSection}>
 						{isPending && !isExpired &&

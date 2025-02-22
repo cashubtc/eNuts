@@ -6,16 +6,21 @@ import { expect } from 'detox'
  * 1. Go through the onboarding screens
  * 2. Create a quick wallet
  * 3. Skip PIN setup
- * 4. Add the first default mint
+ * 4. Add the testnut mint
+ * 5. Mint some cashu token
+ * 6. Check history entry
+ * 7. Create new cashu token
+ * 8. Claim the cashu token
+ * 9. Melt remaining balance
  */
 const testmint = 'testnut.cashu.space'
 // const noFeesMint = 'nofees.testnut.cashu.space'
+const testAmount = '100'
 
 describe('Add the testnut mint', () => {
 	beforeAll(async () => {
 		await device.launchApp()
 	})
-
 
 	it('should go through the 3 onboarding screens', async () => {
 		const header1 = element(by.text('eNuts & Ecash'))
@@ -80,5 +85,48 @@ describe('Add the testnut mint', () => {
 		await submitBtn.tap()
 		const successModalHeader = element(by.id('new-mint-success'))
 		await expect(successModalHeader).toBeVisible()
+	})
+
+	it('should mint the first cashu token', async () => {
+		const confirmBtn = element(by.id('Yes-modal-button'))
+		await confirmBtn.tap()
+		// now in the select amount screen
+		const continueBtn = element(by.id('Continue-modal-button'))
+		await expect(continueBtn).toBeVisible()
+		await continueBtn.tap()
+		// without amount, nothing should happen
+		await expect(continueBtn).toBeVisible()
+		const input = element(by.id('mint-amount-input'))
+		await input.typeText(testAmount)
+		await continueBtn.tap()
+		// wait for QR to appear
+		await waitFor(element(by.id('qr-code'))).toBeVisible().withTimeout(10000)
+		// wait for confirmation to appear
+		await waitFor(element(by.id(`amount: ${testAmount}`))).toBeVisible().withTimeout(30000)
+		await expect(element(by.id(`mint: ${testmint}`))).toBeVisible()
+		await element(by.id('Back to dashboard-modal-button')).tap()
+	})
+
+	it ('should show the transaction in the History', async () => {
+		const historyEntry = element(by.id('history-entry-0'))
+		await expect(historyEntry).toBeVisible()
+		await historyEntry.tap()
+		await expect(element(by.id('history-entry-details'))).toBeVisible()
+		await element(by.id('back-btn-top-nav')).tap()
+		await expect(element(by.id(`balance: ${testAmount}`))).toBeVisible()
+	})
+
+	it ('should create a new cashu token', async () => {
+		await element(by.id('Send-btn')).tap()
+		await element(by.id('send-ecash-option')).tap()
+		await element(by.id('mint-amount-input')).typeText('50')
+		await element(by.id('continue-send-ecash')).tap()
+		await element(by.id('swipe-confirm-button')).swipe('right')
+		const qr = element(by.id('qr-code'))
+		await waitFor(qr).toBeVisible().withTimeout(10000)
+		await expect(element(by.id('50-txt'))).toBeVisible()
+		await qr.tap() // copy token to clipboard
+		await element(by.id('back-btn-top-nav')).tap()
+		await expect(element(by.id('history-entry-1'))).toBeVisible()
 	})
 })

@@ -22,7 +22,9 @@ export default function Txt({ txt, bold, center, error, success, styles }: ITxtP
 					textAlign: center ? 'center' : 'left'
 				},
 				...(styles || [])
-			]}>
+			]}
+			testID={`${txt}-txt`}
+		>
 			{txt}
 		</Text>
 	)

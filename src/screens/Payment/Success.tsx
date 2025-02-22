@@ -64,7 +64,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 				<Logo size={s(230)} style={styles.img} success />
 			}
 			<View style={{ width: '100%' }}>
-				<Text style={[styles.successTxt, { color: color.TEXT }]}>
+				<Text testID={`amount: ${amount}`} style={[styles.successTxt, { color: color.TEXT }]}>
 					{nostr ?
 						<>{formatSatStr(amount || 0)} {t('nostrPaymentSuccess')}</>
 						:
@@ -89,13 +89,12 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 					</Text>
 				}
 				{mint && mint.length > 0 &&
-					<Text style={[styles.mints, { color: color.TEXT_SECONDARY }]}>
+					<Text testID={`mint: ${mint}`} style={[styles.mints, { color: color.TEXT_SECONDARY }]}>
 						{mint}
 					</Text>
 				}
 				<View style={styles.successAnim}>
 					<LottieView
-						 
 						source={require('../../../assets/lottie/success.json')}
 						autoPlay
 						loop={false}

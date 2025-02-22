@@ -50,6 +50,7 @@ export default function OptsModal({
 			<TouchableOpacity
 				style={styles.container}
 				onPress={onPressFirstBtn}
+				testID='send-ecash-option'
 			>
 				<View style={styles.iconContainer}>
 					{isSend ?

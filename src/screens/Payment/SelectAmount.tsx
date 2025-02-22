@@ -208,10 +208,11 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 						cursorColor={hi[highlight]}
 						placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
 						style={[globals().selectAmount, { color: err ? mainColors.ERROR : hi[highlight] }]}
-						onChangeText={amount => setAmount(cleanUpNumericStr(amount))}
+						onChangeText={amountt => setAmount(cleanUpNumericStr(amountt))}
 						onSubmitEditing={() => void handleAmountSubmit()}
 						value={amount}
 						maxLength={8}
+						testID='mint-amount-input'
 					/>
 				</Animated.View>
 				<Txt
@@ -256,6 +257,7 @@ export default function SelectAmountScreen({ navigation, route }: TSelectAmountP
 							onPress={() => void handleAmountSubmit()}
 							icon={<ChevronRightIcon color={mainColors.WHITE} />}
 							size={s(55)}
+							testId='continue-send-ecash'
 						/>
 					</>
 					:
