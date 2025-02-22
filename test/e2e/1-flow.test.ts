@@ -8,13 +8,14 @@ import { expect } from 'detox'
  * 3. Skip PIN setup
  * 4. Add the first default mint
  */
+const testmint = 'testnut.cashu.space'
+// const noFeesMint = 'nofees.testnut.cashu.space'
 
 describe('Add the testnut mint', () => {
 	beforeAll(async () => {
 		await device.launchApp()
 	})
 
-	const testmint = 'testnut.cashu.space'
 
 	it('should go through the 3 onboarding screens', async () => {
 		const header1 = element(by.text('eNuts & Ecash'))
@@ -52,7 +53,7 @@ describe('Add the testnut mint', () => {
 		const addMintBtn = element(by.id('Mint-btn'))
 		await expect(addMintBtn).toBeVisible()
 		await addMintBtn.tap()
-		const addNewMintBtn = element(by.id('Add a new mint-button'))
+		const addNewMintBtn = element(by.id('Add a new mint-modal-button'))
 		await expect(addNewMintBtn).toBeVisible()
 		await addNewMintBtn.tap()
 	})
