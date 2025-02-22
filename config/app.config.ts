@@ -115,7 +115,7 @@ const config: ExpoConfig = {
 		config: {
 			usesNonExemptEncryption: false
 		},
-		bundleIdentifier: 'xyz.elliptica.enuts',
+		bundleIdentifier: 'xyz.elliptica.enuts', // com.agron.enuts
 		buildNumber: '1'
 	},
 	android: {
