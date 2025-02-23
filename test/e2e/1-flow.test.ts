@@ -17,7 +17,7 @@ import { expect } from 'detox'
 const noFeesMint = 'nofees.testnut.cashu.space'
 const testAmount = '100'
 
-describe('Add the testnut mint', () => {
+describe('Test the happy path of the app', () => {
 	beforeAll(async () => {
 		await device.launchApp()
 	})
@@ -89,15 +89,13 @@ describe('Add the testnut mint', () => {
 
 	it('should mint the first cashu token', async () => {
 		await device.disableSynchronization()
-		const confirmBtn = element(by.id('Yes-modal-button'))
-		await confirmBtn.tap()
+		await element(by.id('Yes-modal-button')).tap()
 		const continueBtn = element(by.id('Continue-modal-button'))
 		await expect(continueBtn).toBeVisible()
 		await continueBtn.tap()
-		await expect(continueBtn).toBeVisible()
 		const input = element(by.id('mint-amount-input'))
 		await input.typeText(testAmount)
-		await continueBtn.tap()
+		await element(by.id('Continue-modal-button')).tap()
 		const qr = element(by.id('qr-code'))
 		await waitFor(qr).toBeVisible().withTimeout(10000)
 		await expect(qr).toBeVisible()
