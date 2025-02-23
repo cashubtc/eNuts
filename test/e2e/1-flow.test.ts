@@ -136,6 +136,7 @@ describe('Test the happy path of the app', () => {
 	it('should claim the cashu token', async () => {
 		await device.disableSynchronization()
 		const receiveBtn = element(by.id('Receive-btn'))
+		await expect(receiveBtn).toBeVisible()
 		await receiveBtn.tap()
 		await element(by.id('send-ecash-option')).tap()
 		const amount = element(by.id('amount: 50'))
