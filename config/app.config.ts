@@ -85,15 +85,6 @@ const config: ExpoConfig = {
 			{
 				enableFTS: true,
 				useSQLCipher: true,
-				android: {
-					// Override the shared configuration for android
-					enableFTS: false,
-					useSQLCipher: false
-				},
-				ios: {
-					// You can also override the shared configurations for iOS
-					customBuildFlags: ['-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1']
-				}
 			}
 		],
 		[
