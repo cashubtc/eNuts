@@ -150,7 +150,7 @@ export default [{
 		}],
 
 		'prefer-promise-reject-errors': 'warn',
-		'no-await-in-loop': 'warn',
+		'no-await-in-loop': 'off',
 		'no-return-await': 'warn',
 		'no-prototype-builtins': 'warn',
 		'no-empty': 'warn',
