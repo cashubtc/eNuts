@@ -40,6 +40,7 @@ export default [{
 		'**/report',
 		'**/assets',
 		'**/scripts',
+		'package.json',
 		'scripts/dev',
 		'scripts/**/*.*',
 		'scripts/dev/*',
