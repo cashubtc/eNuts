@@ -6,7 +6,6 @@ import type { INavigatorProps } from '@model/nav'
 import Navigator from '@nav/Navigator'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { CustomErrorBoundary } from '@screens/ErrorScreen/ErrorBoundary'
-// import { ErrorDetails } from '@screens/ErrorScreen/ErrorDetails'
 import * as Sentry from '@sentry/react-native'
 import { BalanceProvider } from '@src/context/Balance'
 import { FocusClaimProvider } from '@src/context/FocusClaim'
@@ -22,7 +21,6 @@ import { secureStore, store } from '@store'
 import { SECURESTORE_KEY, STORE_KEYS } from '@store/consts'
 import { dark, light } from '@styles'
 import { isErr, isNull, isStr } from '@util'
-// import { routingInstrumentation } from '@util/crashReporting'
 import { runRequestTokenLoop } from '@wallet'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
@@ -36,9 +34,6 @@ import Blank from './Blank'
 import ClipboardModal from './ClipboardModal'
 import Toaster from './Toaster'
 import Txt from './Txt'
-
-// LogBox.ignoreLogs(['is deprecated'])
-// LogBox.ignoreLogs([/expo-image/gmi])
 
 const navigationIntegration = Sentry.reactNavigationIntegration({
 	enableTimeToInitialDisplay: true,
@@ -196,7 +191,6 @@ function My_App() {
 			setIsRdy(true) // APP is ready to render
 		}
 		void init()
-		 
 		const subscription = AppState.addEventListener('change', async nextAppState => {
 			if (
 				appState.current.match(/inactive|background/) &&
@@ -264,7 +258,6 @@ function NavContainer({ children }: { children: React.ReactNode }) {
 			theme={theme === 'Light' ? light : dark}
 			ref={navigation}
 			onReady={() => {
-				// routingInstrumentation?.registerNavigationContainer?.(navigation)
 				navigationIntegration.registerNavigationContainer(navigation)
 			}}
 		>
