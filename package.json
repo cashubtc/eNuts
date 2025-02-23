@@ -39,7 +39,7 @@
 		"update-translations": "node utils/update-translations.js",
 		"android": "expo run:android",
 		"detox:build:android": "npx detox build -c android.emu.release",
-		"detox:test:android:ci": "npx detox test -c android.emu.release --headless --record-logs all"
+		"detox:test:android:ci": "npx detox test -c android.emu.release --headless --record-logs all --loglevel trace"
 	},
 	"dependencies": {
 		"@cashu/cashu-ts": "^0.9.0",
