@@ -74,7 +74,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			return setTrustModal(false)
 		}
 		for (const mint of tokenInfo.mints) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await addMint(mint)
 		}
 		stopLoading()

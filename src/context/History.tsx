@@ -1,4 +1,4 @@
-/* eslint-disable no-await-in-loop */
+ 
 import { delInvoice, getAllInvoices, getInvoiceByPr } from '@db'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'

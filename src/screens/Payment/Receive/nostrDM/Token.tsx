@@ -71,7 +71,7 @@ export default function Token({ sender, token, id, dms, setDms, mints }: ITokenP
 	const handleTrustModal = async () => {
 		if (!info) { return }
 		for (const mint of info.mints) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await addMint(mint)
 		}
 		// add token to db

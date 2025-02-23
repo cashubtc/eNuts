@@ -97,9 +97,9 @@ export async function isTokenSpendable(token: string): Promise<boolean> {
 		const useableTokenProofs: Proof[] = []
 		for (const t of decoded.token) {
 			if (!t?.proofs?.length) { continue }
-			// eslint-disable-next-line no-await-in-loop
+			 
 			const w = await getWallet(t.mint)
-			// eslint-disable-next-line no-await-in-loop
+			 
 			const usedSecrets = (await w.checkProofsSpent(t.proofs)).map(x => x.secret)
 			if (usedSecrets.length === t.proofs.length) {
 				// usedTokens.push(token)
@@ -144,7 +144,7 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
 			}
 		}
 		for (const mint of mintUrls) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await addMint(mint)
 		}
 		if (!token?.token?.length) { return false }
@@ -364,13 +364,13 @@ async function requestTokenLoop(): Promise<void> {
 	}
 	for (const invoice of invoices) {
 		try {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await requestToken(invoice.mintUrl, invoice.amount, invoice.hash)
 			// TODO notify user and add history entry
 		} catch {/* ignore */ }
 		const { expiry } = decodeLnInvoice(invoice.pr)
 		const date = new Date((invoice.time * 1000) + (expiry * 1000)).getTime()
-		// eslint-disable-next-line no-await-in-loop
+		 
 		if (Date.now() > date) { await delInvoice(invoice.hash) }
 	}
 	isRequestTokenLoopRunning = false

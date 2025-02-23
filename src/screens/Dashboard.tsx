@@ -76,7 +76,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			return
 		}
 		for (const mint of tokenInfo.mints) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await addMint(mint)
 		}
 		// add token to db

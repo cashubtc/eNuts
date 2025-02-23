@@ -53,9 +53,9 @@ const useFocusClaim = () => {
 			return true
 		}
 		for (let i = 0; i < 10; i++) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			if (await fn() || isSpent) { return }
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await sleep(50)
 		}
 	}
