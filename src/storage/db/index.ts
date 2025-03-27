@@ -2,11 +2,10 @@ import type { Proof, Token } from '@cashu/cashu-ts'
 import { CashuMint, deriveKeysetId, getDecodedToken } from '@cashu/cashu-ts'
 import { env } from '@consts'
 import { l } from '@log'
-import type { IContact, IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp, ITx } from '@model'
+import type { IContact, IInvoice, IMint, IMintWithBalance, IPreferences, IPreferencesResp } from '@model'
 import { arrToChunks, isObj } from '@util'
-import * as SQLite from 'expo-sqlite/legacy'
 
-import { Db } from './Db'
+import { SQLiteDB } from './Db'
 import { tables } from './sql/table'
 import { views } from './sql/view'
 
@@ -16,7 +15,7 @@ async function getCurrentKeySetId(mintUrl: string) {
 	return keySetId
 }
 
-const db = new Db(SQLite.openDatabase('cashu.db'))
+const db = new SQLiteDB('cashu.db')
 /*  ### table names ###
 	proofs
 	proofsUsed
@@ -28,64 +27,39 @@ const db = new Db(SQLite.openDatabase('cashu.db'))
 	invoices
 */
 
+const INITIAL_SQL = `
+PRAGMA cache_size=8192;
+PRAGMA encoding="UTF-8";
+PRAGMA synchronous=NORMAL;
+PRAGMA temp_store=FILE;
+`
 
 // ################################ init DB ################################
 export async function initDb() {
 	if (env.NODE_ENV === 'test') {
 		l('[initDb]', 'reset DB in test mode')
-		await db.reset(SQLite.openDatabase('cashu.db'))
+		await db.reset()
 	}
-	await db.execMany([
-		{ sql: 'PRAGMA cache_size=8192;', args: [] },
-		{ sql: 'PRAGMA encoding="UTF-8";', args: [] },
-		{ sql: 'PRAGMA synchronous=NORMAL;', args: [] },
-		{ sql: 'PRAGMA temp_store=FILE;', args: [] },
-	], false)
+	await db.exec(INITIAL_SQL)
 	const queries: readonly string[] = [
 		...tables,
 		...views
 	]
-	const cmds: ITx[] = queries.map(query => ({
-		sql: query,
-		args: [],
-		errorCb: (_: any, error: unknown) => {
-			l('[initDb]', query, 'DB init error!', error)
-			return true
-		},
-	}))
-	return db.execTxs(
-		cmds,
-		err => { l('[initDb]', 'DB init error!', err) },
-		() => { l('[initDb]', 'DB init success!') }
-	)
+	await db.exec(queries.join(' '))
 }
-
 
 // ################################ Balance ################################
 export async function getBalance(unused = true): Promise<number> {
-	return (await db.get<{ balance: number }>(`select * from ${unused ? 'balance' : 'balance_used'}`, []))?.balance || 0
+	const result = await db.first<{ balance: number }>(`select * from ${unused ? 'balance' : 'balance_used'}`)
+	l('[getBalance]', result)
+	return result?.balance || 0
 }
 export async function getMintsBalances(): Promise<IMintWithBalance[]> {
-	const result = await db.all<{ balance: number, mintUrl: string }>(
-		'select * from mintBalances',
-		[]
-	)
+	const result = await db.all<{ balance: number, mintUrl: string }>('select * from mintBalances')
+	l('[getMintsBalances]', result)
+	if (!result || !result.length) { return [] }
 	return result.map(r => ({ mintUrl: r.mintUrl, amount: r.balance, name: '' }))
 }
-
-/* export async function getMintsBalances(): Promise<IMintWithBalance[]> {
-	const mints = await getMints()
-	const proofs = await getProofs()
-	const result: { [mintUrl: string]: number } = {}
-	for (const mint of mints) {
-		if (!result[mint.mintUrl]) { result[mint.mintUrl] = 0 }
-		result[mint.mintUrl] += proofs.reduce((acc, p) => {
-			if (p.id === mint.id) { acc += p.amount }
-			return acc
-		}, 0)
-	}
-	return Object.entries(result).map(([mintUrl, amount]) => ({ mintUrl, amount, name: '' }))
-} */
 export async function getMintBalance(mintUrl: string): Promise<number> {
 	const mints = await getMintIdsByUrl(mintUrl)
 	const proofs = await getProofs()
@@ -107,9 +81,7 @@ export async function checkBal() {
 	return mintBalsTotal !== bal
 }
 
-
 // ################################ Token ################################
-
 export async function addToken(token: Token | string): Promise<void> {
 	let decoded: Token
 	if (typeof token === 'string') {
@@ -122,11 +94,9 @@ export async function addToken(token: Token | string): Promise<void> {
 		const ids = t.proofs.map(x => x.id)
 		l('[addToken] adding mints')
 		for (const id of ids) {
-			// eslint-disable-next-line no-await-in-loop
 			await addMint(t.mint, id)
 		}
 		l('[addToken] adding proofs')
-		// eslint-disable-next-line no-await-in-loop
 		await addProofs(...t.proofs.filter(p => p && p.C && p.amount && p.secret && p.id))
 	}
 }
@@ -138,19 +108,19 @@ async function _addUsedProofs(...proofs: Proof[]) {
 	const sqlSuffix = proofs.map(_ => '(?, ?, ?, ?)').join(' , ')
 	const sql = sqlPrefix + sqlSuffix
 	const params = proofs.flatMap(x => ([x.id, x.amount, x.secret, x.C]))
-	const result = await db.execInsert<Proof>(sql, params)
-	l('[addUsedProofs]', result, proofs)
-	return result?.rowsAffected === proofs.length
+	const result = await db.run(sql, params)
+	l('[_addUsedProofs]', result)
+	return result?.changes === proofs.length
 }
 async function addUsedProofs(...proofs: Proof[]): Promise<boolean> {
 	if (!proofs || !proofs.length) { return false }
 	const results: (boolean | undefined)[] = []
 	for (const arr of arrToChunks(proofs, 100)) {
-		// eslint-disable-next-line no-await-in-loop
 		results.push(await _addUsedProofs(...arr))
 	}
 	return results.every(x => x)
 }
+
 // ################################ Proofs ################################
 async function _addProofs(...proofs: Proof[]) {
 	if (!proofs || !proofs.length) { return }
@@ -158,15 +128,14 @@ async function _addProofs(...proofs: Proof[]) {
 	const sqlSuffix = proofs.map(_ => '(?, ?, ?, ?)').join(' , ')
 	const sql = sqlPrefix + sqlSuffix
 	const params = proofs.flatMap(x => ([x.id, x.amount, x.secret, x.C]))
-	const result = await db.execInsert<Proof>(sql, params)
-	l('[addProofs]', result, proofs)
-	return result?.rowsAffected === proofs.length
+	const result = await db.run(sql, params)
+	l('[_addProofs]', result)
+	return result?.changes === proofs.length
 }
 async function addProofs(...proofs: Proof[]): Promise<boolean> {
 	if (!proofs || !proofs.length) { return false }
 	const results: (boolean | undefined)[] = []
 	for (const arr of arrToChunks(proofs, 100)) {
-		// eslint-disable-next-line no-await-in-loop
 		results.push(await _addProofs(...arr))
 	}
 	return results.every(x => x)
@@ -181,11 +150,13 @@ async function addProofs(...proofs: Proof[]): Promise<boolean> {
 export async function getProofs(): Promise<Proof[]> {
 	const proofs = await db.all<Proof>('SELECT * FROM proofs', [])
 	l('[getProofs]', proofs)
+	if (!proofs || !proofs.length) { return [] }
 	return proofs
 }
 export async function getProofsByIds(ids: string[]): Promise<Proof[]> {
 	const toGet = ids.map(id => `"${id}"`).join(',')
 	const proofs = await db.all<Proof>(`SELECT * FROM proofs WHERE id in (${toGet})`, [])
+	if (!proofs || !proofs.length) { return [] }
 	return proofs
 }
 export async function getProofsByMintUrl(mintUrl: string): Promise<Proof[]> {
@@ -197,22 +168,22 @@ export async function deleteProofs(proofs: Proof[]): Promise<boolean | undefined
 	if (!proofs || !proofs.length) { return }
 	const toDel = proofs.map(p => `"${p.secret}"`).join(',')
 	const ids = proofs.map(x => `"${x.id}"`).join(',')
-	const result = await db.execTx(`DELETE from proofs WHERE id in (${ids}) and secret in (${toDel})`, [])
-	l('[deleteProofs]', { result, proofs })
+	const result = await db.run(`DELETE from proofs WHERE id in (${ids}) and secret in (${toDel})`)
+	l('[deleteProofs]', result)
 	void addUsedProofs(...proofs)
-	return result.rowsAffected === proofs.length
+	return result?.changes === proofs.length
 }
 
 // ################################ Mints ################################
 export async function getMints(): Promise<IMint[]> {
-
-	const result = await db.all<IMint>('SELECT * FROM keysetIds', [])
+	const result = await db.all<IMint>('select * from keysetIds')
 	l('[getMints]', result)
+	if (!result || !result.length) { return [] }
 	return result
 }
 /**
- * get all unique mint urls in db 
- * 
+ * get all unique mint urls in db
+ *
  *	if asObj is false or undefined, returns array of strings
 
  * @export
@@ -221,8 +192,8 @@ export async function getMints(): Promise<IMint[]> {
  */
 export async function getMintsUrls(asObj?: false): Promise<string[]>
 /**
- * get all unique mint urls in db 
- * 
+ * get all unique mint urls in db
+ *
  *	if asObj is true, returns array of objects with key mintUrl
 
  * @deprecated  this overload will be removed in the future
@@ -233,18 +204,18 @@ export async function getMintsUrls(asObj?: false): Promise<string[]>
  */
 export async function getMintsUrls(asObj: true): Promise<{ mintUrl: string }[]>
 export async function getMintsUrls(asObj = false): Promise<(string | { mintUrl: string })[]> {
-
-	const result = await db.all<{ mintUrl: string }>('SELECT DISTINCT mintUrl FROM keysetIds', [])
-	l('Mints', result)
+	const result = await db.all<{ mintUrl: string }>('select DISTINCT mintUrl from keysetIds')
+	l('[Mints]', result)
+	if (!result || !result.length) { return [] }
 	return asObj ? result : result.map(x => x.mintUrl)
 }
 export async function addMint(mintUrl: string, id = ''): Promise<boolean> {
 	const sql = 'INSERT OR IGNORE INTO keysetIds (id, mintUrl) VALUES (?, ?)'
 	if (!id) { id = await getCurrentKeySetId(mintUrl) }
 	const params = [id, mintUrl]
-	const result = await db.execInsert<IMint>(sql, params)
-	l('[addMint]', 'mint added', result)
-	return result?.rowsAffected === 1
+	const result = await db.run(sql, params)
+	l('[addMint]', result)
+	return result?.changes === 1
 }
 async function _addMints(...args: { mintUrl: string, id: string }[]): Promise<boolean> {
 	if (!args || !args.length) { return false }
@@ -252,15 +223,14 @@ async function _addMints(...args: { mintUrl: string, id: string }[]): Promise<bo
 	const sqlSuffix = args.map(_ => '(?, ?)').join(' , ')
 	const sql = sqlPrefix + sqlSuffix
 	const params = args.flatMap(x => ([x.id, x.mintUrl]))
-	const result = await db.execInsert<IMint[]>(sql, params)
-	l('[addMints]', 'mints added', result)
-	return result?.rowsAffected === args.length
+	const result = await db.run(sql, params)
+	l('[addMints]', result)
+	return result?.changes === args.length
 }
 export async function addMints(...args: { mintUrl: string, id: string }[]): Promise<boolean> {
 	if (!args || !args.length) { return false }
 	const results: boolean[] = []
 	for (const arr of arrToChunks(args, 100)) {
-		// eslint-disable-next-line no-await-in-loop
 		results.push(await _addMints(...arr))
 	}
 	return results.every(x => x)
@@ -269,127 +239,103 @@ export async function addAllMintIds() {
 	const mints = await getMints()
 	const toDo: { mintUrl: string, id: string }[] = []
 	for (const mint of mints) {
-		// eslint-disable-next-line no-await-in-loop
 		const ids = (await CashuMint.getKeySets(mint.mintUrl)).keysets
 		for (const id of ids) {
 			if (mints.some(x => x.id === id && x.mintUrl === mint.mintUrl)) { continue }
-			// eslint-disable-next-line no-await-in-loop
 			toDo.push({ mintUrl: mint.mintUrl, id })
 		}
 	}
 	await addMints(...toDo)
 }
 export async function hasMints(): Promise<boolean> {
-	const mintCountResult = await db.get<{ count: number }>('SELECT count(id) as count FROM keysetIds limit 1')
-	// l('[hasMints]', mintCountResult)
+	const mintCountResult = await db.first<{ count: number }>('SELECT count(id) as count FROM keysetIds limit 1')
+	l('[hasMints]', mintCountResult)
 	return !!mintCountResult?.count
 }
 export async function getMintByKeySetId(id: string): Promise<IMint | undefined | null> {
-	const x = await db.get<IMint>('SELECT * FROM keysetIds WHERE id = ?', [id])
-	return x
+	const mint = await db.first<IMint>('SELECT * FROM keysetIds WHERE id = ?', [id])
+	l('[getMintByKeySetId]', mint)
+	return mint
 }
 export async function getMintIdsByUrl(mintUrl: string): Promise<IMint[]> {
-	const x = await db.all<IMint>('SELECT * FROM keysetIds WHERE mintUrl = ?', [mintUrl])
-	return x
+	const mintIds = await db.all<IMint>('SELECT * FROM keysetIds WHERE mintUrl = ?', [mintUrl])
+	l('[getMintIdsByUrl]', mintIds)
+	if (!mintIds || !mintIds.length) { return [] }
+	return mintIds
 }
 export async function deleteMint(mintUrl: string) {
-	const result = await db.execTx('DELETE from keysetIds WHERE mintUrl = ? ', [mintUrl])
-	l('[deleteMint]', result, mintUrl)
-	return result.rowsAffected === 1
+	const result = await db.run('DELETE from keysetIds WHERE mintUrl = ?', [mintUrl])
+	l('[deleteMint]', result)
+	return result?.changes === 1
 }
 // ################################ Preferences ################################
 export async function getPreferences(): Promise<IPreferences> {
-	const x = await db.get<IPreferencesResp>('SELECT * FROM preferences limit 1', [])
+	const prefs = await db.first<IPreferencesResp>('SELECT * FROM preferences limit 1')
+	l('[getPreferences]', prefs)
 	return {
-		id: x?.id || 1,
-		darkmode: x?.darkmode === 'true',
-		theme: x?.theme || 'Default',
-		formatBalance: x?.formatBalance === 'true',
-		hasPref: isObj(x)
+		id: prefs?.id || 1,
+		darkmode: prefs?.darkmode === 'true',
+		theme: prefs?.theme || 'Default',
+		formatBalance: prefs?.formatBalance === 'true',
+		hasPref: isObj(prefs)
 	}
 }
 export async function setPreferences(p: IPreferences) {
-	const x = await db.execInsert<IPreferences>(
-		'INSERT OR REPLACE INTO preferences (id, theme,darkmode,formatBalance) VALUES (?, ?,?, ?)',
-		[1, p.theme, p.darkmode.toString(), p.formatBalance.toString()]
-	)
-	return x.rowsAffected === 1
+	const result = await db.run('INSERT OR REPLACE INTO preferences (id, theme,darkmode,formatBalance) VALUES (?, ?,?, ?)', [1, p.theme, p.darkmode.toString(), p.formatBalance.toString()])
+	l('[setPreferences]', result)
+	return result?.changes === 1
 }
 
 // ################################ Invoices ################################
 export async function addInvoice({ pr, hash, amount, mintUrl }: Omit<IInvoice, 'time'>) {
-	const result = await db.execInsert<IInvoice>(
-		'INSERT OR IGNORE INTO invoices (amount,pr,hash,mintUrl) VALUES (?, ?, ?, ?)',
-		[amount, pr, hash, mintUrl]
-	)
-	l('[addInvoice]', result, { pr, hash, amount, mintUrl })
-	return result.rowsAffected === 1
+	const result = await db.run('INSERT OR IGNORE INTO invoices (amount,pr,hash,mintUrl) VALUES (?, ?, ?, ?)', [amount, pr, hash, mintUrl])
+	l('[addInvoice]', result)
+	return result?.changes === 1
 }
 export async function getAllInvoices(): Promise<IInvoice[]> {
-	const result = await db.all<IInvoice>(
-		'Select * from invoices',
-		[]
-	)
+	const result = await db.all<IInvoice>('Select * from invoices')
+	l('[getAllInvoices]', result)
+	if (!result || !result.length) { return [] }
 	return result
 }
 export async function delInvoice(hash: string) {
-	const result = await db.execTx<IInvoice>(
-		'Delete from invoices Where hash = ?',
-		[hash]
-	)
-	l('[delInvoice]', result, { hash })
-	return result.rowsAffected === 1
+	const result = await db.run('Delete from invoices Where hash = ?', [hash])
+	l('[delInvoice]', result)
+	return result?.changes === 1
 }
 export async function getInvoice(hash: string) {
-	const result = await db.execSelect<IInvoice>(
-		'SELECT * from invoices Where hash = ?',
-		[hash]
-	)
-	l('[getInvoice]', result, { hash })
-	return result?.item?.(0)
+	const result = await db.first<IInvoice>('SELECT * from invoices Where hash = ?', [hash])
+	l('[getInvoice]', result)
+	return result
 }
 export async function getInvoiceByPr(pr: string) {
-	const result = await db.execSelect<IInvoice>(
-		'SELECT * from invoices Where pr = ?',
-		[pr]
-	)
-	l('[getInvoice]', result, { pr })
-	return result?.item?.(0)
+	const result = await db.first<IInvoice>('SELECT * from invoices Where pr = ?', [pr])
+	l('[getInvoiceByPr]', result)
+	return result
 }
 
 // ################################ Contacts ################################
 export async function getContacts(): Promise<IContact[]> {
 	interface ITempContact extends Omit<IContact, 'isOwner'> { isOwner: number }
 	const contacts = await db.all<ITempContact>('select * from contacts')
-	// l('[getContacts]', contacts)
-	return contacts.map(c => ({ ...c, isOwner: !!c.isOwner })) as IContact[]
+	l('[getContacts]', contacts)
+	return contacts?.map(c => ({ ...c, isOwner: !!c.isOwner })) as IContact[]
 }
 export async function addContact(c: IContact) {
-	const result = await db.execInsert(
-		'INSERT INTO contacts (name, ln, isOwner) VALUES (?, ?, ?)',
-		[c.name, c.ln, c?.isOwner ? 1 : 0]
-	)
-	l('[addContact]', result, c)
-	return result.rowsAffected === 1
+	const result = await db.run('INSERT OR IGNORE INTO contacts (name, ln, isOwner) VALUES (?, ?, ?)', [c.name, c.ln, c?.isOwner ? 1 : 0])
+	l('[addContact]', result)
+	return result?.changes === 1
 }
 export async function editContact(c: Required<IContact>) {
-	const result = await db.execTx(
-		'UPDATE contacts SET name = ? , ln = ? WHERE id = ?',
-		[c.name, c.ln, c.id]
-	)
-	l('[editContact]', result, c)
-	return result.rowsAffected === 1
+	const result = await db.run('UPDATE contacts SET name = ? , ln = ? WHERE id = ?', [c.name, c.ln, c.id])
+	l('[editContact]', result)
+	return result?.changes === 1
 }
 export async function delContact(id: number) {
-	const result = await db.execTx(
-		'Delete from contacts Where id = ?',
-		[id]
-	)
-	l('[delContact]', result, { id })
-	return result.rowsAffected === 1
+	const result = await db.run('Delete from contacts Where id = ?', [id])
+	l('[delContact]', result)
+	return result?.changes === 1
 }
-
-
 
 // ################################ Drops ################################
 export function dropProofs() {
@@ -398,8 +344,8 @@ export function dropProofs() {
 export function dropContacts() {
 	return dropTable('contacts')
 }
-export function dropTable(table: string) {
-	return db.execTx(`drop table ${table}`, [])
+export async function dropTable(table: string) {
+	await db.run(`drop table ${table}`)
 }
 export async function dropAll() {
 	try {
@@ -412,7 +358,7 @@ export async function dropAll() {
 			dropTable('proofs'),
 			dropTable('invoices'),
 		])
-	} catch (e) {
+	} catch {
 		// ignore
 	}
 }

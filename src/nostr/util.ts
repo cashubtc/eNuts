@@ -109,7 +109,7 @@ export function isNpubQR(str: string) {
 		const clean = u.hostname || u.pathname
 		if (!isNpub(clean)) { return }
 		return clean
-	} catch (_) {/* ignored */ }
+	} catch {/* ignored */ }
 }
 
 export async function handleNewNpub(hex: HexKey, initSecret = false) {
@@ -136,7 +136,7 @@ export function npubEncode(hex: HexKey) {
 	let npub = ''
 	try {
 		npub = nip19.npubEncode(hex)
-	} catch (e) {
+	} catch {
 		return ''
 	}
 	return npub

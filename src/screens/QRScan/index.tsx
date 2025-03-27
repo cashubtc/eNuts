@@ -74,7 +74,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			return setTrustModal(false)
 		}
 		for (const mint of tokenInfo.mints) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await addMint(mint)
 		}
 		stopLoading()
@@ -101,7 +101,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 			try {
 				const res = nip19.decode(data)?.data
 				return navigation.navigate('npub confirm', { hex: res.pubkey, isPayment })
-			} catch (e) {
+			} catch {
 				return openPromptAutoClose({ msg: t('unknownType') + ` "${data}"` })
 			}
 		}
@@ -130,7 +130,7 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
 				return openPromptAutoClose({ msg: t('invoiceExpired') })
 			}
 			navigation.navigate('qr processing', { ln: { invoice, mint, balance, amount } })
-		} catch (e) {
+		} catch {
 			openPromptAutoClose({ msg: t('unknownType') + ` "${data}"` })
 		}
 	}

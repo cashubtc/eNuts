@@ -30,7 +30,7 @@ export default function QR({ size, value, isInvoice, truncateNum, onError }: QRP
 				<QRCode
 					size={size}
 					value={str}
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					testID='qr-code'
 					logo={require('@assets/app-qr-icon.png')}
 					logoBorderRadius={10}
 					logoBackgroundColor={mainColors.WHITE}

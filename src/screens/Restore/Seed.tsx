@@ -34,7 +34,7 @@ export default function SeedScreen({ navigation, route: { params } }: ISeedPageP
 			return openPromptAutoClose({ msg: t('noMintForCounter'), success: false })
 		}
 		for (const mint of allMints) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await incrementCounterByMintUrl(mint.mintUrl, incrementValue)
 		}
 		setCounterOpen(false)

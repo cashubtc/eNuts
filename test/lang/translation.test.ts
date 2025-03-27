@@ -1,5 +1,3 @@
-import { cTo } from '@src/storage/store/utils'
-import { isObj } from '@src/util'
 import { readdirSync, readFileSync } from 'fs'
 import { join, resolve } from 'path'
 
@@ -12,7 +10,13 @@ const tlPath = '../../assets/translations'
 const loadJSON = (filename: string) => {
 	const filePath = resolve(__dirname, tlPath, filename)
 	const content = readFileSync(filePath, 'utf-8')
-	return cTo<Translation>(content)
+	try {
+		return JSON.parse(content) as Translation
+	} catch (error) {
+		// eslint-disable-next-line no-console
+		console.log('error', error)
+		return {}
+	}
 }
 
 // base language
@@ -33,7 +37,7 @@ function getAllKeys(obj: TLObjectParam, prefix: string = ''): string[] {
 		const newKey = prefix ? `${prefix}.${key}` : key
 		keys.push(newKey)
 		const tmp = obj[key]
-		if (!isObj(tmp)) { continue }
+		if (typeof tmp !== 'object') { continue }
 		keys.push(...getAllKeys(tmp, newKey))
 	}
 	return keys

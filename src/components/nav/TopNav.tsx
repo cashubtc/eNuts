@@ -62,6 +62,7 @@ export default function TopNav({
 					<TouchableOpacity
 						onPress={handlePress}
 						style={styles.backiconWrap}
+						testID='back-btn-top-nav'
 					>
 						<LeftArrow color={hi[highlight]} />
 					</TouchableOpacity>

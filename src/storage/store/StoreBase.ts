@@ -1,9 +1,8 @@
-import type { Db } from '@db/Db'
+import type { SQLiteDB } from '@db/Db'
 import { l } from '@log'
-import type { IKeyValuePair } from '@model'
-import type { Query, SQLResultSetRowList } from 'expo-sqlite/legacy'
+import type { IKeyValuePair, Query } from '@model'
 
-import { cTo, getBlankSQLResultSetRowList, toJson } from './utils'
+import { cTo, toJson } from './utils'
 
 export type TOrder = 'ASC' | 'DESC'
 export type TOrderBY = 'insertionOrder' | 'key' | 'value'
@@ -15,11 +14,11 @@ export interface ISelectParams {
 }
 export abstract class StoreBase {
 	#setupDb: Query
-	protected readonly _db: Db
+	protected readonly _db: SQLiteDB
 	protected _isReady = false
 	protected _name: string
 
-	constructor(db: Db, name: string) {
+	constructor(db: SQLiteDB, name: string) {
 		this._db = db
 		this._name = name
 		this.#setupDb = {
@@ -31,7 +30,7 @@ export abstract class StoreBase {
 				`,
 			args: []
 		}
-		this._createStoreSync()
+		void this._createStore()
 	}
 	#getOrderByPart({ order = 'ASC', orderBy = 'insertionOrder' }: ISelectParams) {
 		let sqlOrderBYPart = 'ORDER BY '
@@ -51,18 +50,19 @@ export abstract class StoreBase {
 		}
 		return `${sqlOrderBYPart} ${order === 'ASC' ? '' : 'DESC'}`
 	}
-	async #select<T>(cols: 'key' | 'value' | 'key,value', { order = 'ASC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<SQLResultSetRowList<T>> {
+	async #select<T>(cols: 'key' | 'value' | 'key,value', { order = 'ASC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<T[] | null> {
 		if (!this._isReady) {
 			await this._createStore()
-			if (!this._isReady) { return getBlankSQLResultSetRowList<T>() }
+			if (!this._isReady) { return [] }
 		}
-		const result = await this._db.execSelect<T>(
+		const result = await this._db.all<T>(
 			`select ${cols}
 			from ${this._name}
 			${this.#getOrderByPart({ order, orderBy })}
 			${this.#getSelectSuffix({ start, count })}`,
 			[]
 		)
+		l('[StoreBase#select] result', result)
 		return result
 	}
 
@@ -75,7 +75,7 @@ export abstract class StoreBase {
 			await this._createStore()
 			if (!this._isReady) { return [] }
 		}
-		const result = await this._db.execSelect<{ key: string, value: string }>(
+		const result = await this._db.all<{ key: string, value: string }>(
 			`select key,value
 			from ${this._name}
 			where key in (${arr.map(x => `'${x}'`).join(',')})
@@ -83,35 +83,39 @@ export abstract class StoreBase {
 			${this.#getSelectSuffix({ start, count })}`,
 			[]
 		)
-		return result._array
+		return result
 	}
 	#getSelectSuffix({ start = 0, count = -1 }: ISelectParams) {
 		let sqlSuffix = `LIMIT ${count}`
 		if (start > 0) { sqlSuffix += ` OFFSET ${start}` }
 		return sqlSuffix
 	}
-	protected _createStoreSync() {
-		if (this._isReady) { return }
-		this._db.execSync(
-			this.#setupDb,
-			false,
-			(err, resultSet) => {
-				if (err) { throw err }
-				if (!resultSet) { throw new Error('unable create table: resultSet is null') }
-				if (resultSet?.length && 'error' in resultSet[0] && resultSet[0].error) {
-					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-					throw new Error(`unable create table: ${resultSet[0].error}`)
-				}
-				this._isReady = true
-			})
-	}
+	// protected _createStoreSync() {
+	// 	if (this._isReady) { return }
+	// 	void this._db.run(this.#setupDb.sql).then(() => {
+	// 		this._isReady = true
+	// 	})
+	// 	// this._db.execSync(
+	// 	// 	this.#setupDb,
+	// 	// 	false,
+	// 	// 	(err, resultSet) => {
+	// 	// 		if (err) { throw err }
+	// 	// 		if (!resultSet) { throw new Error('unable create table: resultSet is null') }
+	// 	// 		if (resultSet?.length && 'error' in resultSet[0] && resultSet[0].error) {
+	// 	// 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+	// 	// 			throw new Error(`unable create table: ${resultSet[0].error}`)
+	// 	// 		}
+	// 	// 		this._isReady = true
+	// 	// 	})
+	// }
 	protected async _createStore() {
 		if (this._isReady) { return }
 		try {
-			await this._db.exec(
-				this.#setupDb,
-				false
-			)
+			// await this._db.exec(
+			// 	this.#setupDb,
+			// 	false
+			// )
+			await this._db.run(this.#setupDb.sql)
 			this._isReady = true
 		} catch (e) { l('[_createStore][Error]', e) }
 	}
@@ -128,22 +132,24 @@ export abstract class StoreBase {
 			await this._createStore()
 			if (!this._isReady) { return null }
 		}
-		const result = await this._db.execSelect<{ value: string }>(
+		const result = await this._db.first<{ value: string }>(
 			`select value from ${this._name} where key = ? limit 1`,
 			[key]
 		)
-		return result?.item?.(0)?.value
+		return result?.value
+		// return result?.item?.(0)?.value
 	}
 	protected async updateByValue(oldValue: string, newValue: string): Promise<boolean> {
 		if (!this._isReady) {
 			await this._createStore()
 			if (!this._isReady) { return false }
 		}
-		const result = await this._db.exec({
-			sql: `UPDATE ${this._name} SET value = ? WHERE KEY in (SELECT KEY FROM ${this._name} WHERE value = ? LIMIT 1)`,
-			args: [newValue, oldValue]
-		})
-		return !!(result && 'rowsAffected' in result && result?.rowsAffected === 1)
+		const result = await this._db.run(`UPDATE ${this._name} SET value = ? WHERE KEY in (SELECT KEY FROM ${this._name} WHERE value = ? LIMIT 1)`, [newValue, oldValue])
+		// const result = await this._db.exec({
+		// 	sql: `UPDATE ${this._name} SET value = ? WHERE KEY in (SELECT KEY FROM ${this._name} WHERE value = ? LIMIT 1)`,
+		// 	args: [newValue, oldValue]
+		// })
+		return !!(result.changes === 1)
 	}
 	protected async updateObjByValue<T extends object>(oldValue: T, newValue: T): Promise<boolean> {
 		if (!this._isReady) {
@@ -164,13 +170,13 @@ export abstract class StoreBase {
 			await this._createStore()
 			if (!this._isReady) { return [] }
 		}
-		const result = await this._db.execSelect<{ key: string, value: string }>(
-			`select key,value from ${this._name} where key like ? 
+		const result = await this._db.all<{ key: string, value: string }>(
+			`select key,value from ${this._name} where key like ?
 			${this.#getOrderByPart({ order, orderBy })}
 			${this.#getSelectSuffix({ start, count })}`,
 			[`${prefix}%`]
 		)
-		return result._array
+		return result
 	}
 	protected async getObjsByKeyPrefix<T extends object>(prefix: string, { order = 'ASC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<IKeyValuePair<T>[]> {
 		const strKeyValPairs = await this.getByKeyPrefix(prefix, { order, start, count, orderBy })
@@ -186,7 +192,8 @@ export abstract class StoreBase {
 			if (!this._isReady) { return [] }
 		}
 		const result = await this.#select<{ key: string, value: string }>('key,value', { order, start, count, orderBy })
-		return result._array
+		if (!result) { return [] }
+		return result
 	}
 	protected async getObjsAll<T extends object>({ order = 'ASC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<IKeyValuePair<T>[]> {
 		const strKeyValPairs = await this.getAll({ order, start, count, orderBy })
@@ -200,11 +207,11 @@ export abstract class StoreBase {
 			await this._createStore()
 			if (!this._isReady) { return false }
 		}
-		const result = await this._db.execInsert<string>(
+		const result = await this._db.run(
 			`INSERT OR REPLACE INTO ${this._name} (key,value) VALUES (?, ?)`,
 			[key, value]
 		)
-		return result?.rowsAffected === 1
+		return result?.changes === 1
 	}
 	protected async setObj<T extends object>(key: string, value: T): Promise<boolean> {
 		const result = await this.set(key, toJson(value))
@@ -216,7 +223,8 @@ export abstract class StoreBase {
 			if (!this._isReady) { return [] }
 		}
 		const result = await this.#select<{ key: string }>('key', { order, start, count, orderBy })
-		return result._array.map(x => x.key)
+		if (!result) { return [] }
+		return result.map(x => x.key)
 	}
 	protected async keysByPrefix(prefix: string, { order = 'ASC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<string[]> {
 		if (!this._isReady) {
@@ -224,13 +232,14 @@ export abstract class StoreBase {
 			if (!this._isReady) { return [] }
 		}
 
-		const result = await this._db.execSelect<{ key: string }>(
+		const result = await this._db.all<{ key: string }>(
 			`select key from ${this._name} where key like ? 
 			${this.#getOrderByPart({ order, orderBy })}
 			${this.#getSelectSuffix({ start, count })}`,
 			[`${prefix}%`]
 		)
-		return result._array.map(x => x.key)
+		if (!result) { return [] }
+		return result.map(x => x.key)
 	}
 	protected async values({ order = 'ASC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<string[]> {
 		if (!this._isReady) {
@@ -238,7 +247,8 @@ export abstract class StoreBase {
 			if (!this._isReady) { return [] }
 		}
 		const result = await this.#select<{ value: string }>('value', { order, start, count, orderBy })
-		return result._array.map(x => x.value)
+		if (!result) { return [] }
+		return result.map(x => x.value)
 	}
 	protected async valuesObjs<T extends object>({ order = 'ASC', start = 0, count = -1, orderBy = 'insertionOrder' }: ISelectParams = {}): Promise<T[]> {
 		if (!this._isReady) {
@@ -253,19 +263,19 @@ export abstract class StoreBase {
 			await this._createStore()
 			if (!this._isReady) { return -1 }
 		}
-		const result = await this._db.execSelect<{ count: number }>(
+		const result = await this._db.first<{ count: number }>(
 			`select count(*) as count from ${this._name}`
 		)
-		return result?.item?.(0)?.count ?? -1
+		return result?.count ?? -1
 	}
 	protected async clear(): Promise<boolean> {
-		const result = await this._db.execTx({ sql: `delete from ${this._name}`, args: [] })
+		const result = await this._db.run(`delete from ${this._name}`)
 		// await this._db.delete()
-		return !!(result?.insertId || result?.rowsAffected)
+		return !!(result?.lastInsertRowId || result?.changes)
 	}
-	protected close(): void { return this._db.close() }
+	protected close(): void { return void this._db.close() }
 	protected async removeItem(key: string) {
-		const result = await this._db.execTx({ sql: `delete from ${this._name} where key = ?`, args: [key] })
-		return result?.rowsAffected === 1
+		const result = await this._db.run(`delete from ${this._name} where key = ?`, [key])
+		return result?.changes === 1
 	}
 }

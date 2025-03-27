@@ -9,7 +9,7 @@ interface ILogoProps {
 
 export default function Logo({ size, success, style }: ILogoProps) {
 	const { highlight, theme } = useThemeContext()
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	 
 	const src = success ?
 		require('@assets/icon_transparent_success.png')
 		:
@@ -21,7 +21,7 @@ export default function Logo({ size, success, style }: ILogoProps) {
 		<View style={styles.imgWrap}>
 			<Image
 				style={[styles.img, { height: size }, style]}
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				 
 				source={src}
 			/>
 		</View>

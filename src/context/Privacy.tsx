@@ -1,5 +1,5 @@
 /* eslint-disable no-return-await */
-/* eslint-disable @typescript-eslint/await-thenable */
+ 
 import { l } from '@log'
 import { store } from '@store'
 import { STORE_KEYS } from '@store/consts'

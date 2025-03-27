@@ -67,7 +67,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 				center
 				bold={overshoot > 0}
 				styles={[styles.hint, { color: overshoot > 0 ? mainColors.VALID : mainColors.WARN, marginTop: s(40) }]}
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+				 
 				txt={overshoot > 0 ? `${t('doneSafety')} ${overshoot}/${RESTORE_OVERSHOOT}` : t('dontClose')}
 			/>
 		</View>

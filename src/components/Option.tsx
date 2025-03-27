@@ -22,7 +22,7 @@ export default function Option({ icon, txt, hint, onPress, hasSeparator, loading
 	const { color } = useThemeContext()
 	return (
 		<>
-			<TouchableOpacity style={globals().wrapRow} onPress={onPress}>
+			<TouchableOpacity style={globals().wrapRow} onPress={onPress} testID={`send-option-${txt}`}>
 				<View style={styles.txtWrap}>
 					{icon ?
 						<View style={{ minWidth: s(40) }}>

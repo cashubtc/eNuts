@@ -40,7 +40,7 @@ export default function ProfileBanner({ hex, uri, dimmed, isSending }: IProfileB
 				</>
 				:
 				<Image
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					 
 					source={require('@assets/mixed_forest.png')}
 					contentFit='cover'
 					style={styles.defaultBanner}

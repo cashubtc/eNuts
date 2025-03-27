@@ -129,7 +129,7 @@ export default function Mints({ navigation }: TMintsPageProps) {
 
 	// get mints balances and default mint after navigating to this page
 	useEffect(() => {
-		// eslint-disable-next-line @typescript-eslint/no-misused-promises
+		 
 		const focusHandler = navigation.addListener('focus', async () => {
 			await handleInitialRender()
 		})

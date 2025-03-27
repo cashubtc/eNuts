@@ -65,7 +65,7 @@ jobs:
               run: |
                   cd ./android && ./gradlew assembleRelease --no-daemon --stacktrace
                   find . -type f -name '*.apk' 2>/dev/null
-                  cd ${{ env.GITHUB_WORKSPACE }}
+                  cd ${{ github.workspace }}
               shell: bash
 
             - name: Save Cache

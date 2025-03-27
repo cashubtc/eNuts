@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+ 
 import Balance from '@comps/Balance'
 import { IconBtn } from '@comps/Button'
 import useLoading from '@comps/hooks/Loading'
@@ -76,7 +76,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			return
 		}
 		for (const mint of tokenInfo.mints) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await addMint(mint)
 		}
 		// add token to db
@@ -235,7 +235,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 				clearTimeout(t)
 			}, 1000)
 		})()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		 
 	}, [])
 
 	// check for available mints of the user
@@ -275,7 +275,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 			setHasMint(data)
 		})
 		return focusHandler
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		 
 	}, [navigation])
 
 	// prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
@@ -413,16 +413,14 @@ interface IActionBtnsProps {
 
 function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 	return (
-		<View
-			style={styles.btnWrap}
-			testID={`${txt}-btn`}
-		>
+		<View style={styles.btnWrap}>
 			<IconBtn
 				icon={icon}
 				size={s(60)}
 				outlined
 				onPress={onPress}
 				disabled={disabled}
+				testId={`${txt}-btn`}
 			/>
 			<Txt
 				txt={txt}

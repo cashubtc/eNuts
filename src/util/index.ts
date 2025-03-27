@@ -9,7 +9,7 @@ import { decodeUrlOrAddress, isLnurlOrAddress, isUrl } from './lnurl'
 import { getLanguageCode } from './localization'
 import { isArr, isStr } from './typeguards'
 
-export { isArr, isArrOf, isArrOfNonNullable, isArrOfNum, isArrOfObj, isArrOfStr, isBool, isBuf, isErr, isFunc, isNonNullable, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
+export { isArr, isArrOf, isArrOfNonNullable, isArrOfNum, isArrOfObj, isArrOfStr, isBool, isBuf, isErr, isNonNullable, isNull, isNum, isObj, isStr, isUndef } from './typeguards'
 
 export function unixTimestamp() { return Math.ceil(new Date().getTime() / 1000) }
 
@@ -166,7 +166,7 @@ export function isCashuToken(token: string) {
 		token = token.slice(prefix.length).trim()
 	})
 	if (!token) { return }
-	try { getDecodedToken(token.trim()) } catch (_) { return }
+	try { getDecodedToken(token.trim()) } catch { return }
 	return token.trim()
 }
 
@@ -196,7 +196,7 @@ export function isLnInvoice(str: string) {
 	str = lnTrim(str)
 	if (!str) { return }
 	if (isLnurlOrAddress(str.trim())) {return str.trim()}
-	try { decodeInvoice(str.trim()) } catch (_) { return }
+	try { decodeInvoice(str.trim()) } catch { return }
 	return str.trim()
 }
 
@@ -204,7 +204,7 @@ export function extractStrFromURL(url?: string) {
 	try {
 		const u = new URL(url || '')
 		return u.hostname || u.pathname
-	} catch (e) {
+	} catch {
 		return url
 	}
 }
@@ -227,15 +227,10 @@ export function getLnInvoiceInfo(invoice: string) {
 
 export function decodeLnInvoice(invoice: string) {
 	const x = decodeInvoice(invoice)
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const amount = x.amountInMSats
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const timestamp = x.timestamp
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const expiry = x.expiry
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const memo = x.memo
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const paymentHash = x.paymentHash
 	const timePassed = unixTimestamp() - timestamp
 	const timeLeft = expiry - timePassed

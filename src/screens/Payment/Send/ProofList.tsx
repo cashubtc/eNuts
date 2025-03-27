@@ -48,7 +48,7 @@ export function CoinSelectionModal({ mint, lnAmount, disableCS, proofs, setProof
 		startLoading()
 		try {
 			setMintKeysetId(await getMintCurrentKeySetId(mint.mintUrl))
-		} catch (e) {
+		} catch {
 			openPromptAutoClose({ msg: 'Can not highlight the latest keyset IDs. Bad mint response.' })
 		}
 		stopLoading()

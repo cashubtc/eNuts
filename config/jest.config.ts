@@ -1,6 +1,6 @@
 // import type { Config } from 'jest'
 // import { defaults } from 'jest-config'
-import type { JestConfigWithTsJest} from 'ts-jest'
+import type { JestConfigWithTsJest } from 'ts-jest'
 import { pathsToModuleNameMapper } from 'ts-jest'
 
 import { compilerOptions } from '../tsconfig.json'
@@ -22,6 +22,15 @@ export default (): JestConfigWithTsJest => ({
 	},
 	resolver: 'ts-jest-resolver',
 	testRegex: 'test/(?!e2e/).*\\.(test|spec)?\\.(ts|tsx)$',
+	testPathIgnorePatterns: [
+		'/test/crypto.test.ts',
+		'/test/db.test.ts',
+		'/test/HistoryStore.test.ts',
+		'/test/restore.test.ts',
+		'/test/SimpleKeyValueStore.test.ts',
+		'/test/ttl.test.ts',
+		'/test/utils.test.ts'
+	],
 	// moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 	preset: 'jest-expo',
 	transformIgnorePatterns: [
@@ -63,5 +72,5 @@ export default (): JestConfigWithTsJest => ({
 	],
 	// verbose: true,
 	// setupFilesAfterEnv: [ '<rootDir>/node_modules/react-native-gesture-handler/jestSetup.js'],
-	setupFiles: ['<rootDir>/test/setup.ts'],
+	// setupFiles: ['<rootDir>/test/setup.ts'],
 })

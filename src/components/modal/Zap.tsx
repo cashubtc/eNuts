@@ -72,7 +72,7 @@ export function ZapModal({ visible, close }: IQuestionModalProps) {
 				{zaps.map(z => <Selection key={z.amount} zap={z} onPress={handleSelect} />)}
 			</View>
 			<Button
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+				 
 				txt={`${t('donateLn')}  🎁`}
 				onPress={() => void handleDonation()}
 				loading={loading}

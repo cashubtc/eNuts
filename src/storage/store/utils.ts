@@ -1,12 +1,11 @@
-import { Db } from '@db/Db'
+import { SQLiteDB } from '@db/Db'
 import { l } from '@src/logger'
-import * as SQLite from 'expo-sqlite/legacy'
-
 
 /* const _storeDbs: { [k: string]: SimpleKeyValueStore } = {} */
 
 export function getDb(name: string) {
-	return new Db(SQLite.openDatabase(`${name}.db`))
+	return new SQLiteDB(`${name}.db`)
+	// return new Db(SQLite.openDatabase(`${name}.db`))
 }
 
 /* export function getStore(name: string) {
@@ -17,13 +16,13 @@ export function getDb(name: string) {
 	return store
 } */
 
-export function getBlankSQLResultSetRowList<T>() { return { length: 0, _array: [] as T[] } }
+export function getBlankSQLResultSetRowList<T>() { return { key: '', value: '' } as unknown as T }
 
 export function cTo<T extends object>(s: string) {
 	try {
 		return JSON.parse(s) as T
 	} catch (error) {
-		l('cTo',error,s)
+		l('cTo', error, s)
 	}
 	return JSON.parse(s) as T
 }

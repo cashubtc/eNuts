@@ -1,4 +1,4 @@
-import {hash256 } from '@util/crypto'
+import { hash256 } from '@util/crypto'
 import { Buffer } from 'buffer/'
 
 describe('test crypto', () => {

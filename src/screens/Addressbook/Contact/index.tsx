@@ -47,7 +47,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 	// link press
 	const handlePress = (url: string) => {
 		if (url === 'lightning://') {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+			 
 			openPromptAutoClose({ msg: `⚠️\n\n${t('zapSoon', { ns: NS.common })}\n\n⚡👀` })
 			return
 		}
@@ -100,7 +100,7 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 			await replaceNpub(hex)
 			closeSheet()
 			navigation.navigate('scan success', { hex, edited: true })
-		} catch (error) {
+		} catch {
 			return openPromptAutoClose({ msg: t('invalidPubKey', { ns: NS.common }) })
 		}
 	}
@@ -142,7 +142,6 @@ export default function ContactPage({ navigation, route }: IContactPageProps) {
 				{/* npub */}
 				<View style={styles.npubWrap}>
 					<Txt
-						// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 						txt={`${isUser ? t('enutsPub', { ns: NS.common }) : ''}${truncateNpub(isUser ? nostr.pubKey.encoded : npubEncode(contact?.hex ?? ''))}`}
 						styles={[styles.npub, { color: color.TEXT_SECONDARY }]}
 					/>

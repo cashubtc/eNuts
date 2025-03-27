@@ -50,6 +50,7 @@ export default function OptsModal({
 			<TouchableOpacity
 				style={styles.container}
 				onPress={onPressFirstBtn}
+				testID='send-ecash-option'
 			>
 				<View style={styles.iconContainer}>
 					{isSend ?
@@ -97,6 +98,7 @@ export default function OptsModal({
 			<TouchableOpacity
 				style={styles.container}
 				onPress={onPressSecondBtn}
+				testID='pay-invoice-option'
 			>
 				<View style={styles.iconContainer}>
 					<ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />

@@ -63,7 +63,7 @@ export default function Balance({ nav }: IBalanceProps) {
 				onPress={toggleBalanceFormat}
 				disabled={hidden.balance}
 			>
-				<Text style={[styles.balAmount, { color: getColor(highlight, color) }]}>
+				<Text testID={`balance: ${balance}`} style={[styles.balAmount, { color: getColor(highlight, color) }]}>
 					{hidden.balance ? '****' : formatSats ? formatBalance(balance) : formatInt(balance)}
 				</Text>
 				<View style={styles.balAssetNameWrap}>
@@ -85,7 +85,7 @@ export default function Balance({ nav }: IBalanceProps) {
 			}
 			{/* latest 3 history entries */}
 			{latestHistory.length > 0 &&
-				latestHistory.map(h => (
+				latestHistory.map((h, i) => (
 					<HistoryEntry
 						key={h.timestamp}
 						icon={
@@ -109,6 +109,7 @@ export default function Balance({ nav }: IBalanceProps) {
 						amount={h.amount}
 						isExpired={h.isExpired}
 						onPress={() => nav?.navigate('history entry details', { entry: h })}
+						testID={`history-entry-${i}`}
 					/>
 				))
 			}
@@ -132,9 +133,10 @@ interface IHistoryEntryProps {
 	amount: number
 	isExpired?: boolean
 	onPress: () => void
+	testID: string
 }
 
-function HistoryEntry({ icon, txType, isSwap, timestamp, amount, isExpired, onPress }: IHistoryEntryProps) {
+function HistoryEntry({ icon, txType, isSwap, timestamp, amount, isExpired, onPress, testID }: IHistoryEntryProps) {
 	const { t } = useTranslation([NS.history])
 	const { color, highlight } = useThemeContext()
 	const { hidden } = usePrivacyContext()
@@ -146,7 +148,7 @@ function HistoryEntry({ icon, txType, isSwap, timestamp, amount, isExpired, onPr
 	}
 
 	return (
-		<TouchableOpacity style={styles.entry} onPress={onPress}>
+		<TouchableOpacity style={styles.entry} onPress={onPress} testID={testID}>
 			<View style={styles.wrap}>
 				<View style={styles.iconWrap}>
 					{icon}

@@ -1,9 +1,9 @@
 import { useThemeContext } from '@src/context/Theme'
-import { type StyleProp, type TextStyle, View } from 'react-native'
+import { type StyleProp, View,type ViewStyle } from 'react-native'
 import { ScaledSheet, vs } from 'react-native-size-matters'
 
 interface ISeparatorProps {
-	style?: StyleProp<TextStyle>[]
+	style?: StyleProp<ViewStyle>[]
 	noMargin?: boolean
 }
 

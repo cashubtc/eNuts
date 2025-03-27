@@ -128,9 +128,9 @@ export function getLnurlData(url?: string): Promise<ILnUrlPayRequest> | null {
 export function getLnurlIdentifierFromMetadata(metadata: string) {
 	try {
 		const parsed = JSON.parse(metadata) as string[][]
-		const identidier = parsed.find(([key]) => key === 'text/identifier')?.[1]
-		return identidier ?? 'Identifier not found'
-	} catch (e) {
+		const identifier = parsed.find(([key]) => key === 'text/identifier')?.[1]
+		return identifier ?? 'Identifier not found'
+	} catch {
 		return 'Error: Identifier not found'
 	}
 }

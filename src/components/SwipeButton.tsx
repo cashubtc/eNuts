@@ -115,7 +115,7 @@ export default function SwipeButton({ txt, onToggle }: ISwipeButtonProps) {
 			<GestureHandlerRootView>
 				<Animated.View style={[styles.swipeCont, AnimatedStyles.swipeCont, { backgroundColor: color.INPUT_BG }]}>
 					<AnimatedView style={[AnimatedStyles.colorWave, styles.colorWave, { backgroundColor: hi[highlight] }]} />
-					<PanGestureHandler onGestureEvent={animatedGestureHandler}>
+					<PanGestureHandler onGestureEvent={animatedGestureHandler} testID='swipe-confirm-button'>
 						<Animated.View style={[styles.swipeable, AnimatedStyles.swipeable, { borderColor: color.INPUT_PH }]}>
 							<ChevronRightIcon color={mainColors.WHITE} />
 						</Animated.View>

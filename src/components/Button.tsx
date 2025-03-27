@@ -1,7 +1,7 @@
 import { useThemeContext } from '@src/context/Theme'
 import { globals, highlight as hi, mainColors } from '@styles'
 import { getColor } from '@styles/colors'
-import { SafeAreaView, type StyleProp, type TextStyle, TouchableOpacity } from 'react-native'
+import { SafeAreaView, type StyleProp, TouchableOpacity, type ViewStyle } from 'react-native'
 import { s, ScaledSheet } from 'react-native-size-matters'
 
 import Loading from './Loading'
@@ -95,7 +95,7 @@ interface ITxtBtnProps {
 	onPress: () => void
 	icon?: React.ReactNode
 	disabled?: boolean
-	style?: StyleProp<TextStyle>[]
+	style?: StyleProp<ViewStyle>[]
 	txtColor?: string
 }
 

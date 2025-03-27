@@ -44,7 +44,7 @@ const useFocusClaim = () => {
 				const isSpendable = await isTokenSpendable(cleanedClipboard)
 				isSpent = !isSpendable
 				if (!isSpendable) { return false }
-			} catch (e) {
+			} catch {
 				// openPromptAutoClose({ msg: isErr(e) ? e.message : t('checkSpendableErr') })
 				return
 			}
@@ -53,9 +53,9 @@ const useFocusClaim = () => {
 			return true
 		}
 		for (let i = 0; i < 10; i++) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			if (await fn() || isSpent) { return }
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await sleep(50)
 		}
 	}
@@ -63,7 +63,6 @@ const useFocusClaim = () => {
 	useEffect(() => {
 		// disable foreground claim on iOS
 		if (isIOS) { return }
-		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		const subscription = AppState.addEventListener('change', async nextAppState => {
 			if (
 				appState.current.match(/inactive|background/) &&
@@ -79,7 +78,7 @@ const useFocusClaim = () => {
 			appState.current = nextAppState
 		})
 		return () => subscription.remove()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		 
 	}, [])
 
 	return {

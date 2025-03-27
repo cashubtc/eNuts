@@ -49,7 +49,7 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 	// link press
 	const handlePress = (url: string) => {
 		if (url === 'lightning://') {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+			 
 			openPromptAutoClose({ msg: `⚠️\n\n${t('zapSoon', { ns: NS.common })}\n\n⚡👀` })
 			return
 		}
@@ -159,7 +159,7 @@ export default function NpubConfirmScreen({ navigation, route }: TNpubConfirmPag
 						<Username contact={userProfile} fontSize={vs(22)} />
 						{/* npub */}
 						<Txt
-							// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+							 
 							txt={`${truncateNpub(npubEncode(userProfile?.hex ?? ''))}`}
 							styles={[styles.npub, { color: color.TEXT_SECONDARY }]}
 						/>

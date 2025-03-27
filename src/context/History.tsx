@@ -1,4 +1,4 @@
-/* eslint-disable no-await-in-loop */
+ 
 import { delInvoice, getAllInvoices, getInvoiceByPr } from '@db'
 import { l } from '@log'
 import type { IHistoryEntry } from '@model'
@@ -50,7 +50,7 @@ const useHistory = () => {
 					await delInvoice(invoice.hash)
 					continue
 				}
-			} catch (_) {/* ignore */ }
+			} catch {/* ignore */ }
 			const { expiry } = decodeLnInvoice(invoice.pr)
 			const date = new Date((invoice.time * 1000) + (expiry * 1000)).getTime()
 			if (Date.now() > date) {
@@ -151,7 +151,7 @@ const HistoryCtx = createContext<useHistoryType>({
 	history: {},
 	latestHistory: [],
 	hasEntries: false,
-	// eslint-disable-next-line require-await, @typescript-eslint/require-await
+	// eslint-disable-next-line require-await
 	addHistoryEntry: async () => ({
 		timestamp: 0,
 		amount: 0,
@@ -165,11 +165,11 @@ const HistoryCtx = createContext<useHistoryType>({
 		isSpent: false,
 		isPending: false
 	}),
-	// eslint-disable-next-line no-return-await, @typescript-eslint/await-thenable
+	// eslint-disable-next-line no-return-await
 	updateHistoryEntry: async () => await l(''),
-	// eslint-disable-next-line no-return-await, @typescript-eslint/await-thenable
+	// eslint-disable-next-line no-return-await
 	deleteHistory: async () => await l(''),
-	// eslint-disable-next-line no-return-await, @typescript-eslint/await-thenable
+	// eslint-disable-next-line no-return-await
 	checkLnPr: async () => await l('')
 })
 

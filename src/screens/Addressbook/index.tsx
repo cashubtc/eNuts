@@ -111,7 +111,7 @@ export default function AddressbookPage({ navigation, route }: TAddressBookPageP
 			},
 			// noCache: true,
 		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		 
 	}, [])
 
 	// gets initial nostr data from cache or relay
