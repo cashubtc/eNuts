@@ -1,4 +1,28 @@
 <div align="center">
+  <h1>⚠️ IMPORTANT NOTICE ⚠️</h1>
+  <p><strong>This project is no longer maintained.</strong>
+
+  Due to other commitments, I am no longer able to dedicate the time required to properly maintain this project. I plan to archive this repository in 90 days unless substantial progress is made on migrating to the latest Cashu protocol specs. I encourage developers to fork the repository and continue building on this foundation.</p>
+
+  <p>I am deeply grateful for the community's support and interest in this project. Your feedback, contributions, and enthusiasm have made this one of the most exciting experiences of my life.</p>
+
+  <h3>Moving Your Funds</h3>
+  <p>Transfer funds to another Cashu wallet:</p>
+  <ul>
+    <li><a href="https://cashu.me">Cashu.me</a> - Web-based Cashu wallet</li>
+    <li><a href="https://minibits.cash">Minibits</a> - Mobile wallet for Android</li>
+    <li><a href="https://github.com/zeugmaster/macadamia">Macadamia</a> - Mobile wallet for iOS</li>
+  </ul>
+
+  <p>You can transfer funds by sending a Cashu token to yourself using another wallet, or by using the backup/restore functionality of your new wallet.</p>
+  <p>If the mint URL has changed, you can add the new URL to your mint list and try to perform a backup/restore to be able to move the funds out of eNuts.</p>
+  <p>Make sure the mint is still online.</p>
+  <p>If you experience any issues, please join the Telegram group and we will try to find a solution.</p>
+
+  <hr style="width:50%;margin:2rem auto;">
+</div>
+
+<div align="center">
   <p>
     <img src="https://www.enuts.cash/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhero.110e6c49.png&w=3840&q=100" style="max-width:660px; width: 100%; height: auto;">
   </p>
