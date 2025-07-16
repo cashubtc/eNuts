@@ -1,16 +1,13 @@
 import { getDecodedToken, Token } from "@cashu/cashu-ts";
-import ActionButtons from "@comps/ActionButtons";
 import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
 import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from "@comps/Icons";
 import OptsModal from "@comps/modal/OptsModal";
-import { PromptModal } from "@comps/modal/Prompt";
 import Txt from "@comps/Txt";
 import { _testmintUrl, env } from "@consts";
-import { addMint, getMintsUrls, hasMints } from "@db";
+import { getMintsUrls, hasMints } from "@db";
 import { l } from "@log";
-import type { ITokenInfo } from "@model";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
 import BottomNav from "@nav/BottomNav";
 import { preventBack } from "@nav/utils";
@@ -108,13 +105,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             const action = await showTrustMintModal(token);
 
             if (action === "trust") {
-                for (const proof of token.proofs) {
-                    const res = await mintRepository.saveKnownMint(
-                        token.mint,
-                        mintInfo
-                    );
-                    console.log("res", res);
-                }
+                await mintRepository.saveKnownMint(token.mint, mintInfo);
                 await receiveToken(cleanedToken);
             } else if (action === "swap") {
                 // The swap navigation is handled in the modal itself
@@ -153,35 +144,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
         await receiveToken(cleanedClipboard);
         closeOptsModal();
-    };
-
-    const handleTokenSubmit = async (token: string) => {
-        console.log("handleTokenSubmit", token);
-        if (loading) {
-            return;
-        }
-        startLoading();
-        const info = getTokenInfo(token);
-        if (!info) {
-            openPromptAutoClose({ msg: t("invalidOrSpent") });
-            stopLoading();
-            return;
-        }
-
-        // check if user wants to trust the token mint
-        const defaultM = await getDefaultMint();
-        const userMints = await getMintsUrls();
-        if (
-            !hasTrustedMint(userMints, info.mints as string[]) ||
-            (isStr(defaultM) && !(info.mints as string[]).includes(defaultM))
-        ) {
-            stopLoading();
-            // Show trust modal
-            await handleTrustFlow(info, token);
-            return;
-        }
-
-        await receiveToken(token);
     };
 
     const handleMintBtnPress = async () => {
@@ -278,27 +240,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             }));
         })();
     }, [claimed]);
-
-    // handle deep links
-    useEffect(() => {
-        if (!url) {
-            return;
-        }
-        const t = isCashuToken(url);
-        if (t) {
-            return void handleTokenSubmit(t);
-        }
-        if (isLnInvoice(url)) {
-            navigation.navigate("processing", {
-                mint: { mintUrl: "", customName: "" },
-                amount: 0,
-                isZap: true,
-                recipient: extractStrFromURL(url) || url,
-            });
-            clearUrl();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [url]);
 
     // update states after navigating to this page
     useEffect(() => {
