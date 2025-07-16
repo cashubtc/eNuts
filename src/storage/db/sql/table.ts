@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS proofs (
 	amount INT NOT NULL,
 	secret TEXT PRIMARY KEY NOT NULL,
 	C TEXT NOT NULL
-);`
+);`;
 
 const createProofsUsedTable = `
 CREATE TABLE IF NOT EXISTS proofsUsed (
@@ -12,14 +12,17 @@ CREATE TABLE IF NOT EXISTS proofsUsed (
 	C TEXT NOT NULL,
 	secret TEXT PRIMARY KEY NOT NULL,
 	id TEXT NOT NULL
-);`
+);`;
 
 const createKeysetIdsTable = `
 CREATE TABLE IF NOT EXISTS keysetIds (
-	id TEXT,
-	mintUrl TEXT,
+	id TEXT PRIMARY KEY,
+	mintUrl TEXT NOT NULL,
+	active Bool DEFAULT True,
+	fee INTEGER DEFAULT 0,
+	counter INTEGER DEFAULT 0,
 	UNIQUE (id, mintUrl)
-);`
+);`;
 
 const createMintKeysTable = `
 CREATE TABLE IF NOT EXISTS mintKeys (
@@ -28,7 +31,7 @@ CREATE TABLE IF NOT EXISTS mintKeys (
 	pubkey TEXT NOT NULL,
 
 	UNIQUE (id, pubkey)
-);`
+);`;
 
 const createInvoicesTable = `
 CREATE TABLE IF NOT EXISTS invoices (
@@ -37,7 +40,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 	hash TEXT PRIMARY KEY,
 	time INTEGER DEFAULT (cast(strftime('%s','now') as INTEGER)),
 	mintUrl TEXT NOT NULL
-);`
+);`;
 
 // preferences
 const createPreferencesTable = `
@@ -46,7 +49,7 @@ CREATE TABLE IF NOT EXISTS preferences (
 	formatBalance Bool NOT NULL,
 	darkmode Bool NOT NULL,
 	theme TEXT NOT NULL
-);`
+);`;
 
 const createContactsTable = `
 CREATE TABLE IF NOT EXISTS contacts (
@@ -54,14 +57,24 @@ CREATE TABLE IF NOT EXISTS contacts (
 	name TEXT NOT NULL UNIQUE,
 	ln TEXT NOT NULL UNIQUE,
 	isOwner Bool Default False
-);`
+);`;
+
+const createKnownMintsTable = `
+CREATE TABLE IF NOT EXISTS known_mints (
+	mint_url TEXT PRIMARY KEY,
+	name TEXT NOT NULL,
+	mint_info TEXT NOT NULL, -- JSON string of GetInfoResponse
+	created_at INTEGER DEFAULT (cast(strftime('%s','now') as INTEGER)),
+	updated_at INTEGER DEFAULT (cast(strftime('%s','now') as INTEGER))
+);`;
 
 export const tables: readonly string[] = [
-	createProofsTable,
-	createProofsUsedTable,
-	createKeysetIdsTable,
-	createMintKeysTable,
-	createInvoicesTable,
-	createPreferencesTable,
-	createContactsTable
-]
+    createProofsTable,
+    createProofsUsedTable,
+    createKeysetIdsTable,
+    createMintKeysTable,
+    createInvoicesTable,
+    createPreferencesTable,
+    createContactsTable,
+    createKnownMintsTable,
+];
