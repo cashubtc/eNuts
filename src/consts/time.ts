@@ -1,0 +1,10 @@
+export const Ten_seconds = 10_000 /*  */
+export const MinuteInS = 60 /*  */
+export const FiveMins = 5 * MinuteInS
+export const MinuteInMs = 60_000 /* 1_000 * 60 */
+export const HourInMs = 3_600_000 /* MinuteInMs * 60 */
+export const DayInMs = 86_400_000 /* HourInMs * 24 */
+export const SecondInMs = 1_000 /* 1_000 */
+export const WeekInMs = 604_800_000 /* DayInMs * 7 */
+export const MonthInMs = 2_592_000_000 /* DayInMs * 30 */
+export const YearInMs = 31_536_000_000 /* DayInMs * 365 */

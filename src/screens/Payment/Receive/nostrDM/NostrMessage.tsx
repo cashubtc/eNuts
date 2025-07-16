@@ -1,0 +1,48 @@
+import Separator from '@comps/Separator'
+import type { TNostrReceivePageProps } from '@model/nav'
+import type { IContact, INostrDm } from '@model/nostr'
+import EntryTime from '@screens/History/entryTime'
+import { useThemeContext } from '@src/context/Theme'
+import { NS } from '@src/i18n'
+import { globals } from '@styles'
+import { useTranslation } from 'react-i18next'
+import { Text, View } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
+
+import MsgContent from './MsgContent'
+import Sender from './Sender'
+
+interface INostrMessageProps {
+	msgEntry: INostrDm
+	sender?: IContact
+	dms: INostrDm[]
+	setDms: (newDms: INostrDm[]) => void
+	mints: string[]
+	nav: TNostrReceivePageProps
+}
+
+export default function NostrMessage({ msgEntry, sender, dms, setDms, mints, nav }: INostrMessageProps) {
+	const { t } = useTranslation([NS.history])
+	const { color } = useThemeContext()
+	return (
+		<View style={[globals(color).wrapContainer, styles.msgContainer]}>
+			<Sender contact={sender} navigation={nav.navigation} />
+			<Separator style={[styles.separator]} />
+			<MsgContent sender={sender} msgEntry={msgEntry} dms={dms} setDms={setDms} mints={mints} />
+			<Text style={{ marginBottom: 10, color: color.TEXT_SECONDARY }}>
+				<EntryTime from={msgEntry.created_at * 1000} fallback={t('justNow')} />
+			</Text>
+		</View>
+	)
+}
+
+const styles = ScaledSheet.create({
+	msgContainer: {
+		paddingVertical: '10@vs',
+		marginBottom: '20@vs',
+	},
+	separator: {
+		marginTop: '10@vs',
+		marginBottom: '20@vs',
+	}
+})
