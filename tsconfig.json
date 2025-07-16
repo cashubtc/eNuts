@@ -30,9 +30,7 @@
 			"@store": ["src/storage/store"],
 			"@store/*": ["src/storage/store/*"],
 			"@consts": ["src/consts"],
-			"@consts/*": ["src/consts/*"],
-			"@nostr": ["src/nostr"],
-			"@nostr/*": ["src/nostr/*"]
+			"@consts/*": ["src/consts/*"]
 		}
   }
 }

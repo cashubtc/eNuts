@@ -13,7 +13,7 @@ import { BalanceProvider } from "@src/context/Balance";
 import { FocusClaimProvider } from "@src/context/FocusClaim";
 import { HistoryProvider } from "@src/context/History";
 import { KeyboardProvider } from "@src/context/Keyboard";
-import { NostrProvider } from "@src/context/Nostr";
+
 import { PinCtx } from "@src/context/Pin";
 import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
@@ -211,35 +211,33 @@ function My_App() {
             <PinCtx.Provider value={pinData}>
                 <PrivacyProvider>
                     <MenuProvider>
-                        <NostrProvider>
-                            <NavContainer>
-                                <BalanceProvider>
-                                    <FocusClaimProvider>
-                                        <PromptProvider>
-                                            <HistoryProvider>
-                                                <KeyboardProvider>
-                                                    <Navigator
-                                                        shouldOnboard={
-                                                            shouldOnboard
-                                                        }
-                                                        pinHash={auth.pinHash}
-                                                        bgAuth={bgAuth}
-                                                        setBgAuth={setBgAuth}
-                                                        hasSeed={hasSeed}
-                                                        sawSeedUpdate={
-                                                            sawSeedUpdate
-                                                        }
-                                                    />
-                                                    <StatusBar style="auto" />
-                                                    <ClipboardModal />
-                                                    <Toaster />
-                                                </KeyboardProvider>
-                                            </HistoryProvider>
-                                        </PromptProvider>
-                                    </FocusClaimProvider>
-                                </BalanceProvider>
-                            </NavContainer>
-                        </NostrProvider>
+                        <NavContainer>
+                            <BalanceProvider>
+                                <FocusClaimProvider>
+                                    <PromptProvider>
+                                        <HistoryProvider>
+                                            <KeyboardProvider>
+                                                <Navigator
+                                                    shouldOnboard={
+                                                        shouldOnboard
+                                                    }
+                                                    pinHash={auth.pinHash}
+                                                    bgAuth={bgAuth}
+                                                    setBgAuth={setBgAuth}
+                                                    hasSeed={hasSeed}
+                                                    sawSeedUpdate={
+                                                        sawSeedUpdate
+                                                    }
+                                                />
+                                                <StatusBar style="auto" />
+                                                <ClipboardModal />
+                                                <Toaster />
+                                            </KeyboardProvider>
+                                        </HistoryProvider>
+                                    </PromptProvider>
+                                </FocusClaimProvider>
+                            </BalanceProvider>
+                        </NavContainer>
                     </MenuProvider>
                 </PrivacyProvider>
             </PinCtx.Provider>
