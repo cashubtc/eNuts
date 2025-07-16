@@ -18,6 +18,7 @@ import { PinCtx } from "@src/context/Pin";
 import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
 import { ThemeProvider, useThemeContext } from "@src/context/Theme";
+import { TrustMintProvider } from "@src/context/TrustMint";
 import { NS } from "@src/i18n";
 import { secureStore, store } from "@store";
 import { SECURESTORE_KEY, STORE_KEYS } from "@store/consts";
@@ -34,6 +35,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import Blank from "./Blank";
 import ClipboardModal from "./ClipboardModal";
+import TrustMintModal from "./modal/TrustMintModal";
 import Toaster from "./Toaster";
 import Txt from "./Txt";
 
@@ -215,25 +217,28 @@ function My_App() {
                             <BalanceProvider>
                                 <FocusClaimProvider>
                                     <PromptProvider>
-                                        <HistoryProvider>
-                                            <KeyboardProvider>
-                                                <Navigator
-                                                    shouldOnboard={
-                                                        shouldOnboard
-                                                    }
-                                                    pinHash={auth.pinHash}
-                                                    bgAuth={bgAuth}
-                                                    setBgAuth={setBgAuth}
-                                                    hasSeed={hasSeed}
-                                                    sawSeedUpdate={
-                                                        sawSeedUpdate
-                                                    }
-                                                />
-                                                <StatusBar style="auto" />
-                                                <ClipboardModal />
-                                                <Toaster />
-                                            </KeyboardProvider>
-                                        </HistoryProvider>
+                                        <TrustMintProvider>
+                                            <HistoryProvider>
+                                                <KeyboardProvider>
+                                                    <Navigator
+                                                        shouldOnboard={
+                                                            shouldOnboard
+                                                        }
+                                                        pinHash={auth.pinHash}
+                                                        bgAuth={bgAuth}
+                                                        setBgAuth={setBgAuth}
+                                                        hasSeed={hasSeed}
+                                                        sawSeedUpdate={
+                                                            sawSeedUpdate
+                                                        }
+                                                    />
+                                                    <StatusBar style="auto" />
+                                                    <ClipboardModal />
+                                                    <TrustMintModal />
+                                                    <Toaster />
+                                                </KeyboardProvider>
+                                            </HistoryProvider>
+                                        </TrustMintProvider>
                                     </PromptProvider>
                                 </FocusClaimProvider>
                             </BalanceProvider>
