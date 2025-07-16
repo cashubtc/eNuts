@@ -1,3 +1,6 @@
+// Import shim first to set up crypto polyfill before any other modules
+import "../shim";
+
 import { env } from "@consts";
 import { FiveMins } from "@consts/time";
 import { addAllMintIds, getBalance, getMintsBalances, initDb } from "@db";
@@ -38,6 +41,8 @@ import ClipboardModal from "./ClipboardModal";
 import TrustMintModal from "./modal/TrustMintModal";
 import Toaster from "./Toaster";
 import Txt from "./Txt";
+
+import "../shim";
 
 interface ILockData {
     mismatch: boolean;

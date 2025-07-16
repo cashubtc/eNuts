@@ -16,6 +16,7 @@ import { _testmintUrl } from "@consts";
 import {
     addInvoice,
     addMint,
+    addProofs,
     addToken,
     deleteProofs,
     delInvoice,
@@ -39,6 +40,7 @@ import { decodeLnInvoice, isCashuToken, isNum } from "@util";
 
 import { sumProofsValue, sumTokenProofs } from "./proofs";
 import { getProofsToUse } from "./util";
+import { walletService } from "./services/WalletService";
 
 interface IGetSeedWalletParams {
     mintUrl: string;
@@ -106,10 +108,11 @@ export async function getSeedWalletByMnemonic({
 }
 
 async function getCurrentKeySetId(mintUrl: string): Promise<string> {
-    const keys = await (await getWallet(mintUrl)).mint.getKeys();
-    const keySetId = deriveKeysetId(keys);
-    _setKeys(mintUrl, keys, keySetId);
-    return keySetId;
+    console.log("getCurrentKeySetId", mintUrl);
+    const wallet = await walletService.getWallet(mintUrl);
+    const keys = await wallet.getKeys();
+    console.log("keys", keys);
+    return wallet.keysetId;
 }
 
 export function getMintCurrentKeySetId(mintUrl: string): Promise<string> {
@@ -178,16 +181,12 @@ export async function claimToken(encodedToken: string): Promise<boolean> {
         return false;
     }
     const decoded = getDecodedToken(encodedToken);
-    const trustedMints = await getMintsUrls();
-    if (!trustedMints.includes(decoded.mint)) {
-        return false;
-    }
-    const wallet = await getWallet(decoded.mint);
+    const wallet = await walletService.getWallet(decoded.mint);
     const counter = await getCounterByMintUrl(decoded.mint);
     try {
-        const newProofs = await wallet.receive(encodedToken, { counter });
+        const newProofs = await wallet.receive(decoded, { counter });
         l("[claimToken]", { decoded });
-        await addToken();
+        await addProofs(...newProofs);
         await incrementCounterByMintUrl(decoded.mint, decoded.proofs.length);
         return true;
     } catch (e) {
@@ -441,12 +440,15 @@ export async function fullAutoMintSwap(
 
 export async function getCounterByMintUrl(mintUrl: string) {
     try {
+        console.log("getCounterByMintUrl", mintUrl);
         const seed = await getSeed();
+        console.log("seed", seed);
         if (!seed) {
             return;
         }
         // TODO do not call getMintCurrentKeySetId() every time. find a faster way to get keysetId
         const keysetId = await getMintCurrentKeySetId(mintUrl);
+        console.log("keysetId", keysetId);
         const storeKey = `${mintUrl}:${keysetId}`;
         const counter = await store.get(storeKey);
         if (!counter) {

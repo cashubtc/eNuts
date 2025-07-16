@@ -19,6 +19,7 @@
     "expo-application": "~6.1.5",
     "expo-camera": "~16.1.10",
     "expo-clipboard": "~7.1.5",
+    "expo-crypto": "^14.1.5",
     "expo-image": "~2.3.2",
     "expo-localization": "~16.1.6",
     "expo-secure-store": "~14.2.3",

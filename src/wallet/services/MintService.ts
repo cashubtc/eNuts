@@ -42,6 +42,11 @@ class MintService {
     async getKnownMintsCount(): Promise<number> {
         return await mintRepository.getKnownMintsCount();
     }
+    async getUnknownMintInfo(mintUrl: string): Promise<MintInfo> {
+        const wallet = await walletService.getWallet(mintUrl);
+        const mintInfo = await wallet.getMintInfo();
+        return mintInfo;
+    }
 }
 
 export const mintService = new MintService();

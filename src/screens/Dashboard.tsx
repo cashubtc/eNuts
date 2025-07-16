@@ -21,6 +21,7 @@ import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { useTrustMintContext } from "@src/context/TrustMint";
 import { NS } from "@src/i18n";
+import { mintRepository } from "@src/storage/db/MintRepository";
 import { mintService } from "@src/wallet/services/MintService";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
@@ -102,15 +103,17 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     };
 
     const handleTrustFlow = async (token: Token, cleanedToken: string) => {
+        const mintInfo = await mintService.getUnknownMintInfo(token.mint);
         try {
             const action = await showTrustMintModal(token);
 
             if (action === "trust") {
                 for (const proof of token.proofs) {
-                    await addMint({
-                        mintUrl: token.mint,
-                        id: proof.id,
-                    });
+                    const res = await mintRepository.saveKnownMint(
+                        token.mint,
+                        mintInfo
+                    );
+                    console.log("res", res);
                 }
                 await receiveToken(cleanedToken);
             } else if (action === "swap") {
@@ -153,6 +156,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     };
 
     const handleTokenSubmit = async (token: string) => {
+        console.log("handleTokenSubmit", token);
         if (loading) {
             return;
         }

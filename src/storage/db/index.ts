@@ -140,7 +140,8 @@ async function _addProofs(...proofs: Proof[]) {
     l("[_addProofs]", result);
     return result?.changes === proofs.length;
 }
-async function addProofs(...proofs: Proof[]): Promise<boolean> {
+
+export async function addProofs(...proofs: Proof[]): Promise<boolean> {
     if (!proofs || !proofs.length) {
         return false;
     }
