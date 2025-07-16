@@ -1,8 +1,8 @@
+import { getDecodedToken, Token } from "@cashu/cashu-ts";
 import ActionButtons from "@comps/ActionButtons";
 import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
-import useCashuToken from "@comps/hooks/Token";
 import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from "@comps/Icons";
 import OptsModal from "@comps/modal/OptsModal";
 import { PromptModal } from "@comps/modal/Prompt";
@@ -10,7 +10,6 @@ import Txt from "@comps/Txt";
 import { _testmintUrl, env } from "@consts";
 import { addMint, getMintsUrls, hasMints } from "@db";
 import { l } from "@log";
-import TrustMintModal from "@modal/TrustMint";
 import type { ITokenInfo } from "@model";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
 import BottomNav from "@nav/BottomNav";
@@ -20,7 +19,9 @@ import { useHistoryContext } from "@src/context/History";
 import { useInitialURL } from "@src/context/Linking";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
+import { useTrustMintContext } from "@src/context/TrustMint";
 import { NS } from "@src/i18n";
+import { mintService } from "@src/wallet/services/MintService";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
 import { getDefaultMint } from "@store/mintStore";
@@ -35,6 +36,7 @@ import {
 } from "@util";
 import { claimToken, getMintsForPayment } from "@wallet";
 import { getTokenInfo } from "@wallet/proofs";
+import { isValidCashuToken } from "@wallet/util";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity, View } from "react-native";
@@ -53,15 +55,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     // Prompt modal
     const { openPromptAutoClose } = usePromptContext();
     const { addHistoryEntry } = useHistoryContext();
-    // Cashu token hook
-    const {
-        token,
-        setToken,
-        tokenInfo,
-        setTokenInfo,
-        trustModal,
-        setTrustModal,
-    } = useCashuToken();
+    // Trust mint modal
+    const { showTrustMintModal } = useTrustMintContext();
+
     const [hasMint, setHasMint] = useState(false);
     // modals
     const [modal, setModal] = useState({
@@ -69,35 +65,20 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         sendOpts: false,
     });
 
-    // This function is only called if the mints of the received token are not in the user DB
-    const handleTrustModal = async () => {
-        if (loading) {
-            return;
-        }
-        startLoading();
-        if (!tokenInfo) {
-            openPromptAutoClose({ msg: t("clipboardInvalid") });
-            closeOptsModal();
-            stopLoading();
-            return;
-        }
-        for (const mint of tokenInfo.mints) {
-            await addMint(mint);
-        }
-        // add token to db
-        await receiveToken(token);
-        closeOptsModal();
-        stopLoading();
-    };
-
     const receiveToken = async (token: string) => {
         if (loading) {
             return;
         }
         startLoading();
         try {
+            const tokenInfo = getTokenInfo(token);
+            if (!tokenInfo) {
+                openPromptAutoClose({ msg: t("invalidOrSpent") });
+                return;
+            }
+
             const success = await claimToken(token);
-            if (success && tokenInfo) {
+            if (success) {
                 openPromptAutoClose({
                     msg: t("claimSuccess"),
                     success: true,
@@ -109,8 +90,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
                     value: token,
                     mints: tokenInfo.mints,
                 });
-                setToken("");
-                setTokenInfo(undefined);
                 return;
             }
             openPromptAutoClose({ msg: t("claimTokenErr") });
@@ -122,41 +101,53 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         }
     };
 
+    const handleTrustFlow = async (token: Token, cleanedToken: string) => {
+        try {
+            const action = await showTrustMintModal(token);
+
+            if (action === "trust") {
+                for (const proof of token.proofs) {
+                    await addMint({
+                        mintUrl: token.mint,
+                        id: proof.id,
+                    });
+                }
+                await receiveToken(cleanedToken);
+            } else if (action === "swap") {
+                // The swap navigation is handled in the modal itself
+                // No additional action needed here
+            }
+            // If action is 'cancel', do nothing
+        } catch (e) {
+            l(e);
+            openPromptAutoClose({ msg: t("claimTokenErr") });
+        }
+    };
+
     const handleClaimBtnPress = async () => {
         if (loading) {
             return;
         }
         startLoading();
         const clipboard = await getStrFromClipboard();
-        const cleanedClipboard = isCashuToken(clipboard ?? "");
-        if (!cleanedClipboard?.length) {
+        const cleanedClipboard = isValidCashuToken(clipboard);
+        if (!cleanedClipboard) {
             openPromptAutoClose({ msg: t("clipboardInvalid") });
             closeOptsModal();
             stopLoading();
             return;
         }
-        const info = getTokenInfo(cleanedClipboard);
-        if (!info) {
-            openPromptAutoClose({ msg: t("clipboardInvalid") });
+        const decoded = getDecodedToken(cleanedClipboard);
+
+        const knownMints = await mintService.getAllKnownMints();
+        if (!knownMints.find((m) => m.mintUrl === decoded.mint)) {
             closeOptsModal();
             stopLoading();
+            // Show trust modal
+            await handleTrustFlow(decoded, cleanedClipboard);
             return;
         }
-        setTokenInfo(info as ITokenInfo);
-        // check if user wants to trust the token mint
-        const defaultM = await getDefaultMint();
-        const userMints = await getMintsUrls();
-        if (
-            !hasTrustedMint(userMints, info.mints as string[]) ||
-            (isStr(defaultM) && !(info.mints as string[]).includes(defaultM))
-        ) {
-            closeOptsModal();
-            // ask user for permission if token mint is not in his mint list
-            setTrustModal(true);
-            setToken(cleanedClipboard);
-            stopLoading();
-            return;
-        }
+
         await receiveToken(cleanedClipboard);
         closeOptsModal();
     };
@@ -172,7 +163,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             stopLoading();
             return;
         }
-        setTokenInfo(info as ITokenInfo);
+
         // check if user wants to trust the token mint
         const defaultM = await getDefaultMint();
         const userMints = await getMintsUrls();
@@ -180,12 +171,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             !hasTrustedMint(userMints, info.mints as string[]) ||
             (isStr(defaultM) && !(info.mints as string[]).includes(defaultM))
         ) {
-            // ask user for permission if token mint is not in his mint list
-            setTrustModal(true);
-            setToken(token);
             stopLoading();
+            // Show trust modal
+            await handleTrustFlow(info, token);
             return;
         }
+
         await receiveToken(token);
     };
 
@@ -406,18 +397,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             )}
             {/* Bottom nav icons */}
             <BottomNav navigation={navigation} route={route} />
-            {/* Question modal for mint trusting */}
-            {trustModal && (
-                <TrustMintModal
-                    loading={loading}
-                    tokenInfo={tokenInfo}
-                    handleTrustModal={() => void handleTrustModal()}
-                    closeModal={() => {
-                        setTrustModal(false);
-                        setToken("");
-                    }}
-                />
-            )}
             {/* Send options */}
             <OptsModal
                 visible={modal.sendOpts}

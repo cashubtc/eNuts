@@ -6,18 +6,23 @@ import { uniq } from "@util";
 export function getTokenInfo(encodedToken: string) {
     try {
         const decoded = getDecodedToken(encodedToken);
-        return { mints: [decoded.mint], value: sumProofsValue(decoded.proofs) };
+        return {
+            mints: [decoded.mint],
+            value: sumProofsValue(decoded.proofs),
+            decoded: decoded,
+        };
     } catch (e) {
         l(e);
     }
 }
 
 export function getValueFromEncodedToken(encodedToken: string) {
-    return sumTokenValue(getDecodedToken(encodedToken));
+    const decoded = getDecodedToken(encodedToken);
+    return sumProofsValue(decoded.proofs);
 }
 
 export function sumTokenValue(token: Token) {
-    return token.token.reduce((r, c) => r + sumProofsValue(c.proofs), 0);
+    return sumProofsValue(token.proofs);
 }
 
 export function sumProofsValue(proofs: Proof[]) {
@@ -25,5 +30,5 @@ export function sumProofsValue(proofs: Proof[]) {
 }
 
 export function sumTokenProofs(token: Token) {
-    return token.token.reduce((r, c) => r + c.proofs.length, 0);
+    return token.proofs.length;
 }

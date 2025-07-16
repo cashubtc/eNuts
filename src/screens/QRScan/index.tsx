@@ -1,15 +1,14 @@
 import Empty from "@comps/Empty";
 import useLoading from "@comps/hooks/Loading";
-import useCashuToken from "@comps/hooks/Token";
 import { CloseIcon, FlashlightOffIcon } from "@comps/Icons";
 import { isIOS, QRType } from "@consts";
 import { addMint, getMintsUrls } from "@db";
-import TrustMintModal from "@modal/TrustMint";
 import type { ITokenInfo } from "@model";
 import type { TQRScanPageProps } from "@model/nav";
 import { useIsFocused } from "@react-navigation/core";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
+import { useTrustMintContext } from "@src/context/TrustMint";
 import { NS } from "@src/i18n";
 import { getDefaultMint } from "@store/mintStore";
 import { globals, mainColors } from "@styles";
@@ -41,23 +40,18 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
     const [flash, setFlash] = useState(false);
     // prompt modal
     const { loading, startLoading, stopLoading } = useLoading();
-    // cashu token
-    const {
-        token,
-        setToken,
-        tokenInfo,
-        setTokenInfo,
-        trustModal,
-        setTrustModal,
-    } = useCashuToken();
+    // Trust mint modal
+    const { showTrustMintModal } = useTrustMintContext();
+    // Local state for token handling
+    const [token, setToken] = useState("");
+    const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>();
 
     const handleCashuToken = async (data: string) => {
         const info = getTokenInfo(data);
         if (!info) {
             return openPromptAutoClose({ msg: t("invalidOrSpent") });
         }
-        // save token info in state
-        setTokenInfo(info as ITokenInfo);
+
         // check if user wants to trust the token mint
         const defaultM = await getDefaultMint();
         const userMints = await getMintsUrls();
@@ -65,11 +59,37 @@ export default function QRScanPage({ navigation, route }: TQRScanPageProps) {
             !hasTrustedMint(userMints, info.mints) ||
             (isStr(defaultM) && !info.mints.includes(defaultM))
         ) {
-            // ask user for permission if token mint is not in his mint list
-            return setTrustModal(true);
+            // Show trust modal using imperative API
+            try {
+                const action = await showTrustMintModal(info);
+                if (action === "trust") {
+                    // Add mint to trusted mints
+                    for (const mint of info.mints) {
+                        await addMint({
+                            mintUrl: mint,
+                            id: "", // Will be set by addMint function
+                            active: true,
+                            fee: 0,
+                        } as any); // Type assertion to bypass interface mismatch
+                    }
+                    // Navigate to processing
+                    navigation.navigate("qr processing", {
+                        tokenInfo: info,
+                        token: data,
+                    });
+                } else if (action === "swap") {
+                    // The swap navigation is handled in the modal itself
+                    // No additional action needed here
+                }
+                // If action is 'cancel', do nothing
+            } catch (e) {
+                openPromptAutoClose({ msg: t("invalidOrSpent") });
+            }
+            return;
         }
+
         navigation.navigate("qr processing", {
-            tokenInfo: info as ITokenInfo,
+            tokenInfo: info,
             token: data,
         });
     };

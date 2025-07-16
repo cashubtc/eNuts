@@ -1,8 +1,42 @@
 import { db } from "./database";
-import { IMint, IKnownMint } from "@model";
+import { IMint } from "@model";
 import { SQLiteDB } from "./Db";
 import { MintInfo } from "@src/wallet/types";
-import { MintData } from "@src/model/mint";
+
+// Database row type (snake_case - matches table structure)
+interface KnownMintRow {
+    mint_url: string;
+    name: string;
+    mint_info: string; // JSON string
+    created_at: number;
+    updated_at: number;
+}
+
+// Domain type (camelCase - for use in codebase)
+export interface KnownMint {
+    mintUrl: string;
+    name: string;
+    mintInfo: MintInfo;
+    createdAt: number;
+    updatedAt: number;
+}
+
+// Mapper functions
+const mapRowToDomain = (row: KnownMintRow): KnownMint => ({
+    mintUrl: row.mint_url,
+    name: row.name,
+    mintInfo: JSON.parse(row.mint_info),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+});
+
+const mapDomainToRow = (domain: Partial<KnownMint>): Partial<KnownMintRow> => ({
+    mint_url: domain.mintUrl,
+    name: domain.name,
+    mint_info: domain.mintInfo ? JSON.stringify(domain.mintInfo) : undefined,
+    created_at: domain.createdAt,
+    updated_at: domain.updatedAt,
+});
 
 export class MintRepository {
     constructor(private database: SQLiteDB) {}
@@ -21,58 +55,65 @@ export class MintRepository {
         return result?.changes === 1;
     }
 
-    async getKnownMint(mintUrl: string): Promise<IKnownMint | null> {
+    async getKnownMint(mintUrl: string): Promise<KnownMint | null> {
         const sql = "SELECT * FROM known_mints WHERE mint_url = ?";
-        const result = await this.database.first<{
-            mint_url: string;
-            name: string;
-            mint_info: string;
-            created_at: number;
-            updated_at: number;
-        }>(sql, [mintUrl]);
+        const result = await this.database.first<KnownMintRow>(sql, [mintUrl]);
 
         if (!result) return null;
 
-        return {
-            mint_url: result.mint_url,
-            name: result.name,
-            mint_info: JSON.parse(result.mint_info),
-            created_at: result.created_at,
-            updated_at: result.updated_at,
-        };
+        return mapRowToDomain(result);
     }
 
-    async getAllKnownMints(): Promise<IKnownMint[]> {
+    async getAllKnownMints(): Promise<KnownMint[]> {
         const sql = "SELECT * FROM known_mints ORDER BY name";
-        const results = await this.database.all<{
-            mint_url: string;
-            name: string;
-            mint_info: string;
-            created_at: number;
-            updated_at: number;
-        }>(sql);
+        const results = await this.database.all<KnownMintRow>(sql);
 
-        return results.map(
-            (result: {
-                mint_url: string;
-                name: string;
-                mint_info: string;
-                created_at: number;
-                updated_at: number;
-            }) => ({
-                mint_url: result.mint_url,
-                name: result.name,
-                mint_info: JSON.parse(result.mint_info),
-                created_at: result.created_at,
-                updated_at: result.updated_at,
-            })
-        );
+        return results.map(mapRowToDomain);
     }
 
     async deleteKnownMint(mintUrl: string): Promise<boolean> {
         const sql = "DELETE FROM known_mints WHERE mint_url = ?";
         const result = await this.database.run(sql, [mintUrl]);
         return result?.changes === 1;
+    }
+
+    async updateKnownMint(
+        mintUrl: string,
+        updates: Partial<KnownMint>
+    ): Promise<boolean> {
+        const rowUpdates = mapDomainToRow(updates);
+        const fields = Object.keys(rowUpdates).filter(
+            (key) => rowUpdates[key as keyof KnownMintRow] !== undefined
+        );
+
+        if (fields.length === 0) return false;
+
+        const setClause = fields.map((field) => `${field} = ?`).join(", ");
+        const sql = `UPDATE known_mints SET ${setClause}, updated_at = cast(strftime('%s','now') as INTEGER) WHERE mint_url = ?`;
+        const params = [
+            ...fields
+                .map((field) => rowUpdates[field as keyof KnownMintRow])
+                .filter((val) => val !== undefined),
+            mintUrl,
+        ];
+
+        const result = await this.database.run(sql, params);
+        return result?.changes === 1;
+    }
+
+    async findKnownMintsByName(namePattern: string): Promise<KnownMint[]> {
+        const sql = "SELECT * FROM known_mints WHERE name LIKE ? ORDER BY name";
+        const results = await this.database.all<KnownMintRow>(sql, [
+            `%${namePattern}%`,
+        ]);
+
+        return results.map(mapRowToDomain);
+    }
+
+    async getKnownMintsCount(): Promise<number> {
+        const sql = "SELECT COUNT(*) as count FROM known_mints";
+        const result = await this.database.first<{ count: number }>(sql);
+        return result?.count || 0;
     }
 }
 

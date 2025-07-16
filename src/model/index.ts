@@ -50,14 +50,6 @@ export interface IMint {
     mintUrl: string;
 }
 
-export interface IKnownMint {
-    mint_url: string;
-    name: string;
-    mint_info: Awaited<ReturnType<CashuWallet["getMintInfo"]>>;
-    created_at: number;
-    updated_at: number;
-}
-
 export interface IMintUrl {
     mintUrl: string;
     customName?: string;

@@ -1,5 +1,5 @@
 import { walletService } from "./WalletService";
-import { mintRepository } from "@src/storage/db/MintRepository";
+import { mintRepository, KnownMint } from "@src/storage/db/MintRepository";
 import { MintInfo } from "../types";
 
 class MintService {
@@ -8,24 +8,39 @@ class MintService {
         if (!mint) {
             throw new Error("Mint not found");
         }
-        return mint.mint_info;
+        return mint.mintInfo;
     }
 
-    async updateAllKnownMints() {
+    async updateAllKnownMints(): Promise<void> {
         const mints = await mintRepository.getAllKnownMints();
         for (const mint of mints) {
-            const wallet = await walletService.getWallet(mint.mint_url);
+            const wallet = await walletService.getWallet(mint.mintUrl);
             const mintInfo = await wallet.getMintInfo();
-            await mintRepository.saveKnownMint(mint.mint_url, mintInfo);
+            await mintRepository.saveKnownMint(mint.mintUrl, mintInfo);
         }
     }
 
-    async getAllKnownMints() {
+    async getAllKnownMints(): Promise<KnownMint[]> {
         return await mintRepository.getAllKnownMints();
     }
 
-    async removeMintFromKnownMints(mintUrl: string) {
+    async removeMintFromKnownMints(mintUrl: string): Promise<boolean> {
         return await mintRepository.deleteKnownMint(mintUrl);
+    }
+
+    async updateKnownMint(
+        mintUrl: string,
+        updates: Partial<KnownMint>
+    ): Promise<boolean> {
+        return await mintRepository.updateKnownMint(mintUrl, updates);
+    }
+
+    async findKnownMintsByName(namePattern: string): Promise<KnownMint[]> {
+        return await mintRepository.findKnownMintsByName(namePattern);
+    }
+
+    async getKnownMintsCount(): Promise<number> {
+        return await mintRepository.getKnownMintsCount();
     }
 }
 
