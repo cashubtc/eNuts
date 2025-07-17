@@ -1,4 +1,4 @@
-import { getDecodedToken, Token } from "@cashu/cashu-ts";
+import { getDecodedToken, getEncodedToken, Token } from "@cashu/cashu-ts";
 import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
@@ -33,7 +33,7 @@ import {
     isStr,
 } from "@util";
 import { claimToken, getMintsForPayment } from "@wallet";
-import { getTokenInfo } from "@wallet/proofs";
+import { getTokenInfo, sumProofsValue } from "@wallet/proofs";
 import { isValidCashuToken } from "@wallet/util";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -63,18 +63,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         sendOpts: false,
     });
 
-    const receiveToken = async (token: string) => {
+    const receiveToken = async (token: Token) => {
         if (loading) {
             return;
         }
         startLoading();
         try {
-            const tokenInfo = getTokenInfo(token);
-            if (!tokenInfo) {
-                openPromptAutoClose({ msg: t("invalidOrSpent") });
-                return;
-            }
-
             const success = await claimToken(token);
             if (success) {
                 openPromptAutoClose({
@@ -83,10 +77,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
                 });
                 // add as history entry
                 await addHistoryEntry({
-                    amount: tokenInfo.value,
+                    amount: sumProofsValue(token.proofs),
                     type: 1,
-                    value: token,
-                    mints: tokenInfo.mints,
+                    value: getEncodedToken(token),
+                    mints: [token.mint],
                 });
                 return;
             }
@@ -99,14 +93,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         }
     };
 
-    const handleTrustFlow = async (token: Token, cleanedToken: string) => {
+    const handleTrustFlow = async (token: Token) => {
         const mintInfo = await mintService.getUnknownMintInfo(token.mint);
         try {
             const action = await showTrustMintModal(token);
 
             if (action === "trust") {
                 await mintRepository.saveKnownMint(token.mint, mintInfo);
-                await receiveToken(cleanedToken);
+                await receiveToken(token);
             } else if (action === "swap") {
                 // The swap navigation is handled in the modal itself
                 // No additional action needed here
@@ -124,25 +118,32 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         }
         startLoading();
         const clipboard = await getStrFromClipboard();
-        const cleanedClipboard = isValidCashuToken(clipboard);
-        if (!cleanedClipboard) {
+        let decoded: Token;
+        try {
+            if (!clipboard) {
+                throw new Error("Clipboard is empty");
+            }
+            decoded = getDecodedToken(clipboard);
+            if (!decoded) {
+                throw new Error("Clipboard is not a valid cashu token");
+            }
+        } catch {
             openPromptAutoClose({ msg: t("clipboardInvalid") });
             closeOptsModal();
             stopLoading();
             return;
         }
-        const decoded = getDecodedToken(cleanedClipboard);
 
         const knownMints = await mintService.getAllKnownMints();
         if (!knownMints.find((m) => m.mintUrl === decoded.mint)) {
             closeOptsModal();
             stopLoading();
             // Show trust modal
-            await handleTrustFlow(decoded, cleanedClipboard);
+            await handleTrustFlow(decoded);
             return;
         }
 
-        await receiveToken(cleanedClipboard);
+        await receiveToken(decoded);
         closeOptsModal();
     };
 

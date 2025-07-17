@@ -1,4 +1,4 @@
-import type { Proof } from "@cashu/cashu-ts";
+import type { Proof, Token } from "@cashu/cashu-ts";
 import { getProofsByMintUrl } from "@db";
 import { isCashuToken } from "@util";
 

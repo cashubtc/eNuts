@@ -6,6 +6,7 @@ import {
     generateNewMnemonic,
     getDecodedToken,
     getEncodedToken,
+    Token,
     type GetInfoResponse,
     type MintKeys,
     type PayLnInvoiceResponse,
@@ -175,19 +176,14 @@ export async function checkFees(
     return fee;
 }
 
-export async function claimToken(encodedToken: string): Promise<boolean> {
-    encodedToken = isCashuToken(encodedToken) || "";
-    if (!encodedToken?.trim()) {
-        return false;
-    }
-    const decoded = getDecodedToken(encodedToken);
-    const wallet = await walletService.getWallet(decoded.mint);
-    const counter = await getCounterByMintUrl(decoded.mint);
+export async function claimToken(token: Token): Promise<boolean> {
+    const wallet = await walletService.getWallet(token.mint);
+    const counter = await getCounterByMintUrl(token.mint);
     try {
-        const newProofs = await wallet.receive(decoded, { counter });
-        l("[claimToken]", { decoded });
+        const newProofs = await wallet.receive(token, { counter });
+        l("[claimToken]", { token });
         await addProofs(...newProofs);
-        await incrementCounterByMintUrl(decoded.mint, decoded.proofs.length);
+        await incrementCounterByMintUrl(token.mint, token.proofs.length);
         return true;
     } catch (e) {
         l("[claimToken] error", { e });
