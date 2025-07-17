@@ -5,49 +5,45 @@ interface ProofRow {
     C: string;
     amount: number;
     secret: string;
-    dleq: string; // JSON string
+    dleq: string | null; // JSON string
     state: string;
 }
 
 // Domain type (camelCase - for use in codebase)
-export interface Proof {
+export type EnutsProof = {
     mintUrl: string;
-    id: string;
-    C: string;
-    amount: number;
-    secret: string;
-    dleq: string; // JSON string
     state: "ready" | "inflight" | "used";
-}
+} & Proof;
 
+import { Proof } from "@cashu/cashu-ts";
 import { db } from "../database";
 import { SQLiteDB } from "../Db";
 
 // Mapper functions
-const mapRowToDomain = (row: ProofRow): Proof => ({
+const mapRowToDomain = (row: ProofRow): EnutsProof => ({
     mintUrl: row.mint_url,
     id: row.id,
     C: row.C,
     amount: row.amount,
     secret: row.secret,
-    dleq: row.dleq,
+    dleq: row.dleq ? JSON.parse(row.dleq) : undefined,
     state: row.state as "ready" | "inflight" | "used",
 });
 
-const mapDomainToRow = (proof: Partial<Proof>): Partial<ProofRow> => ({
+const mapDomainToRow = (proof: Partial<EnutsProof>): Partial<ProofRow> => ({
     mint_url: proof.mintUrl,
     id: proof.id,
     C: proof.C,
     amount: proof.amount,
     secret: proof.secret,
-    dleq: proof.dleq,
+    dleq: proof.dleq ? JSON.stringify(proof.dleq) : null,
     state: proof.state,
 });
 
 export class ProofRepository {
     constructor(private database: SQLiteDB) {}
 
-    async saveProof(proof: Proof): Promise<boolean> {
+    async saveProof(proof: EnutsProof): Promise<boolean> {
         const sql = `
             INSERT OR REPLACE INTO proofs (mint_url, id, C, amount, secret, dleq, state) 
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -58,14 +54,14 @@ export class ProofRepository {
             proof.C,
             proof.amount,
             proof.secret,
-            proof.dleq,
+            proof.dleq ? JSON.stringify(proof.dleq) : null,
             proof.state,
         ];
         const result = await this.database.run(sql, params);
         return result?.changes === 1;
     }
 
-    async saveProofs(proofs: Proof[]): Promise<boolean> {
+    async saveProofs(proofs: EnutsProof[]): Promise<boolean> {
         if (proofs.length === 0) return true;
 
         await this.database.db.withTransactionAsync(async () => {
@@ -80,7 +76,7 @@ export class ProofRepository {
                     proof.C,
                     proof.amount,
                     proof.secret,
-                    proof.dleq,
+                    proof.dleq ? JSON.stringify(proof.dleq) : null,
                     proof.state,
                 ];
                 await this.database.db.runAsync(sql, params);
@@ -89,7 +85,7 @@ export class ProofRepository {
         return true;
     }
 
-    async getProof(id: string): Promise<Proof | null> {
+    async getProof(id: string): Promise<EnutsProof | null> {
         const sql = "SELECT * FROM proofs WHERE id = ?";
         const result = await this.database.first<ProofRow>(sql, [id]);
 
@@ -98,21 +94,21 @@ export class ProofRepository {
         return mapRowToDomain(result);
     }
 
-    async getProofsByMintUrl(mintUrl: string): Promise<Proof[]> {
+    async getProofsByMintUrl(mintUrl: string): Promise<EnutsProof[]> {
         const sql = "SELECT * FROM proofs WHERE mint_url = ?";
         const results = await this.database.all<ProofRow>(sql, [mintUrl]);
 
         return results.map(mapRowToDomain);
     }
 
-    async getAllProofs(): Promise<Proof[]> {
+    async getAllProofs(): Promise<EnutsProof[]> {
         const sql = "SELECT * FROM proofs";
         const results = await this.database.all<ProofRow>(sql);
 
         return results.map(mapRowToDomain);
     }
 
-    async getProofsByState(state: Proof["state"]): Promise<Proof[]> {
+    async getProofsByState(state: EnutsProof["state"]): Promise<EnutsProof[]> {
         const sql = "SELECT * FROM proofs WHERE state = ?";
         const results = await this.database.all<ProofRow>(sql, [state]);
 
@@ -162,7 +158,7 @@ export class ProofRepository {
 
     async updateProofsState(
         ids: string[],
-        state: Proof["state"]
+        state: EnutsProof["state"]
     ): Promise<boolean> {
         if (ids.length === 0) return true;
 

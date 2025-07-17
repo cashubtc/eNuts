@@ -60,19 +60,22 @@ const migrations: Migration[] = [
             // Create all initial tables
             const createProofsTable = `
                 CREATE TABLE IF NOT EXISTS proofs (
+                    mint_url TEXT NOT NULL,
                     id TEXT NOT NULL,
-                    amount INT NOT NULL,
+                    C TEXT NOT NULL,
+                    amount INTEGER NOT NULL,
                     secret TEXT PRIMARY KEY NOT NULL,
-                    C TEXT NOT NULL
+                    dleq TEXT,
+                    state TEXT NOT NULL
                 )
             `;
 
             const createProofsUsedTable = `
                 CREATE TABLE IF NOT EXISTS proofsUsed (
-                    amount INTEGER NOT NULL,
-                    C TEXT NOT NULL,
+                    id TEXT NOT NULL,
+                    amount INT NOT NULL,
                     secret TEXT PRIMARY KEY NOT NULL,
-                    id TEXT NOT NULL
+                    C TEXT NOT NULL
                 )
             `;
 

@@ -1,4 +1,5 @@
 /* eslint-disable require-await */
+import { l } from "@src/logger";
 import { proofRepository } from "@src/storage/db/repo/ProofRepository";
 import { proofEvents } from "@src/util/events";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -8,8 +9,12 @@ const useBalance = () => {
 
     useEffect(() => {
         async function getBalance() {
-            const bal = await proofRepository.getReadyProofsAmount();
-            setBalance(bal);
+            try {
+                const bal = await proofRepository.getReadyProofsAmount();
+                setBalance(bal);
+            } catch (error) {
+                l(error);
+            }
         }
         getBalance();
         proofEvents.on("proofsUpdated", getBalance);
