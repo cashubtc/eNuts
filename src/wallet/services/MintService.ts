@@ -1,5 +1,5 @@
 import { walletService } from "./WalletService";
-import { mintRepository, KnownMint } from "@src/storage/db/MintRepository";
+import { mintRepository, KnownMint } from "@src/storage/db/repo/MintRepository";
 import { MintInfo } from "../types";
 
 class MintService {

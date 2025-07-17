@@ -64,7 +64,6 @@ CREATE TABLE IF NOT EXISTS known_mints (
 	mint_url TEXT PRIMARY KEY,
 	name TEXT NOT NULL,
 	mint_info TEXT NOT NULL, -- JSON string of GetInfoResponse
-	created_at INTEGER DEFAULT (cast(strftime('%s','now') as INTEGER)),
 	updated_at INTEGER DEFAULT (cast(strftime('%s','now') as INTEGER))
 );`;
 

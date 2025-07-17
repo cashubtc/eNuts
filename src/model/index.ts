@@ -1,5 +1,4 @@
 import type {
-    PayLnInvoiceResponse,
     Proof,
     Token,
     GetInfoResponse,
@@ -48,6 +47,8 @@ export interface ILnUrlPayRequest {
 export interface IMint {
     id: string;
     mintUrl: string;
+    active?: boolean;
+    fee?: number;
 }
 
 export interface IMintUrl {
@@ -186,7 +187,7 @@ export interface IOpenPromptAutoCloseProps {
 }
 
 export type TPayLnInvoiceReturnType = Promise<{
-    result?: PayLnInvoiceResponse;
+    result?: { success: boolean; [key: string]: any };
     fee?: number;
     realFee?: number;
     error?: unknown;

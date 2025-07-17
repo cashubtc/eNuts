@@ -1,6 +1,5 @@
-import { db } from "./database";
-import { IMint } from "@model";
-import { SQLiteDB } from "./Db";
+import { db } from "../database";
+import { SQLiteDB } from "../Db";
 import { MintInfo } from "@src/wallet/types";
 
 // Database row type (snake_case - matches table structure)
@@ -28,14 +27,6 @@ const mapRowToDomain = (row: KnownMintRow): KnownMint => ({
     mintInfo: JSON.parse(row.mint_info),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-});
-
-const mapDomainToRow = (domain: Partial<KnownMint>): Partial<KnownMintRow> => ({
-    mint_url: domain.mintUrl,
-    name: domain.name,
-    mint_info: domain.mintInfo ? JSON.stringify(domain.mintInfo) : undefined,
-    created_at: domain.createdAt,
-    updated_at: domain.updatedAt,
 });
 
 export class MintRepository {
@@ -74,30 +65,6 @@ export class MintRepository {
     async deleteKnownMint(mintUrl: string): Promise<boolean> {
         const sql = "DELETE FROM known_mints WHERE mint_url = ?";
         const result = await this.database.run(sql, [mintUrl]);
-        return result?.changes === 1;
-    }
-
-    async updateKnownMint(
-        mintUrl: string,
-        updates: Partial<KnownMint>
-    ): Promise<boolean> {
-        const rowUpdates = mapDomainToRow(updates);
-        const fields = Object.keys(rowUpdates).filter(
-            (key) => rowUpdates[key as keyof KnownMintRow] !== undefined
-        );
-
-        if (fields.length === 0) return false;
-
-        const setClause = fields.map((field) => `${field} = ?`).join(", ");
-        const sql = `UPDATE known_mints SET ${setClause}, updated_at = cast(strftime('%s','now') as INTEGER) WHERE mint_url = ?`;
-        const params = [
-            ...fields
-                .map((field) => rowUpdates[field as keyof KnownMintRow])
-                .filter((val) => val !== undefined),
-            mintUrl,
-        ];
-
-        const result = await this.database.run(sql, params);
         return result?.changes === 1;
     }
 

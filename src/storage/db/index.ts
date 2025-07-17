@@ -12,16 +12,8 @@ import type {
 import { arrToChunks, isObj } from "@util";
 
 import { addMint, getMintIdsByUrl } from "./keysets";
-import { tables } from "./sql/table";
-import { views } from "./sql/view";
+import { runMigrations } from "./migrations";
 import { db } from "./database";
-
-const INITIAL_SQL = `
-PRAGMA cache_size=8192;
-PRAGMA encoding="UTF-8";
-PRAGMA synchronous=NORMAL;
-PRAGMA temp_store=FILE;
-`;
 
 // ################################ init DB ################################
 export async function initDb() {
@@ -29,9 +21,9 @@ export async function initDb() {
         l("[initDb]", "reset DB in test mode");
         await db.reset();
     }
-    await db.exec(INITIAL_SQL);
-    const queries: readonly string[] = [...tables, ...views];
-    await db.exec(queries.join(" "));
+
+    // Run database migrations
+    await runMigrations();
 }
 
 // ################################ Balance ################################
@@ -334,3 +326,10 @@ export {
     getMintIdsByUrl,
     deleteMint,
 } from "./keysets";
+
+// ################################ Re-exports from migrations.ts ################################
+export {
+    runMigrations,
+    rollbackMigration,
+    getMigrationStatus,
+} from "./migrations";

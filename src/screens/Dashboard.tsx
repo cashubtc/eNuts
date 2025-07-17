@@ -18,7 +18,7 @@ import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { useTrustMintContext } from "@src/context/TrustMint";
 import { NS } from "@src/i18n";
-import { mintRepository } from "@src/storage/db/MintRepository";
+import { mintRepository } from "@src/storage/db/repo/MintRepository";
 import { mintService } from "@src/wallet/services/MintService";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
