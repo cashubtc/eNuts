@@ -24,8 +24,9 @@ export class ProofService {
         return this.proofRepo.getProofsByState(state);
     }
     async addProofs(proofs: EnutsProof[]) {
+        const res = await this.proofRepo.saveProofs(proofs);
         proofEvents.emit("proofsUpdated", null);
-        return this.proofRepo.saveProofs(proofs);
+        return res;
     }
 }
 

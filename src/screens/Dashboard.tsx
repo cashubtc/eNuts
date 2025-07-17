@@ -17,6 +17,7 @@ import { useInitialURL } from "@src/context/Linking";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { useTrustMintContext } from "@src/context/TrustMint";
+import useKnownMints from "@src/hooks/useKnownMints";
 import { NS } from "@src/i18n";
 import { mintRepository } from "@src/storage/db/repo/MintRepository";
 import { mintService } from "@src/wallet/services/MintService";
@@ -55,8 +56,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     const { addHistoryEntry } = useHistoryContext();
     // Trust mint modal
     const { showTrustMintModal } = useTrustMintContext();
-
-    const [hasMint, setHasMint] = useState(false);
+    const knownMints = useKnownMints();
     // modals
     const [modal, setModal] = useState({
         receiveOpts: false,
@@ -224,37 +224,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     const closeOptsModal = () =>
         setModal((prev) => ({ ...prev, receiveOpts: false, sendOpts: false }));
 
-    useEffect(() => {
-        void (async () => {
-            const userHasMints = await hasMints();
-            setHasMint(userHasMints);
-        })();
-    }, []);
-
-    // check for available mints of the user
-    useEffect(() => {
-        void (async () => {
-            const [userHasMints, explainerSeen] = await Promise.all([
-                hasMints(),
-                store.get(STORE_KEYS.explainer),
-            ]);
-            setHasMint(userHasMints);
-            setModal((prev) => ({
-                ...prev,
-                mint: !userHasMints && explainerSeen !== "1",
-            }));
-        })();
-    }, [claimed]);
-
-    // update states after navigating to this page
-    useEffect(() => {
-        const focusHandler = navigation.addListener("focus", async () => {
-            const data = await hasMints();
-            setHasMint(data);
-        });
-        return focusHandler;
-    }, [navigation]);
-
     // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
     useEffect(() => {
         const backHandler = (e: TBeforeRemoveEvent) =>
@@ -270,7 +239,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             {/* Receive/send/mints buttons */}
             <View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
                 {/* Send button or add first mint */}
-                {hasMint ? (
+                {knownMints.length > 0 ? (
                     <ActionBtn
                         icon={
                             <SendIcon
@@ -326,10 +295,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
                     txt={t("receive", { ns: NS.wallet })}
                     color={hi[highlight]}
                     onPress={() => {
-                        if (!hasMint) {
-                            // try to claim from clipboard to avoid receive-options-modal to popup and having to press again
-                            return handleClaimBtnPress();
-                        }
+                        // if (!hasMint) {
+                        //     // try to claim from clipboard to avoid receive-options-modal to popup and having to press again
+                        //     return handleClaimBtnPress();
+                        // }
                         setModal((prev) => ({ ...prev, receiveOpts: true }));
                     }}
                 />

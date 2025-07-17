@@ -30,3 +30,7 @@ export class EventEmitter<T extends Record<string, any>> {
 export const proofEvents = new EventEmitter<{
     proofsUpdated: null;
 }>();
+
+export const knownMintsEvents = new EventEmitter<{
+    knownMintsUpdated: null;
+}>();
