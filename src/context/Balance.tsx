@@ -1,16 +1,17 @@
 /* eslint-disable require-await */
 import { l } from "@src/logger";
+import { proofService } from "@src/services/ProofService";
 import { proofRepository } from "@src/storage/db/repo/ProofRepository";
 import { proofEvents } from "@src/util/events";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const useBalance = () => {
-    const [balance, setBalance] = useState<number>();
+    const [balance, setBalance] = useState<number>(0);
 
     useEffect(() => {
         async function getBalance() {
             try {
-                const bal = await proofRepository.getReadyProofsAmount();
+                const bal = await proofService.getBalance();
                 setBalance(bal);
             } catch (error) {
                 l(error);

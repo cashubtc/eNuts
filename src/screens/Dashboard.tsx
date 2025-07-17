@@ -72,7 +72,11 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             const success = await claimToken(token);
             if (success) {
                 openPromptAutoClose({
-                    msg: t("claimSuccess"),
+                    msg: t("claimSuccess", {
+                        amount: sumProofsValue(token.proofs),
+                        mintUrl: token.mint,
+                        memo: token.memo,
+                    }),
                     success: true,
                 });
                 // add as history entry

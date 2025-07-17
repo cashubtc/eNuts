@@ -42,6 +42,7 @@ import { decodeLnInvoice, isCashuToken, isNum } from "@util";
 import { sumProofsValue, sumTokenProofs } from "./proofs";
 import { getProofsToUse } from "./util";
 import { walletService } from "./services/WalletService";
+import { proofService } from "@src/services/ProofService";
 
 interface IGetSeedWalletParams {
     mintUrl: string;
@@ -182,7 +183,14 @@ export async function claimToken(token: Token): Promise<boolean> {
     try {
         const newProofs = await wallet.receive(token, { counter });
         l("[claimToken]", { token });
-        await addProofs(...newProofs);
+        await proofService.addProofs(
+            newProofs.map((p) => ({
+                ...p,
+                state: "ready",
+                mintUrl: token.mint,
+                dleq: p.dleq || undefined,
+            }))
+        );
         await incrementCounterByMintUrl(token.mint, token.proofs.length);
         return true;
     } catch (e) {
