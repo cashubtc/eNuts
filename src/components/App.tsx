@@ -22,6 +22,7 @@ import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
 import { ThemeProvider, useThemeContext } from "@src/context/Theme";
 import { TrustMintProvider } from "@src/context/TrustMint";
+import { KnownMintsProvider } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { secureStore, store } from "@store";
 import { SECURESTORE_KEY, STORE_KEYS } from "@store/consts";
@@ -224,24 +225,30 @@ function My_App() {
                                     <PromptProvider>
                                         <TrustMintProvider>
                                             <HistoryProvider>
-                                                <KeyboardProvider>
-                                                    <Navigator
-                                                        shouldOnboard={
-                                                            shouldOnboard
-                                                        }
-                                                        pinHash={auth.pinHash}
-                                                        bgAuth={bgAuth}
-                                                        setBgAuth={setBgAuth}
-                                                        hasSeed={hasSeed}
-                                                        sawSeedUpdate={
-                                                            sawSeedUpdate
-                                                        }
-                                                    />
-                                                    <StatusBar style="auto" />
-                                                    <ClipboardModal />
-                                                    <TrustMintModal />
-                                                    <Toaster />
-                                                </KeyboardProvider>
+                                                <KnownMintsProvider>
+                                                    <KeyboardProvider>
+                                                        <Navigator
+                                                            shouldOnboard={
+                                                                shouldOnboard
+                                                            }
+                                                            pinHash={
+                                                                auth.pinHash
+                                                            }
+                                                            bgAuth={bgAuth}
+                                                            setBgAuth={
+                                                                setBgAuth
+                                                            }
+                                                            hasSeed={hasSeed}
+                                                            sawSeedUpdate={
+                                                                sawSeedUpdate
+                                                            }
+                                                        />
+                                                        <StatusBar style="auto" />
+                                                        <ClipboardModal />
+                                                        <TrustMintModal />
+                                                        <Toaster />
+                                                    </KeyboardProvider>
+                                                </KnownMintsProvider>
                                             </HistoryProvider>
                                         </TrustMintProvider>
                                     </PromptProvider>

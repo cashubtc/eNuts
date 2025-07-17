@@ -17,7 +17,7 @@ import { useInitialURL } from "@src/context/Linking";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { useTrustMintContext } from "@src/context/TrustMint";
-import useKnownMints from "@src/hooks/useKnownMints";
+import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { mintRepository } from "@src/storage/db/repo/MintRepository";
 import { mintService } from "@src/wallet/services/MintService";
@@ -56,7 +56,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     const { addHistoryEntry } = useHistoryContext();
     // Trust mint modal
     const { showTrustMintModal } = useTrustMintContext();
-    const knownMints = useKnownMints();
+    const { knownMints } = useKnownMints();
     // modals
     const [modal, setModal] = useState({
         receiveOpts: false,
@@ -179,45 +179,39 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         isMelt?: boolean;
         isSendEcash?: boolean;
     } = {}) => {
-        const { mintsBals, mints } = await getMintsForPayment();
-        closeOptsModal();
-        const nonEmptyMints = mintsBals.filter((m) => m.amount > 0);
+        // const { mintsBals, mints } = await getMintsForPayment();
+        // closeOptsModal();
+        // const nonEmptyMints = mintsBals.filter((m) => m.amount > 0);
         // user has only 1 mint with balance, he can skip the mint selection
-        if (nonEmptyMints.length === 1) {
-            // user can directly navigate to amount selection
-            if (isSendEcash) {
-                navigation.navigate("selectAmount", {
-                    mint: mints.find(
-                        (m) => m.mintUrl === nonEmptyMints[0].mintUrl
-                    ) || { mintUrl: "N/A", customName: "N/A" },
-                    balance: nonEmptyMints[0].amount,
-                    isSendEcash,
-                });
-                return;
-            }
-            // otherwise he can select his target, get remaining mints for a possible multimint swap
-            const remainingMints = mints.filter(
-                (m) => m.mintUrl !== _testmintUrl
-            );
-            navigation.navigate("selectTarget", {
-                mint: mints.find(
-                    (m) => m.mintUrl === nonEmptyMints[0].mintUrl
-                ) || { mintUrl: "N/A", customName: "N/A" },
-                balance: nonEmptyMints[0].amount,
-                isMelt,
-                isSendEcash,
-                remainingMints,
-            });
-            return;
-        }
+        // if (nonEmptyMints.length === 1) {
+        //     // user can directly navigate to amount selection
+        //     if (isSendEcash) {
+        //         navigation.navigate("selectAmount", {
+        //             mint: mints.find(
+        //                 (m) => m.mintUrl === nonEmptyMints[0].mintUrl
+        //             ) || { mintUrl: "N/A", customName: "N/A" },
+        //             balance: nonEmptyMints[0].amount,
+        //             isSendEcash,
+        //         });
+        //         return;
+        //     }
+        //     // otherwise he can select his target, get remaining mints for a possible multimint swap
+        //     const remainingMints = mints.filter(
+        //         (m) => m.mintUrl !== _testmintUrl
+        //     );
+        //     navigation.navigate("selectTarget", {
+        //         mint: mints.find(
+        //             (m) => m.mintUrl === nonEmptyMints[0].mintUrl
+        //         ) || { mintUrl: "N/A", customName: "N/A" },
+        //         balance: nonEmptyMints[0].amount,
+        //         isMelt,
+        //         isSendEcash,
+        //         remainingMints,
+        //     });
+        //     return;
+        // }
         // user has more than 1 mint so he has to choose the one he wants to communicate to
-        navigation.navigate("selectMint", {
-            mints,
-            mintsWithBal: mintsBals,
-            allMintsEmpty: !nonEmptyMints.length,
-            isMelt,
-            isSendEcash,
-        });
+        navigation.navigate("selectMint");
     };
 
     // close send/receive options modal
