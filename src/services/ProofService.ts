@@ -23,8 +23,20 @@ export class ProofService {
     async getProofsByState(state: EnutsProof["state"]) {
         return this.proofRepo.getProofsByState(state);
     }
+
     async addProofs(proofs: EnutsProof[]) {
         const res = await this.proofRepo.saveProofs(proofs);
+        proofEvents.emit("proofsUpdated", null);
+        return res;
+    }
+
+    /**
+     * Set the state of multiple proofs by their ids.
+     * @param proofIds Array of proof ids to update.
+     * @param state The new state to set.
+     */
+    async setProofsState(proofIds: string[], state: EnutsProof["state"]) {
+        const res = await this.proofRepo.updateProofsState(proofIds, state);
         proofEvents.emit("proofsUpdated", null);
         return res;
     }

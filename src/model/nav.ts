@@ -9,6 +9,8 @@ import type {
     IProofSelection,
     ITokenInfo,
 } from ".";
+import { EnutsProof } from "@src/storage/db/repo/ProofRepository";
+import { Proof, Token } from "@cashu/cashu-ts";
 
 interface ILnurlNavData {
     userInput: string;

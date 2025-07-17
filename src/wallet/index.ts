@@ -6,6 +6,7 @@ import {
     generateNewMnemonic,
     getDecodedToken,
     getEncodedToken,
+    OutputData,
     Token,
     type GetInfoResponse,
     type MintKeys,
@@ -333,32 +334,13 @@ export async function sendToken(
     memo: string,
     proofs: Proof[] = []
 ): Promise<string> {
-    const wallet = await getWallet(mintUrl);
-    if (!proofs?.length) {
-        const { proofsToUse } = await getProofsToUse(mintUrl, amount);
-        proofs = proofsToUse;
-    }
-    const counter = await getCounterByMintUrl(mintUrl);
+    const wallet = await walletService.getWallet(mintUrl);
     // will throw if not enough proofs are available
-    const { send, returnChange, newKeys } = await wallet.send(
-        amount,
-        proofs,
-        undefined,
-        counter
+    const { keep, send } = await wallet.send(amount, proofs);
+    await proofService.addProofs(
+        keep.map((p) => ({ ...p, state: "ready", mintUrl }))
     );
-    if (newKeys) {
-        _setKeys(mintUrl, newKeys);
-    }
-    // add change back to db
-    if (returnChange?.length) {
-        await addToken({ token: [{ mint: mintUrl, proofs: returnChange }] });
-    }
-    await deleteProofs(proofs);
-    await incrementCounterByMintUrl(mintUrl, send.length + returnChange.length);
-    return getEncodedToken({
-        token: [{ mint: mintUrl, proofs: send }],
-        memo: memo.length > 0 ? memo : "Sent via eNuts.",
-    });
+    return getEncodedToken({ mint: mintUrl, proofs: send });
 }
 
 export async function autoMintSwap(

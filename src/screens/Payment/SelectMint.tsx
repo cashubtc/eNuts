@@ -10,7 +10,7 @@ import type { TSelectMintPageProps } from "@model/nav";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
-import { useKnownMints } from "@src/context/KnownMints";
+import { KnownMintWithBalance, useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { getDefaultMint } from "@store/mintStore";
 import { globals, highlight as hi } from "@styles";
@@ -71,7 +71,7 @@ export default function SelectMintScreen({
         return "chooseMintHint";
     };
     // press mint
-    const handlePressMint = (mint: IMintBalWithName) => {
+    const handlePressMint = (mint: KnownMintWithBalance) => {
         // pay scanned invoice
         // if (invoice && invoiceAmount && isNum(estFee)) {
         //     if (invoiceAmount + estFee > mint.amount) {
@@ -102,7 +102,7 @@ export default function SelectMintScreen({
             // l('user wants to send payment, navigate to target selection')
             return navigation.navigate("selectTarget", {
                 mint,
-                balance: mint.amount,
+                balance: mint.balance,
                 remainingMints,
                 isSendEcash,
                 isMelt,
@@ -110,7 +110,7 @@ export default function SelectMintScreen({
         }
         navigation.navigate("selectAmount", {
             mint,
-            balance: mint.amount,
+            balance: mint.balance,
             isSendEcash,
         });
     };

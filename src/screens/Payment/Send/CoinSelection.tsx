@@ -35,6 +35,7 @@ import {
     CoinSelectionResume,
     OverviewRow,
 } from "./ProofList";
+import { proofService } from "@src/services/ProofService";
 
 export default function CoinSelectionScreen({
     navigation,
@@ -58,9 +59,6 @@ export default function CoinSelectionScreen({
     const { t } = useTranslation([NS.common]);
     const { color } = useThemeContext();
     const { url, clearUrl } = useInitialURL();
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled((prev) => !prev);
-    const [proofs, setProofs] = useState<IProofSelection[]>([]);
 
     const getPaymentType = () => {
         if (isZap) {
@@ -97,14 +95,8 @@ export default function CoinSelectionScreen({
         return t("n/a");
     };
 
-    const submitPaymentReq = () => {
-        if (isZap && mint.mintUrl === _testmintUrl) {
-            return navigation.navigate("processingError", {
-                mint,
-                amount,
-                errorMsg: t("zapNotAllowed", { ns: NS.mints }),
-            });
-        }
+    const submitPaymentReq = async () => {
+        const proofs = await proofService.getProofsByMintUrl(mint.mintUrl);
         navigation.navigate("processing", {
             mint,
             amount,
@@ -116,20 +108,10 @@ export default function CoinSelectionScreen({
             isZap,
             payZap: true,
             targetMint,
-            proofs: proofs.filter((p) => p.selected),
+            proofs: proofs.map((p) => ({ ...p, selected: true })),
             recipient,
         });
     };
-
-    // set proofs
-    useEffect(() => {
-        void (async () => {
-            const proofsDB = (await getProofsByMintUrl(mint.mintUrl)).map(
-                (p) => ({ ...p, selected: false })
-            );
-            setProofs(proofsDB);
-        })();
-    }, [mint.mintUrl]);
 
     return (
         <View style={[globals(color).container, styles.container]}>
@@ -226,32 +208,6 @@ export default function CoinSelectionScreen({
                             txt2={memo}
                         />
                     )}
-                    <View style={globals().wrapRow}>
-                        <View>
-                            <Txt
-                                txt={t("coinSelection")}
-                                styles={[{ fontWeight: "500" }]}
-                            />
-                            <Txt
-                                txt={t("coinSelectionHint", { ns: NS.mints })}
-                                styles={[
-                                    styles.coinSelectionHint,
-                                    { color: color.TEXT_SECONDARY },
-                                ]}
-                            />
-                        </View>
-                        <Toggle value={isEnabled} onChange={toggleSwitch} />
-                    </View>
-                    {isEnabled && proofs.some((p) => p.selected) && (
-                        <>
-                            <Separator />
-                            <CoinSelectionResume
-                                withSeparator
-                                lnAmount={amount + estFee}
-                                selectedAmount={getSelectedAmount(proofs)}
-                            />
-                        </>
-                    )}
                 </View>
             </ScrollView>
             <View
@@ -265,17 +221,6 @@ export default function CoinSelectionScreen({
             >
                 <SwipeButton txt={t(getBtnTxt())} onToggle={submitPaymentReq} />
             </View>
-
-            {/* coin selection page */}
-            {isEnabled && (
-                <CoinSelectionModal
-                    mint={mint}
-                    lnAmount={amount + estFee}
-                    disableCS={() => setIsEnabled(false)}
-                    proofs={proofs}
-                    setProof={setProofs}
-                />
-            )}
         </View>
     );
 }

@@ -25,18 +25,14 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
         isClaim,
         isMelt,
         isAutoSwap,
-        isZap,
         isScanned,
-        isRestored,
     } = route.params;
     const { t } = useTranslation([NS.common]);
     const { color } = useThemeContext();
-    const { updateBalance } = useBalanceContext();
     const insets = useSafeAreaInsets();
 
     useEffect(() => {
         vib(400);
-        void updateBalance();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -56,17 +52,15 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
                     testID={`amount: ${amount}`}
                     style={[styles.successTxt, { color: color.TEXT }]}
                 >
-                    (isMelt && !isAutoSwap) || isZap ? t('paymentSuccess') :
-                    isAutoSwap ? t('autoSwapSuccess') : isRestored ?
-                    <>
-                        {formatSatStr(amount || 0)} {t("restored")}!
-                    </>
-                    : !nostr ?
-                    <>
-                        {formatSatStr(amount || 0)}{" "}
-                        {isClaim ? t("claimed") : t("minted")}!
-                    </>
-                    : null
+                    {(() => {
+                        if (isMelt && !isAutoSwap) {
+                            return t("paymentSuccess");
+                        }
+                        if (isAutoSwap) {
+                            return t("autoSwapSuccess");
+                        }
+                        return null;
+                    })()}
                 </Text>
                 {memo && (
                     <Text

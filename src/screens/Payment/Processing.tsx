@@ -129,27 +129,31 @@ export default function ProcessingScreen({
     };
 
     const handleSendEcash = async () => {
+        console.log("sending ecash");
         if (!proofs?.length) {
             return handleError({});
         }
         try {
-            const { token, change } = await sendToken(
-                proofs,
+            const encodedToken = await sendToken(
                 mint.mintUrl,
-                amount
+                amount,
+                memo || "",
+                proofs
             );
-            if (!token) {
+            if (!encodedToken) {
                 return handleError({});
             }
-            await addHistoryEntry({
-                amount,
-                type: 2,
-                value: token,
+            const entry = await addHistoryEntry({
+                amount: amount,
+                type: 1,
+                value: encodedToken,
                 mints: [mint.mintUrl],
                 recipient,
             });
             clearUrl();
-            navigation.navigate("success", { amount, change });
+            navigation.navigate("encodedToken", {
+                entry,
+            });
         } catch (e) {
             handleError({ e });
         }
