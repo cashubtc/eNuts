@@ -31,6 +31,10 @@ export const proofEvents = new EventEmitter<{
     proofsUpdated: null;
 }>();
 
+export const historyEvents = new EventEmitter<{
+    historyUpdated: null;
+}>();
+
 export const knownMintsEvents = new EventEmitter<{
     knownMintsUpdated: null;
 }>();

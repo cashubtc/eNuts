@@ -195,19 +195,49 @@ const migrations: Migration[] = [
             l("[Migration 1] Database schema dropped");
         },
     },
-    // Future migrations would go here
-    // Example:
-    // {
-    //     version: 2,
-    //     description: "Add new column to proofs table",
-    //     up: async () => {
-    //         await db.exec("ALTER TABLE proofs ADD COLUMN new_column TEXT");
-    //     },
-    //     down: async () => {
-    //         // SQLite doesn't support DROP COLUMN, so we'd need to recreate the table
-    //         // This is why down migrations are optional and complex
-    //     }
-    // }
+    {
+        version: 2,
+        description: "Update history table schema for new HistoryEvent type",
+        up: async () => {
+            // Drop the old table and create new one with updated schema
+            await db.exec("DROP TABLE IF EXISTS history");
+
+            const createHistoryTable = `
+                CREATE TABLE IF NOT EXISTS history (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    amount INTEGER NOT NULL,
+                    type TEXT NOT NULL,
+                    meta TEXT NOT NULL DEFAULT '{}',
+                    mints TEXT NOT NULL DEFAULT '[]',
+                    created_at INTEGER DEFAULT (cast(strftime('%s','now') as INTEGER))
+                )
+            `;
+
+            await db.exec(createHistoryTable);
+
+            l("[Migration 2] History table schema updated");
+        },
+        down: async () => {
+            // Rollback: recreate the old table structure
+            await db.exec("DROP TABLE IF EXISTS history");
+
+            const createOldHistoryTable = `
+                CREATE TABLE IF NOT EXISTS history (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    amount INTEGER NOT NULL,
+                    type INTEGER NOT NULL,
+                    value TEXT NOT NULL UNIQUE,
+                    mints TEXT NOT NULL,
+                    recipient TEXT,
+                    created_at INTEGER DEFAULT (cast(strftime('%s','now') as INTEGER))
+                )
+            `;
+
+            await db.exec(createOldHistoryTable);
+
+            l("[Migration 2] History table schema rolled back");
+        },
+    },
 ];
 
 // Run all pending migrations
