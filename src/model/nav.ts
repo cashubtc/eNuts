@@ -145,7 +145,7 @@ export type RootStackParamList = {
         paymentRequest: string;
     };
     encodedToken: {
-        entry: IHistoryEntry;
+        token: Token;
     };
     success: {
         amount?: number;

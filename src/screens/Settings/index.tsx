@@ -175,11 +175,13 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
                         />
                     </View>
                 )}
+                <Txt txt={appVersion} bold center />
                 <Txt
-                    txt={appVersion}
-                    bold
+                    txt={
+                        "No geese were harmed in the making of this software 🪿"
+                    }
                     center
-                    styles={[{ marginBottom: s(100) }]}
+                    styles={[{ marginBottom: s(100), fontSize: s(12) }]}
                 />
             </ScrollView>
             <BottomNav navigation={navigation} route={route} />

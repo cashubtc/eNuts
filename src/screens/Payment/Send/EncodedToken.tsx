@@ -1,4 +1,4 @@
-import { CashuWallet, getDecodedToken } from "@cashu/cashu-ts";
+import { CashuWallet, getDecodedToken, getEncodedToken } from "@cashu/cashu-ts";
 import Button from "@comps/Button";
 import useCopy from "@comps/hooks/Copy";
 import { useCheckSpent } from "@comps/hooks/Spent";
@@ -15,6 +15,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { l } from "@src/logger";
 import { proofEvents } from "@src/util/events";
+import { sumProofsValue } from "@src/wallet/proofs";
 import { walletService } from "@src/wallet/services/WalletService";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
@@ -22,7 +23,7 @@ import { globals, highlight as hi, mainColors } from "@styles";
 import { formatInt, formatSatStr, share, vib } from "@util";
 import { isTokenSpendable } from "@wallet";
 import LottieView from "lottie-react-native";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
@@ -34,18 +35,14 @@ export default function EncodedTokenPage({
     navigation,
     route,
 }: TEncodedTokenPageProps) {
-    const { value, amount } = route.params.entry;
+    const { token } = route.params || {};
     const { t } = useTranslation([NS.common]);
     const { color, highlight } = useThemeContext();
     const [error, setError] = useState({ msg: "", open: false });
-    const spent = useCheckSpent(value);
+    const spent = useCheckSpent(token);
+    const encodedToken = useMemo(() => getEncodedToken(token), [token]);
+    const tokenAmount = useMemo(() => sumProofsValue(token.proofs), [token]);
     const { copied, copy } = useCopy();
-
-    useEffect(() => {
-        // we can save the created token here to avoid foreground prompts of self-created tokens
-        void store.set(STORE_KEYS.createdToken, value);
-        vib(400);
-    }, [value]);
 
     // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
     useEffect(() => {
@@ -99,16 +96,14 @@ export default function EncodedTokenPage({
                     {/* The amount of the created token */}
                     <View style={styles.qrWrap}>
                         <Txt
-                            txt={formatInt(
-                                amount < 0 ? Math.abs(amount) : amount
-                            )}
+                            txt={formatInt(tokenAmount)}
                             styles={[
                                 styles.tokenAmount,
                                 { color: hi[highlight] },
                             ]}
                         />
                         <Txt
-                            txt={formatSatStr(amount, "standard", false)}
+                            txt={formatSatStr(tokenAmount, "standard", false)}
                             styles={[styles.tokenFormat]}
                         />
                         {/* The QR code */}
@@ -123,9 +118,16 @@ export default function EncodedTokenPage({
                         ) : (
                             <QR
                                 size={s(280)}
-                                value={value}
+                                value={encodedToken}
                                 onError={() =>
-                                    setError({ msg: t("bigQrMsg"), open: true })
+                                    setTimeout(
+                                        () =>
+                                            setError({
+                                                msg: t("bigQrMsg"),
+                                                open: true,
+                                            }),
+                                        0
+                                    )
                                 }
                             />
                         )}
@@ -135,7 +137,7 @@ export default function EncodedTokenPage({
                             <>
                                 <Button
                                     txt={t(copied ? "copied" : "copyToken")}
-                                    onPress={() => void copy(value)}
+                                    onPress={() => void copy(encodedToken)}
                                     icon={
                                         <CopyIcon
                                             width={s(18)}
@@ -151,7 +153,10 @@ export default function EncodedTokenPage({
                             outlined
                             txt={t("share")}
                             onPress={() =>
-                                void share(value, `cashu://${value}`)
+                                void share(
+                                    encodedToken,
+                                    `cashu://${encodedToken}`
+                                )
                             }
                             icon={
                                 <ShareIcon

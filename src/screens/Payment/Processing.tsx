@@ -1,3 +1,4 @@
+import { getDecodedToken } from "@cashu/cashu-ts";
 import Loading from "@comps/Loading";
 import Txt from "@comps/Txt";
 import { getMintBalance } from "@db";
@@ -152,7 +153,7 @@ export default function ProcessingScreen({
             });
             clearUrl();
             navigation.navigate("encodedToken", {
-                entry,
+                token: getDecodedToken(encodedToken),
             });
         } catch (e) {
             handleError({ e });

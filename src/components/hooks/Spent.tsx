@@ -1,10 +1,10 @@
-import { getDecodedToken } from "@cashu/cashu-ts";
+import { getDecodedToken, Token } from "@cashu/cashu-ts";
 import { l } from "@src/logger";
 import { proofService } from "@src/services/ProofService";
 import { walletService } from "@src/wallet/services/WalletService";
 import { useEffect, useRef, useState } from "react";
 
-export const useCheckSpent = (value: string) => {
+export const useCheckSpent = (token: Token) => {
     const [spent, setSpent] = useState(false);
     const isMarkedAsSpent = useRef(false);
 
@@ -13,15 +13,12 @@ export const useCheckSpent = (value: string) => {
         let isCancelled = false;
 
         const checkProofsSpent = async () => {
-            if (!value) return;
-            const decodedToken = getDecodedToken(value);
-            if (decodedToken) {
+            if (!token) return;
+            if (token) {
                 try {
-                    const wallet = await walletService.getWallet(
-                        decodedToken.mint
-                    );
+                    const wallet = await walletService.getWallet(token.mint);
                     const subscription = await wallet.onProofStateUpdates(
-                        decodedToken.proofs,
+                        token.proofs,
                         async (p) => {
                             if (p.state === "SPENT") {
                                 if (!isCancelled && !isMarkedAsSpent.current) {
@@ -29,7 +26,7 @@ export const useCheckSpent = (value: string) => {
                                     console.log(
                                         "Payment sent! Marking proofs as used."
                                     );
-                                    const proofIds = decodedToken.proofs.map(
+                                    const proofIds = token.proofs.map(
                                         (pr) => pr.id
                                     );
                                     await proofService.setProofsState(
@@ -64,7 +61,7 @@ export const useCheckSpent = (value: string) => {
                 unsub();
             }
         };
-    }, [value]);
+    }, [token]);
 
     return spent;
 };

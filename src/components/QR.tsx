@@ -9,9 +9,10 @@ import { s, ScaledSheet } from "react-native-size-matters";
 import useCopy from "./hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "./Icons";
 import Txt from "./Txt";
+import { useAnimatedQr } from "./hooks/AnimatedQr";
 
-// Helper function to truncate strings
 function truncateStr(str: string, len: number): string {
+    if (!str) return "";
     if (str.length <= len) return str;
     return str.slice(0, len) + "...";
 }
@@ -35,12 +36,15 @@ export default function QR({
     const { color } = useThemeContext();
     const { copied, copy } = useCopy();
     const str = isInvoice ? value.toUpperCase() : value;
+    const chunk = useAnimatedQr(value);
+    console.log("value", value);
+    console.log("chunk", chunk);
     return (
         <TouchableOpacity onPress={() => void copy(str)}>
             <View style={styles.qrWrap}>
                 <QRCode
                     size={size}
-                    value={str}
+                    value={chunk}
                     testID="qr-code"
                     logo={require("@assets/app-qr-icon.png")}
                     logoBorderRadius={10}
