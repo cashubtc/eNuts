@@ -8,7 +8,7 @@ import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { formatSatStr } from "@util";
 import { mainColors } from "@styles";
-import React, { forwardRef, useMemo, useCallback } from "react";
+import React, { forwardRef, useMemo, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
@@ -18,6 +18,59 @@ interface MintSelectionSheetProps {
     selectedMint?: { mintUrl: string };
     onMintSelect: (mint: KnownMintWithBalance) => void;
 }
+
+// Memoize individual mint items to prevent re-renders
+const MintItem = memo(
+    ({
+        mint,
+        isSelected,
+        onPress,
+        textColor,
+        secondaryTextColor,
+        inputBgColor,
+    }: {
+        mint: KnownMintWithBalance;
+        isSelected: boolean;
+        onPress: (mint: KnownMintWithBalance) => void;
+        textColor: string;
+        secondaryTextColor: string;
+        inputBgColor: string;
+    }) => {
+        const handlePress = useCallback(() => onPress(mint), [onPress, mint]);
+
+        return (
+            <TouchableOpacity
+                style={[
+                    styles.mintItem,
+                    {
+                        backgroundColor: inputBgColor,
+                        borderColor: isSelected
+                            ? mainColors.VALID
+                            : "transparent",
+                    },
+                ]}
+                onPress={handlePress}
+            >
+                <View style={styles.mintInfo}>
+                    <Txt
+                        txt={mint.name || new URL(mint.mintUrl).hostname}
+                        styles={[styles.mintAlias, { color: textColor }]}
+                    />
+                    <Txt
+                        txt={mint.mintUrl}
+                        styles={[styles.mintUrl, { color: secondaryTextColor }]}
+                    />
+                </View>
+                <Txt
+                    txt={formatSatStr(mint.balance)}
+                    styles={[styles.balance, { color: mainColors.VALID }]}
+                />
+            </TouchableOpacity>
+        );
+    }
+);
+
+MintItem.displayName = "MintItem";
 
 const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
     ({ selectedMint, onMintSelect }, ref) => {
@@ -32,37 +85,21 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
             [knownMints]
         );
 
+        // Use static snap points for better performance
         const snapPoints = useMemo(() => {
-            // Use percentage for more reliable behavior
-            const minHeight = Math.max(350, 200 + mintsWithBalance.length * 80);
-            // Add safe area insets to the total height since we're incorporating it into the content
-            const maxHeight = Math.min(minHeight + insets.bottom + vs(20), 650);
+            // Use fixed percentages based on common scenarios
+            if (mintsWithBalance.length <= 3) return ["40%"];
+            if (mintsWithBalance.length <= 6) return ["60%"];
+            return ["75%"];
+        }, [mintsWithBalance.length]);
 
-            // Convert to percentage if needed
-            const heightPercent = Math.min(
-                Math.max((maxHeight / 800) * 100, 40),
-                80
-            );
-
-            console.log(
-                "MintSelectionSheet snapPoints:",
-                [`${heightPercent}%`],
-                "mintsCount:",
-                mintsWithBalance.length,
-                "calculated height:",
-                maxHeight,
-                "insets.bottom:",
-                insets.bottom
-            );
-
-            return [`${heightPercent}%`];
-        }, [mintsWithBalance.length, insets.bottom]);
-
-        const handleMintPress = (mint: KnownMintWithBalance) => {
-            console.log("Mint selected:", mint.name || mint.mintUrl);
-            onMintSelect(mint);
-            (ref as React.RefObject<BottomSheet>)?.current?.close();
-        };
+        const handleMintPress = useCallback(
+            (mint: KnownMintWithBalance) => {
+                onMintSelect(mint);
+                (ref as React.RefObject<BottomSheet>)?.current?.close();
+            },
+            [onMintSelect, ref]
+        );
 
         const renderBackdrop = useCallback(
             (props: any) => (
@@ -89,6 +126,7 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
                 handleIndicatorStyle={{
                     backgroundColor: color.TEXT_SECONDARY,
                 }}
+                animateOnMount={true}
             >
                 <View
                     style={[
@@ -130,48 +168,17 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
                             </View>
                         ) : (
                             mintsWithBalance.map((mint) => (
-                                <TouchableOpacity
+                                <MintItem
                                     key={mint.mintUrl}
-                                    style={[
-                                        styles.mintItem,
-                                        {
-                                            backgroundColor: color.INPUT_BG,
-                                            borderColor:
-                                                selectedMint?.mintUrl ===
-                                                mint.mintUrl
-                                                    ? mainColors.VALID
-                                                    : "transparent",
-                                        },
-                                    ]}
-                                    onPress={() => handleMintPress(mint)}
-                                >
-                                    <View style={styles.mintInfo}>
-                                        <Txt
-                                            txt={
-                                                mint.name ||
-                                                new URL(mint.mintUrl).hostname
-                                            }
-                                            styles={[
-                                                styles.mintAlias,
-                                                { color: color.TEXT },
-                                            ]}
-                                        />
-                                        <Txt
-                                            txt={mint.mintUrl}
-                                            styles={[
-                                                styles.mintUrl,
-                                                { color: color.TEXT_SECONDARY },
-                                            ]}
-                                        />
-                                    </View>
-                                    <Txt
-                                        txt={formatSatStr(mint.balance)}
-                                        styles={[
-                                            styles.balance,
-                                            { color: mainColors.VALID },
-                                        ]}
-                                    />
-                                </TouchableOpacity>
+                                    mint={mint}
+                                    isSelected={
+                                        selectedMint?.mintUrl === mint.mintUrl
+                                    }
+                                    onPress={handleMintPress}
+                                    textColor={color.TEXT}
+                                    secondaryTextColor={color.TEXT_SECONDARY}
+                                    inputBgColor={color.INPUT_BG}
+                                />
                             ))
                         )}
                     </BottomSheetScrollView>

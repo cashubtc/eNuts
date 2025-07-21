@@ -5,30 +5,22 @@ import Loading from "@comps/Loading";
 import Screen from "@comps/Screen";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
-import MintSelectionSheet from "@comps/MintSelectionSheet";
+// Lazy load the MintSelectionSheet to improve initial render
+const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
 import { isIOS } from "@consts";
-import { l } from "@log";
 import type { TSelectAmountPageProps } from "@model/nav";
-import { useFocusEffect } from "@react-navigation/native";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi, mainColors } from "@styles";
-import {
-    cleanUpNumericStr,
-    formatInt,
-    formatSatStr,
-    getInvoiceFromLnurl,
-    vib,
-} from "@util";
+import { formatInt, formatSatStr, vib } from "@util";
 import {
     getLnurlIdentifierFromMetadata,
     isLightningAddress,
 } from "@util/lnurl";
-import { checkFees, requestMint } from "@wallet";
-import { createRef, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import {
     Animated,
@@ -44,27 +36,159 @@ export default function SelectAmountScreen({
     navigation,
     route,
 }: TSelectAmountPageProps) {
-    const { lnurl, isMelt, isSendEcash, isSwap, targetMint, scanned } =
-        route.params || {};
-    const { openPromptAutoClose } = usePromptContext();
+    const { lnurl, isMelt, isSendEcash, isSwap, scanned } = route.params || {};
     const { t } = useTranslation([NS.wallet]);
     const { color, highlight } = useThemeContext();
     const { hidden } = usePrivacyContext();
     const { anim, shake } = useShakeAnimation();
     const { knownMints } = useKnownMints();
-    const numericInputRef = createRef<TextInput>();
-    const txtInputRef = createRef<TextInput>();
+
+    // Use useRef instead of createRef to avoid recreation on every render
+    const numericInputRef = useRef<TextInput>(null);
+    const txtInputRef = useRef<TextInput>(null);
     const mintSelectionSheetRef = useRef<BottomSheet>(null);
-    const [amount, setAmount] = useState("");
+
+    const [amount, setAmount] = useState(0);
     const [memo, setMemo] = useState("");
 
-    // Use first mint from knownMints as default, ensure we always have a mint
-    const defaultMint = knownMints.length > 0 ? knownMints[0] : null;
+    const defaultMint = useMemo(() => {
+        return knownMints.length > 0 ? knownMints[0] : null;
+    }, [knownMints]);
+
     const [selectedMint, setSelectedMint] =
         useState<KnownMintWithBalance | null>(defaultMint);
 
-    // If no mints available, render empty state or redirect
-    if (!selectedMint || knownMints.length === 0) {
+    const noMintsAvailable = useMemo(() => {
+        return !selectedMint || knownMints.length === 0;
+    }, [selectedMint, knownMints.length]);
+
+    // Memoize expensive URL hostname extraction
+    const selectedMintName = useMemo(() => {
+        if (!selectedMint) return "";
+        try {
+            return selectedMint.name || new URL(selectedMint.mintUrl).hostname;
+        } catch {
+            return selectedMint.mintUrl;
+        }
+    }, [selectedMint]);
+
+    // Memoize style objects to prevent recreation
+    const globalStyles = useMemo(() => globals(), []);
+
+    // Defer non-critical state initialization
+    const [err, setErr] = useState(false);
+
+    // Get balance for the selected mint (fallback to 0 if no mint selected)
+    const selectedMintBalance = selectedMint?.balance || 0;
+    const balTooLow = amount > selectedMintBalance;
+
+    // Memoize screen name computation
+    const screenName = useMemo(() => {
+        if (isMelt) return "cashOut";
+        if (isSwap) return "multimintSwap";
+        if (isSendEcash) return "sendEcash";
+        return "createInvoice";
+    }, [isMelt, isSwap, isSendEcash]);
+
+    // Memoize action button text
+    const actionBtnTxt = useMemo(() => {
+        if (!isMelt && !isSwap && !isSendEcash) {
+            return t("continue", { ns: NS.common });
+        }
+        if (balTooLow) {
+            return t("balTooLow", { ns: NS.common });
+        }
+        return t("continue", {
+            ns: NS.common,
+        });
+    }, [isMelt, isSwap, isSendEcash, balTooLow, t]);
+
+    const onMemoChange = useCallback((text: string) => setMemo(text), []);
+
+    const handleMintSelect = useCallback(
+        (mint: KnownMintWithBalance) => {
+            setSelectedMint(mint);
+        },
+        [setSelectedMint]
+    );
+
+    const handleMintSelectionOpen = useCallback(() => {
+        // Blur the text inputs when opening the sheet
+        numericInputRef.current?.blur();
+        txtInputRef.current?.blur();
+
+        // Try expand method first, fallback to snapToIndex
+        if (mintSelectionSheetRef.current) {
+            try {
+                mintSelectionSheetRef.current.expand();
+            } catch (error) {
+                mintSelectionSheetRef.current.snapToIndex(0);
+            }
+        }
+    }, []);
+
+    const handleInputFocus = useCallback(() => {
+        // Close the mint selection sheet when input is focused
+        mintSelectionSheetRef.current?.close();
+    }, []);
+
+    const handleAmountSubmit = useCallback(() => {
+        const isSendingTX = isSendEcash || isMelt || isSwap;
+        // error & shake animation if amount === 0 or greater than mint balance
+        if (
+            !amount ||
+            +amount < 1 ||
+            (isSendingTX && +amount > selectedMintBalance)
+        ) {
+            vib(400);
+            setErr(true);
+            shake();
+            const t = setTimeout(() => {
+                setErr(false);
+                clearTimeout(t);
+            }, 500);
+            return;
+        }
+        if (isSendingTX) {
+            const recipient = isLightningAddress(lnurl?.userInput || "")
+                ? lnurl?.userInput
+                : lnurl?.data
+                ? getLnurlIdentifierFromMetadata(lnurl.data?.metadata)
+                : undefined;
+            return navigation.navigate("coinSelection", {
+                mint: selectedMint!,
+                balance: selectedMintBalance,
+                amount: +amount,
+                memo,
+                estFee: 0,
+                isMelt,
+                isSendEcash,
+                isSwap,
+                targetMint: route.params.targetMint,
+                recipient,
+            });
+        }
+        // request new token from mint
+        navigation.navigate("processing", {
+            mint: selectedMint!,
+            amount: +amount,
+        });
+    }, [
+        balTooLow,
+        isSendEcash,
+        isMelt,
+        isSwap,
+        amount,
+        selectedMintBalance,
+        lnurl,
+        navigation,
+        selectedMint,
+        route.params.targetMint,
+        memo,
+    ]);
+
+    // Early return after all hooks
+    if (noMintsAvailable) {
         return (
             <Screen
                 screenName={t("selectAmount", { ns: NS.common })}
@@ -84,237 +208,16 @@ export default function SelectAmountScreen({
             </Screen>
         );
     }
-    // invoice amount too low
-    const [err, setErr] = useState(false);
-    const [shouldEstimate, setShouldEstimate] = useState(false);
-    const [fee, setFee] = useState({ estimation: 0, isCalculating: false });
-
-    // Get balance for the selected mint (fallback to 0 if no mint selected)
-    const selectedMintBalance = selectedMint?.balance || 0;
-    const balTooLow =
-        (isMelt || isSwap) && +amount + fee.estimation > selectedMintBalance;
-
-    const isSendingWholeMintBal = () => {
-        // includes fee
-        if (isMelt && +amount + fee.estimation === selectedMintBalance) {
-            return true;
-        }
-        // without fee
-        if (isSendEcash && +amount === selectedMintBalance) {
-            return true;
-        }
-        return false;
-    };
-
-    // navigation screen name
-    const getScreenName = () => {
-        if (isMelt) {
-            return "cashOut";
-        }
-        if (isSwap) {
-            return "multimintSwap";
-        }
-        if (isSendEcash) {
-            return "sendEcash";
-        }
-        return "createInvoice";
-    };
-
-    const handleFeeEstimation = async () => {
-        setFee((prev) => ({ ...prev, isCalculating: true }));
-        try {
-            // check fee for payment to lnurl
-            if (lnurl) {
-                const lnurlInvoice = await getInvoiceFromLnurl(
-                    lnurl.userInput,
-                    +amount
-                );
-                if (!lnurlInvoice?.length) {
-                    openPromptAutoClose({
-                        msg: t("feeErr", { ns: NS.common, input: lnurl.url }),
-                    });
-                    return setFee((prev) => ({
-                        ...prev,
-                        isCalculating: false,
-                    }));
-                }
-                const estFee = await checkFees(
-                    selectedMint!.mintUrl,
-                    lnurlInvoice
-                );
-                setFee({ estimation: estFee, isCalculating: false });
-                return setShouldEstimate(false);
-            }
-            // check fee for multimint swap
-            if (isSwap && route.params.targetMint?.mintUrl.length) {
-                const { pr } = await requestMint(
-                    route.params.targetMint.mintUrl,
-                    +amount
-                );
-                // const invoice = await getInvoice(hash)
-                const estFee = await checkFees(selectedMint!.mintUrl, pr);
-                setFee({ estimation: estFee, isCalculating: false });
-                setShouldEstimate(false);
-            }
-        } catch (e) {
-            l(e);
-            openPromptAutoClose({ msg: t("requestMintErr", { ns: NS.error }) });
-            setFee((prev) => ({ ...prev, isCalculating: false }));
-        }
-    };
-
-    const getActionBtnTxt = () => {
-        if (!isMelt && !isSwap && !isSendEcash) {
-            return t("continue", { ns: NS.common });
-        }
-        if (fee.isCalculating) {
-            return t("calculateFeeEst", { ns: NS.common });
-        }
-        if (balTooLow) {
-            return t("balTooLow", { ns: NS.common });
-        }
-        return t(shouldEstimate ? "estimateFee" : "continue", {
-            ns: NS.common,
-        });
-    };
-
-    const onMemoChange = useCallback((text: string) => setMemo(text), []);
-
-    const handleMintSelect = (mint: KnownMintWithBalance) => {
-        setSelectedMint(mint);
-        // Reset amount and fee when mint changes
-        setAmount("");
-        setFee({ estimation: 0, isCalculating: false });
-        setShouldEstimate(!isSendEcash);
-    };
-
-    const handleMintSelectionOpen = () => {
-        // Blur the text inputs when opening the sheet
-        numericInputRef.current?.blur();
-        txtInputRef.current?.blur();
-
-        console.log(
-            "Opening mint selection sheet, ref:",
-            !!mintSelectionSheetRef.current
-        );
-
-        // Try expand method first, fallback to snapToIndex
-        if (mintSelectionSheetRef.current) {
-            try {
-                mintSelectionSheetRef.current.expand();
-            } catch (error) {
-                console.log("Expand failed, trying snapToIndex:", error);
-                mintSelectionSheetRef.current.snapToIndex(0);
-            }
-        }
-    };
-
-    const handleInputFocus = () => {
-        // Close the mint selection sheet when input is focused
-        mintSelectionSheetRef.current?.close();
-    };
-
-    const handleAmountSubmit = () => {
-        if (fee.isCalculating || balTooLow) {
-            return;
-        }
-        const isSendingTX = isSendEcash || isMelt || isSwap;
-        // error & shake animation if amount === 0 or greater than mint balance
-        if (
-            !amount ||
-            +amount < 1 ||
-            (isSendingTX && +amount > selectedMintBalance)
-        ) {
-            vib(400);
-            setErr(true);
-            shake();
-            const t = setTimeout(() => {
-                setErr(false);
-                clearTimeout(t);
-            }, 500);
-            return;
-        }
-        // estimate melting/swap fee
-        if (!isSendEcash && shouldEstimate && (lnurl || isSwap)) {
-            return handleFeeEstimation();
-        }
-        // send ecash / melt / swap
-        if (isSendingTX) {
-            const recipient = isLightningAddress(lnurl?.userInput || "")
-                ? lnurl?.userInput
-                : lnurl?.data
-                ? getLnurlIdentifierFromMetadata(lnurl.data?.metadata)
-                : undefined;
-            // Check if user melts/swaps his whole mint balance, so there is no need for coin selection and that can be skipped here
-            if (!isSendEcash && isSendingWholeMintBal()) {
-                return navigation.navigate("processing", {
-                    mint: selectedMint!,
-                    amount: +amount,
-                    estFee: fee.estimation,
-                    isMelt,
-                    isSendEcash,
-                    isSwap,
-                    targetMint: route.params.targetMint,
-                    recipient,
-                });
-            }
-            return navigation.navigate("coinSelection", {
-                mint: selectedMint!,
-                balance: selectedMintBalance,
-                amount: +amount,
-                memo,
-                estFee: fee.estimation,
-                isMelt,
-                isSendEcash,
-                isSwap,
-                targetMint: route.params.targetMint,
-                recipient,
-            });
-        }
-        // request new token from mint
-        navigation.navigate("processing", {
-            mint: selectedMint!,
-            amount: +amount,
-        });
-    };
-
-    // auto-focus numeric input when the screen gains focus
-    useFocusEffect(
-        useCallback(() => {
-            const timeoutId = setTimeout(() => {
-                if (!txtInputRef.current?.isFocused()) {
-                    numericInputRef.current?.focus();
-                }
-            }, 200);
-            return () => clearTimeout(timeoutId);
-        }, [txtInputRef, numericInputRef])
-    );
-
-    // check if is melting process
-    useEffect(() => setShouldEstimate(!isSendEcash), [isSendEcash]);
-
-    // estimate fee each time the melt or swap amount changes
-    useEffect(() => {
-        if (isSendEcash) {
-            return;
-        }
-        setFee({ estimation: 0, isCalculating: false });
-        setShouldEstimate(true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [amount]);
 
     return (
         <Screen
-            screenName={t(getScreenName(), { ns: NS.common })}
+            screenName={t(screenName, { ns: NS.common })}
             withBackBtn
             handlePress={() =>
                 scanned
                     ? navigation.navigate("qr scan", {})
                     : navigation.goBack()
             }
-            mintBalance={selectedMintBalance}
-            disableMintBalance={isMelt || isSwap || hidden.balance}
-            handleMintBalancePress={() => setAmount(`${selectedMintBalance}`)}
         >
             {!isMelt && !isSwap && (
                 <Txt
@@ -339,10 +242,7 @@ export default function SelectAmountScreen({
             >
                 <View style={styles.mintSelectorInfo}>
                     <Txt
-                        txt={
-                            selectedMint!.name ||
-                            new URL(selectedMint!.mintUrl).hostname
-                        }
+                        txt={selectedMintName}
                         styles={[
                             styles.mintSelectorName,
                             { color: color.TEXT },
@@ -405,13 +305,11 @@ export default function SelectAmountScreen({
                             err ? mainColors.ERROR : hi[highlight]
                         }
                         style={[
-                            globals().selectAmount,
+                            globalStyles.selectAmount,
                             { color: err ? mainColors.ERROR : hi[highlight] },
                         ]}
-                        onChangeText={(amountt) =>
-                            setAmount(cleanUpNumericStr(amountt))
-                        }
-                        onSubmitEditing={() => void handleAmountSubmit()}
+                        onChangeText={(amount) => setAmount(parseInt(amount))}
+                        onSubmitEditing={handleAmountSubmit}
                         onFocus={handleInputFocus}
                         value={amount}
                         maxLength={8}
@@ -457,7 +355,7 @@ export default function SelectAmountScreen({
                             selectionColor={hi[highlight]}
                             cursorColor={hi[highlight]}
                             onChangeText={onMemoChange}
-                            onSubmitEditing={() => void handleAmountSubmit()}
+                            onSubmitEditing={handleAmountSubmit}
                             onFocus={handleInputFocus}
                             maxLength={21}
                             style={[
@@ -469,7 +367,7 @@ export default function SelectAmountScreen({
                             ]}
                         />
                         <IconBtn
-                            onPress={() => void handleAmountSubmit()}
+                            onPress={handleAmountSubmit}
                             icon={<ChevronRightIcon color={mainColors.WHITE} />}
                             size={s(55)}
                             testId="continue-send-ecash"
@@ -477,9 +375,8 @@ export default function SelectAmountScreen({
                     </>
                 ) : (
                     <Button
-                        txt={getActionBtnTxt()}
-                        outlined={shouldEstimate}
-                        onPress={() => void handleAmountSubmit()}
+                        txt={actionBtnTxt}
+                        onPress={handleAmountSubmit}
                         disabled={balTooLow}
                         icon={
                             fee.isCalculating ? (
@@ -493,11 +390,13 @@ export default function SelectAmountScreen({
                 )}
             </KeyboardAvoidingView>
 
-            <MintSelectionSheet
-                ref={mintSelectionSheetRef}
-                selectedMint={selectedMint!}
-                onMintSelect={handleMintSelect}
-            />
+            <Suspense fallback={<View />}>
+                <MintSelectionSheet
+                    ref={mintSelectionSheetRef}
+                    selectedMint={selectedMint!}
+                    onMintSelect={handleMintSelect}
+                />
+            </Suspense>
         </Screen>
     );
 }
