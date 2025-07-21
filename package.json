@@ -39,7 +39,8 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-size-matters": "^0.4.2",
-    "react-native-svg": "15.11.2"
+    "react-native-svg": "15.11.2",
+    "@gorhom/bottom-sheet": "^5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

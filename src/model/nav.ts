@@ -67,11 +67,9 @@ export type RootStackParamList = {
         remainingMints?: IMintUrl[];
     };
     selectAmount: {
-        mint: IMintUrl;
         isMelt?: boolean;
         isSendEcash?: boolean;
         isSwap?: boolean;
-        balance: number;
         lnurl?: ILnurlNavData;
         targetMint?: IMintUrl;
         scanned?: boolean;

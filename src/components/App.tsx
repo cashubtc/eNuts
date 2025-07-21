@@ -36,6 +36,7 @@ import { useTranslation } from "react-i18next";
 import { AppState } from "react-native";
 import { MenuProvider } from "react-native-popup-menu";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import Blank from "./Blank";
 import ClipboardModal from "./ClipboardModal";
@@ -59,11 +60,13 @@ l("[APP] Starting app...");
 void SplashScreen.preventAutoHideAsync();
 function App(_: { exp: Record<string, unknown> }) {
     return (
-        <SafeAreaProvider>
-            <CustomErrorBoundary catchErrors="always">
-                <My_App />
-            </CustomErrorBoundary>
-        </SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaProvider>
+                <CustomErrorBoundary catchErrors="always">
+                    <My_App />
+                </CustomErrorBoundary>
+            </SafeAreaProvider>
+        </GestureHandlerRootView>
     );
 }
 export default App;

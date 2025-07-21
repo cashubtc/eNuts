@@ -1,10 +1,11 @@
 import { useShakeAnimation } from "@comps/animation/Shake";
 import Button, { IconBtn } from "@comps/Button";
-import { ChevronRightIcon } from "@comps/Icons";
+import { ChevronRightIcon, ArrowDownIcon } from "@comps/Icons";
 import Loading from "@comps/Loading";
 import Screen from "@comps/Screen";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
+import MintSelectionSheet from "@comps/MintSelectionSheet";
 import { isIOS } from "@consts";
 import { l } from "@log";
 import type { TSelectAmountPageProps } from "@model/nav";
@@ -12,6 +13,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
+import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi, mainColors } from "@styles";
 import {
@@ -26,48 +28,79 @@ import {
     isLightningAddress,
 } from "@util/lnurl";
 import { checkFees, requestMint } from "@wallet";
-import { createRef, useCallback, useEffect, useState } from "react";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Animated, KeyboardAvoidingView, TextInput, View } from "react-native";
+import {
+    Animated,
+    KeyboardAvoidingView,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 export default function SelectAmountScreen({
     navigation,
     route,
 }: TSelectAmountPageProps) {
-    const {
-        mint,
-        balance,
-        lnurl,
-        isMelt,
-        isSendEcash,
-        isSwap,
-        targetMint,
-        scanned,
-    } = route.params;
+    const { lnurl, isMelt, isSendEcash, isSwap, targetMint, scanned } =
+        route.params || {};
     const { openPromptAutoClose } = usePromptContext();
     const { t } = useTranslation([NS.wallet]);
     const { color, highlight } = useThemeContext();
     const { hidden } = usePrivacyContext();
     const { anim, shake } = useShakeAnimation();
+    const { knownMints } = useKnownMints();
     const numericInputRef = createRef<TextInput>();
     const txtInputRef = createRef<TextInput>();
+    const mintSelectionSheetRef = useRef<BottomSheet>(null);
     const [amount, setAmount] = useState("");
     const [memo, setMemo] = useState("");
+
+    // Use first mint from knownMints as default, ensure we always have a mint
+    const defaultMint = knownMints.length > 0 ? knownMints[0] : null;
+    const [selectedMint, setSelectedMint] =
+        useState<KnownMintWithBalance | null>(defaultMint);
+
+    // If no mints available, render empty state or redirect
+    if (!selectedMint || knownMints.length === 0) {
+        return (
+            <Screen
+                screenName={t("selectAmount", { ns: NS.common })}
+                withBackBtn
+                handlePress={() => navigation.goBack()}
+            >
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: 20,
+                    }}
+                >
+                    <Txt txt={t("noMintsWithBalance", { ns: NS.common })} />
+                </View>
+            </Screen>
+        );
+    }
     // invoice amount too low
     const [err, setErr] = useState(false);
     const [shouldEstimate, setShouldEstimate] = useState(false);
     const [fee, setFee] = useState({ estimation: 0, isCalculating: false });
 
-    const balTooLow = (isMelt || isSwap) && +amount + fee.estimation > balance;
+    // Get balance for the selected mint (fallback to 0 if no mint selected)
+    const selectedMintBalance = selectedMint?.balance || 0;
+    const balTooLow =
+        (isMelt || isSwap) && +amount + fee.estimation > selectedMintBalance;
 
     const isSendingWholeMintBal = () => {
         // includes fee
-        if (isMelt && +amount + fee.estimation === balance) {
+        if (isMelt && +amount + fee.estimation === selectedMintBalance) {
             return true;
         }
         // without fee
-        if (isSendEcash && +amount === balance) {
+        if (isSendEcash && +amount === selectedMintBalance) {
             return true;
         }
         return false;
@@ -105,15 +138,21 @@ export default function SelectAmountScreen({
                         isCalculating: false,
                     }));
                 }
-                const estFee = await checkFees(mint.mintUrl, lnurlInvoice);
+                const estFee = await checkFees(
+                    selectedMint!.mintUrl,
+                    lnurlInvoice
+                );
                 setFee({ estimation: estFee, isCalculating: false });
                 return setShouldEstimate(false);
             }
             // check fee for multimint swap
-            if (isSwap && targetMint?.mintUrl.length) {
-                const { pr } = await requestMint(targetMint.mintUrl, +amount);
+            if (isSwap && route.params.targetMint?.mintUrl.length) {
+                const { pr } = await requestMint(
+                    route.params.targetMint.mintUrl,
+                    +amount
+                );
                 // const invoice = await getInvoice(hash)
-                const estFee = await checkFees(mint.mintUrl, pr);
+                const estFee = await checkFees(selectedMint!.mintUrl, pr);
                 setFee({ estimation: estFee, isCalculating: false });
                 setShouldEstimate(false);
             }
@@ -141,13 +180,51 @@ export default function SelectAmountScreen({
 
     const onMemoChange = useCallback((text: string) => setMemo(text), []);
 
+    const handleMintSelect = (mint: KnownMintWithBalance) => {
+        setSelectedMint(mint);
+        // Reset amount and fee when mint changes
+        setAmount("");
+        setFee({ estimation: 0, isCalculating: false });
+        setShouldEstimate(!isSendEcash);
+    };
+
+    const handleMintSelectionOpen = () => {
+        // Blur the text inputs when opening the sheet
+        numericInputRef.current?.blur();
+        txtInputRef.current?.blur();
+
+        console.log(
+            "Opening mint selection sheet, ref:",
+            !!mintSelectionSheetRef.current
+        );
+
+        // Try expand method first, fallback to snapToIndex
+        if (mintSelectionSheetRef.current) {
+            try {
+                mintSelectionSheetRef.current.expand();
+            } catch (error) {
+                console.log("Expand failed, trying snapToIndex:", error);
+                mintSelectionSheetRef.current.snapToIndex(0);
+            }
+        }
+    };
+
+    const handleInputFocus = () => {
+        // Close the mint selection sheet when input is focused
+        mintSelectionSheetRef.current?.close();
+    };
+
     const handleAmountSubmit = () => {
         if (fee.isCalculating || balTooLow) {
             return;
         }
         const isSendingTX = isSendEcash || isMelt || isSwap;
         // error & shake animation if amount === 0 or greater than mint balance
-        if (!amount || +amount < 1 || (isSendingTX && +amount > balance)) {
+        if (
+            !amount ||
+            +amount < 1 ||
+            (isSendingTX && +amount > selectedMintBalance)
+        ) {
             vib(400);
             setErr(true);
             shake();
@@ -171,31 +248,34 @@ export default function SelectAmountScreen({
             // Check if user melts/swaps his whole mint balance, so there is no need for coin selection and that can be skipped here
             if (!isSendEcash && isSendingWholeMintBal()) {
                 return navigation.navigate("processing", {
-                    mint,
+                    mint: selectedMint!,
                     amount: +amount,
                     estFee: fee.estimation,
                     isMelt,
                     isSendEcash,
                     isSwap,
-                    targetMint,
+                    targetMint: route.params.targetMint,
                     recipient,
                 });
             }
             return navigation.navigate("coinSelection", {
-                mint,
-                balance,
+                mint: selectedMint!,
+                balance: selectedMintBalance,
                 amount: +amount,
                 memo,
                 estFee: fee.estimation,
                 isMelt,
                 isSendEcash,
                 isSwap,
-                targetMint,
+                targetMint: route.params.targetMint,
                 recipient,
             });
         }
         // request new token from mint
-        navigation.navigate("processing", { mint, amount: +amount });
+        navigation.navigate("processing", {
+            mint: selectedMint!,
+            amount: +amount,
+        });
     };
 
     // auto-focus numeric input when the screen gains focus
@@ -232,9 +312,9 @@ export default function SelectAmountScreen({
                     ? navigation.navigate("qr scan", {})
                     : navigation.goBack()
             }
-            mintBalance={balance}
+            mintBalance={selectedMintBalance}
             disableMintBalance={isMelt || isSwap || hidden.balance}
-            handleMintBalancePress={() => setAmount(`${balance}`)}
+            handleMintBalancePress={() => setAmount(`${selectedMintBalance}`)}
         >
             {!isMelt && !isSwap && (
                 <Txt
@@ -245,6 +325,43 @@ export default function SelectAmountScreen({
                     styles={[styles.headerHint]}
                 />
             )}
+
+            {/* Mint Selection Button */}
+            <TouchableOpacity
+                style={[
+                    styles.mintSelector,
+                    {
+                        backgroundColor: color.INPUT_BG,
+                        borderColor: color.BORDER,
+                    },
+                ]}
+                onPress={handleMintSelectionOpen}
+            >
+                <View style={styles.mintSelectorInfo}>
+                    <Txt
+                        txt={
+                            selectedMint!.name ||
+                            new URL(selectedMint!.mintUrl).hostname
+                        }
+                        styles={[
+                            styles.mintSelectorName,
+                            { color: color.TEXT },
+                        ]}
+                    />
+                    <Txt
+                        txt={`${formatSatStr(selectedMintBalance)} available`}
+                        styles={[
+                            styles.mintSelectorBalance,
+                            { color: color.TEXT_SECONDARY },
+                        ]}
+                    />
+                </View>
+                <ArrowDownIcon
+                    color={color.TEXT_SECONDARY}
+                    width={16}
+                    height={16}
+                />
+            </TouchableOpacity>
             <View
                 style={[
                     styles.overviewWrap,
@@ -295,6 +412,7 @@ export default function SelectAmountScreen({
                             setAmount(cleanUpNumericStr(amountt))
                         }
                         onSubmitEditing={() => void handleAmountSubmit()}
+                        onFocus={handleInputFocus}
                         value={amount}
                         maxLength={8}
                         testID="mint-amount-input"
@@ -340,6 +458,7 @@ export default function SelectAmountScreen({
                             cursorColor={hi[highlight]}
                             onChangeText={onMemoChange}
                             onSubmitEditing={() => void handleAmountSubmit()}
+                            onFocus={handleInputFocus}
                             maxLength={21}
                             style={[
                                 styles.memoInput,
@@ -373,6 +492,12 @@ export default function SelectAmountScreen({
                     <View style={{ height: isSendEcash ? vs(100) : vs(20) }} />
                 )}
             </KeyboardAvoidingView>
+
+            <MintSelectionSheet
+                ref={mintSelectionSheetRef}
+                selectedMint={selectedMint!}
+                onMintSelect={handleMintSelect}
+            />
         </Screen>
     );
 }
@@ -475,5 +600,27 @@ const styles = ScaledSheet.create({
         paddingVertical: "18@vs",
         borderRadius: 50,
         fontSize: "14@vs",
+    },
+    mintSelector: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: "20@s",
+        paddingVertical: "16@vs",
+        marginHorizontal: "20@s",
+        marginBottom: "16@vs",
+        borderRadius: "12@s",
+        borderWidth: 1,
+    },
+    mintSelectorInfo: {
+        flex: 1,
+    },
+    mintSelectorName: {
+        fontSize: "16@s",
+        fontWeight: "500",
+        marginBottom: "4@vs",
+    },
+    mintSelectorBalance: {
+        fontSize: "12@s",
     },
 });

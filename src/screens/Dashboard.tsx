@@ -211,7 +211,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         //     return;
         // }
         // user has more than 1 mint so he has to choose the one he wants to communicate to
-        navigation.navigate("selectMint");
+        closeOptsModal();
+        console.log("isSendEcash", isSendEcash);
+        navigation.navigate("selectAmount", { isSendEcash: true });
     };
 
     // close send/receive options modal
