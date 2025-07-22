@@ -171,11 +171,15 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         isMelt?: boolean;
         isSendEcash?: boolean;
     } = {}) => {
-        // Navigate directly to selectAmount with the correct parameters
-        navigation.navigate("selectAmount", {
-            isMelt,
-            isSendEcash,
-        });
+        if (isMelt) {
+            navigation.navigate("meltInputfield");
+        } else {
+            // Navigate directly to selectAmount with the correct parameters
+            navigation.navigate("selectAmount", {
+                isMelt,
+                isSendEcash,
+            });
+        }
     };
 
     // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
