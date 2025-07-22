@@ -3,8 +3,9 @@ import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
 import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from "@comps/Icons";
-import OptsModal from "@comps/modal/OptsModal";
+import BottomSheetOptionsModal from "@comps/modal/BottomSheetOptionsModal";
 import Txt from "@comps/Txt";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { _testmintUrl, env } from "@consts";
 import { getMintsUrls, hasMints } from "@db";
 import { l } from "@log";
@@ -36,7 +37,7 @@ import {
 import { claimToken, getMintsForPayment } from "@wallet";
 import { getTokenInfo, sumProofsValue } from "@wallet/proofs";
 import { isValidCashuToken } from "@wallet/util";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
@@ -57,11 +58,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     // Trust mint modal
     const { showTrustMintModal } = useTrustMintContext();
     const { knownMints } = useKnownMints();
-    // modals
-    const [modal, setModal] = useState({
-        receiveOpts: false,
-        sendOpts: false,
-    });
+    // Bottom sheet refs
+    const sendOptionsRef = useRef<BottomSheet>(null);
+    const receiveOptionsRef = useRef<BottomSheet>(null);
 
     const receiveToken = async (token: Token) => {
         if (loading) {
@@ -133,14 +132,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             }
         } catch {
             openPromptAutoClose({ msg: t("clipboardInvalid") });
-            closeOptsModal();
             stopLoading();
             return;
         }
 
         const knownMints = await mintService.getAllKnownMints();
         if (!knownMints.find((m) => m.mintUrl === decoded.mint)) {
-            closeOptsModal();
             stopLoading();
             // Show trust modal
             await handleTrustFlow(decoded);
@@ -148,12 +145,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         }
 
         await receiveToken(decoded);
-        closeOptsModal();
     };
 
     const handleMintBtnPress = async () => {
         const { mintsBals, mints } = await getMintsForPayment();
-        closeOptsModal();
         const nonEmptyMints = mintsBals.filter((m) => m.amount > 0);
         // user has only 1 mint with balance, he can skip the mint selection
         if (nonEmptyMints.length === 1) {
@@ -176,17 +171,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         isMelt?: boolean;
         isSendEcash?: boolean;
     } = {}) => {
-        closeOptsModal();
         // Navigate directly to selectAmount with the correct parameters
         navigation.navigate("selectAmount", {
             isMelt,
             isSendEcash,
         });
     };
-
-    // close send/receive options modal
-    const closeOptsModal = () =>
-        setModal((prev) => ({ ...prev, receiveOpts: false, sendOpts: false }));
 
     // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
     useEffect(() => {
@@ -215,7 +205,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
                         txt={t("send", { ns: NS.wallet })}
                         color={hi[highlight]}
                         onPress={() => {
-                            setModal((prev) => ({ ...prev, sendOpts: true }));
+                            sendOptionsRef.current?.snapToIndex(0);
                         }}
                     />
                 ) : (
@@ -263,7 +253,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
                         //     // try to claim from clipboard to avoid receive-options-modal to popup and having to press again
                         //     return handleClaimBtnPress();
                         // }
-                        setModal((prev) => ({ ...prev, receiveOpts: true }));
+                        receiveOptionsRef.current?.snapToIndex(0);
                     }}
                 />
             </View>
@@ -280,9 +270,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             )}
             {/* Bottom nav icons */}
             <BottomNav navigation={navigation} route={route} />
-            {/* Send options */}
-            <OptsModal
-                visible={modal.sendOpts}
+            {/* Send options bottom sheet */}
+            <BottomSheetOptionsModal
+                ref={sendOptionsRef}
                 button1Txt={t("sendEcash")}
                 onPressFirstBtn={() =>
                     void handleSendBtnPress({ isSendEcash: true })
@@ -291,12 +281,12 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
                 onPressSecondBtn={() =>
                     void handleSendBtnPress({ isMelt: true })
                 }
-                onPressCancel={closeOptsModal}
+                onPressCancel={() => {}}
                 isSend
             />
-            {/* Receive options */}
-            <OptsModal
-                visible={modal.receiveOpts}
+            {/* Receive options bottom sheet */}
+            <BottomSheetOptionsModal
+                ref={receiveOptionsRef}
                 button1Txt={
                     loading
                         ? t("claiming", { ns: NS.wallet })
@@ -305,7 +295,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
                 onPressFirstBtn={() => void handleClaimBtnPress()}
                 button2Txt={t("createLnInvoice")}
                 onPressSecondBtn={() => void handleMintBtnPress()}
-                onPressCancel={closeOptsModal}
+                onPressCancel={() => {}}
                 loading={loading}
             />
         </View>
