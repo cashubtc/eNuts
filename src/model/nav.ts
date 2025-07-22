@@ -87,6 +87,7 @@ export type RootStackParamList = {
         recipient?: string;
         memo?: string;
         scanned?: boolean;
+        aiPathfindingEnabled?: boolean;
     };
     processing: {
         mint: IMintUrl;

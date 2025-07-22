@@ -3,7 +3,7 @@ import useLoading from "@comps/hooks/Loading";
 import Loading from "@comps/Loading";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
-import { ChevronRightIcon } from "@comps/Icons";
+import { ChevronRightIcon, CheckmarkIcon } from "@comps/Icons";
 // Lazy load the MintSelectionSheet to improve initial render
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
 import { isIOS } from "@consts";
@@ -46,6 +46,7 @@ import {
 } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import BottomSheet from "@gorhom/bottom-sheet";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { MeltOverview } from "../SelectAmount";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
@@ -73,6 +74,9 @@ export default function InputfieldScreen({
     const [selectedMints, setSelectedMints] = useState<KnownMintWithBalance[]>(
         []
     );
+
+    // AI pathfinding state
+    const [aiPathfindingEnabled, setAIPathfindingEnabled] = useState(false);
 
     // Use refs for better performance
     const inputRef = useRef<TextInput>(null);
@@ -144,6 +148,10 @@ export default function InputfieldScreen({
         },
         []
     );
+
+    const handleAIPathfindingChange = useCallback((enabled: boolean) => {
+        setAIPathfindingEnabled(enabled);
+    }, []);
 
     const handleMintSelectionOpen = useCallback(() => {
         // Blur the input when opening the sheet
@@ -265,6 +273,7 @@ export default function InputfieldScreen({
                 estFee,
                 isMelt: true,
                 recipient: input,
+                aiPathfindingEnabled,
             });
         } catch {
             // invalid invoice
@@ -323,12 +332,6 @@ export default function InputfieldScreen({
                 disableMintBalance
             />
             <View>
-                {!input.length && (
-                    <Txt
-                        styles={[styles.hint]}
-                        txt={t("meltInputHint", { ns: NS.mints })}
-                    />
-                )}
                 {decodedAmount > 0 ? (
                     <>
                         {loading ? (
@@ -367,35 +370,105 @@ export default function InputfieldScreen({
                     </>
                 ) : null}
 
+                {/* AI Pathfinding Option */}
+                <TouchableOpacity
+                    style={[
+                        styles.aiPathfindingContainer,
+                        {
+                            backgroundColor: color.INPUT_BG,
+                            borderColor: color.BORDER,
+                        },
+                    ]}
+                    onPress={() =>
+                        handleAIPathfindingChange(!aiPathfindingEnabled)
+                    }
+                >
+                    <View style={styles.aiPathfindingContent}>
+                        <Ionicons
+                            name="sparkles-sharp"
+                            size={18}
+                            color={
+                                aiPathfindingEnabled
+                                    ? mainColors.VALID
+                                    : color.TEXT_SECONDARY
+                            }
+                        />
+                        <Txt
+                            txt="Enable AI pathfinding"
+                            styles={[
+                                styles.aiPathfindingText,
+                                { color: color.TEXT },
+                            ]}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            styles.checkbox,
+                            {
+                                backgroundColor: aiPathfindingEnabled
+                                    ? mainColors.VALID
+                                    : "transparent",
+                                borderColor: aiPathfindingEnabled
+                                    ? mainColors.VALID
+                                    : color.TEXT_SECONDARY,
+                            },
+                        ]}
+                    >
+                        {aiPathfindingEnabled && (
+                            <CheckmarkIcon
+                                color={mainColors.WHITE}
+                                width={14}
+                                height={14}
+                            />
+                        )}
+                    </View>
+                </TouchableOpacity>
+
                 {/* Mint Selection Button */}
                 <TouchableOpacity
                     style={[
                         styles.seamlessMintSelector,
-                        { borderColor: color.BORDER },
+                        {
+                            borderColor: color.BORDER,
+                            opacity: aiPathfindingEnabled ? 0.5 : 1,
+                        },
                     ]}
-                    onPress={handleMintSelectionOpen}
+                    onPress={
+                        aiPathfindingEnabled
+                            ? undefined
+                            : handleMintSelectionOpen
+                    }
+                    disabled={aiPathfindingEnabled}
                 >
                     <View style={styles.mintSelectorInfo}>
                         <Txt
-                            txt={`Pay from: ${selectedMintName}`}
+                            txt={
+                                aiPathfindingEnabled
+                                    ? "AI will select optimal mints"
+                                    : `Pay from: ${selectedMintName}`
+                            }
                             styles={[
                                 styles.seamlessMintName,
                                 { color: color.TEXT_SECONDARY },
                             ]}
                         />
-                        <Txt
-                            txt={`${formatSatStr(balance)} available`}
-                            styles={[
-                                styles.seamlessMintBalance,
-                                { color: color.TEXT },
-                            ]}
-                        />
+                        {!aiPathfindingEnabled && (
+                            <Txt
+                                txt={`${formatSatStr(balance)} available`}
+                                styles={[
+                                    styles.seamlessMintBalance,
+                                    { color: color.TEXT },
+                                ]}
+                            />
+                        )}
                     </View>
-                    <ChevronRightIcon
-                        color={color.TEXT_SECONDARY}
-                        width={16}
-                        height={16}
-                    />
+                    {!aiPathfindingEnabled && (
+                        <ChevronRightIcon
+                            color={color.TEXT_SECONDARY}
+                            width={16}
+                            height={16}
+                        />
+                    )}
                 </TouchableOpacity>
             </View>
             <KeyboardAvoidingView
@@ -522,5 +595,32 @@ const styles = ScaledSheet.create({
     seamlessMintBalance: {
         fontSize: "14@s",
         fontWeight: "500",
+    },
+    aiPathfindingContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: "20@s",
+        paddingVertical: "12@vs",
+        marginHorizontal: "20@s",
+        marginTop: "16@vs",
+        borderRadius: "8@s",
+        borderWidth: 1,
+    },
+    aiPathfindingContent: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    aiPathfindingText: {
+        fontSize: "12@s",
+        marginLeft: "8@s",
+    },
+    checkbox: {
+        width: "20@s",
+        height: "20@s",
+        borderRadius: "4@s",
+        borderWidth: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
