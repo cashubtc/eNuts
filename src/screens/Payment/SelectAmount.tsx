@@ -51,6 +51,10 @@ export default function SelectAmountScreen({
     const [amount, setAmount] = useState(0);
     const [memo, setMemo] = useState("");
 
+    // Fee estimation state for melt operations
+    const [fee, setFee] = useState({ estimation: 0, isCalculating: false });
+    const shouldEstimate = isMelt && amount > 0;
+
     const defaultMint = useMemo(() => {
         return knownMints.length > 0 ? knownMints[0] : null;
     }, [knownMints]);
@@ -229,39 +233,6 @@ export default function SelectAmountScreen({
                 />
             )}
 
-            {/* Mint Selection Button */}
-            <TouchableOpacity
-                style={[
-                    styles.mintSelector,
-                    {
-                        backgroundColor: color.INPUT_BG,
-                        borderColor: color.BORDER,
-                    },
-                ]}
-                onPress={handleMintSelectionOpen}
-            >
-                <View style={styles.mintSelectorInfo}>
-                    <Txt
-                        txt={selectedMintName}
-                        styles={[
-                            styles.mintSelectorName,
-                            { color: color.TEXT },
-                        ]}
-                    />
-                    <Txt
-                        txt={`${formatSatStr(selectedMintBalance)} available`}
-                        styles={[
-                            styles.mintSelectorBalance,
-                            { color: color.TEXT_SECONDARY },
-                        ]}
-                    />
-                </View>
-                <ArrowDownIcon
-                    color={color.TEXT_SECONDARY}
-                    width={16}
-                    height={16}
-                />
-            </TouchableOpacity>
             <View
                 style={[
                     styles.overviewWrap,
@@ -300,6 +271,7 @@ export default function SelectAmountScreen({
                         keyboardType="numeric"
                         ref={numericInputRef}
                         placeholder="0"
+                        autoFocus
                         cursorColor={hi[highlight]}
                         placeholderTextColor={
                             err ? mainColors.ERROR : hi[highlight]
@@ -308,10 +280,12 @@ export default function SelectAmountScreen({
                             globalStyles.selectAmount,
                             { color: err ? mainColors.ERROR : hi[highlight] },
                         ]}
-                        onChangeText={(amount) => setAmount(parseInt(amount))}
+                        onChangeText={(amount) =>
+                            setAmount(parseInt(amount) || 0)
+                        }
                         onSubmitEditing={handleAmountSubmit}
                         onFocus={handleInputFocus}
-                        value={amount}
+                        value={amount.toString()}
                         maxLength={8}
                         testID="mint-amount-input"
                     />
@@ -341,6 +315,38 @@ export default function SelectAmountScreen({
                     </>
                 )}
             </View>
+
+            {/* Mint Selection Button - More seamless design */}
+            <TouchableOpacity
+                style={[
+                    styles.seamlessMintSelector,
+                    { borderColor: color.BORDER },
+                ]}
+                onPress={handleMintSelectionOpen}
+            >
+                <View style={styles.mintSelectorInfo}>
+                    <Txt
+                        txt={`Pay from: ${selectedMintName}`}
+                        styles={[
+                            styles.seamlessMintName,
+                            { color: color.TEXT_SECONDARY },
+                        ]}
+                    />
+                    <Txt
+                        txt={`${formatSatStr(selectedMintBalance)} available`}
+                        styles={[
+                            styles.seamlessMintBalance,
+                            { color: color.TEXT },
+                        ]}
+                    />
+                </View>
+                <ChevronRightIcon
+                    color={color.TEXT_SECONDARY}
+                    width={16}
+                    height={16}
+                />
+            </TouchableOpacity>
+
             <KeyboardAvoidingView
                 behavior={isIOS ? "padding" : undefined}
                 style={isSendEcash ? styles.actionWrap : styles.continue}
@@ -500,26 +506,26 @@ const styles = ScaledSheet.create({
         borderRadius: 50,
         fontSize: "14@vs",
     },
-    mintSelector: {
+
+    mintSelectorInfo: {
+        flex: 1,
+    },
+    seamlessMintSelector: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         paddingHorizontal: "20@s",
-        paddingVertical: "16@vs",
+        paddingVertical: "12@vs",
         marginHorizontal: "20@s",
-        marginBottom: "16@vs",
-        borderRadius: "12@s",
-        borderWidth: 1,
+        marginTop: "16@vs",
+        borderBottomWidth: 1,
     },
-    mintSelectorInfo: {
-        flex: 1,
-    },
-    mintSelectorName: {
-        fontSize: "16@s",
-        fontWeight: "500",
-        marginBottom: "4@vs",
-    },
-    mintSelectorBalance: {
+    seamlessMintName: {
         fontSize: "12@s",
+        marginBottom: "2@vs",
+    },
+    seamlessMintBalance: {
+        fontSize: "14@s",
+        fontWeight: "500",
     },
 });

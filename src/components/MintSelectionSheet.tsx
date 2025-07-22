@@ -1,6 +1,7 @@
 import BottomSheet, {
     BottomSheetScrollView,
     BottomSheetBackdrop,
+    BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import Txt from "@comps/Txt";
 import { useThemeContext } from "@src/context/Theme";
@@ -10,7 +11,7 @@ import { formatSatStr } from "@util";
 import { mainColors } from "@styles";
 import React, { forwardRef, useMemo, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, Dimensions } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -85,13 +86,12 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
             [knownMints]
         );
 
-        // Use static snap points for better performance
-        const snapPoints = useMemo(() => {
-            // Use fixed percentages based on common scenarios
-            if (mintsWithBalance.length <= 3) return ["40%"];
-            if (mintsWithBalance.length <= 6) return ["60%"];
-            return ["75%"];
-        }, [mintsWithBalance.length]);
+        // Use dynamic sizing for optimal height calculation
+        const maxHeight = useMemo(() => {
+            // Cap height at 80% of screen height to prevent overly tall sheets
+            const screenHeight = Dimensions.get("window").height;
+            return Math.floor(screenHeight * 0.8);
+        }, []);
 
         const handleMintPress = useCallback(
             (mint: KnownMintWithBalance) => {
@@ -116,9 +116,10 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
         return (
             <BottomSheet
                 ref={ref}
-                snapPoints={snapPoints}
                 index={-1}
                 enablePanDownToClose={true}
+                enableDynamicSizing
+                maxDynamicContentSize={maxHeight}
                 backdropComponent={renderBackdrop}
                 backgroundStyle={{
                     backgroundColor: color.BACKGROUND,
@@ -128,19 +129,19 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
                 }}
                 animateOnMount={true}
             >
-                <View
+                <BottomSheetScrollView
                     style={[
-                        styles.container,
-                        {
-                            backgroundColor: color.BACKGROUND,
-                            paddingBottom: insets.bottom + vs(20),
-                        },
+                        styles.scrollView,
+                        { backgroundColor: color.BACKGROUND },
                     ]}
+                    contentContainerStyle={[styles.scrollContent]}
+                    showsVerticalScrollIndicator={false}
                 >
                     <View
                         style={[
                             styles.header,
                             {
+                                backgroundColor: color.BACKGROUND,
                                 borderBottomColor:
                                     color.BORDER || "rgba(0,0,0,0.1)",
                             },
@@ -152,49 +153,39 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
                         />
                     </View>
 
-                    <BottomSheetScrollView
-                        style={styles.scrollView}
-                        contentContainerStyle={styles.scrollContent}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        {mintsWithBalance.length === 0 ? (
-                            <View style={styles.emptyState}>
-                                <Txt
-                                    txt={t("noMintsWithBalance", {
-                                        ns: NS.common,
-                                    })}
-                                    styles={[{ color: color.TEXT_SECONDARY }]}
-                                />
-                            </View>
-                        ) : (
-                            mintsWithBalance.map((mint) => (
-                                <MintItem
-                                    key={mint.mintUrl}
-                                    mint={mint}
-                                    isSelected={
-                                        selectedMint?.mintUrl === mint.mintUrl
-                                    }
-                                    onPress={handleMintPress}
-                                    textColor={color.TEXT}
-                                    secondaryTextColor={color.TEXT_SECONDARY}
-                                    inputBgColor={color.INPUT_BG}
-                                />
-                            ))
-                        )}
-                    </BottomSheetScrollView>
-                </View>
+                    {mintsWithBalance.length === 0 ? (
+                        <View style={styles.emptyState}>
+                            <Txt
+                                txt={t("noMintsWithBalance", {
+                                    ns: NS.common,
+                                })}
+                                styles={[{ color: color.TEXT_SECONDARY }]}
+                            />
+                        </View>
+                    ) : (
+                        mintsWithBalance.map((mint) => (
+                            <MintItem
+                                key={mint.mintUrl}
+                                mint={mint}
+                                isSelected={
+                                    selectedMint?.mintUrl === mint.mintUrl
+                                }
+                                onPress={handleMintPress}
+                                textColor={color.TEXT}
+                                secondaryTextColor={color.TEXT_SECONDARY}
+                                inputBgColor={color.INPUT_BG}
+                            />
+                        ))
+                    )}
+                </BottomSheetScrollView>
             </BottomSheet>
         );
     }
 );
 
 const styles = ScaledSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: "20@s",
-    },
     header: {
-        paddingVertical: "20@vs",
+        paddingVertical: "10@vs",
         alignItems: "center",
         borderBottomWidth: 1,
         marginBottom: "16@vs",
@@ -207,7 +198,7 @@ const styles = ScaledSheet.create({
         flex: 1,
     },
     scrollContent: {
-        paddingBottom: "30@vs",
+        flexGrow: 1,
     },
     emptyState: {
         padding: "20@s",
