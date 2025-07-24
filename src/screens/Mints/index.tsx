@@ -1,389 +1,149 @@
-import ActionButtons from '@comps/ActionButtons'
-import Button, { IconBtn, TxtButton } from '@comps/Button'
-import Empty from '@comps/Empty'
-import { CheckCircleIcon, ChevronRightIcon, MintBoardIcon, PlusIcon, QRIcon, ZapIcon } from '@comps/Icons'
-import Separator from '@comps/Separator'
-import Txt from '@comps/Txt'
-import TxtInput from '@comps/TxtInput'
-import { _testmintUrl } from '@consts'
-import { addMint, getMintsBalances, getMintsUrls } from '@db'
-import { l } from '@log'
-import MyModal from '@modal'
-import { BottomModal } from '@modal/Question'
-import type { IMintBalWithName, IMintUrl } from '@model'
-import type { TMintsPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
-import { BITCOIN_MINTS_URL } from '@src/consts/urls'
-import { usePrivacyContext } from '@src/context/Privacy'
-import { usePromptContext } from '@src/context/Prompt'
-import { useThemeContext } from '@src/context/Theme'
-import { NS } from '@src/i18n'
-import { getCustomMintNames, getDefaultMint } from '@store/mintStore'
-import { globals, highlight as hi, mainColors } from '@styles'
-import { getColor } from '@styles/colors'
-import { formatMintUrl, formatSatStr, isErr, normalizeMintUrl, openUrl, sortMintsByDefault } from '@util'
-import { useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import Button, { IconBtn, TxtButton } from "@comps/Button";
+import Empty from "@comps/Empty";
+import { PlusIcon } from "@comps/Icons";
+import { _testmintUrl } from "@consts";
+import type { TMintsPageProps } from "@model/nav";
+import TopNav from "@nav/TopNav";
+import { BITCOIN_MINTS_URL } from "@src/consts/urls";
+import { useKnownMints } from "@src/context/KnownMints";
+import { usePrivacyContext } from "@src/context/Privacy";
+import { usePromptContext } from "@src/context/Prompt";
+import { useThemeContext } from "@src/context/Theme";
+import { NS } from "@src/i18n";
+import { globals } from "@styles";
+import { getColor } from "@styles/colors";
+import { isErr, openUrl } from "@util";
+import { useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { s, ScaledSheet } from "react-native-size-matters";
+import BottomSheet from "@gorhom/bottom-sheet";
+import AddMintBottomSheet from "./components/AddMintBottomSheet";
+import MintItem from "./components/MintItem";
 
 export default function Mints({ navigation }: TMintsPageProps) {
-	const { t } = useTranslation([NS.common])
-	const { prompt, closePrompt, openPromptAutoClose } = usePromptContext()
-	const { color, highlight } = useThemeContext()
-	const insets = useSafeAreaInsets()
-	const { hidden } = usePrivacyContext()
-	const [loading, setLoading] = useState(false)
-	// mint list
-	const [usertMints, setUserMints] = useState<IMintBalWithName[]>([])
-	// this state is used to determine which mint has been pressed
-	const [selectedMint, setSelectedMint] = useState<IMintUrl>()
-	// the default mint url if user has set one
-	const [defaultMint, setDefaultM] = useState('')
-	// modal visibility state for adding a new mint
-	const [newMintModal, setNewMintModal] = useState(false)
-	// modal visibility for top up a newly added mint
-	const [topUpModal, setTopUpModal] = useState(false)
-	const openTopUpModal = useCallback(() => {
-		const to = setTimeout(() => {
-			setTopUpModal(true)
-			clearTimeout(to)
-		}, 250)
-	}, [])
-	// the text input for adding a new mint
-	const [input, setInput] = useState('')
-	// visibility state for trusting a new mint that is not in the user mint list
-	const [trustModalOpen, setTrustModalOpen] = useState(false)
-	const isTrustedMint = (mintUrl: string) => usertMints.some(m => m.mintUrl === mintUrl)
+    const { t } = useTranslation([NS.common]);
+    const { closePrompt, openPromptAutoClose } = usePromptContext();
+    const { color, highlight } = useThemeContext();
+    const insets = useSafeAreaInsets();
+    const { hidden } = usePrivacyContext();
+    const { knownMints } = useKnownMints();
 
-	// adds a mint via input
-	const handleMintInput = async () => {
-		setLoading(true)
-		// Allow user to submit URL without "https://" and add it ourself if not available
-		const submitted = normalizeMintUrl(input)
-		if (!submitted?.length) {
-			setLoading(false)
-			return openPromptAutoClose({ msg: t('invalidUrl', { ns: NS.mints }), ms: 1500 })
-		}
-		try {
-			// check if mint is already in db
-			const mints = await getMintsUrls(true)
-			if (mints.some(m => m.mintUrl === submitted)) {
-				setLoading(false)
-				return openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
-			}
-			// add mint url to db
-			await addMint(submitted)
-			setSelectedMint({ mintUrl: submitted })
-		} catch (e) {
-			setLoading(false)
-			return openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
-		}
-		setNewMintModal(false)
-		const mints = await getMintsBalances()
-		setUserMints(await getCustomMintNames(mints))
-		setLoading(false)
-		openTopUpModal()
-	}
+    // Bottom sheet ref
+    const addMintSheetRef = useRef<BottomSheet>(null);
 
-	// trust modal asks user for confirmation on adding a default mint to its trusted list
-	const handleTrustModal = async () => {
-		if (!selectedMint) { return }
-		try {
-			await addMint(selectedMint.mintUrl)
-		} catch (e) {
-			// prompt error
-			openPromptAutoClose({ msg: t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
-			setTrustModalOpen(false)
-			return l(e)
-		}
-		setTrustModalOpen(false)
-		openTopUpModal()
-		// update mints list state
-		const mints = await getMintsBalances()
-		setUserMints(await getCustomMintNames(mints))
-	}
+    // Handle QR scanner opening
+    const handleOpenQRScanner = useCallback(() => {
+        navigation.navigate("qr scan", {});
+    }, [navigation]);
 
-	const handleMintsState = useCallback(async () => {
-		const mintsBal = await getMintsBalances()
-		setUserMints(await getCustomMintNames(mintsBal))
-	}, [])
+    const navToBtcMintsDotCom = () => {
+        openUrl(BITCOIN_MINTS_URL)?.catch((e) =>
+            openPromptAutoClose({
+                msg: isErr(e) ? e.message : t("deepLinkErr"),
+            })
+        );
+    };
 
-	const handleInitialRender = useCallback(async () => {
-		await handleMintsState()
-		const defaultt = await getDefaultMint()
-		setDefaultM(defaultt ?? '')
-	}, [handleMintsState])
+    return (
+        <View style={[globals(color).container, styles.container]}>
+            <TopNav
+                screenName="Mints"
+                withBackBtn
+                handlePress={() => navigation.goBack()}
+            />
 
-	const navToBtcMintsDotCom = () => {
-		openUrl(BITCOIN_MINTS_URL)?.catch(e =>
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('deepLinkErr') }))
-	}
+            {knownMints.length > 0 ? (
+                <View
+                    style={[
+                        styles.topSection,
+                        { marginBottom: 75 + insets.bottom },
+                    ]}
+                >
+                    <ScrollView
+                        style={[globals(color).wrapContainer]}
+                        alwaysBounceVertical={false}
+                    >
+                        {knownMints.map((mint, i) => (
+                            <MintItem
+                                key={mint.mintUrl}
+                                mint={mint}
+                                navigation={navigation}
+                                isLast={i === knownMints.length - 1}
+                                color={color}
+                                highlight={highlight}
+                                hidden={hidden}
+                                t={t}
+                            />
+                        ))}
+                    </ScrollView>
+                </View>
+            ) : (
+                <View style={styles.noMintContainer}>
+                    <Empty txt={t("noMint")} />
+                    <View style={styles.noMintBottomSection}>
+                        <Button
+                            txt={t("addNewMint", { ns: NS.mints })}
+                            onPress={() =>
+                                addMintSheetRef.current?.snapToIndex(0)
+                            }
+                        />
+                    </View>
+                </View>
+            )}
 
-	// Show user mints with balances and default mint icon
-	useEffect(() => {
-		void handleInitialRender()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+            {knownMints.length > 0 && (
+                <View style={[styles.newMint, { marginBottom: insets.bottom }]}>
+                    <IconBtn
+                        icon={
+                            <PlusIcon
+                                width={s(30)}
+                                height={s(30)}
+                                color={getColor(highlight, color)}
+                            />
+                        }
+                        onPress={() => {
+                            closePrompt();
+                            addMintSheetRef.current?.snapToIndex(0);
+                        }}
+                    />
+                </View>
+            )}
 
-	// get mints balances and default mint after navigating to this page
-	useEffect(() => {
-		 
-		const focusHandler = navigation.addListener('focus', async () => {
-			await handleInitialRender()
-		})
-		return focusHandler
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [navigation])
-
-	return (
-		<View style={[
-			globals(color).container,
-			styles.container
-		]}>
-			<TopNav
-				screenName='Mints'
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-			/>
-			{usertMints.length > 0 ?
-				<View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
-					{/* Mints list where test mint is always visible */}
-					<ScrollView style={globals(color).wrapContainer} alwaysBounceVertical={false}>
-						{sortMintsByDefault(usertMints, defaultMint).map((m, i) => (
-							<View key={m.mintUrl}>
-								<TouchableOpacity
-									style={[globals().wrapRow, { paddingBottom: s(15) }]}
-									onPress={() => {
-										const remainingMints = usertMints.filter(mint => mint.mintUrl !== m.mintUrl && mint.mintUrl !== _testmintUrl)
-										navigation.navigate('mintmanagement', {
-											mint: m,
-											amount: m.amount,
-											remainingMints
-										})
-									}}
-								>
-									<View style={styles.mintNameWrap}>
-										<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-											{defaultMint === m.mintUrl &&
-												<MintBoardIcon width={18} height={18} color={hi[highlight]} />
-											}
-											<Txt
-												txt={m.customName || formatMintUrl(m.mintUrl)}
-												bold
-												styles={[{ marginLeft: defaultMint === m.mintUrl ? 10 : 0 }]}
-											/>
-										</View>
-										{isTrustedMint(m.mintUrl) &&
-											<View style={styles.mintBal}>
-												{m.amount > 0 && <ZapIcon color={hi[highlight]} />}
-												<Text
-													style={{
-														color: m.amount > 0 ? color.TEXT : color.TEXT_SECONDARY,
-														marginLeft: m.amount > 0 ? 5 : 0,
-														marginBottom: 5
-													}}
-												>
-													{hidden.balance ? '****' : m.amount > 0 ? formatSatStr(m.amount, 'compact') : t('emptyMint')}
-												</Text>
-											</View>
-										}
-									</View>
-									{/* Add mint icon or show balance */}
-									<View>
-										{isTrustedMint(m.mintUrl) ?
-											<ChevronRightIcon color={color.TEXT} />
-											:
-											<PlusIcon color={color.TEXT} />
-										}
-									</View>
-								</TouchableOpacity>
-								{i < usertMints.length - 1 && <Separator style={[{ marginBottom: s(15) }]} />}
-							</View>
-						))}
-					</ScrollView>
-					<TxtButton
-						txt={t('findMint')}
-						onPress={navToBtcMintsDotCom}
-					/>
-				</View>
-				:
-				<View style={styles.noMintContainer}>
-					<Empty txt={t('noMint')} />
-					<View style={styles.noMintBottomSection}>
-						<Button
-							txt={t('addNewMint', { ns: NS.mints })}
-							onPress={() => {
-								setNewMintModal(true)
-							}}
-						/>
-						<Button
-							outlined
-							txt={t('findMint')}
-							onPress={navToBtcMintsDotCom}
-						/>
-					</View>
-				</View>
-			}
-			{/* Submit new mint URL modal */}
-			<MyModal
-				type='bottom'
-				animation='slide'
-				visible={newMintModal && !prompt.open}
-				close={() => setNewMintModal(false)}
-			>
-				<Text style={globals(color).modalHeader}>
-					{t('addNewMint', { ns: NS.mints })}
-				</Text>
-				<View style={styles.wrap}>
-					<TxtInput
-						keyboardType='url'
-						autoCapitalize='none'
-						placeholder='Mint URL'
-						value={input}
-						onChangeText={setInput}
-						onSubmitEditing={() => void handleMintInput()}
-						style={[{ paddingRight: s(55) }]}
-					/>
-					{/* scan icon */}
-					<TouchableOpacity
-						style={styles.inputQR}
-						onPress={() => {
-							setNewMintModal(false)
-							const t = setTimeout(() => {
-								navigation.navigate('qr scan', {})
-								clearTimeout(t)
-							}, 200)
-						}}
-					>
-						<QRIcon color={color.INPUT_PH} />
-					</TouchableOpacity>
-				</View>
-				<Button
-					txt={t('addMintBtn', { ns: NS.mints })}
-					onPress={() => void handleMintInput()}
-					disabled={!input.length || loading}
-					loading={loading}
-				/>
-				<TouchableOpacity style={styles.cancel} onPress={() => setNewMintModal(false)}>
-					<Txt txt={t('cancel')} styles={[globals(color, highlight).pressTxt]} />
-				</TouchableOpacity>
-			</MyModal>
-			{/* Top up newly added mint */}
-			<MyModal
-				type='bottom'
-				animation='slide'
-				visible={topUpModal}
-				close={() => setTopUpModal(false)}
-			>
-				<View style={{ alignItems: 'center', justifyContent: 'center' }}>
-					<CheckCircleIcon width={50} height={50} color={mainColors.VALID} />
-					<Text style={globals(color).modalHeader} testID='new-mint-success'>
-						{t('newMintAdded', { ns: NS.mints })}
-					</Text>
-					<Txt
-						txt={t('newMintAddedQuestion', { ns: NS.mints })}
-						styles={[{ marginTop: -20, marginBottom: 30 }]}
-					/>
-				</View>
-				<ActionButtons
-					topBtnTxt={t('yes')}
-					topBtnAction={() => {
-						setTopUpModal(false)
-						l({ selectedMint })
-						navigation.navigate('selectAmount', {
-							// either for initial default mint (selectedMint->undefined & userMints.length == 1 (user has only the 1 initial mint))
-							// or mint via input (selectedMint->defined)
-							mint: !selectedMint ? { mintUrl: usertMints[0].mintUrl, customName: usertMints[0].customName } : selectedMint,
-							balance: 0,
-						})
-					}}
-					bottomBtnTxt={t('willDoLater')}
-					bottomBtnAction={() => {
-						setTopUpModal(false)
-						// navigation.navigate('dashboard')
-					}}
-				/>
-			</MyModal>
-			<BottomModal
-				header={selectedMint?.mintUrl === _testmintUrl ?
-					t('testMintHint', { ns: NS.mints })
-					:
-					t('trustMintSure', { ns: NS.mints })
-				}
-				visible={trustModalOpen}
-				confirmFn={() => void handleTrustModal()}
-				cancelFn={() => setTrustModalOpen(false)}
-			/>
-			{/* add new mint button */}
-			{usertMints.length > 0 &&
-				<View style={[styles.newMint, { marginBottom: insets.bottom }]}>
-					<IconBtn
-						icon={<PlusIcon width={s(30)} height={s(30)} color={getColor(highlight, color)} />}
-						onPress={() => {
-							closePrompt()
-							setNewMintModal(true)
-						}}
-					/>
-				</View>
-			}
-		</View>
-	)
+            <AddMintBottomSheet
+                ref={addMintSheetRef}
+                onMintAdded={() => {}}
+                onOpenQRScanner={handleOpenQRScanner}
+            />
+        </View>
+    );
 }
 
 const styles = ScaledSheet.create({
-	container: {
-		alignItems: 'center',
-		justifyContent: 'flex-start'
-	},
-	noMintContainer: {
-		flex: 1,
-		width: '100%',
-		paddingHorizontal: '20@s',
-	},
-	noMintBottomSection: {
-		position: 'absolute',
-		bottom: '20@s',
-		right: '20@s',
-		left: '20@s',
-		rowGap: '20@s',
-	},
-	topSection: {
-		width: '100%',
-		// marginTop: 110,
-	},
-	wrap: {
-		position: 'relative',
-		width: '100%',
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	inputQR: {
-		position: 'absolute',
-		right: '13@s',
-		height: '41@vs',
-		paddingHorizontal: '10@s',
-	},
-	newMint: {
-		position: 'absolute',
-		right: 20,
-		bottom: 20,
-	},
-	mintNameWrap: {
-		flexDirection: 'column',
-		alignItems: 'flex-start'
-	},
-	mintBal: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginTop: 10,
-	},
-	cancel: {
-		alignItems: 'center',
-		marginTop: 15,
-		padding: 10,
-		width: '100%',
-	},
-})
+    container: {
+        alignItems: "center",
+        justifyContent: "flex-start",
+        padding: 8,
+    },
+    noMintContainer: {
+        flex: 1,
+        width: "100%",
+        paddingHorizontal: "20@s",
+    },
+    noMintBottomSection: {
+        position: "absolute",
+        bottom: "20@s",
+        right: "20@s",
+        left: "20@s",
+        rowGap: "20@s",
+    },
+    topSection: {
+        width: "100%",
+    },
+    newMint: {
+        position: "absolute",
+        right: 20,
+        bottom: 20,
+    },
+});
