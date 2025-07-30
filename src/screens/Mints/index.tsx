@@ -38,14 +38,6 @@ export default function Mints({ navigation }: TMintsPageProps) {
         navigation.navigate("qr scan", {});
     }, [navigation]);
 
-    const navToBtcMintsDotCom = () => {
-        openUrl(BITCOIN_MINTS_URL)?.catch((e) =>
-            openPromptAutoClose({
-                msg: isErr(e) ? e.message : t("deepLinkErr"),
-            })
-        );
-    };
-
     return (
         <View style={[globals(color).container, styles.container]}>
             <TopNav

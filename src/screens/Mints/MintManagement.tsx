@@ -170,7 +170,13 @@ export default function MintManagement({
                 if (currentDefault === route.params.mint?.mintUrl) {
                     await setDefaultMint("");
                 }
-                await deleteMint(route.params.mint?.mintUrl);
+                // Use MintRepository to delete the mint
+                const { mintRepository } = await import(
+                    "@src/storage/db/repo/MintRepository"
+                );
+                await mintRepository.deleteKnownMint(
+                    route.params.mint?.mintUrl
+                );
                 navigation.goBack();
             } catch (e) {
                 l(e);

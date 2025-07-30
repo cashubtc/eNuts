@@ -35,16 +35,13 @@ const AddMintBottomSheet = forwardRef<BottomSheet, AddMintBottomSheetProps>(
         const [input, setInput] = useState("");
         const [loading, setLoading] = useState(false);
 
-        // Handle sheet animations to dismiss keyboard as soon as sheet starts closing
-        const handleSheetAnimate = useCallback(
-            (fromIndex: number, toIndex: number) => {
-                // Dismiss keyboard immediately when sheet starts animating towards closure
-                if (toIndex === -1) {
-                    Keyboard.dismiss();
-                }
-            },
-            []
-        );
+        // Handle sheet changes to dismiss keyboard when closing
+        const handleSheetChanges = useCallback((index: number) => {
+            if (index === -1) {
+                // Sheet is closing, dismiss keyboard
+                Keyboard.dismiss();
+            }
+        }, []);
 
         const handleMintInput = useCallback(async () => {
             const submitted = normalizeMintUrl(input);
@@ -65,14 +62,10 @@ const AddMintBottomSheet = forwardRef<BottomSheet, AddMintBottomSheetProps>(
 
             setLoading(true);
             try {
-                const mintInfo = await mintService.getUnknownMintInfo(
-                    submitted
-                );
-                await mintRepository.saveKnownMint(submitted, mintInfo);
-
+                await mintService.addKnownMint(submitted);
                 setInput("");
                 onMintAdded(submitted);
-                // Keyboard will be dismissed automatically via handleSheetAnimate when sheet starts closing
+                // Keyboard will be dismissed automatically via handleSheetChanges when sheet closes
                 (ref as React.RefObject<BottomSheet>)?.current?.close();
             } catch (e) {
                 openPromptAutoClose({
@@ -87,7 +80,7 @@ const AddMintBottomSheet = forwardRef<BottomSheet, AddMintBottomSheetProps>(
         }, [input, knownMints, onMintAdded, openPromptAutoClose, ref, t]);
 
         const handleQRPress = useCallback(() => {
-            // Dismiss keyboard immediately before closing sheet
+            // Dismiss keyboard before closing sheet and opening QR scanner
             Keyboard.dismiss();
             (ref as React.RefObject<BottomSheet>)?.current?.close();
             setTimeout(() => onOpenQRScanner(), 200);
@@ -95,7 +88,7 @@ const AddMintBottomSheet = forwardRef<BottomSheet, AddMintBottomSheetProps>(
 
         const handleCancel = useCallback(() => {
             setInput("");
-            // Keyboard will be dismissed automatically via handleSheetAnimate when sheet starts closing
+            // Keyboard will be dismissed automatically via handleSheetChanges when sheet closes
             (ref as React.RefObject<BottomSheet>)?.current?.close();
         }, [ref]);
 
@@ -119,7 +112,6 @@ const AddMintBottomSheet = forwardRef<BottomSheet, AddMintBottomSheetProps>(
                 enableDynamicSizing
                 keyboardBehavior="interactive"
                 keyboardBlurBehavior="restore"
-                enableBlurKeyboardOnGesture={true}
                 backdropComponent={renderBackdrop}
                 backgroundStyle={{
                     backgroundColor: color.BACKGROUND,
@@ -128,7 +120,7 @@ const AddMintBottomSheet = forwardRef<BottomSheet, AddMintBottomSheetProps>(
                     backgroundColor: color.TEXT_SECONDARY,
                 }}
                 animateOnMount={true}
-                onAnimate={handleSheetAnimate}
+                onChange={handleSheetChanges}
             >
                 <BottomSheetScrollView
                     style={[

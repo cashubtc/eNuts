@@ -82,6 +82,30 @@ export class MintRepository {
         const result = await this.database.first<{ count: number }>(sql);
         return result?.count || 0;
     }
+
+    async updateKnownMint(
+        mintUrl: string,
+        updates: Partial<KnownMint>
+    ): Promise<boolean> {
+        const current = await this.getKnownMint(mintUrl);
+        if (!current) {
+            return false;
+        }
+
+        const updated = { ...current, ...updates };
+        const sql = `
+            UPDATE known_mints 
+            SET name = ?, mint_info = ?, updated_at = cast(strftime('%s','now') as INTEGER)
+            WHERE mint_url = ?
+        `;
+        const params = [
+            updated.name,
+            JSON.stringify(updated.mintInfo),
+            mintUrl,
+        ];
+        const result = await this.database.run(sql, params);
+        return result?.changes === 1;
+    }
 }
 
 export const mintRepository = new MintRepository(db);
