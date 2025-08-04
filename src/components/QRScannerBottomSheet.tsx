@@ -19,7 +19,7 @@ import { NS } from "@src/i18n";
 import { mainColors } from "@styles";
 
 // Constants
-const CAMERA_READY_DELAY = 300;
+const CAMERA_READY_DELAY = isIOS ? 1000 : 300; // Even longer delay for iOS
 const QR_MARKER_SIZE = 300;
 const SNAP_POINTS = ["85%"];
 const BACKDROP_OPACITY = 0.8;
@@ -39,8 +39,22 @@ export default function QRScannerBottomSheet() {
 
     // Handle camera permissions
     const requestCameraPermission = useCallback(async () => {
+        console.log(
+            "🎥 Requesting camera permission on platform:",
+            isIOS ? "iOS" : "Android"
+        );
+        console.log("📋 Current permission state before request:", permission);
+
         const result = await requestPermission();
+        console.log("📝 Camera permission result:", {
+            granted: result.granted,
+            status: result.status,
+            canAskAgain: result.canAskAgain,
+            expires: result.expires,
+        });
+
         if (!result.granted) {
+            console.warn("Camera permission denied");
             Alert.alert(
                 t("cameraPermissionTitle") || "Camera Permission",
                 t("cameraPermissionMessage") ||
@@ -60,21 +74,57 @@ export default function QRScannerBottomSheet() {
                 ]
             );
         } else {
+            console.log(
+                `📱 Camera permission granted, setting up camera with ${CAMERA_READY_DELAY}ms delay`
+            );
             // Small delay after permission grant to ensure camera is ready
-            setTimeout(() => setCameraReady(true), CAMERA_READY_DELAY);
+            setTimeout(() => {
+                console.log(
+                    "🎯 Camera ready state set to true after permission grant"
+                );
+                setCameraReady(true);
+            }, CAMERA_READY_DELAY);
         }
     }, [requestPermission, t, closeScanner]);
 
     // Request camera permissions when modal opens
     useEffect(() => {
-        if (!state.visible) return;
+        if (!state.visible) {
+            console.log("QR Scanner not visible, skipping camera setup");
+            return;
+        }
+
+        console.log("🔍 QR Scanner visible, checking permissions...", {
+            permissionGranted: permission?.granted,
+            permissionStatus: permission?.status,
+            permissionRequested,
+            platform: isIOS ? "iOS" : "Android",
+            cameraReady,
+        });
 
         if (!permission?.granted && !permissionRequested) {
+            console.log("🚫 Permission not granted, requesting...");
             setPermissionRequested(true);
             void requestCameraPermission();
         } else if (permission?.granted) {
-            // Permissions already granted - activate camera immediately
-            setCameraReady(true);
+            console.log("✅ Permissions already granted, activating camera");
+            // For iOS, add extra delay even when permission already granted
+            if (isIOS) {
+                console.log(
+                    `⏱️ iOS: Setting camera ready after ${
+                        CAMERA_READY_DELAY / 2
+                    }ms delay`
+                );
+                setTimeout(() => {
+                    console.log("🎯 iOS: Camera ready state set after delay");
+                    setCameraReady(true);
+                }, CAMERA_READY_DELAY / 2);
+            } else {
+                console.log("🚀 Android: Camera ready immediately");
+                setCameraReady(true);
+            }
+        } else {
+            console.log("⚠️ Unexpected permission state:", permission);
         }
     }, [
         state.visible,
@@ -155,6 +205,7 @@ export default function QRScannerBottomSheet() {
 
     // Handle dismiss completion with delay to avoid backdrop flickering
     const handleDismissComplete = useCallback(() => {
+        console.log("QR Scanner dismissed, resetting states");
         // Delay state reset to allow dismiss animation to complete
         setTimeout(() => {
             setPermissionRequested(false);
@@ -199,11 +250,19 @@ export default function QRScannerBottomSheet() {
                         <Text style={styles.cameraLoadingText}>
                             {t("loadingCamera") || "Loading camera..."}
                         </Text>
+                        {isIOS && (
+                            <Text style={styles.cameraHintText}>
+                                If the camera doesn't appear, try closing and
+                                reopening the scanner
+                            </Text>
+                        )}
                     </View>
                 ) : (
                     <>
                         <CameraView
                             style={styles.camera}
+                            facing="back"
+                            mode="picture"
                             onBarcodeScanned={
                                 scanned ? undefined : handleBarCodeScanned
                             }
@@ -211,10 +270,15 @@ export default function QRScannerBottomSheet() {
                                 barcodeTypes: ["qr"],
                             }}
                             onCameraReady={() => {
-                                // Camera is ready - could add analytics here if needed
+                                // Camera is ready - ensure proper state
+                                console.log(
+                                    "✅ Camera successfully mounted and ready on platform:",
+                                    isIOS ? "iOS" : "Android"
+                                );
                             }}
                             onMountError={(error) => {
                                 // Camera failed to mount - close scanner with error
+                                console.error("❌ Camera mount error:", error);
                                 const result: QRScanResult = {
                                     success: false,
                                     error:
@@ -224,10 +288,14 @@ export default function QRScannerBottomSheet() {
                                 handleScanResult(result);
                             }}
                         />
-                        <StaticQRMarker
-                            size={QR_MARKER_SIZE}
-                            color={scanned ? mainColors.GREY : mainColors.WHITE}
-                        />
+                        <View style={styles.markerContainer}>
+                            <StaticQRMarker
+                                size={QR_MARKER_SIZE}
+                                color={
+                                    scanned ? mainColors.GREY : mainColors.WHITE
+                                }
+                            />
+                        </View>
                         {scanned && !processing && (
                             <View style={styles.scanAgain}>
                                 <TouchableOpacity
@@ -268,7 +336,11 @@ const styles = ScaledSheet.create({
         flex: 1,
         width: "100%",
         height: "100%",
-        backgroundColor: mainColors.BLACK,
+        // iOS-specific camera fixes
+        ...(isIOS && {
+            overflow: "hidden",
+            borderRadius: 0,
+        }),
     },
     cameraLoading: {
         flex: 1,
@@ -281,6 +353,14 @@ const styles = ScaledSheet.create({
         fontSize: "16@vs",
         fontWeight: "500",
         marginTop: "10@vs",
+    },
+    cameraHintText: {
+        color: mainColors.WHITE,
+        fontSize: "12@vs",
+        fontWeight: "400",
+        marginTop: "10@vs",
+        textAlign: "center",
+        opacity: 0.7,
     },
     topNav: {
         position: "absolute",
@@ -320,5 +400,15 @@ const styles = ScaledSheet.create({
         fontSize: "16@vs",
         fontWeight: "500",
         marginTop: "10@vs",
+    },
+    markerContainer: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        alignItems: "center",
+        justifyContent: "center",
+        pointerEvents: "none", // Allow camera touch events through
     },
 });

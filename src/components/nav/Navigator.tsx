@@ -34,6 +34,8 @@ import MnemonicScreen from "@screens/Restore/Mnemonic";
 import RecoverScreen from "@screens/Restore/Recover";
 import RecoveringScreen from "@screens/Restore/Recovering";
 import RestoreWarningScreen from "@screens/Restore/RestoreWarning";
+import QRScannerTest from "@screens/QRScannerTest";
+import QRScan from "@screens/QRScan";
 import SeedScreen from "@screens/Restore/Seed";
 import SelectRecoveryMintScreen from "@screens/Restore/SelectRecoveryMint";
 import Settings from "@screens/Settings";
@@ -237,6 +239,17 @@ export default function Navigator({
                 <Stack.Screen
                     name="Restore warning"
                     component={RestoreWarningScreen}
+                />
+                <Stack.Screen
+                    name="QR Scanner Test"
+                    component={QRScannerTest}
+                />
+                <Stack.Screen
+                    name="qr scan"
+                    component={QRScan}
+                    options={{
+                        headerShown: false,
+                    }}
                 />
             </Stack.Navigator>
         </View>

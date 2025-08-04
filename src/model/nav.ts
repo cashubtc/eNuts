@@ -206,6 +206,12 @@ export type RootStackParamList = {
     "Restore warning": {
         comingFromOnboarding?: boolean;
     };
+    "QR Scanner Test": undefined;
+    "qr scan": {
+        mint?: IMintUrl;
+        balance?: number;
+        isPayment?: boolean;
+    };
 };
 
 export type TRouteString = "dashboard" | "mints" | "Settings";
@@ -373,6 +379,14 @@ export type ISelectRecoveryMintPageProps = NativeStackScreenProps<
 export type IRestoreWarningPageProps = NativeStackScreenProps<
     RootStackParamList,
     "Restore warning"
+>;
+export type TQRScannerTestPageProps = NativeStackScreenProps<
+    RootStackParamList,
+    "QR Scanner Test"
+>;
+export type TQRScanPageProps = NativeStackScreenProps<
+    RootStackParamList,
+    "qr scan"
 >;
 export type TBottomNavProps =
     | TDashboardPageProps

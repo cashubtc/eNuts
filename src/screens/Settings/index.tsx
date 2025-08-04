@@ -173,6 +173,13 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
                             icon={<Text>💥💥💥</Text>}
                             onPress={() => setConfirmReset(true)}
                         />
+                        <MenuItem
+                            txt="QR Scanner Test"
+                            icon={<Text>📱</Text>}
+                            onPress={() =>
+                                navigation.navigate("QR Scanner Test")
+                            }
+                        />
                     </View>
                 )}
                 <Txt txt={appVersion} bold center />
