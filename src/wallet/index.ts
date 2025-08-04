@@ -336,6 +336,7 @@ export async function sendToken(
 ): Promise<string> {
     const wallet = await walletService.getWallet(mintUrl);
     // will throw if not enough proofs are available
+    await proofService.setProofsState(proofs, "inflight");
     const { keep, send } = await wallet.send(amount, proofs);
     await proofService.addProofs(
         keep.map((p) => ({ ...p, state: "ready", mintUrl }))

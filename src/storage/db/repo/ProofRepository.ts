@@ -85,9 +85,9 @@ export class ProofRepository {
         return true;
     }
 
-    async getProof(id: string): Promise<EnutsProof | null> {
-        const sql = "SELECT * FROM proofs WHERE id = ?";
-        const result = await this.database.first<ProofRow>(sql, [id]);
+    async getProof(secret: string): Promise<EnutsProof | null> {
+        const sql = "SELECT * FROM proofs WHERE secret = ?";
+        const result = await this.database.first<ProofRow>(sql, [secret]);
 
         if (!result) return null;
 
@@ -115,18 +115,25 @@ export class ProofRepository {
         return results.map(mapRowToDomain);
     }
 
-    async deleteProof(id: string): Promise<boolean> {
-        const sql = "DELETE FROM proofs WHERE id = ?";
-        const result = await this.database.run(sql, [id]);
+    async getProofsByKeysetId(keysetId: string): Promise<EnutsProof[]> {
+        const sql = "SELECT * FROM proofs WHERE id = ?";
+        const results = await this.database.all<ProofRow>(sql, [keysetId]);
+
+        return results.map(mapRowToDomain);
+    }
+
+    async deleteProof(secret: string): Promise<boolean> {
+        const sql = "DELETE FROM proofs WHERE secret = ?";
+        const result = await this.database.run(sql, [secret]);
         return result?.changes === 1;
     }
 
-    async deleteProofsByIds(ids: string[]): Promise<boolean> {
-        if (ids.length === 0) return true;
-        const placeholders = ids.map(() => "?").join(",");
-        const sql = `DELETE FROM proofs WHERE id IN (${placeholders})`;
-        const result = await this.database.run(sql, ids);
-        return result?.changes === ids.length;
+    async deleteProofsBySecrets(secrets: string[]): Promise<boolean> {
+        if (secrets.length === 0) return true;
+        const placeholders = secrets.map(() => "?").join(",");
+        const sql = `DELETE FROM proofs WHERE secret IN (${placeholders})`;
+        const result = await this.database.run(sql, secrets);
+        return result?.changes === secrets.length;
     }
 
     async deleteProofsByMintUrl(mintUrl: string): Promise<boolean> {
@@ -135,7 +142,10 @@ export class ProofRepository {
         return result?.changes >= 1;
     }
 
-    async updateProof(id: string, updates: Partial<Proof>): Promise<boolean> {
+    async updateProof(
+        secret: string,
+        updates: Partial<Proof>
+    ): Promise<boolean> {
         const rowUpdates = mapDomainToRow(updates);
         const fields = Object.keys(rowUpdates).filter(
             (key) => rowUpdates[key as keyof ProofRow] !== undefined
@@ -144,12 +154,12 @@ export class ProofRepository {
         if (fields.length === 0) return false;
 
         const setClause = fields.map((field) => `${field} = ?`).join(", ");
-        const sql = `UPDATE proofs SET ${setClause} WHERE id = ?`;
+        const sql = `UPDATE proofs SET ${setClause} WHERE secret = ?`;
         const params = [
             ...fields
                 .map((field) => rowUpdates[field as keyof ProofRow])
                 .filter((val) => val !== undefined),
-            id,
+            secret,
         ];
 
         const result = await this.database.run(sql, params);
@@ -157,17 +167,17 @@ export class ProofRepository {
     }
 
     async updateProofsState(
-        ids: string[],
+        secrets: string[],
         state: EnutsProof["state"]
     ): Promise<boolean> {
-        if (ids.length === 0) return true;
+        if (secrets.length === 0) return true;
 
-        const placeholders = ids.map(() => "?").join(",");
-        const sql = `UPDATE proofs SET state = ? WHERE id IN (${placeholders})`;
-        const params = [state, ...ids];
+        const placeholders = secrets.map(() => "?").join(",");
+        const sql = `UPDATE proofs SET state = ? WHERE secret IN (${placeholders})`;
+        const params = [state, ...secrets];
 
         const result = await this.database.run(sql, params);
-        return result?.changes === ids.length;
+        return result?.changes === secrets.length;
     }
 
     async getProofsCount(): Promise<number> {

@@ -26,11 +26,8 @@ export const useCheckSpent = (token: Token) => {
                                     console.log(
                                         "Payment sent! Marking proofs as used."
                                     );
-                                    const proofIds = token.proofs.map(
-                                        (pr) => pr.id
-                                    );
                                     await proofService.setProofsState(
-                                        proofIds,
+                                        token.proofs,
                                         "used"
                                     );
                                     setSpent(true);
