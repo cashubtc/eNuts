@@ -25,7 +25,7 @@ import InputfieldScreen from "@screens/Payment/Send/Inputfield";
 import SelectMintToSwapToScreen from "@screens/Payment/Send/SelectMintToSwapTo";
 import SelectTargetScreen from "@screens/Payment/Send/SelectTarget";
 import SuccessPage from "@screens/Payment/Success";
-import QRScanPage from "@screens/QRScan";
+
 import MintConfirmScreen from "@screens/QRScan/MintConfirm";
 import QRProcessingScreen from "@screens/QRScan/QRProcessing";
 import ScanSuccessScreen from "@screens/QRScan/ScanSuccess";
@@ -196,13 +196,6 @@ export default function Navigator({
                 />
                 <Stack.Screen name="mint info" component={MintInfoPage} />
                 <Stack.Screen name="mint proofs" component={MintProofsPage} />
-                <Stack.Screen
-                    name="qr scan"
-                    component={QRScanPage}
-                    options={{
-                        navigationBarHidden: true,
-                    }}
-                />
                 <Stack.Screen name="history" component={HistoryPage} />
                 <Stack.Screen
                     name="history entry details"

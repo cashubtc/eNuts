@@ -20,6 +20,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { useTrustMintContext } from "@src/context/TrustMint";
 import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
+import { useQRScanHandler } from "@util/qrScanner";
 import { mintRepository } from "@src/storage/db/repo/MintRepository";
 import { mintService } from "@src/wallet/services/MintService";
 import { store } from "@store";
@@ -58,6 +59,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     // Trust mint modal
     const { showTrustMintModal } = useTrustMintContext();
     const { knownMints } = useKnownMints();
+    // QR Scanner
+    const { openQRScanner } = useQRScanHandler(navigation);
     // Bottom sheet refs
     const sendOptionsRef = useRef<BottomSheet>(null);
     const receiveOptionsRef = useRef<BottomSheet>(null);
@@ -238,9 +241,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
                     }
                     txt={t("scan")}
                     color={hi[highlight]}
-                    onPress={() =>
-                        navigation.navigate("qr scan", { mint: undefined })
-                    }
+                    onPress={() => void openQRScanner()}
                 />
                 <ActionBtn
                     icon={

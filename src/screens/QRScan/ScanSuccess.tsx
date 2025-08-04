@@ -4,6 +4,7 @@ import type { TBeforeRemoveEvent, TScanSuccessPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
+import { useQRScanHandler } from "@util/qrScanner";
 import { globals } from "@styles";
 import { formatMintUrl } from "@util";
 import AnimatedLottieView from "lottie-react-native";
@@ -19,6 +20,7 @@ export default function ScanSuccessScreen({
     const { mintUrl, edited } = route.params;
     const { t } = useTranslation([NS.mints]);
     const { color } = useThemeContext();
+    const { openQRScanner } = useQRScanHandler(navigation);
 
     const handleTopUp = () => {
         if (!mintUrl) {
@@ -67,7 +69,7 @@ export default function ScanSuccessScreen({
                     <Button
                         txt={t("scanAnother", { ns: NS.common })}
                         outlined
-                        onPress={() => navigation.navigate("qr scan", {})}
+                        onPress={() => void openQRScanner()}
                     />
                 )}
                 <TxtButton

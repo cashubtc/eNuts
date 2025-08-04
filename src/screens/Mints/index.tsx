@@ -10,6 +10,7 @@ import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
+import { useQRScanHandler } from "@util/qrScanner";
 import { globals } from "@styles";
 import { getColor } from "@styles/colors";
 import { isErr, openUrl } from "@util";
@@ -29,14 +30,15 @@ export default function Mints({ navigation }: TMintsPageProps) {
     const insets = useSafeAreaInsets();
     const { hidden } = usePrivacyContext();
     const { knownMints } = useKnownMints();
+    const { openQRScanner } = useQRScanHandler(navigation);
 
     // Bottom sheet ref
     const addMintSheetRef = useRef<BottomSheet>(null);
 
     // Handle QR scanner opening
     const handleOpenQRScanner = useCallback(() => {
-        navigation.navigate("qr scan", {});
-    }, [navigation]);
+        void openQRScanner();
+    }, [openQRScanner]);
 
     return (
         <View style={[globals(color).container, styles.container]}>

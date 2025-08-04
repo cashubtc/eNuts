@@ -17,7 +17,6 @@ import { NS } from "@src/i18n";
 import { globals, highlight as hi } from "@styles";
 import { normalizeMintUrl, isErr } from "@util";
 import { mintService } from "@src/wallet/services/MintService";
-import { mintRepository } from "@src/storage/db/repo/MintRepository";
 import { useKnownMints } from "@src/context/KnownMints";
 
 interface AddMintBottomSheetProps {
@@ -62,7 +61,7 @@ const AddMintBottomSheet = forwardRef<BottomSheet, AddMintBottomSheetProps>(
 
             setLoading(true);
             try {
-                await mintService.addKnownMint(submitted);
+                await mintService.addMint(submitted);
                 setInput("");
                 onMintAdded(submitted);
                 // Keyboard will be dismissed automatically via handleSheetChanges when sheet closes

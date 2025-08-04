@@ -3,7 +3,7 @@ import { SQLiteDB } from "../Db";
 import { MintInfo } from "@src/wallet/types";
 
 // Database row type (snake_case - matches table structure)
-interface KnownMintRow {
+interface MintRow {
     mint_url: string;
     name: string;
     mint_info: string; // JSON string
@@ -12,7 +12,7 @@ interface KnownMintRow {
 }
 
 // Domain type (camelCase - for use in codebase)
-export interface KnownMint {
+export interface Mint {
     mintUrl: string;
     name: string;
     mintInfo: MintInfo;
@@ -21,7 +21,7 @@ export interface KnownMint {
 }
 
 // Mapper functions
-const mapRowToDomain = (row: KnownMintRow): KnownMint => ({
+const mapRowToDomain = (row: MintRow): Mint => ({
     mintUrl: row.mint_url,
     name: row.name,
     mintInfo: JSON.parse(row.mint_info),
@@ -46,46 +46,46 @@ export class MintRepository {
         return result?.changes === 1;
     }
 
-    async getKnownMint(mintUrl: string): Promise<KnownMint | null> {
+    async getMint(mintUrl: string): Promise<Mint | null> {
         const sql = "SELECT * FROM known_mints WHERE mint_url = ?";
-        const result = await this.database.first<KnownMintRow>(sql, [mintUrl]);
+        const result = await this.database.first<MintRow>(sql, [mintUrl]);
 
         if (!result) return null;
 
         return mapRowToDomain(result);
     }
 
-    async getAllKnownMints(): Promise<KnownMint[]> {
+    async getAllMints(): Promise<Mint[]> {
         const sql = "SELECT * FROM known_mints ORDER BY name";
-        const results = await this.database.all<KnownMintRow>(sql);
+        const results = await this.database.all<MintRow>(sql);
 
         return results.map(mapRowToDomain);
     }
 
-    async deleteKnownMint(mintUrl: string): Promise<boolean> {
+    async deleteMint(mintUrl: string): Promise<boolean> {
         const sql = "DELETE FROM known_mints WHERE mint_url = ?";
         const result = await this.database.run(sql, [mintUrl]);
         return result?.changes === 1;
     }
 
-    async findKnownMintsByName(namePattern: string): Promise<KnownMint[]> {
+    async findMintsByName(namePattern: string): Promise<Mint[]> {
         const sql = "SELECT * FROM known_mints WHERE name LIKE ? ORDER BY name";
-        const results = await this.database.all<KnownMintRow>(sql, [
+        const results = await this.database.all<MintRow>(sql, [
             `%${namePattern}%`,
         ]);
 
         return results.map(mapRowToDomain);
     }
 
-    async getKnownMintsCount(): Promise<number> {
+    async getMintsCount(): Promise<number> {
         const sql = "SELECT COUNT(*) as count FROM known_mints";
         const result = await this.database.first<{ count: number }>(sql);
         return result?.count || 0;
     }
 
-    async updateKnownMint(
+    async updateMint(
         mintUrl: string,
-        updates: Partial<KnownMint>
+        updates: Partial<Mint>
     ): Promise<boolean> {
         const current = await this.getKnownMint(mintUrl);
         if (!current) {

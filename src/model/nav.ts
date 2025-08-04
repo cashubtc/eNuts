@@ -170,11 +170,6 @@ export type RootStackParamList = {
     "mint proofs": {
         mintUrl: string;
     };
-    "qr scan": {
-        mint?: IMintUrl;
-        balance?: number;
-        isPayment?: boolean;
-    };
     "history entry details": {
         entry: IHistoryEntry;
     };
@@ -322,11 +317,6 @@ export type TMintInfoPageProps = NativeStackScreenProps<
 export type TMintProofsPageProps = NativeStackScreenProps<
     RootStackParamList,
     "mint proofs",
-    "MyStack"
->;
-export type TQRScanPageProps = NativeStackScreenProps<
-    RootStackParamList,
-    "qr scan",
     "MyStack"
 >;
 export type THistoryPageProps = NativeStackScreenProps<

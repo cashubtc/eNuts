@@ -6,7 +6,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { s } from "react-native-size-matters";
 import { globals, highlight as hi } from "@styles";
 import type { NavigationProp } from "@react-navigation/native";
-import type { TRootStackParamList } from "@model/nav";
+import type { RootStackParamList } from "@model/nav";
 
 interface MintItemProps {
     mint: {
@@ -14,7 +14,7 @@ interface MintItemProps {
         name?: string;
         balance: number;
     };
-    navigation: NavigationProp<TRootStackParamList>;
+    navigation: NavigationProp<RootStackParamList>;
     isLast: boolean;
     color: any;
     highlight: string;
@@ -71,7 +71,9 @@ export default function MintItem({
                         />
                     </View>
                     <View style={styles.mintBal}>
-                        {mint.balance > 0 && <ZapIcon color={hi[highlight]} />}
+                        {mint.balance > 0 && (
+                            <ZapIcon color={hi[highlight as keyof typeof hi]} />
+                        )}
                         <Text
                             style={{
                                 color:

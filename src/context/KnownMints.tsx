@@ -37,7 +37,7 @@ const useKnownMintsInternal = () => {
         setLoading(true);
         try {
             const [knownMintsData, readyProofs] = await Promise.all([
-                mintService.getAllKnownMints(),
+                mintService.getAllMints(),
                 proofService.getProofsByState("ready"),
             ]);
 

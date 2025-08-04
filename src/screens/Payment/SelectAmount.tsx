@@ -14,6 +14,7 @@ import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
+import { useQRScanHandler } from "@util/qrScanner";
 import { globals, highlight as hi, mainColors } from "@styles";
 import { formatInt, formatSatStr, vib } from "@util";
 import {
@@ -42,6 +43,7 @@ export default function SelectAmountScreen({
     const { hidden } = usePrivacyContext();
     const { anim, shake } = useShakeAnimation();
     const { knownMints } = useKnownMints();
+    const { openQRScanner } = useQRScanHandler(navigation);
 
     // Use useRef instead of createRef to avoid recreation on every render
     const numericInputRef = useRef<TextInput>(null);
@@ -218,9 +220,7 @@ export default function SelectAmountScreen({
             screenName={t(screenName, { ns: NS.common })}
             withBackBtn
             handlePress={() =>
-                scanned
-                    ? navigation.navigate("qr scan", {})
-                    : navigation.goBack()
+                scanned ? void openQRScanner() : navigation.goBack()
             }
         >
             {!isMelt && !isSwap && (

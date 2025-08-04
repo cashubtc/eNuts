@@ -12,6 +12,7 @@ import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { KnownMintWithBalance, useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
+import { useQRScanHandler } from "@util/qrScanner";
 import { getDefaultMint } from "@store/mintStore";
 import { globals, highlight as hi } from "@styles";
 import { formatInt, formatMintUrl, isNum, sortMintsByDefault } from "@util";
@@ -42,6 +43,7 @@ export default function SelectMintScreen({
     const { t } = useTranslation([NS.wallet]);
     const { color, highlight } = useThemeContext();
     const { knownMints } = useKnownMints();
+    const { openQRScanner } = useQRScanHandler(navigation);
 
     const mintsWithBalance = useMemo(() => {
         return knownMints.filter((m) => m.balance > 0);
@@ -121,7 +123,7 @@ export default function SelectMintScreen({
             withBackBtn
             handlePress={() => {
                 if (scanned) {
-                    return navigation.navigate("qr scan", {});
+                    return void openQRScanner();
                 }
                 navigation.goBack();
             }}

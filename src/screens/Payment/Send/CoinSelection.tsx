@@ -15,6 +15,7 @@ function truncateStr(str: string, len: number): string {
 import { useInitialURL } from "@src/context/Linking";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
+import { useQRScanHandler } from "@util/qrScanner";
 import { globals } from "@styles";
 import {
     formatInt,
@@ -59,6 +60,7 @@ export default function CoinSelectionScreen({
     const { t } = useTranslation([NS.common]);
     const { color } = useThemeContext();
     const { url, clearUrl } = useInitialURL();
+    const { openQRScanner } = useQRScanHandler(navigation);
 
     const getPaymentType = () => {
         if (isZap) {
@@ -128,7 +130,7 @@ export default function CoinSelectionScreen({
                 withBackBtn
                 handlePress={() => {
                     if (scanned) {
-                        return navigation.navigate("qr scan", {});
+                        return void openQRScanner();
                     }
                     const routes = navigation.getState()?.routes;
                     const prevRoute = routes[routes.length - 2];
