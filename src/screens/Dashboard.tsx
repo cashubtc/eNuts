@@ -7,7 +7,6 @@ import BottomSheetOptionsModal from "@comps/modal/BottomSheetOptionsModal";
 import Txt from "@comps/Txt";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { _testmintUrl, env } from "@consts";
-import { getMintsUrls, hasMints } from "@db";
 import { l } from "@log";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
 import BottomNav from "@nav/BottomNav";
@@ -23,21 +22,10 @@ import { NS } from "@src/i18n";
 // import { useQRScanHandler } from "@util/qrScanner"; // No longer needed - using dedicated screen
 import { mintRepository } from "@src/storage/db/repo/MintRepository";
 import { mintService } from "@src/wallet/services/MintService";
-import { store } from "@store";
-import { STORE_KEYS } from "@store/consts";
-import { getDefaultMint } from "@store/mintStore";
 import { highlight as hi, mainColors } from "@styles";
-import {
-    extractStrFromURL,
-    getStrFromClipboard,
-    hasTrustedMint,
-    isCashuToken,
-    isLnInvoice,
-    isStr,
-} from "@util";
+import { getStrFromClipboard } from "@util";
 import { claimToken, getMintsForPayment } from "@wallet";
-import { getTokenInfo, sumProofsValue } from "@wallet/proofs";
-import { isValidCashuToken } from "@wallet/util";
+import { sumProofsValue } from "@wallet/proofs";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity, View } from "react-native";
@@ -139,7 +127,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             return;
         }
 
-        const knownMints = await mintService.getAllKnownMints();
+        const knownMints = await mintService.getAllMints();
         if (!knownMints.find((m) => m.mintUrl === decoded.mint)) {
             stopLoading();
             // Show trust modal
@@ -172,7 +160,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         isSendEcash,
     }: {
         isMelt?: boolean;
-        isSendEcash?: boolean;
+        isSendEash?: boolean;
     } = {}) => {
         if (isMelt) {
             navigation.navigate("meltInputfield");

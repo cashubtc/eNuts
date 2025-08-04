@@ -7,7 +7,7 @@ import {
 import { proofEvents } from "@src/util/events";
 
 export class ProofService {
-    private proofRepo: ProofRepository;
+    public proofRepo: ProofRepository;
 
     constructor(proofRepo: ProofRepository) {
         this.proofRepo = proofRepo;

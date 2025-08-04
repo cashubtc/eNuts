@@ -207,6 +207,7 @@ export type RootStackParamList = {
         comingFromOnboarding?: boolean;
     };
     "QR Scanner Test": undefined;
+    "Proofs Debug": undefined;
     "qr scan": {
         mint?: IMintUrl;
         balance?: number;
@@ -383,6 +384,10 @@ export type IRestoreWarningPageProps = NativeStackScreenProps<
 export type TQRScannerTestPageProps = NativeStackScreenProps<
     RootStackParamList,
     "QR Scanner Test"
+>;
+export type TProofsDebugPageProps = NativeStackScreenProps<
+    RootStackParamList,
+    "Proofs Debug"
 >;
 export type TQRScanPageProps = NativeStackScreenProps<
     RootStackParamList,
