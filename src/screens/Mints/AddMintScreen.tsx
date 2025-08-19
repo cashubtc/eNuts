@@ -145,7 +145,6 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
     try {
       await mintService.addMint(submitted);
       const allMints = await mintService.getAllMints();
-      console.log(allMints);
       navigation.goBack();
     } catch (e) {
       openPromptAutoClose({

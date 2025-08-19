@@ -1,26 +1,20 @@
 import useCopy from "@comps/hooks/Copy";
 import {
-  AboutIcon,
   BitcoinIcon,
   CheckmarkIcon,
   ChevronRightIcon,
   CopyIcon,
-  EyeIcon,
-  PlusIcon,
-  QRIcon,
   TrashbinIcon,
   ValidateIcon,
-  ZapIcon,
 } from "@comps/Icons";
-import QRModal from "@comps/QRModal";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
 
 import { _testmintUrl, isIOS } from "@consts";
-import { deleteProofs, getProofsByMintUrl } from "@db";
 import { l } from "@log";
 import { BottomModal } from "@modal/Question";
 import TopNav from "@nav/TopNav";
+import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
@@ -30,11 +24,11 @@ import { mintService } from "@src/wallet/services/MintService";
 
 import { globals, mainColors } from "@styles";
 import { formatMintUrl, formatSatStr } from "@util";
-import { checkProofsSpent } from "@wallet";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { Image } from "expo-image";
 
 export default function MintSettingsScreen({
   navigation,
@@ -50,35 +44,24 @@ export default function MintSettingsScreen({
   // delete mint prompt
   const [delMintModalOpen, setDelMintModalOpen] = useState(false);
   const { copied, copy } = useCopy();
-  const [qr, setQr] = useState({ open: false, error: false });
 
-  const handleProofCheck = async () => {
-    setCheckProofsOpen(false);
-    const mintUrl = route.params.mint?.mintUrl;
-    const proofs = await getProofsByMintUrl(mintUrl);
-    const res = await checkProofsSpent(mintUrl, proofs);
-    const proofsToDel = proofs.filter((p) =>
-      res.map((x) => x.secret).includes(p.secret),
-    );
-    try {
-      await deleteProofs(proofsToDel);
-      openPromptAutoClose({
-        msg: t("deletedProofs", {
-          ns: NS.mints,
-          proofsToDel: proofsToDel.length,
-        }),
-        success: true,
-      });
-    } catch (e) {
-      l(e);
-      openPromptAutoClose({ msg: t("errDelProofs", { ns: NS.mints }) });
-    }
+  // Track which field was copied for better UX
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopy = async (text: string, fieldId: string) => {
+    await copy(text);
+    setCopiedField(fieldId);
+    setTimeout(() => setCopiedField(null), 2000);
   };
+
+  const { knownMints } = useKnownMints();
+  const mint = knownMints.find((m) => m.mintUrl === route.params.mintUrl);
+  console.log("mint", mint);
 
   const handleMintDelete = () => {
     void (async () => {
       try {
-        await mintService.removeMintFromStrore(route.params.mint?.mintUrl);
+        await mintService.removeMintFromStrore(route.params.mintUrl);
         navigation.goBack();
       } catch (e) {
         l(e);
@@ -98,6 +81,31 @@ export default function MintSettingsScreen({
         showsVerticalScrollIndicator={false}
       >
         <View>
+          {/* Mint Header */}
+          <View style={styles.mintHeader}>
+            <View style={styles.mintInfoContainer}>
+              {mint?.mintInfo?.name && (
+                <Txt
+                  txt={mint.mintInfo.name}
+                  styles={[styles.mintName, { color: color.TEXT }]}
+                />
+              )}
+              {mint?.mintInfo?.version && (
+                <Txt
+                  txt={mint.mintInfo.version}
+                  styles={[styles.mintVersion, { color: color.TEXT_SECONDARY }]}
+                />
+              )}
+            </View>
+            {mint?.mintInfo?.icon_url && (
+              <Image
+                source={{ uri: mint.mintInfo.icon_url }}
+                style={styles.mintIcon}
+                contentFit="cover"
+                transition={200}
+              />
+            )}
+          </View>
           {/* General */}
           <Txt
             txt={t("general", { ns: NS.mints })}
@@ -113,20 +121,18 @@ export default function MintSettingsScreen({
                 <Txt txt={t("balance")} />
               </View>
               <Txt
-                txt={
-                  hidden.balance ? "****" : formatSatStr(route.params.amount)
-                }
+                txt={hidden.balance ? "****" : formatSatStr(mint?.balance ?? 0)}
               />
             </View>
             <Separator style={[styles.separator]} />
             {/* Mint url */}
             <MintOption
-              txt={formatMintUrl(route.params.mint?.mintUrl)}
+              txt={formatMintUrl(route.params.mintUrl)}
               hasSeparator
               noChevron
-              onPress={() => void copy(route.params.mint?.mintUrl)}
+              onPress={() => void handleCopy(route.params.mintUrl, "mintUrl")}
               icon={
-                copied ? (
+                copiedField === "mintUrl" ? (
                   <CheckmarkIcon
                     width={s(20)}
                     height={s(20)}
@@ -137,81 +143,141 @@ export default function MintSettingsScreen({
                 )
               }
             />
-            {/* scan url */}
-            <MintOption
-              txt={t("showQr", { ns: NS.history })}
-              hasSeparator
-              noChevron
-              onPress={() => setQr({ open: true, error: false })}
-              icon={<QRIcon width={s(16)} height={s(16)} color={color.TEXT} />}
-            />
-
-            {/* Mint info */}
-            <MintOption
-              txt={t("mintInfo", { ns: NS.mints })}
-              onPress={() =>
-                navigation.navigate("mint info", {
-                  mintUrl: route.params.mint?.mintUrl,
-                })
-              }
-              icon={
-                <AboutIcon width={s(22)} height={s(22)} color={color.TEXT} />
-              }
-            />
           </View>
-          {/* Fund management */}
-          <Txt
-            txt={t("funds", { ns: NS.mints })}
-            styles={[styles.sectionHeader]}
-          />
-          <View style={globals(color).wrapContainer}>
-            {/* Mint new tokens */}
-            <MintOption
-              txt={t("mintNewTokens", { ns: NS.mints })}
-              hasSeparator
-              onPress={() =>
-                navigation.navigate("selectAmount", {
-                  isMelt: false,
-                  isSendEcash: false,
-                })
-              }
-              icon={<PlusIcon color={color.TEXT} />}
-            />
-            {/* Redeem to lightning */}
-            <MintOption
-              txt={t("meltToken", { ns: NS.mints })}
-              hasSeparator
-              onPress={() => {
-                if (route.params.amount < 1) {
-                  openPromptAutoClose({ msg: t("noFunds") });
-                  return;
-                }
-                navigation.navigate("selectTarget", {
-                  mint: route.params.mint,
-                  balance: route.params.amount,
-                  remainingMints: route.params.remainingMints,
-                });
-              }}
-              icon={<ZapIcon color={color.TEXT} />}
-            />
+          {/* Metadata */}
+          {mint?.mintInfo && (
+            <>
+              <Txt
+                txt={t("metadata", { ns: NS.mints })}
+                styles={[styles.sectionHeader]}
+              />
+              <View style={globals(color).wrapContainer}>
+                {/* Description */}
+                {mint.mintInfo.description && (
+                  <MintOption
+                    txt={mint.mintInfo.description}
+                    hasSeparator={!!mint.mintInfo.description_long}
+                    noChevron
+                    onPress={() =>
+                      void handleCopy(
+                        mint.mintInfo.description || "",
+                        "description"
+                      )
+                    }
+                    icon={
+                      copiedField === "description" ? (
+                        <CheckmarkIcon
+                          width={s(20)}
+                          height={s(20)}
+                          color={mainColors.VALID}
+                        />
+                      ) : (
+                        <CopyIcon color={color.TEXT} />
+                      )
+                    }
+                  />
+                )}
+                {/* Long Description */}
+                {mint.mintInfo.description_long && (
+                  <MintOption
+                    txt={mint.mintInfo.description_long}
+                    hasSeparator={
+                      !!(
+                        mint.mintInfo.contact &&
+                        mint.mintInfo.contact.length > 0
+                      ) || !!mint.mintInfo.motd
+                    }
+                    noChevron
+                    onPress={() =>
+                      void handleCopy(
+                        mint.mintInfo.description_long || "",
+                        "descriptionLong"
+                      )
+                    }
+                    icon={
+                      copiedField === "descriptionLong" ? (
+                        <CheckmarkIcon
+                          width={s(20)}
+                          height={s(20)}
+                          color={mainColors.VALID}
+                        />
+                      ) : (
+                        <CopyIcon color={color.TEXT} />
+                      )
+                    }
+                  />
+                )}
+                {/* Contact Information */}
+                {mint.mintInfo.contact && mint.mintInfo.contact.length > 0 && (
+                  <>
+                    {mint.mintInfo.contact.map((contact, index) => {
+                      const isLast =
+                        index === mint.mintInfo.contact!.length - 1;
+                      const hasMotd = !!mint.mintInfo.motd;
+                      const formatContactMethod = (method: string) => {
+                        switch (method.toLowerCase()) {
+                          case "email":
+                            return "📧";
+                          case "twitter":
+                            return "🐦";
+                          case "nostr":
+                            return "⚡";
+                          default:
+                            return "📞";
+                        }
+                      };
 
-            {/* Proof list */}
-            <MintOption
-              txt={t("proofs", { ns: NS.wallet })}
-              onPress={() => {
-                if (route.params.amount < 1) {
-                  openPromptAutoClose({
-                    msg: t("noProofs", { ns: NS.mints }),
-                  });
-                  return;
-                }
-                navigation.navigate("mint proofs", {
-                  mintUrl: route.params.mint.mintUrl,
-                });
-              }}
-              icon={<EyeIcon width={s(22)} height={s(22)} color={color.TEXT} />}
-            />
-          </View>
+                      return (
+                        <MintOption
+                          key={`${contact.method}-${index}`}
+                          txt={`${formatContactMethod(contact.method)} ${
+                            contact.info
+                          }`}
+                          hasSeparator={!isLast || hasMotd}
+                          noChevron
+                          onPress={() =>
+                            void handleCopy(contact.info, `contact-${index}`)
+                          }
+                          icon={
+                            copiedField === `contact-${index}` ? (
+                              <CheckmarkIcon
+                                width={s(20)}
+                                height={s(20)}
+                                color={mainColors.VALID}
+                              />
+                            ) : (
+                              <CopyIcon color={color.TEXT} />
+                            )
+                          }
+                        />
+                      );
+                    })}
+                  </>
+                )}
+                {/* Message of the Day */}
+                {mint.mintInfo.motd && (
+                  <MintOption
+                    txt={`💬 ${mint.mintInfo.motd}`}
+                    noChevron
+                    onPress={() =>
+                      void handleCopy(mint.mintInfo.motd || "", "motd")
+                    }
+                    icon={
+                      copiedField === "motd" ? (
+                        <CheckmarkIcon
+                          width={s(20)}
+                          height={s(20)}
+                          color={mainColors.VALID}
+                        />
+                      ) : (
+                        <CopyIcon color={color.TEXT} />
+                      )
+                    }
+                  />
+                )}
+              </View>
+            </>
+          )}
           {/* Danger zone */}
           <Txt
             txt={t("dangerZone", { ns: NS.mints })}
@@ -237,7 +303,7 @@ export default function MintSettingsScreen({
             <MintOption
               txt={t("delMint", { ns: NS.mints })}
               onPress={() => {
-                if (route.params.amount > 0) {
+                if (mint && mint.balance > 0) {
                   openPromptAutoClose({
                     msg: t("mintDelErr"),
                   });
@@ -262,31 +328,12 @@ export default function MintSettingsScreen({
       {delMintModalOpen && (
         <BottomModal
           header={t("delMintSure", { ns: NS.mints })}
-          txt={route.params.mint.mintUrl}
+          txt={route.params.mintUrl}
           visible={delMintModalOpen}
           confirmFn={() => handleMintDelete()}
           cancelFn={() => setDelMintModalOpen(false)}
         />
       )}
-      {/* Check proofs modal */}
-      {checkProofsOpen && (
-        <BottomModal
-          header={t("checkProofsQ", { ns: NS.mints })}
-          txt={t("checkProofsTxt", { ns: NS.mints })}
-          visible={checkProofsOpen}
-          confirmFn={() => void handleProofCheck()}
-          cancelFn={() => setCheckProofsOpen(false)}
-        />
-      )}
-
-      <QRModal
-        visible={qr.open}
-        value={route.params.mint?.mintUrl}
-        error={qr.error}
-        close={() => setQr({ open: false, error: false })}
-        onError={() => setQr({ open: true, error: true })}
-        truncateNum={30}
-      />
     </View>
   );
 }
@@ -331,6 +378,33 @@ const styles = ScaledSheet.create({
     marginTop: "90@vs",
     marginBottom: isIOS ? "20@vs" : "0@vs",
     padding: 8,
+  },
+  mintHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: "20@vs",
+    marginTop: "10@vs",
+    paddingHorizontal: "20@s",
+  },
+  mintInfoContainer: {
+    flex: 1,
+    marginRight: "15@s",
+  },
+  mintName: {
+    fontSize: "20@vs",
+    fontWeight: "600",
+    marginBottom: "4@vs",
+  },
+  mintVersion: {
+    fontSize: "14@vs",
+    fontWeight: "400",
+  },
+  mintIcon: {
+    width: "60@s",
+    height: "60@s",
+    borderRadius: "30@s",
+    backgroundColor: "#f0f0f0",
   },
   mintUrl: {
     fontSize: "14@vs",
