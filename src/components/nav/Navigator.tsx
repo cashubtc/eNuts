@@ -1,17 +1,16 @@
 import type { INavigatorProps, RootStackParamList } from "@model/nav";
 import { useNavigation } from "@react-navigation/core";
 import {
-    createNativeStackNavigator,
-    type NativeStackNavigationProp,
+  createNativeStackNavigator,
+  type NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 import AuthPage from "@screens/Auth";
 import Dashboard from "@screens/Dashboard";
 import { Disclaimer } from "@screens/Disclaimer";
 import HistoryPage from "@screens/History";
 import DetailsPage from "@screens/History/Details";
-import Mints from "@screens/Mints";
 import MintInfoPage from "@screens/Mints/Info";
-import MintManagement from "@screens/Mints/MintManagement";
+import MintNavigator from "@src/nav/MintNavigator";
 import MintProofsPage from "@screens/Mints/Proofs";
 import OnboardingScreen from "@screens/Onboarding";
 import ProcessingScreen from "@screens/Payment/Processing";
@@ -34,8 +33,6 @@ import MnemonicScreen from "@screens/Restore/Mnemonic";
 import RecoverScreen from "@screens/Restore/Recover";
 import RecoveringScreen from "@screens/Restore/Recovering";
 import RestoreWarningScreen from "@screens/Restore/RestoreWarning";
-import QRScannerTest from "@screens/QRScannerTest";
-import QRScan from "@screens/QRScan";
 import ProofsDebug from "@screens/Settings/ProofsDebug";
 import SeedScreen from "@screens/Restore/Seed";
 import SelectRecoveryMintScreen from "@screens/Restore/SelectRecoveryMint";
@@ -52,208 +49,162 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const animationDuration = 250;
 
 export default function Navigator({
-    pinHash,
-    bgAuth,
-    shouldOnboard,
-    setBgAuth,
-    hasSeed,
-    sawSeedUpdate,
+  pinHash,
+  bgAuth,
+  shouldOnboard,
+  setBgAuth,
+  hasSeed,
+  sawSeedUpdate,
 }: INavigatorProps) {
-    const { color } = useThemeContext();
+  const { color } = useThemeContext();
 
-    const nav =
-        useNavigation<
-            NativeStackNavigationProp<RootStackParamList, "success", "MyStack">
-        >();
+  const nav =
+    useNavigation<
+      NativeStackNavigationProp<RootStackParamList, "success", "MyStack">
+    >();
 
-    const getInitialRoute = () => {
-        // initial onboarding
-        if (shouldOnboard) {
-            return "onboarding";
-        }
-        // a pin has been setup previously
-        if (pinHash || bgAuth) {
-            return "auth";
-        }
-        // no previous pin setup && onboarding done
-        if (!hasSeed && !sawSeedUpdate) {
-            return "Seed";
-        }
-        return "dashboard";
-    };
+  const getInitialRoute = () => {
+    // initial onboarding
+    if (shouldOnboard) {
+      return "onboarding";
+    }
+    // a pin has been setup previously
+    if (pinHash || bgAuth) {
+      return "auth";
+    }
+    // no previous pin setup && onboarding done
+    if (!hasSeed && !sawSeedUpdate) {
+      return "Seed";
+    }
+    return "dashboard";
+  };
 
-    useEffect(() => {
-        if (!bgAuth || !pinHash.length) {
-            return;
-        }
-        setBgAuth?.(false);
-        nav.navigate("auth", { pinHash });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [bgAuth]);
+  useEffect(() => {
+    if (!bgAuth || !pinHash.length) {
+      return;
+    }
+    setBgAuth?.(false);
+    nav.navigate("auth", { pinHash });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bgAuth]);
 
-    return (
-        <View
-            style={{
-                position: "absolute",
-                height: "100%",
-                width: "100%",
-                backgroundColor: color.BACKGROUND,
-            }}
-        >
-            <Stack.Navigator
-                initialRouteName={getInitialRoute()}
-                screenOptions={{
-                    headerShown: false,
-                    animation: "fade",
-                    animationDuration,
-                    navigationBarColor: color.BACKGROUND,
-                }}
-            >
-                <Stack.Screen name="selectMint" component={SelectMintScreen} />
-                <Stack.Screen
-                    name="selectTarget"
-                    component={SelectTargetScreen}
-                />
-                <Stack.Screen
-                    name="selectMintToSwapTo"
-                    component={SelectMintToSwapToScreen}
-                />
-                <Stack.Screen
-                    name="meltInputfield"
-                    component={InputfieldScreen}
-                />
-                <Stack.Screen
-                    name="selectAmount"
-                    component={SelectAmountScreen}
-                />
-                <Stack.Screen
-                    name="coinSelection"
-                    component={CoinSelectionScreen}
-                />
-                <Stack.Screen
-                    name="processing"
-                    component={ProcessingScreen}
-                    options={{ gestureEnabled: false }}
-                />
-                <Stack.Screen
-                    name="qr processing"
-                    component={QRProcessingScreen}
-                    options={{ gestureEnabled: false }}
-                />
-                <Stack.Screen
-                    name="mint confirm"
-                    component={MintConfirmScreen}
-                />
-                <Stack.Screen
-                    name="scan success"
-                    component={ScanSuccessScreen}
-                />
-                <Stack.Screen
-                    name="processingError"
-                    component={ProcessingErrorScreen}
-                />
-                <Stack.Screen name="mintInvoice" component={InvoiceScreen} />
-                <Stack.Screen
-                    name="onboarding"
-                    component={OnboardingScreen}
-                    options={{
-                        animation: "default",
-                        animationDuration,
-                    }}
-                />
-                <Stack.Screen
-                    name="dashboard"
-                    component={Dashboard}
-                    options={{
-                        animation: "default",
-                        animationDuration,
-                        gestureEnabled: false,
-                    }}
-                />
-                <Stack.Screen name="disclaimer" component={Disclaimer} />
-                <Stack.Screen
-                    name="auth"
-                    component={AuthPage}
-                    initialParams={{ pinHash, sawSeedUpdate }}
-                    options={{ gestureEnabled: false }}
-                />
-                {/* sendable token created page */}
-                <Stack.Screen
-                    name="encodedToken"
-                    component={EncodedTokenPage}
-                    options={{
-                        animation: "slide_from_bottom",
-                        animationDuration,
-                        gestureEnabled: false,
-                    }}
-                />
-                <Stack.Screen
-                    name="success"
-                    component={SuccessPage}
-                    options={{ gestureEnabled: false }}
-                />
-                <Stack.Screen name="mints" component={Mints} />
-                <Stack.Screen
-                    name="mintmanagement"
-                    component={MintManagement}
-                />
-                <Stack.Screen name="mint info" component={MintInfoPage} />
-                <Stack.Screen name="mint proofs" component={MintProofsPage} />
-                <Stack.Screen name="history" component={HistoryPage} />
-                <Stack.Screen
-                    name="history entry details"
-                    component={DetailsPage}
-                />
-                <Stack.Screen name="Settings" component={Settings} />
-                <Stack.Screen
-                    name="Display settings"
-                    component={DisplaySettings}
-                />
-                <Stack.Screen
-                    name="Language settings"
-                    component={LanguageSettings}
-                />
-                <Stack.Screen
-                    name="Advanced settings"
-                    component={AdvancedFunctionScreen}
-                />
-                <Stack.Screen
-                    name="Seed"
-                    component={SeedScreen}
-                    initialParams={{
-                        sawSeedUpdate: sawSeedUpdate,
-                        comingFromOnboarding: false,
-                        hasSeed: hasSeed,
-                    }}
-                />
-                <Stack.Screen name="Recover" component={RecoverScreen} />
-                <Stack.Screen name="Mnemonic" component={MnemonicScreen} />
-                <Stack.Screen
-                    name="Confirm Mnemonic"
-                    component={ConfirmMnemonicScreen}
-                />
-                <Stack.Screen name="Recovering" component={RecoveringScreen} />
-                <Stack.Screen
-                    name="Select recovery mint"
-                    component={SelectRecoveryMintScreen}
-                />
-                <Stack.Screen
-                    name="Restore warning"
-                    component={RestoreWarningScreen}
-                />
-                <Stack.Screen
-                    name="QR Scanner Test"
-                    component={QRScannerTest}
-                />
-                <Stack.Screen name="Proofs Debug" component={ProofsDebug} />
-                <Stack.Screen
-                    name="qr scan"
-                    component={QRScan}
-                    options={{
-                        headerShown: false,
-                    }}
-                />
-            </Stack.Navigator>
-        </View>
-    );
+  return (
+    <View
+      style={{
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+        backgroundColor: color.BACKGROUND,
+      }}
+    >
+      <Stack.Navigator
+        initialRouteName={getInitialRoute()}
+        screenOptions={{
+          headerShown: false,
+          animation: "fade",
+          animationDuration,
+          navigationBarColor: color.BACKGROUND,
+        }}
+      >
+        <Stack.Screen name="selectMint" component={SelectMintScreen} />
+        <Stack.Screen name="selectTarget" component={SelectTargetScreen} />
+        <Stack.Screen
+          name="selectMintToSwapTo"
+          component={SelectMintToSwapToScreen}
+        />
+        <Stack.Screen name="meltInputfield" component={InputfieldScreen} />
+        <Stack.Screen name="selectAmount" component={SelectAmountScreen} />
+        <Stack.Screen name="coinSelection" component={CoinSelectionScreen} />
+        <Stack.Screen
+          name="processing"
+          component={ProcessingScreen}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name="qr processing"
+          component={QRProcessingScreen}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen name="mint confirm" component={MintConfirmScreen} />
+        <Stack.Screen name="scan success" component={ScanSuccessScreen} />
+        <Stack.Screen
+          name="processingError"
+          component={ProcessingErrorScreen}
+        />
+        <Stack.Screen name="mintInvoice" component={InvoiceScreen} />
+        <Stack.Screen
+          name="onboarding"
+          component={OnboardingScreen}
+          options={{
+            animation: "default",
+            animationDuration,
+          }}
+        />
+        <Stack.Screen
+          name="dashboard"
+          component={Dashboard}
+          options={{
+            animation: "default",
+            animationDuration,
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen name="disclaimer" component={Disclaimer} />
+        <Stack.Screen
+          name="auth"
+          component={AuthPage}
+          initialParams={{ pinHash, sawSeedUpdate }}
+          options={{ gestureEnabled: false }}
+        />
+        {/* sendable token created page */}
+        <Stack.Screen
+          name="encodedToken"
+          component={EncodedTokenPage}
+          options={{
+            animation: "slide_from_bottom",
+            animationDuration,
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="success"
+          component={SuccessPage}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen name="Mint" component={MintNavigator} />
+        <Stack.Screen name="mint info" component={MintInfoPage} />
+        <Stack.Screen name="mint proofs" component={MintProofsPage} />
+        <Stack.Screen name="history" component={HistoryPage} />
+        <Stack.Screen name="history entry details" component={DetailsPage} />
+        <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="Display settings" component={DisplaySettings} />
+        <Stack.Screen name="Language settings" component={LanguageSettings} />
+        <Stack.Screen
+          name="Advanced settings"
+          component={AdvancedFunctionScreen}
+        />
+        <Stack.Screen
+          name="Seed"
+          component={SeedScreen}
+          initialParams={{
+            sawSeedUpdate: sawSeedUpdate,
+            comingFromOnboarding: false,
+            hasSeed: hasSeed,
+          }}
+        />
+        <Stack.Screen name="Recover" component={RecoverScreen} />
+        <Stack.Screen name="Mnemonic" component={MnemonicScreen} />
+        <Stack.Screen
+          name="Confirm Mnemonic"
+          component={ConfirmMnemonicScreen}
+        />
+        <Stack.Screen name="Recovering" component={RecoveringScreen} />
+        <Stack.Screen
+          name="Select recovery mint"
+          component={SelectRecoveryMintScreen}
+        />
+        <Stack.Screen name="Restore warning" component={RestoreWarningScreen} />
+      </Stack.Navigator>
+    </View>
+  );
 }
