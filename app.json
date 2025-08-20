@@ -1,42 +1,46 @@
 {
-    "expo": {
-        "name": "eNut2",
-        "slug": "eNut2",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "./assets/icon.png",
-        "userInterfaceStyle": "light",
-        "newArchEnabled": true,
-        "splash": {
-            "image": "./assets/splash-icon.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
-        },
-        "ios": {
-            "supportsTablet": true
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#ffffff"
-            },
-            "edgeToEdgeEnabled": true
-        },
-        "web": {
-            "favicon": "./assets/favicon.png"
-        },
-        "plugins": [
-            "expo-sqlite",
-            "expo-secure-store",
-            "expo-localization",
-            [
-                "expo-camera",
-                {
-                    "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to scan QR codes",
-                    "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for video recording",
-                    "recordAudioAndroid": false
-                }
-            ]
-        ]
-    }
+  "expo": {
+    "name": "eNut2",
+    "slug": "eNut2",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon_transparent.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.eNut2"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/app-icon-android-adaptive-foreground.png",
+        "backgroundImage": "./assets/app-icon-android-adaptive-background.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": ["android.permission.CAMERA"],
+      "package": "com.anonymous.eNut2"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-localization",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to scan QR codes",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for video recording",
+          "recordAudioAndroid": false
+        }
+      ]
+    ]
+  }
 }
