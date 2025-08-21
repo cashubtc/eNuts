@@ -260,7 +260,10 @@
     "checkPayment": "Comprobar pago",
     "lnPaymentSpamHint": "Por favor, espere {{ remainingSeconds }} segundos para aliviar la Mint.",
     "shareEnuts": "Comparte eNuts con alguien",
-    "supportUs": "Apóyanos"
+    "supportUs": "Apóyanos",
+    "justNow": "Ahora mismo",
+    "hoursAgo": "hace {{count}} horas",
+    "yesterday": "Ayer"
   },
   "error": {
     "checkSpendableErr": "Error al comprobar si el token puede ser gastado",
@@ -279,6 +282,8 @@
     "isPending": "El token está pendiente",
     "isSpent": "El token ha sido gastado",
     "justNow": "Ahora mismo",
+    "hoursAgo": "hace {{count}} horas",
+    "yesterday": "Ayer",
     "memo": "Nota",
     "nHrsAgo": "Hace {{hrs}} horas",
     "nMinsAgo": "Hace {{mins}} minutos",
@@ -358,7 +363,10 @@
     "newMintAdded": "¡Ceca añadida!",
     "newMintAddedQuestion": "¿Quieres recibir Ecash ahora?",
     "selectSwapReceiver": "Selecciona una ceca como receptora del pago.",
-    "prepairZapData": "Preparando los datos de la transacción..."
+    "prepairZapData": "Preparando los datos de la transacción...",
+    "lastUpdated": "Última actualización",
+    "mintInfoUpdated": "¡Información de la ceca actualizada!",
+    "mintInfoUpdateFailed": "Error al actualizar la información de la ceca"
   },
   "topNav": {
     "about": "Sobre nosotros",

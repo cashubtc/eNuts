@@ -261,7 +261,10 @@
     "checkPayment": "Check payment",
     "lnPaymentSpamHint": "Please wait {{ remainingSeconds }} seconds to avoid spamming the mint.",
     "supportUs": "Support us",
-    "shareEnuts": "Share eNuts with someone"
+    "shareEnuts": "Share eNuts with someone",
+    "justNow": "Just now",
+    "hoursAgo": "{{count}} hours ago",
+    "yesterday": "Yesterday"
   },
   "error": {
     "checkSpendableErr": "Error while checking if token is spendable",
@@ -280,6 +283,8 @@
     "isPending": "Token is pending",
     "isSpent": "Token has been spent",
     "justNow": "Just now",
+    "hoursAgo": "{{count}} hours ago",
+    "yesterday": "Yesterday",
     "memo": "Memo",
     "nHrsAgo": "{{hrs}} hours ago",
     "nMinsAgo": "{{mins}} minutes ago",
@@ -359,7 +364,10 @@
     "newMintAdded": "Mint added!",
     "newMintAddedQuestion": "Do you want to receive Ecash now?",
     "selectSwapReceiver": "Select a mint as the payment receiver.",
-    "prepairZapData": "Preparing the transaction data..."
+    "prepairZapData": "Preparing the transaction data...",
+    "lastUpdated": "Last updated",
+    "mintInfoUpdated": "Mint info updated!",
+    "mintInfoUpdateFailed": "Failed to update mint info"
   },
   "topNav": {
     "about": "About us",

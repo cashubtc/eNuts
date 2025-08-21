@@ -260,7 +260,10 @@
     "checkPayment": "Vérifier le paiement",
     "lnPaymentSpamHint": "Veuillez attendre {{ remainingSeconds }} secondes pour soulager la Mint.",
     "shareEnuts": "Partagez eNuts avec quelqu'un",
-    "supportUs": "Soutenez-nous"
+    "supportUs": "Soutenez-nous",
+    "justNow": "À l'instant",
+    "hoursAgo": "il y a {{count}} heures",
+    "yesterday": "Hier"
   },
   "error": {
     "checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",
@@ -279,6 +282,8 @@
     "isPending": "Le token est en attente",
     "isSpent": "Le token a été dépensé",
     "justNow": "À l'instant",
+    "hoursAgo": "il y a {{count}} heures",
+    "yesterday": "Hier",
     "memo": "Mémo",
     "nHrsAgo": "Il y a {{hrs}} heures",
     "nMinsAgo": "Il y a {{mins}} minutes",
@@ -359,7 +364,10 @@
     "newMintAddedQuestion": "Voulez-vous recevoir l'Ecash maintenant?",
     "seeFullHistory": "Voir l'historique complet",
     "selectSwapReceiver": "Sélectionnez une mint en tant que destinataire du paiement.",
-    "prepairZapData": "Préparation des données de la transaction..."
+    "prepairZapData": "Préparation des données de la transaction...",
+    "lastUpdated": "Dernière mise à jour",
+    "mintInfoUpdated": "Informations de la mint mises à jour !",
+    "mintInfoUpdateFailed": "Échec de la mise à jour des informations de la mint"
   },
   "topNav": {
     "about": "À propos de nous",

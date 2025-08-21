@@ -50,6 +50,7 @@ export default function LastUpdated({ mintUrl, updatedAt }: LastUpdatedProps) {
       openPromptAutoClose({
         msg: t("mintInfoUpdated", { ns: NS.mints }),
         ms: 1500,
+        success: true,
       });
     } catch (e) {
       l(e);
@@ -64,7 +65,7 @@ export default function LastUpdated({ mintUrl, updatedAt }: LastUpdatedProps) {
 
   return (
     <TouchableOpacity
-      onLongPress={handleRefreshMintInfo}
+      onPress={handleRefreshMintInfo}
       disabled={isRefreshing}
       style={[styles.container, { opacity: isRefreshing ? 0.5 : 1 }]}
       activeOpacity={0.7}
