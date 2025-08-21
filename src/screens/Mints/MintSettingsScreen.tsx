@@ -7,6 +7,7 @@ import {
   TrashbinIcon,
   ValidateIcon,
 } from "@comps/Icons";
+import LastUpdated from "./components/LastUpdated";
 import MetadataItem from "./components/MetadataItem";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
@@ -44,6 +45,7 @@ export default function MintSettingsScreen({
   const [checkProofsOpen, setCheckProofsOpen] = useState(false);
   // delete mint prompt
   const [delMintModalOpen, setDelMintModalOpen] = useState(false);
+
   const { copied, copy } = useCopy();
 
   // Track which field was copied for better UX
@@ -95,6 +97,12 @@ export default function MintSettingsScreen({
                 <Txt
                   txt={mint.mintInfo.version}
                   styles={[styles.mintVersion, { color: color.TEXT_SECONDARY }]}
+                />
+              )}
+              {mint && (
+                <LastUpdated
+                  mintUrl={route.params.mintUrl}
+                  updatedAt={mint.updatedAt}
                 />
               )}
             </View>
