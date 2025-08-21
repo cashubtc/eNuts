@@ -7,6 +7,7 @@ import {
   TrashbinIcon,
   ValidateIcon,
 } from "@comps/Icons";
+import MetadataItem from "./components/MetadataItem";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
 
@@ -154,56 +155,20 @@ export default function MintSettingsScreen({
               <View style={globals(color).wrapContainer}>
                 {/* Description */}
                 {mint.mintInfo.description && (
-                  <MintOption
-                    txt={mint.mintInfo.description}
+                  <MetadataItem
+                    text={mint.mintInfo.description}
                     hasSeparator={!!mint.mintInfo.description_long}
-                    noChevron
-                    onPress={() =>
-                      void handleCopy(
-                        mint.mintInfo.description || "",
-                        "description"
-                      )
-                    }
-                    icon={
-                      copiedField === "description" ? (
-                        <CheckmarkIcon
-                          width={s(20)}
-                          height={s(20)}
-                          color={mainColors.VALID}
-                        />
-                      ) : (
-                        <CopyIcon color={color.TEXT} />
-                      )
-                    }
                   />
                 )}
                 {/* Long Description */}
                 {mint.mintInfo.description_long && (
-                  <MintOption
-                    txt={mint.mintInfo.description_long}
+                  <MetadataItem
+                    text={mint.mintInfo.description_long}
                     hasSeparator={
                       !!(
                         mint.mintInfo.contact &&
                         mint.mintInfo.contact.length > 0
                       ) || !!mint.mintInfo.motd
-                    }
-                    noChevron
-                    onPress={() =>
-                      void handleCopy(
-                        mint.mintInfo.description_long || "",
-                        "descriptionLong"
-                      )
-                    }
-                    icon={
-                      copiedField === "descriptionLong" ? (
-                        <CheckmarkIcon
-                          width={s(20)}
-                          height={s(20)}
-                          color={mainColors.VALID}
-                        />
-                      ) : (
-                        <CopyIcon color={color.TEXT} />
-                      )
                     }
                   />
                 )}
@@ -256,24 +221,7 @@ export default function MintSettingsScreen({
                 )}
                 {/* Message of the Day */}
                 {mint.mintInfo.motd && (
-                  <MintOption
-                    txt={`💬 ${mint.mintInfo.motd}`}
-                    noChevron
-                    onPress={() =>
-                      void handleCopy(mint.mintInfo.motd || "", "motd")
-                    }
-                    icon={
-                      copiedField === "motd" ? (
-                        <CheckmarkIcon
-                          width={s(20)}
-                          height={s(20)}
-                          color={mainColors.VALID}
-                        />
-                      ) : (
-                        <CopyIcon color={color.TEXT} />
-                      )
-                    }
-                  />
+                  <MetadataItem text={`💬 ${mint.mintInfo.motd}`} />
                 )}
               </View>
             </>
@@ -364,7 +312,9 @@ function MintOption({
       >
         <View style={styles.mintOption}>
           <View style={{ minWidth: s(30) }}>{icon}</View>
-          <Txt txt={txt} styles={[{ color: rowColor || color.TEXT }]} />
+          <View style={styles.mintOptionText}>
+            <Txt txt={txt} styles={[{ color: rowColor || color.TEXT }]} />
+          </View>
         </View>
         {!noChevron ? <ChevronRightIcon color={color.TEXT} /> : <View />}
       </TouchableOpacity>
@@ -412,14 +362,21 @@ const styles = ScaledSheet.create({
     fontWeight: "500",
   },
   sectionHeader: {
-    fontWeight: "500",
+    fontWeight: "600",
+    fontSize: "16@vs",
     paddingHorizontal: "20@s",
-    marginTop: "10@vs",
-    marginBottom: "10@vs",
+    marginTop: "20@vs",
+    marginBottom: "12@vs",
+    opacity: 0.9,
   },
   mintOption: {
     flexDirection: "row",
     alignItems: "center",
+    flex: 1,
+  },
+  mintOptionText: {
+    flex: 1,
+    marginLeft: "10@s",
   },
   separator: {
     marginBottom: "15@vs",
