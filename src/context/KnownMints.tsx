@@ -1,7 +1,7 @@
 import { l } from "@src/logger";
 import { Mint } from "@src/storage/db/repo/MintRepository";
 import { knownMintsEvents, proofEvents } from "@src/util/events";
-import { mintService } from "@src/wallet/services/MintService";
+import { mintService } from "@src/services/MintService";
 import { proofService } from "@src/services/ProofService";
 import {
   createContext,
@@ -46,7 +46,7 @@ const useKnownMintsInternal = () => {
       readyProofs.forEach((p) => {
         balancesMap.set(
           p.mintUrl,
-          (balancesMap.get(p.mintUrl) || 0) + p.amount,
+          (balancesMap.get(p.mintUrl) || 0) + p.amount
         );
       });
 
@@ -54,7 +54,7 @@ const useKnownMintsInternal = () => {
         (mint) => ({
           ...mint,
           balance: balancesMap.get(mint.mintUrl) || 0,
-        }),
+        })
       );
 
       setKnownMints(knownMintsWithBalance);

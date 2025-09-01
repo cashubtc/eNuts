@@ -32,18 +32,42 @@ const mapRowToDomain = (row: MintRow): Mint => ({
 export class MintRepository {
   constructor(private database: SQLiteDB) {}
 
-  async saveKnownMint(mintUrl: string, mintInfo: MintInfo): Promise<boolean> {
+  /**
+   * Saves a new mint to the database. Fails if mint already exists.
+   */
+  async saveMint(mintUrl: string, mintInfo: MintInfo): Promise<boolean> {
     const sql = `
-            INSERT OR REPLACE INTO known_mints (mint_url, name, mint_info, updated_at) 
-            VALUES (?, ?, ?, cast(strftime('%s','now') as INTEGER))
+            INSERT INTO known_mints (mint_url, name, mint_info, created_at, updated_at) 
+            VALUES (?, ?, ?, cast(strftime('%s','now') as INTEGER), cast(strftime('%s','now') as INTEGER))
         `;
     const params = [
       mintUrl,
       mintInfo.name || "Unknown Mint",
       JSON.stringify(mintInfo),
     ];
-    const result = await this.database.run(sql, params);
-    return result?.changes === 1;
+    try {
+      const result = await this.database.run(sql, params);
+      return result?.changes === 1;
+    } catch (error) {
+      // SQLite constraint violation (mint already exists)
+      return false;
+    }
+  }
+
+  /**
+   * Legacy method for backward compatibility - uses upsert logic
+   * @deprecated Use saveMint() for new mints or updateMint() for updates
+   */
+  async saveKnownMint(mintUrl: string, mintInfo: MintInfo): Promise<boolean> {
+    const existing = await this.getMint(mintUrl);
+    if (existing) {
+      return await this.updateMint(mintUrl, {
+        mintInfo,
+        name: mintInfo.name || "Unknown Mint",
+      });
+    } else {
+      return await this.saveMint(mintUrl, mintInfo);
+    }
   }
 
   async getMint(mintUrl: string): Promise<Mint | null> {

@@ -6,7 +6,7 @@ import Txt from "@comps/Txt";
 import { useThemeContext } from "@src/context/Theme";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
-import { mintService } from "@src/wallet/services/MintService";
+import { mintService } from "@src/services/MintService";
 import { l } from "@log";
 
 interface LastUpdatedProps {

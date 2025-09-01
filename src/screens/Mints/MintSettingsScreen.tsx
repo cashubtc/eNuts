@@ -22,7 +22,7 @@ import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { MintSettingsScreenProps } from "@src/nav/navTypes";
-import { mintService } from "@src/wallet/services/MintService";
+import { mintService } from "@src/services/MintService";
 
 import { globals, mainColors } from "@styles";
 import { formatMintUrl, formatSatStr } from "@util";
@@ -64,7 +64,7 @@ export default function MintSettingsScreen({
   const handleMintDelete = () => {
     void (async () => {
       try {
-        await mintService.removeMintFromStrore(route.params.mintUrl);
+        await mintService.removeMintFromStore(route.params.mintUrl);
         navigation.goBack();
       } catch (e) {
         l(e);

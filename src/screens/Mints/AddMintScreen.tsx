@@ -20,7 +20,7 @@ import {
 import { s, vs } from "react-native-size-matters";
 import TopNav from "@nav/TopNav";
 import { isIOS } from "@consts";
-import { mintService } from "@src/wallet/services/MintService";
+import { mintService } from "@src/services/MintService";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import { useTranslation } from "react-i18next";
@@ -52,8 +52,8 @@ function RecommendedMintItem({
     mint.speedIndex !== undefined
       ? `Speed: ${mint.speedIndex}`
       : mint.auditorData.averageSwapTimeMs
-        ? `Avg: ${mint.auditorData.averageSwapTimeMs}ms`
-        : "Speed: N/A";
+      ? `Avg: ${mint.auditorData.averageSwapTimeMs}ms`
+      : "Speed: N/A";
 
   return (
     <TouchableOpacity
