@@ -48,6 +48,8 @@ import * as SQLite from "expo-sqlite";
 import { ExpoSqliteRepositories } from "coco-cashu-expo-sqlite";
 import { ConsoleLogger, Manager } from "coco-cashu-core";
 import { getSeed } from "@src/storage/store/restore";
+import { dbProvider } from "@src/storage/DbProvider";
+import { seedService } from "@src/services/SeedService";
 
 interface ILockData {
   mismatch: boolean;
@@ -147,17 +149,21 @@ function useRootAppState() {
 
   useEffect(() => {
     async function createManager() {
-      const db = await SQLite.openDatabaseAsync("cashu.db");
+      const db = dbProvider.getDatabase();
       const repo = new ExpoSqliteRepositories({ database: db });
       await repo.init();
       async function seedGetter() {
-        const seed = await getSeed();
+        const seed = await seedService.getSeed();
         if (!seed) {
           throw new Error("No seed found");
         }
         return seed;
       }
-      const mgr = new Manager(repo, seedGetter, new ConsoleLogger(undefined));
+      const mgr = new Manager(
+        repo,
+        seedGetter,
+        new ConsoleLogger(undefined, { level: "debug" })
+      );
       await mgr.enableMintQuoteWatcher();
       return mgr;
     }

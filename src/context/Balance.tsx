@@ -4,9 +4,10 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useManager } from "./Manager";
 
 const useBalance = () => {
-  const [balance, setBalance] = useState<
-    ({ [mintUrl: string]: number } & { total: number }) | undefined
-  >(undefined);
+  const [balance, setBalance] = useState<{
+    [mintUrl: string]: number;
+    total: number;
+  }>({ total: 0 });
   const manager = useManager();
 
   useEffect(() => {
@@ -17,7 +18,9 @@ const useBalance = () => {
           (acc, cur) => acc + cur,
           0
         );
-        setBalance({ ...bal, total });
+        console.log("bal", bal);
+        console.log("total", total);
+        setBalance({ ...(bal || {}), total });
       } catch (error) {
         l(error);
       }
