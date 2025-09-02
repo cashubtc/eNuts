@@ -1,9 +1,8 @@
 import { useShakeAnimation } from "@comps/animation/Shake";
 import { IconBtn } from "@comps/Button";
-import { ChevronRightIcon, ArrowDownIcon } from "@comps/Icons";
+import { ChevronRightIcon } from "@comps/Icons";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
-// Lazy load the MintSelectionSheet to improve initial render
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
 import { isIOS } from "@consts";
 import type { TSelectAmountPageProps } from "@model/nav";
@@ -27,7 +26,6 @@ import { useManager } from "@src/context/Manager";
 
 export default function SendSelectAmountScreen({
   navigation,
-  route,
 }: TSelectAmountPageProps) {
   const { t } = useTranslation([NS.wallet]);
   const { color, highlight } = useThemeContext();
@@ -39,7 +37,7 @@ export default function SendSelectAmountScreen({
   const txtInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheet>(null);
 
-  const [amount, setAmount] = useState(0);
+  const [amountInput, setAmountInput] = useState("");
   const [memo, setMemo] = useState("");
 
   const defaultMint = useMemo(() => {
@@ -47,7 +45,7 @@ export default function SendSelectAmountScreen({
   }, [knownMints]);
 
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
-    defaultMint
+    defaultMint ?? null
   );
 
   const noMintsAvailable = useMemo(() => {
@@ -70,22 +68,18 @@ export default function SendSelectAmountScreen({
   // Defer non-critical state initialization
   const [err, setErr] = useState(false);
 
-  // Get balance for the selected mint (fallback to 0 if no mint selected)
+  // Derived numeric amount and selected mint balance
+  const amountValue = useMemo(() => {
+    const parsed = parseInt(amountInput || "0", 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }, [amountInput]);
   const selectedMintBalance = selectedMint?.balance || 0;
-  const balTooLow = amount > selectedMintBalance;
 
   // Memoize screen name computation
   const screenName = "sendEcash";
 
-  // Memoize action button text
-  const actionBtnTxt = useMemo(() => {
-    if (balTooLow) {
-      return t("balTooLow", { ns: NS.common });
-    }
-    return t("continue", {
-      ns: NS.common,
-    });
-  }, [balTooLow, t]);
+  // Back navigation handler
+  const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const onMemoChange = useCallback((text: string) => setMemo(text), []);
 
@@ -116,9 +110,14 @@ export default function SendSelectAmountScreen({
     mintSelectionSheetRef.current?.close();
   }, []);
 
+  const handleAmountChange = useCallback((text: string) => {
+    const sanitized = text.replace(/\D/g, "");
+    setAmountInput(sanitized);
+  }, []);
+
   const handleAmountSubmit = useCallback(async () => {
     if (!selectedMint) return;
-    if (!amount || +amount < 1 || amount > selectedMintBalance) {
+    if (!amountValue || amountValue < 1 || amountValue > selectedMintBalance) {
       vib(400);
       setErr(true);
       shake();
@@ -128,11 +127,11 @@ export default function SendSelectAmountScreen({
       }, 500);
       return;
     }
-    const token = await manager.wallet.send(selectedMint.mintUrl, amount);
+    const token = await manager.wallet.send(selectedMint.mintUrl, amountValue);
     return navigation.navigate("encodedToken", {
       token,
     });
-  }, [balTooLow, amount, selectedMintBalance, navigation, selectedMint, memo]);
+  }, [amountValue, selectedMint, manager, navigation, selectedMintBalance]);
 
   // Early return after all hooks
   if (noMintsAvailable) {
@@ -140,7 +139,7 @@ export default function SendSelectAmountScreen({
       <Screen
         screenName={t("selectAmount", { ns: NS.common })}
         withBackBtn
-        handlePress={() => navigation.goBack()}
+        handlePress={handleBack}
       >
         <View
           style={{
@@ -160,7 +159,7 @@ export default function SendSelectAmountScreen({
     <Screen
       screenName={t(screenName, { ns: NS.common })}
       withBackBtn
-      handlePress={() => navigation.goBack()}
+      handlePress={handleBack}
     >
       <Txt
         txt={t("ecashAmountHint", {
@@ -187,16 +186,16 @@ export default function SendSelectAmountScreen({
               globalStyles.selectAmount,
               { color: err ? mainColors.ERROR : hi[highlight] },
             ]}
-            onChangeText={(amount) => setAmount(parseInt(amount) || 0)}
+            onChangeText={handleAmountChange}
             onSubmitEditing={handleAmountSubmit}
             onFocus={handleInputFocus}
-            value={amount.toString()}
+            value={amountInput}
             maxLength={8}
             testID="mint-amount-input"
           />
         </Animated.View>
         <Txt
-          txt={formatSatStr(+amount, "standard", false)}
+          txt={formatSatStr(amountValue, "standard", false)}
           styles={[styles.sats, { color: color.TEXT_SECONDARY }]}
         />
       </View>
