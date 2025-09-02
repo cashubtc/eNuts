@@ -41,6 +41,7 @@ import LanguageSettings from "@screens/Settings/Language";
 import { useThemeContext } from "@src/context/Theme";
 import { useEffect } from "react";
 import { View } from "react-native";
+import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -112,6 +113,10 @@ export default function Navigator({
         />
         <Stack.Screen name="meltInputfield" component={InputfieldScreen} />
         <Stack.Screen name="selectAmount" component={SelectAmountScreen} />
+        <Stack.Screen
+          name="SendSelectAmount"
+          component={SendSelectAmountScreen}
+        />
         <Stack.Screen name="coinSelection" component={CoinSelectionScreen} />
         <Stack.Screen
           name="processing"

@@ -91,24 +91,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     });
   };
 
-  const handleSendBtnPress = async ({
-    isMelt,
-    isSendEcash,
-  }: {
-    isMelt?: boolean;
-    isSendEash?: boolean;
-  } = {}) => {
-    if (isMelt) {
-      navigation.navigate("meltInputfield");
-    } else {
-      // Navigate directly to selectAmount with the correct parameters
-      navigation.navigate("selectAmount", {
-        isMelt,
-        isSendEcash,
-      });
-    }
-  };
-
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) =>
@@ -187,9 +169,11 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
       <BottomSheetOptionsModal
         ref={sendOptionsRef}
         button1Txt={t("sendEcash")}
-        onPressFirstBtn={() => void handleSendBtnPress({ isSendEcash: true })}
+        onPressFirstBtn={() => {
+          navigation.navigate("SendSelectAmount");
+        }}
         button2Txt={t("payLNInvoice", { ns: NS.wallet })}
-        onPressSecondBtn={() => void handleSendBtnPress({ isMelt: true })}
+        onPressSecondBtn={() => {}}
         onPressCancel={() => {}}
         isSend
       />
