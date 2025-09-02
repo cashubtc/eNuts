@@ -28,12 +28,10 @@ import SuccessPage from "@screens/Payment/Success";
 import MintConfirmScreen from "@screens/QRScan/MintConfirm";
 import QRProcessingScreen from "@screens/QRScan/QRProcessing";
 import ScanSuccessScreen from "@screens/QRScan/ScanSuccess";
-import ConfirmMnemonicScreen from "@screens/Restore/ConfirmMnemonic";
 import MnemonicScreen from "@screens/Restore/Mnemonic";
 import RecoverScreen from "@screens/Restore/Recover";
 import RecoveringScreen from "@screens/Restore/Recovering";
 import RestoreWarningScreen from "@screens/Restore/RestoreWarning";
-import ProofsDebug from "@screens/Settings/ProofsDebug";
 import SeedScreen from "@screens/Restore/Seed";
 import SelectRecoveryMintScreen from "@screens/Restore/SelectRecoveryMint";
 import Settings from "@screens/Settings";
@@ -194,10 +192,6 @@ export default function Navigator({
         />
         <Stack.Screen name="Recover" component={RecoverScreen} />
         <Stack.Screen name="Mnemonic" component={MnemonicScreen} />
-        <Stack.Screen
-          name="Confirm Mnemonic"
-          component={ConfirmMnemonicScreen}
-        />
         <Stack.Screen name="Recovering" component={RecoveringScreen} />
         <Stack.Screen
           name="Select recovery mint"
