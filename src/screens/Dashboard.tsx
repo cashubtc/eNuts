@@ -1,4 +1,4 @@
-import { getDecodedToken, getEncodedToken, Token } from "@cashu/cashu-ts";
+import { getDecodedToken, Token } from "@cashu/cashu-ts";
 import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
@@ -10,16 +10,11 @@ import { _testmintUrl, env } from "@consts";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
 import BottomNav from "@nav/BottomNav";
 import { preventBack } from "@nav/utils";
-import { useFocusClaimContext } from "@src/context/FocusClaim";
-import { useHistoryContext } from "@src/context/History";
-import { useInitialURL } from "@src/context/Linking";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { useTrustMintContext } from "@src/context/TrustMint";
 import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-// import { useQRScanHandler } from "@util/qrScanner"; // No longer needed - using dedicated screen
-import { mintService } from "@src/services/MintService";
 import { highlight as hi, mainColors } from "@styles";
 import { getStrFromClipboard } from "@util";
 import { getMintsForPayment } from "@wallet";
@@ -41,9 +36,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
   const { showTrustMintModal } = useTrustMintContext();
   const { knownMints } = useKnownMints();
   const manager = useManager();
-  // QR Scanner - using dedicated screen instead of bottom sheet
-  // const { openQRScanner } = useQRScanHandler(navigation);
-  // Bottom sheet refs
   const sendOptionsRef = useRef<BottomSheet>(null);
   const receiveOptionsRef = useRef<BottomSheet>(null);
 
@@ -68,29 +60,18 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
       return;
     }
 
-    if (!knownMints.find((m) => m.mintUrl === decoded.mint)) {
+    const isKnown = await manager.mint.isKnownMint(decoded.mint);
+    if (isKnown) {
+      await manager.wallet.receive(decoded);
+    } else {
       const action = await showTrustMintModal(decoded);
 
       if (action === "trust") {
         await manager.mint.addMint(decoded.mint);
-        console.log("mint added");
-        try {
-          await manager.wallet.receive(decoded);
-          console.log("mint received");
-        } catch (e) {
-          console.log("error receiving mint", e);
-        }
-      } else {
-        return;
+        await manager.wallet.receive(decoded);
       }
-      stopLoading();
     }
-    try {
-      await manager.wallet.receive(decoded);
-      console.log("mint received");
-    } catch (e) {
-      console.log("error receiving mint", e);
-    }
+    stopLoading();
   };
 
   const handleMintBtnPress = async () => {
