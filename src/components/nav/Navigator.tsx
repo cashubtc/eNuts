@@ -42,6 +42,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { useEffect } from "react";
 import { View } from "react-native";
 import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
+import MintSelectAmountScreen from "@screens/Payment/MintSelectAmount";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -116,6 +117,10 @@ export default function Navigator({
         <Stack.Screen
           name="SendSelectAmount"
           component={SendSelectAmountScreen}
+        />
+        <Stack.Screen
+          name="MintSelectAmount"
+          component={MintSelectAmountScreen}
         />
         <Stack.Screen name="coinSelection" component={CoinSelectionScreen} />
         <Stack.Screen

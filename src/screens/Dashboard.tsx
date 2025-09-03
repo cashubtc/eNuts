@@ -74,23 +74,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     stopLoading();
   };
 
-  const handleMintBtnPress = async () => {
-    const { mintsBals, mints } = await getMintsForPayment();
-    const nonEmptyMints = mintsBals.filter((m) => m.amount > 0);
-    // user has only 1 mint with balance, he can skip the mint selection
-    if (nonEmptyMints.length === 1) {
-      return navigation.navigate("selectAmount", {
-        // No mint parameter needed, SelectAmount will get mint from context
-      });
-    }
-    // user has more than 1 mint so he has to choose the one he wants to communicate to
-    navigation.navigate("selectMint", {
-      mints,
-      mintsWithBal: mintsBals,
-      allMintsEmpty: !nonEmptyMints.length,
-    });
-  };
-
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) =>
@@ -187,7 +170,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         }
         onPressFirstBtn={() => void handleClaimBtnPress()}
         button2Txt={t("createLnInvoice")}
-        onPressSecondBtn={() => void handleMintBtnPress()}
+        onPressSecondBtn={() => {
+          navigation.navigate("MintSelectAmount");
+        }}
         onPressCancel={() => {}}
         loading={loading}
       />

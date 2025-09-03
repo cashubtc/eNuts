@@ -10,7 +10,7 @@ import type {
   ITokenInfo,
 } from ".";
 import { EnutsProof } from "@src/storage/db/repo/ProofRepository";
-import { Proof, Token } from "@cashu/cashu-ts";
+import { MintQuoteResponse, Proof, Token } from "@cashu/cashu-ts";
 import { MintStackParamList } from "@src/nav/navTypes";
 
 interface ILnurlNavData {
@@ -139,10 +139,7 @@ export type RootStackParamList = {
   };
   mintInvoice: {
     mintUrl: string;
-    amount: number;
-    hash: string;
-    expiry: number;
-    paymentRequest: string;
+    quote: MintQuoteResponse;
   };
   encodedToken: {
     token: Token;
@@ -383,16 +380,16 @@ export type IRestoreWarningPageProps = NativeStackScreenProps<
   "Restore warning"
 >;
 export type TQRScannerTestPageProps = NativeStackScreenProps<
-    RootStackParamList,
-    "QR Scanner Test"
+  RootStackParamList,
+  "QR Scanner Test"
 >;
 export type TProofsDebugPageProps = NativeStackScreenProps<
-    RootStackParamList,
-    "Proofs Debug"
+  RootStackParamList,
+  "Proofs Debug"
 >;
 export type TQRScanPageProps = NativeStackScreenProps<
-    RootStackParamList,
-    "qr scan"
+  RootStackParamList,
+  "qr scan"
 >;
 export type TBottomNavProps =
   | TDashboardPageProps
