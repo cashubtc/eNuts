@@ -23,10 +23,11 @@ import {
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useManager } from "@src/context/Manager";
+import { SendSelectAmountProps } from "@src/nav/navTypes";
 
 export default function SendSelectAmountScreen({
   navigation,
-}: TSelectAmountPageProps) {
+}: SendSelectAmountProps) {
   const { t } = useTranslation([NS.wallet]);
   const { color, highlight } = useThemeContext();
   const { anim, shake } = useShakeAnimation();

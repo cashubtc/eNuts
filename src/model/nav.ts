@@ -10,7 +10,12 @@ import type {
   ITokenInfo,
 } from ".";
 import { EnutsProof } from "@src/storage/db/repo/ProofRepository";
-import { MintQuoteResponse, Proof, Token } from "@cashu/cashu-ts";
+import {
+  MintQuoteResponse,
+  Proof,
+  Token,
+  MeltQuoteResponse,
+} from "@cashu/cashu-ts";
 import { MintStackParamList } from "@src/nav/navTypes";
 
 interface ILnurlNavData {
@@ -66,6 +71,13 @@ export type RootStackParamList = {
     mint: IMintUrl;
     balance: number;
     remainingMints?: IMintUrl[];
+  };
+  SendSelectAmount: undefined;
+  MintSelectAmount: undefined;
+  MeltInput: undefined;
+  MeltConfirmation: {
+    quote: MeltQuoteResponse;
+    mintUrl: string;
   };
   selectAmount: {
     isMelt?: boolean;
@@ -237,6 +249,11 @@ export type TSelectMintToSwapToPageProps = NativeStackScreenProps<
 export type TMeltInputfieldPageProps = NativeStackScreenProps<
   RootStackParamList,
   "meltInputfield",
+  "MyStack"
+>;
+export type SendSelectAmountProps = NativeStackScreenProps<
+  RootStackParamList,
+  "selectAmount",
   "MyStack"
 >;
 export type TSelectAmountPageProps = NativeStackScreenProps<

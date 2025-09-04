@@ -39,7 +39,6 @@ export default function Balance({ nav }: IBalanceProps) {
   const [formatSats, setFormatSats] = useState(pref?.formatBalance);
   const { balance } = useBalanceContext();
   const { latestHistory } = useHistoryContext();
-  console.log(balance);
 
   const toggleBalanceFormat = () => {
     setFormatSats((prev) => !prev);

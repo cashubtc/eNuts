@@ -156,7 +156,9 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
           navigation.navigate("SendSelectAmount");
         }}
         button2Txt={t("payLNInvoice", { ns: NS.wallet })}
-        onPressSecondBtn={() => {}}
+        onPressSecondBtn={() => {
+          navigation.navigate("MeltInput");
+        }}
         onPressCancel={() => {}}
         isSend
       />

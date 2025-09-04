@@ -33,10 +33,14 @@ const useKnownMintsInternal = () => {
 
     manager.on("mint:added", getKnownMints);
     manager.on("mint:updated", getKnownMints);
+    manager.on("proofs:saved", getKnownMints);
+    manager.on("proofs:state-changed", getKnownMints);
 
     return () => {
       manager.off("mint:added", getKnownMints);
       manager.off("mint:updated", getKnownMints);
+      manager.off("proofs:saved", getKnownMints);
+      manager.off("proofs:state-changed", getKnownMints);
     };
   }, [getKnownMints, manager]);
 

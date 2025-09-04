@@ -43,6 +43,8 @@ import { useEffect } from "react";
 import { View } from "react-native";
 import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
 import MintSelectAmountScreen from "@screens/Payment/MintSelectAmount";
+import MeltInputScreen from "@screens/Payment/MeltInput";
+import MeltConfirmationScreen from "@screens/Payment/MeltConfirmation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -107,13 +109,16 @@ export default function Navigator({
         }}
       >
         <Stack.Screen name="selectMint" component={SelectMintScreen} />
-        <Stack.Screen name="selectTarget" component={SelectTargetScreen} />
+
         <Stack.Screen
           name="selectMintToSwapTo"
           component={SelectMintToSwapToScreen}
         />
-        <Stack.Screen name="meltInputfield" component={InputfieldScreen} />
-        <Stack.Screen name="selectAmount" component={SelectAmountScreen} />
+        <Stack.Screen name="MeltInput" component={MeltInputScreen} />
+        <Stack.Screen
+          name="MeltConfirmation"
+          component={MeltConfirmationScreen}
+        />
         <Stack.Screen
           name="SendSelectAmount"
           component={SendSelectAmountScreen}

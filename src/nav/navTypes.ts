@@ -25,3 +25,18 @@ export type MintSettingsScreenProps = CompositeScreenProps<
   MintStackScreenProps<"MintSettings">,
   NativeStackScreenProps<RootStackParamList>
 >;
+
+export type SendSelectAmountProps = NativeStackScreenProps<
+  RootStackParamList,
+  "SendSelectAmount"
+>;
+
+export type MintSelectAmountProps = NativeStackScreenProps<
+  RootStackParamList,
+  "MintSelectAmount"
+>;
+
+export type MeltConfirmationProps = NativeStackScreenProps<
+  RootStackParamList,
+  "MeltConfirmation"
+>;

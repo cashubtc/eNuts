@@ -1,11 +1,10 @@
 import { useShakeAnimation } from "@comps/animation/Shake";
-import Button, { IconBtn } from "@comps/Button";
+import Button from "@comps/Button";
 import { ChevronRightIcon } from "@comps/Icons";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
 import { isIOS } from "@consts";
-import type { TSelectAmountPageProps } from "@model/nav";
 import { useThemeContext } from "@src/context/Theme";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
@@ -23,10 +22,11 @@ import {
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useManager } from "@src/context/Manager";
+import { MintSelectAmountProps } from "@src/nav/navTypes";
 
 export default function MintSelectAmountScreen({
   navigation,
-}: TSelectAmountPageProps) {
+}: MintSelectAmountProps) {
   const { t } = useTranslation([NS.wallet]);
   const { color, highlight } = useThemeContext();
   const { anim, shake } = useShakeAnimation();
