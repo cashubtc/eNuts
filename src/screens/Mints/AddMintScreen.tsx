@@ -24,6 +24,7 @@ import { mintService } from "@src/services/MintService";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import { useTranslation } from "react-i18next";
+import { useManager } from "@src/context/Manager";
 
 interface RecommendedMintItemProps {
   mint: {
@@ -130,6 +131,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
   const [inputUrl, setInputUrl] = useState("");
   const search = useMintRecommendations();
   const { openPromptAutoClose } = usePromptContext();
+  const manager = useManager();
 
   const handleMintSelect = (url: string) => {
     setInputUrl(url);
@@ -143,8 +145,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
       return;
     }
     try {
-      await mintService.addMint(submitted);
-      const allMints = await mintService.getAllMints();
+      await manager.mint.addMint(submitted);
       navigation.goBack();
     } catch (e) {
       openPromptAutoClose({
