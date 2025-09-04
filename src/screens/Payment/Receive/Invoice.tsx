@@ -35,9 +35,8 @@ export default function InvoiceScreen({
   };
 
   useEffect(() => {
-    manager.subscription.awaitMintQuotePaid(mintUrl, quote.quote).then(() => {
-      handlePaidInvoice();
-    });
+    manager.on("mint-quote:redeemed", handlePaidInvoice);
+    return () => manager.off("mint-quote:redeemed", handlePaidInvoice);
   }, []);
 
   return (
