@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "eNut2",
-    "slug": "eNut2",
+    "slug": "enuts",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon_transparent.png",
@@ -23,7 +23,9 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": ["android.permission.CAMERA"],
+      "permissions": [
+        "android.permission.CAMERA"
+      ],
       "package": "com.anonymous.eNut2"
     },
     "web": {
@@ -41,6 +43,12 @@
           "recordAudioAndroid": false
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "3cc1ef51-5bef-42a4-8b6b-a1bb802d46a4"
+      }
+    },
+    "owner": "egge"
   }
 }
