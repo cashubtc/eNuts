@@ -55,7 +55,9 @@ export default function MintSelectAmountScreen({
   const selectedMintName = useMemo(() => {
     if (!selectedMint) return "";
     try {
-      return selectedMint.name || new URL(selectedMint.mintUrl).hostname;
+      return (
+        selectedMint.mintInfo.name || new URL(selectedMint.mintUrl).hostname
+      );
     } catch {
       return selectedMint.mintUrl;
     }
@@ -208,7 +210,7 @@ export default function MintSelectAmountScreen({
       >
         <View style={styles.mintSelectorInfo}>
           <Txt
-            txt={`Pay from: ${selectedMintName}`}
+            txt={`Receive on: ${selectedMintName}`}
             styles={[styles.seamlessMintName, { color: color.TEXT_SECONDARY }]}
           />
           <Txt
@@ -236,6 +238,7 @@ export default function MintSelectAmountScreen({
           ref={mintSelectionSheetRef}
           selectedMint={selectedMint!}
           onMintSelect={handleMintSelect}
+          showZeroBalanceMints={true}
         />
       </Suspense>
     </Screen>

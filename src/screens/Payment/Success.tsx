@@ -46,6 +46,14 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+      <View pointerEvents="none" style={styles.confetti}>
+        <LottieView
+          source={require("../../../assets/lottie/confetti.json")}
+          autoPlay
+          loop={false}
+          style={{ width: "100%", height: "100%" }}
+        />
+      </View>
       <Logo size={s(230)} style={styles.img} success />
       <View style={{ width: "100%" }}>
         <Text
@@ -81,7 +89,6 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             autoPlay
             loop={false}
             style={styles.lottie}
-            renderMode="HARDWARE"
           />
         </View>
         {(isMelt || isAutoSwap) && amount && (
@@ -129,25 +136,16 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             const routes = navigation.getState()?.routes;
             const prevRoute = routes[routes.length - 2];
             // if user comes from auth screen, navigate back to auth
-            // @ts-expect-error navigation type is not complete
-            if (prevRoute?.name === "auth" && prevRoute.params?.pinHash) {
-              // @ts-expect-error navigation type is not complete
-
+            const prevParams: any = prevRoute?.params;
+            if (prevRoute?.name === "auth" && prevParams?.pinHash) {
               return navigation.navigate("auth", {
-                pinHash: prevRoute.params.pinHash,
+                pinHash: prevParams.pinHash as string,
               });
             }
             navigation.navigate("dashboard");
           }}
         />
       </View>
-      <LottieView
-        source={require("../../../assets/lottie/confetti.json")}
-        autoPlay
-        loop={false}
-        style={styles.confetti}
-        renderMode="HARDWARE"
-      />
     </View>
   );
 }
@@ -209,13 +207,11 @@ const styles = ScaledSheet.create({
     paddingHorizontal: "20@s",
   },
   confetti: {
-    width: "340@s",
     position: "absolute",
     top: 0,
     right: 0,
-    bottom: "-300@vs",
+    bottom: 0,
     left: 0,
-    zIndex: -1,
   },
   successAnim: {
     justifyContent: "center",
