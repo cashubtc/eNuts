@@ -1,177 +1,125 @@
-import Button, { TxtButton } from '@comps/Button'
-import RadioBtn from '@comps/RadioBtn'
-import Screen from '@comps/Screen'
-import Separator from '@comps/Separator'
-import Txt from '@comps/Txt'
-import TxtInput from '@comps/TxtInput'
-import { isIOS } from '@consts'
-import { mintUrl } from '@consts/mints'
-import { addMint, getMintsUrls } from '@db'
-import type { ISelectRecoveryMintPageProps } from '@model/nav'
-import { usePromptContext } from '@src/context/Prompt'
-import { useThemeContext } from '@src/context/Theme'
-import { NS } from '@src/i18n'
-import { getDefaultMint } from '@store/mintStore'
-import { globals } from '@styles'
-import { formatMintUrl, isErr, isStr, normalizeMintUrl } from '@util'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ScrollView, TouchableOpacity, View } from 'react-native'
-import { s, ScaledSheet } from 'react-native-size-matters'
+import Button, { TxtButton } from "@comps/Button";
+import Screen from "@comps/Screen";
+import Txt from "@comps/Txt";
+import TxtInput from "@comps/TxtInput";
+import { isIOS } from "@consts";
+import type { ISelectRecoveryMintPageProps } from "@model/nav";
+import { useThemeContext } from "@src/context/Theme";
+import { NS } from "@src/i18n";
+import { globals } from "@styles";
+import { normalizeMintUrl } from "@util";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ScrollView, View } from "react-native";
+import { s, ScaledSheet } from "react-native-size-matters";
 
-export default function SelectRecoveryMintScreen({ navigation, route }: ISelectRecoveryMintPageProps) {
+export default function SelectRecoveryMintScreen({
+  navigation,
+  route,
+}: ISelectRecoveryMintPageProps) {
+  const { t } = useTranslation([NS.common]);
+  const { color } = useThemeContext();
 
-	const { t } = useTranslation([NS.common])
-	const { color } = useThemeContext()
-	const { openPromptAutoClose } = usePromptContext()
+  const [input, setInput] = useState("");
+  const [urls, setUrls] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string | null>(null);
 
-	const [userMints, setUserMints] = useState<string[]>([])
-	const [selectedMint, setSelectedMint] = useState('')
-	const [isCustomMint, setIsCustomMint] = useState(false)
-	const [input, setInput] = useState('')
+  const handleAdd = () => {
+    const submitted = normalizeMintUrl(input.trim());
+    if (!submitted?.length) {
+      return;
+    }
+    setUrls((prev) => [...prev, submitted]);
+    setSelected(submitted);
+    setInput("");
+  };
 
-	// adds a mint via input
-	const handleMintInput = async () => {
-		// Allow user to submit URL without "https://" and add it ourself if not available
-		const submitted = normalizeMintUrl(input)
-		if (!submitted?.length) { return setIsCustomMint(false) }
-		try {
-			// check if mint is already in db
-			const mints = await getMintsUrls(true)
-			if (mints.some(m => m.mintUrl === submitted)) {
-				openPromptAutoClose({ msg: t('mntAlreadyAdded', { ns: NS.mints }), ms: 1500 })
-				return setIsCustomMint(false)
-			}
-			// add mint url to db
-			await addMint(submitted)
-			setUserMints([...userMints, submitted])
-			setSelectedMint(submitted)
-			setIsCustomMint(false)
-		} catch (e) {
-			openPromptAutoClose({ msg: isErr(e) ? e.message : t('mintConnectionFail', { ns: NS.mints }), ms: 2000 })
-			setIsCustomMint(false)
-		}
-	}
+  const handleDelete = (index: number) => {
+    setUrls((prev) => {
+      const next = prev.filter((_, i) => i !== index);
+      if (selected && selected === prev[index]) {
+        setSelected(next.length ? next[next.length - 1] : null);
+      }
+      return next;
+    });
+  };
 
-	useEffect(() => {
-		void (async () => {
-			const allMints = await getMintsUrls()
-			const defaultMint = await getDefaultMint()
-			setUserMints(!allMints.length ? [mintUrl] : allMints)
-			if (isStr(defaultMint)) { return setSelectedMint(defaultMint) }
-			if (!allMints.length) { return setSelectedMint(mintUrl) }
-			setSelectedMint(allMints[0])
-		})()
-	}, [])
-
-	return (
-		<Screen
-			screenName={t('walletRecovery')}
-			withBackBtn
-			handlePress={() => navigation.goBack()}
-		>
-			<Txt txt={t('selectRestoreMint')} styles={[styles.hint]} bold />
-			{userMints.length > 0 ?
-				<ScrollView alwaysBounceVertical={false} style={{ marginBottom: s(90) }}>
-					<View style={[globals(color).wrapContainer, { paddingBottom: s(20) }]}>
-						{userMints.map((m, i) => (
-							<RecoveryMint
-								key={i}
-								mintUrl={formatMintUrl(m)}
-								handlePress={() => setSelectedMint(m)}
-								selected={selectedMint === m}
-								hasSeparator={i < userMints.length - 1}
-							/>
-						))}
-					</View>
-					{!isCustomMint &&
-						<TxtButton
-							txt={t('addNewMint', { ns: NS.mints })}
-							onPress={() => setIsCustomMint(true)}
-						/>
-					}
-				</ScrollView>
-				:
-				<View>
-					<RecoveryMint
-						mintUrl={formatMintUrl(mintUrl)}
-						handlePress={() => setSelectedMint(mintUrl)}
-						selected={selectedMint === mintUrl}
-					/>
-				</View>
-			}
-			<View style={[styles.btn, { backgroundColor: color.BACKGROUND }]}>
-				<View style={styles.btnWrap}>
-					{isCustomMint &&
-						<TxtInput
-							autoCapitalize='none'
-							placeholder='Mint URL'
-							onChangeText={text => setInput(text)}
-							onSubmitEditing={() => void handleMintInput()}
-							autoFocus
-						/>
-					}
-					<Button
-						txt={isCustomMint ? !input.length ? t('cancel') : t('confirm') : t('continue')}
-						onPress={() => {
-							if (isCustomMint) {
-								return void handleMintInput()
-							}
-							navigation.navigate('Recover', {
-								mintUrl: selectedMint,
-								comingFromOnboarding: route.params.comingFromOnboarding
-							})
-						}}
-					/>
-				</View>
-			</View>
-		</Screen>
-	)
-}
-
-interface IRecoveryMintProps {
-	mintUrl: string
-	handlePress: () => void
-	selected?: boolean
-	hasSeparator?: boolean
-}
-
-function RecoveryMint({ mintUrl, handlePress, selected, hasSeparator }: IRecoveryMintProps) {
-	return (
-		<>
-			<TouchableOpacity
-				onPress={handlePress}
-				style={styles.rowWrap}
-			>
-				<Txt txt={mintUrl} />
-				<RadioBtn selected={selected} />
-			</TouchableOpacity>
-			{hasSeparator && <Separator style={[styles.separator]} />}
-		</>
-	)
+  return (
+    <Screen
+      screenName={t("walletRecovery")}
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+    >
+      <View style={{ paddingHorizontal: s(20) }}>
+        <Txt txt={t("selectRestoreMint")} styles={[styles.hint]} bold />
+        <TxtInput
+          autoCapitalize="none"
+          placeholder="Mint URL"
+          value={input}
+          onChangeText={(text) => setInput(text)}
+          onSubmitEditing={() => void handleAdd()}
+          ms={200}
+        />
+        <View style={{ marginTop: s(10) }}>
+          <Button
+            disabled={!input.length}
+            txt={t("add")}
+            onPress={() => void handleAdd()}
+          />
+        </View>
+      </View>
+      <ScrollView
+        alwaysBounceVertical={false}
+        style={{ marginBottom: s(90), marginTop: s(20) }}
+      >
+        <View style={[globals(color).wrapContainer, { paddingBottom: s(20) }]}>
+          {urls.map((url, i) => (
+            <View key={`${url}-${i}`} style={styles.rowWrap}>
+              <Txt txt={url} />
+              <TxtButton txt={t("delete")} onPress={() => handleDelete(i)} />
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+      <View style={[styles.btn, { backgroundColor: color.BACKGROUND }]}>
+        <View style={styles.btnWrap}>
+          <Button
+            disabled={!selected}
+            txt={t("confirm")}
+            onPress={() => {
+              if (!selected) {
+                return;
+              }
+              navigation.navigate("Recover", {
+                mintUrl: selected,
+                comingFromOnboarding: route.params?.comingFromOnboarding,
+              });
+            }}
+          />
+        </View>
+      </View>
+    </Screen>
+  );
 }
 
 const styles = ScaledSheet.create({
-	hint: {
-		paddingHorizontal: '20@s',
-		marginBottom: '20@vs',
-	},
-	rowWrap: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-	separator: {
-		marginTop: '20@s',
-	},
-	btn: {
-		position: 'absolute',
-		right: 0,
-		bottom: isIOS ? '0@s' : '20@s',
-		left: 0,
-	},
-	btnWrap: {
-		marginHorizontal: '20@s',
-		marginTop: '20@s',
-	}
-})
+  hint: {
+    paddingHorizontal: "20@s",
+    marginBottom: "20@vs",
+  },
+  rowWrap: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  btn: {
+    position: "absolute",
+    right: 0,
+    bottom: isIOS ? "0@s" : "20@s",
+    left: 0,
+  },
+  btnWrap: {
+    marginHorizontal: "20@s",
+    marginTop: "20@s",
+  },
+});
