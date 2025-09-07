@@ -14,7 +14,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.eNut2"
+      "bundleIdentifier": "com.cypherbase.eNuts",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,10 +26,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": [
-        "android.permission.CAMERA"
-      ],
-      "package": "com.anonymous.eNut2"
+      "permissions": ["android.permission.CAMERA"],
+      "package": "com.cypherbase.eNuts"
     },
     "web": {
       "favicon": "./assets/favicon.png"
