@@ -13,7 +13,6 @@ import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 import { BalanceProvider } from "@src/context/Balance";
 import { FocusClaimProvider } from "@src/context/FocusClaim";
 import { HistoryProvider } from "@src/context/History";
-import { KeyboardProvider } from "@src/context/Keyboard";
 
 import { PinCtx } from "@src/context/Pin";
 import { PrivacyProvider } from "@src/context/Privacy";
@@ -50,6 +49,7 @@ import { ConsoleLogger, Manager } from "coco-cashu-core";
 import { getSeed } from "@src/storage/store/restore";
 import { dbProvider } from "@src/storage/DbProvider";
 import { seedService } from "@src/services/SeedService";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 interface ILockData {
   mismatch: boolean;
@@ -68,11 +68,13 @@ void SplashScreen.preventAutoHideAsync();
 function App(_: { exp: Record<string, unknown> }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <CustomErrorBoundary catchErrors="always">
-          <RootApp />
-        </CustomErrorBoundary>
-      </SafeAreaProvider>
+      <KeyboardProvider>
+        <SafeAreaProvider>
+          <CustomErrorBoundary catchErrors="always">
+            <RootApp />
+          </CustomErrorBoundary>
+        </SafeAreaProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }
@@ -128,22 +130,22 @@ function useRootAppState() {
       l(
         isErr(e)
           ? e.message
-          : "Error while initiating the user app configuration."
+          : "Error while initiating the user app configuration.",
       );
     }
   };
 
   const initAuth = async () => {
-    const [pinHash, onboard, sawSeed, seed] = await Promise.all([
+    const hasSeed = seedService.isMnemonicSet();
+    const [pinHash, onboard, sawSeed] = await Promise.all([
       secureStore.get(SECURESTORE_KEY),
       store.get(STORE_KEYS.explainer),
       store.get(STORE_KEYS.sawSeedUpdate),
-      store.get(STORE_KEYS.hasSeed),
     ]);
     setAuth({ pinHash: isNull(pinHash) ? "" : pinHash });
     setShouldOnboard(onboard && onboard === "1" ? false : true);
     setSawSeedUpdate(sawSeed && sawSeed === "1" ? true : false);
-    setHasSeed(!!seed);
+    setHasSeed(hasSeed);
     await handlePinForeground();
   };
 
@@ -162,7 +164,7 @@ function useRootAppState() {
       const mgr = new Manager(
         repo,
         seedGetter,
-        new ConsoleLogger(undefined, { level: "debug" })
+        new ConsoleLogger(undefined, { level: "debug" }),
       );
       await mgr.enableMintQuoteWatcher();
       return mgr;
@@ -198,11 +200,11 @@ function useRootAppState() {
           l("[PIN] App has gone to the background!");
           await store.set(
             STORE_KEYS.bgCounter,
-            `${Math.ceil(Date.now() / 1000)}`
+            `${Math.ceil(Date.now() / 1000)}`,
           );
         }
         appState.current = nextAppState;
-      }
+      },
     );
     return () => subscription.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps

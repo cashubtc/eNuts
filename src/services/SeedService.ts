@@ -20,6 +20,10 @@ class SeedService {
     return SecureStore.getItem("mnemonic");
   }
 
+  isMnemonicSet() {
+    return SecureStore.getItem("mnemonic") !== null;
+  }
+
   getSeed() {
     if (this._seed) {
       return this._seed;

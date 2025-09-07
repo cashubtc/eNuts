@@ -1,9 +1,12 @@
-import Button, { TxtButton } from "@comps/Button";
-import Screen from "@comps/Screen";
+import Button, { IconBtn, TxtButton } from "@comps/Button";
+import { highlight as hi } from "@styles";
+import { PlusIcon, TrashbinIcon } from "@comps/Icons";
+import Screen, { ScreenWithKeyboard } from "@comps/Screen";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
 import { isIOS } from "@consts";
 import type { ISelectRecoveryMintPageProps } from "@model/nav";
+import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals } from "@styles";
@@ -18,15 +21,17 @@ export default function SelectRecoveryMintScreen({
   route,
 }: ISelectRecoveryMintPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const { highlight, color, pref } = useThemeContext();
 
   const [input, setInput] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+  const { openPromptAutoClose } = usePromptContext();
 
   const handleAdd = () => {
     const submitted = normalizeMintUrl(input.trim());
     if (!submitted?.length) {
+      openPromptAutoClose({ msg: t("invalidUrl", { ns: NS.mints }), ms: 1500 });
       return;
     }
     setUrls((prev) => [...prev, submitted]);
@@ -45,60 +50,67 @@ export default function SelectRecoveryMintScreen({
   };
 
   return (
-    <Screen
+    <ScreenWithKeyboard
       screenName={t("walletRecovery")}
       withBackBtn
       handlePress={() => navigation.goBack()}
     >
-      <View style={{ paddingHorizontal: s(20) }}>
+      <View style={{ flex: 1, gap: s(10) }}>
         <Txt txt={t("selectRestoreMint")} styles={[styles.hint]} bold />
-        <TxtInput
-          autoCapitalize="none"
-          placeholder="Mint URL"
-          value={input}
-          onChangeText={(text) => setInput(text)}
-          onSubmitEditing={() => void handleAdd()}
-          ms={200}
-        />
-        <View style={{ marginTop: s(10) }}>
-          <Button
-            disabled={!input.length}
-            txt={t("add")}
+        <View
+          style={{ flexDirection: "row", alignItems: "center", gap: s(12) }}
+        >
+          <View style={{ flex: 1 }}>
+            <TxtInput
+              autoCapitalize="none"
+              placeholder="Mint URL"
+              value={input}
+              onChangeText={(text) => setInput(text)}
+              onSubmitEditing={() => void handleAdd()}
+            />
+          </View>
+          <IconBtn
+            icon={<PlusIcon color="white" width={s(20)} height={s(20)} />}
             onPress={() => void handleAdd()}
+            disabled={!input.length}
           />
         </View>
-      </View>
-      <ScrollView
-        alwaysBounceVertical={false}
-        style={{ marginBottom: s(90), marginTop: s(20) }}
-      >
-        <View style={[globals(color).wrapContainer, { paddingBottom: s(20) }]}>
-          {urls.map((url, i) => (
-            <View key={`${url}-${i}`} style={styles.rowWrap}>
-              <Txt txt={url} />
-              <TxtButton txt={t("delete")} onPress={() => handleDelete(i)} />
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-      <View style={[styles.btn, { backgroundColor: color.BACKGROUND }]}>
-        <View style={styles.btnWrap}>
+        <ScrollView alwaysBounceVertical={false}>
           <Button
-            disabled={!selected}
+            disabled={urls.length === 0}
             txt={t("confirm")}
             onPress={() => {
-              if (!selected) {
+              if (urls.length === 0) {
                 return;
               }
               navigation.navigate("Recover", {
-                mintUrl: selected,
+                mintUrl: urls[0],
                 comingFromOnboarding: route.params?.comingFromOnboarding,
               });
             }}
           />
-        </View>
+          <View style={[globals(color).wrapContainer, { marginTop: 10 }]}>
+            {urls.map((url, i) => (
+              <View key={`${url}-${i}`} style={styles.rowWrap}>
+                <Txt txt={url} />
+                <IconBtn
+                  outlined
+                  icon={
+                    <TrashbinIcon
+                      width={s(20)}
+                      height={s(20)}
+                      color={hi[highlight]}
+                    />
+                  }
+                  size={s(40)}
+                  onPress={() => handleDelete(i)}
+                />
+              </View>
+            ))}
+          </View>
+        </ScrollView>
       </View>
-    </Screen>
+    </ScreenWithKeyboard>
   );
 }
 

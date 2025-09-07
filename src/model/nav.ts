@@ -37,6 +37,7 @@ export type RootStackParamList = {
   "Display settings": undefined;
   "Language settings": undefined;
   "Advanced settings": undefined;
+  "View mnemonic": undefined;
   auth: {
     pinHash: string;
     shouldEdit?: boolean;
@@ -366,6 +367,10 @@ export type TLanguageSettingsPageProps = NativeStackScreenProps<
 export type TAdvancedSettingsPageProps = NativeStackScreenProps<
   RootStackParamList,
   "Advanced settings"
+>;
+export type TViewMnemonicPageProps = NativeStackScreenProps<
+  RootStackParamList,
+  "View mnemonic"
 >;
 export type ISeedPageProps = NativeStackScreenProps<RootStackParamList, "Seed">;
 export type IRecoverPageProps = NativeStackScreenProps<

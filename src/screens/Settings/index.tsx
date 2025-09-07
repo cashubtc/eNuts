@@ -5,6 +5,7 @@ import {
   GithubIcon,
   HistoryIcon,
   LanguageIcon,
+  KeyIcon,
   LockIcon,
   MintBoardIcon,
   PaletteIcon,
@@ -113,13 +114,11 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
               })
             }
           />
-          {hasSeed && (
-            <MenuItem
-              txt={t("backupSeed")}
-              icon={<BackupIcon color={color.TEXT} />}
-              onPress={() => navigation.navigate("Seed", { hasSeed })}
-            />
-          )}
+          <MenuItem
+            txt={"View Mnemonic"}
+            icon={<KeyIcon color={color.TEXT} />}
+            onPress={() => navigation.navigate("View mnemonic")}
+          />
         </View>
         {/* ABOUT */}
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>

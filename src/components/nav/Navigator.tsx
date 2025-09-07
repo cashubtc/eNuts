@@ -38,6 +38,7 @@ import Settings from "@screens/Settings";
 import AdvancedFunctionScreen from "@screens/Settings/Advanced";
 import DisplaySettings from "@screens/Settings/Display";
 import LanguageSettings from "@screens/Settings/Language";
+import ViewMnemonic from "@screens/Settings/ViewMnemonic";
 import { useThemeContext } from "@src/context/Theme";
 import { useEffect } from "react";
 import { View } from "react-native";
@@ -196,6 +197,7 @@ export default function Navigator({
           name="Advanced settings"
           component={AdvancedFunctionScreen}
         />
+        <Stack.Screen name="View mnemonic" component={ViewMnemonic} />
         <Stack.Screen
           name="Seed"
           component={SeedScreen}
