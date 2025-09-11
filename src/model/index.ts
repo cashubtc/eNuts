@@ -1,10 +1,4 @@
-import type {
-  Proof,
-  Token,
-  GetInfoResponse,
-  CashuWallet,
-} from "@cashu/cashu-ts";
-import { mintService } from "@src/services/MintService";
+import type { Proof, Token } from "@cashu/cashu-ts";
 import type { HighlightKey } from "@styles";
 import type { ExpoConfig } from "expo/config";
 
