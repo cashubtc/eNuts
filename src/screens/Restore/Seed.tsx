@@ -1,33 +1,14 @@
-import Button, { TxtButton } from "@comps/Button";
-import {
-  BackupIcon,
-  BoltIcon,
-  ExclamationIcon,
-  ExitIcon,
-  InfoIcon,
-  LeafIcon,
-  LeftArrow,
-} from "@comps/Icons";
-import MyModal from "@comps/modal";
+import { BackupIcon, LeafIcon } from "@comps/Icons";
 import Screen from "@comps/Screen";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
-import { getMints } from "@db";
 import type { ISeedPageProps } from "@model/nav";
-import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { store } from "@store";
-import { STORE_KEYS } from "@store/consts";
-import { globals, mainColors } from "@styles";
 import { H_Colors } from "@styles/colors";
-import { incrementCounterByMintUrl } from "@wallet";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
-
-const incrementValue = 50;
 
 export default function SeedScreen({ navigation }: ISeedPageProps) {
   const { t } = useTranslation([NS.common]);
@@ -49,7 +30,7 @@ export default function SeedScreen({ navigation }: ISeedPageProps) {
                 <LeafIcon
                   width={s(22)}
                   height={s(22)}
-                  color={mainColors.VALID}
+                  color={H_Colors.Default}
                 />
               </View>
               <View>
@@ -65,10 +46,7 @@ export default function SeedScreen({ navigation }: ISeedPageProps) {
         </>
         <TouchableOpacity
           onPress={() => {
-            void store.set(STORE_KEYS.sawSeedUpdate, "1");
-            navigation.navigate("Restore warning", {
-              comingFromOnboarding: true,
-            });
+            navigation.navigate("RecoverMints", {});
           }}
         >
           <View style={styles.action}>

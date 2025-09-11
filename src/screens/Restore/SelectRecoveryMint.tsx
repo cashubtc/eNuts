@@ -1,11 +1,13 @@
-import Button, { IconBtn, TxtButton } from "@comps/Button";
+import Button, { IconBtn } from "@comps/Button";
 import { highlight as hi } from "@styles";
 import { PlusIcon, TrashbinIcon } from "@comps/Icons";
-import Screen, { ScreenWithKeyboard } from "@comps/Screen";
+import { ScreenWithKeyboard } from "@comps/Screen";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
 import { isIOS } from "@consts";
-import type { ISelectRecoveryMintPageProps } from "@model/nav";
+import type { RecoverMintsScreenProps } from "@src/nav/navTypes";
+import { useManager } from "@src/context/Manager";
+import { useKnownMints } from "@src/context/KnownMints";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
@@ -18,35 +20,24 @@ import { s, ScaledSheet } from "react-native-size-matters";
 
 export default function SelectRecoveryMintScreen({
   navigation,
-  route,
-}: ISelectRecoveryMintPageProps) {
+}: RecoverMintsScreenProps) {
   const { t } = useTranslation([NS.common]);
-  const { highlight, color, pref } = useThemeContext();
+  const { highlight, color } = useThemeContext();
 
   const [input, setInput] = useState("");
-  const [urls, setUrls] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string | null>(null);
+  const { knownMints } = useKnownMints();
+  const manager = useManager();
   const { openPromptAutoClose } = usePromptContext();
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     const submitted = normalizeMintUrl(input.trim());
     if (!submitted?.length) {
       openPromptAutoClose({ msg: t("invalidUrl", { ns: NS.mints }), ms: 1500 });
       return;
     }
-    setUrls((prev) => [...prev, submitted]);
-    setSelected(submitted);
-    setInput("");
-  };
+    await manager.mint.addMint(submitted);
 
-  const handleDelete = (index: number) => {
-    setUrls((prev) => {
-      const next = prev.filter((_, i) => i !== index);
-      if (selected && selected === prev[index]) {
-        setSelected(next.length ? next[next.length - 1] : null);
-      }
-      return next;
-    });
+    setInput("");
   };
 
   return (
@@ -77,37 +68,35 @@ export default function SelectRecoveryMintScreen({
         </View>
         <ScrollView alwaysBounceVertical={false}>
           <Button
-            disabled={urls.length === 0}
+            disabled={knownMints.length === 0}
             txt={t("confirm")}
             onPress={() => {
-              if (urls.length === 0) {
-                return;
-              }
-              navigation.navigate("Recover", {
-                mintUrl: urls[0],
-                comingFromOnboarding: route.params?.comingFromOnboarding,
-              });
+              navigation.navigate("Recover");
             }}
           />
-          <View style={[globals(color).wrapContainer, { marginTop: 10 }]}>
-            {urls.map((url, i) => (
-              <View key={`${url}-${i}`} style={styles.rowWrap}>
-                <Txt txt={url} />
-                <IconBtn
-                  outlined
-                  icon={
-                    <TrashbinIcon
-                      width={s(20)}
-                      height={s(20)}
-                      color={hi[highlight]}
-                    />
-                  }
-                  size={s(40)}
-                  onPress={() => handleDelete(i)}
-                />
-              </View>
-            ))}
-          </View>
+          {knownMints.length > 0 && (
+            <View style={[globals(color).wrapContainer, { marginTop: 10 }]}>
+              {knownMints.map((mint, i) => (
+                <View key={`${mint.mintUrl}-${i}`} style={styles.rowWrap}>
+                  <Txt txt={mint.mintUrl} />
+                  <IconBtn
+                    outlined
+                    icon={
+                      <TrashbinIcon
+                        width={s(20)}
+                        height={s(20)}
+                        color={hi[highlight]}
+                      />
+                    }
+                    size={s(40)}
+                    onPress={() => {
+                      //TODO: Add delete
+                    }}
+                  />
+                </View>
+              ))}
+            </View>
+          )}
         </ScrollView>
       </View>
     </ScreenWithKeyboard>

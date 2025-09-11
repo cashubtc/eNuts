@@ -10,7 +10,7 @@ import { NS } from "@src/i18n";
 import { seedService } from "@src/services/SeedService";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, SafeAreaView, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 
 export default function MnemonicScreen({

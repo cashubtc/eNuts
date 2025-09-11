@@ -85,7 +85,6 @@ function useRootAppState() {
   const [auth, setAuth] = useState<INavigatorProps>({ pinHash: "" });
   const [shouldOnboard, setShouldOnboard] = useState(false);
   const [hasSeed, setHasSeed] = useState(false);
-  const [sawSeedUpdate, setSawSeedUpdate] = useState(false);
   const [bgAuth, setBgAuth] = useState(false);
   const [attempts, setAttempts] = useState({
     mismatch: false,
@@ -130,21 +129,19 @@ function useRootAppState() {
       l(
         isErr(e)
           ? e.message
-          : "Error while initiating the user app configuration.",
+          : "Error while initiating the user app configuration."
       );
     }
   };
 
   const initAuth = async () => {
     const hasSeed = seedService.isMnemonicSet();
-    const [pinHash, onboard, sawSeed] = await Promise.all([
+    const [pinHash, onboard] = await Promise.all([
       secureStore.get(SECURESTORE_KEY),
       store.get(STORE_KEYS.explainer),
-      store.get(STORE_KEYS.sawSeedUpdate),
     ]);
     setAuth({ pinHash: isNull(pinHash) ? "" : pinHash });
     setShouldOnboard(onboard && onboard === "1" ? false : true);
-    setSawSeedUpdate(sawSeed && sawSeed === "1" ? true : false);
     setHasSeed(hasSeed);
     await handlePinForeground();
   };
@@ -164,7 +161,7 @@ function useRootAppState() {
       const mgr = new Manager(
         repo,
         seedGetter,
-        new ConsoleLogger(undefined, { level: "debug" }),
+        new ConsoleLogger(undefined, { level: "debug" })
       );
       await mgr.enableMintQuoteWatcher();
       return mgr;
@@ -200,11 +197,11 @@ function useRootAppState() {
           l("[PIN] App has gone to the background!");
           await store.set(
             STORE_KEYS.bgCounter,
-            `${Math.ceil(Date.now() / 1000)}`,
+            `${Math.ceil(Date.now() / 1000)}`
           );
         }
         appState.current = nextAppState;
-      },
+      }
     );
     return () => subscription.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -215,7 +212,6 @@ function useRootAppState() {
     manager,
     shouldOnboard,
     hasSeed,
-    sawSeedUpdate,
     auth,
     bgAuth,
     setBgAuth,
@@ -267,7 +263,6 @@ function RootApp() {
     manager,
     shouldOnboard,
     hasSeed,
-    sawSeedUpdate,
     auth,
     bgAuth,
     setBgAuth,
@@ -285,7 +280,6 @@ function RootApp() {
           bgAuth={bgAuth}
           setBgAuth={setBgAuth}
           hasSeed={hasSeed}
-          sawSeedUpdate={sawSeedUpdate}
         />
         <StatusBar style="auto" />
         <ClipboardModal />
