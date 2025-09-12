@@ -36,11 +36,12 @@ import Toaster from "./Toaster";
 import * as SplashScreen from "expo-splash-screen";
 import { ManagerProvider } from "@src/context/Manager";
 import { ExpoSqliteRepositories } from "coco-cashu-expo-sqlite";
-import { ConsoleLogger, Manager } from "coco-cashu-core";
+import { Manager } from "coco-cashu-core";
 import { dbProvider } from "@src/storage/DbProvider";
 import { seedService } from "@src/services/SeedService";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { usePinAuth } from "@src/modules/pin/PinProvider";
+import { appLogger } from "@src/logger";
 
 l("[APP] Starting app...");
 
@@ -106,7 +107,7 @@ function useAppInitialization() {
       const mgr = new Manager(
         repo,
         seedGetter,
-        new ConsoleLogger(undefined, { level: "debug" })
+        appLogger.child({ name: "Manager" })
       );
       await mgr.enableMintQuoteWatcher();
       return mgr;

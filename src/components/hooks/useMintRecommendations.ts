@@ -1,5 +1,5 @@
-import { l } from "@src/logger";
-import { ConsoleLogger, KYMHandler } from "cashu-kym";
+import { l, appLogger } from "@src/logger";
+import { KYMHandler } from "cashu-kym";
 import { useEffect, useState } from "react";
 
 type SearchResult = Awaited<ReturnType<KYMHandler["discover"]>>;
@@ -14,7 +14,7 @@ const useMintRecommendations = () => {
       relays: ["wss://relay.damus.io", "wss://relay.primals.io"],
       timeout: 2000,
       auditorBaseUrl: "https://api.audit.8333.space",
-      logger: new ConsoleLogger({ logLevel: "debug" }),
+      logger: appLogger.child({ name: "KYM" }),
     });
     handler
       .discover()
