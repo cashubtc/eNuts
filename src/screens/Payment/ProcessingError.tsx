@@ -87,9 +87,6 @@ export default function ProcessingErrorScreen({
           outlined={scan}
           txt={t("backToDashboard")}
           onPress={() => {
-            if (comingFromOnboarding) {
-              return navigation.navigate("auth", { pinHash: "" });
-            }
             navigation.navigate("dashboard");
           }}
         />

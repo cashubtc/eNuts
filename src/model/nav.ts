@@ -40,9 +40,7 @@ export type RootStackParamList = {
   "Advanced settings": undefined;
   "View mnemonic": undefined;
   auth: {
-    pinHash: string;
-    shouldEdit?: boolean;
-    shouldRemove?: boolean;
+    mode: "unlock" | "setup" | "edit" | "remove";
     sawSeedUpdate?: boolean;
   };
   Restore: NavigatorScreenParams<RestoreStackParamList>;
@@ -382,11 +380,7 @@ export type TBottomNavProps =
   | TSettingsPageProps
   | TDisplaySettingsPageProps;
 export interface INavigatorProps {
-  pinHash: string;
-  // shouldSetup?: boolean
-  bgAuth?: boolean;
   shouldOnboard?: boolean;
-  setBgAuth?: (val: boolean) => void;
   hasSeed?: boolean;
 }
 export type TBeforeRemoveEvent = EventArg<

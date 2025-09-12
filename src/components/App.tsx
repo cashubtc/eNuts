@@ -1,7 +1,6 @@
 // Import shim first to set up crypto polyfill before any other modules
 import "../shim";
 
-import { FiveMins } from "@consts/time";
 import { l } from "@log";
 import type { INavigatorProps } from "@model/nav";
 import Navigator from "@nav/Navigator";
@@ -14,17 +13,17 @@ import { BalanceProvider } from "@src/context/Balance";
 import { FocusClaimProvider } from "@src/context/FocusClaim";
 import { HistoryProvider } from "@src/context/History";
 
-import { PinCtx } from "@src/context/Pin";
+import { PinProvider } from "@src/modules/pin/PinProvider";
 import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
 import { ThemeProvider, useThemeContext } from "@src/context/Theme";
 import { QRScannerProvider } from "@src/context/QRScanner";
 import { KnownMintsProvider } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { secureStore, store } from "@store";
-import { SECURESTORE_KEY, STORE_KEYS } from "@store/consts";
+import { store } from "@store";
+import { STORE_KEYS } from "@store/consts";
 import { dark, light } from "@styles";
-import { isErr, isNull, isStr } from "@util";
+import { isErr } from "@util";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -48,16 +47,9 @@ import { getSeed } from "@src/storage/store/restore";
 import { dbProvider } from "@src/storage/DbProvider";
 import { seedService } from "@src/services/SeedService";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { usePinAuth } from "@src/modules/pin/PinProvider";
 
-interface ILockData {
-  mismatch: boolean;
-  mismatchCount: number;
-  locked: boolean;
-  lockedCount: number;
-  lockedTime: number;
-  timestamp: number;
-}
-type PinContextValue = React.ContextType<typeof PinCtx>;
+type PinContextValue = never;
 
 l("[APP] Starting app...");
 
@@ -80,42 +72,11 @@ export default App;
 
 function useRootAppState() {
   const [manager, setManager] = useState<Manager | null>(null);
-  const [auth, setAuth] = useState<INavigatorProps>({ pinHash: "" });
   const [shouldOnboard, setShouldOnboard] = useState(false);
   const [hasSeed, setHasSeed] = useState(false);
-  const [bgAuth, setBgAuth] = useState(false);
-  const [attempts, setAttempts] = useState({
-    mismatch: false,
-    mismatchCount: 0,
-    locked: false,
-    lockedCount: 0,
-    lockedTime: 0,
-  });
-  const pinData = { attempts, setAttempts };
   const { i18n } = useTranslation([NS.common]);
   const [isRdy, setIsRdy] = useState(false);
   const appState = useRef(AppState.currentState);
-
-  const handlePinForeground = async () => {
-    const pw = await secureStore.get(SECURESTORE_KEY);
-    if (isNull(pw)) {
-      return;
-    }
-    const now = Math.ceil(Date.now() / 1000);
-    const lockData = await store.getObj<ILockData>(STORE_KEYS.lock);
-    if (lockData) {
-      const secsPassed = now - lockData.timestamp;
-      const lockedTime = lockData.lockedTime - secsPassed;
-      const { timestamp: _timestamp, ...rest } = lockData;
-      setAttempts({ ...rest, mismatch: false, lockedTime });
-    }
-    const bgTimestamp = await store.get(STORE_KEYS.bgCounter);
-    if (isStr(bgTimestamp) && bgTimestamp.length > 0) {
-      if (now - +bgTimestamp > FiveMins) {
-        setBgAuth(true);
-      }
-    }
-  };
 
   const initData = async () => {
     try {
@@ -134,14 +95,9 @@ function useRootAppState() {
 
   const initAuth = async () => {
     const hasSeed = seedService.isMnemonicSet();
-    const [pinHash, onboard] = await Promise.all([
-      secureStore.get(SECURESTORE_KEY),
-      store.get(STORE_KEYS.explainer),
-    ]);
-    setAuth({ pinHash: isNull(pinHash) ? "" : pinHash });
+    const [onboard] = await Promise.all([store.get(STORE_KEYS.explainer)]);
     setShouldOnboard(onboard && onboard === "1" ? false : true);
     setHasSeed(hasSeed);
-    await handlePinForeground();
   };
 
   useEffect(() => {
@@ -176,28 +132,11 @@ function useRootAppState() {
     }
 
     (async () => {
-      try {
-        await init();
-      } finally {
-        await SplashScreen.hideAsync();
-      }
+      await init();
     })();
     const subscription = AppState.addEventListener(
       "change",
       async (nextAppState) => {
-        if (
-          appState.current.match(/inactive|background/) &&
-          nextAppState === "active"
-        ) {
-          l("[PIN] App has come to the foreground!");
-          await handlePinForeground();
-        } else {
-          l("[PIN] App has gone to the background!");
-          await store.set(
-            STORE_KEYS.bgCounter,
-            `${Math.ceil(Date.now() / 1000)}`
-          );
-        }
         appState.current = nextAppState;
       }
     );
@@ -210,23 +149,13 @@ function useRootAppState() {
     manager,
     shouldOnboard,
     hasSeed,
-    auth,
-    bgAuth,
-    setBgAuth,
-    pinData,
   };
 }
 
-function AppProviders({
-  children,
-  pinData,
-}: {
-  children: React.ReactNode;
-  pinData: PinContextValue;
-}) {
+function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      <PinCtx.Provider value={pinData}>
+      <PinProvider>
         <PrivacyProvider>
           <MenuProvider>
             <BottomSheetModalProvider>
@@ -248,35 +177,22 @@ function AppProviders({
             </BottomSheetModalProvider>
           </MenuProvider>
         </PrivacyProvider>
-      </PinCtx.Provider>
+      </PinProvider>
     </ThemeProvider>
   );
 }
 
 function RootApp() {
-  const {
-    isRdy,
-    manager,
-    shouldOnboard,
-    hasSeed,
-    auth,
-    bgAuth,
-    setBgAuth,
-    pinData,
-  } = useRootAppState();
+  const { isRdy, manager, shouldOnboard, hasSeed } = useRootAppState();
+  const { ready: pinReady } = usePinAuth();
   if (!isRdy || !manager) {
     return <Blank />;
   }
   return (
     <ManagerProvider manager={manager}>
-      <AppProviders pinData={pinData}>
-        <Navigator
-          shouldOnboard={shouldOnboard}
-          pinHash={auth.pinHash}
-          bgAuth={bgAuth}
-          setBgAuth={setBgAuth}
-          hasSeed={hasSeed}
-        />
+      <AppProviders>
+        <Navigator shouldOnboard={shouldOnboard} hasSeed={hasSeed} />
+        <SplashGate appReady={isRdy && !!manager} pinReady={pinReady} />
         <StatusBar style="auto" />
         <ClipboardModal />
         <QRScannerBottomSheet />
@@ -299,4 +215,19 @@ function NavContainer({ children }: { children: React.ReactNode }) {
       {children}
     </NavigationContainer>
   );
+}
+
+function SplashGate({
+  appReady,
+  pinReady,
+}: {
+  appReady: boolean;
+  pinReady: boolean;
+}) {
+  useEffect(() => {
+    if (appReady && pinReady) {
+      void SplashScreen.hideAsync();
+    }
+  }, [appReady, pinReady]);
+  return null;
 }

@@ -41,14 +41,11 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const animationDuration = 250;
 
-export default function Navigator({
-  pinHash,
-  bgAuth,
-  shouldOnboard,
-  setBgAuth,
-  hasSeed,
-}: INavigatorProps) {
+export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
   const { color } = useThemeContext();
+  // lazy import to avoid circulars in types
+  const { usePinAuth } = require("@src/modules/pin/PinProvider");
+  const { ready, hasPin, needsAuth, clearNeedsAuth } = usePinAuth();
 
   const nav =
     useNavigation<
@@ -58,27 +55,33 @@ export default function Navigator({
   const getInitialRoute = () => {
     // initial onboarding
     if (shouldOnboard) {
+      console.log("onboarding");
       return "onboarding";
     }
-    // a pin has been setup previously
-    if (pinHash || bgAuth) {
+    // a pin has been setup previously and re-auth required
+    if (needsAuth) {
+      console.log("auth");
       return "auth";
     }
     // no previous pin setup && onboarding done
     if (!hasSeed) {
+      console.log("restore");
       return "Restore";
     }
+    console.log("dashboard");
     return "dashboard";
   };
 
   useEffect(() => {
-    if (!bgAuth || !pinHash.length) {
-      return;
+    if (!ready) return;
+    // do not interrupt onboarding with PIN prompt
+    if (shouldOnboard) return;
+    if (needsAuth && hasPin) {
+      clearNeedsAuth();
+      nav.navigate("auth", { mode: "unlock" });
     }
-    setBgAuth?.(false);
-    nav.navigate("auth", { pinHash });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bgAuth]);
+  }, [ready, needsAuth, hasPin, shouldOnboard]);
 
   return (
     <View
@@ -153,7 +156,7 @@ export default function Navigator({
         <Stack.Screen
           name="auth"
           component={AuthPage}
-          initialParams={{ pinHash }}
+          initialParams={{ mode: "unlock" }}
           options={{ gestureEnabled: false }}
         />
         {/* sendable token created page */}

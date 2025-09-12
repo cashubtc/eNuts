@@ -109,8 +109,7 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
             icon={<LockIcon color={color.TEXT} />}
             onPress={() =>
               navigation.navigate("auth", {
-                pinHash: pin || "",
-                shouldEdit: true,
+                mode: pin ? "edit" : "setup",
               })
             }
           />
