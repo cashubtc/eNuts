@@ -2,12 +2,8 @@
 import "../shim";
 
 import { l } from "@log";
-import type { INavigatorProps } from "@model/nav";
 import Navigator from "@nav/Navigator";
-import {
-  NavigationContainer,
-  NavigationContainerRef,
-} from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 import { BalanceProvider } from "@src/context/Balance";
 import { FocusClaimProvider } from "@src/context/FocusClaim";
@@ -25,9 +21,8 @@ import { STORE_KEYS } from "@store/consts";
 import { dark, light } from "@styles";
 import { isErr } from "@util";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppState } from "react-native";
 import { MenuProvider } from "react-native-popup-menu";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -40,16 +35,12 @@ import Toaster from "./Toaster";
 
 import * as SplashScreen from "expo-splash-screen";
 import { ManagerProvider } from "@src/context/Manager";
-import * as SQLite from "expo-sqlite";
 import { ExpoSqliteRepositories } from "coco-cashu-expo-sqlite";
 import { ConsoleLogger, Manager } from "coco-cashu-core";
-import { getSeed } from "@src/storage/store/restore";
 import { dbProvider } from "@src/storage/DbProvider";
 import { seedService } from "@src/services/SeedService";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { usePinAuth } from "@src/modules/pin/PinProvider";
-
-type PinContextValue = never;
 
 l("[APP] Starting app...");
 
@@ -58,25 +49,25 @@ void SplashScreen.preventAutoHideAsync();
 function App(_: { exp: Record<string, unknown> }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <KeyboardProvider>
-        <SafeAreaProvider>
-          <CustomErrorBoundary catchErrors="always">
+      <SafeAreaProvider>
+        <CustomErrorBoundary catchErrors="always">
+          <PinProvider>
             <RootApp />
-          </CustomErrorBoundary>
-        </SafeAreaProvider>
-      </KeyboardProvider>
+          </PinProvider>
+        </CustomErrorBoundary>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
 export default App;
 
-function useRootAppState() {
+function useAppInitialization() {
   const [manager, setManager] = useState<Manager | null>(null);
   const [shouldOnboard, setShouldOnboard] = useState(false);
   const [hasSeed, setHasSeed] = useState(false);
   const { i18n } = useTranslation([NS.common]);
-  const [isRdy, setIsRdy] = useState(false);
-  const appState = useRef(AppState.currentState);
+  const [isAppReady, setIsAppReady] = useState(false);
+  const { ready: pinReady } = usePinAuth();
 
   const initData = async () => {
     try {
@@ -96,7 +87,7 @@ function useRootAppState() {
   const initAuth = async () => {
     const hasSeed = seedService.isMnemonicSet();
     const [onboard] = await Promise.all([store.get(STORE_KEYS.explainer)]);
-    setShouldOnboard(onboard && onboard === "1" ? false : true);
+    setShouldOnboard(onboard !== "1");
     setHasSeed(hasSeed);
   };
 
@@ -128,24 +119,17 @@ function useRootAppState() {
         createManager(),
       ]);
       setManager(mgr);
-      setIsRdy(true);
+      setIsAppReady(true);
     }
 
     (async () => {
       await init();
     })();
-    const subscription = AppState.addEventListener(
-      "change",
-      async (nextAppState) => {
-        appState.current = nextAppState;
-      }
-    );
-    return () => subscription.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
-    isRdy,
+    ready: isAppReady && pinReady,
     manager,
     shouldOnboard,
     hasSeed,
@@ -155,44 +139,45 @@ function useRootAppState() {
 function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      <PinProvider>
-        <PrivacyProvider>
-          <MenuProvider>
-            <BottomSheetModalProvider>
-              <NavContainer>
-                <BalanceProvider>
-                  <FocusClaimProvider>
-                    <PromptProvider>
-                      <QRScannerProvider>
-                        <HistoryProvider>
-                          <KnownMintsProvider>
-                            <KeyboardProvider>{children}</KeyboardProvider>
-                          </KnownMintsProvider>
-                        </HistoryProvider>
-                      </QRScannerProvider>
-                    </PromptProvider>
-                  </FocusClaimProvider>
-                </BalanceProvider>
-              </NavContainer>
-            </BottomSheetModalProvider>
-          </MenuProvider>
-        </PrivacyProvider>
-      </PinProvider>
+      <PrivacyProvider>
+        <MenuProvider>
+          <BottomSheetModalProvider>
+            <ThemedNavigationContainer>
+              <BalanceProvider>
+                <FocusClaimProvider>
+                  <PromptProvider>
+                    <QRScannerProvider>
+                      <HistoryProvider>
+                        <KnownMintsProvider>
+                          <KeyboardProvider>{children}</KeyboardProvider>
+                        </KnownMintsProvider>
+                      </HistoryProvider>
+                    </QRScannerProvider>
+                  </PromptProvider>
+                </FocusClaimProvider>
+              </BalanceProvider>
+            </ThemedNavigationContainer>
+          </BottomSheetModalProvider>
+        </MenuProvider>
+      </PrivacyProvider>
     </ThemeProvider>
   );
 }
 
 function RootApp() {
-  const { isRdy, manager, shouldOnboard, hasSeed } = useRootAppState();
-  const { ready: pinReady } = usePinAuth();
-  if (!isRdy || !manager) {
+  const { ready, manager, shouldOnboard, hasSeed } = useAppInitialization();
+  useEffect(() => {
+    if (ready && manager) {
+      void SplashScreen.hide();
+    }
+  }, [ready, manager]);
+  if (!ready || !manager) {
     return <Blank />;
   }
   return (
     <ManagerProvider manager={manager}>
       <AppProviders>
         <Navigator shouldOnboard={shouldOnboard} hasSeed={hasSeed} />
-        <SplashGate appReady={isRdy && !!manager} pinReady={pinReady} />
         <StatusBar style="auto" />
         <ClipboardModal />
         <QRScannerBottomSheet />
@@ -202,32 +187,15 @@ function RootApp() {
   );
 }
 
-function NavContainer({ children }: { children: React.ReactNode }) {
-  const navigation =
-    useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null);
+function ThemedNavigationContainer({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { theme } = useThemeContext();
-
   return (
-    <NavigationContainer
-      theme={theme === "Light" ? light : dark}
-      ref={navigation}
-    >
+    <NavigationContainer theme={theme === "Light" ? light : dark}>
       {children}
     </NavigationContainer>
   );
-}
-
-function SplashGate({
-  appReady,
-  pinReady,
-}: {
-  appReady: boolean;
-  pinReady: boolean;
-}) {
-  useEffect(() => {
-    if (appReady && pinReady) {
-      void SplashScreen.hideAsync();
-    }
-  }, [appReady, pinReady]);
-  return null;
 }

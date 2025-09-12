@@ -72,17 +72,6 @@ export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
     return "dashboard";
   };
 
-  useEffect(() => {
-    if (!ready) return;
-    // do not interrupt onboarding with PIN prompt
-    if (shouldOnboard) return;
-    if (needsAuth && hasPin) {
-      clearNeedsAuth();
-      nav.navigate("auth", { mode: "unlock" });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, needsAuth, hasPin, shouldOnboard]);
-
   return (
     <View
       style={{

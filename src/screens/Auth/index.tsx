@@ -40,9 +40,6 @@ export default function AuthPage({ navigation, route }: TAuthPageProps) {
       return navigation.navigate(mode === "edit" ? "Settings" : "dashboard");
     }
     if (res.type === "unlocked") {
-      if (!params.sawSeedUpdate) {
-        return navigation.navigate("Restore", { screen: "Seed" });
-      }
       return navigation.navigate("dashboard");
     }
     // skipped
