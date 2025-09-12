@@ -1,4 +1,4 @@
-import { getDecodedToken, getEncodedToken, Token } from "@cashu/cashu-ts";
+import { getDecodedToken, Token } from "@cashu/cashu-ts";
 import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
@@ -7,103 +7,38 @@ import BottomSheetOptionsModal from "@comps/modal/BottomSheetOptionsModal";
 import Txt from "@comps/Txt";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { _testmintUrl, env } from "@consts";
-import { l } from "@log";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
 import BottomNav from "@nav/BottomNav";
 import { preventBack } from "@nav/utils";
-import { useFocusClaimContext } from "@src/context/FocusClaim";
-import { useHistoryContext } from "@src/context/History";
-import { useInitialURL } from "@src/context/Linking";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
-import { useTrustMintContext } from "@src/context/TrustMint";
+import TrustMintBottomSheet, {
+  type TrustMintBottomSheetRef,
+} from "@modal/TrustMintBottomSheet";
 import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-// import { useQRScanHandler } from "@util/qrScanner"; // No longer needed - using dedicated screen
-import { mintRepository } from "@src/storage/db/repo/MintRepository";
-import { mintService } from "@src/services/MintService";
 import { highlight as hi, mainColors } from "@styles";
 import { getStrFromClipboard } from "@util";
-import { claimToken, getMintsForPayment } from "@wallet";
-import { sumProofsValue } from "@wallet/proofs";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
+import { useManager } from "@src/context/Manager";
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
   const { t } = useTranslation([NS.common]);
-  // The URL content that redirects to this app after clicking on it (cashu:)
-  const { url, clearUrl } = useInitialURL();
   // Theme
   const { color, highlight } = useThemeContext();
-  // State to indicate token claim from clipboard after app comes to the foreground, to re-render total balance
-  const { claimed } = useFocusClaimContext();
   // Loading state
   const { loading, startLoading, stopLoading } = useLoading();
   // Prompt modal
   const { openPromptAutoClose } = usePromptContext();
-  const { addHistoryEntry } = useHistoryContext();
-  // Trust mint modal
-  const { showTrustMintModal } = useTrustMintContext();
+  // Trust mint sheet
+  const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
   const { knownMints } = useKnownMints();
-  // QR Scanner - using dedicated screen instead of bottom sheet
-  // const { openQRScanner } = useQRScanHandler(navigation);
-  // Bottom sheet refs
+  const manager = useManager();
   const sendOptionsRef = useRef<BottomSheet>(null);
   const receiveOptionsRef = useRef<BottomSheet>(null);
-
-  const receiveToken = async (token: Token) => {
-    if (loading) {
-      return;
-    }
-    startLoading();
-    try {
-      const success = await claimToken(token);
-      if (success) {
-        openPromptAutoClose({
-          msg: t("claimSuccess", {
-            amount: sumProofsValue(token.proofs),
-            mintUrl: token.mint,
-            memo: token.memo,
-          }),
-          success: true,
-        });
-        // add as history entry
-        await addHistoryEntry({
-          amount: sumProofsValue(token.proofs),
-          type: 1,
-          value: getEncodedToken(token),
-          mints: [token.mint],
-        });
-        return;
-      }
-      openPromptAutoClose({ msg: t("claimTokenErr") });
-    } catch (e) {
-      l(e);
-      openPromptAutoClose({ msg: t("claimTokenErr") });
-    } finally {
-      stopLoading();
-    }
-  };
-
-  const handleTrustFlow = async (token: Token) => {
-    try {
-      const action = await showTrustMintModal(token);
-
-      if (action === "trust") {
-        await mintService.addMint(token.mint);
-        await receiveToken(token);
-      } else if (action === "swap") {
-        // The swap navigation is handled in the modal itself
-        // No additional action needed here
-      }
-      // If action is 'cancel', do nothing
-    } catch (e) {
-      l(e);
-      openPromptAutoClose({ msg: t("claimTokenErr") });
-    }
-  };
 
   const handleClaimBtnPress = async () => {
     if (loading) {
@@ -126,50 +61,18 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
       return;
     }
 
-    const knownMints = await mintService.getAllMints();
-    if (!knownMints.find((m) => m.mintUrl === decoded.mint)) {
-      stopLoading();
-      // Show trust modal
-      await handleTrustFlow(decoded);
-      return;
-    }
-
-    await receiveToken(decoded);
-  };
-
-  const handleMintBtnPress = async () => {
-    const { mintsBals, mints } = await getMintsForPayment();
-    const nonEmptyMints = mintsBals.filter((m) => m.amount > 0);
-    // user has only 1 mint with balance, he can skip the mint selection
-    if (nonEmptyMints.length === 1) {
-      return navigation.navigate("selectAmount", {
-        // No mint parameter needed, SelectAmount will get mint from context
-      });
-    }
-    // user has more than 1 mint so he has to choose the one he wants to communicate to
-    navigation.navigate("selectMint", {
-      mints,
-      mintsWithBal: mintsBals,
-      allMintsEmpty: !nonEmptyMints.length,
-    });
-  };
-
-  const handleSendBtnPress = async ({
-    isMelt,
-    isSendEcash,
-  }: {
-    isMelt?: boolean;
-    isSendEash?: boolean;
-  } = {}) => {
-    if (isMelt) {
-      navigation.navigate("meltInputfield");
+    const isKnown = await manager.mint.isKnownMint(decoded.mint);
+    if (isKnown) {
+      await manager.wallet.receive(decoded);
     } else {
-      // Navigate directly to selectAmount with the correct parameters
-      navigation.navigate("selectAmount", {
-        isMelt,
-        isSendEcash,
-      });
+      const action = await trustMintRef.current?.open(decoded);
+
+      if (action === "trust") {
+        await manager.mint.addMint(decoded.mint);
+        await manager.wallet.receive(decoded);
+      }
     }
+    stopLoading();
   };
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
@@ -233,26 +136,19 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
           }}
         />
       </View>
-      {/* beta warning */}
-      {(env.isExpoBeta || __DEV__) && (
-        <View style={styles.hintWrap}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("disclaimer")}
-            style={styles.betaHint}
-          >
-            <Txt txt="BETA" styles={[{ color: mainColors.WARN }]} />
-          </TouchableOpacity>
-        </View>
-      )}
       {/* Bottom nav icons */}
       <BottomNav navigation={navigation} route={route} />
       {/* Send options bottom sheet */}
       <BottomSheetOptionsModal
         ref={sendOptionsRef}
         button1Txt={t("sendEcash")}
-        onPressFirstBtn={() => void handleSendBtnPress({ isSendEcash: true })}
+        onPressFirstBtn={() => {
+          navigation.navigate("SendSelectAmount");
+        }}
         button2Txt={t("payLNInvoice", { ns: NS.wallet })}
-        onPressSecondBtn={() => void handleSendBtnPress({ isMelt: true })}
+        onPressSecondBtn={() => {
+          navigation.navigate("MeltInput");
+        }}
         onPressCancel={() => {}}
         isSend
       />
@@ -266,10 +162,14 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         }
         onPressFirstBtn={() => void handleClaimBtnPress()}
         button2Txt={t("createLnInvoice")}
-        onPressSecondBtn={() => void handleMintBtnPress()}
+        onPressSecondBtn={() => {
+          navigation.navigate("MintSelectAmount");
+        }}
         onPressCancel={() => {}}
         loading={loading}
       />
+      {/* Trust mint bottom sheet */}
+      <TrustMintBottomSheet ref={trustMintRef} />
     </View>
   );
 }

@@ -1,40 +1,58 @@
-import Button from "@comps/Button";
-import Loading from "@comps/Loading";
-import useCopy from "@comps/hooks/Copy";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
+import Loading from "@comps/Loading";
 import { isIOS } from "@consts";
-import type { IMnemonicPageProps } from "@model/nav";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { seedService } from "@src/services/SeedService";
 import { useEffect, useState } from "react";
+import type { TViewMnemonicPageProps } from "@model/nav";
 import { useTranslation } from "react-i18next";
 import { FlatList, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 
-export default function MnemonicScreen({
-  navigation,
-  route,
-}: IMnemonicPageProps) {
+export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
-  const [mnemonic, setMnemonic] = useState<string>();
+  const [mnemonic, setMnemonic] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const id = setTimeout(() => {
-      const words = seedService.createNewMnemonic();
-      if (words) {
-        setMnemonic(words);
+      try {
+        const words = seedService.getMnemonic();
+        setMnemonic(words || null);
+      } finally {
+        setLoading(false);
       }
     }, 0);
     return () => clearTimeout(id);
   }, []);
 
   return (
-    <Screen noIcons>
+    <Screen
+      screenName={"Mnemonic"}
+      noIcons
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+    >
       <View style={styles.content}>
-        {mnemonic ? (
+        {loading ? (
+          <View
+            style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}
+          >
+            <Loading size="large" />
+          </View>
+        ) : !mnemonic ? (
+          <View
+            style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}
+          >
+            <Txt
+              txt={"No mnemonic found"}
+              styles={[{ color: color.TEXT_SECONDARY }]}
+            />
+          </View>
+        ) : (
           <FlatList
             data={mnemonic.split(" ")}
             numColumns={2}
@@ -54,22 +72,7 @@ export default function MnemonicScreen({
               </View>
             )}
           />
-        ) : (
-          <View
-            style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}
-          >
-            <Loading size="large" />
-          </View>
         )}
-      </View>
-      <View style={styles.actionWrap}>
-        <Button
-          outlined
-          txt={t("continue")}
-          onPress={() => {
-            navigation.navigate("dashboard");
-          }}
-        />
       </View>
     </Screen>
   );
@@ -87,12 +90,6 @@ const styles = ScaledSheet.create({
     width: "48.5%",
     flexDirection: "row",
     alignItems: "center",
-  },
-  actionWrap: {
-    position: "absolute",
-    bottom: isIOS ? "40@s" : "20@s",
-    width: "100%",
-    paddingHorizontal: "20@s",
   },
   warnContainer: {
     alignItems: "center",

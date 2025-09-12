@@ -12,93 +12,89 @@ import Txt from "./Txt";
 import { useAnimatedQr } from "./hooks/AnimatedQr";
 
 function truncateStr(str: string, len: number): string {
-    if (!str) return "";
-    if (str.length <= len) return str;
-    return str.slice(0, len) + "...";
+  if (!str) return "";
+  if (str.length <= len) return str;
+  return str.slice(0, len) + "...";
 }
 
 interface QRProps {
-    size: number;
-    value: string;
-    isInvoice?: boolean;
-    truncateNum?: number;
-    onError: () => void;
+  size: number;
+  value: string;
+  isInvoice?: boolean;
+  animate?: boolean;
+  truncateNum?: number;
+  onError: () => void;
 }
 
 export default function QR({
-    size,
-    value,
-    isInvoice,
-    truncateNum,
-    onError,
+  size,
+  value,
+  isInvoice,
+  animate,
+  truncateNum,
+  onError,
 }: QRProps) {
-    const { t } = useTranslation([NS.common]);
-    const { color } = useThemeContext();
-    const { copied, copy } = useCopy();
-    const str = isInvoice ? value.toUpperCase() : value;
-    const chunk = useAnimatedQr(value);
-    console.log("value", value);
-    console.log("chunk", chunk);
-    return (
-        <TouchableOpacity onPress={() => void copy(str)}>
-            <View style={styles.qrWrap}>
-                <QRCode
-                    size={size}
-                    value={chunk}
-                    testID="qr-code"
-                    logo={require("@assets/app-qr-icon.png")}
-                    logoBorderRadius={10}
-                    logoBackgroundColor={mainColors.WHITE}
-                    logoMargin={s(6)}
-                    onError={onError}
-                />
-            </View>
-            <View
-                style={[
-                    styles.txtContainer,
-                    {
-                        borderColor: color.BORDER,
-                        backgroundColor: color.INPUT_BG,
-                    },
-                ]}
-            >
-                <View style={styles.iconCon}>
-                    {copied ? (
-                        <CheckmarkIcon color={mainColors.VALID} />
-                    ) : (
-                        <CopyIcon color={color.TEXT} />
-                    )}
-                </View>
-                <Txt
-                    txt={
-                        copied
-                            ? t("copied")
-                            : truncateStr(str, truncateNum ?? 20)
-                    }
-                    styles={[{ color: copied ? mainColors.VALID : color.TEXT }]}
-                />
-            </View>
-        </TouchableOpacity>
-    );
+  const { t } = useTranslation([NS.common]);
+  const { color } = useThemeContext();
+  const { copied, copy } = useCopy();
+  const str = isInvoice ? value.toUpperCase() : value;
+  const chunk = useAnimatedQr(value, { animate });
+  return (
+    <TouchableOpacity onPress={() => void copy(str)}>
+      <View style={styles.qrWrap}>
+        <QRCode
+          size={size}
+          value={chunk}
+          testID="qr-code"
+          logo={require("@assets/app-qr-icon.png")}
+          logoBorderRadius={10}
+          logoBackgroundColor={mainColors.WHITE}
+          logoMargin={s(6)}
+          onError={onError}
+        />
+      </View>
+      <View
+        style={[
+          styles.txtContainer,
+          {
+            borderColor: color.BORDER,
+            backgroundColor: color.INPUT_BG,
+          },
+        ]}
+      >
+        <View style={styles.iconCon}>
+          {copied ? (
+            <CheckmarkIcon color={mainColors.VALID} />
+          ) : (
+            <CopyIcon color={color.TEXT} />
+          )}
+        </View>
+        <Txt
+          txt={copied ? t("copied") : truncateStr(str, truncateNum ?? 20)}
+          styles={[{ color: copied ? mainColors.VALID : color.TEXT }]}
+        />
+      </View>
+    </TouchableOpacity>
+  );
 }
 
 const styles = ScaledSheet.create({
-    qrWrap: {
-        borderWidth: "10@s",
-        borderColor: mainColors.WHITE,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-    },
-    txtContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "15@s",
-        borderWidth: 1,
-        borderBottomLeftRadius: 10,
-        borderBottomRightRadius: 10,
-    },
-    iconCon: {
-        minWidth: "30@s",
-    },
+  qrWrap: {
+    borderWidth: "10@s",
+    borderColor: mainColors.WHITE,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  txtContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "15@s",
+    borderWidth: 1,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  iconCon: {
+    minWidth: "30@s",
+  },
 });

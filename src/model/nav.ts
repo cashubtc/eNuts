@@ -1,4 +1,5 @@
 import type { EventArg, NavigatorScreenParams } from "@react-navigation/core";
+import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import type {
@@ -10,8 +11,13 @@ import type {
   ITokenInfo,
 } from ".";
 import { EnutsProof } from "@src/storage/db/repo/ProofRepository";
-import { Proof, Token } from "@cashu/cashu-ts";
-import { MintStackParamList } from "@src/nav/navTypes";
+import {
+  MintQuoteResponse,
+  Proof,
+  Token,
+  MeltQuoteResponse,
+} from "@cashu/cashu-ts";
+import { MintStackParamList, RestoreStackParamList } from "@src/nav/navTypes";
 
 interface ILnurlNavData {
   userInput: string;
@@ -32,12 +38,14 @@ export type RootStackParamList = {
   "Display settings": undefined;
   "Language settings": undefined;
   "Advanced settings": undefined;
+  "View mnemonic": undefined;
   auth: {
     pinHash: string;
     shouldEdit?: boolean;
     shouldRemove?: boolean;
     sawSeedUpdate?: boolean;
   };
+  Restore: NavigatorScreenParams<RestoreStackParamList>;
   selectMint: {
     mints: IMintUrl[];
     mintsWithBal: IMintWithBalance[];
@@ -66,6 +74,13 @@ export type RootStackParamList = {
     mint: IMintUrl;
     balance: number;
     remainingMints?: IMintUrl[];
+  };
+  SendSelectAmount: undefined;
+  MintSelectAmount: undefined;
+  MeltInput: undefined;
+  MeltConfirmation: {
+    quote: MeltQuoteResponse;
+    mintUrl: string;
   };
   selectAmount: {
     isMelt?: boolean;
@@ -139,10 +154,7 @@ export type RootStackParamList = {
   };
   mintInvoice: {
     mintUrl: string;
-    amount: number;
-    hash: string;
-    expiry: number;
-    paymentRequest: string;
+    quote: MintQuoteResponse;
   };
   encodedToken: {
     token: Token;
@@ -181,39 +193,6 @@ export type RootStackParamList = {
   "history entry details": {
     entry: IHistoryEntry;
   };
-  Seed:
-    | {
-        comingFromOnboarding?: boolean;
-        sawSeedUpdate?: boolean;
-        hasSeed?: boolean;
-      }
-    | undefined;
-  "Select recovery mint": {
-    comingFromOnboarding?: boolean;
-  };
-  Recover: {
-    mintUrl: string;
-    comingFromOnboarding?: boolean;
-  };
-  Mnemonic: {
-    comingFromOnboarding?: boolean;
-  };
-  "Confirm Mnemonic": {
-    mnemonic: string[];
-    comingFromOnboarding?: boolean;
-  };
-  Deriving: {
-    mnemonic: string[];
-    comingFromOnboarding?: boolean;
-  };
-  Recovering: {
-    mintUrl: string;
-    mnemonic: string;
-    comingFromOnboarding?: boolean;
-  };
-  "Restore warning": {
-    comingFromOnboarding?: boolean;
-  };
 };
 
 export type TRouteString = "dashboard" | "mints" | "Settings";
@@ -240,6 +219,11 @@ export type TSelectMintToSwapToPageProps = NativeStackScreenProps<
 export type TMeltInputfieldPageProps = NativeStackScreenProps<
   RootStackParamList,
   "meltInputfield",
+  "MyStack"
+>;
+export type SendSelectAmountProps = NativeStackScreenProps<
+  RootStackParamList,
+  "selectAmount",
   "MyStack"
 >;
 export type TSelectAmountPageProps = NativeStackScreenProps<
@@ -353,50 +337,44 @@ export type TAdvancedSettingsPageProps = NativeStackScreenProps<
   RootStackParamList,
   "Advanced settings"
 >;
-export type ISeedPageProps = NativeStackScreenProps<RootStackParamList, "Seed">;
-export type IRecoverPageProps = NativeStackScreenProps<
+export type TViewMnemonicPageProps = NativeStackScreenProps<
   RootStackParamList,
-  "Recover"
+  "View mnemonic"
 >;
-export type IMnemonicPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Mnemonic"
+type RestoreStackScreenProps<T extends keyof RestoreStackParamList> =
+  NativeStackScreenProps<RestoreStackParamList, T>;
+
+export type ISeedPageProps = CompositeScreenProps<
+  RestoreStackScreenProps<"Seed">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type IConfirmMnemonicPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Confirm Mnemonic"
+export type IRecoverPageProps = CompositeScreenProps<
+  RestoreStackScreenProps<"Recover">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type IDerivingPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Deriving"
+export type IMnemonicPageProps = CompositeScreenProps<
+  RestoreStackScreenProps<"Mnemonic">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type IRecoveringPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Recovering"
+export type IRecoveringPageProps = CompositeScreenProps<
+  RestoreStackScreenProps<"Recovering">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type ISelectRecoveryMintPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Select recovery mint"
->;
-export type IRestoreWarningPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Restore warning"
+export type ISelectRecoveryMintPageProps = CompositeScreenProps<
+  RestoreStackScreenProps<"Select recovery mint">,
+  NativeStackScreenProps<RootStackParamList>
 >;
 export type TQRScannerTestPageProps = NativeStackScreenProps<
-    RootStackParamList,
-    "QR Scanner Test"
+  RootStackParamList,
+  "qr scan"
 >;
 export type TProofsDebugPageProps = NativeStackScreenProps<
-    RootStackParamList,
-    "Proofs Debug"
+  RootStackParamList,
+  "history"
 >;
-export type TQRScanPageProps = NativeStackScreenProps<
-    RootStackParamList,
-    "qr scan"
->;
+// Duplicate removed
 export type TBottomNavProps =
   | TDashboardPageProps
-  | TMintsPageProps
   | TMintManagementPageProps
   | THistoryPageProps
   | THistoryEntryPageProps
@@ -410,7 +388,6 @@ export interface INavigatorProps {
   shouldOnboard?: boolean;
   setBgAuth?: (val: boolean) => void;
   hasSeed?: boolean;
-  sawSeedUpdate?: boolean;
 }
 export type TBeforeRemoveEvent = EventArg<
   "beforeRemove",

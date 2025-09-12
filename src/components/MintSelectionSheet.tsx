@@ -1,7 +1,7 @@
 import BottomSheet, {
-    BottomSheetScrollView,
-    BottomSheetBackdrop,
-    BottomSheetView,
+  BottomSheetScrollView,
+  BottomSheetBackdrop,
+  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import Txt from "@comps/Txt";
 import Button from "@comps/Button";
@@ -18,367 +18,352 @@ import { s, ScaledSheet, vs } from "react-native-size-matters";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface MintSelectionSheetProps {
-    selectedMint?: { mintUrl: string };
-    selectedMints?: { mintUrl: string }[];
-    onMintSelect: (mint: KnownMintWithBalance) => void;
-    onMultipleMintSelect?: (mints: KnownMintWithBalance[]) => void;
-    multiSelect?: boolean;
+  selectedMint?: { mintUrl: string };
+  selectedMints?: { mintUrl: string }[];
+  onMintSelect: (mint: KnownMintWithBalance) => void;
+  onMultipleMintSelect?: (mints: KnownMintWithBalance[]) => void;
+  multiSelect?: boolean;
+  showZeroBalanceMints?: boolean;
 }
 
 // Memoize individual mint items to prevent re-renders
 const MintItem = memo(
-    ({
-        mint,
-        isSelected,
-        onPress,
-        textColor,
-        secondaryTextColor,
-        inputBgColor,
-        multiSelect,
-    }: {
-        mint: KnownMintWithBalance;
-        isSelected: boolean;
-        onPress: (mint: KnownMintWithBalance) => void;
-        textColor: string;
-        secondaryTextColor: string;
-        inputBgColor: string;
-        multiSelect?: boolean;
-    }) => {
-        const handlePress = useCallback(() => onPress(mint), [onPress, mint]);
+  ({
+    mint,
+    isSelected,
+    onPress,
+    textColor,
+    secondaryTextColor,
+    inputBgColor,
+    multiSelect,
+  }: {
+    mint: KnownMintWithBalance;
+    isSelected: boolean;
+    onPress: (mint: KnownMintWithBalance) => void;
+    textColor: string;
+    secondaryTextColor: string;
+    inputBgColor: string;
+    multiSelect?: boolean;
+  }) => {
+    const handlePress = useCallback(() => onPress(mint), [onPress, mint]);
 
-        return (
-            <TouchableOpacity
-                style={[
-                    styles.mintItem,
-                    {
-                        backgroundColor: inputBgColor,
-                        borderColor: isSelected
-                            ? mainColors.VALID
-                            : "transparent",
-                    },
-                ]}
-                onPress={handlePress}
+    return (
+      <TouchableOpacity
+        style={[
+          styles.mintItem,
+          {
+            backgroundColor: inputBgColor,
+            borderColor: isSelected ? mainColors.VALID : "transparent",
+          },
+        ]}
+        onPress={handlePress}
+      >
+        <View style={styles.mintInfo}>
+          <Txt
+            txt={mint.name || new URL(mint.mintUrl).hostname}
+            styles={[styles.mintAlias, { color: textColor }]}
+          />
+          <Txt
+            txt={mint.mintUrl}
+            styles={[styles.mintUrl, { color: secondaryTextColor }]}
+          />
+        </View>
+        <View style={styles.rightSection}>
+          <Txt
+            txt={formatSatStr(mint.balance)}
+            styles={[styles.balance, { color: mainColors.VALID }]}
+          />
+          {multiSelect && (
+            <View
+              style={[
+                styles.checkbox,
+                {
+                  backgroundColor: isSelected
+                    ? mainColors.VALID
+                    : "transparent",
+                  borderColor: isSelected ? mainColors.VALID : textColor,
+                },
+              ]}
             >
-                <View style={styles.mintInfo}>
-                    <Txt
-                        txt={mint.name || new URL(mint.mintUrl).hostname}
-                        styles={[styles.mintAlias, { color: textColor }]}
-                    />
-                    <Txt
-                        txt={mint.mintUrl}
-                        styles={[styles.mintUrl, { color: secondaryTextColor }]}
-                    />
-                </View>
-                <View style={styles.rightSection}>
-                    <Txt
-                        txt={formatSatStr(mint.balance)}
-                        styles={[styles.balance, { color: mainColors.VALID }]}
-                    />
-                    {multiSelect && (
-                        <View
-                            style={[
-                                styles.checkbox,
-                                {
-                                    backgroundColor: isSelected
-                                        ? mainColors.VALID
-                                        : "transparent",
-                                    borderColor: isSelected
-                                        ? mainColors.VALID
-                                        : textColor,
-                                },
-                            ]}
-                        >
-                            {isSelected && (
-                                <CheckmarkIcon
-                                    color={mainColors.WHITE}
-                                    width={14}
-                                    height={14}
-                                />
-                            )}
-                        </View>
-                    )}
-                </View>
-            </TouchableOpacity>
-        );
-    }
+              {isSelected && (
+                <CheckmarkIcon
+                  color={mainColors.WHITE}
+                  width={14}
+                  height={14}
+                />
+              )}
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  }
 );
 
 MintItem.displayName = "MintItem";
 
 const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
-    (
-        {
-            selectedMint,
-            selectedMints,
-            onMintSelect,
-            onMultipleMintSelect,
-            multiSelect = false,
-        },
-        ref
-    ) => {
-        const { t } = useTranslation([NS.common]);
-        const { color } = useThemeContext();
-        const { knownMints } = useKnownMints();
-        const insets = useSafeAreaInsets();
+  (
+    {
+      selectedMint,
+      selectedMints,
+      onMintSelect,
+      onMultipleMintSelect,
+      multiSelect = false,
+      showZeroBalanceMints = false,
+    },
+    ref
+  ) => {
+    const { t } = useTranslation([NS.common]);
+    const { color } = useThemeContext();
+    const { knownMints } = useKnownMints();
+    const insets = useSafeAreaInsets();
 
-        // Internal state for multi-select mode
-        const [internalSelectedMints, setInternalSelectedMints] = useState<
-            KnownMintWithBalance[]
-        >([]);
+    // Internal state for multi-select mode
+    const [internalSelectedMints, setInternalSelectedMints] = useState<
+      KnownMintWithBalance[]
+    >([]);
 
-        // Filter mints with balances > 0
-        const mintsWithBalance = useMemo(
-            () => knownMints.filter((mint) => mint.balance > 0),
-            [knownMints]
+    // Determine which mints to display based on balance visibility setting
+    const displayMints = useMemo(
+      () =>
+        showZeroBalanceMints
+          ? knownMints
+          : knownMints.filter((mint) => mint.balance > 0),
+      [knownMints, showZeroBalanceMints]
+    );
+
+    // Initialize internal state when controlled selectedMints change
+    React.useEffect(() => {
+      if (multiSelect && selectedMints) {
+        const controlledSelectedMints = displayMints.filter((mint) =>
+          selectedMints.some((selected) => selected.mintUrl === mint.mintUrl)
         );
+        setInternalSelectedMints(controlledSelectedMints);
+      }
+    }, [selectedMints, displayMints, multiSelect]);
 
-        // Initialize internal state when controlled selectedMints change
-        React.useEffect(() => {
-            if (multiSelect && selectedMints) {
-                const controlledSelectedMints = mintsWithBalance.filter(
-                    (mint) =>
-                        selectedMints.some(
-                            (selected) => selected.mintUrl === mint.mintUrl
-                        )
-                );
-                setInternalSelectedMints(controlledSelectedMints);
+    // Determine selected mints based on mode
+    const currentSelectedMints = useMemo(() => {
+      if (multiSelect) {
+        return internalSelectedMints;
+      }
+      return selectedMint
+        ? [displayMints.find((m) => m.mintUrl === selectedMint.mintUrl)].filter(
+            Boolean
+          )
+        : [];
+    }, [multiSelect, internalSelectedMints, selectedMint, displayMints]);
+
+    // Use dynamic sizing for optimal height calculation
+    const maxHeight = useMemo(() => {
+      // Cap height at 80% of screen height to prevent overly tall sheets
+      const screenHeight = Dimensions.get("window").height;
+      return Math.floor(screenHeight * 0.8);
+    }, []);
+
+    const handleMintPress = useCallback(
+      (mint: KnownMintWithBalance) => {
+        if (multiSelect) {
+          setInternalSelectedMints((prev) => {
+            const isAlreadySelected = prev.some(
+              (selected) => selected.mintUrl === mint.mintUrl
+            );
+            if (isAlreadySelected) {
+              return prev.filter(
+                (selected) => selected.mintUrl !== mint.mintUrl
+              );
+            } else {
+              return [...prev, mint];
             }
-        }, [selectedMints, mintsWithBalance, multiSelect]);
+          });
+        } else {
+          // Single select mode - close immediately
+          onMintSelect(mint);
+          (ref as React.RefObject<BottomSheet>)?.current?.close();
+        }
+      },
+      [multiSelect, onMintSelect, ref]
+    );
 
-        // Determine selected mints based on mode
-        const currentSelectedMints = useMemo(() => {
-            if (multiSelect) {
-                return internalSelectedMints;
-            }
-            return selectedMint
-                ? [
-                      mintsWithBalance.find(
-                          (m) => m.mintUrl === selectedMint.mintUrl
-                      ),
-                  ].filter(Boolean)
-                : [];
-        }, [
-            multiSelect,
-            internalSelectedMints,
-            selectedMint,
-            mintsWithBalance,
-        ]);
+    const handleConfirmMultiSelect = useCallback(() => {
+      if (onMultipleMintSelect) {
+        onMultipleMintSelect(internalSelectedMints);
+      }
+      (ref as React.RefObject<BottomSheet>)?.current?.close();
+    }, [onMultipleMintSelect, internalSelectedMints, ref]);
 
-        // Use dynamic sizing for optimal height calculation
-        const maxHeight = useMemo(() => {
-            // Cap height at 80% of screen height to prevent overly tall sheets
-            const screenHeight = Dimensions.get("window").height;
-            return Math.floor(screenHeight * 0.8);
-        }, []);
+    const isMintSelected = useCallback(
+      (mint: KnownMintWithBalance) => {
+        if (multiSelect) {
+          return internalSelectedMints.some(
+            (selected) => selected.mintUrl === mint.mintUrl
+          );
+        }
+        return selectedMint?.mintUrl === mint.mintUrl;
+      },
+      [multiSelect, internalSelectedMints, selectedMint]
+    );
 
-        const handleMintPress = useCallback(
-            (mint: KnownMintWithBalance) => {
-                if (multiSelect) {
-                    setInternalSelectedMints((prev) => {
-                        const isAlreadySelected = prev.some(
-                            (selected) => selected.mintUrl === mint.mintUrl
-                        );
-                        if (isAlreadySelected) {
-                            return prev.filter(
-                                (selected) => selected.mintUrl !== mint.mintUrl
-                            );
-                        } else {
-                            return [...prev, mint];
-                        }
-                    });
-                } else {
-                    // Single select mode - close immediately
-                    onMintSelect(mint);
-                    (ref as React.RefObject<BottomSheet>)?.current?.close();
-                }
-            },
-            [multiSelect, onMintSelect, ref]
-        );
+    const renderBackdrop = useCallback(
+      (props: any) => (
+        <BottomSheetBackdrop
+          {...props}
+          appearsOnIndex={0}
+          disappearsOnIndex={-1}
+          opacity={0.5}
+        />
+      ),
+      []
+    );
 
-        const handleConfirmMultiSelect = useCallback(() => {
-            if (onMultipleMintSelect) {
-                onMultipleMintSelect(internalSelectedMints);
-            }
-            (ref as React.RefObject<BottomSheet>)?.current?.close();
-        }, [onMultipleMintSelect, internalSelectedMints, ref]);
+    return (
+      <BottomSheet
+        ref={ref}
+        index={-1}
+        enablePanDownToClose={true}
+        enableDynamicSizing
+        maxDynamicContentSize={maxHeight}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{
+          backgroundColor: color.BACKGROUND,
+        }}
+        handleIndicatorStyle={{
+          backgroundColor: color.TEXT_SECONDARY,
+        }}
+        animateOnMount={true}
+      >
+        <BottomSheetScrollView
+          style={[styles.scrollView, { backgroundColor: color.BACKGROUND }]}
+          contentContainerStyle={[styles.scrollContent]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View
+            style={[
+              styles.header,
+              {
+                backgroundColor: color.BACKGROUND,
+                borderBottomColor: color.BORDER || "rgba(0,0,0,0.1)",
+              },
+            ]}
+          >
+            <Txt
+              txt={t(multiSelect ? "selectMints" : "selectMint", {
+                ns: NS.common,
+              })}
+              styles={[styles.headerText, { color: color.TEXT }]}
+            />
+          </View>
 
-        const isMintSelected = useCallback(
-            (mint: KnownMintWithBalance) => {
-                if (multiSelect) {
-                    return internalSelectedMints.some(
-                        (selected) => selected.mintUrl === mint.mintUrl
-                    );
-                }
-                return selectedMint?.mintUrl === mint.mintUrl;
-            },
-            [multiSelect, internalSelectedMints, selectedMint]
-        );
-
-        const renderBackdrop = useCallback(
-            (props: any) => (
-                <BottomSheetBackdrop
-                    {...props}
-                    appearsOnIndex={0}
-                    disappearsOnIndex={-1}
-                    opacity={0.5}
+          {displayMints.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Txt
+                txt={t("noMintsWithBalance", {
+                  ns: NS.common,
+                })}
+                styles={[{ color: color.TEXT_SECONDARY }]}
+              />
+            </View>
+          ) : (
+            <>
+              {displayMints.map((mint) => (
+                <MintItem
+                  key={mint.mintUrl}
+                  mint={mint}
+                  isSelected={isMintSelected(mint)}
+                  onPress={handleMintPress}
+                  textColor={color.TEXT}
+                  secondaryTextColor={color.TEXT_SECONDARY}
+                  inputBgColor={color.INPUT_BG}
+                  multiSelect={multiSelect}
                 />
-            ),
-            []
-        );
+              ))}
 
-        return (
-            <BottomSheet
-                ref={ref}
-                index={-1}
-                enablePanDownToClose={true}
-                enableDynamicSizing
-                maxDynamicContentSize={maxHeight}
-                backdropComponent={renderBackdrop}
-                backgroundStyle={{
-                    backgroundColor: color.BACKGROUND,
-                }}
-                handleIndicatorStyle={{
-                    backgroundColor: color.TEXT_SECONDARY,
-                }}
-                animateOnMount={true}
-            >
-                <BottomSheetScrollView
-                    style={[
-                        styles.scrollView,
-                        { backgroundColor: color.BACKGROUND },
-                    ]}
-                    contentContainerStyle={[styles.scrollContent]}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <View
-                        style={[
-                            styles.header,
-                            {
-                                backgroundColor: color.BACKGROUND,
-                                borderBottomColor:
-                                    color.BORDER || "rgba(0,0,0,0.1)",
-                            },
-                        ]}
-                    >
-                        <Txt
-                            txt={t(multiSelect ? "selectMints" : "selectMint", {
-                                ns: NS.common,
-                            })}
-                            styles={[styles.headerText, { color: color.TEXT }]}
-                        />
-                    </View>
-
-                    {mintsWithBalance.length === 0 ? (
-                        <View style={styles.emptyState}>
-                            <Txt
-                                txt={t("noMintsWithBalance", {
-                                    ns: NS.common,
-                                })}
-                                styles={[{ color: color.TEXT_SECONDARY }]}
-                            />
-                        </View>
-                    ) : (
-                        <>
-                            {mintsWithBalance.map((mint) => (
-                                <MintItem
-                                    key={mint.mintUrl}
-                                    mint={mint}
-                                    isSelected={isMintSelected(mint)}
-                                    onPress={handleMintPress}
-                                    textColor={color.TEXT}
-                                    secondaryTextColor={color.TEXT_SECONDARY}
-                                    inputBgColor={color.INPUT_BG}
-                                    multiSelect={multiSelect}
-                                />
-                            ))}
-
-                            {multiSelect && (
-                                <View style={styles.buttonContainer}>
-                                    <Button
-                                        txt={t("confirm", { ns: NS.common })}
-                                        onPress={handleConfirmMultiSelect}
-                                        disabled={
-                                            internalSelectedMints.length === 0
-                                        }
-                                    />
-                                </View>
-                            )}
-                        </>
-                    )}
-                </BottomSheetScrollView>
-            </BottomSheet>
-        );
-    }
+              {multiSelect && (
+                <View style={styles.buttonContainer}>
+                  <Button
+                    txt={t("confirm", { ns: NS.common })}
+                    onPress={handleConfirmMultiSelect}
+                    disabled={internalSelectedMints.length === 0}
+                  />
+                </View>
+              )}
+            </>
+          )}
+        </BottomSheetScrollView>
+      </BottomSheet>
+    );
+  }
 );
 
 const styles = ScaledSheet.create({
-    header: {
-        paddingVertical: "10@vs",
-        alignItems: "center",
-        borderBottomWidth: 1,
-        marginBottom: "16@vs",
-    },
-    headerText: {
-        fontSize: "18@s",
-        fontWeight: "600",
-    },
-    selectedCount: {
-        fontSize: "12@s",
-        marginTop: "4@vs",
-    },
-    scrollView: {
-        flex: 1,
-    },
-    scrollContent: {
-        flexGrow: 1,
-        paddingHorizontal: "16@s",
-    },
-    emptyState: {
-        padding: "20@s",
-        alignItems: "center",
-    },
-    mintItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: "16@s",
-        marginBottom: "12@vs",
-        borderRadius: "12@s",
-        borderWidth: 2,
-        minHeight: "70@vs",
-    },
-    mintInfo: {
-        flex: 1,
-        marginRight: "12@s",
-    },
-    rightSection: {
-        alignItems: "flex-end",
-        justifyContent: "center",
-    },
-    mintAlias: {
-        fontSize: "16@s",
-        fontWeight: "500",
-        marginBottom: "4@vs",
-    },
-    mintUrl: {
-        fontSize: "12@s",
-    },
-    balance: {
-        fontSize: "14@s",
-        fontWeight: "600",
-        marginBottom: "8@vs",
-    },
-    checkbox: {
-        width: "22@s",
-        height: "22@s",
-        borderRadius: "4@s",
-        borderWidth: 1.5,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    buttonContainer: {
-        padding: "16@s",
-        paddingTop: "20@vs",
-    },
+  header: {
+    paddingVertical: "10@vs",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    marginBottom: "16@vs",
+  },
+  headerText: {
+    fontSize: "18@s",
+    fontWeight: "600",
+  },
+  selectedCount: {
+    fontSize: "12@s",
+    marginTop: "4@vs",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: "16@s",
+  },
+  emptyState: {
+    padding: "20@s",
+    alignItems: "center",
+  },
+  mintItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: "16@s",
+    marginBottom: "12@vs",
+    borderRadius: "12@s",
+    borderWidth: 2,
+    minHeight: "70@vs",
+  },
+  mintInfo: {
+    flex: 1,
+    marginRight: "12@s",
+  },
+  rightSection: {
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  mintAlias: {
+    fontSize: "16@s",
+    fontWeight: "500",
+    marginBottom: "4@vs",
+  },
+  mintUrl: {
+    fontSize: "12@s",
+  },
+  balance: {
+    fontSize: "14@s",
+    fontWeight: "600",
+    marginBottom: "8@vs",
+  },
+  checkbox: {
+    width: "22@s",
+    height: "22@s",
+    borderRadius: "4@s",
+    borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonContainer: {
+    padding: "16@s",
+    paddingTop: "20@vs",
+  },
 });
 
 export default MintSelectionSheet;

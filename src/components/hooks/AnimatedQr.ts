@@ -1,35 +1,85 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { UR, UREncoder } from "@gandlaf21/bc-ur";
 
-export const useAnimatedQr = (payload: string) => {
-    const [chunk, setChunk] = useState<string>(payload || "");
+type AnimatedQrOptions = {
+  intervalMs?: number;
+  maxFragmentLen?: number;
+  startWithUr?: boolean;
+  animate?: boolean;
+  minLengthToAnimate?: number;
+};
 
-    useEffect(() => {
-        if (!payload) {
-            setChunk("");
-            return;
-        }
+export const useAnimatedQr = (
+  payload: string,
+  options: AnimatedQrOptions = {}
+): string => {
+  const {
+    intervalMs = 250,
+    maxFragmentLen = 200,
+    startWithUr = true,
+    animate = true,
+    minLengthToAnimate = 150,
+  } = options;
 
-        // Start with the original payload for immediate display
+  const [chunk, setChunk] = useState<string>(payload || "");
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!payload) {
+        setChunk("");
+        return;
+      }
+
+      const shouldAnimate = animate && payload.length >= minLengthToAnimate;
+      if (!shouldAnimate) {
         setChunk(payload);
+        return;
+      }
 
+      try {
+        const messageBuffer =
+          typeof TextEncoder !== "undefined"
+            ? new TextEncoder().encode(payload)
+            : new Uint8Array([...payload].map((c) => c.charCodeAt(0)));
+
+        const ur = UR.from(messageBuffer);
+        const encoder = new UREncoder(ur, maxFragmentLen, 0);
+
+        setChunk(startWithUr ? encoder.nextPart() : payload);
+
+        const timer = setInterval(() => {
+          const nextChunk = encoder.nextPart();
+          setChunk(nextChunk);
+        }, intervalMs);
+
+        return () => {
+          console.log("clearing timer");
+          clearInterval(timer);
+        };
+      } catch (error) {
+        // Fall back to original payload if UR encoding fails
+        // Guard dev-only logging to avoid noise in production
         try {
-            const messageBuffer = new TextEncoder().encode(payload);
-            const ur = UR.from(messageBuffer);
-            const encoder = new UREncoder(ur, 200, 0);
-
-            const timer = setInterval(() => {
-                const nextChunk = encoder.nextPart();
-                setChunk(nextChunk);
-            }, 500);
-
-            return () => clearInterval(timer);
-        } catch (error) {
-            // If UR encoding fails, fall back to original payload
+          // @ts-ignore - __DEV__ is provided by React Native envs
+          if (typeof __DEV__ !== "undefined" && __DEV__) {
+            // eslint-disable-next-line no-console
             console.warn("UR encoding failed, using original payload:", error);
-            setChunk(payload);
+          }
+        } catch (_) {
+          // no-op
         }
-    }, [payload]);
+        setChunk(payload);
+      }
+    }, [
+      payload,
+      intervalMs,
+      maxFragmentLen,
+      startWithUr,
+      animate,
+      minLengthToAnimate,
+    ])
+  );
 
-    return chunk || payload;
+  return chunk || payload;
 };

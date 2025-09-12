@@ -7,7 +7,6 @@ import {
   TrashbinIcon,
   ValidateIcon,
 } from "@comps/Icons";
-import LastUpdated from "./components/LastUpdated";
 import MetadataItem from "./components/MetadataItem";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
@@ -22,7 +21,6 @@ import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { MintSettingsScreenProps } from "@src/nav/navTypes";
-import { mintService } from "@src/services/MintService";
 
 import { globals, mainColors } from "@styles";
 import { formatMintUrl, formatSatStr } from "@util";
@@ -64,7 +62,7 @@ export default function MintSettingsScreen({
   const handleMintDelete = () => {
     void (async () => {
       try {
-        await mintService.removeMintFromStore(route.params.mintUrl);
+        //TODO: Add delete
         navigation.goBack();
       } catch (e) {
         l(e);
@@ -97,12 +95,6 @@ export default function MintSettingsScreen({
                 <Txt
                   txt={mint.mintInfo.version}
                   styles={[styles.mintVersion, { color: color.TEXT_SECONDARY }]}
-                />
-              )}
-              {mint && (
-                <LastUpdated
-                  mintUrl={route.params.mintUrl}
-                  updatedAt={mint.updatedAt}
                 />
               )}
             </View>

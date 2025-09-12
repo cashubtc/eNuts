@@ -6,7 +6,6 @@ import {
 } from "@react-navigation/native-stack";
 import AuthPage from "@screens/Auth";
 import Dashboard from "@screens/Dashboard";
-import { Disclaimer } from "@screens/Disclaimer";
 import HistoryPage from "@screens/History";
 import DetailsPage from "@screens/History/Details";
 import MintInfoPage from "@screens/Mints/Info";
@@ -16,33 +15,27 @@ import OnboardingScreen from "@screens/Onboarding";
 import ProcessingScreen from "@screens/Payment/Processing";
 import ProcessingErrorScreen from "@screens/Payment/ProcessingError";
 import InvoiceScreen from "@screens/Payment/Receive/Invoice";
-import SelectAmountScreen from "@screens/Payment/SelectAmount";
-import SelectMintScreen from "@screens/Payment/SelectMint";
 import CoinSelectionScreen from "@screens/Payment/Send/CoinSelection";
 import EncodedTokenPage from "@screens/Payment/Send/EncodedToken";
-import InputfieldScreen from "@screens/Payment/Send/Inputfield";
 import SelectMintToSwapToScreen from "@screens/Payment/Send/SelectMintToSwapTo";
-import SelectTargetScreen from "@screens/Payment/Send/SelectTarget";
 import SuccessPage from "@screens/Payment/Success";
 
 import MintConfirmScreen from "@screens/QRScan/MintConfirm";
 import QRProcessingScreen from "@screens/QRScan/QRProcessing";
 import ScanSuccessScreen from "@screens/QRScan/ScanSuccess";
-import ConfirmMnemonicScreen from "@screens/Restore/ConfirmMnemonic";
-import MnemonicScreen from "@screens/Restore/Mnemonic";
-import RecoverScreen from "@screens/Restore/Recover";
-import RecoveringScreen from "@screens/Restore/Recovering";
-import RestoreWarningScreen from "@screens/Restore/RestoreWarning";
-import ProofsDebug from "@screens/Settings/ProofsDebug";
-import SeedScreen from "@screens/Restore/Seed";
-import SelectRecoveryMintScreen from "@screens/Restore/SelectRecoveryMint";
+import RestoreNavigator from "@src/nav/RestoreNavigator";
 import Settings from "@screens/Settings";
 import AdvancedFunctionScreen from "@screens/Settings/Advanced";
 import DisplaySettings from "@screens/Settings/Display";
 import LanguageSettings from "@screens/Settings/Language";
+import ViewMnemonic from "@screens/Settings/ViewMnemonic";
 import { useThemeContext } from "@src/context/Theme";
 import { useEffect } from "react";
 import { View } from "react-native";
+import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
+import MintSelectAmountScreen from "@screens/Payment/MintSelectAmount";
+import MeltInputScreen from "@screens/Payment/MeltInput";
+import MeltConfirmationScreen from "@screens/Payment/MeltConfirmation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -54,7 +47,6 @@ export default function Navigator({
   shouldOnboard,
   setBgAuth,
   hasSeed,
-  sawSeedUpdate,
 }: INavigatorProps) {
   const { color } = useThemeContext();
 
@@ -73,8 +65,8 @@ export default function Navigator({
       return "auth";
     }
     // no previous pin setup && onboarding done
-    if (!hasSeed && !sawSeedUpdate) {
-      return "Seed";
+    if (!hasSeed) {
+      return "Restore";
     }
     return "dashboard";
   };
@@ -106,14 +98,23 @@ export default function Navigator({
           navigationBarColor: color.BACKGROUND,
         }}
       >
-        <Stack.Screen name="selectMint" component={SelectMintScreen} />
-        <Stack.Screen name="selectTarget" component={SelectTargetScreen} />
         <Stack.Screen
           name="selectMintToSwapTo"
           component={SelectMintToSwapToScreen}
         />
-        <Stack.Screen name="meltInputfield" component={InputfieldScreen} />
-        <Stack.Screen name="selectAmount" component={SelectAmountScreen} />
+        <Stack.Screen name="meltInputfield" component={MeltInputScreen} />
+        <Stack.Screen
+          name="MeltConfirmation"
+          component={MeltConfirmationScreen}
+        />
+        <Stack.Screen
+          name="SendSelectAmount"
+          component={SendSelectAmountScreen}
+        />
+        <Stack.Screen
+          name="MintSelectAmount"
+          component={MintSelectAmountScreen}
+        />
         <Stack.Screen name="coinSelection" component={CoinSelectionScreen} />
         <Stack.Screen
           name="processing"
@@ -149,11 +150,10 @@ export default function Navigator({
             gestureEnabled: false,
           }}
         />
-        <Stack.Screen name="disclaimer" component={Disclaimer} />
         <Stack.Screen
           name="auth"
           component={AuthPage}
-          initialParams={{ pinHash, sawSeedUpdate }}
+          initialParams={{ pinHash }}
           options={{ gestureEnabled: false }}
         />
         {/* sendable token created page */}
@@ -183,27 +183,8 @@ export default function Navigator({
           name="Advanced settings"
           component={AdvancedFunctionScreen}
         />
-        <Stack.Screen
-          name="Seed"
-          component={SeedScreen}
-          initialParams={{
-            sawSeedUpdate: sawSeedUpdate,
-            comingFromOnboarding: false,
-            hasSeed: hasSeed,
-          }}
-        />
-        <Stack.Screen name="Recover" component={RecoverScreen} />
-        <Stack.Screen name="Mnemonic" component={MnemonicScreen} />
-        <Stack.Screen
-          name="Confirm Mnemonic"
-          component={ConfirmMnemonicScreen}
-        />
-        <Stack.Screen name="Recovering" component={RecoveringScreen} />
-        <Stack.Screen
-          name="Select recovery mint"
-          component={SelectRecoveryMintScreen}
-        />
-        <Stack.Screen name="Restore warning" component={RestoreWarningScreen} />
+        <Stack.Screen name="View mnemonic" component={ViewMnemonic} />
+        <Stack.Screen name="Restore" component={RestoreNavigator} />
       </Stack.Navigator>
     </View>
   );
