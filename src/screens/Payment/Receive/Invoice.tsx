@@ -7,13 +7,14 @@ import { _testmintUrl, isIOS } from "@consts";
 import { l } from "@log";
 import type { TMintInvoicePageProps } from "@model/nav";
 import TopNav from "@nav/TopNav";
+import { useFocusEffect } from "@react-navigation/native";
 import { useManager } from "@src/context/Manager";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals } from "@styles";
 import { getColor } from "@styles/colors";
 import { formatMintUrl, share } from "@util";
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
@@ -34,10 +35,12 @@ export default function InvoiceScreen({
     });
   };
 
-  useEffect(() => {
-    manager.on("mint-quote:redeemed", handlePaidInvoice);
-    return () => manager.off("mint-quote:redeemed", handlePaidInvoice);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      manager.on("mint-quote:redeemed", handlePaidInvoice);
+      return () => manager.off("mint-quote:redeemed", handlePaidInvoice);
+    }, [])
+  );
 
   return (
     <View style={[globals(color).container, styles.container]}>
