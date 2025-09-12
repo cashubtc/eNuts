@@ -15,7 +15,6 @@ import OnboardingScreen from "@screens/Onboarding";
 import ProcessingScreen from "@screens/Payment/Processing";
 import ProcessingErrorScreen from "@screens/Payment/ProcessingError";
 import InvoiceScreen from "@screens/Payment/Receive/Invoice";
-import SelectMintScreen from "@screens/Payment/SelectMint";
 import CoinSelectionScreen from "@screens/Payment/Send/CoinSelection";
 import EncodedTokenPage from "@screens/Payment/Send/EncodedToken";
 import SelectMintToSwapToScreen from "@screens/Payment/Send/SelectMintToSwapTo";
@@ -99,8 +98,6 @@ export default function Navigator({
           navigationBarColor: color.BACKGROUND,
         }}
       >
-        <Stack.Screen name="selectMint" component={SelectMintScreen} />
-
         <Stack.Screen
           name="selectMintToSwapTo"
           component={SelectMintToSwapToScreen}

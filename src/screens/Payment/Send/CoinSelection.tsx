@@ -16,6 +16,9 @@ import { useInitialURL } from "@src/context/Linking";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { useQRScanHandler } from "@util/qrScanner";
+import TrustMintBottomSheet, {
+  type TrustMintBottomSheetRef,
+} from "@modal/TrustMintBottomSheet";
 import { globals } from "@styles";
 import {
   formatInt,
@@ -25,7 +28,7 @@ import {
   isNum,
 } from "@util";
 import { isLightningAddress } from "@util/lnurl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -59,7 +62,11 @@ export default function CoinSelectionScreen({
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
   const { url, clearUrl } = useInitialURL();
-  const { openQRScanner } = useQRScanHandler(navigation);
+  const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
+  const { openQRScanner } = useQRScanHandler(
+    navigation,
+    (token) => trustMintRef.current?.open(token) as Promise<any>
+  );
 
   const getPaymentType = () => {
     if (isZap) {
@@ -200,6 +207,7 @@ export default function CoinSelectionScreen({
       >
         <SwipeButton txt={t(getBtnTxt())} onToggle={submitPaymentReq} />
       </View>
+      <TrustMintBottomSheet ref={trustMintRef} />
     </View>
   );
 }

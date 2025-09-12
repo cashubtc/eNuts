@@ -42,8 +42,6 @@ import { decodeLnInvoice, isCashuToken, isNum } from "@util";
 
 import { sumProofsValue, sumTokenProofs } from "./proofs";
 import { getProofsToUse } from "./util";
-import { walletService } from "@src/services/WalletService";
-import { proofService } from "@src/services/ProofService";
 
 interface IGetSeedWalletParams {
   mintUrl: string;
@@ -110,14 +108,6 @@ export async function getSeedWalletByMnemonic({
   return { wallet, seed };
 }
 
-async function getCurrentKeySetId(mintUrl: string): Promise<string> {
-  console.log("getCurrentKeySetId", mintUrl);
-  const wallet = await walletService.getWallet(mintUrl);
-  const keys = await wallet.getKeys();
-  console.log("keys", keys);
-  return wallet.keysetId;
-}
-
 export function getMintCurrentKeySetId(mintUrl: string): Promise<string> {
   return getCurrentKeySetId(mintUrl);
 }
@@ -179,66 +169,8 @@ export async function checkFees(
 }
 
 export async function claimToken(token: Token): Promise<boolean> {
-  const wallet = await walletService.getWallet(token.mint);
-  const counter = await getCounterByMintUrl(token.mint);
-  try {
-    const newProofs = await wallet.receive(token, { counter });
-    l("[claimToken]", { token });
-    await proofService.addProofs(
-      newProofs.map((p) => ({
-        ...p,
-        state: "ready",
-        mintUrl: token.mint,
-        dleq: p.dleq || undefined,
-      }))
-    );
-    await incrementCounterByMintUrl(token.mint, token.proofs.length);
-    return true;
-  } catch (e) {
-    l("[claimToken] error", { e });
-    return false;
-  }
-}
-
-export async function requestMint(
-  mintUrl: string,
-  amount: number
-): Promise<RequestMintResponse> {
-  const wallet = await getWallet(mintUrl);
-  const result = await wallet.requestMint(amount);
-  await addInvoice({ amount, mintUrl, ...result });
-  runRequestTokenLoop();
-  l("[requestMint]", { result, mintUrl, amount });
-  return result;
-}
-
-export async function requestToken(
-  mintUrl: string,
-  amount: number,
-  hash: string
-): TRequestTokenReturnType {
-  const invoice = await getInvoice(hash);
-  const wallet = await getWallet(mintUrl);
-  const counter = await getCounterByMintUrl(mintUrl);
-  try {
-    const { proofs, newKeys } = await wallet.requestTokens(
-      amount,
-      hash,
-      undefined,
-      counter
-    );
-    l("[requestToken]", { proofs, mintUrl, amount, hash });
-    if (newKeys) {
-      _setKeys(mintUrl, newKeys);
-    }
-    await addToken({ token: [{ mint: mintUrl, proofs }] });
-    await delInvoice(hash);
-    await incrementCounterByMintUrl(mintUrl, proofs.length);
-  } catch (e) {
-    l("[requestToken] error: ", e);
-    return { success: false, invoice };
-  }
-  return { success: true, invoice };
+  //TODO: Remove function
+  return true;
 }
 
 export async function payLnInvoice(
@@ -326,22 +258,6 @@ export async function payLnInvoice(
     await addToken({ token: [{ mint: mintUrl, proofs }] });
     return { result: undefined, error };
   }
-}
-
-export async function sendToken(
-  mintUrl: string,
-  amount: number,
-  memo: string,
-  proofs: Proof[] = []
-): Promise<string> {
-  const wallet = await walletService.getWallet(mintUrl);
-  // will throw if not enough proofs are available
-  await proofService.setProofsState(proofs, "inflight");
-  const { keep, send } = await wallet.send(amount, proofs);
-  await proofService.addProofs(
-    keep.map((p) => ({ ...p, state: "ready", mintUrl }))
-  );
-  return getEncodedToken({ mint: mintUrl, proofs: send });
 }
 
 export async function autoMintSwap(

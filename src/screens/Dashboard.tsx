@@ -12,7 +12,9 @@ import BottomNav from "@nav/BottomNav";
 import { preventBack } from "@nav/utils";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
-import { useTrustMintContext } from "@src/context/TrustMint";
+import TrustMintBottomSheet, {
+  type TrustMintBottomSheetRef,
+} from "@modal/TrustMintBottomSheet";
 import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { highlight as hi, mainColors } from "@styles";
@@ -31,8 +33,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
   const { loading, startLoading, stopLoading } = useLoading();
   // Prompt modal
   const { openPromptAutoClose } = usePromptContext();
-  // Trust mint modal
-  const { showTrustMintModal } = useTrustMintContext();
+  // Trust mint sheet
+  const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
   const { knownMints } = useKnownMints();
   const manager = useManager();
   const sendOptionsRef = useRef<BottomSheet>(null);
@@ -63,7 +65,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     if (isKnown) {
       await manager.wallet.receive(decoded);
     } else {
-      const action = await showTrustMintModal(decoded);
+      const action = await trustMintRef.current?.open(decoded);
 
       if (action === "trust") {
         await manager.mint.addMint(decoded.mint);
@@ -166,6 +168,8 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         onPressCancel={() => {}}
         loading={loading}
       />
+      {/* Trust mint bottom sheet */}
+      <TrustMintBottomSheet ref={trustMintRef} />
     </View>
   );
 }

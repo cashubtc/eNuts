@@ -18,7 +18,6 @@ import { PinCtx } from "@src/context/Pin";
 import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
 import { ThemeProvider, useThemeContext } from "@src/context/Theme";
-import { TrustMintProvider } from "@src/context/TrustMint";
 import { QRScannerProvider } from "@src/context/QRScanner";
 import { KnownMintsProvider } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
@@ -38,7 +37,6 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Blank from "./Blank";
 import ClipboardModal from "./ClipboardModal";
 import QRScannerBottomSheet from "./QRScannerBottomSheet";
-import TrustMintModal from "./modal/TrustMintModal";
 import Toaster from "./Toaster";
 
 import * as SplashScreen from "expo-splash-screen";
@@ -236,15 +234,13 @@ function AppProviders({
                 <BalanceProvider>
                   <FocusClaimProvider>
                     <PromptProvider>
-                      <TrustMintProvider>
-                        <QRScannerProvider>
-                          <HistoryProvider>
-                            <KnownMintsProvider>
-                              <KeyboardProvider>{children}</KeyboardProvider>
-                            </KnownMintsProvider>
-                          </HistoryProvider>
-                        </QRScannerProvider>
-                      </TrustMintProvider>
+                      <QRScannerProvider>
+                        <HistoryProvider>
+                          <KnownMintsProvider>
+                            <KeyboardProvider>{children}</KeyboardProvider>
+                          </KnownMintsProvider>
+                        </HistoryProvider>
+                      </QRScannerProvider>
                     </PromptProvider>
                   </FocusClaimProvider>
                 </BalanceProvider>
@@ -284,7 +280,6 @@ function RootApp() {
         <StatusBar style="auto" />
         <ClipboardModal />
         <QRScannerBottomSheet />
-        <TrustMintModal />
         <Toaster />
       </AppProviders>
     </ManagerProvider>
