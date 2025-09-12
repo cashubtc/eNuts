@@ -64,10 +64,6 @@ export type RootStackParamList = {
     isSendEcash?: boolean;
     remainingMints?: IMintUrl[];
   };
-  meltInputfield: {
-    mint: IMintUrl;
-    balance: number;
-  };
   selectMintToSwapTo: {
     mint: IMintUrl;
     balance: number;

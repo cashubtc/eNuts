@@ -1,7 +1,7 @@
-import BottomSheet, {
+import {
+  BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetBackdrop,
-  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import Txt from "@comps/Txt";
 import Button from "@comps/Button";
@@ -102,7 +102,10 @@ const MintItem = memo(
 
 MintItem.displayName = "MintItem";
 
-const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
+const MintSelectionSheet = forwardRef<
+  BottomSheetModal,
+  MintSelectionSheetProps
+>(
   (
     {
       selectedMint,
@@ -180,7 +183,7 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
         } else {
           // Single select mode - close immediately
           onMintSelect(mint);
-          (ref as React.RefObject<BottomSheet>)?.current?.close();
+          (ref as React.RefObject<BottomSheetModal>)?.current?.dismiss();
         }
       },
       [multiSelect, onMintSelect, ref]
@@ -190,7 +193,7 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
       if (onMultipleMintSelect) {
         onMultipleMintSelect(internalSelectedMints);
       }
-      (ref as React.RefObject<BottomSheet>)?.current?.close();
+      (ref as React.RefObject<BottomSheetModal>)?.current?.dismiss();
     }, [onMultipleMintSelect, internalSelectedMints, ref]);
 
     const isMintSelected = useCallback(
@@ -218,10 +221,10 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
     );
 
     return (
-      <BottomSheet
+      <BottomSheetModal
         ref={ref}
-        index={-1}
         enablePanDownToClose={true}
+        enableDismissOnClose
         enableDynamicSizing
         maxDynamicContentSize={maxHeight}
         backdropComponent={renderBackdrop}
@@ -231,7 +234,6 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
         handleIndicatorStyle={{
           backgroundColor: color.TEXT_SECONDARY,
         }}
-        animateOnMount={true}
       >
         <BottomSheetScrollView
           style={[styles.scrollView, { backgroundColor: color.BACKGROUND }]}
@@ -291,7 +293,7 @@ const MintSelectionSheet = forwardRef<BottomSheet, MintSelectionSheetProps>(
             </>
           )}
         </BottomSheetScrollView>
-      </BottomSheet>
+      </BottomSheetModal>
     );
   }
 );

@@ -37,14 +37,14 @@ import {
   View,
 } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { useManager } from "@src/context/Manager";
+import { MeltInputProps } from "@src/nav/navTypes";
+import Screen, { ScreenWithKeyboard } from "@comps/Screen";
 
-export default function MeltInputScreen({
-  navigation,
-}: TMeltInputfieldPageProps) {
+export default function MeltInputScreen({ navigation }: MeltInputProps) {
   const { knownMints } = useKnownMints();
   const manager = useManager();
 
@@ -54,7 +54,7 @@ export default function MeltInputScreen({
 
   // Use refs for better performance
   const inputRef = useRef<TextInput>(null);
-  const mintSelectionSheetRef = useRef<BottomSheet>(null);
+  const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
 
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
@@ -80,9 +80,9 @@ export default function MeltInputScreen({
     // Try expand method first, fallback to snapToIndex
     if (mintSelectionSheetRef.current) {
       try {
-        mintSelectionSheetRef.current.expand();
+        mintSelectionSheetRef.current.present();
       } catch (error) {
-        mintSelectionSheetRef.current.snapToIndex(0);
+        /* ignore */
       }
     }
   }, []);
@@ -138,14 +138,13 @@ export default function MeltInputScreen({
   // Early return if no mints available
   if (noMintsAvailable) {
     return (
-      <View style={[globals(color).container, styles.container]}>
-        <TopNav
-          screenName={t("cashOut")}
-          withBackBtn
-          handlePress={() => navigation.goBack()}
-          mintBalance={0}
-          disableMintBalance
-        />
+      <Screen
+        screenName={t("cashOut")}
+        withBackBtn
+        handlePress={() => navigation.goBack()}
+        mintBalance={0}
+        disableMintBalance
+      >
         <View
           style={{
             flex: 1,
@@ -156,54 +155,19 @@ export default function MeltInputScreen({
         >
           <Txt txt={t("noMintsWithBalance", { ns: NS.common })} />
         </View>
-      </View>
+      </Screen>
     );
   }
 
   return (
-    <View style={[globals(color).container, styles.container]}>
-      <TopNav
-        screenName={t("cashOut")}
-        withBackBtn
-        handlePress={() => navigation.goBack()}
-        mintBalance={balance}
-        disableMintBalance
-      />
-      <View>
-        <TouchableOpacity
-          style={[
-            styles.seamlessMintSelector,
-            {
-              borderColor: color.BORDER,
-              opacity: 1,
-            },
-          ]}
-          onPress={handleMintSelectionOpen}
-        >
-          <View style={styles.mintSelectorInfo}>
-            <Txt
-              txt={`Pay from: ${selectedMintName}`}
-              styles={[
-                styles.seamlessMintName,
-                { color: color.TEXT_SECONDARY },
-              ]}
-            />
-            <Txt
-              txt={`${formatSatStr(balance)} available`}
-              styles={[styles.seamlessMintBalance, { color: color.TEXT }]}
-            />
-          </View>
-          <ChevronRightIcon
-            color={color.TEXT_SECONDARY}
-            width={16}
-            height={16}
-          />
-        </TouchableOpacity>
-      </View>
-      <KeyboardAvoidingView
-        behavior={isIOS ? "padding" : undefined}
-        style={styles.actionWrap}
-      >
+    <ScreenWithKeyboard
+      screenName={t("cashOut")}
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+      mintBalance={balance}
+      disableMintBalance
+    >
+      <View style={{ flex: 1 }}>
         <View style={{ position: "relative" }}>
           <TxtInput
             innerRef={inputRef}
@@ -238,15 +202,36 @@ export default function MeltInputScreen({
             </Text>
           </TouchableOpacity>
         </View>
-        <Button
-          disabled={loading || !input.length}
-          txt={t("continue")}
-          onPress={() => void handleBtnPress()}
-          icon={loading ? <Loading size={20} /> : undefined}
-        />
-        {isIOS && <View style={styles.placeholder} />}
-      </KeyboardAvoidingView>
-
+      </View>
+      <TouchableOpacity
+        style={[
+          styles.seamlessMintSelector,
+          {
+            borderColor: color.BORDER,
+            opacity: 1,
+          },
+        ]}
+        onPress={handleMintSelectionOpen}
+      >
+        <View style={styles.mintSelectorInfo}>
+          <Txt
+            txt={`Pay from: ${selectedMintName}`}
+            styles={[styles.seamlessMintName, { color: color.TEXT_SECONDARY }]}
+          />
+          <Txt
+            txt={`${formatSatStr(balance)} available`}
+            styles={[styles.seamlessMintBalance, { color: color.TEXT }]}
+          />
+        </View>
+        <ChevronRightIcon color={color.TEXT_SECONDARY} width={16} height={16} />
+      </TouchableOpacity>
+      <Button
+        disabled={loading || !input.length}
+        txt={t("continue")}
+        onPress={() => void handleBtnPress()}
+        icon={loading ? <Loading size={20} /> : undefined}
+      />
+      {isIOS && <View style={styles.placeholder} />}
       {/* Mint Selection Sheet with Multi-Select Support */}
       <Suspense fallback={<View />}>
         <MintSelectionSheet
@@ -256,7 +241,7 @@ export default function MeltInputScreen({
           multiSelect={false}
         />
       </Suspense>
-    </View>
+    </ScreenWithKeyboard>
   );
 }
 

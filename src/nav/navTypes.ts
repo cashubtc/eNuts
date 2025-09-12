@@ -67,6 +67,11 @@ export type MintSelectAmountProps = NativeStackScreenProps<
   "MintSelectAmount"
 >;
 
+export type MeltInputProps = NativeStackScreenProps<
+  RootStackParamList,
+  "MeltInput"
+>;
+
 export type MeltConfirmationProps = NativeStackScreenProps<
   RootStackParamList,
   "MeltConfirmation"

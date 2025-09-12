@@ -21,7 +21,7 @@ import {
   View,
 } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useManager } from "@src/context/Manager";
 import { SendSelectAmountProps } from "@src/nav/navTypes";
 
@@ -36,7 +36,7 @@ export default function SendSelectAmountScreen({
   // Use useRef instead of createRef to avoid recreation on every render
   const numericInputRef = useRef<TextInput>(null);
   const txtInputRef = useRef<TextInput>(null);
-  const mintSelectionSheetRef = useRef<BottomSheet>(null);
+  const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
 
   const [amountInput, setAmountInput] = useState("");
   const [memo, setMemo] = useState("");
@@ -99,16 +99,16 @@ export default function SendSelectAmountScreen({
     // Try expand method first, fallback to snapToIndex
     if (mintSelectionSheetRef.current) {
       try {
-        mintSelectionSheetRef.current.expand();
+        mintSelectionSheetRef.current.present();
       } catch (error) {
-        mintSelectionSheetRef.current.snapToIndex(0);
+        /* ignore */
       }
     }
   }, []);
 
   const handleInputFocus = useCallback(() => {
     // Close the mint selection sheet when input is focused
-    mintSelectionSheetRef.current?.close();
+    mintSelectionSheetRef.current?.dismiss();
   }, []);
 
   const handleAmountChange = useCallback((text: string) => {

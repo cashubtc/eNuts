@@ -30,7 +30,6 @@ import DisplaySettings from "@screens/Settings/Display";
 import LanguageSettings from "@screens/Settings/Language";
 import ViewMnemonic from "@screens/Settings/ViewMnemonic";
 import { useThemeContext } from "@src/context/Theme";
-import { useEffect } from "react";
 import { View } from "react-native";
 import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
 import MintSelectAmountScreen from "@screens/Payment/MintSelectAmount";
@@ -45,7 +44,7 @@ export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
   const { color } = useThemeContext();
   // lazy import to avoid circulars in types
   const { usePinAuth } = require("@src/modules/pin/PinProvider");
-  const { ready, hasPin, needsAuth, clearNeedsAuth } = usePinAuth();
+  const { needsAuth } = usePinAuth();
 
   const nav =
     useNavigation<
@@ -55,20 +54,16 @@ export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
   const getInitialRoute = () => {
     // initial onboarding
     if (shouldOnboard) {
-      console.log("onboarding");
       return "onboarding";
     }
     // a pin has been setup previously and re-auth required
     if (needsAuth) {
-      console.log("auth");
       return "auth";
     }
     // no previous pin setup && onboarding done
     if (!hasSeed) {
-      console.log("restore");
       return "Restore";
     }
-    console.log("dashboard");
     return "dashboard";
   };
 
@@ -94,7 +89,7 @@ export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
           name="selectMintToSwapTo"
           component={SelectMintToSwapToScreen}
         />
-        <Stack.Screen name="meltInputfield" component={MeltInputScreen} />
+        <Stack.Screen name="MeltInput" component={MeltInputScreen} />
         <Stack.Screen
           name="MeltConfirmation"
           component={MeltConfirmationScreen}
