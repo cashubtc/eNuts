@@ -27,6 +27,9 @@ import { s, ScaledSheet } from "react-native-size-matters";
 import { TxtButton } from "./Button";
 import Logo from "./Logo";
 import Txt from "./Txt";
+import { usePaginatedHistory } from "coco-cashu-react";
+// removed unused MintHistoryEntry import
+import { LatestHistory } from "@screens/History/components/LatestHistory";
 
 interface IBalanceProps {
   nav?: NativeStackNavigationProp<RootStackParamList, "dashboard", "MyStack">;
@@ -38,7 +41,7 @@ export default function Balance({ nav }: IBalanceProps) {
   const { hidden, handleLogoPress } = usePrivacyContext();
   const [formatSats, setFormatSats] = useState(pref?.formatBalance);
   const { balance } = useBalanceContext();
-  const { latestHistory } = useHistoryContext();
+  const { history: latestHistory, hasMore } = usePaginatedHistory(3);
 
   const toggleBalanceFormat = () => {
     setFormatSats((prev) => !prev);
@@ -47,19 +50,6 @@ export default function Balance({ nav }: IBalanceProps) {
     }
     // update DB
     void setPreferences({ ...pref, formatBalance: !formatSats });
-  };
-
-  const getTxTypeStr = (type: TTXType) => {
-    if (type === txType.SEND_RECEIVE) {
-      return "Ecash";
-    }
-    if (type === txType.LIGHTNING) {
-      return "Lightning";
-    }
-    if (type === txType.SWAP) {
-      return t("swap");
-    }
-    return t("seedBackup");
   };
 
   return (
@@ -123,41 +113,8 @@ export default function Balance({ nav }: IBalanceProps) {
         </View>
       )}
       {/* latest 3 history entries */}
-      {latestHistory.length > 0 &&
-        latestHistory.map((h, i) => (
-          <HistoryEntry
-            key={h.timestamp}
-            icon={
-              h.isPending && !h.isExpired ? (
-                <ClockIcon color={getColor(highlight, color)} />
-              ) : h.isExpired ? (
-                <CloseCircleIcon
-                  width={s(21)}
-                  height={s(21)}
-                  color={getColor(highlight, color)}
-                />
-              ) : h.type === txType.RESTORE ? (
-                <CheckmarkIcon color={getColor(highlight, color)} />
-              ) : h.type === txType.LIGHTNING || h.type === txType.SWAP ? (
-                <ZapIcon
-                  width={s(28)}
-                  height={s(28)}
-                  color={getColor(highlight, color)}
-                />
-              ) : (
-                <EcashIcon color={getColor(highlight, color)} />
-              )
-            }
-            isSwap={h.type === txType.SWAP}
-            txType={getTxTypeStr(h.type)}
-            timestamp={h.timestamp}
-            amount={h.amount}
-            isExpired={h.isExpired}
-            onPress={() => nav?.navigate("history entry details", { entry: h })}
-            testID={`history-entry-${i}`}
-          />
-        ))}
-      {latestHistory.length === 3 && (
+      <LatestHistory history={latestHistory} />
+      {hasMore && (
         <TxtButton
           txt={t("seeFullHistory")}
           onPress={() => nav?.navigate("history")}
