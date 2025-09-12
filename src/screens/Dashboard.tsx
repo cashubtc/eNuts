@@ -135,17 +135,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
           }}
         />
       </View>
-      {/* beta warning */}
-      {(env.isExpoBeta || __DEV__) && (
-        <View style={styles.hintWrap}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("disclaimer")}
-            style={styles.betaHint}
-          >
-            <Txt txt="BETA" styles={[{ color: mainColors.WARN }]} />
-          </TouchableOpacity>
-        </View>
-      )}
       {/* Bottom nav icons */}
       <BottomNav navigation={navigation} route={route} />
       {/* Send options bottom sheet */}

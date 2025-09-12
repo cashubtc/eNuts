@@ -6,7 +6,6 @@ import {
 } from "@react-navigation/native-stack";
 import AuthPage from "@screens/Auth";
 import Dashboard from "@screens/Dashboard";
-import { Disclaimer } from "@screens/Disclaimer";
 import HistoryPage from "@screens/History";
 import DetailsPage from "@screens/History/Details";
 import MintInfoPage from "@screens/Mints/Info";
@@ -154,7 +153,6 @@ export default function Navigator({
             gestureEnabled: false,
           }}
         />
-        <Stack.Screen name="disclaimer" component={Disclaimer} />
         <Stack.Screen
           name="auth"
           component={AuthPage}
