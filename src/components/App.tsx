@@ -5,7 +5,7 @@ import { l } from "@log";
 import Navigator from "@nav/Navigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
-import { BalanceProvider } from "@src/context/Balance";
+// Balance is now provided by CocoCashuProvider
 import { FocusClaimProvider } from "@src/context/FocusClaim";
 import { HistoryProvider } from "@src/context/History";
 
@@ -34,7 +34,7 @@ import QRScannerBottomSheet from "./QRScannerBottomSheet";
 import Toaster from "./Toaster";
 
 import * as SplashScreen from "expo-splash-screen";
-import { ManagerProvider } from "@src/context/Manager";
+import { CocoCashuProvider } from "coco-cashu-react";
 import { ExpoSqliteRepositories } from "coco-cashu-expo-sqlite";
 import { Manager } from "coco-cashu-core";
 import { dbProvider } from "@src/storage/DbProvider";
@@ -144,19 +144,15 @@ function AppProviders({ children }: { children: React.ReactNode }) {
         <MenuProvider>
           <BottomSheetModalProvider>
             <ThemedNavigationContainer>
-              <BalanceProvider>
-                <FocusClaimProvider>
-                  <PromptProvider>
-                    <QRScannerProvider>
-                      <HistoryProvider>
-                        <KnownMintsProvider>
-                          <KeyboardProvider>{children}</KeyboardProvider>
-                        </KnownMintsProvider>
-                      </HistoryProvider>
-                    </QRScannerProvider>
-                  </PromptProvider>
-                </FocusClaimProvider>
-              </BalanceProvider>
+              <FocusClaimProvider>
+                <PromptProvider>
+                  <QRScannerProvider>
+                    <HistoryProvider>
+                      <KeyboardProvider>{children}</KeyboardProvider>
+                    </HistoryProvider>
+                  </QRScannerProvider>
+                </PromptProvider>
+              </FocusClaimProvider>
             </ThemedNavigationContainer>
           </BottomSheetModalProvider>
         </MenuProvider>
@@ -176,7 +172,7 @@ function RootApp() {
     return <Blank />;
   }
   return (
-    <ManagerProvider manager={manager}>
+    <CocoCashuProvider manager={manager}>
       <AppProviders>
         <Navigator shouldOnboard={shouldOnboard} hasSeed={hasSeed} />
         <StatusBar style="auto" />
@@ -184,7 +180,7 @@ function RootApp() {
         <QRScannerBottomSheet />
         <Toaster />
       </AppProviders>
-    </ManagerProvider>
+    </CocoCashuProvider>
   );
 }
 

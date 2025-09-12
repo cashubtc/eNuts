@@ -1,67 +1,18 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-} from "react";
-import { useManager } from "./Manager";
+import { useMemo } from "react";
 import { Mint } from "coco-cashu-core";
+import { useMints, useBalanceContext } from "coco-cashu-react";
 
 export type KnownMintWithBalance = Mint & { balance: number };
 
-const useKnownMintsInternal = () => {
-  const [knownMints, setKnownMints] = useState<KnownMintWithBalance[]>([]);
-  const [loading, setLoading] = useState(false);
-  const manager = useManager();
+export const useKnownMints = () => {
+  const { mints } = useMints();
+  const { balance } = useBalanceContext();
 
-  const getKnownMints = useCallback(async () => {
-    const mints = await manager.mint.getAllMints();
-    const balances = await manager.wallet.getBalances();
+  const knownMints: KnownMintWithBalance[] = useMemo(
+    () =>
+      mints.map((mint) => ({ ...mint, balance: balance[mint.mintUrl] || 0 })),
+    [mints, balance]
+  );
 
-    const knownMintsWithBalance: KnownMintWithBalance[] = mints.map((mint) => ({
-      ...mint,
-      balance: balances[mint.mintUrl] || 0,
-    }));
-
-    setKnownMints(knownMintsWithBalance);
-  }, []);
-
-  useEffect(() => {
-    void getKnownMints();
-
-    manager.on("mint:added", getKnownMints);
-    manager.on("mint:updated", getKnownMints);
-    manager.on("proofs:saved", getKnownMints);
-    manager.on("proofs:state-changed", getKnownMints);
-
-    return () => {
-      manager.off("mint:added", getKnownMints);
-      manager.off("mint:updated", getKnownMints);
-      manager.off("proofs:saved", getKnownMints);
-      manager.off("proofs:state-changed", getKnownMints);
-    };
-  }, [getKnownMints, manager]);
-
-  return useMemo(() => ({ knownMints, loading }), [knownMints, loading]);
+  return { knownMints, loading: false };
 };
-
-type UseKnownMintsType = ReturnType<typeof useKnownMintsInternal>;
-
-const KnownMintsCtx = createContext<UseKnownMintsType>({
-  knownMints: [],
-  loading: false,
-});
-
-export const useKnownMints = () => useContext(KnownMintsCtx);
-
-export const KnownMintsProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => (
-  <KnownMintsCtx.Provider value={useKnownMintsInternal()}>
-    {children}
-  </KnownMintsCtx.Provider>
-);
