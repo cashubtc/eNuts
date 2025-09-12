@@ -17,10 +17,9 @@ import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { highlight as hi, mainColors } from "@styles";
 import { getStrFromClipboard } from "@util";
-import { getMintsForPayment } from "@wallet";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 import { useManager } from "@src/context/Manager";
 
