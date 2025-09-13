@@ -1,21 +1,34 @@
 import Screen from "@comps/Screen";
+import Progress from "@comps/Progress";
+import { useUrDecoder } from "@comps/hooks/useUrDecoder";
 import TopNav from "@nav/TopNav";
 import { usePromptContext } from "@src/context/Prompt";
 import { QRScannerScreenProps } from "@src/nav/navTypes";
 import { CameraView, ScanningResult, useCameraPermissions } from "expo-camera";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { Button, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 function parseScannerContent(content: string) {
-  const normalizedContent = content.trim().toLowerCase();
+  const trimmed = content.trim();
+  const normalized = trimmed.toLowerCase();
   let type = "UNKNOWN";
   let parsedContent = "";
-  if (normalizedContent.startsWith("lnbc")) {
+  if (normalized.startsWith("lnbc")) {
     type = "LIGHTNING_INVOICE";
-    parsedContent = normalizedContent;
-  } else if (normalizedContent.startsWith("lightning:")) {
+    parsedContent = trimmed;
+  } else if (normalized.startsWith("lightning:")) {
     type = "LIGHTNING_INVOICE";
-    parsedContent = normalizedContent.slice(10);
+    parsedContent = trimmed.slice(10);
+  } else if (
+    normalized.startsWith("cashua") ||
+    normalized.startsWith("cashub")
+  ) {
+    type = "CASHU_TOKEN";
+    parsedContent = trimmed;
+  } else if (normalized.startsWith("cashu:")) {
+    type = "CASHU_TOKEN";
+    parsedContent = trimmed.slice(6);
   }
   return { type, content: parsedContent };
 }
@@ -26,23 +39,74 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   const [isScanningEnabled, setIsScanningEnabled] = useState(true);
   const isHandlingScanRef = useRef(false);
 
-  useEffect(() => {
-    return () => {
+  const {
+    addPart,
+    reset: resetUr,
+    active: urActive,
+    complete: urComplete,
+    estimated,
+    expectedCount,
+    receivedCount,
+    decodedString,
+    error: urError,
+  } = useUrDecoder({ allowedTypes: ["bytes"] });
+
+  const urHandledRef = useRef(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      // on focus
       isHandlingScanRef.current = false;
-    };
-  }, []);
+      urHandledRef.current = false;
+      setIsScanningEnabled(true);
+      resetUr();
+      return () => {
+        // on blur
+        resetUr();
+        isHandlingScanRef.current = false;
+        urHandledRef.current = false;
+        setIsScanningEnabled(true);
+      };
+    }, [resetUr])
+  );
+
+  useEffect(() => {
+    if (!urComplete || !decodedString || urHandledRef.current) return;
+    urHandledRef.current = true;
+    isHandlingScanRef.current = true;
+    setIsScanningEnabled(false);
+    let content = decodedString;
+    const { type, content: parsedContent } = parseScannerContent(content);
+    if (type === "LIGHTNING_INVOICE") {
+      navigation.replace("MeltInput", { invoice: parsedContent });
+      return;
+    }
+    openPromptAutoClose({ msg: "Unsupported format", success: false });
+  }, [urComplete, decodedString, navigation, openPromptAutoClose]);
 
   const handleCodeScanned = (result: ScanningResult) => {
     if (isHandlingScanRef.current) {
       return;
     }
+    let content = result.data;
+    if (content.toLowerCase().startsWith("ur:")) {
+      const { accepted } = addPart(content);
+      if (accepted) {
+        // Keep scanning to accumulate further parts
+        return;
+      }
+      // If not accepted, fall through to normal parsing
+    }
     isHandlingScanRef.current = true;
     setIsScanningEnabled(false);
 
-    const content = result.data;
     const { type, content: parsedContent } = parseScannerContent(content);
     if (type === "LIGHTNING_INVOICE") {
-      openPromptAutoClose({ msg: "Is a Lightning invoice", success: true });
+      navigation.replace("MeltInput", { invoice: parsedContent });
+      return;
+    }
+    if (type === "CASHU_TOKEN") {
+      //TODO: handle cashu token
       return;
     }
     openPromptAutoClose({ msg: "Unsupported format", success: false });
@@ -51,6 +115,8 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   const handleRescan = () => {
     isHandlingScanRef.current = false;
     setIsScanningEnabled(true);
+    resetUr();
+    urHandledRef.current = false;
   };
 
   if (!permission) {
@@ -88,8 +154,20 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
           style={styles.camera}
           onBarcodeScanned={isScanningEnabled ? handleCodeScanned : undefined}
         />
-        {!isScanningEnabled && (
+        {(!isScanningEnabled || urActive) && (
           <View style={styles.overlay}>
+            {urActive && (
+              <View style={styles.progressBox}>
+                <Text style={styles.progressTitle}>Receiving animated QR…</Text>
+                <Progress
+                  progress={estimated}
+                  withIndicator
+                  contactsCount={expectedCount || undefined}
+                  doneCount={receivedCount || undefined}
+                />
+                {urError && <Text style={styles.errorText}>{urError}</Text>}
+              </View>
+            )}
             <TouchableOpacity
               style={styles.rescanButton}
               onPress={handleRescan}
@@ -135,6 +213,19 @@ const styles = StyleSheet.create({
     bottom: 24,
     alignItems: "center",
   },
+  progressBox: {
+    width: "90%",
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    marginBottom: 12,
+  },
+  progressTitle: {
+    color: "#fff",
+    fontSize: 14,
+    marginBottom: 10,
+    fontWeight: "600",
+  },
   rescanButton: {
     backgroundColor: "rgba(0,0,0,0.7)",
     paddingVertical: 12,
@@ -145,5 +236,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+  },
+  errorText: {
+    color: "#ff8a8a",
+    marginTop: 8,
+    textAlign: "center",
   },
 });
