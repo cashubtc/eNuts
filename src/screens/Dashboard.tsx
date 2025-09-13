@@ -119,7 +119,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
           }
           txt={t("scan")}
           color={hi[highlight]}
-          onPress={() => navigation.navigate("qr scan", {})}
+          onPress={() => navigation.navigate("QRScanner")}
         />
         <ActionBtn
           icon={

@@ -81,3 +81,8 @@ export type RestoreScreenProps = NativeStackScreenProps<
   RootStackParamList,
   "Restore"
 >;
+
+export type QRScannerScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "QRScanner"
+>;
