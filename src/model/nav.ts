@@ -71,7 +71,7 @@ export type RootStackParamList = {
   };
   SendSelectAmount: undefined;
   MintSelectAmount: undefined;
-  MeltInput: { invoice: string };
+  MeltInput: { invoice?: string };
   MeltConfirmation: {
     quote: MeltQuoteResponse;
     mintUrl: string;

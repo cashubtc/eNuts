@@ -1,6 +1,7 @@
 import Screen from "@comps/Screen";
 import Progress from "@comps/Progress";
-import { useUrDecoder } from "@comps/hooks/useUrDecoder";
+import useScanResult from "@src/screens/QRScan/hooks/useScanResult";
+import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 import TopNav from "@nav/TopNav";
 import { usePromptContext } from "@src/context/Prompt";
 import { QRScannerScreenProps } from "@src/nav/navTypes";
@@ -9,30 +10,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { Button, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-function parseScannerContent(content: string) {
-  const trimmed = content.trim();
-  const normalized = trimmed.toLowerCase();
-  let type = "UNKNOWN";
-  let parsedContent = "";
-  if (normalized.startsWith("lnbc")) {
-    type = "LIGHTNING_INVOICE";
-    parsedContent = trimmed;
-  } else if (normalized.startsWith("lightning:")) {
-    type = "LIGHTNING_INVOICE";
-    parsedContent = trimmed.slice(10);
-  } else if (
-    normalized.startsWith("cashua") ||
-    normalized.startsWith("cashub")
-  ) {
-    type = "CASHU_TOKEN";
-    parsedContent = trimmed;
-  } else if (normalized.startsWith("cashu:")) {
-    type = "CASHU_TOKEN";
-    parsedContent = trimmed.slice(6);
-  }
-  return { type, content: parsedContent };
-}
-
 function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   const [permission, requestPermission] = useCameraPermissions();
   const { openPromptAutoClose } = usePromptContext();
@@ -40,83 +17,75 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   const isHandlingScanRef = useRef(false);
 
   const {
-    addPart,
-    reset: resetUr,
+    onScan,
+    reset,
     active: urActive,
-    complete: urComplete,
+    complete,
     estimated,
     expectedCount,
     receivedCount,
-    decodedString,
     error: urError,
-  } = useUrDecoder({ allowedTypes: ["bytes"] });
+    result: scanResult,
+  } = useScanResult();
 
-  const urHandledRef = useRef(false);
+  const { claimFromTokenString } = useCashuClaimFlow();
 
   useFocusEffect(
     useCallback(() => {
       // on focus
       isHandlingScanRef.current = false;
-      urHandledRef.current = false;
       setIsScanningEnabled(true);
-      resetUr();
+      reset();
       return () => {
         // on blur
-        resetUr();
+        reset();
         isHandlingScanRef.current = false;
-        urHandledRef.current = false;
         setIsScanningEnabled(true);
       };
-    }, [resetUr])
+    }, [reset])
   );
 
   useEffect(() => {
-    if (!urComplete || !decodedString || urHandledRef.current) return;
-    urHandledRef.current = true;
+    if (!complete || !scanResult || isHandlingScanRef.current) return;
     isHandlingScanRef.current = true;
     setIsScanningEnabled(false);
-    let content = decodedString;
-    const { type, content: parsedContent } = parseScannerContent(content);
-    if (type === "LIGHTNING_INVOICE") {
-      navigation.replace("MeltInput", { invoice: parsedContent });
-      return;
-    }
-    openPromptAutoClose({ msg: "Unsupported format", success: false });
-  }, [urComplete, decodedString, navigation, openPromptAutoClose]);
-
-  const handleCodeScanned = (result: ScanningResult) => {
-    if (isHandlingScanRef.current) {
-      return;
-    }
-    let content = result.data;
-    if (content.toLowerCase().startsWith("ur:")) {
-      const { accepted } = addPart(content);
-      if (accepted) {
-        // Keep scanning to accumulate further parts
-        return;
-      }
-      // If not accepted, fall through to normal parsing
-    }
-    isHandlingScanRef.current = true;
-    setIsScanningEnabled(false);
-
-    const { type, content: parsedContent } = parseScannerContent(content);
+    const { type, content: parsedContent } = scanResult;
     if (type === "LIGHTNING_INVOICE") {
       navigation.replace("MeltInput", { invoice: parsedContent });
       return;
     }
     if (type === "CASHU_TOKEN") {
-      //TODO: handle cashu token
+      (async () => {
+        const result = await claimFromTokenString(parsedContent);
+        if (result === "success") {
+          navigation.replace("success", {
+            isClaim: true,
+            isScanned: true,
+          });
+        }
+      })();
       return;
     }
     openPromptAutoClose({ msg: "Unsupported format", success: false });
+  }, [
+    complete,
+    scanResult,
+    navigation,
+    openPromptAutoClose,
+    claimFromTokenString,
+  ]);
+
+  const handleCodeScanned = (result: ScanningResult) => {
+    if (isHandlingScanRef.current) {
+      return;
+    }
+    onScan(result.data);
   };
 
   const handleRescan = () => {
     isHandlingScanRef.current = false;
     setIsScanningEnabled(true);
-    resetUr();
-    urHandledRef.current = false;
+    reset();
   };
 
   if (!permission) {
