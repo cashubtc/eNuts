@@ -1,4 +1,4 @@
-import { getDecodedToken, Token } from "@cashu/cashu-ts";
+import { Token } from "@cashu/cashu-ts";
 import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
@@ -12,9 +12,6 @@ import BottomNav from "@nav/BottomNav";
 import { preventBack } from "@nav/utils";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
-import TrustMintBottomSheet, {
-  type TrustMintBottomSheetRef,
-} from "@modal/TrustMintBottomSheet";
 import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { highlight as hi, mainColors } from "@styles";
@@ -23,7 +20,7 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
-import { useManager } from "@src/context/Manager";
+import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 
 export default function Dashboard({ navigation, route }: TDashboardPageProps) {
   const { t } = useTranslation([NS.common]);
@@ -33,12 +30,10 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
   const { loading, startLoading, stopLoading } = useLoading();
   // Prompt modal
   const { openPromptAutoClose } = usePromptContext();
-  // Trust mint sheet
-  const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
   const { knownMints } = useKnownMints();
-  const manager = useManager();
   const sendOptionsRef = useRef<BottomSheet>(null);
   const receiveOptionsRef = useRef<BottomSheet>(null);
+  const { claimFromTokenString } = useCashuClaimFlow();
 
   const handleClaimBtnPress = async () => {
     if (loading) {
@@ -46,31 +41,15 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
     }
     startLoading();
     const clipboard = await getStrFromClipboard();
-    let decoded: Token;
     try {
       if (!clipboard) {
         throw new Error("Clipboard is empty");
       }
-      decoded = getDecodedToken(clipboard);
-      if (!decoded) {
-        throw new Error("Clipboard is not a valid cashu token");
-      }
-    } catch {
+      await claimFromTokenString(clipboard);
+    } catch (e) {
       openPromptAutoClose({ msg: t("clipboardInvalid") });
       stopLoading();
       return;
-    }
-
-    const isKnown = await manager.mint.isKnownMint(decoded.mint);
-    if (isKnown) {
-      await manager.wallet.receive(decoded);
-    } else {
-      const action = await trustMintRef.current?.open(decoded);
-
-      if (action === "trust") {
-        await manager.mint.addMint(decoded.mint);
-        await manager.wallet.receive(decoded);
-      }
     }
     stopLoading();
   };
@@ -119,7 +98,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
           }
           txt={t("scan")}
           color={hi[highlight]}
-          onPress={() => navigation.navigate("qr scan", {})}
+          onPress={() => navigation.navigate("QRScanner")}
         />
         <ActionBtn
           icon={
@@ -147,7 +126,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         }}
         button2Txt={t("payLNInvoice", { ns: NS.wallet })}
         onPressSecondBtn={() => {
-          navigation.navigate("MeltInput");
+          navigation.navigate("MeltInput", {});
         }}
         onPressCancel={() => {}}
         isSend
@@ -168,8 +147,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
         onPressCancel={() => {}}
         loading={loading}
       />
-      {/* Trust mint bottom sheet */}
-      <TrustMintBottomSheet ref={trustMintRef} />
     </View>
   );
 }

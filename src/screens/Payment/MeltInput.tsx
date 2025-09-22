@@ -44,7 +44,8 @@ import { useManager } from "@src/context/Manager";
 import { MeltInputProps } from "@src/nav/navTypes";
 import Screen, { ScreenWithKeyboard } from "@comps/Screen";
 
-export default function MeltInputScreen({ navigation }: MeltInputProps) {
+export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
+  const { invoice } = route.params || {};
   const { knownMints } = useKnownMints();
   const manager = useManager();
 
@@ -60,7 +61,7 @@ export default function MeltInputScreen({ navigation }: MeltInputProps) {
   const { openPromptAutoClose } = usePromptContext();
   const { color, highlight } = useThemeContext();
   const { loading, startLoading, stopLoading } = useLoading();
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(invoice || "");
   const [decodedAmount, setDecodedAmount] = useState(0);
 
   // Get balance from selected mints (always multi-select mode)

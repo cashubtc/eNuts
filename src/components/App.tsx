@@ -27,6 +27,7 @@ import { MenuProvider } from "react-native-popup-menu";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { TrustMintModalProvider } from "@modal/TrustMintProvider";
 
 import Blank from "./Blank";
 import ClipboardModal from "./ClipboardModal";
@@ -143,17 +144,19 @@ function AppProviders({ children }: { children: React.ReactNode }) {
       <PrivacyProvider>
         <MenuProvider>
           <BottomSheetModalProvider>
-            <ThemedNavigationContainer>
-              <FocusClaimProvider>
-                <PromptProvider>
-                  <QRScannerProvider>
-                    <HistoryProvider>
-                      <KeyboardProvider>{children}</KeyboardProvider>
-                    </HistoryProvider>
-                  </QRScannerProvider>
-                </PromptProvider>
-              </FocusClaimProvider>
-            </ThemedNavigationContainer>
+            <TrustMintModalProvider>
+              <ThemedNavigationContainer>
+                <FocusClaimProvider>
+                  <PromptProvider>
+                    <QRScannerProvider>
+                      <HistoryProvider>
+                        <KeyboardProvider>{children}</KeyboardProvider>
+                      </HistoryProvider>
+                    </QRScannerProvider>
+                  </PromptProvider>
+                </FocusClaimProvider>
+              </ThemedNavigationContainer>
+            </TrustMintModalProvider>
           </BottomSheetModalProvider>
         </MenuProvider>
       </PrivacyProvider>

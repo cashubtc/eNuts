@@ -20,9 +20,7 @@ import EncodedTokenPage from "@screens/Payment/Send/EncodedToken";
 import SelectMintToSwapToScreen from "@screens/Payment/Send/SelectMintToSwapTo";
 import SuccessPage from "@screens/Payment/Success";
 
-import MintConfirmScreen from "@screens/QRScan/MintConfirm";
-import QRProcessingScreen from "@screens/QRScan/QRProcessing";
-import ScanSuccessScreen from "@screens/QRScan/ScanSuccess";
+import QrScannerScreen from "@screens/QRScan/QrScannerScreen";
 import RestoreNavigator from "@src/nav/RestoreNavigator";
 import Settings from "@screens/Settings";
 import AdvancedFunctionScreen from "@screens/Settings/Advanced";
@@ -108,13 +106,7 @@ export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
           component={ProcessingScreen}
           options={{ gestureEnabled: false }}
         />
-        <Stack.Screen
-          name="qr processing"
-          component={QRProcessingScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen name="mint confirm" component={MintConfirmScreen} />
-        <Stack.Screen name="scan success" component={ScanSuccessScreen} />
+        <Stack.Screen name="QRScanner" component={QrScannerScreen} />
         <Stack.Screen
           name="processingError"
           component={ProcessingErrorScreen}

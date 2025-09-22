@@ -71,7 +71,7 @@ export type RootStackParamList = {
   };
   SendSelectAmount: undefined;
   MintSelectAmount: undefined;
-  MeltInput: undefined;
+  MeltInput: { invoice?: string };
   MeltConfirmation: {
     quote: MeltQuoteResponse;
     mintUrl: string;
@@ -99,6 +99,7 @@ export type RootStackParamList = {
     scanned?: boolean;
     aiPathfindingEnabled?: boolean;
   };
+  QRScanner: undefined;
   processing: {
     mint: IMintUrl;
     tokenInfo?: ITokenInfo;
@@ -114,23 +115,6 @@ export type RootStackParamList = {
     proofs?: IProofSelection[];
     recipient?: string;
     memo?: string;
-  };
-  "qr processing": {
-    tokenInfo?: ITokenInfo;
-    token?: string;
-    scanned?: boolean;
-    ln?: {
-      invoice: string;
-      mint?: IMintUrl;
-      balance?: number;
-      amount: number;
-    };
-    lnurl?: {
-      mint?: IMintUrl;
-      balance?: number;
-      url: string;
-      data: string;
-    };
   };
   "mint confirm": {
     mintUrl: string;
@@ -179,11 +163,6 @@ export type RootStackParamList = {
   "mint proofs": {
     mintUrl: string;
   };
-  "qr scan": {
-    mint?: IMintUrl;
-    balance?: number;
-    isPayment?: boolean;
-  };
   "history entry details": {
     entry: IHistoryEntry;
   };
@@ -210,11 +189,6 @@ export type TSelectMintToSwapToPageProps = NativeStackScreenProps<
   "selectMintToSwapTo",
   "MyStack"
 >;
-export type TMeltInputfieldPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "meltInputfield",
-  "MyStack"
->;
 export type SendSelectAmountProps = NativeStackScreenProps<
   RootStackParamList,
   "selectAmount",
@@ -233,11 +207,6 @@ export type TCoinSelectionPageProps = NativeStackScreenProps<
 export type TProcessingPageProps = NativeStackScreenProps<
   RootStackParamList,
   "processing",
-  "MyStack"
->;
-export type TQRProcessingPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "qr processing",
   "MyStack"
 >;
 export type TMintConfirmPageProps = NativeStackScreenProps<
@@ -300,11 +269,6 @@ export type TMintProofsPageProps = NativeStackScreenProps<
   "mint proofs",
   "MyStack"
 >;
-export type TQRScanPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "qr scan",
-  "MyStack"
->;
 export type THistoryPageProps = NativeStackScreenProps<
   RootStackParamList,
   "history",
@@ -353,14 +317,6 @@ export type IMnemonicPageProps = CompositeScreenProps<
 export type IRecoveringPageProps = CompositeScreenProps<
   RestoreStackScreenProps<"Recovering">,
   NativeStackScreenProps<RootStackParamList>
->;
-export type ISelectRecoveryMintPageProps = CompositeScreenProps<
-  RestoreStackScreenProps<"Select recovery mint">,
-  NativeStackScreenProps<RootStackParamList>
->;
-export type TQRScannerTestPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "qr scan"
 >;
 export type TProofsDebugPageProps = NativeStackScreenProps<
   RootStackParamList,
