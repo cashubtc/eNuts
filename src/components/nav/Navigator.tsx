@@ -4,7 +4,6 @@ import {
   createNativeStackNavigator,
   type NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import AuthPage from "@screens/Auth";
 import Dashboard from "@screens/Dashboard";
 import HistoryPage from "@screens/History";
 import DetailsPage from "@screens/History/Details";
@@ -40,9 +39,6 @@ const animationDuration = 250;
 
 export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
   const { color } = useThemeContext();
-  // lazy import to avoid circulars in types
-  const { usePinAuth } = require("@src/modules/pin/PinProvider");
-  const { needsAuth } = usePinAuth();
 
   const nav =
     useNavigation<
@@ -54,11 +50,6 @@ export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
     if (shouldOnboard) {
       return "onboarding";
     }
-    // a pin has been setup previously and re-auth required
-    if (needsAuth) {
-      return "auth";
-    }
-    // no previous pin setup && onboarding done
     if (!hasSeed) {
       return "Restore";
     }
@@ -128,12 +119,6 @@ export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
             animationDuration,
             gestureEnabled: false,
           }}
-        />
-        <Stack.Screen
-          name="auth"
-          component={AuthPage}
-          initialParams={{ mode: "unlock" }}
-          options={{ gestureEnabled: false }}
         />
         {/* sendable token created page */}
         <Stack.Screen

@@ -104,16 +104,6 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
         {/* SECURITY */}
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
           <MenuItem
-            header={t("security")}
-            txt={t("authPin")}
-            icon={<LockIcon color={color.TEXT} />}
-            onPress={() =>
-              navigation.navigate("auth", {
-                mode: pin ? "edit" : "setup",
-              })
-            }
-          />
-          <MenuItem
             txt={"View Mnemonic"}
             icon={<KeyIcon color={color.TEXT} />}
             onPress={() => navigation.navigate("View mnemonic")}

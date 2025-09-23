@@ -9,12 +9,10 @@ import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 import { FocusClaimProvider } from "@src/context/FocusClaim";
 import { HistoryProvider } from "@src/context/History";
 
-import { PinProvider } from "@src/modules/pin/PinProvider";
 import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
 import { ThemeProvider, useThemeContext } from "@src/context/Theme";
 import { QRScannerProvider } from "@src/context/QRScanner";
-import { KnownMintsProvider } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
@@ -41,7 +39,6 @@ import { Manager } from "coco-cashu-core";
 import { dbProvider } from "@src/storage/DbProvider";
 import { seedService } from "@src/services/SeedService";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { usePinAuth } from "@src/modules/pin/PinProvider";
 import { appLogger } from "@src/logger";
 
 l("[APP] Starting app...");
@@ -53,9 +50,7 @@ function App(_: { exp: Record<string, unknown> }) {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <CustomErrorBoundary catchErrors="always">
-          <PinProvider>
-            <RootApp />
-          </PinProvider>
+          <RootApp />
         </CustomErrorBoundary>
       </SafeAreaProvider>
     </GestureHandlerRootView>
@@ -69,7 +64,6 @@ function useAppInitialization() {
   const [hasSeed, setHasSeed] = useState(false);
   const { i18n } = useTranslation([NS.common]);
   const [isAppReady, setIsAppReady] = useState(false);
-  const { ready: pinReady } = usePinAuth();
 
   const initData = async () => {
     try {
@@ -131,7 +125,7 @@ function useAppInitialization() {
   }, []);
 
   return {
-    ready: isAppReady && pinReady,
+    ready: isAppReady,
     manager,
     shouldOnboard,
     hasSeed,

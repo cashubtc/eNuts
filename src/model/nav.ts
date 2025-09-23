@@ -10,13 +10,7 @@ import type {
   IProofSelection,
   ITokenInfo,
 } from ".";
-import { EnutsProof } from "@src/storage/db/repo/ProofRepository";
-import {
-  MintQuoteResponse,
-  Proof,
-  Token,
-  MeltQuoteResponse,
-} from "@cashu/cashu-ts";
+import { MintQuoteResponse, Token, MeltQuoteResponse } from "@cashu/cashu-ts";
 import { MintStackParamList, RestoreStackParamList } from "@src/nav/navTypes";
 
 interface ILnurlNavData {
@@ -39,10 +33,6 @@ export type RootStackParamList = {
   "Language settings": undefined;
   "Advanced settings": undefined;
   "View mnemonic": undefined;
-  auth: {
-    mode: "unlock" | "setup" | "edit" | "remove";
-    sawSeedUpdate?: boolean;
-  };
   Restore: NavigatorScreenParams<RestoreStackParamList>;
   selectMint: {
     mints: IMintUrl[];
@@ -237,11 +227,6 @@ export type TDashboardPageProps = NativeStackScreenProps<
 export type TDisclaimerPageProps = NativeStackScreenProps<
   RootStackParamList,
   "disclaimer",
-  "MyStack"
->;
-export type TAuthPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "auth",
   "MyStack"
 >;
 export type TEncodedTokenPageProps = NativeStackScreenProps<
