@@ -115,8 +115,6 @@ export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
           name="dashboard"
           component={Dashboard}
           options={{
-            animation: "default",
-            animationDuration,
             gestureEnabled: false,
           }}
         />
