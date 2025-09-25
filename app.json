@@ -4,13 +4,13 @@
     "slug": "enuts",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon_transparent.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/app-icon-all.png",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#5DB075"
     },
     "ios": {
       "supportsTablet": true,
