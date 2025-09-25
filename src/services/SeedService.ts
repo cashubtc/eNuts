@@ -1,6 +1,7 @@
 import * as bip39 from "@scure/bip39";
 import { wordlist } from "@scure/bip39/wordlists/english";
 import * as SecureStore from "expo-secure-store";
+import { privateKeyFromSeedWords } from "nostr-tools/nip06";
 
 class SeedService {
   private _seed: Uint8Array | null = null;
@@ -35,6 +36,15 @@ class SeedService {
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     this._seed = seed;
     return seed;
+  }
+
+  async getNostrSk() {
+    const mnemonic = await this.getMnemonic();
+    if (!mnemonic) {
+      throw new Error("No mnemonic found");
+    }
+    const sk = privateKeyFromSeedWords(mnemonic);
+    return sk;
   }
 }
 

@@ -37,7 +37,7 @@
     "expo-status-bar": "~2.2.3",
     "lottie-react-native": "7.2.2",
     "message-port-polyfill": "^0.2.0",
-    "nostr-tools": "^2.16.2",
+    "nostr-tools": "^2.17.0",
     "react": "19.0.0",
     "react-i18next": "^15.6.0",
     "react-native": "0.79.5",
