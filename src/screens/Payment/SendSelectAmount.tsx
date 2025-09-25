@@ -10,7 +10,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi, mainColors } from "@styles";
-import { formatSatStr, vib } from "@util";
+import { formatSatStr, isErr, vib } from "@util";
 import { useCallback, useRef, useState, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -24,6 +24,8 @@ import { s, ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useManager } from "@src/context/Manager";
 import { SendSelectAmountProps } from "@src/nav/navTypes";
+import { useSend } from "coco-cashu-react";
+import { usePromptContext } from "@src/context/Prompt";
 
 export default function SendSelectAmountScreen({
   navigation,
@@ -37,6 +39,8 @@ export default function SendSelectAmountScreen({
   const numericInputRef = useRef<TextInput>(null);
   const txtInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
+  const { isSending, isError: isSendError, send } = useSend();
+  const { openPromptAutoClose } = usePromptContext();
 
   const [amountInput, setAmountInput] = useState("");
   const [memo, setMemo] = useState("");
@@ -128,7 +132,15 @@ export default function SendSelectAmountScreen({
       }, 500);
       return;
     }
-    const token = await manager.wallet.send(selectedMint.mintUrl, amountValue);
+    const token = await send(selectedMint.mintUrl, amountValue, {
+      onError: (e) => {
+        console.error(e);
+        openPromptAutoClose({
+          msg: isErr(e) ? e.message : t("sendTokenErr", { ns: NS.error }),
+        });
+        shake();
+      },
+    });
     return navigation.navigate("encodedToken", {
       token,
     });
@@ -248,6 +260,7 @@ export default function SendSelectAmountScreen({
             icon={<ChevronRightIcon color={mainColors.WHITE} />}
             size={s(55)}
             testId="continue-send-ecash"
+            disabled={isSending}
           />
         </>
         {isIOS && <View style={{ height: vs(100) }} />}

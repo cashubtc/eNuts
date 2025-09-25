@@ -33,7 +33,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
   const { knownMints } = useKnownMints();
   const sendOptionsRef = useRef<BottomSheet>(null);
   const receiveOptionsRef = useRef<BottomSheet>(null);
-  const { claimFromTokenString } = useCashuClaimFlow();
+  const { claimFromTokenString, isReceiving } = useCashuClaimFlow();
 
   const handleClaimBtnPress = async () => {
     if (loading) {
@@ -106,6 +106,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
           }
           txt={t("receive", { ns: NS.wallet })}
           color={hi[highlight]}
+          disabled={isReceiving}
           onPress={() => {
             // if (!hasMint) {
             //     // try to claim from clipboard to avoid receive-options-modal to popup and having to press again

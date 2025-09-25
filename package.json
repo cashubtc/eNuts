@@ -21,7 +21,7 @@
     "cashu-kym": "^0.4.1",
     "coco-cashu-core": "^1.0.0-rc5",
     "coco-cashu-expo-sqlite": "^0.6.0",
-    "coco-cashu-react": "^1.0.2",
+    "coco-cashu-react": "^1.1.0",
     "crypto-js": "^4.2.0",
     "expo": "53.0.22",
     "expo-application": "~6.1.5",
