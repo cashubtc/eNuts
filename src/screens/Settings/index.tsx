@@ -14,7 +14,6 @@ import {
 import { BottomModal } from "@modal/Question";
 import { ZapModal } from "@modal/Zap";
 import type { TSettingsPageProps } from "@model/nav";
-import BottomNav from "@nav/BottomNav";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 import { usePromptContext } from "@src/context/Prompt";
@@ -33,7 +32,7 @@ import { s, vs } from "react-native-size-matters";
 
 import MenuItem from "./MenuItem";
 
-export default function Settings({ navigation, route }: TSettingsPageProps) {
+export default function Settings({ navigation }: TSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
   const { openPromptAutoClose } = usePromptContext();
@@ -62,7 +61,11 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
   };
 
   return (
-    <Screen screenName={t("settings", { ns: NS.topNav })} noIcons>
+    <Screen
+      screenName={t("settings", { ns: NS.topNav })}
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+    >
       <ScrollView alwaysBounceVertical={false}>
         {/* MINT */}
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
@@ -140,7 +143,6 @@ export default function Settings({ navigation, route }: TSettingsPageProps) {
           styles={[{ marginBottom: s(100), fontSize: s(12) }]}
         />
       </ScrollView>
-      <BottomNav navigation={navigation} route={route} />
       <ZapModal visible={zapModal} close={() => setZapModal(false)} />
       {/* confirm factory reset */}
       <BottomModal

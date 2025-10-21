@@ -2,13 +2,18 @@ import { Token } from "@cashu/cashu-ts";
 import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
-import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from "@comps/Icons";
+import {
+  PlusIcon,
+  ReceiveIcon,
+  ScanQRIcon,
+  SendIcon,
+  SettingsIcon,
+} from "@comps/Icons";
 import BottomSheetOptionsModal from "@comps/modal/BottomSheetOptionsModal";
 import Txt from "@comps/Txt";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { _testmintUrl, env } from "@consts";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
-import BottomNav from "@nav/BottomNav";
 import { preventBack } from "@nav/utils";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
@@ -18,11 +23,11 @@ import { highlight as hi, mainColors } from "@styles";
 import { getStrFromClipboard } from "@util";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 
-export default function Dashboard({ navigation, route }: TDashboardPageProps) {
+export default function Dashboard({ navigation }: TDashboardPageProps) {
   const { t } = useTranslation([NS.common]);
   // Theme
   const { color, highlight } = useThemeContext();
@@ -64,6 +69,15 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+      {/* Settings button */}
+      <TouchableOpacity
+        style={styles.settingsBtn}
+        onPress={() =>
+          navigation.navigate("Settings", { screen: "SettingsMain" })
+        }
+      >
+        <SettingsIcon width={s(24)} height={s(24)} color={color.BACKGROUND} />
+      </TouchableOpacity>
       {/* Balance, Disclaimer & History */}
       <Balance nav={navigation} />
       {/* Receive/send/mints buttons */}
@@ -88,7 +102,7 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
             txt={t("mint")}
             color={hi[highlight]}
             onPress={() => {
-              navigation.navigate("mints");
+              navigation.navigate("Mint", { screen: "MintHome" });
             }}
           />
         )}
@@ -116,8 +130,6 @@ export default function Dashboard({ navigation, route }: TDashboardPageProps) {
           }}
         />
       </View>
-      {/* Bottom nav icons */}
-      <BottomNav navigation={navigation} route={route} />
       {/* Send options bottom sheet */}
       <BottomSheetOptionsModal
         ref={sendOptionsRef}
@@ -183,6 +195,13 @@ function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 const styles = ScaledSheet.create({
   container: {
     flex: 1,
+  },
+  settingsBtn: {
+    position: "absolute",
+    top: "50@s",
+    right: "20@s",
+    zIndex: 10,
+    padding: "8@s",
   },
   actionWrap: {
     flexDirection: "row",

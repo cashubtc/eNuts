@@ -1,6 +1,26 @@
-import { CompositeScreenProps } from "@react-navigation/native";
+import {
+  CompositeScreenProps,
+  NavigatorScreenParams,
+} from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "@src/model/nav";
+import type { IHistoryEntry } from "@src/model";
+
+// Settings Stack
+
+export type SettingsStackParamList = {
+  SettingsMain: undefined;
+  "Display settings": undefined;
+  "Language settings": undefined;
+  "Advanced settings": undefined;
+  "View mnemonic": undefined;
+  history: undefined;
+  "history entry details": {
+    entry: IHistoryEntry;
+  };
+};
+
+type SettingsStackScreenProps<T extends keyof SettingsStackParamList> =
+  NativeStackScreenProps<SettingsStackParamList, T>;
 
 // Mint Screens
 

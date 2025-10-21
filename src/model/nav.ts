@@ -11,7 +11,11 @@ import type {
   ITokenInfo,
 } from ".";
 import { MintQuoteResponse, Token, MeltQuoteResponse } from "@cashu/cashu-ts";
-import { MintStackParamList, RestoreStackParamList } from "@src/nav/navTypes";
+import {
+  MintStackParamList,
+  RestoreStackParamList,
+  SettingsStackParamList,
+} from "@src/nav/navTypes";
 
 interface ILnurlNavData {
   userInput: string;
@@ -25,14 +29,8 @@ interface ILnurlNavData {
 export type RootStackParamList = {
   onboarding: undefined;
   dashboard: undefined;
+  Settings: NavigatorScreenParams<SettingsStackParamList>;
   disclaimer: undefined;
-  history: undefined;
-  mints: undefined;
-  Settings: undefined;
-  "Display settings": undefined;
-  "Language settings": undefined;
-  "Advanced settings": undefined;
-  "View mnemonic": undefined;
   Restore: NavigatorScreenParams<RestoreStackParamList>;
   selectMint: {
     mints: IMintUrl[];
@@ -153,12 +151,9 @@ export type RootStackParamList = {
   "mint proofs": {
     mintUrl: string;
   };
-  "history entry details": {
-    entry: IHistoryEntry;
-  };
 };
 
-export type TRouteString = "dashboard" | "mints" | "Settings";
+export type TRouteString = "dashboard" | "Settings";
 export type TOnboardingPageProps = NativeStackScreenProps<
   RootStackParamList,
   "onboarding",
@@ -254,35 +249,33 @@ export type TMintProofsPageProps = NativeStackScreenProps<
   "mint proofs",
   "MyStack"
 >;
-export type THistoryPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "history",
-  "MyStack"
+export type TSettingsPageProps = CompositeScreenProps<
+  NativeStackScreenProps<SettingsStackParamList, "SettingsMain">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type THistoryEntryPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "history entry details",
-  "MyStack"
+export type TDisplaySettingsPageProps = CompositeScreenProps<
+  NativeStackScreenProps<SettingsStackParamList, "Display settings">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type TSettingsPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Settings"
+export type TLanguageSettingsPageProps = CompositeScreenProps<
+  NativeStackScreenProps<SettingsStackParamList, "Language settings">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type TDisplaySettingsPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Display settings"
+export type TAdvancedSettingsPageProps = CompositeScreenProps<
+  NativeStackScreenProps<SettingsStackParamList, "Advanced settings">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type TLanguageSettingsPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Language settings"
+export type TViewMnemonicPageProps = CompositeScreenProps<
+  NativeStackScreenProps<SettingsStackParamList, "View mnemonic">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type TAdvancedSettingsPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Advanced settings"
+export type THistoryPageProps = CompositeScreenProps<
+  NativeStackScreenProps<SettingsStackParamList, "history">,
+  NativeStackScreenProps<RootStackParamList>
 >;
-export type TViewMnemonicPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "View mnemonic"
+export type THistoryEntryPageProps = CompositeScreenProps<
+  NativeStackScreenProps<SettingsStackParamList, "history entry details">,
+  NativeStackScreenProps<RootStackParamList>
 >;
 type RestoreStackScreenProps<T extends keyof RestoreStackParamList> =
   NativeStackScreenProps<RestoreStackParamList, T>;
@@ -303,19 +296,7 @@ export type IRecoveringPageProps = CompositeScreenProps<
   RestoreStackScreenProps<"Recovering">,
   NativeStackScreenProps<RootStackParamList>
 >;
-export type TProofsDebugPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "history"
->;
-// Duplicate removed
-export type TBottomNavProps =
-  | TDashboardPageProps
-  | TMintManagementPageProps
-  | THistoryPageProps
-  | THistoryEntryPageProps
-  | TMintProofsPageProps
-  | TSettingsPageProps
-  | TDisplaySettingsPageProps;
+export type TProofsDebugPageProps = THistoryPageProps;
 export interface INavigatorProps {
   shouldOnboard?: boolean;
   hasSeed?: boolean;

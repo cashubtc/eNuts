@@ -1,8 +1,6 @@
 import type { INavigatorProps, RootStackParamList } from "@model/nav";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "@screens/Dashboard";
-import HistoryPage from "@screens/History";
-import DetailsPage from "@screens/History/Details";
 import MintInfoPage from "@screens/Mints/Info";
 import MintNavigator from "@src/nav/MintNavigator";
 import MintProofsPage from "@screens/Mints/Proofs";
@@ -14,14 +12,9 @@ import CoinSelectionScreen from "@screens/Payment/Send/CoinSelection";
 import EncodedTokenPage from "@screens/Payment/Send/EncodedToken";
 import SelectMintToSwapToScreen from "@screens/Payment/Send/SelectMintToSwapTo";
 import SuccessPage from "@screens/Payment/Success";
-
 import QrScannerScreen from "@screens/QRScan/QrScannerScreen";
 import RestoreNavigator from "@src/nav/RestoreNavigator";
-import Settings from "@screens/Settings";
-import AdvancedFunctionScreen from "@screens/Settings/Advanced";
-import DisplaySettings from "@screens/Settings/Display";
-import LanguageSettings from "@screens/Settings/Language";
-import ViewMnemonic from "@screens/Settings/ViewMnemonic";
+import SettingsNavigator from "@src/nav/SettingsNavigator";
 import { useThemeContext } from "@src/context/Theme";
 import { View } from "react-native";
 import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
@@ -55,6 +48,22 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
         }}
       >
         <Stack.Screen
+          name="onboarding"
+          component={OnboardingScreen}
+          options={{
+            animation: "default",
+            animationDuration,
+          }}
+        />
+        <Stack.Screen
+          name="dashboard"
+          component={Dashboard}
+          options={{
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen name="Settings" component={SettingsNavigator} />
+        <Stack.Screen
           name="selectMintToSwapTo"
           component={SelectMintToSwapToScreen}
         />
@@ -83,21 +92,6 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
           component={ProcessingErrorScreen}
         />
         <Stack.Screen name="mintInvoice" component={InvoiceScreen} />
-        <Stack.Screen
-          name="onboarding"
-          component={OnboardingScreen}
-          options={{
-            animation: "default",
-            animationDuration,
-          }}
-        />
-        <Stack.Screen
-          name="dashboard"
-          component={Dashboard}
-          options={{
-            gestureEnabled: false,
-          }}
-        />
         {/* sendable token created page */}
         <Stack.Screen
           name="encodedToken"
@@ -116,16 +110,6 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
         <Stack.Screen name="Mint" component={MintNavigator} />
         <Stack.Screen name="mint info" component={MintInfoPage} />
         <Stack.Screen name="mint proofs" component={MintProofsPage} />
-        <Stack.Screen name="history" component={HistoryPage} />
-        <Stack.Screen name="history entry details" component={DetailsPage} />
-        <Stack.Screen name="Settings" component={Settings} />
-        <Stack.Screen name="Display settings" component={DisplaySettings} />
-        <Stack.Screen name="Language settings" component={LanguageSettings} />
-        <Stack.Screen
-          name="Advanced settings"
-          component={AdvancedFunctionScreen}
-        />
-        <Stack.Screen name="View mnemonic" component={ViewMnemonic} />
         <Stack.Screen name="Restore" component={RestoreNavigator} />
       </Stack.Navigator>
     </View>
