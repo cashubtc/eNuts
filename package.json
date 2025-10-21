@@ -17,6 +17,7 @@
     "@scure/bip39": "^2.0.0",
     "@shopify/flash-list": "1.7.6",
     "@tanstack/react-query": "^5.83.0",
+    "@types/react-native-onboarding-swiper": "^1.1.9",
     "bech32": "^2.0.0",
     "cashu-kym": "^0.4.1",
     "coco-cashu-core": "^1.0.0-rc5",
