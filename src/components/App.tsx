@@ -61,7 +61,6 @@ export default App;
 function useAppInitialization() {
   const [manager, setManager] = useState<Manager | null>(null);
   const [shouldOnboard, setShouldOnboard] = useState(false);
-  const [hasSeed, setHasSeed] = useState(false);
   const { i18n } = useTranslation([NS.common]);
   const [isAppReady, setIsAppReady] = useState(false);
 
@@ -81,10 +80,9 @@ function useAppInitialization() {
   };
 
   const initAuth = async () => {
-    const hasSeed = seedService.isMnemonicSet();
-    const [onboard] = await Promise.all([store.get(STORE_KEYS.explainer)]);
+    seedService.ensureMnemonicSet();
+    const onboard = await store.get(STORE_KEYS.explainer);
     setShouldOnboard(onboard !== "1");
-    setHasSeed(hasSeed);
   };
 
   useEffect(() => {
@@ -128,7 +126,6 @@ function useAppInitialization() {
     ready: isAppReady,
     manager,
     shouldOnboard,
-    hasSeed,
   };
 }
 
@@ -159,7 +156,7 @@ function AppProviders({ children }: { children: React.ReactNode }) {
 }
 
 function RootApp() {
-  const { ready, manager, shouldOnboard, hasSeed } = useAppInitialization();
+  const { ready, manager, shouldOnboard } = useAppInitialization();
   useEffect(() => {
     if (ready && manager) {
       void SplashScreen.hide();
@@ -171,7 +168,7 @@ function RootApp() {
   return (
     <CocoCashuProvider manager={manager}>
       <AppProviders>
-        <Navigator shouldOnboard={shouldOnboard} hasSeed={hasSeed} />
+        <Navigator shouldOnboard={shouldOnboard} />
         <StatusBar style="auto" />
         <ClipboardModal />
         <QRScannerBottomSheet />

@@ -1,9 +1,5 @@
 import type { INavigatorProps, RootStackParamList } from "@model/nav";
-import { useNavigation } from "@react-navigation/core";
-import {
-  createNativeStackNavigator,
-  type NativeStackNavigationProp,
-} from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "@screens/Dashboard";
 import HistoryPage from "@screens/History";
 import DetailsPage from "@screens/History/Details";
@@ -37,24 +33,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const animationDuration = 250;
 
-export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
+export default function Navigator({ shouldOnboard }: INavigatorProps) {
   const { color } = useThemeContext();
-
-  const nav =
-    useNavigation<
-      NativeStackNavigationProp<RootStackParamList, "success", "MyStack">
-    >();
-
-  const getInitialRoute = () => {
-    // initial onboarding
-    if (shouldOnboard) {
-      return "onboarding";
-    }
-    if (!hasSeed) {
-      return "Restore";
-    }
-    return "dashboard";
-  };
 
   return (
     <View
@@ -66,7 +46,7 @@ export default function Navigator({ shouldOnboard, hasSeed }: INavigatorProps) {
       }}
     >
       <Stack.Navigator
-        initialRouteName={getInitialRoute()}
+        initialRouteName={shouldOnboard ? "onboarding" : "dashboard"}
         screenOptions={{
           headerShown: false,
           animation: "fade",

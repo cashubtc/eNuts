@@ -14,10 +14,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
   const { t } = useTranslation([NS.common]);
   const handleDone = async () => {
     await store.set(STORE_KEYS.explainer, "1");
-    navigation.navigate("Restore", {
-      screen: "Seed",
-      params: { comingFromOnboarding: true },
-    });
+    navigation.replace("dashboard");
   };
   return (
     <Onboarding

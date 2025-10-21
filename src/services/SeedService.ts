@@ -25,6 +25,13 @@ class SeedService {
     return SecureStore.getItem("mnemonic") !== null;
   }
 
+  ensureMnemonicSet() {
+    const savedMnemonic = this.getMnemonic();
+    if (!savedMnemonic) {
+      this.createNewMnemonic();
+    }
+  }
+
   getSeed() {
     if (this._seed) {
       return this._seed;
