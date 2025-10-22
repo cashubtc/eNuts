@@ -35,11 +35,12 @@ import Toaster from "./Toaster";
 import * as SplashScreen from "expo-splash-screen";
 import { CocoCashuProvider } from "coco-cashu-react";
 import { ExpoSqliteRepositories } from "coco-cashu-expo-sqlite";
-import { Manager } from "coco-cashu-core";
+import { Manager, initializeCoco } from "coco-cashu-core";
 import { dbProvider } from "@src/storage/DbProvider";
 import { seedService } from "@src/services/SeedService";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { appLogger } from "@src/logger";
+import { AppState } from "react-native";
 
 l("[APP] Starting app...");
 
@@ -89,20 +90,25 @@ function useAppInitialization() {
     async function createManager() {
       const db = dbProvider.getDatabase();
       const repo = new ExpoSqliteRepositories({ database: db });
-      await repo.init();
       async function seedGetter() {
-        const seed = await seedService.getSeed();
+        const seed = seedService.getSeed();
         if (!seed) {
           throw new Error("No seed found");
         }
         return seed;
       }
-      const mgr = new Manager(
+      const mgr = await initializeCoco({
         repo,
         seedGetter,
-        appLogger.child({ name: "Manager" })
-      );
-      await mgr.enableMintQuoteWatcher();
+        logger: appLogger.child({ name: "Manager" }),
+      });
+      AppState.addEventListener("change", (state) => {
+        if (state === "background") {
+          mgr.pauseSubscriptions();
+        } else if (state === "active") {
+          mgr.resumeSubscriptions();
+        }
+      });
       return mgr;
     }
 

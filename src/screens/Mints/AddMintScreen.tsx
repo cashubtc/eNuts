@@ -196,8 +196,10 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
             <View style={{ flex: 1 }}>
               <TxtInput
                 onChangeText={setInputUrl}
+                autoCorrect={false}
                 value={inputUrl}
                 placeholder="Enter mint URL or select from recommendations below"
+                autoCapitalize="none"
               />
             </View>
             <View>

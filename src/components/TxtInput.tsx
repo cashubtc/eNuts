@@ -12,6 +12,7 @@ import {
 import { vs } from "react-native-size-matters";
 
 interface ITxtInputProps {
+  autoCorrect?: boolean;
   keyboardType?: KeyboardTypeOptions;
   placeholder: string;
   onChangeText: (text: string) => void;
@@ -42,6 +43,7 @@ export default function TxtInput({
   multiline,
   numberOfLines,
   style,
+  autoCorrect,
   autoCapitalize,
 }: ITxtInputProps) {
   const { color, highlight } = useThemeContext();
@@ -63,6 +65,7 @@ export default function TxtInput({
       keyboardType={keyboardType || "default"}
       placeholder={placeholder}
       placeholderTextColor={color.INPUT_PH}
+      autoCorrect={autoCorrect}
       selectionColor={hi[highlight]}
       cursorColor={hi[highlight]}
       onChangeText={onChangeText}
