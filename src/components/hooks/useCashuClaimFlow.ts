@@ -23,7 +23,7 @@ export function useCashuClaimFlow() {
 
     try {
       const decoded = getDecodedToken(tokenStr);
-      const isKnown = await manager.mint.isKnownMint(decoded.mint);
+      const isKnown = await manager.mint.isTrustedMint(decoded.mint);
       if (isKnown) {
         await receive(decoded, {
           onError: (e) => {
