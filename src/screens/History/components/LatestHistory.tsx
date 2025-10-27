@@ -3,6 +3,8 @@ import { View } from "react-native";
 import { memo } from "react";
 import { LatestHistoryMintEntry } from "./LatestHistoryMintEntry";
 import { LatestHistorySendEntry } from "./LatestHistorySendEntry";
+import { LatestHistoryMeltEntry } from "./LatestHistoryMeltEntry";
+import { LatestHistoryReceiveEntry } from "./LatestHistoryReceiveEntry";
 
 type LatestHistoryProps = {
   history: ReadonlyArray<HistoryEntry>;
@@ -20,6 +22,10 @@ function renderHistoryEntry(history: HistoryEntry) {
       return <LatestHistoryMintEntry history={history} key={history.id} />;
     case "send":
       return <LatestHistorySendEntry history={history} key={history.id} />;
+    case "melt":
+      return <LatestHistoryMeltEntry history={history} key={history.id} />;
+    case "receive":
+      return <LatestHistoryReceiveEntry history={history} key={history.id} />;
     default:
       return null;
   }
