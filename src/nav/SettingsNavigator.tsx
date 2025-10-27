@@ -4,8 +4,6 @@ import AdvancedFunctionScreen from "@screens/Settings/Advanced";
 import DisplaySettings from "@screens/Settings/Display";
 import LanguageSettings from "@screens/Settings/Language";
 import ViewMnemonic from "@screens/Settings/ViewMnemonic";
-import HistoryPage from "@screens/History";
-import DetailsPage from "@screens/History/Details";
 import { useThemeContext } from "@src/context/Theme";
 import { SettingsStackParamList } from "./navTypes";
 
@@ -39,11 +37,6 @@ export default function SettingsNavigator() {
         component={AdvancedFunctionScreen}
       />
       <SettingsStack.Screen name="View mnemonic" component={ViewMnemonic} />
-      <SettingsStack.Screen name="history" component={HistoryPage} />
-      <SettingsStack.Screen
-        name="history entry details"
-        component={DetailsPage}
-      />
     </SettingsStack.Navigator>
   );
 }

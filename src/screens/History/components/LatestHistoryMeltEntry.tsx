@@ -5,22 +5,33 @@ import { MeltHistoryEntry } from "coco-cashu-core";
 import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 
+type LatestHistoryMeltEntryProps = {
+  history: MeltHistoryEntry;
+  variant?: "highlight" | "standard";
+};
+
 export const LatestHistoryMeltEntry = memo(
-  function LatestHistoryMeltEntry({ history }: { history: MeltHistoryEntry }) {
+  function LatestHistoryMeltEntry({
+    history,
+    variant = "highlight",
+  }: LatestHistoryMeltEntryProps) {
     const { color, highlight } = useThemeContext();
+    const iconColor =
+      variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+
     let icon;
     switch (history.state) {
       case "UNPAID":
-        icon = <ZapIcon color={getColor(highlight, color)} />;
+        icon = <ZapIcon color={iconColor} />;
         break;
       case "PAID":
-        icon = <CheckmarkIcon color={getColor(highlight, color)} />;
+        icon = <CheckmarkIcon color={iconColor} />;
         break;
       case "PENDING":
-        icon = <ZapIcon color={getColor(highlight, color)} />;
+        icon = <ZapIcon color={iconColor} />;
         break;
       default:
-        icon = <ZapIcon color={getColor(highlight, color)} />;
+        icon = <ZapIcon color={iconColor} />;
     }
     return (
       <LatestHistoryWrapper
@@ -28,6 +39,8 @@ export const LatestHistoryMeltEntry = memo(
         name={history.type}
         createdAt={history.createdAt}
         amount={history.amount}
+        variant={variant}
+        entry={history}
       />
     );
   },
@@ -37,5 +50,3 @@ export const LatestHistoryMeltEntry = memo(
     prev.history.amount === next.history.amount &&
     prev.history.createdAt === next.history.createdAt
 );
-
-

@@ -82,7 +82,9 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             header={t("wallet")}
             txt={t("history", { ns: NS.topNav })}
             icon={<HistoryIcon color={color.TEXT} />}
-            onPress={() => navigation.navigate("history")}
+            onPress={() =>
+              navigation.navigate("History", { screen: "HistoryMain" })
+            }
           />
         </View>
         {/* PREFERENCES */}

@@ -5,19 +5,28 @@ import { ReceiveHistoryEntry } from "coco-cashu-core";
 import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 
+type LatestHistoryReceiveEntryProps = {
+  history: ReceiveHistoryEntry;
+  variant?: "highlight" | "standard";
+};
+
 export const LatestHistoryReceiveEntry = memo(
   function LatestHistoryReceiveEntry({
     history,
-  }: {
-    history: ReceiveHistoryEntry;
-  }) {
+    variant = "highlight",
+  }: LatestHistoryReceiveEntryProps) {
     const { color, highlight } = useThemeContext();
+    const iconColor =
+      variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+
     return (
       <LatestHistoryWrapper
-        icon={<ReceiveIcon color={getColor(highlight, color)} />}
+        icon={<ReceiveIcon color={iconColor} />}
         name={history.type}
         createdAt={history.createdAt}
         amount={history.amount}
+        variant={variant}
+        entry={history}
       />
     );
   },
@@ -26,5 +35,3 @@ export const LatestHistoryReceiveEntry = memo(
     prev.history.amount === next.history.amount &&
     prev.history.createdAt === next.history.createdAt
 );
-
-

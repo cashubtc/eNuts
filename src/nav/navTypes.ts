@@ -3,7 +3,8 @@ import {
   NavigatorScreenParams,
 } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { IHistoryEntry } from "@src/model";
+import { RootStackParamList } from "@src/model/nav";
+import { HistoryEntry } from "coco-cashu-core";
 
 // Settings Stack
 
@@ -13,10 +14,6 @@ export type SettingsStackParamList = {
   "Language settings": undefined;
   "Advanced settings": undefined;
   "View mnemonic": undefined;
-  history: undefined;
-  "history entry details": {
-    entry: IHistoryEntry;
-  };
 };
 
 type SettingsStackScreenProps<T extends keyof SettingsStackParamList> =
@@ -33,20 +30,12 @@ export type MintStackParamList = {
 type MintStackScreenProps<T extends keyof MintStackParamList> =
   NativeStackScreenProps<MintStackParamList, T>;
 
-export type MintHomeScreenProps = CompositeScreenProps<
-  MintStackScreenProps<"MintHome">,
-  NativeStackScreenProps<RootStackParamList>
->;
-
-export type MintAddScreenProps = CompositeScreenProps<
-  MintStackScreenProps<"MintAdd">,
-  NativeStackScreenProps<RootStackParamList>
->;
-
-export type MintSettingsScreenProps = CompositeScreenProps<
-  MintStackScreenProps<"MintSettings">,
-  NativeStackScreenProps<RootStackParamList>
->;
+export type HistoryStackParamList = {
+  HistoryMain: undefined;
+  HistoryEntryDetails: {
+    entry: HistoryEntry;
+  };
+};
 
 // Restore Screens
 

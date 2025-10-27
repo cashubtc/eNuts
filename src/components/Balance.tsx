@@ -117,7 +117,7 @@ export default function Balance({ nav }: IBalanceProps) {
       {hasMore && (
         <TxtButton
           txt={t("seeFullHistory")}
-          onPress={() => nav?.navigate("history")}
+          onPress={() => nav?.navigate("History", { screen: "HistoryMain" })}
           txtColor={getColor(highlight, color)}
           style={[{ paddingTop: s(15) }]}
         />

@@ -1,117 +1,109 @@
-import Empty from '@comps/Empty'
-import { TrashbinIcon } from '@comps/Icons'
-import { BottomModal } from '@comps/modal/Question'
-import Separator from '@comps/Separator'
-import Txt from '@comps/Txt'
-import { isIOS } from '@consts'
-import type { THistoryPageProps } from '@model/nav'
-import TopNav from '@nav/TopNav'
-import { FlashList } from '@shopify/flash-list'
-import { useHistoryContext } from '@src/context/History'
-import { useThemeContext } from '@src/context/Theme'
-import { NS } from '@src/i18n'
-import { globals } from '@styles'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { s, ScaledSheet, vs } from 'react-native-size-matters'
+import Empty from "@comps/Empty";
+import { isIOS } from "@consts";
+import type { THistoryPageProps } from "@model/nav";
+import TopNav from "@nav/TopNav";
+import { FlashList } from "@shopify/flash-list";
+import { useThemeContext } from "@src/context/Theme";
+import { NS } from "@src/i18n";
+import { globals } from "@styles";
+import { useTranslation } from "react-i18next";
+import { ActivityIndicator, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScaledSheet } from "react-native-size-matters";
+import { usePaginatedHistory } from "coco-cashu-react";
+import { HistoryEntry } from "coco-cashu-core";
 
-import HistoryEntry from './Entry'
+import { LatestHistoryMintEntry } from "./components/LatestHistoryMintEntry";
+import { LatestHistorySendEntry } from "./components/LatestHistorySendEntry";
+import { LatestHistoryMeltEntry } from "./components/LatestHistoryMeltEntry";
+import { LatestHistoryReceiveEntry } from "./components/LatestHistoryReceiveEntry";
 
-export default function HistoryPage({ navigation, route }: THistoryPageProps) {
-	const insets = useSafeAreaInsets()
-	const { t } = useTranslation([NS.common])
-	const { color } = useThemeContext()
-	const { history, hasEntries, deleteHistory } = useHistoryContext()
-	const [confirm, setConfirm] = useState(false)
+export default function HistoryPage({ navigation }: THistoryPageProps) {
+  const insets = useSafeAreaInsets();
+  const { t } = useTranslation([NS.common]);
+  const { color } = useThemeContext();
+  const { history, loadMore, hasMore, isFetching, refresh } =
+    usePaginatedHistory(5);
 
-	const handleDeleteHistory = async () => {
-		await deleteHistory()
-		setConfirm(false)
-	}
+  const renderHistoryEntry = (entry: HistoryEntry) => {
+    switch (entry.type) {
+      case "mint":
+        return <LatestHistoryMintEntry history={entry} variant="standard" />;
+      case "send":
+        return <LatestHistorySendEntry history={entry} variant="standard" />;
+      case "melt":
+        return <LatestHistoryMeltEntry history={entry} variant="standard" />;
+      case "receive":
+        return <LatestHistoryReceiveEntry history={entry} variant="standard" />;
+      default:
+        return null;
+    }
+  };
 
-	return (
-		<View style={[globals(color).container, styles.container, { paddingBottom: isIOS ? insets.bottom : 0 }]}>
-			<TopNav
-				screenName={t('history', { ns: NS.topNav })}
-				withBackBtn
-				handlePress={() => navigation.goBack()}
-				historyOpts={[{
-					txt: t('delHistory'),
-					onSelect: () => {
-						if (hasEntries) {
-							setConfirm(true)
-						}
-					},
-					disabled: !hasEntries,
-					icon: <TrashbinIcon width={s(20)} height={vs(20)} color={hasEntries ? color.TEXT : color.TEXT_SECONDARY} />,
-				}]}
-			/>
-			<View style={styles.listWrap}>
-				{/* History list grouped by settled date */}
-				<FlashList
-					data={Object.entries(history)}
-					estimatedItemSize={100}
-					renderItem={data => (
-						<>
-							{/* Group date */}
-							<Txt
-								txt={data.item[0] === 'Today' ? t('today') : data.item[0]}
-								bold
-								styles={[styles.date]}
-							/>
-							{/* Group entries */}
-							<View style={[styles.entriesWrap, { backgroundColor: color.DRAWER }]}>
-								{data.item[1].map((item, i) => (
-									<View key={i}>
-										<HistoryEntry
-											item={item}
-											nav={{ navigation, route }}
-										/>
-										{i < data.item[1].length - 1 && <Separator style={[{ marginBottom: vs(10) }]} />}
-									</View>
-								))}
-							</View>
-						</>
-					)}
-					ListEmptyComponent={<Empty txt={t('noTX') + '...'} />}
-				/>
-			</View>
-			{/* confirm history deletion */}
-			<BottomModal
-				header={t('delHistoryQ')}
-				txt={t('delHistoryTxt')}
-				visible={confirm}
-				confirmTxt={t('yes')}
-				confirmFn={() => void handleDeleteHistory()}
-				cancelTxt={t('no')}
-				cancelFn={() => setConfirm(false)}
-			/>
-		</View>
-	)
+  const handleLoadMore = () => {
+    if (!isFetching && hasMore) {
+      void loadMore();
+    }
+  };
+
+  return (
+    <View
+      style={[
+        globals(color).container,
+        styles.container,
+        { paddingBottom: isIOS ? insets.bottom : 0 },
+      ]}
+    >
+      <TopNav
+        screenName={t("history", { ns: NS.topNav })}
+        withBackBtn
+        handlePress={() => navigation.goBack()}
+      />
+      <View style={styles.listContainer}>
+        {/* History list with infinite scroll */}
+        <FlashList
+          data={history}
+          estimatedItemSize={80}
+          renderItem={({ item }) => (
+            <View style={[styles.entryCard, { backgroundColor: color.DRAWER }]}>
+              {renderHistoryEntry(item)}
+            </View>
+          )}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListEmptyComponent={<Empty txt={t("noTX") + "..."} />}
+          ListFooterComponent={
+            isFetching && hasMore ? (
+              <View style={styles.loaderWrap}>
+                <ActivityIndicator size="small" color={color.TEXT} />
+              </View>
+            ) : null
+          }
+          onRefresh={() => void refresh()}
+          refreshing={isFetching && history.length === 0}
+        />
+      </View>
+    </View>
+  );
 }
 
 const styles = ScaledSheet.create({
-	container: {
-		alignItems: 'center',
-	},
-	listWrap: {
-		flex: 1,
-		width: '100%',
-	},
-	date: {
-		fontSize: '14@vs',
-		marginHorizontal: '20@s',
-		marginBottom: '10@vs',
-		marginTop: '20@vs',
-	},
-	entriesWrap: {
-		flex: 1,
-		borderRadius: 20,
-		paddingHorizontal: '20@s',
-		paddingTop: '10@vs',
-		paddingBottom: 0,
-		marginBottom: '20@vs',
-	}
-})
+  container: {
+    alignItems: "center",
+  },
+  listContainer: {
+    flex: 1,
+    width: "100%",
+  },
+  entryCard: {
+    borderRadius: 20,
+    paddingHorizontal: "20@s",
+    paddingVertical: "15@vs",
+    marginBottom: "6@vs",
+  },
+  loaderWrap: {
+    paddingVertical: "20@vs",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

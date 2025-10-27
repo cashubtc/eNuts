@@ -5,19 +5,30 @@ import { MintHistoryEntry } from "coco-cashu-core";
 import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 
+type LatestHistoryMintEntryProps = {
+  history: MintHistoryEntry;
+  variant?: "highlight" | "standard";
+};
+
 export const LatestHistoryMintEntry = memo(
-  function LatestHistoryMintEntry({ history }: { history: MintHistoryEntry }) {
+  function LatestHistoryMintEntry({
+    history,
+    variant = "highlight",
+  }: LatestHistoryMintEntryProps) {
     const { color, highlight } = useThemeContext();
+    const iconColor =
+      variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+
     let icon;
     switch (history.state) {
       case "UNPAID":
-        icon = <ClockIcon color={getColor(highlight, color)} />;
+        icon = <ClockIcon color={iconColor} />;
         break;
       case "PAID":
-        icon = <CheckmarkIcon color={getColor(highlight, color)} />;
+        icon = <CheckmarkIcon color={iconColor} />;
         break;
       default:
-        icon = <EcashIcon color={getColor(highlight, color)} />;
+        icon = <EcashIcon color={iconColor} />;
     }
     return (
       <LatestHistoryWrapper
@@ -25,6 +36,8 @@ export const LatestHistoryMintEntry = memo(
         name={history.type}
         createdAt={history.createdAt}
         amount={history.amount}
+        variant={variant}
+        entry={history}
       />
     );
   },

@@ -11,11 +11,12 @@ import type {
   ITokenInfo,
 } from ".";
 import { MintQuoteResponse, Token, MeltQuoteResponse } from "@cashu/cashu-ts";
-import {
+import type {
+  HistoryStackParamList,
   MintStackParamList,
-  RestoreStackParamList,
-  SettingsStackParamList,
 } from "@src/nav/navTypes";
+import type { RestoreStackParamList } from "@src/nav/navTypes";
+import type { SettingsStackParamList } from "@src/nav/navTypes";
 
 interface ILnurlNavData {
   userInput: string;
@@ -64,6 +65,7 @@ export type RootStackParamList = {
     quote: MeltQuoteResponse;
     mintUrl: string;
   };
+  History: NavigatorScreenParams<HistoryStackParamList>;
   selectAmount: {
     isMelt?: boolean;
     isSendEcash?: boolean;
@@ -270,11 +272,11 @@ export type TViewMnemonicPageProps = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList>
 >;
 export type THistoryPageProps = CompositeScreenProps<
-  NativeStackScreenProps<SettingsStackParamList, "history">,
+  NativeStackScreenProps<HistoryStackParamList, "HistoryMain">,
   NativeStackScreenProps<RootStackParamList>
 >;
 export type THistoryEntryPageProps = CompositeScreenProps<
-  NativeStackScreenProps<SettingsStackParamList, "history entry details">,
+  NativeStackScreenProps<HistoryStackParamList, "HistoryEntryDetails">,
   NativeStackScreenProps<RootStackParamList>
 >;
 type RestoreStackScreenProps<T extends keyof RestoreStackParamList> =

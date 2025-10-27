@@ -21,6 +21,7 @@ import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
 import MintSelectAmountScreen from "@screens/Payment/MintSelectAmount";
 import MeltInputScreen from "@screens/Payment/MeltInput";
 import MeltConfirmationScreen from "@screens/Payment/MeltConfirmation";
+import HistoryNavigator from "@src/nav/HistoryNavigator";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -111,6 +112,7 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
         <Stack.Screen name="mint info" component={MintInfoPage} />
         <Stack.Screen name="mint proofs" component={MintProofsPage} />
         <Stack.Screen name="Restore" component={RestoreNavigator} />
+        <Stack.Screen name="History" component={HistoryNavigator} />
       </Stack.Navigator>
     </View>
   );
