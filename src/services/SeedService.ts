@@ -13,6 +13,10 @@ class SeedService {
     return mnemonic;
   }
 
+  async deleteMnemonic() {
+    return SecureStore.deleteItemAsync("mnemonic");
+  }
+
   setMnemonic(mnemonic: string) {
     this._seed = bip39.mnemonicToSeedSync(mnemonic);
   }
