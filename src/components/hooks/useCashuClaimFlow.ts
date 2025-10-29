@@ -41,7 +41,7 @@ export function useCashuClaimFlow() {
 
       const action = await openTrustMint(decoded);
       if (action === "trust") {
-        await manager.mint.addMint(decoded.mint);
+        await manager.mint.addMint(decoded.mint, { trusted: true });
         await manager.wallet.receive(decoded);
         return "success";
       }
