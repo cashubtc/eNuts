@@ -1,4 +1,5 @@
 import * as SQLite from "expo-sqlite";
+import Storage from "expo-sqlite/kv-store";
 
 /**
  * Provider for an Expo SQLite database.
@@ -21,6 +22,15 @@ class DbProvider {
       this.database = SQLite.openDatabaseSync(this.dbName);
     }
     return this.database;
+  }
+
+  public getFingerprint(): string | null {
+    const fingerprint = Storage.getItemSync("coco_fingerprint");
+    return fingerprint;
+  }
+
+  public setFingerprint(fingerprint: string): void {
+    Storage.setItemSync("coco_fingerprint", fingerprint);
   }
 
   /**

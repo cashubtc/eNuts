@@ -42,8 +42,6 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { appLogger } from "@src/logger";
 import { AppState } from "react-native";
 
-l("[APP] Starting app...");
-
 void SplashScreen.preventAutoHideAsync();
 
 function App(_: { exp: Record<string, unknown> }) {
@@ -65,66 +63,75 @@ function useAppInitialization() {
   const { i18n } = useTranslation([NS.common]);
   const [isAppReady, setIsAppReady] = useState(false);
 
-  const initData = async () => {
-    try {
-      const [lang] = await Promise.all([store.get(STORE_KEYS.lang)]);
-      if (lang?.length) {
-        await i18n.changeLanguage(lang);
-      }
-    } catch (e) {
-      l(
-        isErr(e)
-          ? e.message
-          : "Error while initiating the user app configuration."
-      );
-    }
-  };
-
-  const initAuth = async () => {
-    seedService.ensureMnemonicSet();
-    const onboard = await store.get(STORE_KEYS.explainer);
-    setShouldOnboard(onboard !== "1");
-  };
-
   useEffect(() => {
-    async function createManager() {
-      const db = dbProvider.getDatabase();
-      const repo = new ExpoSqliteRepositories({ database: db });
-      async function seedGetter() {
-        const seed = seedService.getSeed();
-        if (!seed) {
-          throw new Error("No seed found");
+    let isMounted = true;
+
+    async function initializeApp() {
+      appLogger.info("Starting app...");
+      // Check seed / database integrity
+
+      const seedFingerprint = await seedService.getFingerprint();
+      if (seedFingerprint) {
+        // App was initialized before
+        const dbFingerprint = dbProvider.getFingerprint();
+        if (!dbFingerprint) {
+          appLogger.info("Found missmatch in db and seed. Rerolling mnemonic");
+          // Fresh database, but old seed. Reroll seed and persist new fingerprint
+          const { fingerprint: newFingerprint } =
+            await seedService.createNewMnemonic();
+          dbProvider.setFingerprint(newFingerprint);
+        } else if (seedFingerprint !== dbFingerprint) {
+          // This state should never happen, if it does we need to display an error to the user
+          //TODO: Display an error to the user
         }
-        return seed;
       }
-      const mgr = await initializeCoco({
-        repo,
-        seedGetter,
-        logger: appLogger.child({ name: "Manager" }),
-      });
-      AppState.addEventListener("change", (state) => {
-        if (state === "background") {
-          mgr.pauseSubscriptions();
-        } else if (state === "active") {
-          mgr.resumeSubscriptions();
+
+      // Initialise app
+
+      try {
+        appLogger.debug("Loading languages...");
+        const lang = await store.get(STORE_KEYS.lang);
+        if (lang?.length) {
+          await i18n.changeLanguage(lang);
         }
-      });
-      return mgr;
+        await seedService.ensureMnemonicSet();
+        const onboard = await store.get(STORE_KEYS.explainer);
+        appLogger.debug("Onboarding already displayed: ", onboard === "1");
+        setShouldOnboard(onboard !== "1");
+        // Initialize auth, data, and manager in parallel
+        const db = dbProvider.getDatabase();
+        const repo = new ExpoSqliteRepositories({ database: db });
+        const mgr = await initializeCoco({
+          repo,
+          seedGetter: async () => seedService.getSeed(),
+          logger: appLogger.child({ name: "Manager" }),
+        });
+        // Handle app state changes for subscription management
+        AppState.addEventListener("change", (state) => {
+          if (state === "background") {
+            mgr.pauseSubscriptions();
+          } else if (state === "active") {
+            mgr.resumeSubscriptions();
+          }
+        });
+        // Only update state if component is still mounted
+        if (isMounted) {
+          setManager(mgr);
+          setIsAppReady(true);
+          appLogger.info("App is ready!");
+        }
+      } catch (error) {
+        l(isErr(error) ? error.message : "Failed to initialize app");
+        throw error;
+      }
     }
 
-    async function init() {
-      const [_, __, mgr] = await Promise.all([
-        initAuth(),
-        initData(),
-        createManager(),
-      ]);
-      setManager(mgr);
-      setIsAppReady(true);
-    }
+    void initializeApp();
 
-    (async () => {
-      await init();
-    })();
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

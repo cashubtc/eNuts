@@ -1,16 +1,24 @@
 import * as bip39 from "@scure/bip39";
+import * as Crypto from "expo-crypto";
 import { wordlist } from "@scure/bip39/wordlists/english";
 import * as SecureStore from "expo-secure-store";
 import { privateKeyFromSeedWords } from "nostr-tools/nip06";
 
 class SeedService {
   private _seed: Uint8Array | null = null;
-  createNewMnemonic() {
+  async createNewMnemonic(): Promise<{
+    mnemonic: string;
+    fingerprint: string;
+  }> {
     const mnemonic = bip39.generateMnemonic(wordlist);
     SecureStore.setItem("mnemonic", mnemonic);
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     this._seed = seed;
-    return mnemonic;
+    const fingerprint = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.MD5,
+      mnemonic
+    );
+    return { mnemonic, fingerprint };
   }
 
   async deleteMnemonic() {
@@ -29,10 +37,21 @@ class SeedService {
     return SecureStore.getItem("mnemonic") !== null;
   }
 
-  ensureMnemonicSet() {
+  async getFingerprint() {
+    const mnemonic = this.getMnemonic();
+    if (!mnemonic) {
+      return null;
+    }
+    const fingerprint = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.MD5,
+      mnemonic
+    );
+    return fingerprint;
+  }
+  async ensureMnemonicSet() {
     const savedMnemonic = this.getMnemonic();
     if (!savedMnemonic) {
-      this.createNewMnemonic();
+      await this.createNewMnemonic();
     }
   }
 
