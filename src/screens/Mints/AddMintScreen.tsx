@@ -144,7 +144,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
       return;
     }
     try {
-      await manager.mint.addMint(submitted);
+      await manager.mint.addMint(submitted, { trusted: true });
       navigation.goBack();
     } catch (e) {
       openPromptAutoClose({

@@ -10,7 +10,9 @@ export const useKnownMints = () => {
 
   const knownMints: KnownMintWithBalance[] = useMemo(
     () =>
-      mints.map((mint) => ({ ...mint, balance: balance[mint.mintUrl] || 0 })),
+      mints
+        .filter((mint) => mint.trusted)
+        .map((mint) => ({ ...mint, balance: balance[mint.mintUrl] || 0 })),
     [mints, balance]
   );
 
