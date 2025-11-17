@@ -1,14 +1,9 @@
 import { Token } from "@cashu/cashu-ts";
 import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
+import DashboardTopBar from "@comps/DashboardTopBar";
 import useLoading from "@comps/hooks/Loading";
-import {
-  PlusIcon,
-  ReceiveIcon,
-  ScanQRIcon,
-  SendIcon,
-  SettingsIcon,
-} from "@comps/Icons";
+import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from "@comps/Icons";
 import BottomSheetOptionsModal from "@comps/modal/BottomSheetOptionsModal";
 import Txt from "@comps/Txt";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -69,66 +64,67 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-      {/* Settings button */}
-      <TouchableOpacity
-        style={styles.settingsBtn}
-        onPress={() =>
+      {/* Dashboard top bar */}
+      <DashboardTopBar
+        onSettingsPress={() =>
           navigation.navigate("Settings", { screen: "SettingsMain" })
         }
-      >
-        <SettingsIcon width={s(24)} height={s(24)} color={color.BACKGROUND} />
-      </TouchableOpacity>
-      {/* Balance, Disclaimer & History */}
-      <Balance nav={navigation} />
-      {/* Receive/send/mints buttons */}
-      <View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
-        {/* Send button or add first mint */}
-        {knownMints.length > 0 ? (
+      />
+      {/* Balance section - takes 2/3 of available space */}
+      <View style={styles.balanceSection}>
+        <Balance nav={navigation} />
+      </View>
+      {/* Action buttons section - takes 1/3 of available space */}
+      <View style={styles.actionsSection}>
+        <View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
+          {/* Send button or add first mint */}
+          {knownMints.length > 0 ? (
+            <ActionBtn
+              icon={
+                <SendIcon width={s(32)} height={s(32)} color={hi[highlight]} />
+              }
+              txt={t("send", { ns: NS.wallet })}
+              color={hi[highlight]}
+              onPress={() => {
+                sendOptionsRef.current?.snapToIndex(0);
+              }}
+            />
+          ) : (
+            <ActionBtn
+              icon={
+                <PlusIcon width={s(36)} height={s(36)} color={hi[highlight]} />
+              }
+              txt={t("mint")}
+              color={hi[highlight]}
+              onPress={() => {
+                navigation.navigate("Mint", { screen: "MintHome" });
+              }}
+            />
+          )}
           <ActionBtn
             icon={
-              <SendIcon width={s(32)} height={s(32)} color={hi[highlight]} />
+              <ScanQRIcon width={s(32)} height={s(32)} color={hi[highlight]} />
             }
-            txt={t("send", { ns: NS.wallet })}
+            txt={t("scan")}
             color={hi[highlight]}
-            onPress={() => {
-              sendOptionsRef.current?.snapToIndex(0);
-            }}
+            onPress={() => navigation.navigate("QRScanner")}
           />
-        ) : (
           <ActionBtn
             icon={
-              <PlusIcon width={s(36)} height={s(36)} color={hi[highlight]} />
+              <ReceiveIcon width={s(32)} height={s(32)} color={hi[highlight]} />
             }
-            txt={t("mint")}
+            txt={t("receive", { ns: NS.wallet })}
             color={hi[highlight]}
+            disabled={isReceiving}
             onPress={() => {
-              navigation.navigate("Mint", { screen: "MintHome" });
+              // if (!hasMint) {
+              //     // try to claim from clipboard to avoid receive-options-modal to popup and having to press again
+              //     return handleClaimBtnPress();
+              // }
+              receiveOptionsRef.current?.snapToIndex(0);
             }}
           />
-        )}
-        <ActionBtn
-          icon={
-            <ScanQRIcon width={s(32)} height={s(32)} color={hi[highlight]} />
-          }
-          txt={t("scan")}
-          color={hi[highlight]}
-          onPress={() => navigation.navigate("QRScanner")}
-        />
-        <ActionBtn
-          icon={
-            <ReceiveIcon width={s(32)} height={s(32)} color={hi[highlight]} />
-          }
-          txt={t("receive", { ns: NS.wallet })}
-          color={hi[highlight]}
-          disabled={isReceiving}
-          onPress={() => {
-            // if (!hasMint) {
-            //     // try to claim from clipboard to avoid receive-options-modal to popup and having to press again
-            //     return handleClaimBtnPress();
-            // }
-            receiveOptionsRef.current?.snapToIndex(0);
-          }}
-        />
+        </View>
       </View>
       {/* Send options bottom sheet */}
       <BottomSheetOptionsModal
@@ -196,18 +192,18 @@ const styles = ScaledSheet.create({
   container: {
     flex: 1,
   },
-  settingsBtn: {
-    position: "absolute",
-    top: "50@s",
-    right: "20@s",
-    zIndex: 10,
-    padding: "8@s",
+  balanceSection: {
+    flex: 2,
+  },
+  actionsSection: {
+    flex: 1,
+    justifyContent: "flex-start",
   },
   actionWrap: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: "-30@s",
+    marginTop: "-40@s", // Offset to float centered at intersection
   },
   btnWrap: {
     alignItems: "center",

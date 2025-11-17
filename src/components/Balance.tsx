@@ -22,7 +22,7 @@ import { formatBalance, formatInt, formatSatStr, isBool } from "@util";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 import { TxtButton } from "./Button";
 import Logo from "./Logo";
@@ -38,7 +38,7 @@ interface IBalanceProps {
 export default function Balance({ nav }: IBalanceProps) {
   const { t } = useTranslation([NS.common]);
   const { pref, color, highlight } = useThemeContext();
-  const { hidden, handleLogoPress } = usePrivacyContext();
+  const { hidden } = usePrivacyContext();
   const [formatSats, setFormatSats] = useState(pref?.formatBalance);
   const { balance } = useBalanceContext();
   const { history: latestHistory, hasMore } = usePaginatedHistory(3);
@@ -59,10 +59,6 @@ export default function Balance({ nav }: IBalanceProps) {
         { borderColor: color.BORDER, backgroundColor: hi[highlight] },
       ]}
     >
-      <TouchableOpacity onPress={() => void handleLogoPress()}>
-        <Logo size={s(40)} style={{ marginTop: s(10), marginBottom: s(10) }} />
-      </TouchableOpacity>
-      {/* balance */}
       <TouchableOpacity
         style={styles.balanceWrap}
         onPress={toggleBalanceFormat}
@@ -126,79 +122,11 @@ export default function Balance({ nav }: IBalanceProps) {
   );
 }
 
-interface IHistoryEntryProps {
-  icon: React.ReactNode;
-  txType: string;
-  isSwap?: boolean;
-  timestamp: number;
-  amount: number;
-  isExpired?: boolean;
-  onPress: () => void;
-  testID: string;
-}
-
-function HistoryEntry({
-  icon,
-  txType,
-  isSwap,
-  timestamp,
-  amount,
-  isExpired,
-  onPress,
-  testID,
-}: IHistoryEntryProps) {
-  const { t } = useTranslation([NS.history]);
-  const { color, highlight } = useThemeContext();
-  const { hidden } = usePrivacyContext();
-
-  const getAmount = () => {
-    if (hidden.balance) {
-      return "****";
-    }
-    if (isSwap) {
-      return formatSatStr(Math.abs(amount));
-    }
-    return `${amount > 0 ? "+" : ""}${formatSatStr(amount)}`;
-  };
-
-  return (
-    <TouchableOpacity style={styles.entry} onPress={onPress} testID={testID}>
-      <View style={styles.wrap}>
-        <View style={styles.iconWrap}>{icon}</View>
-        <View>
-          <Txt
-            txt={txType}
-            styles={[
-              {
-                color: getColor(highlight, color),
-                marginBottom: s(4),
-              },
-            ]}
-          />
-          <Text
-            style={{
-              color: getColor(highlight, color),
-              fontSize: s(12),
-            }}
-          >
-            <EntryTime from={timestamp * 1000} fallback={t("justNow")} />
-          </Text>
-        </View>
-      </View>
-      <Txt
-        txt={isExpired ? t("expired", { ns: NS.common }) : getAmount()}
-        styles={[{ color: getColor(highlight, color) }]}
-      />
-    </TouchableOpacity>
-  );
-}
-
 const styles = ScaledSheet.create({
   board: {
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
     paddingHorizontal: "20@s",
-    paddingTop: "40@s",
     paddingBottom: "50@s",
     minHeight: "55%",
   },
