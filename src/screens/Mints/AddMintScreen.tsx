@@ -5,10 +5,12 @@ import Separator from "@comps/Separator";
 import { ChevronRightIcon, ZapIcon, PlusIcon } from "@comps/Icons";
 import { IconBtn } from "@comps/Button";
 import { useThemeContext } from "@src/context/Theme";
-import { MintAddScreenProps } from "@src/nav/navTypes";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { MintStackParamList } from "@src/nav/navTypes";
 import { globals, highlight as hi } from "@src/styles";
 import { formatMintUrl, isErr, normalizeMintUrl } from "@util";
 import { useState } from "react";
+import useDiscoverMints from "@comps/hooks/useDiscoverMints";
 import {
   View,
   TouchableOpacity,
@@ -26,35 +28,34 @@ import { useTranslation } from "react-i18next";
 import { useManager } from "@src/context/Manager";
 
 interface RecommendedMintItemProps {
-  mint: {
-    url: string;
-    score: number;
-    speedIndex?: number;
-    auditorData: {
-      name: string;
-      averageSwapTimeMs?: number;
-      swapCount?: number;
-    };
-  };
+  mint: MintRecommendation;
   onPress: (url: string) => void;
   color: any;
   highlight: string;
 }
 
+type MintRecommendation = {
+  id: number;
+  url: string;
+  info: string;
+  name: string;
+  balance: number;
+  sum_donations: number;
+  updated_at: string;
+  next_update: string;
+  state: string;
+  n_errors: number;
+  n_mints: number;
+  n_melts: number;
+};
+
 function RecommendedMintItem({
   mint,
-  onPress,
   color,
   highlight,
+  onPress,
 }: RecommendedMintItemProps) {
-  const displayName = mint.auditorData.name || formatMintUrl(mint.url);
-  const speedText =
-    mint.speedIndex !== undefined
-      ? `Speed: ${mint.speedIndex}`
-      : mint.auditorData.averageSwapTimeMs
-      ? `Avg: ${mint.auditorData.averageSwapTimeMs}ms`
-      : "Speed: N/A";
-
+  const displayName = mint.name || formatMintUrl(mint.url);
   return (
     <TouchableOpacity
       style={[
@@ -95,7 +96,7 @@ function RecommendedMintItem({
                 fontWeight: "bold",
               }}
             >
-              {Math.round(mint.score * 10) / 10}
+              {mint.state}
             </Text>
           </View>
         </View>
@@ -108,27 +109,19 @@ function RecommendedMintItem({
         >
           {mint.url}
         </Text>
-        <Text
-          style={{
-            color: color.TEXT_SECONDARY,
-            fontSize: s(11),
-          }}
-        >
-          {speedText}
-          {mint.auditorData.swapCount &&
-            ` • ${mint.auditorData.swapCount} swaps`}
-        </Text>
       </View>
       <ChevronRightIcon color={color.TEXT_SECONDARY} />
     </TouchableOpacity>
   );
 }
 
+type MintAddScreenProps = NativeStackScreenProps<MintStackParamList, "MintAdd">;
+
 function AddMintScreen({ navigation, route }: MintAddScreenProps) {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
   const [inputUrl, setInputUrl] = useState("");
-  const search = useMintRecommendations();
+  const { recommendations, isLoading, isError } = useDiscoverMints();
   const { openPromptAutoClose } = usePromptContext();
   const manager = useManager();
 
@@ -153,18 +146,6 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
       });
     }
   };
-
-  const sortedMints =
-    search.result?.results?.slice()?.sort((a, b) => {
-      // Sort by score descending, then by speed index ascending (lower is better)
-      if (b.score !== a.score) {
-        return b.score - a.score;
-      }
-      if (a.speedIndex !== undefined && b.speedIndex !== undefined) {
-        return a.speedIndex - b.speedIndex;
-      }
-      return 0;
-    }) || [];
 
   return (
     <View style={[globals(color).container]}>
@@ -224,7 +205,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {search.isLoading && (
+          {isLoading && (
             <View
               style={{
                 flexDirection: "row",
@@ -244,28 +225,26 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
             </View>
           )}
 
-          {search.isError && (
+          {isError && (
             <View style={{ paddingVertical: vs(20), alignItems: "center" }}>
               <Txt
                 txt="Failed to load recommendations"
                 styles={[{ color: color.TEXT_SECONDARY }]}
               />
-              {search.error && (
-                <Text
-                  style={{
-                    color: color.TEXT_SECONDARY,
-                    fontSize: s(12),
-                    textAlign: "center",
-                    marginTop: vs(4),
-                  }}
-                >
-                  {search.error}
-                </Text>
-              )}
+              <Text
+                style={{
+                  color: color.TEXT_SECONDARY,
+                  fontSize: s(12),
+                  textAlign: "center",
+                  marginTop: vs(4),
+                }}
+              >
+                Something went wrong fetching recommendations
+              </Text>
             </View>
           )}
 
-          {!search.isLoading && !search.isError && sortedMints.length > 0 && (
+          {!isLoading && recommendations.length > 0 && (
             <View>
               <Txt
                 txt="Recommended Mints"
@@ -278,9 +257,9 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
                   },
                 ]}
               />
-              {sortedMints.map((mint) => (
+              {recommendations.map((mint) => (
                 <RecommendedMintItem
-                  key={mint.url}
+                  key={mint.id}
                   mint={mint}
                   onPress={handleMintSelect}
                   color={color}
