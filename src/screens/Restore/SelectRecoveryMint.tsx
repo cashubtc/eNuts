@@ -26,6 +26,9 @@ export default function SelectRecoveryMintScreen({
 
   const [input, setInput] = useState("");
   const { knownMints } = useKnownMints();
+  const [selectedMints, setSelectedMints] = useState<string[]>(
+    knownMints.map((mint) => mint.mintUrl)
+  );
   const manager = useManager();
   const { openPromptAutoClose } = usePromptContext();
 
@@ -74,11 +77,11 @@ export default function SelectRecoveryMintScreen({
               navigation.navigate("Recover");
             }}
           />
-          {knownMints.length > 0 && (
+          {selectedMints.length > 0 && (
             <View style={[globals(color).wrapContainer, { marginTop: 10 }]}>
-              {knownMints.map((mint, i) => (
-                <View key={`${mint.mintUrl}-${i}`} style={styles.rowWrap}>
-                  <Txt txt={mint.mintUrl} />
+              {selectedMints.map((mint, i) => (
+                <View key={mint} style={styles.rowWrap}>
+                  <Txt txt={mint} />
                   <IconBtn
                     outlined
                     icon={
@@ -90,7 +93,7 @@ export default function SelectRecoveryMintScreen({
                     }
                     size={s(40)}
                     onPress={() => {
-                      //TODO: Add delete
+                      setSelectedMints(selectedMints.filter((m) => m !== mint));
                     }}
                   />
                 </View>

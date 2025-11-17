@@ -76,6 +76,9 @@ class SeedService {
     const sk = privateKeyFromSeedWords(mnemonic);
     return sk;
   }
+  convertMnemonicToSeed(mnemonic: string) {
+    return bip39.mnemonicToSeedSync(mnemonic);
+  }
 }
 
 export const seedService = new SeedService();

@@ -25,10 +25,12 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
     if (loading || !input.length) {
       return;
     }
+    const seed = seedService.convertMnemonicToSeed(input);
 
-    seedService.setMnemonic(input);
-
-    navigation.navigate("Recovering");
+    navigation.navigate("Recovering", {
+      bip39seed: seed,
+      mintUrls: knownMints.map((mint) => mint.mintUrl),
+    });
   };
 
   // auto-focus keyboard

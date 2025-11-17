@@ -5,10 +5,10 @@ import Progress from "@comps/Progress";
 import Txt from "@comps/Txt";
 import type { IRecoveringPageProps, TBeforeRemoveEvent } from "@model/nav";
 import { preventBack } from "@nav/utils";
-import { useKnownMints } from "@src/context/KnownMints";
 import { useManager } from "@src/context/Manager";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
+import { appLogger } from "@src/logger";
 import { vib } from "@src/util";
 import { globals } from "@styles";
 import LottieView from "lottie-react-native";
@@ -22,27 +22,34 @@ import { s, ScaledSheet, vs } from "react-native-size-matters";
 // show internet connection status
 // show different quotes messages during the process
 
-export default function RecoveringScreen({ navigation }: IRecoveringPageProps) {
+export default function RecoveringScreen({
+  navigation,
+  route,
+}: IRecoveringPageProps) {
   const manager = useManager();
   const { t } = useTranslation([NS.common]);
   const insets = useSafeAreaInsets();
   const [current, setCurrent] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { knownMints } = useKnownMints();
+  const { bip39seed, mintUrls } = route.params;
 
   useEffect(() => {
     const restore = async () => {
       try {
-        for (let i = 0; i < knownMints.length; i++) {
-          const mintUrl = knownMints[i].mintUrl;
-          await manager.wallet.restore(mintUrl);
+        for (let i = 0; i < mintUrls.length; i++) {
+          const mintUrl = mintUrls[i];
+          await manager.wallet.sweep(mintUrl, bip39seed);
           setCurrent(i + 1);
         }
         setIsDone(true);
         vib(300);
       } catch (e) {
         setError("Restore failed");
+        appLogger.error("Restore failed", { error: e });
+        setTimeout(() => {
+          navigation.navigate("dashboard");
+        }, 3000);
       }
     };
     restore();
@@ -58,9 +65,9 @@ export default function RecoveringScreen({ navigation }: IRecoveringPageProps) {
   }, [navigation]);
 
   const progress = useMemo(() => {
-    if (!knownMints?.length) return 0;
-    return Math.min(1, current / knownMints.length);
-  }, [current, knownMints]);
+    if (!mintUrls?.length) return 0;
+    return Math.min(1, current / mintUrls.length);
+  }, [current, mintUrls]);
 
   if (isDone) {
     return (
@@ -108,7 +115,7 @@ export default function RecoveringScreen({ navigation }: IRecoveringPageProps) {
         <Txt
           center
           styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-          txt={`${t("restored")} ${current}/${knownMints.length}`}
+          txt={`${t("restored")} ${current}/${mintUrls.length}`}
         />
         <Txt
           center

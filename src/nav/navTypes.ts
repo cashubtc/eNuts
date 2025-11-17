@@ -50,7 +50,7 @@ export type RestoreStackParamList = {
   RecoverMints: { comingFromOnboarding?: boolean } | undefined;
   Recover: undefined;
   Mnemonic: { comingFromOnboarding?: boolean };
-  Recovering: undefined;
+  Recovering: { bip39seed: Uint8Array; mintUrls: string[] };
 };
 
 type RestoreStackScreenProps<T extends keyof RestoreStackParamList> =

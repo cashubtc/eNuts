@@ -113,6 +113,13 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             icon={<KeyIcon color={color.TEXT} />}
             onPress={() => navigation.navigate("View mnemonic")}
           />
+          <MenuItem
+            txt={"Restore"}
+            icon={<KeyIcon color={color.TEXT} />}
+            onPress={() =>
+              navigation.navigate("Restore", { screen: "RecoverMints" })
+            }
+          />
         </View>
         {/* ABOUT */}
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
