@@ -89,6 +89,8 @@
     "eventError": "Something went wrong while publishing the event.",
     "createViaLn": "Create Invoice",
     "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "autoMode": "Auto mode",
     "dbErr": "Something went wrong while initializing the DB!",
     "deepLinkErr": "Link could not be opened",
     "default": "Default",

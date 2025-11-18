@@ -89,6 +89,8 @@
     "eventError": "Ein Fehler ist aufgetreten während dem veröffentlichen der Nachricht.",
     "createViaLn": "Rechnung Erstellen",
     "darkMode": "Dunkler Modus",
+    "lightMode": "Heller Modus",
+    "autoMode": "Automatischer Modus",
     "dbErr": "Etwas ist schief gelaufen während der Initialisierung der Datenbank!",
     "deepLinkErr": "Link konnte nicht geöffnet werden",
     "default": "Standard",

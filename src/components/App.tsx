@@ -182,9 +182,9 @@ function ThemedNavigationContainer({
 }: {
   children: React.ReactNode;
 }) {
-  const { theme } = useThemeContext();
+  const { activeTheme } = useThemeContext();
   return (
-    <NavigationContainer theme={theme === "Light" ? light : dark}>
+    <NavigationContainer theme={activeTheme === "light" ? light : dark}>
       {children}
     </NavigationContainer>
   );

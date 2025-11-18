@@ -89,6 +89,8 @@
     "eventError": "Kuna tatizo lililotokea wakati wa kuchapisha tukio.",
     "createViaLn": "Unda ankara",
     "darkMode": "Mode ya giza",
+    "lightMode": "Mode ya mwanga",
+    "autoMode": "Mode otomatiki",
     "dbErr": "Kuna tatizo lililotokea wakati wa kuanzisha DB!",
     "deepLinkErr": "Kiungo hakikuweza kufunguliwa",
     "default": "Chaguo-msingi",

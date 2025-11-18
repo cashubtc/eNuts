@@ -13,7 +13,7 @@ interface IDashboardTopBarProps {
 export default function DashboardTopBar({
   onSettingsPress,
 }: IDashboardTopBarProps) {
-  const { color, highlight, theme } = useThemeContext();
+  const { color, highlight, activeTheme } = useThemeContext();
   const { handleLogoPress } = usePrivacyContext();
   const insets = useSafeAreaInsets();
   // Use white color for better visibility against highlight backgrounds
@@ -21,7 +21,7 @@ export default function DashboardTopBar({
 
   // Logo source logic (same as Logo component)
   const logoSrc =
-    theme === "Dark" &&
+    activeTheme === "dark" &&
     (highlight === "Zap" || highlight === "Azyre" || highlight === "Rosy")
       ? require("@assets/icon_transparent_dark.png")
       : require("@assets/icon_transparent.png");

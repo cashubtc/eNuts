@@ -1,92 +1,108 @@
-import { getPreferences, setPreferences } from '@db'
-import { l } from '@log'
-import type { IPreferences } from '@model'
-import { dark, HighlightKey, light , lightTheme } from '@styles'
-import { createContext, useContext, useEffect, useState } from 'react'
-import { Appearance } from 'react-native'
+import { getPreferences, setPreferences } from "@src/storage/store/theme";
+import { l } from "@log";
+import type { IPreferences } from "@model";
+import { dark, HighlightKey, light, lightTheme } from "@styles";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useColorScheme } from "react-native";
+
+type ThemeMode = "dark" | "light" | "auto";
 
 const useTheme = () => {
-	const [theme, setTheme] = useState('Light')
-	const [color, setColors] = useState(theme === 'Light' ? light.custom : dark.custom)
-	const [pref, setPref] = useState<IPreferences | undefined>()
-	const [highlight, setHighlight] = useState<HighlightKey>('Default')
+  // Single source of truth for preferences
+  const [pref, setPref] = useState<IPreferences>({
+    id: 1,
+    mode: "auto",
+    formatBalance: false,
+    theme: "Default",
+    hasPref: false,
+  });
 
-	// update theme
-	useEffect(() => {
-		setColors(theme === 'Light' ? light.custom : dark.custom)
-		if (!pref) { return }
-		// update state
-		setPref({ ...pref, darkmode: theme === 'Dark' })
-		// update DB
-		void setPreferences({ ...pref, darkmode: theme === 'Dark' })
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [theme])
+  // Track if we're initialized to avoid writing default values to DB
+  const isInitialized = useRef(false);
 
-	// update highlighting color
-	useEffect(() => {
-		if (!pref) { return }
-		// update state
-		setPref({ ...pref, theme: highlight })
-		// update DB
-		void setPreferences({ ...pref, theme: highlight })
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [highlight])
+  // Derive the actual theme to display based on mode and device theme
+  const deviceColorScheme = useColorScheme() || "light";
+  const activeTheme = pref.mode === "auto" ? deviceColorScheme : pref.mode;
 
-	// init
-	useEffect(() => {
-		void (async () => {
-			try {
-				// Initialize theme preferences
-				const prefsDB = await getPreferences()
-				const deviceTheme = Appearance.getColorScheme()
-				const darkmode = prefsDB.hasPref ? prefsDB.darkmode : deviceTheme === 'dark'
-				setPref({ ...prefsDB, darkmode })
-				setTheme(darkmode ? 'Dark' : 'Light')
-				setHighlight(prefsDB.theme)
-			} catch (e) {
-				l(e)
-				setPref({
-					id: 1,
-					darkmode: false,
-					formatBalance: false,
-					theme: 'Default',
-					hasPref: true
-				})
-			}
-		})()
-	}, [])
+  // Memoize color object to avoid unnecessary re-renders
+  const color = useMemo(
+    () => (activeTheme === "light" ? light.custom : dark.custom),
+    [activeTheme]
+  );
 
-	return {
-		pref,
-		theme,
-		setTheme,
-		color,
-		highlight,
-		setHighlight
-	}
-}
+  // Initialize preferences from database
+  useEffect(() => {
+    try {
+      const prefsDB = getPreferences();
+      setPref(prefsDB);
+      isInitialized.current = true;
+    } catch (e) {
+      l(e);
+      // Keep default values, mark as initialized
+      isInitialized.current = true;
+    }
+  }, []);
 
-type useThemeType = ReturnType<typeof useTheme>
+  // Update theme mode and persist to DB
+  const updateMode = (mode: ThemeMode) => {
+    if (!isInitialized.current) return;
+
+    const newPref = { ...pref, mode };
+    setPref(newPref);
+    void setPreferences(newPref);
+  };
+
+  // Update highlight color and persist to DB
+  const updateHighlight = (theme: HighlightKey) => {
+    if (!isInitialized.current) return;
+
+    const newPref = { ...pref, theme };
+    setPref(newPref);
+    void setPreferences(newPref);
+  };
+
+  return {
+    // Preferences
+    pref,
+    // Theme state (lowercase for consistency)
+    activeTheme,
+    mode: pref.mode,
+    updateMode,
+    // Colors
+    color,
+    // Highlight
+    highlight: pref.theme,
+    updateHighlight,
+  };
+};
+
+type useThemeType = ReturnType<typeof useTheme>;
 
 const ThemeContext = createContext<useThemeType>({
-	pref: {
-		id: 1,
-		darkmode: false,
-		formatBalance: false,
-		theme: 'Default',
-		hasPref: false
-	},
-	theme: 'Light',
-	setTheme: () => l(''),
-	color: lightTheme,
-	highlight: 'Default',
-	setHighlight: () => l('')
-})
+  pref: {
+    id: 1,
+    mode: "auto",
+    formatBalance: false,
+    theme: "Default",
+    hasPref: false,
+  },
+  activeTheme: "light",
+  mode: "auto",
+  updateMode: () => l(""),
+  color: lightTheme,
+  highlight: "Default",
+  updateHighlight: () => l(""),
+});
 
-export const useThemeContext = () => useContext(ThemeContext)
+export const useThemeContext = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => (
-	<ThemeContext.Provider value={useTheme()} >
-		{children}
-	</ThemeContext.Provider>
-)
+  <ThemeContext.Provider value={useTheme()}>{children}</ThemeContext.Provider>
+);

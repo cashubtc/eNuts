@@ -1,5 +1,5 @@
 import { SwapCurrencyIcon } from "@comps/Icons";
-import { setPreferences } from "@db";
+import { setPreferences } from "@src/storage/store/theme";
 import type { RootStackParamList } from "@model/nav";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useBalanceContext } from "@src/context/Balance";

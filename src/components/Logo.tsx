@@ -8,12 +8,12 @@ interface ILogoProps {
 }
 
 export default function Logo({ size, success, style }: ILogoProps) {
-	const { highlight, theme } = useThemeContext()
+	const { highlight, activeTheme } = useThemeContext()
 	 
 	const src = success ?
 		require('@assets/icon_transparent_success.png')
 		:
-		theme === 'Dark' && (highlight === 'Zap' || highlight === 'Azyre' || highlight === 'Rosy') ?
+		activeTheme === 'dark' && (highlight === 'Zap' || highlight === 'Azyre' || highlight === 'Rosy') ?
 			require('@assets/icon_transparent_dark.png')
 			:
 			require('@assets/icon_transparent.png')

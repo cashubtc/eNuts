@@ -89,6 +89,8 @@
     "eventError": "Valami hiba történt az esemény közzététele közben.",
     "createViaLn": "Számla létrehozása",
     "darkMode": "Sötét mód",
+    "lightMode": "Világos mód",
+    "autoMode": "Automatikus mód",
     "dbErr": "Valami hiba történt az adatbázis előkészítése közben!",
     "deepLinkErr": "Link megnyitása sikertelen",
     "default": "Alapértelmezett",

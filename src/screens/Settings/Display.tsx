@@ -15,7 +15,7 @@ export default function DisplaySettings({
   navigation,
 }: TDisplaySettingsPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { setTheme, theme, color, highlight } = useThemeContext();
+  const { updateMode, mode, color, highlight } = useThemeContext();
   return (
     <Screen
       screenName={t("display", { ns: NS.topNav })}
@@ -25,13 +25,28 @@ export default function DisplaySettings({
       <ScrollView alwaysBounceVertical={false}>
         <Txt txt="Theme" bold styles={[styles.subHeader]} />
         <View style={globals(color).wrapContainer}>
-          <View style={[globals().wrapRow]}>
+          <TouchableOpacity
+            style={[globals().wrapRow]}
+            onPress={() => updateMode("dark")}
+          >
             <Txt txt={t("darkMode")} />
-            <Toggle
-              value={theme === "Dark"}
-              onChange={() => setTheme(theme === "Light" ? "Dark" : "Light")}
-            />
-          </View>
+            <RadioBtn selected={mode === "dark"} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[globals().wrapRow]}
+            onPress={() => updateMode("light")}
+          >
+            <Txt txt={t("lightMode")} />
+            <RadioBtn selected={mode === "light"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[globals().wrapRow]}
+            onPress={() => updateMode("auto")}
+          >
+            <Txt txt={t("autoMode")} />
+            <RadioBtn selected={mode === "auto"} />
+          </TouchableOpacity>
         </View>
         <Txt txt="Highlight" bold styles={[styles.subHeader]} />
         <View style={[globals(color).wrapContainer, { marginBottom: s(80) }]}>
@@ -61,12 +76,12 @@ function ThemeSelection({
   hasSeparator,
 }: IThemeSelectionProps) {
   const { t } = useTranslation([NS.common]);
-  const { setHighlight } = useThemeContext();
+  const { updateHighlight } = useThemeContext();
   return (
     <>
       <TouchableOpacity
         style={[globals().wrapRow, { paddingBottom: s(15) }]}
-        onPress={() => setHighlight(name)}
+        onPress={() => updateHighlight(name)}
       >
         <Txt txt={name === "Default" ? t("default") : name} />
         <RadioBtn selected={selected} />

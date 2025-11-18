@@ -89,6 +89,8 @@
     "eventError": "Qualcosa è andato storto durante la pubblicazione dell'evento.",
     "createViaLn": "Crea richiesta di pagamento",
     "darkMode": "Modalità notturna",
+    "lightMode": "Modalità chiara",
+    "autoMode": "Modalità automatica",
     "dbErr": "Qualcosa è andato storto durante l'inizializzazione del DB!",
     "deepLinkErr": "Non è stato possibile aprire il link",
     "default": "Predefinito",

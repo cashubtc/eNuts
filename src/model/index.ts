@@ -68,7 +68,7 @@ export interface ITokenInfo {
 export interface IPreferencesResp {
   id: 1;
   formatBalance: string;
-  darkmode: string;
+  mode: string;
   theme: HighlightKey;
   hasPref: string;
 }
@@ -76,7 +76,7 @@ export interface IPreferencesResp {
 export interface IPreferences {
   id: 1;
   formatBalance: boolean;
-  darkmode: boolean;
+  mode: "dark" | "light" | "auto";
   theme: HighlightKey;
   hasPref: boolean;
 }

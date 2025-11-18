@@ -89,6 +89,8 @@
     "eventError": "發佈事件時出現了問題。",
     "createViaLn": "創建發票",
     "darkMode": "暗色模式",
+    "lightMode": "淺色模式",
+    "autoMode": "自動模式",
     "dbErr": "數據庫初始化時出現了問題！",
     "deepLinkErr": "無法打開鏈接",
     "default": "默認",

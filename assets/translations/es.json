@@ -89,6 +89,8 @@
     "eventError": "Algo falló al publicar el evento.",
     "createViaLn": "Crear recibo",
     "darkMode": "Modo Noche",
+    "lightMode": "Modo Claro",
+    "autoMode": "Modo Automático",
     "dbErr": "¡Algo falló al inicializar la base de datos!",
     "deepLinkErr": "No se pudo abrir el link",
     "default": "Por defecto",

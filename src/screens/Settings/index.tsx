@@ -128,28 +128,23 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             }}
           />
         </View>
-        {/* DEV */}
-        {__DEV__ && (
-          <View
-            style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}
-          >
-            <MenuItem
-              header="DEV"
-              txt={t("factoryReset")}
-              icon={<Text>💥💥💥</Text>}
-              onPress={() =>
-                confirmSheetRef.current?.open({
-                  header: t("resetQ"),
-                  txt: t("delHistoryTxt"),
-                  confirmTxt: t("yes"),
-                  cancelTxt: t("no"),
-                  onConfirm: () => void handleReset(),
-                  onCancel: () => {},
-                })
-              }
-            />
-          </View>
-        )}
+        <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
+          <MenuItem
+            header="DEV"
+            txt={t("factoryReset")}
+            icon={<Text>💥💥💥</Text>}
+            onPress={() =>
+              confirmSheetRef.current?.open({
+                header: t("resetQ"),
+                txt: t("delHistoryTxt"),
+                confirmTxt: t("yes"),
+                cancelTxt: t("no"),
+                onConfirm: () => void handleReset(),
+                onCancel: () => {},
+              })
+            }
+          />
+        </View>
         <Txt txt={appVersion} bold center />
         <Txt
           txt={"No geese were harmed in the making of this software 🪿"}

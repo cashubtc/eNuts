@@ -89,6 +89,8 @@
     "eventError": "Une erreur s'est produite lors de la publication du message.",
     "createViaLn": "Créer Une Facture",
     "darkMode": "Mode sombre",
+    "lightMode": "Mode clair",
+    "autoMode": "Mode automatique",
     "dbErr": "Une erreur s'est produite lors de l'initialisation de la base de données!",
     "deepLinkErr": "Impossible d'ouvrir le lien",
     "default": "Par défaut",
