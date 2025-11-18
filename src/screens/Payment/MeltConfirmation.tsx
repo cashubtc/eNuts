@@ -1,6 +1,5 @@
 import Button from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
-import Loading from "@comps/Loading";
 import TopNav from "@nav/TopNav";
 import { useThemeContext } from "@src/context/Theme";
 import { useKnownMints } from "@src/context/KnownMints";
@@ -12,10 +11,8 @@ import { ScrollView, View } from "react-native";
 import { ScaledSheet } from "react-native-size-matters";
 import { isIOS } from "@consts";
 import { MeltConfirmationProps } from "@src/nav/navTypes";
-import { OverviewRow } from "@screens/Payment/Send/ProofList";
-import SwipeButton from "@comps/SwipeButton";
+import { OverviewRow } from "../../components/OverviewRow";
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
 import { usePromptContext } from "@src/context/Prompt";
 import { useManager } from "@src/context/Manager";
 
@@ -81,7 +78,7 @@ export default function MeltConfirmationScreen({
           />
         </View>
       </ScrollView>
-      <Button txt={t("confirm")} onPress={handleConfirm} disabled={loading} />
+      <Button txt={t("confirm")} onPress={handleConfirm} />
     </Screen>
   );
 }

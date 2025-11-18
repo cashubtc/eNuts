@@ -1,10 +1,12 @@
 import TopNav from "@nav/TopNav";
 import { useThemeContext } from "@src/context/Theme";
 import { globals } from "@styles";
-import { View, Platform } from "react-native";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useKeyboardCtx } from "@src/context/Keyboard";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import {
+  KeyboardAvoidingView,
+  useKeyboardState,
+} from "react-native-keyboard-controller";
 
 interface IContainerProps {
   children: React.ReactNode;
@@ -31,7 +33,7 @@ export default function Screen({
 }: IContainerProps) {
   const { color } = useThemeContext();
   const insets = useSafeAreaInsets();
-  const { isKeyboardOpen } = useKeyboardCtx();
+  const isKeyboardOpen = useKeyboardState((state) => state.isVisible);
   return (
     <View
       style={[
@@ -66,8 +68,6 @@ export function ScreenWithKeyboard({
   noIcons,
 }: IContainerProps) {
   const { color } = useThemeContext();
-  const insets = useSafeAreaInsets();
-  const { isKeyboardOpen } = useKeyboardCtx();
   return (
     <View style={[globals(color).container]}>
       <TopNav

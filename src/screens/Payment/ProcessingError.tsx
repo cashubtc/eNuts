@@ -6,7 +6,6 @@ import { preventBack } from "@nav/utils";
 import { isIOS } from "@src/consts";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { useQRScanHandler } from "@util/qrScanner";
 import TrustMintBottomSheet, {
   type TrustMintBottomSheetRef,
 } from "@modal/TrustMintBottomSheet";
@@ -27,10 +26,6 @@ export default function ProcessingErrorScreen({
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
   const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
-  const { openQRScanner } = useQRScanHandler(
-    navigation,
-    (token) => trustMintRef.current?.open(token) as Promise<any>
-  );
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
@@ -77,12 +72,6 @@ export default function ProcessingErrorScreen({
         )}
       </View>
       <View style={{ width: "100%" }}>
-        {scan && (
-          <>
-            <Button txt={t("scanAgain")} onPress={() => void openQRScanner()} />
-            <View style={{ marginVertical: vs(10) }} />
-          </>
-        )}
         <Button
           outlined={scan}
           txt={t("backToDashboard")}

@@ -23,7 +23,6 @@ import { formatMintUrl, formatSatStr } from "@util";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
-import { sumTokenValue } from "@wallet/proofs";
 
 export type TrustMintAction = "trust" | "cancel" | "swap";
 
@@ -52,7 +51,7 @@ const TrustMintBottomSheet = forwardRef<
     setLoading(false);
     setTokenInfo({
       mints: [token.mint],
-      value: sumTokenValue(token),
+      value: token.proofs.reduce((r, c) => r + c.amount, 0),
       decoded: token,
     });
     setTimeout(() => {

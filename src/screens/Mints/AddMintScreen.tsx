@@ -1,14 +1,12 @@
-import useMintRecommendations from "@comps/hooks/useMintRecommendations";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
-import Separator from "@comps/Separator";
 import { ChevronRightIcon, ZapIcon, PlusIcon } from "@comps/Icons";
 import { IconBtn } from "@comps/Button";
 import { useThemeContext } from "@src/context/Theme";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MintStackParamList } from "@src/nav/navTypes";
 import { globals, highlight as hi } from "@src/styles";
-import { formatMintUrl, isErr, normalizeMintUrl } from "@util";
+import { formatMintUrl, isErr } from "@util";
 import { useState } from "react";
 import useDiscoverMints from "@comps/hooks/useDiscoverMints";
 import {

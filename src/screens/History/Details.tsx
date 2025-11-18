@@ -34,6 +34,7 @@ const truncateStr = (str: string, maxLength: number) => {
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { StatusBar } from "expo-status-bar";
 
 export default function HistoryEntryDetails({
   navigation,
@@ -42,28 +43,6 @@ export default function HistoryEntryDetails({
   const { entry } = route.params;
   const { t } = useTranslation([NS.history]);
   const { color } = useThemeContext();
-
-  const getEntryIcon = () => {
-    switch (entry.type) {
-      case "receive":
-        return <ReceiveIcon color={mainColors.VALID} />;
-      case "send":
-        return <SendIcon color={mainColors.ERROR} />;
-      case "melt":
-        if (entry.state === "PAID") {
-          return <CheckmarkIcon color={mainColors.VALID} />;
-        }
-        return <ZapIcon color={mainColors.ZAP} />;
-      case "mint":
-        if (entry.state === "UNPAID") {
-          return <ClockIcon color={color.TEXT_SECONDARY} />;
-        }
-        if (entry.state === "PAID") {
-          return <CheckmarkIcon color={mainColors.VALID} />;
-        }
-        return <EcashIcon color={color.TEXT} />;
-    }
-  };
 
   const getEntryAmount = () => {
     switch (entry.type) {

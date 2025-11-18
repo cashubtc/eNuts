@@ -1,18 +1,8 @@
-import {
-  CheckmarkIcon,
-  ClockIcon,
-  CloseCircleIcon,
-  EcashIcon,
-  SwapCurrencyIcon,
-  ZapIcon,
-} from "@comps/Icons";
+import { SwapCurrencyIcon } from "@comps/Icons";
 import { setPreferences } from "@db";
-import { type TTXType, txType } from "@model";
 import type { RootStackParamList } from "@model/nav";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import EntryTime from "@screens/History/entryTime";
 import { useBalanceContext } from "@src/context/Balance";
-import { useHistoryContext } from "@src/context/History";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
@@ -22,13 +12,11 @@ import { formatBalance, formatInt, formatSatStr, isBool } from "@util";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { s, ScaledSheet } from "react-native-size-matters";
 
 import { TxtButton } from "./Button";
-import Logo from "./Logo";
 import Txt from "./Txt";
 import { usePaginatedHistory } from "coco-cashu-react";
-// removed unused MintHistoryEntry import
 import { LatestHistory } from "@screens/History/components/LatestHistory";
 
 interface IBalanceProps {

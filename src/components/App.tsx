@@ -6,13 +6,9 @@ import Navigator from "@nav/Navigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 // Balance is now provided by CocoCashuProvider
-import { FocusClaimProvider } from "@src/context/FocusClaim";
-import { HistoryProvider } from "@src/context/History";
-
 import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
 import { ThemeProvider, useThemeContext } from "@src/context/Theme";
-import { QRScannerProvider } from "@src/context/QRScanner";
 import { NS } from "@src/i18n";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
@@ -28,8 +24,6 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { TrustMintModalProvider } from "@modal/TrustMintProvider";
 
 import Blank from "./Blank";
-import ClipboardModal from "./ClipboardModal";
-import QRScannerBottomSheet from "./QRScannerBottomSheet";
 import Toaster from "./Toaster";
 
 import * as SplashScreen from "expo-splash-screen";
@@ -150,15 +144,9 @@ function AppProviders({ children }: { children: React.ReactNode }) {
           <BottomSheetModalProvider>
             <TrustMintModalProvider>
               <ThemedNavigationContainer>
-                <FocusClaimProvider>
-                  <PromptProvider>
-                    <QRScannerProvider>
-                      <HistoryProvider>
-                        <KeyboardProvider>{children}</KeyboardProvider>
-                      </HistoryProvider>
-                    </QRScannerProvider>
-                  </PromptProvider>
-                </FocusClaimProvider>
+                <PromptProvider>
+                  <KeyboardProvider>{children}</KeyboardProvider>
+                </PromptProvider>
               </ThemedNavigationContainer>
             </TrustMintModalProvider>
           </BottomSheetModalProvider>
@@ -183,8 +171,6 @@ function RootApp() {
       <AppProviders>
         <Navigator shouldOnboard={shouldOnboard} />
         <StatusBar style="auto" />
-        <ClipboardModal />
-        <QRScannerBottomSheet />
         <Toaster />
       </AppProviders>
     </CocoCashuProvider>
