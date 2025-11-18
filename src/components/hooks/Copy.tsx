@@ -1,29 +1,34 @@
-import { copyStrToClipboard } from '@src/util'
-import { useCallback, useRef, useState } from 'react'
+import { copyStrToClipboard } from "@src/util";
+import { useCallback, useRef, useState } from "react";
 
 export default function useCopy() {
+  const timerId = useRef<NodeJS.Timeout | null>(null);
+  const [copied, setCopied] = useState(false);
 
-	const timerId = useRef<ReturnType<typeof setTimeout>>()
-	const [copied, setCopied] = useState(false)
+  const clearTimer = useCallback(() => {
+    if (timerId.current) {
+      clearTimeout(timerId.current);
+    }
+    timerId.current = null;
+  }, []);
 
-	const clearTimer = useCallback(() => {
-		clearTimeout(timerId.current)
-		timerId.current = undefined
-	}, [])
+  const copy = useCallback(
+    async (s: string) => {
+      await copyStrToClipboard(s);
+      setCopied(true);
+      if (timerId.current) {
+        clearTimer();
+      }
+      timerId.current = setTimeout(() => {
+        setCopied(false);
+        clearTimer();
+      }, 3000);
+    },
+    [clearTimer]
+  );
 
-	const copy = useCallback(async (s: string) => {
-		await copyStrToClipboard(s)
-		setCopied(true)
-		if (timerId.current) { clearTimer() }
-		timerId.current = setTimeout(() => {
-			setCopied(false)
-			clearTimer()
-		}, 3000)
-	}, [clearTimer])
-
-	return {
-		copied,
-		copy
-	}
-
+  return {
+    copied,
+    copy,
+  };
 }

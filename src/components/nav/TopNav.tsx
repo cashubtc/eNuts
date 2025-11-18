@@ -1,7 +1,5 @@
 import { LeftArrow, ScanQRIcon, SearchIcon } from "@comps/Icons";
-import Loading from "@comps/Loading";
 import type { IPopupOptionProps } from "@comps/Popup";
-import Popup from "@comps/Popup";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi } from "@styles";
@@ -9,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 
-import MintBalanceBtn from "./MintBalanceBtn";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface TTopNavProps {
@@ -98,29 +95,6 @@ export default function TopNav({
             <Text style={globals(color, highlight).pressTxt}>
               {txt || t("cancel")}
             </Text>
-          </TouchableOpacity>
-        )}
-        {mintBalance ? (
-          <MintBalanceBtn
-            handleMintBalancePress={handleMintBalancePress}
-            disableMintBalance={disableMintBalance}
-            mintBalance={mintBalance}
-          />
-        ) : (
-          <TouchableOpacity
-            style={styles.right}
-            onPress={() => {
-              handlePress?.();
-            }}
-          >
-            {!withBackBtn &&
-              !loading &&
-              !noIcons &&
-              !cancel &&
-              !txt?.length && <ScanQRIcon color={color.TEXT} />}
-            {historyOpts && historyOpts.length > 0 && (
-              <Popup opts={historyOpts} optsWidth={s(250)} />
-            )}
           </TouchableOpacity>
         )}
       </View>

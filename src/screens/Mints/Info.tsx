@@ -11,7 +11,6 @@ import type { TMintInfoPageProps } from "@model/nav";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi, mainColors } from "@styles";
-import { getMintInfo } from "@wallet";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
@@ -27,21 +26,6 @@ export default function MintInfoPage({
   const insets = useSafeAreaInsets();
   const [info, setInfo] = useState<GetInfoResponse>();
   const { loading, startLoading, stopLoading } = useLoading();
-
-  useEffect(() => {
-    void (async () => {
-      startLoading();
-      try {
-        const mintInfo = await getMintInfo(route.params.mintUrl);
-        setInfo(mintInfo);
-      } catch {
-        // ignore mint info not available
-      }
-      stopLoading();
-    })();
-    return () => setInfo(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.params.mintUrl]);
 
   return (
     <Screen

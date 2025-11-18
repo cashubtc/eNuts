@@ -8,7 +8,6 @@ import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { MintHomeScreenProps } from "@src/nav/navTypes";
 import { globals, highlight as hi } from "@styles";
 import { getColor } from "@styles/colors";
 import { formatMintUrl, formatSatStr } from "@util";
@@ -17,7 +16,7 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { s, ScaledSheet } from "react-native-size-matters";
 
-export default function MintHomeScreen({ navigation }: MintHomeScreenProps) {
+export default function MintHomeScreen({ navigation }: any) {
   const { t } = useTranslation([NS.common]);
   const { knownMints } = useKnownMints();
   const { color, highlight } = useThemeContext();

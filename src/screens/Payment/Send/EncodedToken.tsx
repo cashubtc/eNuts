@@ -1,7 +1,6 @@
 import { getEncodedToken } from "@cashu/cashu-ts";
 import Button from "@comps/Button";
 import useCopy from "@comps/hooks/Copy";
-import { useCheckSpent } from "@comps/hooks/Spent";
 import { CopyIcon, ShareIcon } from "@comps/Icons";
 import QR from "@comps/QR";
 import Txt from "@comps/Txt";
@@ -11,7 +10,6 @@ import { preventBack } from "@nav/utils";
 import { isIOS } from "@src/consts";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { sumProofsValue } from "@src/wallet/proofs";
 import { globals, highlight as hi, mainColors } from "@styles";
 import { formatInt, formatSatStr, share, vib } from "@util";
 import LottieView from "lottie-react-native";
@@ -31,9 +29,13 @@ export default function EncodedTokenPage({
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
   const [error, setError] = useState({ msg: "", open: false });
-  const spent = useCheckSpent(token);
   const encodedToken = useMemo(() => getEncodedToken(token), [token]);
-  const tokenAmount = useMemo(() => sumProofsValue(token.proofs), [token]);
+  const tokenAmount = useMemo(
+    () => token.proofs.reduce((r, c) => r + c.amount, 0),
+    [token]
+  );
+  //TODO: Add spent check
+  const spent = false;
   const { copied, copy } = useCopy();
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/

@@ -46,7 +46,6 @@ export default function QR({
           size={size}
           value={chunk}
           testID="qr-code"
-          logo={require("@assets/app-qr-icon.png")}
           logoBorderRadius={10}
           logoBackgroundColor={mainColors.WHITE}
           logoMargin={s(6)}

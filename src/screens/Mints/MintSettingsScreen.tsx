@@ -13,27 +13,25 @@ import Txt from "@comps/Txt";
 
 import { _testmintUrl, isIOS } from "@consts";
 import { l } from "@log";
-import { BottomModal } from "@modal/Question";
+import ConfirmBottomSheet, {
+  ConfirmBottomSheetRef,
+} from "@comps/modal/ConfirmBottomSheet";
 import TopNav from "@nav/TopNav";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { MintSettingsScreenProps } from "@src/nav/navTypes";
 
 import { globals, mainColors } from "@styles";
 import { formatMintUrl, formatSatStr } from "@util";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import { Image } from "expo-image";
 
-export default function MintSettingsScreen({
-  navigation,
-  route,
-}: MintSettingsScreenProps) {
+export default function MintSettingsScreen({ navigation, route }: any) {
   const { t } = useTranslation([NS.common]);
   // prompt modal
   const { openPromptAutoClose } = usePromptContext();
@@ -42,7 +40,7 @@ export default function MintSettingsScreen({
   // check proofs confirmation
   const [checkProofsOpen, setCheckProofsOpen] = useState(false);
   // delete mint prompt
-  const [delMintModalOpen, setDelMintModalOpen] = useState(false);
+  const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
 
   const { copied, copy } = useCopy();
 
@@ -232,22 +230,6 @@ export default function MintSettingsScreen({
             styles={[styles.sectionHeader]}
           />
           <View style={globals(color).wrapContainer}>
-            {/* Check proofs */}
-            <MintOption
-              txt={t("checkProofs", { ns: NS.mints })}
-              hasSeparator
-              onPress={() => setCheckProofsOpen(true)}
-              icon={
-                <ValidateIcon
-                  width={s(22)}
-                  height={s(22)}
-                  color={mainColors.WARN}
-                />
-              }
-              rowColor={mainColors.WARN}
-              noChevron
-            />
-            {/* Delete mint */}
             <MintOption
               txt={t("delMint", { ns: NS.mints })}
               onPress={() => {
@@ -257,7 +239,14 @@ export default function MintSettingsScreen({
                   });
                   return;
                 }
-                setDelMintModalOpen(true);
+                confirmSheetRef.current?.open({
+                  header: t("delMintSure", { ns: NS.mints }),
+                  txt: route.params.mintUrl,
+                  confirmTxt: t("yes"),
+                  cancelTxt: t("no"),
+                  onConfirm: () => handleMintDelete(),
+                  onCancel: () => {},
+                });
               }}
               icon={
                 <TrashbinIcon
@@ -272,16 +261,7 @@ export default function MintSettingsScreen({
           </View>
         </View>
       </ScrollView>
-      {/* modal for deleting a mint */}
-      {delMintModalOpen && (
-        <BottomModal
-          header={t("delMintSure", { ns: NS.mints })}
-          txt={route.params.mintUrl}
-          visible={delMintModalOpen}
-          confirmFn={() => handleMintDelete()}
-          cancelFn={() => setDelMintModalOpen(false)}
-        />
-      )}
+      <ConfirmBottomSheet ref={confirmSheetRef} />
     </View>
   );
 }

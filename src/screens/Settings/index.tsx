@@ -1,7 +1,4 @@
-import Button, { TxtButton } from "@comps/Button";
 import {
-  AboutIcon,
-  BackupIcon,
   GithubIcon,
   HistoryIcon,
   LanguageIcon,
@@ -11,8 +8,6 @@ import {
   PaletteIcon,
   SettingsIcon,
 } from "@comps/Icons";
-import { BottomModal } from "@modal/Question";
-import { ZapModal } from "@modal/Zap";
 import type { TSettingsPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
@@ -24,11 +19,13 @@ import { appVersion } from "@src/consts/env";
 import { secureStore, store } from "@store";
 import { SECURESTORE_KEY, STORE_KEYS } from "@store/consts";
 import { globals } from "@styles";
-import { Image } from "expo-image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
 import { s, vs } from "react-native-size-matters";
+import ConfirmBottomSheet, {
+  ConfirmBottomSheetRef,
+} from "@comps/modal/ConfirmBottomSheet";
 
 import MenuItem from "./MenuItem";
 
@@ -37,7 +34,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
   const { color, highlight } = useThemeContext();
   const { openPromptAutoClose } = usePromptContext();
   const [zapModal, setZapModal] = useState(false);
-  const [confirmReset, setConfirmReset] = useState(false);
+  const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
   const [pin, setPin] = useState<string | null>(null);
   const [hasSeed, setHasSeed] = useState(false);
   const init = async () => {
@@ -57,7 +54,6 @@ export default function Settings({ navigation }: TSettingsPageProps) {
     } catch {
       /* ignore */
     }
-    setConfirmReset(false);
   };
 
   return (
@@ -115,7 +111,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
           />
           <MenuItem
             txt={"Restore"}
-            icon={<KeyIcon color={color.TEXT} />}
+            icon={<LockIcon color={color.TEXT} />}
             onPress={() =>
               navigation.navigate("Restore", { screen: "RecoverMints" })
             }
@@ -141,7 +137,16 @@ export default function Settings({ navigation }: TSettingsPageProps) {
               header="DEV"
               txt={t("factoryReset")}
               icon={<Text>💥💥💥</Text>}
-              onPress={() => setConfirmReset(true)}
+              onPress={() =>
+                confirmSheetRef.current?.open({
+                  header: t("resetQ"),
+                  txt: t("delHistoryTxt"),
+                  confirmTxt: t("yes"),
+                  cancelTxt: t("no"),
+                  onConfirm: () => void handleReset(),
+                  onCancel: () => {},
+                })
+              }
             />
           </View>
         )}
@@ -152,17 +157,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
           styles={[{ marginBottom: s(100), fontSize: s(12) }]}
         />
       </ScrollView>
-      <ZapModal visible={zapModal} close={() => setZapModal(false)} />
-      {/* confirm factory reset */}
-      <BottomModal
-        header={t("resetQ")}
-        txt={t("delHistoryTxt")}
-        visible={confirmReset}
-        confirmTxt={t("yes")}
-        confirmFn={() => void handleReset()}
-        cancelTxt={t("no")}
-        cancelFn={() => setConfirmReset(false)}
-      />
+      <ConfirmBottomSheet ref={confirmSheetRef} />
     </Screen>
   );
 }

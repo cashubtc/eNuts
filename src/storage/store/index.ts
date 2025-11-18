@@ -1,9 +1,8 @@
-import { historyStore } from './HistoryStore'
-import { SecureStore } from './SecureStore'
-import { SimpleKeyValueStore } from './SimpleKeyValueStore'
+import { SecureStore } from "./SecureStore";
+import { SimpleKeyValueStore } from "./SimpleKeyValueStore";
 
-const store = new SimpleKeyValueStore('__store__')
+const store = new SimpleKeyValueStore("__store__");
 
-const secureStore = new SecureStore()
+const secureStore = new SecureStore();
 
-export {  historyStore, secureStore, SimpleKeyValueStore, store }
+export { secureStore, SimpleKeyValueStore, store };

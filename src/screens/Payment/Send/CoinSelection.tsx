@@ -1,9 +1,7 @@
 import Separator from "@comps/Separator";
 import SwipeButton from "@comps/SwipeButton";
-import Toggle from "@comps/Toggle";
 import Txt from "@comps/Txt";
 import { _testmintUrl } from "@consts";
-import { getProofsByMintUrl } from "@db";
 import type { IProofSelection } from "@model";
 import type { TCoinSelectionPageProps } from "@model/nav";
 import TopNav from "@nav/TopNav";
@@ -15,7 +13,6 @@ function truncateStr(str: string, len: number): string {
 import { useInitialURL } from "@src/context/Linking";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { useQRScanHandler } from "@util/qrScanner";
 import TrustMintBottomSheet, {
   type TrustMintBottomSheetRef,
 } from "@modal/TrustMintBottomSheet";
@@ -33,12 +30,7 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { s, ScaledSheet } from "react-native-size-matters";
-
-import {
-  CoinSelectionModal,
-  CoinSelectionResume,
-  OverviewRow,
-} from "./ProofList";
+import { OverviewRow } from "@comps/OverviewRow";
 
 export default function CoinSelectionScreen({
   navigation,
@@ -63,10 +55,6 @@ export default function CoinSelectionScreen({
   const { color } = useThemeContext();
   const { url, clearUrl } = useInitialURL();
   const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
-  const { openQRScanner } = useQRScanHandler(
-    navigation,
-    (token) => trustMintRef.current?.open(token) as Promise<any>
-  );
 
   const getPaymentType = () => {
     if (isZap) {
@@ -136,9 +124,6 @@ export default function CoinSelectionScreen({
         }}
         withBackBtn
         handlePress={() => {
-          if (scanned) {
-            return void openQRScanner();
-          }
           const routes = navigation.getState()?.routes;
           const prevRoute = routes[routes.length - 2];
           // if user comes from processing screen, navigate back to dashboard
