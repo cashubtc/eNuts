@@ -1,5 +1,5 @@
 import { useShakeAnimation } from "@comps/animation/Shake";
-import { IconBtn } from "@comps/Button";
+import Button, { IconBtn } from "@comps/Button";
 import { ChevronRightIcon } from "@comps/Icons";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
@@ -13,19 +13,15 @@ import { globals, highlight as hi, mainColors } from "@styles";
 import { formatSatStr, isErr, vib } from "@util";
 import { useCallback, useRef, useState, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  KeyboardAvoidingView,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, TextInput, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useManager } from "@src/context/Manager";
 import { SendSelectAmountProps } from "@src/nav/navTypes";
 import { useSend } from "coco-cashu-react";
 import { usePromptContext } from "@src/context/Prompt";
+import MintSelector from "@comps/MintSelector";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 export default function SendSelectAmountScreen({
   navigation,
@@ -37,13 +33,11 @@ export default function SendSelectAmountScreen({
   const manager = useManager();
   // Use useRef instead of createRef to avoid recreation on every render
   const numericInputRef = useRef<TextInput>(null);
-  const txtInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
   const { isSending, isError: isSendError, send } = useSend();
   const { openPromptAutoClose } = usePromptContext();
 
   const [amountInput, setAmountInput] = useState("");
-  const [memo, setMemo] = useState("");
 
   const defaultMint = useMemo(() => {
     return knownMints.length > 0 ? knownMints[0] : null;
@@ -56,16 +50,6 @@ export default function SendSelectAmountScreen({
   const noMintsAvailable = useMemo(() => {
     return !selectedMint || knownMints.length === 0;
   }, [selectedMint, knownMints.length]);
-
-  // Memoize expensive URL hostname extraction
-  const selectedMintName = useMemo(() => {
-    if (!selectedMint) return "";
-    try {
-      return selectedMint.name || new URL(selectedMint.mintUrl).hostname;
-    } catch {
-      return selectedMint.mintUrl;
-    }
-  }, [selectedMint]);
 
   // Memoize style objects to prevent recreation
   const globalStyles = useMemo(() => globals(), []);
@@ -86,8 +70,6 @@ export default function SendSelectAmountScreen({
   // Back navigation handler
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
-  const onMemoChange = useCallback((text: string) => setMemo(text), []);
-
   const handleMintSelect = useCallback(
     (mint: KnownMintWithBalance) => {
       setSelectedMint(mint);
@@ -98,7 +80,6 @@ export default function SendSelectAmountScreen({
   const handleMintSelectionOpen = useCallback(() => {
     // Blur the text inputs when opening the sheet
     numericInputRef.current?.blur();
-    txtInputRef.current?.blur();
 
     // Try expand method first, fallback to snapToIndex
     if (mintSelectionSheetRef.current) {
@@ -174,13 +155,6 @@ export default function SendSelectAmountScreen({
       withBackBtn
       handlePress={handleBack}
     >
-      <Txt
-        txt={t("ecashAmountHint", {
-          ns: NS.mints,
-        })}
-        styles={[styles.headerHint]}
-      />
-
       <View style={[styles.overviewWrap, { marginTop: vs(20) }]}>
         <Animated.View
           style={[
@@ -213,57 +187,23 @@ export default function SendSelectAmountScreen({
         />
       </View>
 
-      {/* Mint Selection Button - More seamless design */}
-      <TouchableOpacity
-        style={[styles.seamlessMintSelector, { borderColor: color.BORDER }]}
-        onPress={handleMintSelectionOpen}
-      >
-        <View style={styles.mintSelectorInfo}>
-          <Txt
-            txt={`Pay from: ${selectedMintName}`}
-            styles={[styles.seamlessMintName, { color: color.TEXT_SECONDARY }]}
-          />
-          <Txt
-            txt={`${formatSatStr(selectedMintBalance)} available`}
-            styles={[styles.seamlessMintBalance, { color: color.TEXT }]}
-          />
-        </View>
-        <ChevronRightIcon color={color.TEXT_SECONDARY} width={16} height={16} />
-      </TouchableOpacity>
-
+      {/* Mint Selection and Memo Input */}
       <KeyboardAvoidingView
         behavior={isIOS ? "padding" : undefined}
         style={styles.actionWrap}
       >
-        <>
-          <TextInput
-            keyboardType="default"
-            ref={txtInputRef}
-            placeholder={t("optionalMemo", { ns: NS.common })}
-            placeholderTextColor={color.INPUT_PH}
-            selectionColor={hi[highlight]}
-            cursorColor={hi[highlight]}
-            onChangeText={onMemoChange}
-            onSubmitEditing={handleAmountSubmit}
-            onFocus={handleInputFocus}
-            maxLength={21}
-            style={[
-              styles.memoInput,
-              {
-                color: color?.TEXT,
-                backgroundColor: color?.INPUT_BG,
-              },
-            ]}
+        <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
+          <MintSelector
+            mint={selectedMint!}
+            onPress={handleMintSelectionOpen}
           />
-          <IconBtn
+          <Button
+            txt={t("continue", { ns: NS.common })}
             onPress={handleAmountSubmit}
             icon={<ChevronRightIcon color={mainColors.WHITE} />}
-            size={s(55)}
-            testId="continue-send-ecash"
             disabled={isSending}
           />
-        </>
-        {isIOS && <View style={{ height: vs(100) }} />}
+        </View>
       </KeyboardAvoidingView>
 
       <Suspense fallback={<View />}>
@@ -360,42 +300,13 @@ const styles = ScaledSheet.create({
   },
   actionWrap: {
     flex: 1,
-    position: "absolute",
-    bottom: "20@vs",
-    left: "20@s",
-    right: "20@s",
-    flexDirection: "row",
-    alignItems: "center",
-    maxWidth: "100%",
+    width: "100%",
+    justifyContent: "flex-end",
   },
   memoInput: {
-    flex: 1,
-    marginRight: "20@s",
     paddingHorizontal: "18@s",
     paddingVertical: "18@vs",
     borderRadius: 50,
     fontSize: "14@vs",
-  },
-
-  mintSelectorInfo: {
-    flex: 1,
-  },
-  seamlessMintSelector: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: "20@s",
-    paddingVertical: "12@vs",
-    marginHorizontal: "20@s",
-    marginTop: "16@vs",
-    borderBottomWidth: 1,
-  },
-  seamlessMintName: {
-    fontSize: "12@s",
-    marginBottom: "2@vs",
-  },
-  seamlessMintBalance: {
-    fontSize: "14@s",
-    fontWeight: "500",
   },
 });
