@@ -3,23 +3,21 @@ import useLoading from "@comps/hooks/Loading";
 import Loading from "@comps/Loading";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
-import { ChevronRightIcon } from "@comps/Icons";
+import {
+  ChevronRightIcon,
+  ConnectionErrorIcon,
+  CopyIcon,
+  ScanQRIcon,
+} from "@comps/Icons";
 // Lazy load the MintSelectionSheet to improve initial render
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
 import { isIOS } from "@consts";
-import type { TMeltInputfieldPageProps } from "@model/nav";
-import TopNav from "@nav/TopNav";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
-import { decodeLnInvoice, getStrFromClipboard, formatSatStr } from "@util";
-import {
-  decodeUrlOrAddress,
-  getLnurlData,
-  isLnurlOrAddress,
-} from "@util/lnurl";
-import { checkFees } from "@wallet";
+import { highlight as hi, mainColors } from "@styles";
+import { getStrFromClipboard } from "@util";
+import { isLnurlOrAddress } from "@util/lnurl";
 import {
   useEffect,
   useState,
@@ -27,22 +25,19 @@ import {
   useCallback,
   lazy,
   Suspense,
+  useMemo,
 } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  KeyboardAvoidingView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { TextInput, View } from "react-native";
+import { ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { useManager } from "@src/context/Manager";
 import { MeltInputProps } from "@src/nav/navTypes";
-import Screen, { ScreenWithKeyboard } from "@comps/Screen";
+import Screen from "@comps/Screen";
+import MintSelector from "@comps/MintSelector";
 
 export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const { invoice } = route.params || {};
@@ -59,21 +54,19 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
-  const { color, highlight } = useThemeContext();
-  const { loading, startLoading, stopLoading } = useLoading();
+  const { highlight } = useThemeContext();
+  const { loading } = useLoading();
   const [input, setInput] = useState(invoice || "");
-  const [decodedAmount, setDecodedAmount] = useState(0);
 
-  // Get balance from selected mints (always multi-select mode)
-  const balance = selectedMint?.balance || 0;
-
-  // Memoize selected mint name for performance
-  const selectedMintName = selectedMint?.name || selectedMint?.mintUrl;
+  // Get balance from selected mints
+  const balance = useMemo(() => selectedMint?.balance || 0, [selectedMint]);
 
   // Check if we have mints available
-  const noMintsAvailable = !selectedMint || knownMints.length === 0;
+  const noMintsAvailable = useMemo(() => {
+    return !selectedMint || knownMints.length === 0;
+  }, [selectedMint, knownMints.length]);
 
-  // Mint selection handlers - always multi-select
+  // Mint selection handlers
   const handleMintSelectionOpen = useCallback(() => {
     // Blur the input when opening the sheet
     inputRef.current?.blur();
@@ -88,21 +81,26 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     }
   }, []);
 
-  // Paste/Clear input for LNURL/LN invoice
-  const handleInputLabelPress = async () => {
-    // clear input
-    if (input.length > 0) {
-      setInput("");
-      setDecodedAmount(0);
-      return;
-    }
-    // paste from clipboard
+  const handleMintSelect = useCallback(
+    (mint: KnownMintWithBalance) => {
+      setSelectedMint(mint);
+    },
+    [setSelectedMint]
+  );
+
+  // Paste from clipboard
+  const handlePaste = async () => {
     const clipboard = await getStrFromClipboard();
     if (!clipboard) {
       return;
     }
     setInput(clipboard);
   };
+
+  // Navigate to QR scanner
+  const handleScanQR = useCallback(() => {
+    navigation.replace("QRScanner");
+  }, [navigation]);
 
   const handleBtnPress = async () => {
     const currentMint = selectedMint;
@@ -161,130 +159,96 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   }
 
   return (
-    <ScreenWithKeyboard
+    <Screen
       screenName={t("cashOut")}
       withBackBtn
       handlePress={() => navigation.goBack()}
-      mintBalance={balance}
-      disableMintBalance
     >
       <View style={{ flex: 1 }}>
-        <View style={{ position: "relative" }}>
-          <TxtInput
-            innerRef={inputRef}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            placeholder={t("invoiceOrLnurl")}
-            value={input}
-            onChangeText={(text) => {
-              setInput(text);
-              /* Handle when the continue button is pressed
-							if (isLnInvoice(text)) {
-								void handleInvoicePaste(text)
-							}
-							*/
-            }}
-            onSubmitEditing={() => void handleBtnPress()}
-            autoFocus
-            ms={200}
-            style={{ paddingRight: s(90) }}
-          />
-          {/* Paste / Clear Input */}
-          <TouchableOpacity
-            style={[
-              styles.pasteInputTxtWrap,
-              { backgroundColor: color.INPUT_BG },
-            ]}
-            onPress={() => void handleInputLabelPress()}
-            testID="paste-input"
-          >
-            <Text style={globals(color, highlight).pressTxt}>
-              {!input.length ? t("paste") : t("clear")}
-            </Text>
-          </TouchableOpacity>
+        <TxtInput
+          innerRef={inputRef}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          placeholder={t("invoiceOrLnurl")}
+          value={input}
+          onChangeText={(text) => {
+            setInput(text);
+          }}
+          onSubmitEditing={() => void handleBtnPress()}
+          autoFocus
+          ms={200}
+        />
+
+        {/* Action Buttons: Paste and Scan QR */}
+        <View style={styles.inputActions}>
+          <View style={{ flex: 1 }}>
+            <Button
+              txt={t("paste")}
+              onPress={() => void handlePaste()}
+              outlined
+              size="small"
+              icon={<CopyIcon color={hi[highlight]} />}
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Button
+              txt={t("scanQR", { ns: NS.common })}
+              onPress={handleScanQR}
+              outlined
+              size="small"
+              icon={<ScanQRIcon color={hi[highlight]} />}
+            />
+          </View>
         </View>
       </View>
-      <TouchableOpacity
-        style={[
-          styles.seamlessMintSelector,
-          {
-            borderColor: color.BORDER,
-            opacity: 1,
-          },
-        ]}
-        onPress={handleMintSelectionOpen}
+
+      {/* Mint Selection and Continue Button */}
+      <KeyboardAvoidingView
+        behavior={isIOS ? "padding" : undefined}
+        style={styles.actionWrap}
       >
-        <View style={styles.mintSelectorInfo}>
-          <Txt
-            txt={`Pay from: ${selectedMintName}`}
-            styles={[styles.seamlessMintName, { color: color.TEXT_SECONDARY }]}
+        <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
+          <MintSelector
+            mint={selectedMint!}
+            onPress={handleMintSelectionOpen}
           />
-          <Txt
-            txt={`${formatSatStr(balance)} available`}
-            styles={[styles.seamlessMintBalance, { color: color.TEXT }]}
+          <Button
+            disabled={loading || !input.length}
+            txt={t("continue")}
+            onPress={() => void handleBtnPress()}
+            icon={
+              loading ? (
+                <Loading size={20} />
+              ) : (
+                <ChevronRightIcon color={mainColors.WHITE} />
+              )
+            }
           />
         </View>
-        <ChevronRightIcon color={color.TEXT_SECONDARY} width={16} height={16} />
-      </TouchableOpacity>
-      <Button
-        disabled={loading || !input.length}
-        txt={t("continue")}
-        onPress={() => void handleBtnPress()}
-        icon={loading ? <Loading size={20} /> : undefined}
-      />
-      {isIOS && <View style={styles.placeholder} />}
-      {/* Mint Selection Sheet with Multi-Select Support */}
+      </KeyboardAvoidingView>
+
+      {/* Mint Selection Sheet */}
       <Suspense fallback={<View />}>
         <MintSelectionSheet
           ref={mintSelectionSheetRef}
           selectedMint={selectedMint!}
-          onMintSelect={setSelectedMint}
+          onMintSelect={handleMintSelect}
           multiSelect={false}
         />
       </Suspense>
-    </ScreenWithKeyboard>
+    </Screen>
   );
 }
 
 const styles = ScaledSheet.create({
-  container: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    paddingBottom: isIOS ? "50@vs" : "20@vs",
-    paddingTop: "90@vs",
-  },
-  pasteInputTxtWrap: {
-    position: "absolute",
-    right: "10@s",
-    top: "10@vs",
-    padding: "10@s",
+  inputActions: {
+    flexDirection: "row",
+    gap: "8@vs",
+    marginTop: "8@vs",
   },
   actionWrap: {
-    paddingHorizontal: "20@s",
-  },
-  placeholder: {
-    height: "20@vs",
-  },
-  // Mint selector styles - Same as SelectAmount.tsx
-  seamlessMintSelector: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: "20@s",
-    paddingVertical: "12@vs",
-    marginHorizontal: "20@s",
-    marginTop: "16@vs",
-    borderBottomWidth: 1,
-  },
-  mintSelectorInfo: {
     flex: 1,
-  },
-  seamlessMintName: {
-    fontSize: "12@s",
-    marginBottom: "2@vs",
-  },
-  seamlessMintBalance: {
-    fontSize: "14@s",
-    fontWeight: "500",
+    width: "100%",
+    justifyContent: "flex-end",
   },
 });

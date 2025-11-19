@@ -12,17 +12,13 @@ import { globals, highlight as hi, mainColors } from "@styles";
 import { formatSatStr, vib } from "@util";
 import { useCallback, useRef, useState, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  KeyboardAvoidingView,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, TextInput, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useManager } from "@src/context/Manager";
 import { MintSelectAmountProps } from "@src/nav/navTypes";
+import MintSelector from "@comps/MintSelector";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 export default function MintSelectAmountScreen({
   navigation,
@@ -164,73 +160,53 @@ export default function MintSelectAmountScreen({
       withBackBtn
       handlePress={handleBack}
     >
+      <Animated.View
+        style={[
+          styles.amountWrap,
+          { transform: [{ translateX: anim.current }] },
+        ]}
+      >
+        <TextInput
+          keyboardType="numeric"
+          ref={numericInputRef}
+          placeholder="0"
+          autoFocus
+          cursorColor={hi[highlight]}
+          placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
+          style={[
+            globalStyles.selectAmount,
+            { color: err ? mainColors.ERROR : hi[highlight] },
+          ]}
+          onChangeText={handleAmountChange}
+          onSubmitEditing={handleSubmit}
+          onFocus={handleInputFocus}
+          value={amountInput}
+          maxLength={8}
+          testID="mint-amount-input"
+        />
+      </Animated.View>
       <Txt
-        txt={t("invoiceAmountHint", {
-          ns: NS.mints,
-        })}
-        styles={[styles.headerHint]}
+        txt={formatSatStr(amountValue, "standard", false)}
+        styles={[styles.sats, { color: color.TEXT_SECONDARY }]}
       />
 
-      <View style={[styles.overviewWrap, { marginTop: vs(20) }]}>
-        <Animated.View
-          style={[
-            styles.amountWrap,
-            { transform: [{ translateX: anim.current }] },
-          ]}
-        >
-          <TextInput
-            keyboardType="numeric"
-            ref={numericInputRef}
-            placeholder="0"
-            autoFocus
-            cursorColor={hi[highlight]}
-            placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
-            style={[
-              globalStyles.selectAmount,
-              { color: err ? mainColors.ERROR : hi[highlight] },
-            ]}
-            onChangeText={handleAmountChange}
-            onSubmitEditing={handleSubmit}
-            onFocus={handleInputFocus}
-            value={amountInput}
-            maxLength={8}
-            testID="mint-amount-input"
-          />
-        </Animated.View>
-        <Txt
-          txt={formatSatStr(amountValue, "standard", false)}
-          styles={[styles.sats, { color: color.TEXT_SECONDARY }]}
-        />
-      </View>
-
       {/* Mint Selection Button - More seamless design */}
-      <TouchableOpacity
-        style={[styles.seamlessMintSelector, { borderColor: color.BORDER }]}
-        onPress={handleMintSelectionOpen}
-      >
-        <View style={styles.mintSelectorInfo}>
-          <Txt
-            txt={`Receive on: ${selectedMintName}`}
-            styles={[styles.seamlessMintName, { color: color.TEXT_SECONDARY }]}
-          />
-          <Txt
-            txt={`${formatSatStr(selectedMintBalance)} available`}
-            styles={[styles.seamlessMintBalance, { color: color.TEXT }]}
-          />
-        </View>
-        <ChevronRightIcon color={color.TEXT_SECONDARY} width={16} height={16} />
-      </TouchableOpacity>
 
       <KeyboardAvoidingView
         behavior={isIOS ? "padding" : undefined}
         style={styles.actionWrap}
       >
-        <Button
-          txt={t("continue", { ns: NS.common })}
-          onPress={handleSubmit}
-          icon={<ChevronRightIcon color={mainColors.WHITE} />}
-        />
-        {isIOS && <View style={{ height: vs(100) }} />}
+        <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
+          <MintSelector
+            mint={selectedMint!}
+            onPress={handleMintSelectionOpen}
+          />
+          <Button
+            txt={t("continue", { ns: NS.common })}
+            onPress={handleSubmit}
+            icon={<ChevronRightIcon color={mainColors.WHITE} />}
+          />
+        </View>
       </KeyboardAvoidingView>
 
       <Suspense fallback={<View />}>
@@ -328,13 +304,8 @@ const styles = ScaledSheet.create({
   },
   actionWrap: {
     flex: 1,
-    position: "absolute",
-    bottom: "20@vs",
-    left: "20@s",
-    right: "20@s",
-    flexDirection: "row",
-    alignItems: "center",
-    maxWidth: "100%",
+    width: "100%",
+    justifyContent: "flex-end",
   },
   memoInput: {
     flex: 1,

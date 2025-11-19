@@ -33,14 +33,8 @@ export default function Screen({
 }: IContainerProps) {
   const { color } = useThemeContext();
   const insets = useSafeAreaInsets();
-  const isKeyboardOpen = useKeyboardState((state) => state.isVisible);
   return (
-    <View
-      style={[
-        globals(color).container,
-        { paddingBottom: isKeyboardOpen ? 0 : insets.bottom },
-      ]}
-    >
+    <View style={[globals(color).container, { paddingBottom: insets.bottom }]}>
       <TopNav
         screenName={screenName || ""}
         withBackBtn={withBackBtn}

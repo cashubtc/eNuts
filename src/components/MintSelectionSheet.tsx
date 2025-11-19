@@ -237,7 +237,10 @@ const MintSelectionSheet = forwardRef<
       >
         <BottomSheetScrollView
           style={[styles.scrollView, { backgroundColor: color.BACKGROUND }]}
-          contentContainerStyle={[styles.scrollContent]}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom },
+          ]}
           showsVerticalScrollIndicator={false}
         >
           <View
@@ -282,7 +285,12 @@ const MintSelectionSheet = forwardRef<
               ))}
 
               {multiSelect && (
-                <View style={styles.buttonContainer}>
+                <View
+                  style={[
+                    styles.buttonContainer,
+                    { paddingBottom: insets.bottom + vs(16) },
+                  ]}
+                >
                   <Button
                     txt={t("confirm", { ns: NS.common })}
                     onPress={handleConfirmMultiSelect}
@@ -363,7 +371,7 @@ const styles = ScaledSheet.create({
     justifyContent: "center",
   },
   buttonContainer: {
-    padding: "16@s",
+    paddingHorizontal: "16@s",
     paddingTop: "20@vs",
   },
 });
