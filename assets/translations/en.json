@@ -139,6 +139,7 @@
     "invoiceExpired": "Invoice expired",
     "invoiceInclFee": "Invoice incl. fee",
     "invoiceOrLnurl": "LN invoice or LNURL",
+    "invoiceOrLnAddress": "Invoice or Address",
     "keysetID": "Keyset ID",
     "lnInvoice": "Lightning invoice",
     "lnPayment": "Lightning payment",

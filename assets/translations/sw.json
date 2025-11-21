@@ -139,6 +139,7 @@
     "invoiceExpired": "Ankara imeisha muda wake",
     "invoiceInclFee": "Ankara pamoja na ada",
     "invoiceOrLnurl": "Ankara ya LN au LNURL",
+    "invoiceOrLnAddress": "Ankara au Anwani",
     "keysetID": "Kitufe cha Kitambulisho",
     "lnInvoice": "Ankara ya Lightning",
     "lnPayment": "Malipo ya Lightning",

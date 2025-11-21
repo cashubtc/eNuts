@@ -139,6 +139,7 @@
     "invoiceExpired": "Recibo expirado",
     "invoiceInclFee": "Recibo incl. comisión",
     "invoiceOrLnurl": "Recibo LN o LNURL",
+    "invoiceOrLnAddress": "Factura o Dirección",
     "keysetID": "Keyset ID",
     "lnInvoice": "Recibo Lightning",
     "lnPayment": "Pago Lightning",

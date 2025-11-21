@@ -17,7 +17,11 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { highlight as hi, mainColors } from "@styles";
 import { getStrFromClipboard } from "@util";
-import { isLnurlOrAddress } from "@util/lnurl";
+import {
+  isLightningAddress,
+  isLnurlOrAddress,
+  parseLightningAddress,
+} from "@util/lnurl";
 import {
   useEffect,
   useState,
@@ -38,6 +42,7 @@ import { useManager } from "@src/context/Manager";
 import { MeltInputProps } from "@src/nav/navTypes";
 import Screen from "@comps/Screen";
 import MintSelector from "@comps/MintSelector";
+import { requestLnAddressMetadata } from "@src/util/lud16";
 
 export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const { invoice } = route.params || {};
@@ -57,9 +62,6 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const { highlight } = useThemeContext();
   const { loading } = useLoading();
   const [input, setInput] = useState(invoice || "");
-
-  // Get balance from selected mints
-  const balance = useMemo(() => selectedMint?.balance || 0, [selectedMint]);
 
   // Check if we have mints available
   const noMintsAvailable = useMemo(() => {
@@ -106,6 +108,16 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     const currentMint = selectedMint;
     if (loading || !currentMint) {
       return;
+    }
+    if (isLightningAddress(input)) {
+      inputRef.current?.blur();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      const metadata = await requestLnAddressMetadata(input);
+      return navigation.navigate("MeltLnAddress", {
+        lnAddress: input,
+        metadata,
+        selectedMint: currentMint.mintUrl,
+      });
     }
     // user pasted an encoded LNURL, we need to get the amount by the user
     if (isLnurlOrAddress(input)) {
@@ -169,7 +181,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
           innerRef={inputRef}
           keyboardType="email-address"
           autoCapitalize="none"
-          placeholder={t("invoiceOrLnurl")}
+          placeholder={t("invoiceOrLnAddress")}
           value={input}
           onChangeText={(text) => {
             setInput(text);

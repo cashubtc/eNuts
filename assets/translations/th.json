@@ -139,6 +139,7 @@
     "invoiceExpired": "ใบแจ้งหนี้หมดอายุ",
     "invoiceInclFee": "ใบแจ้งหนี้รวมค่าธรรมเนียม",
     "invoiceOrLnurl": "ใบแจ้งหนี้ LN หรือ LNURL",
+    "invoiceOrLnAddress": "ใบแจ้งหนี้หรือที่อยู่",
     "keysetID": "Keyset ID",
     "lnInvoice": "ใบแจ้งหนี้ Lightning",
     "lnPayment": "การชำระเงิน Lightning",

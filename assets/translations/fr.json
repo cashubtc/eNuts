@@ -139,6 +139,7 @@
     "invoiceExpired": "Facture expirée",
     "invoiceInclFee": "Facture incl. frais",
     "invoiceOrLnurl": "Facture LN ou LNURL",
+    "invoiceOrLnAddress": "Facture ou Adresse",
     "keysetID": "ID de clés",
     "lnInvoice": "Facture Lightning",
     "lnPayment": "Paiement Lightning",

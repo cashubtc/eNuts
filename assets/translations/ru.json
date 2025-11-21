@@ -139,6 +139,7 @@
     "invoiceExpired": "Срок действия счёта истёк",
     "invoiceInclFee": "Счёт включая комиссию",
     "invoiceOrLnurl": "LN инвойс или LNURL",
+    "invoiceOrLnAddress": "Счёт или Адрес",
     "keysetID": "ID-набор ключей",
     "lnInvoice": "Счёт за Lightning",
     "lnPayment": "Оплата через Lightning",

@@ -139,6 +139,7 @@
     "invoiceExpired": "发票已过期",
     "invoiceInclFee": "发票包括费用",
     "invoiceOrLnurl": "闪电发票或 LNURL",
+    "invoiceOrLnAddress": "发票或地址",
     "keysetID": "密钥组 ID",
     "lnInvoice": "闪电发票",
     "lnPayment": "闪电付款",

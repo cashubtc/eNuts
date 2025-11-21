@@ -21,6 +21,7 @@ import MintSelectAmountScreen from "@screens/Payment/MintSelectAmount";
 import MeltInputScreen from "@screens/Payment/MeltInput";
 import MeltConfirmationScreen from "@screens/Payment/MeltConfirmation";
 import HistoryNavigator from "@src/nav/HistoryNavigator";
+import MeltLnAddressScreen from "@screens/Payment/MeltLnAddress";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -68,6 +69,7 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
           component={SelectMintToSwapToScreen}
         />
         <Stack.Screen name="MeltInput" component={MeltInputScreen} />
+        <Stack.Screen name="MeltLnAddress" component={MeltLnAddressScreen} />
         <Stack.Screen
           name="MeltConfirmation"
           component={MeltConfirmationScreen}

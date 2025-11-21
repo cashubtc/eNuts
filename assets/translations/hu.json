@@ -139,6 +139,7 @@
     "invoiceExpired": "Számla lejárt",
     "invoiceInclFee": "Számla díjjal együtt",
     "invoiceOrLnurl": "Lightning számla vagy LNURL",
+    "invoiceOrLnAddress": "Számla vagy Cím",
     "keysetID": "Kulcspár ID",
     "lnInvoice": "Lightning számla",
     "lnPayment": "Lightning utalás",

@@ -139,6 +139,7 @@
     "invoiceExpired": "richiesta di pagamento scaduta",
     "invoiceInclFee": "richiesta di pagamento (commissioni incluse)",
     "invoiceOrLnurl": "richiesta di pagamento LN o LNURL",
+    "invoiceOrLnAddress": "Fattura o Indirizzo",
     "keysetID": "Keyset ID",
     "lnInvoice": "richiesta di pagamento lightning",
     "lnPayment": "Pagamento lightning",

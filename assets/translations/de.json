@@ -139,6 +139,7 @@
     "invoiceExpired": "Rechnung abgelaufen",
     "invoiceInclFee": "Rechnung inkl. Gebühr",
     "invoiceOrLnurl": "LN Rechnung oder LNURL",
+    "invoiceOrLnAddress": "Rechnung oder Adresse",
     "keysetID": "Schlüsselsatz",
     "lnInvoice": "Lightning Rechnung",
     "lnPayment": "Lightning Zahlung",

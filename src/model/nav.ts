@@ -17,6 +17,8 @@ import type {
 } from "@src/nav/navTypes";
 import type { RestoreStackParamList } from "@src/nav/navTypes";
 import type { SettingsStackParamList } from "@src/nav/navTypes";
+import { l } from "@src/logger";
+import { LnAddressMetadata } from "@src/util/lud16";
 
 interface ILnurlNavData {
   userInput: string;
@@ -64,6 +66,11 @@ export type RootStackParamList = {
   MeltConfirmation: {
     quote: MeltQuoteResponse;
     mintUrl: string;
+  };
+  MeltLnAddress: {
+    lnAddress: string;
+    metadata: LnAddressMetadata;
+    selectedMint: string;
   };
   History: NavigatorScreenParams<HistoryStackParamList>;
   selectAmount: {
@@ -314,4 +321,10 @@ export type TBeforeRemoveEvent = EventArg<
       target?: string | undefined;
     }>;
   }
+>;
+
+export type TMeltLnAddressPageProps = NativeStackScreenProps<
+  RootStackParamList,
+  "MeltLnAddress",
+  "MyStack"
 >;
