@@ -1,22 +1,19 @@
-import Button, { IconBtn } from "@comps/Button";
+import Button from "@comps/Button";
 import { highlight as hi } from "@styles";
-import { PlusIcon, TrashbinIcon } from "@comps/Icons";
+import { CheckmarkIcon } from "@comps/Icons";
 import { ScreenWithKeyboard } from "@comps/Screen";
 import Txt from "@comps/Txt";
-import TxtInput from "@comps/TxtInput";
 import { isIOS } from "@consts";
 import type { RecoverMintsScreenProps } from "@src/nav/navTypes";
-import { useManager } from "@src/context/Manager";
 import { useKnownMints } from "@src/context/KnownMints";
-import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals } from "@styles";
-import { normalizeMintUrl } from "@util";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
+import { vs } from "react-native-size-matters";
 
 export default function SelectRecoveryMintScreen({
   navigation,
@@ -24,23 +21,17 @@ export default function SelectRecoveryMintScreen({
   const { t } = useTranslation([NS.common]);
   const { highlight, color } = useThemeContext();
 
-  const [input, setInput] = useState("");
   const { knownMints } = useKnownMints();
   const [selectedMints, setSelectedMints] = useState<string[]>(
     knownMints.map((mint) => mint.mintUrl)
   );
-  const manager = useManager();
-  const { openPromptAutoClose } = usePromptContext();
 
-  const handleAdd = async () => {
-    const submitted = normalizeMintUrl(input.trim());
-    if (!submitted?.length) {
-      openPromptAutoClose({ msg: t("invalidUrl", { ns: NS.mints }), ms: 1500 });
-      return;
-    }
-    await manager.mint.addMint(submitted);
-
-    setInput("");
+  const toggleMintSelection = (mintUrl: string) => {
+    setSelectedMints((prev) =>
+      prev.includes(mintUrl)
+        ? prev.filter((m) => m !== mintUrl)
+        : [...prev, mintUrl]
+    );
   };
 
   return (
@@ -51,56 +42,53 @@ export default function SelectRecoveryMintScreen({
     >
       <View style={{ flex: 1, gap: s(10) }}>
         <Txt txt={t("selectRestoreMint")} styles={[styles.hint]} bold />
-        <View
-          style={{ flexDirection: "row", alignItems: "center", gap: s(12) }}
-        >
-          <View style={{ flex: 1 }}>
-            <TxtInput
-              autoCapitalize="none"
-              placeholder="Mint URL"
-              value={input}
-              onChangeText={(text) => setInput(text)}
-              onSubmitEditing={() => void handleAdd()}
-            />
-          </View>
-          <IconBtn
-            icon={<PlusIcon color="white" width={s(20)} height={s(20)} />}
-            onPress={() => void handleAdd()}
-            disabled={!input.length}
-          />
-        </View>
-        <ScrollView alwaysBounceVertical={false}>
+        <ScrollView alwaysBounceVertical={false} style={{ flex: 1 }}>
+          {knownMints.length > 0 ? (
+            <View style={{ flex: 1, gap: s(4) }}>
+              {knownMints.map((mint) => {
+                const isSelected = selectedMints.includes(mint.mintUrl);
+                return (
+                  <TouchableOpacity
+                    key={mint.mintUrl}
+                    style={[
+                      styles.mintItem,
+                      isSelected && {
+                        backgroundColor: hi[highlight] + "20",
+                        borderColor: hi[highlight],
+                      },
+                    ]}
+                    onPress={() => toggleMintSelection(mint.mintUrl)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.mintContent}>
+                      <Txt txt={mint.mintUrl} styles={[{ flex: 1 }]} />
+                      {isSelected && (
+                        <CheckmarkIcon
+                          width={vs(14)}
+                          height={vs(14)}
+                          color={hi[highlight]}
+                        />
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Txt txt={t("noMint")} />
+            </View>
+          )}
+        </ScrollView>
+        <View style={styles.btnWrap}>
           <Button
-            disabled={knownMints.length === 0}
+            disabled={selectedMints.length === 0}
             txt={t("confirm")}
             onPress={() => {
               navigation.navigate("Recover");
             }}
           />
-          {selectedMints.length > 0 && (
-            <View style={[globals(color).wrapContainer, { marginTop: 10 }]}>
-              {selectedMints.map((mint, i) => (
-                <View key={mint} style={styles.rowWrap}>
-                  <Txt txt={mint} />
-                  <IconBtn
-                    outlined
-                    icon={
-                      <TrashbinIcon
-                        width={s(20)}
-                        height={s(20)}
-                        color={hi[highlight]}
-                      />
-                    }
-                    size={s(40)}
-                    onPress={() => {
-                      setSelectedMints(selectedMints.filter((m) => m !== mint));
-                    }}
-                  />
-                </View>
-              ))}
-            </View>
-          )}
-        </ScrollView>
+        </View>
       </View>
     </ScreenWithKeyboard>
   );
@@ -111,19 +99,25 @@ const styles = ScaledSheet.create({
     paddingHorizontal: "20@s",
     marginBottom: "20@vs",
   },
-  rowWrap: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  mintItem: {
+    padding: "16@s",
+    borderRadius: "12@s",
+    borderWidth: 2,
+    borderColor: "transparent",
+    marginBottom: "8@s",
   },
-  btn: {
-    position: "absolute",
-    right: 0,
-    bottom: isIOS ? "0@s" : "20@s",
-    left: 0,
+  mintContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: "12@s",
+  },
+  emptyContainer: {
+    padding: "20@s",
+    alignItems: "center",
   },
   btnWrap: {
     marginHorizontal: "20@s",
     marginTop: "20@s",
+    marginBottom: isIOS ? "0@s" : "20@s",
   },
 });
