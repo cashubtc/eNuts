@@ -113,22 +113,20 @@ const styles = ScaledSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: "45@vs",
-    paddingHorizontal: "20@s",
     paddingBottom: "10@vs",
   },
   wrap: {
     flexDirection: "row",
     alignItems: "center",
+    paddingLeft: "20@s",
   },
   backiconWrap: {
-    marginLeft: "-20@s",
-    paddingLeft: "20@s",
     paddingRight: "20@s",
   },
   right: {
     paddingLeft: "20@s",
   },
   cancel: {
-    marginRight: "-20@s",
+    paddingHorizontal: "20@s",
   },
 });
