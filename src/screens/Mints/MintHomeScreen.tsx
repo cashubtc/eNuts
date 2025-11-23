@@ -1,20 +1,21 @@
 import Button, { IconBtn } from "@comps/Button";
+import Card from "@comps/Card";
 import Empty from "@comps/Empty";
-import { ChevronRightIcon, PlusIcon, ZapIcon } from "@comps/Icons";
-import Separator from "@comps/Separator";
+import { ChevronRightIcon, PlusIcon } from "@comps/Icons";
 import Txt from "@comps/Txt";
 import TopNav from "@nav/TopNav";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi } from "@styles";
+import { globals } from "@styles";
 import { getColor } from "@styles/colors";
 import { formatMintUrl, formatSatStr } from "@util";
+import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export default function MintHomeScreen({ navigation }: any) {
   const { t } = useTranslation([NS.common]);
@@ -32,55 +33,69 @@ export default function MintHomeScreen({ navigation }: any) {
       />
       {knownMints.length > 0 ? (
         <View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
-          {/* Mints list where test mint is always visible */}
-          <ScrollView
-            style={globals(color).wrapContainer}
-            alwaysBounceVertical={false}
-          >
-            {knownMints.map((m, i) => (
-              <View key={m.mintUrl}>
+          {/* Mints list */}
+          <ScrollView alwaysBounceVertical={false}>
+            {knownMints.map((m, i) => {
+              const displayName = m.mintInfo.name || formatMintUrl(m.mintUrl);
+              const displayBalance = hidden.balance
+                ? "****"
+                : formatSatStr(m.balance, "compact");
+
+              return (
                 <TouchableOpacity
-                  style={[globals().wrapRow, { paddingBottom: s(15) }]}
+                  key={m.mintUrl}
                   onPress={() => {
                     navigation.navigate("MintSettings", {
                       mintUrl: m.mintUrl,
                     });
                   }}
+                  activeOpacity={0.7}
+                  style={{
+                    marginBottom: i < knownMints.length - 1 ? s(12) : 0,
+                  }}
                 >
-                  <View style={styles.mintNameWrap}>
-                    <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                      <Txt txt={m.name || formatMintUrl(m.mintUrl)} bold />
+                  <Card variant="base" style={styles.cardContent}>
+                    <View style={styles.mintContainer}>
+                      {/* Left side: Mint icon (if available) */}
+                      {m.mintInfo.icon_url && (
+                        <View style={styles.iconContainer}>
+                          <Image
+                            source={{ uri: m.mintInfo.icon_url }}
+                            style={styles.icon}
+                            contentFit="cover"
+                            transition={200}
+                          />
+                        </View>
+                      )}
+
+                      {/* Center: Mint name and balance */}
+                      <View style={styles.infoContainer}>
+                        <Txt
+                          txt={displayName}
+                          bold
+                          styles={[{ color: color.TEXT }]}
+                        />
+                        <Txt
+                          txt={displayBalance}
+                          styles={[
+                            {
+                              color: color.TEXT_SECONDARY,
+                              fontSize: s(12),
+                              marginTop: vs(2),
+                            },
+                          ]}
+                        />
+                      </View>
+
+                      {/* Right side: Chevron icon */}
+                      <View style={styles.chevronContainer}>
+                        <ChevronRightIcon color={color.TEXT} />
+                      </View>
                     </View>
-                    <View style={styles.mintBal}>
-                      {m.balance > 0 && <ZapIcon color={hi[highlight]} />}
-                      <Text
-                        style={{
-                          color:
-                            m.balance > 0 ? color.TEXT : color.TEXT_SECONDARY,
-                          marginLeft: m.balance > 0 ? 5 : 0,
-                          marginBottom: 5,
-                        }}
-                      >
-                        {hidden.balance
-                          ? "****"
-                          : m.balance > 0
-                          ? formatSatStr(m.balance, "compact")
-                          : t("emptyMint")}
-                      </Text>
-                    </View>
-                  </View>
-                  {/* Add mint icon or show balance */}
-                  <View>
-                    <ChevronRightIcon color={color.TEXT} />
-                  </View>
+                  </Card>
                 </TouchableOpacity>
-                {i < knownMints.length - 1 && (
-                  <Separator style={[{ marginBottom: s(15) }]} />
-                )}
-              </View>
-            ))}
+              );
+            })}
           </ScrollView>
         </View>
       ) : (
@@ -136,39 +151,32 @@ const styles = ScaledSheet.create({
   },
   topSection: {
     width: "100%",
-    // marginTop: 110,
-  },
-  wrap: {
-    position: "relative",
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  inputQR: {
-    position: "absolute",
-    right: "13@s",
-    height: "41@vs",
-    paddingHorizontal: "10@s",
   },
   newMint: {
     position: "absolute",
     right: 20,
     bottom: 20,
   },
-  mintNameWrap: {
-    flexDirection: "column",
-    alignItems: "flex-start",
+  cardContent: {
+    padding: "12@s",
   },
-  mintBal: {
+  mintContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
   },
-  cancel: {
-    alignItems: "center",
-    marginTop: 15,
-    padding: 10,
-    width: "100%",
+  iconContainer: {
+    marginRight: "12@s",
+  },
+  icon: {
+    width: "40@s",
+    height: "40@s",
+    borderRadius: "20@s",
+  },
+  infoContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  chevronContainer: {
+    marginLeft: "8@s",
   },
 });
