@@ -29,7 +29,6 @@ interface QRProps {
 export default function QR({
   size,
   value,
-  isInvoice,
   animate,
   truncateNum,
   onError,
@@ -37,10 +36,9 @@ export default function QR({
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
   const { copied, copy } = useCopy();
-  const str = isInvoice ? value.toUpperCase() : value;
   const chunk = useAnimatedQr(value, { animate });
   return (
-    <TouchableOpacity onPress={() => void copy(str)}>
+    <TouchableOpacity onPress={() => void copy(value)}>
       <View style={styles.qrWrap}>
         <QRCode
           size={size}
@@ -69,7 +67,7 @@ export default function QR({
           )}
         </View>
         <Txt
-          txt={copied ? t("copied") : truncateStr(str, truncateNum ?? 20)}
+          txt={copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}
           styles={[{ color: copied ? mainColors.VALID : color.TEXT }]}
         />
       </View>

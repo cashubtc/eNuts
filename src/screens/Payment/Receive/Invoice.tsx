@@ -3,7 +3,7 @@ import { ShareIcon } from "@comps/Icons";
 import Loading from "@comps/Loading";
 import QR from "@comps/QR";
 import Txt from "@comps/Txt";
-import { _testmintUrl, isIOS } from "@consts";
+import { isIOS } from "@consts";
 import { l } from "@log";
 import type { TMintInvoicePageProps } from "@model/nav";
 import TopNav from "@nav/TopNav";
@@ -60,11 +60,6 @@ export default function InvoiceScreen({
           animate={false}
         />
         <View>
-          {mintUrl === _testmintUrl && (
-            <View style={{ marginTop: vs(20) }}>
-              <Loading />
-            </View>
-          )}
           <View style={styles.awaitingWrap}>
             <Txt
               txt={t("paymentPending") + "..."}
