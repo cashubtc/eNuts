@@ -1,6 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Settings from "@screens/Settings";
-import AdvancedFunctionScreen from "@screens/Settings/Advanced";
 import DisplaySettings from "@screens/Settings/Display";
 import LanguageSettings from "@screens/Settings/Language";
 import ViewMnemonic from "@screens/Settings/ViewMnemonic";
@@ -31,10 +30,6 @@ export default function SettingsNavigator() {
       <SettingsStack.Screen
         name="Language settings"
         component={LanguageSettings}
-      />
-      <SettingsStack.Screen
-        name="Advanced settings"
-        component={AdvancedFunctionScreen}
       />
       <SettingsStack.Screen name="View mnemonic" component={ViewMnemonic} />
     </SettingsStack.Navigator>

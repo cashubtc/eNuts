@@ -31,22 +31,8 @@ import MenuItem from "./MenuItem";
 
 export default function Settings({ navigation }: TSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
-  const { openPromptAutoClose } = usePromptContext();
-  const [zapModal, setZapModal] = useState(false);
+  const { color } = useThemeContext();
   const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
-  const [pin, setPin] = useState<string | null>(null);
-  const [hasSeed, setHasSeed] = useState(false);
-  const init = async () => {
-    const pinHash = await secureStore.get(SECURESTORE_KEY);
-    const seed = await store.get(STORE_KEYS.hasSeed);
-    setPin(pinHash === null ? "" : pinHash);
-    setHasSeed(!!seed);
-  };
-
-  useEffect(() => {
-    void init();
-  }, []);
 
   const handleReset = async () => {
     try {
@@ -87,30 +73,25 @@ export default function Settings({ navigation }: TSettingsPageProps) {
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
           <MenuItem
             header={t("preferences")}
-            txt={t("Display")}
+            txt={t("display")}
             icon={<PaletteIcon color={color.TEXT} />}
             onPress={() => navigation.navigate("Display settings")}
           />
           <MenuItem
-            txt={t("Language")}
+            txt={t("language")}
             icon={<LanguageIcon color={color.TEXT} />}
             onPress={() => navigation.navigate("Language settings")}
-          />
-          <MenuItem
-            txt={t("Advanced")}
-            icon={<SettingsIcon color={color.TEXT} />}
-            onPress={() => navigation.navigate("Advanced settings")}
           />
         </View>
         {/* SECURITY */}
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
           <MenuItem
-            txt={"View Mnemonic"}
+            txt={t("viewMnemonic")}
             icon={<KeyIcon color={color.TEXT} />}
             onPress={() => navigation.navigate("View mnemonic")}
           />
           <MenuItem
-            txt={"Restore"}
+            txt={t("restore")}
             icon={<LockIcon color={color.TEXT} />}
             onPress={() =>
               navigation.navigate("Restore", { screen: "RecoverMints" })
@@ -121,11 +102,9 @@ export default function Settings({ navigation }: TSettingsPageProps) {
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
           <MenuItem
             header={t("about")}
-            txt={t("Github")}
+            txt={t("github")}
             icon={<GithubIcon color={color.TEXT} />}
-            onPress={() => {
-              setZapModal(true);
-            }}
+            onPress={() => {}}
           />
         </View>
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
@@ -137,8 +116,8 @@ export default function Settings({ navigation }: TSettingsPageProps) {
               confirmSheetRef.current?.open({
                 header: t("resetQ"),
                 txt: t("delHistoryTxt"),
-                confirmTxt: t("yes"),
-                cancelTxt: t("no"),
+                confirmTxt: t("confirmReset"),
+                cancelTxt: t("back"),
                 onConfirm: () => void handleReset(),
                 onCancel: () => {},
               })
