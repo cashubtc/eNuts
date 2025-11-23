@@ -176,11 +176,12 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       withBackBtn
       handlePress={() => navigation.goBack()}
     >
-      <View style={{ flex: 1 }}>
+      <View>
         <TxtInput
           innerRef={inputRef}
           keyboardType="email-address"
           autoCapitalize="none"
+          autoCorrect={false}
           placeholder={t("invoiceOrLnAddress")}
           value={input}
           onChangeText={(text) => {
