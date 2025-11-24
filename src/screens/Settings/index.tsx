@@ -86,6 +86,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
         {/* SECURITY */}
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
           <MenuItem
+            header={t("restore")}
             txt={t("viewMnemonic")}
             icon={<KeyIcon color={color.TEXT} />}
             onPress={() => navigation.navigate("View mnemonic")}
@@ -125,11 +126,6 @@ export default function Settings({ navigation }: TSettingsPageProps) {
           />
         </View>
         <Txt txt={appVersion} bold center />
-        <Txt
-          txt={"No geese were harmed in the making of this software 🪿"}
-          center
-          styles={[{ marginBottom: s(100), fontSize: s(12) }]}
-        />
       </ScrollView>
       <ConfirmBottomSheet ref={confirmSheetRef} />
     </Screen>
