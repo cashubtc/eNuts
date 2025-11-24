@@ -60,7 +60,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
-  const { highlight } = useThemeContext();
+  const { color, highlight } = useThemeContext();
   const { loading } = useLoading();
   const [input, setInput] = useState(invoice || "");
 
@@ -177,7 +177,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       screenName={t("cashOut")}
       withBackBtn
       handlePress={() => navigation.goBack()}
-      withPadding={false}
+      withPadding={true}
       withBottomInset={false}
       withKeyboard={true}
       rightAction={
@@ -220,8 +220,8 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
           <Button
             txt={t("paste")}
             onPress={() => void handlePaste()}
-            outlined
-            icon={<CopyIcon color={hi[highlight]} />}
+            ghost
+            icon={<CopyIcon color={color.TEXT} />}
           />
           <Button
             disabled={loading || !input.length}
@@ -253,14 +253,11 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 
 const styles = ScaledSheet.create({
   contentContainer: {
-    gap: "16@vs",
-    paddingHorizontal: "20@s",
-    paddingTop: "16@vs",
+    gap: "8@vs",
   },
   actionWrap: {
     flex: 1,
     width: "100%",
     justifyContent: "flex-end",
-    paddingHorizontal: "20@s",
   },
 });
