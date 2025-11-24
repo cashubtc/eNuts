@@ -17,7 +17,7 @@ import {
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
 import type { THistoryEntryPageProps } from "@model/nav";
-import TopNav from "@nav/TopNav";
+import Screen from "@comps/Screen";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals, mainColors } from "@styles";
@@ -117,12 +117,11 @@ export default function HistoryEntryDetails({
   };
 
   return (
-    <View style={[globals(color).container, styles.container]}>
-      <TopNav
-        screenName={t("details")}
-        withBackBtn
-        handlePress={() => navigation.goBack()}
-      />
+    <Screen
+      screenName={t("details")}
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+    >
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.overview}>
           <Txt
@@ -237,14 +236,11 @@ export default function HistoryEntryDetails({
           </>
         )}
       </ScrollView>
-    </View>
+    </Screen>
   );
 }
 
 const styles = ScaledSheet.create({
-  container: {
-    paddingTop: "90@vs",
-  },
   scrollContainer: {
     flex: 1,
   },

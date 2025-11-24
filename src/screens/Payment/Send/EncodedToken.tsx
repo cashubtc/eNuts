@@ -5,7 +5,7 @@ import { CopyIcon, ShareIcon } from "@comps/Icons";
 import QR from "@comps/QR";
 import Txt from "@comps/Txt";
 import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from "@model/nav";
-import TopNav from "@nav/TopNav";
+import Screen from "@comps/Screen";
 import { preventBack } from "@nav/utils";
 import { isIOS } from "@src/consts";
 import { useThemeContext } from "@src/context/Theme";
@@ -47,21 +47,18 @@ export default function EncodedTokenPage({
   }, [navigation]);
 
   return (
-    <View
-      style={[
-        globals(color).container,
-        styles.container,
-        { paddingBottom: isIOS ? vs(50) : vs(20) },
-      ]}
+    <Screen
+      withBackBtn={!spent}
+      screenName={!spent ? `${t("newToken")}  🥜🐿️` : undefined}
+      handlePress={() => navigation.navigate("dashboard")}
     >
-      {!spent && (
-        <TopNav
-          withBackBtn
-          screenName={`${t("newToken")}  🥜🐿️`}
-          handlePress={() => navigation.navigate("dashboard")}
-        />
-      )}
-      {spent ? (
+      <View
+        style={[
+          styles.container,
+          { paddingBottom: isIOS ? vs(50) : vs(20) },
+        ]}
+      >
+        {spent ? (
         <>
           <View />
           <View>
@@ -147,14 +144,15 @@ export default function EncodedTokenPage({
             />
           </View>
         </>
-      )}
-    </View>
+        )}
+      </View>
+    </Screen>
   );
 }
 
 const styles = ScaledSheet.create({
   container: {
-    paddingTop: 0,
+    flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",

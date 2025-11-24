@@ -3,7 +3,7 @@ import Card from "@comps/Card";
 import Empty from "@comps/Empty";
 import { ChevronRightIcon, PlusIcon } from "@comps/Icons";
 import Txt from "@comps/Txt";
-import TopNav from "@nav/TopNav";
+import Screen from "@comps/Screen";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
@@ -25,110 +25,113 @@ export default function MintHomeScreen({ navigation }: any) {
   const { hidden } = usePrivacyContext();
 
   return (
-    <View style={[globals(color).container, styles.container]}>
-      <TopNav
-        screenName="Mints"
-        withBackBtn
-        handlePress={() => navigation.goBack()}
-      />
-      {knownMints.length > 0 ? (
-        <View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
-          {/* Mints list */}
-          <ScrollView alwaysBounceVertical={false}>
-            {knownMints.map((m, i) => {
-              const displayName = m.mintInfo.name || formatMintUrl(m.mintUrl);
-              const displayBalance = hidden.balance
-                ? "****"
-                : formatSatStr(m.balance, "compact");
+    <Screen
+      screenName="Mints"
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+    >
+      <View style={styles.container}>
+        {knownMints.length > 0 ? (
+          <View
+            style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}
+          >
+            {/* Mints list */}
+            <ScrollView alwaysBounceVertical={false}>
+              {knownMints.map((m, i) => {
+                const displayName = m.mintInfo.name || formatMintUrl(m.mintUrl);
+                const displayBalance = hidden.balance
+                  ? "****"
+                  : formatSatStr(m.balance, "compact");
 
-              return (
-                <TouchableOpacity
-                  key={m.mintUrl}
-                  onPress={() => {
-                    navigation.navigate("MintSettings", {
-                      mintUrl: m.mintUrl,
-                    });
-                  }}
-                  activeOpacity={0.7}
-                  style={{
-                    marginBottom: i < knownMints.length - 1 ? s(12) : 0,
-                  }}
-                >
-                  <Card variant="base" style={styles.cardContent}>
-                    <View style={styles.mintContainer}>
-                      {/* Left side: Mint icon (if available) */}
-                      {m.mintInfo.icon_url && (
-                        <View style={styles.iconContainer}>
-                          <Image
-                            source={{ uri: m.mintInfo.icon_url }}
-                            style={styles.icon}
-                            contentFit="cover"
-                            transition={200}
+                return (
+                  <TouchableOpacity
+                    key={m.mintUrl}
+                    onPress={() => {
+                      navigation.navigate("MintSettings", {
+                        mintUrl: m.mintUrl,
+                      });
+                    }}
+                    activeOpacity={0.7}
+                    style={{
+                      marginBottom: i < knownMints.length - 1 ? s(12) : 0,
+                    }}
+                  >
+                    <Card variant="base" style={styles.cardContent}>
+                      <View style={styles.mintContainer}>
+                        {/* Left side: Mint icon (if available) */}
+                        {m.mintInfo.icon_url && (
+                          <View style={styles.iconContainer}>
+                            <Image
+                              source={{ uri: m.mintInfo.icon_url }}
+                              style={styles.icon}
+                              contentFit="cover"
+                              transition={200}
+                            />
+                          </View>
+                        )}
+
+                        {/* Center: Mint name and balance */}
+                        <View style={styles.infoContainer}>
+                          <Txt
+                            txt={displayName}
+                            bold
+                            styles={[{ color: color.TEXT }]}
+                          />
+                          <Txt
+                            txt={displayBalance}
+                            styles={[
+                              {
+                                color: color.TEXT_SECONDARY,
+                                fontSize: s(12),
+                                marginTop: vs(2),
+                              },
+                            ]}
                           />
                         </View>
-                      )}
 
-                      {/* Center: Mint name and balance */}
-                      <View style={styles.infoContainer}>
-                        <Txt
-                          txt={displayName}
-                          bold
-                          styles={[{ color: color.TEXT }]}
-                        />
-                        <Txt
-                          txt={displayBalance}
-                          styles={[
-                            {
-                              color: color.TEXT_SECONDARY,
-                              fontSize: s(12),
-                              marginTop: vs(2),
-                            },
-                          ]}
-                        />
+                        {/* Right side: Chevron icon */}
+                        <View style={styles.chevronContainer}>
+                          <ChevronRightIcon color={color.TEXT} />
+                        </View>
                       </View>
-
-                      {/* Right side: Chevron icon */}
-                      <View style={styles.chevronContainer}>
-                        <ChevronRightIcon color={color.TEXT} />
-                      </View>
-                    </View>
-                  </Card>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
-      ) : (
-        <View style={styles.noMintContainer}>
-          <Empty txt={t("noMint")} />
-          <View style={styles.noMintBottomSection}>
-            <Button
-              txt={t("addNewMint", { ns: NS.mints })}
+                    </Card>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+        ) : (
+          <View style={styles.noMintContainer}>
+            <Empty txt={t("noMint")} />
+            <View style={styles.noMintBottomSection}>
+              <Button
+                txt={t("addNewMint", { ns: NS.mints })}
+                onPress={() => {
+                  navigation.navigate("Mint", { screen: "MintAdd" });
+                }}
+              />
+            </View>
+          </View>
+        )}
+        {/* add new mint button */}
+        {knownMints.length > 0 && (
+          <View style={[styles.newMint, { marginBottom: insets.bottom }]}>
+            <IconBtn
+              icon={
+                <PlusIcon
+                  width={s(30)}
+                  height={s(30)}
+                  color={getColor(highlight, color)}
+                />
+              }
               onPress={() => {
-                navigation.navigate("Mint", { screen: "MintAdd" });
+                navigation.navigate("MintAdd");
               }}
             />
           </View>
-        </View>
-      )}
-      {/* add new mint button */}
-      {knownMints.length > 0 && (
-        <View style={[styles.newMint, { marginBottom: insets.bottom }]}>
-          <IconBtn
-            icon={
-              <PlusIcon
-                width={s(30)}
-                height={s(30)}
-                color={getColor(highlight, color)}
-              />
-            }
-            onPress={() => {
-              navigation.navigate("MintAdd");
-            }}
-          />
-        </View>
-      )}
-    </View>
+        )}
+      </View>
+    </Screen>
   );
 }
 

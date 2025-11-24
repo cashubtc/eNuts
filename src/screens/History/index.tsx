@@ -1,7 +1,7 @@
 import Empty from "@comps/Empty";
 import { isIOS } from "@consts";
 import type { THistoryPageProps } from "@model/nav";
-import TopNav from "@nav/TopNav";
+import Screen from "@comps/Screen";
 import { FlashList } from "@shopify/flash-list";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
@@ -47,19 +47,13 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
   };
 
   return (
-    <View
-      style={[
-        globals(color).container,
-        styles.container,
-        { paddingBottom: isIOS ? insets.bottom : 0 },
-      ]}
+    <Screen
+      screenName={t("history", { ns: NS.topNav })}
+      withBackBtn
+      handlePress={() => navigation.goBack()}
     >
-      <TopNav
-        screenName={t("history", { ns: NS.topNav })}
-        withBackBtn
-        handlePress={() => navigation.goBack()}
-      />
-      <View style={styles.listContainer}>
+      <View style={styles.container}>
+        <View style={styles.listContainer}>
         {/* History list with infinite scroll */}
         <FlashList
           data={history}
@@ -82,13 +76,15 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
           onRefresh={() => void refresh()}
           refreshing={isFetching && history.length === 0}
         />
+        </View>
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = ScaledSheet.create({
   container: {
+    flex: 1,
     alignItems: "center",
   },
   listContainer: {

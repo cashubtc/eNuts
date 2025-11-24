@@ -2,7 +2,6 @@ import Screen from "@comps/Screen";
 import Progress from "@comps/Progress";
 import useScanResult from "@src/screens/QRScan/hooks/useScanResult";
 import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
-import TopNav from "@nav/TopNav";
 import { usePromptContext } from "@src/context/Prompt";
 import { QRScannerScreenProps } from "@src/nav/navTypes";
 import { CameraView, ScanningResult, useCameraPermissions } from "expo-camera";
@@ -110,14 +109,12 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.topNavOverlay}>
-        <TopNav
-          screenName="QR Scanner"
-          withBackBtn
-          handlePress={() => navigation.goBack()}
-        />
-      </View>
+    <Screen
+      screenName="QR Scanner"
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+      withPadding={false}
+    >
       <View style={styles.cameraContainer}>
         <CameraView
           style={styles.camera}
@@ -147,16 +144,13 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
           </View>
         )}
       </View>
-    </View>
+    </Screen>
   );
 }
 
 export default QrScannerScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   message: {
     textAlign: "center",
     paddingBottom: 10,
@@ -166,14 +160,6 @@ const styles = StyleSheet.create({
   },
   cameraContainer: {
     flex: 1,
-  },
-  topNavOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    elevation: 10,
   },
   overlay: {
     position: "absolute",

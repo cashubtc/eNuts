@@ -4,7 +4,6 @@ import Loading from "@comps/Loading";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
-import { isIOS } from "@consts";
 import type { RecoverScreenProps } from "@src/nav/navTypes";
 import { NS } from "@src/i18n";
 import { useKnownMints } from "@src/context/KnownMints";
@@ -12,7 +11,7 @@ import { seedService } from "@src/services/SeedService";
 import { getStrFromClipboard } from "@util";
 import { createRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { KeyboardAvoidingView, type TextInput, View } from "react-native";
+import { type TextInput, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 
 export default function RecoverScreen({ navigation }: RecoverScreenProps) {
@@ -56,6 +55,7 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
       screenName={t("walletRecovery")}
       withBackBtn
       handlePress={() => navigation.goBack()}
+      withKeyboard={true}
     >
       <View style={styles.container}>
         <View style={{ paddingHorizontal: s(8) }}>
@@ -81,18 +81,14 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
             value={input}
           />
         </View>
-        <KeyboardAvoidingView
-          behavior={isIOS ? "padding" : undefined}
-          style={styles.actionWrap}
-        >
+        <View style={styles.actionWrap}>
           <Button
             disabled={!input.length}
             txt={t("confirm")}
             onPress={() => void handleBtnPress()}
             icon={loading ? <Loading size={20} /> : undefined}
           />
-          {isIOS && <View style={styles.placeholder} />}
-        </KeyboardAvoidingView>
+        </View>
       </View>
     </Screen>
   );
@@ -125,10 +121,7 @@ const styles = ScaledSheet.create({
     paddingBottom: 0,
   },
   actionWrap: {
-    marginBottom: isIOS ? "0@s" : "20@s",
-  },
-  placeholder: {
-    height: "100@vs",
+    marginBottom: "20@s",
   },
   multilineInput: {
     minHeight: "80@s",

@@ -6,7 +6,7 @@ import Txt from "@comps/Txt";
 import { isIOS } from "@consts";
 import { l } from "@log";
 import type { TMintInvoicePageProps } from "@model/nav";
-import TopNav from "@nav/TopNav";
+import Screen from "@comps/Screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useManager } from "@src/context/Manager";
 import { useThemeContext } from "@src/context/Theme";
@@ -43,15 +43,15 @@ export default function InvoiceScreen({
   );
 
   return (
-    <View style={[globals(color).container, styles.container]}>
-      <TopNav
-        screenName={t("payInvoice", { ns: NS.wallet })}
-        txt={t("cancel")}
-        handlePress={() => {
-          navigation.navigate("dashboard");
-        }}
-      />
-      <View style={styles.content}>
+    <Screen
+      screenName={t("payInvoice", { ns: NS.wallet })}
+      withCancelBtn
+      handlePress={() => {
+        navigation.navigate("dashboard");
+      }}
+    >
+      <View style={styles.container}>
+        <View style={styles.content}>
         <QR
           size={vs(250)}
           value={quote.request}
@@ -75,13 +75,15 @@ export default function InvoiceScreen({
           outlined
         />
         {isIOS && <View style={styles.placeholder} />}
+        </View>
       </View>
-    </View>
+    </Screen>
   );
 }
 
 const styles = ScaledSheet.create({
   container: {
+    flex: 1,
     paddingHorizontal: "20@s",
     paddingBottom: "20@s",
   },

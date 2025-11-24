@@ -4,7 +4,6 @@ import { ChevronRightIcon } from "@comps/Icons";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
-import { isIOS } from "@consts";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { mainColors } from "@styles";
@@ -17,7 +16,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useManager } from "@src/context/Manager";
 import { MintSelectAmountProps } from "@src/nav/navTypes";
 import MintSelector from "@comps/MintSelector";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeContext } from "@src/context/Theme";
 
 export default function MintSelectAmountScreen({
@@ -27,6 +26,7 @@ export default function MintSelectAmountScreen({
   const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
   const manager = useManager();
+  const insets = useSafeAreaInsets();
   const amountInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
 
@@ -109,13 +109,13 @@ export default function MintSelectAmountScreen({
         screenName={t("selectAmount", { ns: NS.common })}
         withBackBtn
         handlePress={handleBack}
+        withPadding={true}
       >
         <View
           style={{
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            padding: 20,
           }}
         >
           <Txt txt={t("noMintsWithBalance", { ns: NS.common })} />
@@ -129,6 +129,9 @@ export default function MintSelectAmountScreen({
       screenName={t(screenName, { ns: NS.common })}
       withBackBtn
       handlePress={handleBack}
+      withPadding={false}
+      withBottomInset={false}
+      withKeyboard={true}
     >
       <AmountInput
         ref={amountInputRef}
@@ -142,10 +145,7 @@ export default function MintSelectAmountScreen({
 
       {/* Mint Selection Button - More seamless design */}
 
-      <KeyboardAvoidingView
-        behavior={isIOS ? "padding" : undefined}
-        style={styles.actionWrap}
-      >
+      <View style={styles.actionWrap}>
         <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
           <MintSelector
             mint={selectedMint!}
@@ -157,7 +157,7 @@ export default function MintSelectAmountScreen({
             icon={<ChevronRightIcon color={mainColors.WHITE} />}
           />
         </View>
-      </KeyboardAvoidingView>
+      </View>
 
       <Suspense fallback={<View />}>
         <MintSelectionSheet
@@ -225,5 +225,6 @@ const styles = ScaledSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "flex-end",
+    paddingHorizontal: "20@s",
   },
 });

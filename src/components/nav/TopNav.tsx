@@ -52,12 +52,7 @@ export default function TopNav({
   const { color, highlight } = useThemeContext();
   const insets = useSafeAreaInsets();
   return (
-    <View
-      style={[
-        styles.topNav,
-        { backgroundColor: color.BACKGROUND, paddingTop: insets.top + 5 },
-      ]}
-    >
+    <View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>
       {/* Placeholder */}
       {!screenName && !withBackBtn && <View />}
       <View style={styles.wrap}>
@@ -107,21 +102,16 @@ export default function TopNav({
 
 const styles = ScaledSheet.create({
   topNav: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: "45@vs",
     paddingBottom: "10@vs",
+    paddingHorizontal: "8@s",
   },
   wrap: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: "20@s",
+    paddingLeft: "12@s",
   },
   backiconWrap: {
     paddingRight: "20@s",

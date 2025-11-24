@@ -4,7 +4,6 @@ import { ChevronRightIcon } from "@comps/Icons";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
-import { isIOS } from "@consts";
 import type { TSelectAmountPageProps } from "@model/nav";
 import { useThemeContext } from "@src/context/Theme";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
@@ -16,12 +15,12 @@ import { useTranslation } from "react-i18next";
 import { Animated, TextInput, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManager } from "@src/context/Manager";
 import { SendSelectAmountProps } from "@src/nav/navTypes";
 import { useSend } from "coco-cashu-react";
 import { usePromptContext } from "@src/context/Prompt";
 import MintSelector from "@comps/MintSelector";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 export default function SendSelectAmountScreen({
   navigation,
@@ -31,6 +30,7 @@ export default function SendSelectAmountScreen({
   const { anim, shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
   const manager = useManager();
+  const insets = useSafeAreaInsets();
   // Use useRef instead of createRef to avoid recreation on every render
   const numericInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
@@ -154,6 +154,9 @@ export default function SendSelectAmountScreen({
       screenName={t(screenName, { ns: NS.common })}
       withBackBtn
       handlePress={handleBack}
+      withPadding={false}
+      withBottomInset={false}
+      withKeyboard={true}
     >
       <View style={[styles.overviewWrap, { marginTop: vs(20) }]}>
         <Animated.View
@@ -188,10 +191,7 @@ export default function SendSelectAmountScreen({
       </View>
 
       {/* Mint Selection and Memo Input */}
-      <KeyboardAvoidingView
-        behavior={isIOS ? "padding" : undefined}
-        style={styles.actionWrap}
-      >
+      <View style={styles.actionWrap}>
         <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
           <MintSelector
             mint={selectedMint!}
@@ -204,7 +204,7 @@ export default function SendSelectAmountScreen({
             disabled={isSending}
           />
         </View>
-      </KeyboardAvoidingView>
+      </View>
 
       <Suspense fallback={<View />}>
         <MintSelectionSheet
@@ -302,6 +302,7 @@ const styles = ScaledSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "flex-end",
+    paddingHorizontal: "20@s",
   },
   memoInput: {
     paddingHorizontal: "18@s",

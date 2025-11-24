@@ -4,7 +4,7 @@ import Txt from "@comps/Txt";
 import { _testmintUrl } from "@consts";
 import type { IProofSelection } from "@model";
 import type { TCoinSelectionPageProps } from "@model/nav";
-import TopNav from "@nav/TopNav";
+import Screen from "@comps/Screen";
 // Helper functions to replace nostr utilities
 function truncateStr(str: string, len: number): string {
   if (str.length <= len) return str;
@@ -111,31 +111,23 @@ export default function CoinSelectionScreen({
   };
 
   return (
-    <View style={[globals(color).container, styles.container]}>
-      <TopNav
-        screenName={t("paymentOverview", { ns: NS.mints })}
-        cancel
-        handleCancel={() => {
+    <Screen
+      screenName={t("paymentOverview", { ns: NS.mints })}
+      withCancelBtn
+      handlePress={() => {
+        const routes = navigation.getState()?.routes;
+        const prevRoute = routes[routes.length - 2];
+        // if user comes from processing screen, navigate back to dashboard
+        // @ts-expect-error navigation type is not complete
+        if (prevRoute?.name === "processing" && prevRoute.params?.isZap) {
           // clear the deep link url if user cancels
-          if (url.length) {
-            clearUrl();
-          }
-          navigation.navigate("dashboard");
-        }}
-        withBackBtn
-        handlePress={() => {
-          const routes = navigation.getState()?.routes;
-          const prevRoute = routes[routes.length - 2];
-          // if user comes from processing screen, navigate back to dashboard
-          // @ts-expect-error navigation type is not complete
-          if (prevRoute?.name === "processing" && prevRoute.params?.isZap) {
-            // clear the deep link url if user cancels
-            clearUrl();
-            return navigation.navigate("dashboard");
-          }
-          navigation.goBack();
-        }}
-      />
+          clearUrl();
+          return navigation.navigate("dashboard");
+        }
+        navigation.goBack();
+      }}
+      withBackBtn
+    >
       <ScrollView alwaysBounceVertical={false} style={{ marginBottom: s(90) }}>
         <View style={globals(color).wrapContainer}>
           <OverviewRow txt1={t("paymentType")} txt2={t(getPaymentType())} />
@@ -193,7 +185,7 @@ export default function CoinSelectionScreen({
         <SwipeButton txt={t(getBtnTxt())} onToggle={submitPaymentReq} />
       </View>
       <TrustMintBottomSheet ref={trustMintRef} />
-    </View>
+    </Screen>
   );
 }
 

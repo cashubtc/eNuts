@@ -35,7 +35,7 @@ import { useTranslation } from "react-i18next";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import { ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { useManager } from "@src/context/Manager";
@@ -48,6 +48,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const { invoice } = route.params || {};
   const { knownMints } = useKnownMints();
   const manager = useManager();
+  const insets = useSafeAreaInsets();
 
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
     knownMints.length > 0 ? knownMints[0] : null
@@ -156,13 +157,13 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
         mintBalance={0}
         disableMintBalance
         withCancelBtn
+        withPadding={true}
       >
         <View
           style={{
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            padding: 20,
           }}
         >
           <Txt txt={t("noMintsWithBalance", { ns: NS.common })} />
@@ -176,6 +177,9 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       screenName={t("cashOut")}
       withBackBtn
       handlePress={() => navigation.goBack()}
+      withPadding={false}
+      withBottomInset={false}
+      withKeyboard={true}
       rightAction={
         <TouchableOpacity
           onPress={handleScanQR}
@@ -211,10 +215,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       </View>
 
       {/* Paste and Continue Buttons at bottom */}
-      <KeyboardAvoidingView
-        behavior={isIOS ? "padding" : undefined}
-        style={styles.actionWrap}
-      >
+      <View style={styles.actionWrap}>
         <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
           <Button
             txt={t("paste")}
@@ -235,7 +236,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
             }
           />
         </View>
-      </KeyboardAvoidingView>
+      </View>
 
       {/* Mint Selection Sheet */}
       <Suspense fallback={<View />}>
@@ -253,10 +254,13 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 const styles = ScaledSheet.create({
   contentContainer: {
     gap: "16@vs",
+    paddingHorizontal: "20@s",
+    paddingTop: "16@vs",
   },
   actionWrap: {
     flex: 1,
     width: "100%",
     justifyContent: "flex-end",
+    paddingHorizontal: "20@s",
   },
 });

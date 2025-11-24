@@ -14,12 +14,10 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
 import { s, vs } from "react-native-size-matters";
-import TopNav from "@nav/TopNav";
-import { isIOS } from "@consts";
+import Screen from "@comps/Screen";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import { useTranslation } from "react-i18next";
@@ -146,130 +144,124 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
   };
 
   return (
-    <View style={[globals(color).container]}>
-      <TopNav
-        screenName="Add Mint"
-        withBackBtn
-        handlePress={() => navigation.goBack()}
-      />
-      <KeyboardAvoidingView
-        behavior={isIOS ? "padding" : undefined}
-        style={{ flex: 1 }}
+    <Screen
+      screenName="Add Mint"
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+      withKeyboard={true}
+    >
+      <View
+        style={{
+          paddingHorizontal: s(16),
+          paddingBottom: vs(12),
+          backgroundColor: color.BACKGROUND,
+          borderBottomWidth: 1,
+          borderBottomColor: color.BORDER || color.INPUT_BG,
+        }}
       >
         <View
           style={{
-            paddingHorizontal: s(16),
-            paddingBottom: vs(12),
-            backgroundColor: color.BACKGROUND,
-            borderBottomWidth: 1,
-            borderBottomColor: color.BORDER || color.INPUT_BG,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: s(12),
           }}
         >
+          <View style={{ flex: 1 }}>
+            <TxtInput
+              onChangeText={setInputUrl}
+              autoCorrect={false}
+              value={inputUrl}
+              placeholder="Enter mint URL or select from recommendations below"
+              autoCapitalize="none"
+            />
+          </View>
+          <View>
+            <IconBtn
+              icon={<PlusIcon color="white" width={s(20)} height={s(20)} />}
+              onPress={handleConfirmSelection}
+              disabled={!inputUrl.trim()}
+              size={s(48)}
+              testId="confirm-mint-button"
+            />
+          </View>
+        </View>
+      </View>
+
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingHorizontal: s(16),
+          paddingTop: vs(16),
+          paddingBottom: vs(20),
+        }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {isLoading && (
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
-              gap: s(12),
+              justifyContent: "center",
+              paddingVertical: vs(20),
             }}
           >
-            <View style={{ flex: 1 }}>
-              <TxtInput
-                onChangeText={setInputUrl}
-                autoCorrect={false}
-                value={inputUrl}
-                placeholder="Enter mint URL or select from recommendations below"
-                autoCapitalize="none"
-              />
-            </View>
-            <View>
-              <IconBtn
-                icon={<PlusIcon color="white" width={s(20)} height={s(20)} />}
-                onPress={handleConfirmSelection}
-                disabled={!inputUrl.trim()}
-                size={s(48)}
-                testId="confirm-mint-button"
-              />
-            </View>
+            <ActivityIndicator
+              size="small"
+              color={hi[highlight as keyof typeof hi]}
+            />
+            <Txt
+              txt="Loading recommendations..."
+              styles={[{ marginLeft: s(8), color: color.TEXT_SECONDARY }]}
+            />
           </View>
-        </View>
+        )}
 
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            paddingHorizontal: s(16),
-            paddingTop: vs(16),
-            paddingBottom: vs(20),
-          }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {isLoading && (
-            <View
+        {isError && (
+          <View style={{ paddingVertical: vs(20), alignItems: "center" }}>
+            <Txt
+              txt="Failed to load recommendations"
+              styles={[{ color: color.TEXT_SECONDARY }]}
+            />
+            <Text
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                paddingVertical: vs(20),
+                color: color.TEXT_SECONDARY,
+                fontSize: s(12),
+                textAlign: "center",
+                marginTop: vs(4),
               }}
             >
-              <ActivityIndicator
-                size="small"
-                color={hi[highlight as keyof typeof hi]}
-              />
-              <Txt
-                txt="Loading recommendations..."
-                styles={[{ marginLeft: s(8), color: color.TEXT_SECONDARY }]}
-              />
-            </View>
-          )}
+              Something went wrong fetching recommendations
+            </Text>
+          </View>
+        )}
 
-          {isError && (
-            <View style={{ paddingVertical: vs(20), alignItems: "center" }}>
-              <Txt
-                txt="Failed to load recommendations"
-                styles={[{ color: color.TEXT_SECONDARY }]}
+        {!isLoading && recommendations.length > 0 && (
+          <View>
+            <Txt
+              txt="Recommended Mints"
+              bold
+              styles={[
+                {
+                  color: color.TEXT,
+                  marginBottom: vs(12),
+                  fontSize: s(16),
+                },
+              ]}
+            />
+            {recommendations.map((mint) => (
+              <RecommendedMintItem
+                key={mint.id}
+                mint={mint}
+                onPress={handleMintSelect}
+                color={color}
+                highlight={highlight}
               />
-              <Text
-                style={{
-                  color: color.TEXT_SECONDARY,
-                  fontSize: s(12),
-                  textAlign: "center",
-                  marginTop: vs(4),
-                }}
-              >
-                Something went wrong fetching recommendations
-              </Text>
-            </View>
-          )}
-
-          {!isLoading && recommendations.length > 0 && (
-            <View>
-              <Txt
-                txt="Recommended Mints"
-                bold
-                styles={[
-                  {
-                    color: color.TEXT,
-                    marginBottom: vs(12),
-                    fontSize: s(16),
-                  },
-                ]}
-              />
-              {recommendations.map((mint) => (
-                <RecommendedMintItem
-                  key={mint.id}
-                  mint={mint}
-                  onPress={handleMintSelect}
-                  color={color}
-                  highlight={highlight}
-                />
-              ))}
-            </View>
-          )}
-        </ScrollView>
-        {isIOS && <View style={{ height: vs(20) }} />}
-      </KeyboardAvoidingView>
-    </View>
+            ))}
+          </View>
+        )}
+      </ScrollView>
+    </Screen>
   );
 }
 

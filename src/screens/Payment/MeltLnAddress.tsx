@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { TextInput, View } from "react-native";
 import { ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AmountInput, { useShakeAnimation } from "@comps/AmountInput";
 import Button from "@comps/Button";
 import Card from "@comps/Card";
@@ -14,7 +14,6 @@ import MintSelector from "@comps/MintSelector";
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
-import { isIOS } from "@consts";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { useManager } from "@src/context/Manager";
 import { usePromptContext } from "@src/context/Prompt";
@@ -41,6 +40,7 @@ export default function MeltLnAddressScreen({
   const { openPromptAutoClose } = usePromptContext();
   const { loading, startLoading, stopLoading } = useLoading();
   const { shake } = useShakeAnimation();
+  const insets = useSafeAreaInsets();
 
   const amountInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
@@ -137,13 +137,13 @@ export default function MeltLnAddressScreen({
         handlePress={handleBack}
         mintBalance={0}
         disableMintBalance
+        withPadding={true}
       >
         <View
           style={{
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            padding: 20,
           }}
         >
           <Txt txt={t("noMintsWithBalance", { ns: NS.common })} />
@@ -153,7 +153,14 @@ export default function MeltLnAddressScreen({
   }
 
   return (
-    <Screen screenName={t("cashOut")} withBackBtn handlePress={handleBack}>
+    <Screen
+      screenName={t("cashOut")}
+      withBackBtn
+      handlePress={handleBack}
+      withPadding={false}
+      withBottomInset={false}
+      withKeyboard={true}
+    >
       <AmountInput
         ref={amountInputRef}
         value={amountInput}
@@ -164,10 +171,7 @@ export default function MeltLnAddressScreen({
         testID="melt-amount-input"
       />
 
-      <KeyboardAvoidingView
-        behavior={isIOS ? "padding" : undefined}
-        style={styles.actionWrap}
-      >
+      <View style={styles.actionWrap}>
         <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
           <View style={styles.cardContainer}>
             <Card>
@@ -180,7 +184,7 @@ export default function MeltLnAddressScreen({
                   {metadata.minSendable && (
                     <View style={styles.rangeItem}>
                       <Txt
-                        txt={t("min", { ns: NS.common })}
+                        txt="Min"
                         styles={[
                           styles.rangeLabel,
                           { color: color.TEXT_SECONDARY },
@@ -195,7 +199,7 @@ export default function MeltLnAddressScreen({
                   {metadata.maxSendable && (
                     <View style={styles.rangeItem}>
                       <Txt
-                        txt={t("max", { ns: NS.common })}
+                        txt="Max"
                         styles={[
                           styles.rangeLabel,
                           { color: color.TEXT_SECONDARY },
@@ -228,7 +232,7 @@ export default function MeltLnAddressScreen({
             }
           />
         </View>
-      </KeyboardAvoidingView>
+      </View>
 
       <Suspense fallback={<View />}>
         <MintSelectionSheet
@@ -247,6 +251,7 @@ const styles = ScaledSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "flex-end",
+    paddingHorizontal: "20@s",
   },
   cardContainer: {
     width: "100%",

@@ -1,6 +1,5 @@
 import Button from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
-import TopNav from "@nav/TopNav";
 import { useThemeContext } from "@src/context/Theme";
 import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
@@ -52,14 +51,12 @@ export default function MeltConfirmationScreen({
   }
 
   return (
-    <Screen>
-      <TopNav
-        screenName={t("lnPayment")}
-        withBackBtn
-        handlePress={() => navigation.goBack()}
-        disableMintBalance
-      />
-
+    <Screen
+      screenName={t("lnPayment")}
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+      disableMintBalance
+    >
       <ScrollView
         alwaysBounceVertical={false}
         style={{ marginBottom: 90 }}
@@ -88,7 +85,6 @@ const styles = ScaledSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     paddingBottom: isIOS ? "50@vs" : "20@vs",
-    paddingTop: "90@vs",
   },
   pasteInputTxtWrap: {
     position: "absolute",
