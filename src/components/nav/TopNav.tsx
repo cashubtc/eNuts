@@ -1,13 +1,10 @@
-import { LeftArrow, ScanQRIcon, SearchIcon } from "@comps/Icons";
-import type { IPopupOptionProps } from "@comps/Popup";
+import { LeftArrow, SearchIcon } from "@comps/Icons";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi } from "@styles";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
-
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface TTopNavProps {
   screenName?: string;
@@ -25,7 +22,6 @@ interface TTopNavProps {
   mintBalance?: number;
   loading?: boolean;
   noIcons?: boolean;
-  historyOpts?: IPopupOptionProps[];
   rightAction?: React.ReactNode;
 }
 
@@ -33,24 +29,15 @@ export default function TopNav({
   screenName,
   withBackBtn,
   handlePress,
-
   showSearch,
   toggleSearch,
   cancel,
   handleCancel,
-  openProfile,
   txt,
-  mintBalance,
-  handleMintBalancePress,
-  disableMintBalance,
-  loading,
-  noIcons,
-  historyOpts,
   rightAction,
 }: TTopNavProps) {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
-  const insets = useSafeAreaInsets();
   return (
     <View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>
       {/* Placeholder */}

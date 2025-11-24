@@ -163,10 +163,11 @@ export default function MintSettingsScreen({ navigation, route }: any) {
             onPress={() => {
               confirmSheetRef.current?.open({
                 header: t("delMint", { ns: NS.mints }),
-                txt: t("delMintTxt", { ns: NS.mints }),
-                confirmTxt: t("confirm", { ns: NS.mints }),
-                cancelTxt: t("cancel", { ns: NS.mints }),
+                txt: t("delMintSure", { ns: NS.mints }),
+                confirmTxt: t("confirm", { ns: NS.common }),
+                cancelTxt: t("cancel", { ns: NS.common }),
                 onConfirm: () => {},
+                destructive: true,
               });
             }}
           />

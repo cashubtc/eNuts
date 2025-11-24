@@ -1,7 +1,6 @@
 import type { INavigatorProps, RootStackParamList } from "@model/nav";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "@screens/Dashboard";
-import MintInfoPage from "@screens/Mints/Info";
 import MintNavigator from "@src/nav/MintNavigator";
 import OnboardingScreen from "@screens/Onboarding";
 import ProcessingScreen from "@screens/Payment/Processing";
@@ -110,7 +109,6 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
           options={{ gestureEnabled: false }}
         />
         <Stack.Screen name="Mint" component={MintNavigator} />
-        <Stack.Screen name="mint info" component={MintInfoPage} />
         <Stack.Screen name="Restore" component={RestoreNavigator} />
         <Stack.Screen name="History" component={HistoryNavigator} />
       </Stack.Navigator>

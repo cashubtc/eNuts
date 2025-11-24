@@ -3,7 +3,7 @@ import Button from "@comps/Button";
 import { ChevronRightIcon } from "@comps/Icons";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
-const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
+import MintSelectionSheet from "@comps/MintSelectionSheet";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { mainColors } from "@styles";
@@ -16,8 +16,8 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useManager } from "@src/context/Manager";
 import { MintSelectAmountProps } from "@src/nav/navTypes";
 import MintSelector from "@comps/MintSelector";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeContext } from "@src/context/Theme";
+import useLoading from "@comps/hooks/Loading";
 
 export default function MintSelectAmountScreen({
   navigation,
@@ -25,8 +25,8 @@ export default function MintSelectAmountScreen({
   const { t } = useTranslation([NS.wallet]);
   const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
+  const { loading, startLoading, stopLoading } = useLoading();
   const manager = useManager();
-  const insets = useSafeAreaInsets();
   const amountInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
 
@@ -81,6 +81,8 @@ export default function MintSelectAmountScreen({
   }, []);
 
   const handleSubmit = useCallback(async () => {
+    startLoading();
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     if (!selectedMint) return;
     if (!amountValue || amountValue < 1) {
       vib(400);
@@ -92,14 +94,20 @@ export default function MintSelectAmountScreen({
       }, 500);
       return;
     }
-    const quote = await manager.quotes.createMintQuote(
-      selectedMint.mintUrl,
-      amountValue
-    );
-    return navigation.navigate("mintInvoice", {
-      mintUrl: selectedMint.mintUrl,
-      quote,
-    });
+    try {
+      const quote = await manager.quotes.createMintQuote(
+        selectedMint.mintUrl,
+        amountValue
+      );
+      return navigation.navigate("mintInvoice", {
+        mintUrl: selectedMint.mintUrl,
+        quote,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      stopLoading();
+    }
   }, [amountValue, selectedMint, manager, navigation, shake]);
 
   // Early return after all hooks
@@ -155,18 +163,17 @@ export default function MintSelectAmountScreen({
             txt={t("continue", { ns: NS.common })}
             onPress={handleSubmit}
             icon={<ChevronRightIcon color={mainColors.WHITE} />}
+            loading={loading}
           />
         </View>
       </View>
 
-      <Suspense fallback={<View />}>
-        <MintSelectionSheet
-          ref={mintSelectionSheetRef}
-          selectedMint={selectedMint!}
-          onMintSelect={handleMintSelect}
-          showZeroBalanceMints={true}
-        />
-      </Suspense>
+      <MintSelectionSheet
+        ref={mintSelectionSheetRef}
+        selectedMint={selectedMint!}
+        onMintSelect={handleMintSelect}
+        showZeroBalanceMints={true}
+      />
     </Screen>
   );
 }

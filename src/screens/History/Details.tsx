@@ -1,27 +1,12 @@
-import { IconBtn } from "@comps/Button";
 import Copy from "@comps/Copy";
-import {
-  BitcoinIcon,
-  CoinIcon,
-  ExclamationIcon,
-  IncomingArrowIcon,
-  OutgoingArrowIcon,
-  SwapIcon,
-  ZapIcon,
-  CheckmarkIcon,
-  ClockIcon,
-  EcashIcon,
-  ReceiveIcon,
-  SendIcon,
-} from "@comps/Icons";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
 import type { THistoryEntryPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, mainColors } from "@styles";
-import { formatInt, formatMintUrl, formatSatStr } from "@util";
+import { mainColors } from "@styles";
+import { formatMintUrl, formatSatStr } from "@util";
 import { getEncodedToken } from "@cashu/cashu-ts";
 
 const truncateStr = (str: string, maxLength: number) => {
@@ -29,9 +14,8 @@ const truncateStr = (str: string, maxLength: number) => {
   return str.substring(0, maxLength) + "...";
 };
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
-import { StatusBar } from "expo-status-bar";
+import { ScrollView, View } from "react-native";
+import { ScaledSheet } from "react-native-size-matters";
 
 export default function HistoryEntryDetails({
   navigation,

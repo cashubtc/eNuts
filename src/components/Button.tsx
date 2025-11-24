@@ -2,7 +2,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { globals, highlight as hi, mainColors } from "@styles";
 import { getColor } from "@styles/colors";
 import {
-  SafeAreaView,
+  View,
   type StyleProp,
   TouchableOpacity,
   type ViewStyle,
@@ -47,28 +47,34 @@ export default function Button({
       paddingHorizontal: s(14),
       paddingVertical: s(12),
       fontSize: s(13),
+      spinnerSize: 16,
     },
     medium: {
       paddingHorizontal: s(18),
       paddingVertical: s(18),
       fontSize: s(14),
+      spinnerSize: 18,
     },
     large: {
       paddingHorizontal: s(22),
       paddingVertical: s(20),
       fontSize: s(16),
+      spinnerSize: 20,
     },
   };
 
   const currentSize = sizeStyles[size];
 
+  // Automatically disable button when loading
+  const isDisabled = disabled || loading;
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <TouchableOpacity
         accessibilityRole="button"
         testID={`${txt}-modal-button`}
         activeOpacity={0.5}
-        disabled={disabled}
+        disabled={isDisabled}
         style={[
           styles.touchableOpacity,
           {
@@ -99,35 +105,47 @@ export default function Button({
                 paddingVertical: currentSize.paddingVertical,
               }
             : {},
-          disabled ? { opacity: 0.3 } : {},
+          isDisabled && !loading ? { opacity: 0.3 } : {},
+          loading ? { opacity: 0.7 } : {},
         ]}
         onPress={onPress}
       >
-        <Txt
-          txt={txt}
-          bold
-          center
-          styles={[
-            {
-              color: getColor(highlight, color),
-              fontSize: currentSize.fontSize,
-            },
-            filled || outlined || ghost ? { color: hi[highlight] } : {},
-            destructive && (outlined || ghost)
-              ? { color: mainColors.ERROR }
-              : destructive
-              ? { color: mainColors.WHITE }
-              : {},
-          ]}
-        />
-        {(loading || icon) && (
-          <SafeAreaView style={styles.iconContainer}>
-            {loading && <Loading color={getColor(highlight, color)} />}
-            {!loading ? icon : null}
-          </SafeAreaView>
+        {!loading && (
+          <Txt
+            txt={txt}
+            bold
+            center
+            styles={[
+              {
+                color: getColor(highlight, color),
+                fontSize: currentSize.fontSize,
+              },
+              filled || outlined || ghost ? { color: hi[highlight] } : {},
+              destructive && (outlined || ghost)
+                ? { color: mainColors.ERROR }
+                : destructive
+                ? { color: mainColors.WHITE }
+                : {},
+            ]}
+          />
         )}
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <Loading
+              size={currentSize.spinnerSize}
+              color={
+                filled || outlined || ghost
+                  ? hi[highlight]
+                  : destructive
+                  ? mainColors.WHITE
+                  : getColor(highlight, color)
+              }
+            />
+          </View>
+        )}
+        {!loading && icon && <View style={styles.iconContainer}>{icon}</View>}
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -150,7 +168,7 @@ export function IconBtn({
 }: IIconBtnProps) {
   const { color, highlight } = useThemeContext();
   return (
-    <SafeAreaView>
+    <View>
       <TouchableOpacity
         accessibilityRole="button"
         activeOpacity={0.5}
@@ -171,7 +189,7 @@ export function IconBtn({
       >
         {icon}
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -222,6 +240,10 @@ const styles = ScaledSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 50,
+  },
+  loadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
   },
   iconContainer: {
     position: "absolute",

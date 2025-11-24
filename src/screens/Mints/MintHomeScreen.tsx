@@ -113,14 +113,6 @@ export default function MintHomeScreen({ navigation }: any) {
         ) : (
           <View style={styles.noMintContainer}>
             <Empty txt={t("noMint")} />
-            <View style={styles.noMintBottomSection}>
-              <Button
-                txt={t("addNewMint", { ns: NS.mints })}
-                onPress={() => {
-                  navigation.navigate("Mint", { screen: "MintAdd" });
-                }}
-              />
-            </View>
           </View>
         )}
       </View>

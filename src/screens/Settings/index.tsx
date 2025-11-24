@@ -28,6 +28,7 @@ import ConfirmBottomSheet, {
 } from "@comps/modal/ConfirmBottomSheet";
 
 import MenuItem from "./MenuItem";
+import Loading from "@comps/Loading";
 
 export default function Settings({ navigation }: TSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
@@ -128,6 +129,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
         </View>
         <Txt txt={appVersion} bold center />
       </ScrollView>
+      <Loading size={20} />
       <ConfirmBottomSheet ref={confirmSheetRef} />
     </Screen>
   );
