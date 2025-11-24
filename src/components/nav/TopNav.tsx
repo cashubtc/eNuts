@@ -26,6 +26,7 @@ interface TTopNavProps {
   loading?: boolean;
   noIcons?: boolean;
   historyOpts?: IPopupOptionProps[];
+  rightAction?: React.ReactNode;
 }
 
 export default function TopNav({
@@ -45,6 +46,7 @@ export default function TopNav({
   loading,
   noIcons,
   historyOpts,
+  rightAction,
 }: TTopNavProps) {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
@@ -71,6 +73,7 @@ export default function TopNav({
         {screenName && <Text style={globals(color).navTxt}>{screenName}</Text>}
       </View>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
+        {rightAction}
         {showSearch && (
           <TouchableOpacity
             onPress={() => toggleSearch?.()}

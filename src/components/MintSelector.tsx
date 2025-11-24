@@ -8,7 +8,6 @@ import {
   type StyleProp,
 } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
-import { Image } from "expo-image";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { ChevronRightIcon } from "./Icons";
 import Txt from "./Txt";
@@ -19,6 +18,7 @@ interface IMintSelectorProps {
   onPress: (mint: KnownMintWithBalance) => void;
   variant?: "base" | "accent";
   style?: StyleProp<ViewStyle>;
+  label?: string;
 }
 
 export default function MintSelector({
@@ -26,6 +26,7 @@ export default function MintSelector({
   onPress,
   variant = "base",
   style,
+  label,
 }: IMintSelectorProps) {
   const { color } = useThemeContext();
   const { hidden } = usePrivacyContext();
@@ -42,20 +43,20 @@ export default function MintSelector({
       style={style}
     >
       <Card variant={variant} style={styles.cardContent}>
+        {label && (
+          <Txt
+            txt={label}
+            styles={[
+              {
+                color: color.TEXT_SECONDARY,
+                fontSize: s(12),
+                marginBottom: vs(8),
+              },
+            ]}
+          />
+        )}
         <View style={styles.container}>
-          {/* Left side: Mint icon (if available) */}
-          {mint.mintInfo.icon_url && (
-            <View style={styles.iconContainer}>
-              <Image
-                source={{ uri: mint.mintInfo.icon_url }}
-                style={styles.icon}
-                contentFit="cover"
-                transition={200}
-              />
-            </View>
-          )}
-
-          {/* Center: Mint name and balance */}
+          {/* Mint name and balance container */}
           <View style={styles.infoContainer}>
             <Txt txt={displayName} bold styles={[{ color: color.TEXT }]} />
             <Txt
@@ -64,13 +65,12 @@ export default function MintSelector({
                 {
                   color: color.TEXT_SECONDARY,
                   fontSize: s(12),
-                  marginTop: vs(2),
                 },
               ]}
             />
           </View>
 
-          {/* Right side: Chevron icon */}
+          {/* Chevron icon */}
           <View style={styles.chevronContainer}>
             <ChevronRightIcon color={color.TEXT} />
           </View>
@@ -87,18 +87,13 @@ const styles = ScaledSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  iconContainer: {
-    marginRight: "12@s",
-  },
-  icon: {
-    width: "40@s",
-    height: "40@s",
-    borderRadius: "20@s",
+    gap: "8@s",
   },
   infoContainer: {
     flex: 1,
-    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   chevronContainer: {
     marginLeft: "8@s",

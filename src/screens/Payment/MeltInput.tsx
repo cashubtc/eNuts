@@ -32,7 +32,7 @@ import {
   useMemo,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { TextInput, View } from "react-native";
+import { TextInput, TouchableOpacity, View } from "react-native";
 import { ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
@@ -155,6 +155,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
         handlePress={() => navigation.goBack()}
         mintBalance={0}
         disableMintBalance
+        withCancelBtn
       >
         <View
           style={{
@@ -175,8 +176,24 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       screenName={t("cashOut")}
       withBackBtn
       handlePress={() => navigation.goBack()}
+      rightAction={
+        <TouchableOpacity
+          onPress={handleScanQR}
+          style={{ paddingHorizontal: 20 }}
+        >
+          <ScanQRIcon color={hi[highlight]} />
+        </TouchableOpacity>
+      }
     >
-      <View>
+      <View style={styles.contentContainer}>
+        {/* Mint Selection at the top */}
+        <MintSelector
+          mint={selectedMint!}
+          onPress={handleMintSelectionOpen}
+          label={t("selectMint")}
+        />
+
+        {/* Input field */}
         <TxtInput
           innerRef={inputRef}
           keyboardType="email-address"
@@ -191,39 +208,19 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
           autoFocus
           ms={200}
         />
-
-        {/* Action Buttons: Paste and Scan QR */}
-        <View style={styles.inputActions}>
-          <View style={{ flex: 1 }}>
-            <Button
-              txt={t("paste")}
-              onPress={() => void handlePaste()}
-              outlined
-              size="small"
-              icon={<CopyIcon color={hi[highlight]} />}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Button
-              txt={t("scanQR", { ns: NS.common })}
-              onPress={handleScanQR}
-              outlined
-              size="small"
-              icon={<ScanQRIcon color={hi[highlight]} />}
-            />
-          </View>
-        </View>
       </View>
 
-      {/* Mint Selection and Continue Button */}
+      {/* Paste and Continue Buttons at bottom */}
       <KeyboardAvoidingView
         behavior={isIOS ? "padding" : undefined}
         style={styles.actionWrap}
       >
         <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
-          <MintSelector
-            mint={selectedMint!}
-            onPress={handleMintSelectionOpen}
+          <Button
+            txt={t("paste")}
+            onPress={() => void handlePaste()}
+            outlined
+            icon={<CopyIcon color={hi[highlight]} />}
           />
           <Button
             disabled={loading || !input.length}
@@ -254,10 +251,8 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 }
 
 const styles = ScaledSheet.create({
-  inputActions: {
-    flexDirection: "row",
-    gap: "8@vs",
-    marginTop: "8@vs",
+  contentContainer: {
+    gap: "16@vs",
   },
   actionWrap: {
     flex: 1,

@@ -18,6 +18,7 @@ interface IContainerProps {
   handleMintBalancePress?: () => void;
   disableMintBalance?: boolean;
   noIcons?: boolean;
+  rightAction?: React.ReactNode;
 }
 
 export default function Screen({
@@ -30,6 +31,7 @@ export default function Screen({
   handleMintBalancePress,
   disableMintBalance,
   noIcons,
+  rightAction,
 }: IContainerProps) {
   const { color } = useThemeContext();
   const insets = useSafeAreaInsets();
@@ -44,6 +46,7 @@ export default function Screen({
         handleMintBalancePress={handleMintBalancePress}
         disableMintBalance={disableMintBalance}
         noIcons={noIcons}
+        rightAction={rightAction}
       />
       {children}
     </View>
@@ -60,6 +63,7 @@ export function ScreenWithKeyboard({
   handleMintBalancePress,
   disableMintBalance,
   noIcons,
+  rightAction,
 }: IContainerProps) {
   const { color } = useThemeContext();
   return (
@@ -73,6 +77,7 @@ export function ScreenWithKeyboard({
         handleMintBalancePress={handleMintBalancePress}
         disableMintBalance={disableMintBalance}
         noIcons={noIcons}
+        rightAction={rightAction}
       />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={"padding"}>
         <View style={{ flex: 1 }}>{children}</View>
