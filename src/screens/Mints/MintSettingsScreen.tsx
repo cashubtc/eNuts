@@ -1,31 +1,30 @@
-import { BitcoinIcon, TrashbinIcon } from "@comps/Icons";
 import Txt from "@comps/Txt";
 import Screen from "@comps/Screen";
 
-import { isIOS } from "@consts";
 import { l } from "@log";
 import ConfirmBottomSheet, {
   ConfirmBottomSheetRef,
 } from "@comps/modal/ConfirmBottomSheet";
 import { useKnownMints } from "@src/context/KnownMints";
-import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 
 import { mainColors } from "@styles";
-import { formatMintUrl, formatSatStr } from "@util";
+import { formatMintUrl } from "@util";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { ScrollView, View } from "react-native";
+import { s, ScaledSheet } from "react-native-size-matters";
 import { Image } from "expo-image";
+import Button from "@comps/Button";
+import { useManager } from "coco-cashu-react";
 
 export default function MintSettingsScreen({ navigation, route }: any) {
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
   const { color } = useThemeContext();
-  const { hidden } = usePrivacyContext();
+  const manager = useManager();
   const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
 
   const { knownMints } = useKnownMints();
@@ -34,8 +33,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
   const handleMintDelete = () => {
     void (async () => {
       try {
-        //TODO: Add delete
-        navigation.goBack();
+        await manager.mint.untrustMint(route.params.mintUrl);
       } catch (e) {
         l(e);
       }
@@ -74,24 +72,6 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                 />
               )}
             </View>
-          </View>
-
-          {/* Balance Display */}
-          <View
-            style={[
-              styles.balanceContainer,
-              { backgroundColor: color.BACKGROUND },
-            ]}
-          >
-            <BitcoinIcon
-              color={color.TEXT_SECONDARY}
-              width={s(18)}
-              height={s(18)}
-            />
-            <Txt
-              txt={hidden.balance ? "****" : formatSatStr(mint?.balance ?? 0)}
-              styles={[styles.balanceText, { color: color.TEXT }]}
-            />
           </View>
         </View>
 
@@ -177,41 +157,19 @@ export default function MintSettingsScreen({ navigation, route }: any) {
             txt={t("dangerZone", { ns: NS.mints })}
             styles={[styles.sectionTitle, { color: mainColors.ERROR }]}
           />
-          <TouchableOpacity
-            style={[
-              styles.deleteButton,
-              {
-                backgroundColor: color.INPUT_BG,
-                borderColor: mainColors.ERROR,
-              },
-            ]}
+          <Button
+            txt={t("delMint", { ns: NS.mints })}
+            destructive={true}
             onPress={() => {
-              if (mint && mint.balance > 0) {
-                openPromptAutoClose({
-                  msg: t("mintDelErr"),
-                });
-                return;
-              }
               confirmSheetRef.current?.open({
-                header: t("delMintSure", { ns: NS.mints }),
-                txt: route.params.mintUrl,
-                confirmTxt: t("yes"),
-                cancelTxt: t("no"),
-                onConfirm: () => handleMintDelete(),
-                onCancel: () => {},
+                header: t("delMint", { ns: NS.mints }),
+                txt: t("delMintTxt", { ns: NS.mints }),
+                confirmTxt: t("confirm", { ns: NS.mints }),
+                cancelTxt: t("cancel", { ns: NS.mints }),
+                onConfirm: () => {},
               });
             }}
-          >
-            <TrashbinIcon
-              width={s(20)}
-              height={s(20)}
-              color={mainColors.ERROR}
-            />
-            <Txt
-              txt={t("delMint", { ns: NS.mints })}
-              styles={[styles.deleteButtonText, { color: mainColors.ERROR }]}
-            />
-          </TouchableOpacity>
+          />
         </View>
       </ScrollView>
       <ConfirmBottomSheet ref={confirmSheetRef} />
@@ -255,7 +213,6 @@ const styles = ScaledSheet.create({
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: "16@vs",
   },
   mintIcon: {
     width: "48@s",

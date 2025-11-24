@@ -121,6 +121,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
                 cancelTxt: t("back"),
                 onConfirm: () => void handleReset(),
                 onCancel: () => {},
+                destructive: true,
               })
             }
           />

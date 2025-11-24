@@ -1,4 +1,4 @@
-import Button, { IconBtn } from "@comps/Button";
+import Button, { IconBtn, TxtButton } from "@comps/Button";
 import Card from "@comps/Card";
 import Empty from "@comps/Empty";
 import { ChevronRightIcon, PlusIcon } from "@comps/Icons";
@@ -8,7 +8,7 @@ import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
+import { globals, highlight as hi } from "@styles";
 import { getColor } from "@styles/colors";
 import { formatMintUrl, formatSatStr } from "@util";
 import { Image } from "expo-image";
@@ -29,6 +29,16 @@ export default function MintHomeScreen({ navigation }: any) {
       screenName="Mints"
       withBackBtn
       handlePress={() => navigation.goBack()}
+      rightAction={
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Mint", { screen: "MintAdd" });
+          }}
+          style={{ flexDirection: "row", alignItems: "center" }}
+        >
+          <PlusIcon width={s(30)} height={s(30)} color={hi[highlight]} />
+        </TouchableOpacity>
+      }
     >
       <View style={styles.container}>
         {knownMints.length > 0 ? (
@@ -111,23 +121,6 @@ export default function MintHomeScreen({ navigation }: any) {
                 }}
               />
             </View>
-          </View>
-        )}
-        {/* add new mint button */}
-        {knownMints.length > 0 && (
-          <View style={[styles.newMint, { marginBottom: insets.bottom }]}>
-            <IconBtn
-              icon={
-                <PlusIcon
-                  width={s(30)}
-                  height={s(30)}
-                  color={getColor(highlight, color)}
-                />
-              }
-              onPress={() => {
-                navigation.navigate("MintAdd");
-              }}
-            />
           </View>
         )}
       </View>

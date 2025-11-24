@@ -217,12 +217,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       {/* Paste and Continue Buttons at bottom */}
       <View style={styles.actionWrap}>
         <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
-          <Button
-            txt={t("paste")}
-            onPress={() => void handlePaste()}
-            ghost
-            icon={<CopyIcon color={color.TEXT} />}
-          />
+          <Button txt={t("paste")} onPress={() => void handlePaste()} ghost />
           <Button
             disabled={loading || !input.length}
             txt={t("continue")}
