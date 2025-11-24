@@ -24,6 +24,7 @@ export type ConfirmBottomSheetRef = {
     cancelTxt: string;
     onConfirm: () => void;
     onCancel?: () => void;
+    destructive?: boolean;
   }) => void;
   close: () => void;
 };
@@ -35,6 +36,7 @@ interface SheetOptions {
   cancelTxt: string;
   onConfirm: () => void;
   onCancel?: () => void;
+  destructive?: boolean;
 }
 
 const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
@@ -122,7 +124,8 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
               <Button
                 txt={options.confirmTxt}
                 onPress={handleConfirm}
-                outlined
+                outlined={!options.destructive}
+                destructive={options.destructive}
               />
               <Button txt={options.cancelTxt} onPress={handleCancel} outlined />
             </View>

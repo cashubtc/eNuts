@@ -18,6 +18,8 @@ interface IButtonProps {
   border?: boolean;
   outlined?: boolean;
   filled?: boolean;
+  ghost?: boolean;
+  destructive?: boolean;
   disabled?: boolean;
   loading?: boolean;
   icon?: React.ReactNode;
@@ -30,6 +32,8 @@ export default function Button({
   border,
   outlined,
   filled,
+  ghost,
+  destructive,
   disabled,
   loading,
   icon,
@@ -74,13 +78,25 @@ export default function Button({
           },
           border ? { borderWidth: 1, borderColor: mainColors.WHITE } : {},
           filled ? { backgroundColor: mainColors.WHITE } : {},
+          destructive && !outlined && !ghost
+            ? {
+                backgroundColor: mainColors.ERROR,
+              }
+            : {},
           outlined
             ? {
                 backgroundColor: "transparent",
                 paddingHorizontal: currentSize.paddingHorizontal,
                 paddingVertical: currentSize.paddingVertical,
                 borderWidth: 1,
-                borderColor: hi[highlight],
+                borderColor: destructive ? mainColors.ERROR : hi[highlight],
+              }
+            : {},
+          ghost
+            ? {
+                backgroundColor: "transparent",
+                paddingHorizontal: currentSize.paddingHorizontal,
+                paddingVertical: currentSize.paddingVertical,
               }
             : {},
           disabled ? { opacity: 0.3 } : {},
@@ -96,12 +112,20 @@ export default function Button({
               color: getColor(highlight, color),
               fontSize: currentSize.fontSize,
             },
-            filled || outlined ? { color: hi[highlight] } : {},
-            loading || icon ? { marginRight: s(10) } : {},
+            filled || outlined || ghost ? { color: hi[highlight] } : {},
+            destructive && (outlined || ghost)
+              ? { color: mainColors.ERROR }
+              : destructive
+              ? { color: mainColors.WHITE }
+              : {},
           ]}
         />
-        {loading && <Loading color={getColor(highlight, color)} />}
-        {!loading ? icon : null}
+        {(loading || icon) && (
+          <SafeAreaView style={styles.iconContainer}>
+            {loading && <Loading color={getColor(highlight, color)} />}
+            {!loading ? icon : null}
+          </SafeAreaView>
+        )}
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -198,6 +222,12 @@ const styles = ScaledSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 50,
+  },
+  iconContainer: {
+    position: "absolute",
+    right: "18@s",
+    alignItems: "center",
+    justifyContent: "center",
   },
   // icon button
   iconBtn: {
