@@ -16,15 +16,12 @@ import {
 } from "@comps/Icons";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
-import { _testmintUrl } from "@consts";
 import type { THistoryEntryPageProps } from "@model/nav";
 import TopNav from "@nav/TopNav";
-import { useHistoryContext } from "@src/context/History";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals, mainColors } from "@styles";
 import { formatInt, formatMintUrl, formatSatStr } from "@util";
-import { HistoryEntry } from "coco-cashu-core";
 import { getEncodedToken } from "@cashu/cashu-ts";
 
 const truncateStr = (str: string, maxLength: number) => {
@@ -149,7 +146,7 @@ export default function HistoryEntryDetails({
               styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]}
             />
             <Txt
-              txt={new Date(entry.createdAt * 1000).toLocaleString()}
+              txt={new Date(entry.createdAt).toLocaleString()}
               styles={[styles.detailValue, { color: color.TEXT }]}
             />
           </View>

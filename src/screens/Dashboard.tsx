@@ -1,4 +1,3 @@
-import { Token } from "@cashu/cashu-ts";
 import Balance from "@comps/Balance";
 import { IconBtn } from "@comps/Button";
 import DashboardTopBar from "@comps/DashboardTopBar";
@@ -7,7 +6,6 @@ import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from "@comps/Icons";
 import BottomSheetOptionsModal from "@comps/modal/BottomSheetOptionsModal";
 import Txt from "@comps/Txt";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { _testmintUrl, env } from "@consts";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { usePromptContext } from "@src/context/Prompt";
@@ -18,7 +16,7 @@ import { highlight as hi, mainColors } from "@styles";
 import { getStrFromClipboard } from "@util";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 

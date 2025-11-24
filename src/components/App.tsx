@@ -3,7 +3,10 @@ import "../shim";
 
 import { l } from "@log";
 import Navigator from "@nav/Navigator";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  useNavigationState,
+} from "@react-navigation/native";
 import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 // Balance is now provided by CocoCashuProvider
 import { PrivacyProvider } from "@src/context/Privacy";
@@ -170,7 +173,7 @@ function RootApp() {
     <CocoCashuProvider manager={manager}>
       <AppProviders>
         <Navigator shouldOnboard={shouldOnboard} />
-        <StatusBar style="auto" />
+        <ThemedStatusBar />
         <Toaster />
       </AppProviders>
     </CocoCashuProvider>
@@ -188,4 +191,11 @@ function ThemedNavigationContainer({
       {children}
     </NavigationContainer>
   );
+}
+
+function ThemedStatusBar() {
+  const { activeTheme } = useThemeContext();
+  // StatusBar style is inverted: "light" style means light text (for dark backgrounds)
+  // and "dark" style means dark text (for light backgrounds)
+  return <StatusBar style={activeTheme === "light" ? "dark" : "light"} />;
 }
