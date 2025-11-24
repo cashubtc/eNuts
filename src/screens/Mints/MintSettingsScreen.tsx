@@ -1,31 +1,21 @@
-import useCopy from "@comps/hooks/Copy";
-import {
-  BitcoinIcon,
-  CheckmarkIcon,
-  ChevronRightIcon,
-  CopyIcon,
-  TrashbinIcon,
-  ValidateIcon,
-} from "@comps/Icons";
-import MetadataItem from "./components/MetadataItem";
-import Separator from "@comps/Separator";
+import { BitcoinIcon, TrashbinIcon } from "@comps/Icons";
 import Txt from "@comps/Txt";
+import Screen from "@comps/Screen";
 
-import { _testmintUrl, isIOS } from "@consts";
+import { isIOS } from "@consts";
 import { l } from "@log";
 import ConfirmBottomSheet, {
   ConfirmBottomSheetRef,
 } from "@comps/modal/ConfirmBottomSheet";
-import TopNav from "@nav/TopNav";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 
-import { globals, mainColors } from "@styles";
+import { mainColors } from "@styles";
 import { formatMintUrl, formatSatStr } from "@util";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
@@ -33,29 +23,13 @@ import { Image } from "expo-image";
 
 export default function MintSettingsScreen({ navigation, route }: any) {
   const { t } = useTranslation([NS.common]);
-  // prompt modal
   const { openPromptAutoClose } = usePromptContext();
   const { color } = useThemeContext();
   const { hidden } = usePrivacyContext();
-  // check proofs confirmation
-  const [checkProofsOpen, setCheckProofsOpen] = useState(false);
-  // delete mint prompt
   const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
-
-  const { copied, copy } = useCopy();
-
-  // Track which field was copied for better UX
-  const [copiedField, setCopiedField] = useState<string | null>(null);
-
-  const handleCopy = async (text: string, fieldId: string) => {
-    await copy(text);
-    setCopiedField(fieldId);
-    setTimeout(() => setCopiedField(null), 2000);
-  };
 
   const { knownMints } = useKnownMints();
   const mint = knownMints.find((m) => m.mintUrl === route.params.mintUrl);
-  console.log("mint", mint);
 
   const handleMintDelete = () => {
     void (async () => {
@@ -69,33 +43,15 @@ export default function MintSettingsScreen({ navigation, route }: any) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: color.BACKGROUND }}>
-      <TopNav
-        screenName={t("mintSettings", { ns: NS.topNav })}
-        withBackBtn
-        handlePress={() => navigation.goBack()}
-      />
-      <ScrollView
-        style={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <View>
-          {/* Mint Header */}
-          <View style={styles.mintHeader}>
-            <View style={styles.mintInfoContainer}>
-              {mint?.mintInfo?.name && (
-                <Txt
-                  txt={mint.mintInfo.name}
-                  styles={[styles.mintName, { color: color.TEXT }]}
-                />
-              )}
-              {mint?.mintInfo?.version && (
-                <Txt
-                  txt={mint.mintInfo.version}
-                  styles={[styles.mintVersion, { color: color.TEXT_SECONDARY }]}
-                />
-              )}
-            </View>
+    <Screen
+      screenName={t("mintSettings", { ns: NS.topNav })}
+      withBackBtn
+      handlePress={() => navigation.goBack()}
+    >
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Mint Header Card */}
+        <View style={[styles.headerCard, { backgroundColor: color.INPUT_BG }]}>
+          <View style={styles.headerContent}>
             {mint?.mintInfo?.icon_url && (
               <Image
                 source={{ uri: mint.mintInfo.icon_url }}
@@ -104,64 +60,85 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                 transition={200}
               />
             )}
-          </View>
-          {/* General */}
-          <Txt
-            txt={t("general", { ns: NS.mints })}
-            styles={[styles.sectionHeader]}
-          />
-          <View style={globals(color).wrapContainer}>
-            {/* Balance */}
-            <View style={[globals().wrapRow, { paddingBottom: vs(15) }]}>
-              <View style={styles.mintOption}>
-                <View style={{ minWidth: 30 }}>
-                  <BitcoinIcon color={color.TEXT} />
-                </View>
-                <Txt txt={t("balance")} />
-              </View>
-              <Txt
-                txt={hidden.balance ? "****" : formatSatStr(mint?.balance ?? 0)}
-              />
+            <View style={styles.headerTextContainer}>
+              {mint?.mintInfo?.name && (
+                <Txt
+                  txt={mint.mintInfo.name}
+                  styles={[styles.mintName, { color: color.TEXT }]}
+                />
+              )}
+              {mint?.mintInfo?.version && (
+                <Txt
+                  txt={`Version ${mint.mintInfo.version}`}
+                  styles={[styles.mintVersion, { color: color.TEXT_SECONDARY }]}
+                />
+              )}
             </View>
-            <Separator style={[styles.separator]} />
-            {/* Mint url */}
-            <MintOption
-              txt={formatMintUrl(route.params.mintUrl)}
-              hasSeparator
-              noChevron
-              onPress={() => void handleCopy(route.params.mintUrl, "mintUrl")}
-              icon={
-                copiedField === "mintUrl" ? (
-                  <CheckmarkIcon
-                    width={s(20)}
-                    height={s(20)}
-                    color={mainColors.VALID}
-                  />
-                ) : (
-                  <CopyIcon color={color.TEXT} />
-                )
-              }
+          </View>
+
+          {/* Balance Display */}
+          <View
+            style={[
+              styles.balanceContainer,
+              { backgroundColor: color.BACKGROUND },
+            ]}
+          >
+            <BitcoinIcon
+              color={color.TEXT_SECONDARY}
+              width={s(18)}
+              height={s(18)}
+            />
+            <Txt
+              txt={hidden.balance ? "****" : formatSatStr(mint?.balance ?? 0)}
+              styles={[styles.balanceText, { color: color.TEXT }]}
             />
           </View>
-          {/* Metadata */}
-          {mint?.mintInfo && (
-            <>
+        </View>
+
+        {/* Mint URL Section */}
+        <View style={styles.section}>
+          <Txt
+            txt={t("general", { ns: NS.mints })}
+            styles={[styles.sectionTitle, { color: color.TEXT_SECONDARY }]}
+          />
+          <View style={[styles.card, { backgroundColor: color.INPUT_BG }]}>
+            <Txt
+              txt={formatMintUrl(route.params.mintUrl)}
+              styles={[styles.urlText, { color: color.TEXT }]}
+            />
+          </View>
+        </View>
+
+        {/* Metadata Section */}
+        {mint?.mintInfo &&
+          (mint.mintInfo.description ||
+            mint.mintInfo.description_long ||
+            (mint.mintInfo.contact && mint.mintInfo.contact.length > 0) ||
+            mint.mintInfo.motd) && (
+            <View style={styles.section}>
               <Txt
                 txt={t("metadata", { ns: NS.mints })}
-                styles={[styles.sectionHeader]}
+                styles={[styles.sectionTitle, { color: color.TEXT_SECONDARY }]}
               />
-              <View style={globals(color).wrapContainer}>
-                {/* Description */}
+              <View style={[styles.card, { backgroundColor: color.INPUT_BG }]}>
                 {mint.mintInfo.description && (
-                  <MetadataItem
-                    text={mint.mintInfo.description}
-                    hasSeparator={!!mint.mintInfo.description_long}
+                  <InfoRow
+                    label="Description"
+                    value={mint.mintInfo.description}
+                    hasSeparator={
+                      !!mint.mintInfo.description_long ||
+                      !!(
+                        mint.mintInfo.contact &&
+                        mint.mintInfo.contact.length > 0
+                      ) ||
+                      !!mint.mintInfo.motd
+                    }
                   />
                 )}
-                {/* Long Description */}
                 {mint.mintInfo.description_long && (
-                  <MetadataItem
-                    text={mint.mintInfo.description_long}
+                  <InfoRow
+                    label="Details"
+                    value={mint.mintInfo.description_long}
                     hasSeparator={
                       !!(
                         mint.mintInfo.contact &&
@@ -170,195 +147,200 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                     }
                   />
                 )}
-                {/* Contact Information */}
                 {mint.mintInfo.contact && mint.mintInfo.contact.length > 0 && (
                   <>
                     {mint.mintInfo.contact.map((contact, index) => {
                       const isLast =
                         index === mint.mintInfo.contact!.length - 1;
                       const hasMotd = !!mint.mintInfo.motd;
-                      const formatContactMethod = (method: string) => {
-                        switch (method.toLowerCase()) {
-                          case "email":
-                            return "📧";
-                          case "twitter":
-                            return "🐦";
-                          case "nostr":
-                            return "⚡";
-                          default:
-                            return "📞";
-                        }
-                      };
-
                       return (
-                        <MintOption
+                        <InfoRow
                           key={`${contact.method}-${index}`}
-                          txt={`${formatContactMethod(contact.method)} ${
-                            contact.info
-                          }`}
+                          label={contact.method}
+                          value={contact.info}
                           hasSeparator={!isLast || hasMotd}
-                          noChevron
-                          onPress={() =>
-                            void handleCopy(contact.info, `contact-${index}`)
-                          }
-                          icon={
-                            copiedField === `contact-${index}` ? (
-                              <CheckmarkIcon
-                                width={s(20)}
-                                height={s(20)}
-                                color={mainColors.VALID}
-                              />
-                            ) : (
-                              <CopyIcon color={color.TEXT} />
-                            )
-                          }
                         />
                       );
                     })}
                   </>
                 )}
-                {/* Message of the Day */}
                 {mint.mintInfo.motd && (
-                  <MetadataItem text={`💬 ${mint.mintInfo.motd}`} />
+                  <InfoRow label="Message" value={mint.mintInfo.motd} />
                 )}
               </View>
-            </>
+            </View>
           )}
-          {/* Danger zone */}
+
+        {/* Danger Zone */}
+        <View style={styles.section}>
           <Txt
             txt={t("dangerZone", { ns: NS.mints })}
-            styles={[styles.sectionHeader]}
+            styles={[styles.sectionTitle, { color: mainColors.ERROR }]}
           />
-          <View style={globals(color).wrapContainer}>
-            <MintOption
-              txt={t("delMint", { ns: NS.mints })}
-              onPress={() => {
-                if (mint && mint.balance > 0) {
-                  openPromptAutoClose({
-                    msg: t("mintDelErr"),
-                  });
-                  return;
-                }
-                confirmSheetRef.current?.open({
-                  header: t("delMintSure", { ns: NS.mints }),
-                  txt: route.params.mintUrl,
-                  confirmTxt: t("yes"),
-                  cancelTxt: t("no"),
-                  onConfirm: () => handleMintDelete(),
-                  onCancel: () => {},
+          <TouchableOpacity
+            style={[
+              styles.deleteButton,
+              {
+                backgroundColor: color.INPUT_BG,
+                borderColor: mainColors.ERROR,
+              },
+            ]}
+            onPress={() => {
+              if (mint && mint.balance > 0) {
+                openPromptAutoClose({
+                  msg: t("mintDelErr"),
                 });
-              }}
-              icon={
-                <TrashbinIcon
-                  width={s(22)}
-                  height={s(22)}
-                  color={mainColors.ERROR}
-                />
+                return;
               }
-              rowColor={mainColors.ERROR}
-              noChevron
+              confirmSheetRef.current?.open({
+                header: t("delMintSure", { ns: NS.mints }),
+                txt: route.params.mintUrl,
+                confirmTxt: t("yes"),
+                cancelTxt: t("no"),
+                onConfirm: () => handleMintDelete(),
+                onCancel: () => {},
+              });
+            }}
+          >
+            <TrashbinIcon
+              width={s(20)}
+              height={s(20)}
+              color={mainColors.ERROR}
             />
-          </View>
+            <Txt
+              txt={t("delMint", { ns: NS.mints })}
+              styles={[styles.deleteButtonText, { color: mainColors.ERROR }]}
+            />
+          </TouchableOpacity>
         </View>
       </ScrollView>
       <ConfirmBottomSheet ref={confirmSheetRef} />
-    </View>
+    </Screen>
   );
 }
 
-interface IMintOption {
-  txt: string;
-  onPress: () => void;
-  icon: React.ReactNode;
-  rowColor?: string;
+interface IInfoRow {
+  label: string;
+  value: string;
   hasSeparator?: boolean;
-  noChevron?: boolean;
 }
 
-function MintOption({
-  txt,
-  onPress,
-  icon,
-  rowColor,
-  hasSeparator,
-  noChevron,
-}: IMintOption) {
+function InfoRow({ label, value, hasSeparator }: IInfoRow) {
   const { color } = useThemeContext();
   return (
     <>
-      <TouchableOpacity
-        onPress={onPress}
-        style={[globals().wrapRow, { paddingBottom: vs(15) }]}
-      >
-        <View style={styles.mintOption}>
-          <View style={{ minWidth: s(30) }}>{icon}</View>
-          <View style={styles.mintOptionText}>
-            <Txt txt={txt} styles={[{ color: rowColor || color.TEXT }]} />
-          </View>
-        </View>
-        {!noChevron ? <ChevronRightIcon color={color.TEXT} /> : <View />}
-      </TouchableOpacity>
-      {hasSeparator && <Separator style={[styles.separator]} />}
+      <View style={styles.infoRow}>
+        <Txt
+          txt={label}
+          styles={[styles.infoLabel, { color: color.TEXT_SECONDARY }]}
+        />
+        <Txt txt={value} styles={[styles.infoValue, { color: color.TEXT }]} />
+      </View>
+      {hasSeparator && (
+        <View
+          style={[styles.infoSeparator, { backgroundColor: color.BORDER }]}
+        />
+      )}
     </>
   );
 }
 
 const styles = ScaledSheet.create({
-  scrollContainer: {
-    marginTop: "90@vs",
-    marginBottom: isIOS ? "20@vs" : "0@vs",
-    padding: 8,
+  headerCard: {
+    borderRadius: "16@s",
+    padding: "20@s",
+    marginTop: "16@vs",
+    marginBottom: "24@vs",
   },
-  mintHeader: {
+  headerContent: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "20@vs",
-    marginTop: "10@vs",
-    paddingHorizontal: "20@s",
+    marginBottom: "16@vs",
   },
-  mintInfoContainer: {
+  mintIcon: {
+    width: "48@s",
+    height: "48@s",
+    borderRadius: "12@s",
+    backgroundColor: "rgba(0,0,0,0.05)",
+  },
+  headerTextContainer: {
     flex: 1,
-    marginRight: "15@s",
+    marginLeft: "16@s",
   },
   mintName: {
     fontSize: "20@vs",
-    fontWeight: "600",
+    fontWeight: "700",
     marginBottom: "4@vs",
+    letterSpacing: 0.3,
   },
   mintVersion: {
-    fontSize: "14@vs",
-    fontWeight: "400",
-  },
-  mintIcon: {
-    width: "60@s",
-    height: "60@s",
-    borderRadius: "30@s",
-    backgroundColor: "#f0f0f0",
-  },
-  mintUrl: {
-    fontSize: "14@vs",
-    marginRight: "10@s",
+    fontSize: "13@vs",
     fontWeight: "500",
+    opacity: 0.7,
   },
-  sectionHeader: {
-    fontWeight: "600",
-    fontSize: "16@vs",
-    paddingHorizontal: "20@s",
-    marginTop: "20@vs",
-    marginBottom: "12@vs",
-    opacity: 0.9,
-  },
-  mintOption: {
+  balanceContainer: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
+    justifyContent: "center",
+    paddingVertical: "12@vs",
+    paddingHorizontal: "16@s",
+    borderRadius: "12@s",
+    gap: "8@s",
   },
-  mintOptionText: {
-    flex: 1,
-    marginLeft: "10@s",
+  balanceText: {
+    fontSize: "18@vs",
+    fontWeight: "600",
   },
-  separator: {
-    marginBottom: "15@vs",
+  section: {
+    marginBottom: "24@vs",
+  },
+  sectionTitle: {
+    fontSize: "12@vs",
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: "12@vs",
+    paddingHorizontal: "4@s",
+  },
+  card: {
+    borderRadius: "16@s",
+    padding: "20@s",
+  },
+  urlText: {
+    fontSize: "14@vs",
+    fontWeight: "500",
+    lineHeight: "20@vs",
+  },
+  infoRow: {
+    paddingVertical: "8@vs",
+  },
+  infoLabel: {
+    fontSize: "12@vs",
+    fontWeight: "600",
+    textTransform: "capitalize",
+    marginBottom: "6@vs",
+  },
+  infoValue: {
+    fontSize: "14@vs",
+    fontWeight: "400",
+    lineHeight: "20@vs",
+  },
+  infoSeparator: {
+    height: 1,
+    marginVertical: "12@vs",
+    opacity: 0.2,
+  },
+  deleteButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "16@s",
+    padding: "16@s",
+    borderWidth: 1.5,
+    gap: "10@s",
+  },
+  deleteButtonText: {
+    fontSize: "15@vs",
+    fontWeight: "600",
   },
 });
