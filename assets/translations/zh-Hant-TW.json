@@ -276,7 +276,12 @@
     "supportUs": "支持我們",
     "justNow": "剛剛",
     "hoursAgo": "{{count}}小時前",
-    "yesterday": "昨天"
+    "yesterday": "昨天",
+    "awaitingPayment": "等待付款",
+    "receivedFromMint": "從鑄幣廠收到",
+    "status": "狀態",
+    "unit": "單位",
+    "quoteId": "報價 ID"
   },
   "error": {
     "checkSpendableErr": "檢查代幣是否可使用時出錯",
@@ -305,7 +310,17 @@
     "oneMinAgo": "1 分鐘前",
     "paymentHash": "付款哈希值",
     "settleTime": "結算時間",
-    "showQr": "顯示二維碼"
+    "showQr": "顯示二維碼",
+    "receive": "接收",
+    "send": "發送",
+    "melt": "熔化",
+    "receivedEcash": "已收到 Ecash",
+    "sentEcash": "已發送 Ecash",
+    "paidInvoice": "已支付發票",
+    "details": "詳情",
+    "date": "日期",
+    "amount": "金額",
+    "token": "代幣"
   },
   "mints": {
     "addCustomName": "添加自定名稱",

@@ -276,7 +276,12 @@
     "shareEnuts": "Teile eNuts mit jemandem",
     "justNow": "Gerade eben",
     "hoursAgo": "vor {{count}} Stunden",
-    "yesterday": "Gestern"
+    "yesterday": "Gestern",
+    "awaitingPayment": "Warte auf Zahlung",
+    "receivedFromMint": "Von Mint erhalten",
+    "status": "Status",
+    "unit": "Einheit",
+    "quoteId": "Angebots-ID"
   },
   "error": {
     "checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
@@ -305,7 +310,17 @@
     "oneMinAgo": "Vor 1 Minute",
     "paymentHash": "Zahlungs-Hash",
     "settleTime": "Zeitpunkt",
-    "showQr": "QR-Code anzeigen"
+    "showQr": "QR-Code anzeigen",
+    "receive": "Empfangen",
+    "send": "Senden",
+    "melt": "Schmelzen",
+    "receivedEcash": "Ecash empfangen",
+    "sentEcash": "Ecash gesendet",
+    "paidInvoice": "Rechnung bezahlt",
+    "details": "Details",
+    "date": "Datum",
+    "amount": "Betrag",
+    "token": "Token"
   },
   "mints": {
     "addCustomName": "Benutzerdefinierten Namen hinzufügen",

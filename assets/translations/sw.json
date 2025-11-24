@@ -276,7 +276,12 @@
     "supportUs": "Tusaidie",
     "justNow": "Sasa hivi",
     "hoursAgo": "masaa {{count}} iliyopita",
-    "yesterday": "Jana"
+    "yesterday": "Jana",
+    "awaitingPayment": "Inasubiri malipo",
+    "receivedFromMint": "Imepokelewa kutoka sarafu",
+    "status": "Hali",
+    "unit": "Kitengo",
+    "quoteId": "Kitambulisho cha nukuu"
   },
   "error": {
     "checkSpendableErr": "Kumetokea kosa wakati wa kuangalia ikiwa kijenzi kina pesa za kutumiwa",
@@ -305,7 +310,17 @@
     "oneMinAgo": "Dakika 1 iliyopita",
     "paymentHash": "Hash ya malipo",
     "settleTime": "Wakati wa kufafanua",
-    "showQr": "Onyesha nambari ya QR"
+    "showQr": "Onyesha nambari ya QR",
+    "receive": "Pokea",
+    "send": "Tuma",
+    "melt": "Yeyusha",
+    "receivedEcash": "Ecash imepokelewa",
+    "sentEcash": "Ecash imetumwa",
+    "paidInvoice": "Ankara imelipwa",
+    "details": "Maelezo",
+    "date": "Tarehe",
+    "amount": "Kiasi",
+    "token": "Kijenzi"
   },
   "mints": {
     "addCustomName": "Ongeza jina la desturi",

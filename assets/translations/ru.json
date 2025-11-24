@@ -276,7 +276,12 @@
     "supportUs": "Поддержите нас",
     "justNow": "Прямо сейчас",
     "hoursAgo": "{{count}} часов назад",
-    "yesterday": "Вчера"
+    "yesterday": "Вчера",
+    "awaitingPayment": "Ожидание платежа",
+    "receivedFromMint": "Получено от монетного двора",
+    "status": "Статус",
+    "unit": "Единица",
+    "quoteId": "ID котировки"
   },
   "error": {
     "checkSpendableErr": "Ошибка при проверке попытке потратить токен",
@@ -305,7 +310,17 @@
     "oneMinAgo": "1 минуту назад",
     "paymentHash": "Хеш платежа",
     "settleTime": "Время сделки",
-    "showQr": "Показать QR-код"
+    "showQr": "Показать QR-код",
+    "receive": "Получить",
+    "send": "Отправить",
+    "melt": "Расплавить",
+    "receivedEcash": "Ecash получен",
+    "sentEcash": "Ecash отправлен",
+    "paidInvoice": "Счёт оплачен",
+    "details": "Детали",
+    "date": "Дата",
+    "amount": "Сумма",
+    "token": "Токен"
   },
   "mints": {
     "addCustomName": "Добавить кастомное название",

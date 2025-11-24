@@ -276,7 +276,12 @@
     "supportUs": "Soutenez-nous",
     "justNow": "À l'instant",
     "hoursAgo": "il y a {{count}} heures",
-    "yesterday": "Hier"
+    "yesterday": "Hier",
+    "awaitingPayment": "En attente de paiement",
+    "receivedFromMint": "Reçu de la mint",
+    "status": "Statut",
+    "unit": "Unité",
+    "quoteId": "ID de devis"
   },
   "error": {
     "checkSpendableErr": "Erreur lors de la vérification si le token est dépensable",
@@ -305,7 +310,17 @@
     "oneMinAgo": "Il y a 1 minute",
     "paymentHash": "Hash de paiement",
     "settleTime": "Heure de règlement",
-    "showQr": "Afficher le code QR"
+    "showQr": "Afficher le code QR",
+    "receive": "Recevoir",
+    "send": "Envoyer",
+    "melt": "Fondre",
+    "receivedEcash": "Ecash reçu",
+    "sentEcash": "Ecash envoyé",
+    "paidInvoice": "Facture payée",
+    "details": "Détails",
+    "date": "Date",
+    "amount": "Montant",
+    "token": "Token"
   },
   "mints": {
     "addCustomName": "Ajouter un nom personnalisé",

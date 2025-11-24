@@ -276,7 +276,12 @@
     "supportUs": "Támogass minket",
     "justNow": "Épp most",
     "hoursAgo": "{{count}} órával ezelőtt",
-    "yesterday": "Tegnap"
+    "yesterday": "Tegnap",
+    "awaitingPayment": "Várakozás fizetésre",
+    "receivedFromMint": "Verdétől fogadva",
+    "status": "Állapot",
+    "unit": "Egység",
+    "quoteId": "Ajánlat azonosító"
   },
   "error": {
     "checkSpendableErr": "Hiba a token elkölthetőségének ellenőrzése közben",
@@ -305,7 +310,17 @@
     "oneMinAgo": "1 perce",
     "paymentHash": "Fizetés ellenőrzőösszege",
     "settleTime": "Elszámolás ideje",
-    "showQr": "QR kód mutatása"
+    "showQr": "QR kód mutatása",
+    "receive": "Fogad",
+    "send": "Küld",
+    "melt": "Kiolvasztás",
+    "receivedEcash": "Ecash fogadva",
+    "sentEcash": "Ecash küldve",
+    "paidInvoice": "Számla kifizetve",
+    "details": "Részletek",
+    "date": "Dátum",
+    "amount": "Összeg",
+    "token": "Token"
   },
   "mints": {
     "addCustomName": "Egyedi név hozzáadása",

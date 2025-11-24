@@ -277,7 +277,12 @@
     "shareEnuts": "Share eNuts with someone",
     "justNow": "Just now",
     "hoursAgo": "{{count}} hours ago",
-    "yesterday": "Yesterday"
+    "yesterday": "Yesterday",
+    "awaitingPayment": "Awaiting payment",
+    "receivedFromMint": "Received from mint",
+    "status": "Status",
+    "unit": "Unit",
+    "quoteId": "Quote ID"
   },
   "error": {
     "checkSpendableErr": "Error while checking if token is spendable",
@@ -306,7 +311,17 @@
     "oneMinAgo": "1 minute ago",
     "paymentHash": "Payment hash",
     "settleTime": "Settle time",
-    "showQr": "Show QR code"
+    "showQr": "Show QR code",
+    "receive": "Receive",
+    "send": "Send",
+    "melt": "Melt",
+    "receivedEcash": "Received Ecash",
+    "sentEcash": "Sent Ecash",
+    "paidInvoice": "Paid invoice",
+    "details": "Details",
+    "date": "Date",
+    "amount": "Amount",
+    "token": "Token"
   },
   "mints": {
     "addCustomName": "Add a custom name",

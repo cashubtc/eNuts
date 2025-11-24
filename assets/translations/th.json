@@ -276,7 +276,12 @@
     "supportUs": "สนับสนุนเรา",
     "justNow": "เมื่อสักครู่นี้",
     "hoursAgo": "{{count}} ชั่วโมงที่แล้ว",
-    "yesterday": "เมื่อวาน"
+    "yesterday": "เมื่อวาน",
+    "awaitingPayment": "รอการชำระเงิน",
+    "receivedFromMint": "ได้รับจากมิ้นต์",
+    "status": "สถานะ",
+    "unit": "หน่วย",
+    "quoteId": "รหัสใบเสนอราคา"
   },
   "error": {
     "checkSpendableErr": "เกิดข้อผิดพลาดขณะตรวจสอบว่า Token สามารถใช้ได้",
@@ -305,7 +310,17 @@
     "oneMinAgo": "1 นาทีที่ผ่านมา",
     "paymentHash": "รหัสการชำระเงิน",
     "settleTime": "เวลาตกลง",
-    "showQr": "แสดงรหัส QR"
+    "showQr": "แสดงรหัส QR",
+    "receive": "รับ",
+    "send": "ส่ง",
+    "melt": "หลอม",
+    "receivedEcash": "ได้รับ Ecash",
+    "sentEcash": "ส่ง Ecash แล้ว",
+    "paidInvoice": "ชำระใบแจ้งหนี้แล้ว",
+    "details": "รายละเอียด",
+    "date": "วันที่",
+    "amount": "จำนวน",
+    "token": "โทเค็น"
   },
   "mints": {
     "addCustomName": "เพิ่มชื่อกำหนดเอง",
