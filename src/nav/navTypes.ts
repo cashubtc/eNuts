@@ -12,6 +12,7 @@ export type SettingsStackParamList = {
   SettingsMain: undefined;
   "Display settings": undefined;
   "Language settings": undefined;
+  "Currency settings": undefined;
   "Advanced settings": undefined;
   "View mnemonic": undefined;
 };

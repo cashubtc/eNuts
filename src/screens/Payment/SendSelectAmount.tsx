@@ -1,21 +1,20 @@
-import { useShakeAnimation } from "@comps/animation/Shake";
-import Button, { IconBtn } from "@comps/Button";
+import AmountInput, { useShakeAnimation } from "@comps/AmountInput";
+import Button from "@comps/Button";
 import { ChevronRightIcon } from "@comps/Icons";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
-import type { TSelectAmountPageProps } from "@model/nav";
 import { useThemeContext } from "@src/context/Theme";
+import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi, mainColors } from "@styles";
-import { formatSatStr, isErr, vib } from "@util";
+import { mainColors } from "@styles";
+import { isErr, vib } from "@util";
 import { useCallback, useRef, useState, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import { Animated, TextInput, View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { TextInput, View } from "react-native";
+import { ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManager } from "@src/context/Manager";
 import { SendSelectAmountProps } from "@src/nav/navTypes";
 import { useSend } from "coco-cashu-react";
@@ -26,13 +25,11 @@ export default function SendSelectAmountScreen({
   navigation,
 }: SendSelectAmountProps) {
   const { t } = useTranslation([NS.wallet]);
-  const { color, highlight } = useThemeContext();
-  const { anim, shake } = useShakeAnimation();
+  const { color } = useThemeContext();
+  const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
   const manager = useManager();
-  const insets = useSafeAreaInsets();
-  // Use useRef instead of createRef to avoid recreation on every render
-  const numericInputRef = useRef<TextInput>(null);
+  const amountInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
   const { isSending, isError: isSendError, send } = useSend();
   const { openPromptAutoClose } = usePromptContext();
@@ -50,9 +47,6 @@ export default function SendSelectAmountScreen({
   const noMintsAvailable = useMemo(() => {
     return !selectedMint || knownMints.length === 0;
   }, [selectedMint, knownMints.length]);
-
-  // Memoize style objects to prevent recreation
-  const globalStyles = useMemo(() => globals(), []);
 
   // Defer non-critical state initialization
   const [err, setErr] = useState(false);
@@ -78,8 +72,8 @@ export default function SendSelectAmountScreen({
   );
 
   const handleMintSelectionOpen = useCallback(() => {
-    // Blur the text inputs when opening the sheet
-    numericInputRef.current?.blur();
+    // Blur the input when opening the sheet
+    amountInputRef.current?.blur();
 
     // Try expand method first, fallback to snapToIndex
     if (mintSelectionSheetRef.current) {
@@ -89,16 +83,6 @@ export default function SendSelectAmountScreen({
         /* ignore */
       }
     }
-  }, []);
-
-  const handleInputFocus = useCallback(() => {
-    // Close the mint selection sheet when input is focused
-    mintSelectionSheetRef.current?.dismiss();
-  }, []);
-
-  const handleAmountChange = useCallback((text: string) => {
-    const sanitized = text.replace(/\D/g, "");
-    setAmountInput(sanitized);
   }, []);
 
   const handleAmountSubmit = useCallback(async () => {
@@ -125,7 +109,7 @@ export default function SendSelectAmountScreen({
     return navigation.navigate("encodedToken", {
       token,
     });
-  }, [amountValue, selectedMint, manager, navigation, selectedMintBalance]);
+  }, [amountValue, selectedMint, manager, navigation, selectedMintBalance, shake, send, openPromptAutoClose, t]);
 
   // Early return after all hooks
   if (noMintsAvailable) {
@@ -158,39 +142,17 @@ export default function SendSelectAmountScreen({
       withBottomInset={false}
       withKeyboard={true}
     >
-      <View style={[styles.overviewWrap, { marginTop: vs(20) }]}>
-        <Animated.View
-          style={[
-            styles.amountWrap,
-            { transform: [{ translateX: anim.current }] },
-          ]}
-        >
-          <TextInput
-            keyboardType="numeric"
-            ref={numericInputRef}
-            placeholder="0"
-            autoFocus
-            cursorColor={hi[highlight]}
-            placeholderTextColor={err ? mainColors.ERROR : hi[highlight]}
-            style={[
-              globalStyles.selectAmount,
-              { color: err ? mainColors.ERROR : hi[highlight] },
-            ]}
-            onChangeText={handleAmountChange}
-            onSubmitEditing={handleAmountSubmit}
-            onFocus={handleInputFocus}
-            value={amountInput}
-            maxLength={8}
-            testID="mint-amount-input"
-          />
-        </Animated.View>
-        <Txt
-          txt={formatSatStr(amountValue, "standard", false)}
-          styles={[styles.sats, { color: color.TEXT_SECONDARY }]}
-        />
-      </View>
+      <AmountInput
+        ref={amountInputRef}
+        value={amountInput}
+        onChange={setAmountInput}
+        onSubmit={handleAmountSubmit}
+        error={err}
+        autoFocus
+        testID="send-amount-input"
+      />
 
-      {/* Mint Selection and Memo Input */}
+      {/* Mint Selection */}
       <View style={styles.actionWrap}>
         <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
           <MintSelector
@@ -234,6 +196,10 @@ export function MeltOverview({
 }: IMeltOverviewProps) {
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
+  const { formatAmount } = useCurrencyContext();
+  const total = shouldEstimate ? 0 : amount + fee;
+  const { formatted, symbol } = formatAmount(total);
+  
   return (
     <View style={styles.overview}>
       <Txt
@@ -245,7 +211,7 @@ export function MeltOverview({
         bold
       />
       <Txt
-        txt={formatSatStr(shouldEstimate ? 0 : amount + fee)}
+        txt={`${formatted} ${symbol}`}
         styles={[
           {
             color:
@@ -262,52 +228,15 @@ export function MeltOverview({
 }
 
 const styles = ScaledSheet.create({
-  headerHint: {
-    paddingHorizontal: "20@s",
-    marginBottom: "20@vs",
-    fontWeight: "500",
-  },
-  amountWrap: {
-    width: "100%",
-    alignItems: "center",
-  },
-  continue: {
-    flex: 1,
-    position: "absolute",
-    right: "20@s",
-    left: "20@s",
-    bottom: "20@vs",
-    alignItems: "center",
-  },
-  overviewWrap: {
-    width: "100%",
-    paddingHorizontal: "20@s",
-  },
   overview: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  sats: {
-    fontSize: "12@vs",
-    textAlign: "center",
-    marginLeft: "-4@s",
-    marginTop: "-5@vs",
-  },
-  feeHint: {
-    fontSize: "10@vs",
-    marginTop: "10@vs",
   },
   actionWrap: {
     flex: 1,
     width: "100%",
     justifyContent: "flex-end",
     paddingHorizontal: "20@s",
-  },
-  memoInput: {
-    paddingHorizontal: "18@s",
-    paddingVertical: "18@vs",
-    borderRadius: 50,
-    fontSize: "14@vs",
   },
 });

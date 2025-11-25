@@ -7,6 +7,7 @@ import {
   MintBoardIcon,
   PaletteIcon,
   SettingsIcon,
+  SwapCurrencyIcon,
 } from "@comps/Icons";
 import type { TSettingsPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
@@ -83,6 +84,11 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             icon={<LanguageIcon color={color.TEXT} />}
             onPress={() => navigation.navigate("Language settings")}
           />
+          <MenuItem
+            txt={t("currency")}
+            icon={<SwapCurrencyIcon color={color.TEXT} />}
+            onPress={() => navigation.navigate("Currency settings")}
+          />
         </View>
         {/* SECURITY */}
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
@@ -129,7 +135,6 @@ export default function Settings({ navigation }: TSettingsPageProps) {
         </View>
         <Txt txt={appVersion} bold center />
       </ScrollView>
-      <Loading size={20} />
       <ConfirmBottomSheet ref={confirmSheetRef} />
     </Screen>
   );

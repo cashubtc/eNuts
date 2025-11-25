@@ -7,9 +7,10 @@ import { ScaledSheet } from 'react-native-size-matters'
 interface IToggleProps {
 	value: boolean,
 	onChange: () => void
+	disabled?: boolean
 }
 
-export default function Toggle({ value, onChange }: IToggleProps) {
+export default function Toggle({ value, onChange, disabled }: IToggleProps) {
 	const { color, highlight } = useThemeContext()
 	return (
 		<Switch
@@ -17,7 +18,8 @@ export default function Toggle({ value, onChange }: IToggleProps) {
 			thumbColor={color.TEXT}
 			onValueChange={onChange}
 			value={value}
-			style={styles.switch}
+			style={[styles.switch, disabled && styles.disabled]}
+			disabled={disabled}
 		/>
 	)
 }
@@ -26,5 +28,8 @@ const styles = ScaledSheet.create({
 	switch: {
 		marginVertical: '-10@vs',
 		transform: [{ scaleX: isIOS ? .6 : 1 }, { scaleY: isIOS ? .6 : 1 }]
+	},
+	disabled: {
+		opacity: 0.5
 	}
 })

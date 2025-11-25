@@ -6,8 +6,9 @@ import type { TBeforeRemoveEvent, TSuccessPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useBalanceContext } from "@src/context/Balance";
 import { useThemeContext } from "@src/context/Theme";
+import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { formatSatStr, isNum, vib } from "@util";
+import { isNum, vib } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -29,6 +30,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
   } = route.params;
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
+  const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -97,15 +99,15 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
               txt={t(isAutoSwap ? "swapped" : "paidOut", {
                 ns: NS.wallet,
               })}
-              value={formatSatStr(amount)}
+              value={`${formatAmount(amount).formatted} ${formatAmount(amount).symbol}`}
             />
-            <Details txt={t("fee")} value={formatSatStr(fee || 0)} />
+            <Details txt={t("fee")} value={`${formatAmount(fee || 0).formatted} ${formatAmount(fee || 0).symbol}`} />
             <Details
               txt={t("totalInclFee")}
-              value={formatSatStr(amount + (fee || 0))}
+              value={`${formatAmount(amount + (fee || 0)).formatted} ${formatAmount(amount + (fee || 0)).symbol}`}
             />
             {isNum(change) && (
-              <Details txt={t("change")} value={formatSatStr(change)} />
+              <Details txt={t("change")} value={`${formatAmount(change).formatted} ${formatAmount(change).symbol}`} />
             )}
           </View>
         )}

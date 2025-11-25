@@ -12,15 +12,14 @@ function truncateStr(str: string, len: number): string {
 }
 import { useInitialURL } from "@src/context/Linking";
 import { useThemeContext } from "@src/context/Theme";
+import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import TrustMintBottomSheet, {
   type TrustMintBottomSheetRef,
 } from "@modal/TrustMintBottomSheet";
 import { globals } from "@styles";
 import {
-  formatInt,
   formatMintUrl,
-  formatSatStr,
   getSelectedAmount,
   isNum,
 } from "@util";
@@ -53,6 +52,7 @@ export default function CoinSelectionScreen({
   const insets = useSafeAreaInsets();
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
+  const { formatAmount } = useCurrencyContext();
   const { url, clearUrl } = useInitialURL();
   const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
 
@@ -144,11 +144,11 @@ export default function CoinSelectionScreen({
               txt2={targetMint.customName || formatMintUrl(targetMint.mintUrl)}
             />
           )}
-          <OverviewRow txt1={t("amount")} txt2={formatSatStr(amount)} />
+          <OverviewRow txt1={t("amount")} txt2={`${formatAmount(amount).formatted} ${formatAmount(amount).symbol}`} />
           {isNum(estFee) && !isSendEcash && (
             <OverviewRow
               txt1={t("estimatedFees")}
-              txt2={formatSatStr(estFee)}
+              txt2={`${formatAmount(estFee).formatted} ${formatAmount(estFee).symbol}`}
             />
           )}
           <View>
@@ -159,10 +159,10 @@ export default function CoinSelectionScreen({
             <Txt
               txt={
                 estFee > 0
-                  ? `${formatInt(balance - amount - estFee)} ${t(
+                  ? `${formatAmount(balance - amount - estFee).formatted} ${t(
                       "to"
-                    )} ${formatSatStr(balance - amount)}`
-                  : `${formatSatStr(balance - amount)}`
+                    )} ${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
+                  : `${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
               }
               styles={[{ color: color.TEXT_SECONDARY }]}
             />

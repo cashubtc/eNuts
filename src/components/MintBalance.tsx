@@ -1,7 +1,7 @@
 import { usePrivacyContext } from '@src/context/Privacy'
 import { useThemeContext } from '@src/context/Theme'
+import { useCurrencyContext } from '@src/context/Currency'
 import { highlight as hi } from '@styles'
-import { formatSatStr } from '@util'
 import { View } from 'react-native'
 import { s, ScaledSheet, vs } from 'react-native-size-matters'
 
@@ -17,10 +17,14 @@ interface IMintBalanceProps {
 export default function MintBalance({ balance, txtColor, disabled }: IMintBalanceProps) {
 	const { color, highlight } = useThemeContext()
 	const { hidden } = usePrivacyContext()
+	const { formatAmount } = useCurrencyContext()
+
+	const { formatted, symbol } = formatAmount(balance)
+
 	return (
 		<View style={[styles.wrap, { borderColor: disabled ? color.TEXT_SECONDARY : hi[highlight] }]}>
 			<MintBoardIcon width={s(16)} height={s(16)} color={disabled ? color.TEXT_SECONDARY : hi[highlight]} />
-			<Txt txt={hidden.balance ? '****' : formatSatStr(balance)} styles={[{ fontSize: vs(10), color: txtColor, marginLeft: s(5) }]} />
+			<Txt txt={hidden.balance ? '****' : `${formatted} ${symbol}`} styles={[{ fontSize: vs(10), color: txtColor, marginLeft: s(5) }]} />
 		</View>
 	)
 }

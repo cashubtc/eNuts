@@ -1,12 +1,12 @@
 import Txt from "@comps/Txt";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
+import { useCurrencyContext } from "@src/context/Currency";
 import { getColor } from "@src/styles/colors";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 import EntryTime from "@screens/History/entryTime";
-import { formatSatStr } from "@util";
 import { NS } from "@src/i18n";
 import { HistoryEntry } from "coco-cashu-core";
 import { useNavigation } from "@react-navigation/native";
@@ -32,6 +32,7 @@ export function LatestHistoryWrapper({
 }: LatestHistoryWrapperProps) {
   const { color, highlight } = useThemeContext();
   const { hidden } = usePrivacyContext();
+  const { formatAmount } = useCurrencyContext();
   const { t } = useTranslation([NS.history, NS.common]);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, "History">>();
@@ -49,6 +50,8 @@ export function LatestHistoryWrapper({
       params: { entry },
     });
   };
+
+  const { formatted, symbol } = formatAmount(amount);
 
   return (
     <TouchableOpacity style={styles.entry} onPress={handlePress}>
@@ -75,7 +78,7 @@ export function LatestHistoryWrapper({
         </View>
       </View>
       <Txt
-        txt={hidden.balance ? "****" : formatSatStr(amount)}
+        txt={hidden.balance ? "****" : `${formatted} ${symbol}`}
         styles={[{ color: textColor }]}
       />
     </TouchableOpacity>

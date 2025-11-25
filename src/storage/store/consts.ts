@@ -15,6 +15,11 @@ export const STORE_KEYS = {
   createdToken: "createdToken",
   sawSeedUpdate: "saw_seed_update",
   hasSeed: "has_seed",
+  // currency conversion
+  exchangeRates: "exchange_rates",
+  exchangeRatesTimestamp: "exchange_rates_timestamp",
+  selectedCurrency: "selected_currency",
+  formatBalance: "format_balance",
   // secure store keys
   mnemonic: "mnemonic",
   seed: "seed",

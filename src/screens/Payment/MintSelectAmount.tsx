@@ -7,7 +7,8 @@ import MintSelectionSheet from "@comps/MintSelectionSheet";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { mainColors } from "@styles";
-import { formatSatStr, vib } from "@util";
+import { vib } from "@util";
+import { useCurrencyContext } from "@src/context/Currency";
 import { useCallback, useRef, useState, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { TextInput, View } from "react-native";
@@ -195,6 +196,10 @@ export function MeltOverview({
 }: IMeltOverviewProps) {
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
+  const { formatAmount } = useCurrencyContext();
+  const total = shouldEstimate ? 0 : amount + fee;
+  const { formatted, symbol } = formatAmount(total);
+  
   return (
     <View style={styles.overview}>
       <Txt
@@ -206,7 +211,7 @@ export function MeltOverview({
         bold
       />
       <Txt
-        txt={formatSatStr(shouldEstimate ? 0 : amount + fee)}
+        txt={`${formatted} ${symbol}`}
         styles={[
           {
             color:

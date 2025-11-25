@@ -1,6 +1,7 @@
 import { useThemeContext } from "@src/context/Theme";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { formatMintUrl, formatSatStr } from "@util";
+import { useCurrencyContext } from "@src/context/Currency";
+import { formatMintUrl } from "@util";
 import {
   TouchableOpacity,
   View,
@@ -30,11 +31,12 @@ export default function MintSelector({
 }: IMintSelectorProps) {
   const { color } = useThemeContext();
   const { hidden } = usePrivacyContext();
+  const { formatAmount } = useCurrencyContext();
 
   const displayName = mint.mintInfo.name || formatMintUrl(mint.mintUrl);
-  const displayBalance = hidden.balance
-    ? "****"
-    : formatSatStr(mint.balance, "compact");
+
+  const { formatted, symbol } = formatAmount(mint.balance);
+  const displayBalance = hidden.balance ? "****" : `${formatted} ${symbol}`;
 
   return (
     <TouchableOpacity

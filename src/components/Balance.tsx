@@ -1,5 +1,4 @@
 import { SwapCurrencyIcon } from "@comps/Icons";
-import { setPreferences } from "@src/storage/store/theme";
 import type { RootStackParamList } from "@model/nav";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useBalanceContext } from "@src/context/Balance";
@@ -8,8 +7,6 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi } from "@styles";
 import { getColor } from "@styles/colors";
-import { formatBalance, formatInt, formatSatStr, isBool } from "@util";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
@@ -18,6 +15,7 @@ import { TxtButton } from "./Button";
 import Txt from "./Txt";
 import { usePaginatedHistory } from "coco-cashu-react";
 import { LatestHistory } from "@screens/History/components/LatestHistory";
+import { useCurrencyContext } from "@src/context/Currency";
 
 interface IBalanceProps {
   nav?: NativeStackNavigationProp<RootStackParamList, "dashboard", "MyStack">;
@@ -25,19 +23,15 @@ interface IBalanceProps {
 
 export default function Balance({ nav }: IBalanceProps) {
   const { t } = useTranslation([NS.common]);
-  const { pref, color, highlight } = useThemeContext();
+  const { color, highlight } = useThemeContext();
   const { hidden } = usePrivacyContext();
-  const [formatSats, setFormatSats] = useState(pref?.formatBalance);
   const { balance } = useBalanceContext();
   const { history: latestHistory, hasMore } = usePaginatedHistory(3);
+  const { formatAmount, formatBalance, setFormatBalance } =
+    useCurrencyContext();
 
   const toggleBalanceFormat = () => {
-    setFormatSats((prev) => !prev);
-    if (!pref || !isBool(formatSats)) {
-      return;
-    }
-    // update DB
-    void setPreferences({ ...pref, formatBalance: !formatSats });
+    void setFormatBalance(!formatBalance);
   };
 
   return (
@@ -56,11 +50,7 @@ export default function Balance({ nav }: IBalanceProps) {
           testID={`balance: ${balance}`}
           style={[styles.balAmount, { color: getColor(highlight, color) }]}
         >
-          {hidden.balance
-            ? "****"
-            : formatSats
-            ? formatBalance(balance?.total)
-            : formatInt(balance.total)}
+          {hidden.balance ? "****" : formatAmount(balance.total).formatted}
         </Text>
         <View style={styles.balAssetNameWrap}>
           {!hidden.balance && (
@@ -71,9 +61,7 @@ export default function Balance({ nav }: IBalanceProps) {
                   { color: getColor(highlight, color) },
                 ]}
               >
-                {formatSats
-                  ? "BTC"
-                  : formatSatStr(balance?.total, "compact", false)}
+                {formatAmount(balance.total).symbol}
               </Text>
               <SwapCurrencyIcon
                 width={s(20)}

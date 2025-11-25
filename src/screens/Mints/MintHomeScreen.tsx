@@ -10,7 +10,8 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi } from "@styles";
 import { getColor } from "@styles/colors";
-import { formatMintUrl, formatSatStr } from "@util";
+import { formatMintUrl } from "@util";
+import { useCurrencyContext } from "@src/context/Currency";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
@@ -21,6 +22,7 @@ export default function MintHomeScreen({ navigation }: any) {
   const { t } = useTranslation([NS.common]);
   const { knownMints } = useKnownMints();
   const { color, highlight } = useThemeContext();
+  const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
   const { hidden } = usePrivacyContext();
 
@@ -49,9 +51,10 @@ export default function MintHomeScreen({ navigation }: any) {
             <ScrollView alwaysBounceVertical={false}>
               {knownMints.map((m, i) => {
                 const displayName = m.mintInfo.name || formatMintUrl(m.mintUrl);
+                const { formatted, symbol } = formatAmount(m.balance);
                 const displayBalance = hidden.balance
                   ? "****"
-                  : formatSatStr(m.balance, "compact");
+                  : `${formatted} ${symbol}`;
 
                 return (
                   <TouchableOpacity

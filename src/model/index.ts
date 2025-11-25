@@ -200,3 +200,21 @@ export interface Query {
   sql: string;
   args: (number | string | null)[];
 }
+
+// Currency and exchange rate types
+export interface IExchangeRate {
+  "15m": number;
+  last: number;
+  buy: number;
+  sell: number;
+  symbol: string;
+}
+
+export type IExchangeRates = Record<string, IExchangeRate>;
+
+export type TCurrencyCode = string; // e.g., "USD", "EUR", "GBP", etc.
+
+export interface IFormattedAmount {
+  formatted: string;
+  symbol: string;
+}
