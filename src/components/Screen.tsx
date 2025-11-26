@@ -15,6 +15,7 @@ interface IContainerProps {
   withBackBtn?: boolean;
   withCancelBtn?: boolean;
   handlePress?: () => void;
+  handleCancel?: () => void;
   mintBalance?: number;
   handleMintBalancePress?: () => void;
   disableMintBalance?: boolean;
@@ -31,6 +32,7 @@ export default function Screen({
   withBackBtn,
   withCancelBtn,
   handlePress,
+  handleCancel,
   mintBalance,
   handleMintBalancePress,
   disableMintBalance,
@@ -74,6 +76,7 @@ export default function Screen({
         screenName={screenName || ""}
         withBackBtn={withBackBtn}
         cancel={withCancelBtn}
+        handleCancel={handleCancel}
         handlePress={handlePress}
         mintBalance={mintBalance}
         handleMintBalancePress={handleMintBalancePress}

@@ -83,7 +83,6 @@ export default function MintSelectAmountScreen({
 
   const handleSubmit = useCallback(async () => {
     startLoading();
-    await new Promise((resolve) => setTimeout(resolve, 5000));
     if (!selectedMint) return;
     if (!amountValue || amountValue < 1) {
       vib(400);
@@ -199,7 +198,7 @@ export function MeltOverview({
   const { formatAmount } = useCurrencyContext();
   const total = shouldEstimate ? 0 : amount + fee;
   const { formatted, symbol } = formatAmount(total);
-  
+
   return (
     <View style={styles.overview}>
       <Txt

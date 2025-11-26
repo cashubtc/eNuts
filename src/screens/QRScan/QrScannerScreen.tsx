@@ -56,10 +56,11 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
     if (type === "CASHU_TOKEN") {
       (async () => {
         const result = await claimFromTokenString(parsedContent);
-        if (result === "success") {
-          navigation.replace("success", {
-            isClaim: true,
-            isScanned: true,
+        if (result.status === "success") {
+          navigation.replace("successScreen", {
+            type: "claim",
+            mint: result.token.mint,
+            amount: result.amount,
           });
         }
       })();

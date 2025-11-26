@@ -37,10 +37,11 @@ export default function MeltConfirmationScreen({
     try {
       startLoading();
       await manager.quotes.payMeltQuote(mintUrl, quote.quote);
-      navigation.navigate("success", {
+      navigation.navigate("successScreen", {
+        type: "melt",
+        mint: mintName,
         amount: quote.amount,
         fee: quote.fee_reserve,
-        isMelt: true,
       });
     } catch (e) {
       if (isErr(e)) {
@@ -66,14 +67,23 @@ export default function MeltConfirmationScreen({
       >
         <View style={globals(color).wrapContainer}>
           <OverviewRow txt1={t("mint")} txt2={mintName} />
-          <OverviewRow txt1={t("amount")} txt2={`${formatAmount(quote.amount).formatted} ${formatAmount(quote.amount).symbol}`} />
+          <OverviewRow
+            txt1={t("amount")}
+            txt2={`${formatAmount(quote.amount).formatted} ${
+              formatAmount(quote.amount).symbol
+            }`}
+          />
           <OverviewRow
             txt1={t("estimatedFees")}
-            txt2={`${formatAmount(quote.fee_reserve).formatted} ${formatAmount(quote.fee_reserve).symbol}`}
+            txt2={`${formatAmount(quote.fee_reserve).formatted} ${
+              formatAmount(quote.fee_reserve).symbol
+            }`}
           />
           <OverviewRow
             txt1={t("totalInclFee")}
-            txt2={`${formatAmount(totalWithFees).formatted} ${formatAmount(totalWithFees).symbol}`}
+            txt2={`${formatAmount(totalWithFees).formatted} ${
+              formatAmount(totalWithFees).symbol
+            }`}
           />
         </View>
       </ScrollView>

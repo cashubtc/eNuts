@@ -29,9 +29,10 @@ export default function InvoiceScreen({
   const manager = useManager();
 
   const handlePaidInvoice = async () => {
-    navigation.navigate("success", {
+    console.log("handlePaidInvoice", quote);
+    navigation.navigate("successScreen", {
+      type: "receive",
       amount: quote.amount,
-      mint: formatMintUrl(mintUrl),
     });
   };
 
@@ -46,35 +47,36 @@ export default function InvoiceScreen({
     <Screen
       screenName={t("payInvoice", { ns: NS.wallet })}
       withCancelBtn
-      handlePress={() => {
+      handleCancel={() => {
+        console.log("handleCancel");
         navigation.navigate("dashboard");
       }}
     >
       <View style={styles.container}>
         <View style={styles.content}>
-        <QR
-          size={vs(250)}
-          value={quote.request}
-          onError={() => l("Error while generating the LN QR code")}
-          isInvoice
-          animate={false}
-        />
-        <View>
-          <View style={styles.awaitingWrap}>
-            <Txt
-              txt={t("paymentPending") + "..."}
-              styles={[{ fontWeight: "500", marginRight: s(10) }]}
-            />
-            <Loading />
+          <QR
+            size={vs(250)}
+            value={quote.request}
+            onError={() => l("Error while generating the LN QR code")}
+            isInvoice
+            animate={false}
+          />
+          <View>
+            <View style={styles.awaitingWrap}>
+              <Txt
+                txt={t("paymentPending") + "..."}
+                styles={[{ fontWeight: "500", marginRight: s(10) }]}
+              />
+              <Loading />
+            </View>
           </View>
-        </View>
-        <Button
-          txt={t("shareInvoice")}
-          onPress={() => void share(quote.request)}
-          icon={<ShareIcon color={getColor(highlight, color)} />}
-          outlined
-        />
-        {isIOS && <View style={styles.placeholder} />}
+          <Button
+            txt={t("shareInvoice")}
+            onPress={() => void share(quote.request)}
+            icon={<ShareIcon color={getColor(highlight, color)} />}
+            outlined
+          />
+          {isIOS && <View style={styles.placeholder} />}
         </View>
       </View>
     </Screen>

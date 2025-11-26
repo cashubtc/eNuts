@@ -25,6 +25,71 @@ interface ILnurlNavData {
   url?: string;
   data?: ILnUrlPayRequest;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Success Screen Config Types (Tagged Union)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface BaseSuccessConfig {
+  mint?: string;
+  memo?: string;
+}
+
+/** User paid a Lightning invoice */
+export interface MeltSuccessConfig extends BaseSuccessConfig {
+  type: "melt";
+  amount: number;
+  fee: number;
+  change?: number;
+}
+
+/** Automatic mint-to-mint swap completed */
+export interface AutoSwapSuccessConfig extends BaseSuccessConfig {
+  type: "autoSwap";
+  amount: number;
+  fee: number;
+  change?: number;
+}
+
+/** User claimed an ecash token */
+interface ClaimSuccessConfig extends BaseSuccessConfig {
+  type: "claim";
+  amount: number;
+}
+
+/** User received funds via Lightning invoice */
+interface ReceiveSuccessConfig extends BaseSuccessConfig {
+  type: "receive";
+  amount: number;
+}
+
+/** Nostr zap payment completed */
+interface ZapSuccessConfig extends BaseSuccessConfig {
+  type: "zap";
+  amount: number;
+  fee?: number;
+}
+
+/** Wallet restoration completed */
+interface RestoreSuccessConfig extends BaseSuccessConfig {
+  type: "restore";
+  amount: number;
+}
+
+/** User sent ecash to someone */
+interface SendSuccessConfig extends BaseSuccessConfig {
+  type: "send";
+  amount: number;
+}
+
+export type SuccessConfig =
+  | MeltSuccessConfig
+  | AutoSwapSuccessConfig
+  | ClaimSuccessConfig
+  | ReceiveSuccessConfig
+  | ZapSuccessConfig
+  | RestoreSuccessConfig
+  | SendSuccessConfig;
 /**
  * Stack Navigator
  */
@@ -148,6 +213,7 @@ export type RootStackParamList = {
     change?: number;
     comingFromOnboarding?: boolean;
   };
+  successScreen: SuccessConfig;
   Mint: NavigatorScreenParams<MintStackParamList>;
   mintmanagement: {
     mint: IMintUrl;
@@ -241,6 +307,11 @@ export type TEncodedTokenPageProps = NativeStackScreenProps<
 export type TSuccessPageProps = NativeStackScreenProps<
   RootStackParamList,
   "success",
+  "MyStack"
+>;
+export type TSuccessScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "successScreen",
   "MyStack"
 >;
 export type TMintManagementPageProps = NativeStackScreenProps<

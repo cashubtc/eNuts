@@ -56,7 +56,6 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
           style={{ width: "100%", height: "100%" }}
         />
       </View>
-      <Logo size={s(230)} style={styles.img} success />
       <View style={{ width: "100%" }}>
         <Text
           testID={`amount: ${amount}`}
@@ -99,15 +98,29 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
               txt={t(isAutoSwap ? "swapped" : "paidOut", {
                 ns: NS.wallet,
               })}
-              value={`${formatAmount(amount).formatted} ${formatAmount(amount).symbol}`}
+              value={`${formatAmount(amount).formatted} ${
+                formatAmount(amount).symbol
+              }`}
             />
-            <Details txt={t("fee")} value={`${formatAmount(fee || 0).formatted} ${formatAmount(fee || 0).symbol}`} />
+            <Details
+              txt={t("fee")}
+              value={`${formatAmount(fee || 0).formatted} ${
+                formatAmount(fee || 0).symbol
+              }`}
+            />
             <Details
               txt={t("totalInclFee")}
-              value={`${formatAmount(amount + (fee || 0)).formatted} ${formatAmount(amount + (fee || 0)).symbol}`}
+              value={`${formatAmount(amount + (fee || 0)).formatted} ${
+                formatAmount(amount + (fee || 0)).symbol
+              }`}
             />
             {isNum(change) && (
-              <Details txt={t("change")} value={`${formatAmount(change).formatted} ${formatAmount(change).symbol}`} />
+              <Details
+                txt={t("change")}
+                value={`${formatAmount(change).formatted} ${
+                  formatAmount(change).symbol
+                }`}
+              />
             )}
           </View>
         )}
@@ -115,20 +128,6 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
       <View
         style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}
       >
-        {isScanned && (
-          <>
-            <Button
-              outlined
-              txt={t("scanAnother", { ns: NS.common })}
-              onPress={() =>
-                navigation.navigate("qr scan", {
-                  mint: undefined,
-                })
-              }
-            />
-            <View style={[{ marginVertical: vs(10) }]} />
-          </>
-        )}
         <Button
           txt={t("backToDashboard")}
           onPress={() => {

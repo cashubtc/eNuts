@@ -7,7 +7,22 @@ import { useTrustMint } from "@modal/TrustMintProvider";
 import { isErr } from "@src/util";
 import { useReceive, useSend } from "coco-cashu-react";
 
-export type ClaimResult = "success" | "cancelled" | "error";
+export type ClaimResult =
+  | SuccessClaimResult
+  | CancelledClaimResult
+  | ErrorClaimResult;
+type SuccessClaimResult = {
+  token: Token;
+  amount: number;
+  status: "success";
+};
+type CancelledClaimResult = {
+  status: "cancelled";
+};
+type ErrorClaimResult = {
+  status: "error";
+  error: string;
+};
 
 export function useCashuClaimFlow() {
   const { t } = useTranslation([NS.common, NS.error, NS.wallet]);
@@ -19,8 +34,6 @@ export function useCashuClaimFlow() {
   const claimFromTokenString = async (
     tokenStr: string
   ): Promise<ClaimResult> => {
-    let decoded: Token;
-
     try {
       const decoded = getDecodedToken(tokenStr);
       const isKnown = await manager.mint.isTrustedMint(decoded.mint);
@@ -29,30 +42,38 @@ export function useCashuClaimFlow() {
           onError: (e) => {
             console.error(e);
             openPromptAutoClose({
-              msg: isErr(e)
-                ? e.message
-                : t("receiveTokenErr", { ns: NS.error }),
+              msg: isErr(e) ? e.message : t("claimTokenErr", { ns: NS.error }),
             });
-            return "error";
+            return {
+              status: "error",
+              error: isErr(e) ? e.message : "Something went wrong",
+            };
           },
         });
-        return "success";
+        return {
+          status: "success",
+          token: decoded,
+          amount: decoded.proofs.reduce((acc, proof) => acc + proof.amount, 0),
+        };
       }
 
       const action = await openTrustMint(decoded);
       if (action === "trust") {
         await manager.mint.addMint(decoded.mint, { trusted: true });
         await manager.wallet.receive(decoded);
-        return "success";
+        return { status: "success", token: decoded, amount: decoded.amount };
       }
       // If cancelled or any other action, just abort as per requirement
-      return "cancelled";
+      return { status: "cancelled" };
     } catch (e) {
       console.error(e);
       openPromptAutoClose({
-        msg: isErr(e) ? e.message : t("Something went wrong"),
+        msg: isErr(e) ? e.message : t("claimTokenErr", { ns: NS.error }),
       });
-      return "error";
+      return {
+        status: "error",
+        error: isErr(e) ? e.message : "Something went wrong",
+      };
     }
   };
 

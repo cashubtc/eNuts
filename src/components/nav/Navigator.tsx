@@ -10,6 +10,7 @@ import CoinSelectionScreen from "@screens/Payment/Send/CoinSelection";
 import EncodedTokenPage from "@screens/Payment/Send/EncodedToken";
 import SelectMintToSwapToScreen from "@screens/Payment/Send/SelectMintToSwapTo";
 import SuccessPage from "@screens/Payment/Success";
+import SuccessScreen from "@screens/Payment/SuccessScreen";
 import QrScannerScreen from "@screens/QRScan/QrScannerScreen";
 import RestoreNavigator from "@src/nav/RestoreNavigator";
 import SettingsNavigator from "@src/nav/SettingsNavigator";
@@ -106,6 +107,11 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
         <Stack.Screen
           name="success"
           component={SuccessPage}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name="successScreen"
+          component={SuccessScreen}
           options={{ gestureEnabled: false }}
         />
         <Stack.Screen name="Mint" component={MintNavigator} />
