@@ -274,6 +274,10 @@ export type TAdvancedSettingsPageProps = CompositeScreenProps<
   NativeStackScreenProps<SettingsStackParamList, "Advanced settings">,
   NativeStackScreenProps<RootStackParamList>
 >;
+export type TCurrencySettingsPageProps = CompositeScreenProps<
+  NativeStackScreenProps<SettingsStackParamList, "Currency settings">,
+  NativeStackScreenProps<RootStackParamList>
+>;
 export type TViewMnemonicPageProps = CompositeScreenProps<
   NativeStackScreenProps<SettingsStackParamList, "View mnemonic">,
   NativeStackScreenProps<RootStackParamList>

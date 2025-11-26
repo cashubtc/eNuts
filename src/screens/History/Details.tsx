@@ -4,9 +4,10 @@ import Txt from "@comps/Txt";
 import type { THistoryEntryPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
 import { useThemeContext } from "@src/context/Theme";
+import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import { mainColors } from "@styles";
-import { formatMintUrl, formatSatStr } from "@util";
+import { formatMintUrl } from "@util";
 import { getEncodedToken } from "@cashu/cashu-ts";
 
 const truncateStr = (str: string, maxLength: number) => {
@@ -24,17 +25,21 @@ export default function HistoryEntryDetails({
   const { entry } = route.params;
   const { t } = useTranslation([NS.history]);
   const { color } = useThemeContext();
+  const { formatAmount } = useCurrencyContext();
+
+  const { formatted, symbol } = formatAmount(entry.amount);
+  const amountDisplay = `${formatted} ${symbol}`;
 
   const getEntryAmount = () => {
     switch (entry.type) {
       case "receive":
-        return `+${formatSatStr(entry.amount)}`;
+        return `+${amountDisplay}`;
       case "send":
-        return `-${formatSatStr(entry.amount)}`;
+        return `-${amountDisplay}`;
       case "melt":
-        return `-${formatSatStr(entry.amount)}`;
+        return `-${amountDisplay}`;
       case "mint":
-        return `+${formatSatStr(entry.amount)}`;
+        return `+${amountDisplay}`;
     }
   };
 
@@ -139,7 +144,7 @@ export default function HistoryEntryDetails({
               styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]}
             />
             <Txt
-              txt={formatSatStr(entry.amount)}
+              txt={amountDisplay}
               styles={[styles.detailValue, { color: color.TEXT }]}
             />
           </View>

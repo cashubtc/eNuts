@@ -7,9 +7,9 @@ import Txt from "@comps/Txt";
 import Button from "@comps/Button";
 import { CheckmarkIcon } from "@comps/Icons";
 import { useThemeContext } from "@src/context/Theme";
+import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { formatSatStr } from "@util";
 import { mainColors } from "@styles";
 import React, { forwardRef, useMemo, useCallback, memo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,6 +36,7 @@ const MintItem = memo(
     secondaryTextColor,
     inputBgColor,
     multiSelect,
+    formattedBalance,
   }: {
     mint: KnownMintWithBalance;
     isSelected: boolean;
@@ -44,6 +45,7 @@ const MintItem = memo(
     secondaryTextColor: string;
     inputBgColor: string;
     multiSelect?: boolean;
+    formattedBalance: string;
   }) => {
     const handlePress = useCallback(() => onPress(mint), [onPress, mint]);
 
@@ -70,7 +72,7 @@ const MintItem = memo(
         </View>
         <View style={styles.rightSection}>
           <Txt
-            txt={formatSatStr(mint.balance)}
+            txt={formattedBalance}
             styles={[styles.balance, { color: mainColors.VALID }]}
           />
           {multiSelect && (
@@ -119,6 +121,7 @@ const MintSelectionSheet = forwardRef<
   ) => {
     const { t } = useTranslation([NS.common]);
     const { color } = useThemeContext();
+    const { formatAmount } = useCurrencyContext();
     const { knownMints } = useKnownMints();
     const insets = useSafeAreaInsets();
 
@@ -271,18 +274,24 @@ const MintSelectionSheet = forwardRef<
             </View>
           ) : (
             <>
-              {displayMints.map((mint) => (
-                <MintItem
-                  key={mint.mintUrl}
-                  mint={mint}
-                  isSelected={isMintSelected(mint)}
-                  onPress={handleMintPress}
-                  textColor={color.TEXT}
-                  secondaryTextColor={color.TEXT_SECONDARY}
-                  inputBgColor={color.INPUT_BG}
-                  multiSelect={multiSelect}
-                />
-              ))}
+              {displayMints.map((mint) => {
+                const { formatted, symbol } = formatAmount(mint.balance);
+                const formattedBalance = `${formatted} ${symbol}`;
+                
+                return (
+                  <MintItem
+                    key={mint.mintUrl}
+                    mint={mint}
+                    isSelected={isMintSelected(mint)}
+                    onPress={handleMintPress}
+                    textColor={color.TEXT}
+                    secondaryTextColor={color.TEXT_SECONDARY}
+                    inputBgColor={color.INPUT_BG}
+                    multiSelect={multiSelect}
+                    formattedBalance={formattedBalance}
+                  />
+                );
+              })}
 
               {multiSelect && (
                 <View

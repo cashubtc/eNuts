@@ -1,10 +1,11 @@
 import Button from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
 import { useThemeContext } from "@src/context/Theme";
+import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { globals } from "@styles";
-import { formatMintUrl, formatSatStr, isErr } from "@util";
+import { formatMintUrl, isErr } from "@util";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 import { ScaledSheet } from "react-native-size-matters";
@@ -24,6 +25,7 @@ export default function MeltConfirmationScreen({
   const manager = useManager();
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
+  const { formatAmount } = useCurrencyContext();
   const { loading, startLoading, stopLoading } = useLoading();
   const { openPromptAutoClose } = usePromptContext();
 
@@ -64,14 +66,14 @@ export default function MeltConfirmationScreen({
       >
         <View style={globals(color).wrapContainer}>
           <OverviewRow txt1={t("mint")} txt2={mintName} />
-          <OverviewRow txt1={t("amount")} txt2={formatSatStr(quote.amount)} />
+          <OverviewRow txt1={t("amount")} txt2={`${formatAmount(quote.amount).formatted} ${formatAmount(quote.amount).symbol}`} />
           <OverviewRow
             txt1={t("estimatedFees")}
-            txt2={formatSatStr(quote.fee_reserve)}
+            txt2={`${formatAmount(quote.fee_reserve).formatted} ${formatAmount(quote.fee_reserve).symbol}`}
           />
           <OverviewRow
             txt1={t("totalInclFee")}
-            txt2={formatSatStr(totalWithFees)}
+            txt2={`${formatAmount(totalWithFees).formatted} ${formatAmount(totalWithFees).symbol}`}
           />
         </View>
       </ScrollView>

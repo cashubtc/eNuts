@@ -7,16 +7,16 @@ import Txt from "@comps/Txt";
 import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
 import { preventBack } from "@nav/utils";
-import { isIOS } from "@src/consts";
 import { useThemeContext } from "@src/context/Theme";
+import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi, mainColors } from "@styles";
-import { formatInt, formatSatStr, share, vib } from "@util";
+import { formatInt, formatSatStr, share } from "@util";
 import LottieView from "lottie-react-native";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { s, ScaledSheet } from "react-native-size-matters";
 
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
@@ -28,12 +28,17 @@ export default function EncodedTokenPage({
   const { token } = route.params || {};
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
+  const { formatBalance, formatAmount } = useCurrencyContext();
   const [error, setError] = useState({ msg: "", open: false });
   const encodedToken = useMemo(() => getEncodedToken(token), [token]);
   const tokenAmount = useMemo(
     () => token.proofs.reduce((r, c) => r + c.amount, 0),
     [token]
   );
+
+  // For tokens, always show sats as primary (tokens ARE in sats)
+  // Show fiat equivalent as secondary info if user prefers fiat
+  const fiatEquivalent = formatBalance ? formatAmount(tokenAmount) : null;
   //TODO: Add spent check
   const spent = false;
   const { copied, copy } = useCopy();
@@ -51,99 +56,108 @@ export default function EncodedTokenPage({
       withBackBtn={!spent}
       screenName={!spent ? `${t("newToken")}  🥜🐿️` : undefined}
       handlePress={() => navigation.navigate("dashboard")}
+      withPadding={false}
     >
-      <View
-        style={[
-          styles.container,
-          { paddingBottom: isIOS ? vs(50) : vs(20) },
-        ]}
-      >
+      <View style={styles.container}>
         {spent ? (
-        <>
-          <View />
-          <View>
-            <Text style={[styles.successTxt, { color: color.TEXT }]}>
-              {t("isSpent", { ns: NS.history })}
-            </Text>
-            <View style={styles.successAnim}>
-              <LottieView
-                source={require("../../../../assets/lottie/success.json")}
-                autoPlay
-                loop={false}
-                style={styles.lottie}
-                renderMode="HARDWARE"
-              />
+          <>
+            <View />
+            <View>
+              <Text style={[styles.successTxt, { color: color.TEXT }]}>
+                {t("isSpent", { ns: NS.history })}
+              </Text>
+              <View style={styles.successAnim}>
+                <LottieView
+                  source={require("../../../../assets/lottie/success.json")}
+                  autoPlay
+                  loop={false}
+                  style={styles.lottie}
+                  renderMode="HARDWARE"
+                />
+              </View>
             </View>
-          </View>
-          <Button
-            txt={t("backToDashboard")}
-            onPress={() => navigation.navigate("dashboard")}
-          />
-        </>
-      ) : (
-        <>
-          {/* The amount of the created token */}
-          <View style={styles.qrWrap}>
-            <Txt
-              txt={formatInt(tokenAmount)}
-              styles={[styles.tokenAmount, { color: hi[highlight] }]}
+            <Button
+              txt={t("backToDashboard")}
+              onPress={() => navigation.navigate("dashboard")}
             />
-            <Txt
-              txt={formatSatStr(tokenAmount, "standard", false)}
-              styles={[styles.tokenFormat]}
-            />
-            {/* The QR code */}
-            {error.open ? (
+          </>
+        ) : (
+          <>
+            {/* The amount of the created token */}
+            <View style={styles.qrWrap}>
               <Txt
-                txt={error.msg}
-                styles={[globals(color).navTxt, styles.errorMsg]}
+                txt={formatInt(tokenAmount)}
+                styles={[styles.tokenAmount, { color: hi[highlight] }]}
               />
-            ) : (
-              <QR
-                size={s(280)}
-                value={encodedToken}
-                onError={() =>
-                  setTimeout(
-                    () =>
-                      setError({
-                        msg: t("bigQrMsg"),
-                        open: true,
-                      }),
-                    0
-                  )
-                }
+              <Txt
+                txt={formatSatStr(tokenAmount, "standard", false)}
+                styles={[styles.tokenFormat]}
               />
-            )}
-          </View>
-          <View style={styles.fullWidth}>
-            {error.open && (
-              <>
-                <Button
-                  txt={t(copied ? "copied" : "copyToken")}
-                  onPress={() => void copy(encodedToken)}
-                  icon={
-                    <CopyIcon
-                      width={s(18)}
-                      height={s(18)}
-                      color={mainColors.WHITE}
-                    />
+              {fiatEquivalent && (
+                <Txt
+                  txt={`≈ ${fiatEquivalent.symbol}${fiatEquivalent.formatted}`}
+                  styles={[
+                    styles.fiatEquivalent,
+                    { color: color.TEXT_SECONDARY },
+                  ]}
+                />
+              )}
+              {/* The QR code */}
+              {error.open ? (
+                <Txt
+                  txt={error.msg}
+                  styles={[globals(color).navTxt, styles.errorMsg]}
+                />
+              ) : (
+                <QR
+                  size={s(280)}
+                  value={encodedToken}
+                  onError={() =>
+                    setTimeout(
+                      () =>
+                        setError({
+                          msg: t("bigQrMsg"),
+                          open: true,
+                        }),
+                      0
+                    )
                   }
                 />
-                <View style={{ marginVertical: vs(10) }} />
-              </>
-            )}
-            <Button
-              outlined
-              txt={t("share")}
-              onPress={() =>
-                void share(encodedToken, `cashu://${encodedToken}`)
-              }
-              icon={
-                <ShareIcon width={s(18)} height={s(18)} color={hi[highlight]} />
-              }
-            />
-          </View>
-        </>
+              )}
+            </View>
+            <View style={styles.fullWidth}>
+              {error.open && (
+                <>
+                  <Button
+                    txt={t(copied ? "copied" : "copyToken")}
+                    onPress={() => void copy(encodedToken)}
+                    icon={
+                      <CopyIcon
+                        width={s(18)}
+                        height={s(18)}
+                        color={mainColors.WHITE}
+                      />
+                    }
+                  />
+                  <View style={{ marginVertical: s(10) }} />
+                </>
+              )}
+              <Button
+                outlined
+                txt={t("share")}
+                onPress={() =>
+                  void share(encodedToken, `cashu://${encodedToken}`)
+                }
+                icon={
+                  <ShareIcon
+                    width={s(18)}
+                    height={s(18)}
+                    color={hi[highlight]}
+                  />
+                }
+              />
+            </View>
+          </>
         )}
       </View>
     </Screen>
@@ -160,7 +174,6 @@ const styles = ScaledSheet.create({
   },
   qrWrap: {
     alignItems: "center",
-    marginTop: "70@vs",
   },
   tokenAmount: {
     fontSize: "40@vs",
@@ -168,6 +181,10 @@ const styles = ScaledSheet.create({
     marginTop: "20@vs",
   },
   tokenFormat: {
+    marginBottom: "5@vs",
+  },
+  fiatEquivalent: {
+    fontSize: "14@vs",
     marginBottom: "15@vs",
   },
   errorMsg: {

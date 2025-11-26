@@ -9,6 +9,7 @@ import {
 } from "@react-navigation/native";
 import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 // Balance is now provided by CocoCashuProvider
+import { CurrencyProvider } from "@src/context/Currency";
 import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
 import { ThemeProvider, useThemeContext } from "@src/context/Theme";
@@ -142,19 +143,21 @@ function useAppInitialization() {
 function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      <PrivacyProvider>
-        <MenuProvider>
-          <BottomSheetModalProvider>
-            <TrustMintModalProvider>
-              <ThemedNavigationContainer>
-                <PromptProvider>
-                  <KeyboardProvider>{children}</KeyboardProvider>
-                </PromptProvider>
-              </ThemedNavigationContainer>
-            </TrustMintModalProvider>
-          </BottomSheetModalProvider>
-        </MenuProvider>
-      </PrivacyProvider>
+      <CurrencyProvider>
+        <PrivacyProvider>
+          <MenuProvider>
+            <BottomSheetModalProvider>
+              <TrustMintModalProvider>
+                <ThemedNavigationContainer>
+                  <PromptProvider>
+                    <KeyboardProvider>{children}</KeyboardProvider>
+                  </PromptProvider>
+                </ThemedNavigationContainer>
+              </TrustMintModalProvider>
+            </BottomSheetModalProvider>
+          </MenuProvider>
+        </PrivacyProvider>
+      </CurrencyProvider>
     </ThemeProvider>
   );
 }

@@ -1,7 +1,8 @@
 import { ChevronRightIcon, ZapIcon } from "@comps/Icons";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
-import { formatMintUrl, formatSatStr } from "@util";
+import { formatMintUrl } from "@util";
+import { useCurrencyContext } from "@src/context/Currency";
 import { Text, TouchableOpacity, View } from "react-native";
 import { s } from "react-native-size-matters";
 import { globals, highlight as hi } from "@styles";
@@ -20,6 +21,7 @@ interface MintItemProps {
     highlight: string;
     hidden: { balance: boolean };
     t: (key: string) => string;
+    formatAmount: (sats: number) => { formatted: string; symbol: string };
 }
 
 const styles = {
@@ -42,7 +44,10 @@ export default function MintItem({
     highlight,
     hidden,
     t,
+    formatAmount,
 }: MintItemProps) {
+    const { formatted, symbol } = formatAmount(mint.balance);
+    
     return (
         <View key={mint.mintUrl}>
             <TouchableOpacity
@@ -87,7 +92,7 @@ export default function MintItem({
                             {hidden.balance
                                 ? "****"
                                 : mint.balance > 0
-                                ? formatSatStr(mint.balance, "compact")
+                                ? `${formatted} ${symbol}`
                                 : t("emptyMint")}
                         </Text>
                     </View>

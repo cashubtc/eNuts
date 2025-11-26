@@ -17,9 +17,10 @@ import Separator from "@comps/Separator";
 import type { Token } from "@cashu/cashu-ts";
 import type { ITokenInfo } from "@model";
 import { useThemeContext } from "@src/context/Theme";
+import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import { globals, mainColors } from "@styles";
-import { formatMintUrl, formatSatStr } from "@util";
+import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
@@ -37,6 +38,7 @@ const TrustMintBottomSheet = forwardRef<
 >((_props, ref) => {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
+  const { formatAmount } = useCurrencyContext();
 
   const sheetRef = useRef<BottomSheetModal>(null);
   const [loading, setLoading] = useState(false);
@@ -126,7 +128,7 @@ const TrustMintBottomSheet = forwardRef<
         </Text>
         {tokenInfo && (
           <Text style={[styles.mintPrompt, { color: color.TEXT }]}>
-            {formatSatStr(tokenInfo.value)} {t("from")}:
+            {formatAmount(tokenInfo.value).formatted} {formatAmount(tokenInfo.value).symbol} {t("from")}:
           </Text>
         )}
         <View style={styles.tokenMintsView}>
