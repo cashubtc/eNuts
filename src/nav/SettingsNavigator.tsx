@@ -3,6 +3,7 @@ import Settings from "@screens/Settings";
 import DisplaySettings from "@screens/Settings/Display";
 import LanguageSettings from "@screens/Settings/Language";
 import CurrencySettings from "@screens/Settings/Currency";
+import NfcSettings from "@screens/Settings/NfcSettings";
 import ViewMnemonic from "@screens/Settings/ViewMnemonic";
 import { useThemeContext } from "@src/context/Theme";
 import { SettingsStackParamList } from "./navTypes";
@@ -36,6 +37,7 @@ export default function SettingsNavigator() {
         name="Currency settings"
         component={CurrencySettings}
       />
+      <SettingsStack.Screen name="NFC settings" component={NfcSettings} />
       <SettingsStack.Screen name="View mnemonic" component={ViewMnemonic} />
     </SettingsStack.Navigator>
   );

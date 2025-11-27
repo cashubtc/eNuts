@@ -4,6 +4,10 @@ import DashboardTopBar from "@comps/DashboardTopBar";
 import useLoading from "@comps/hooks/Loading";
 import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from "@comps/Icons";
 import BottomSheetOptionsModal from "@comps/modal/BottomSheetOptionsModal";
+import { NfcIcon } from "@comps/Icons";
+import NfcPaymentModal, {
+  type NfcPaymentModalRef,
+} from "@comps/modal/NfcPaymentModal";
 import Txt from "@comps/Txt";
 import BottomSheet from "@gorhom/bottom-sheet";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
@@ -31,6 +35,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
   const { knownMints } = useKnownMints();
   const sendOptionsRef = useRef<BottomSheet>(null);
   const receiveOptionsRef = useRef<BottomSheet>(null);
+  const nfcModalRef = useRef<NfcPaymentModalRef>(null);
   const { claimFromTokenString, isReceiving } = useCashuClaimFlow();
 
   const handleClaimBtnPress = async () => {
@@ -50,6 +55,20 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
       return;
     }
     stopLoading();
+  };
+
+  const handleNfcOptionPress = () => {
+    sendOptionsRef.current?.close();
+    setTimeout(() => {
+      nfcModalRef.current?.open();
+    }, 200);
+  };
+
+  const handleNfcOptionLongPress = () => {
+    sendOptionsRef.current?.close();
+    setTimeout(() => {
+      nfcModalRef.current?.openWithDefault();
+    }, 200);
   };
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
@@ -115,15 +134,12 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
             color={hi[highlight]}
             disabled={isReceiving}
             onPress={() => {
-              // if (!hasMint) {
-              //     // try to claim from clipboard to avoid receive-options-modal to popup and having to press again
-              //     return handleClaimBtnPress();
-              // }
               receiveOptionsRef.current?.snapToIndex(0);
             }}
           />
         </View>
       </View>
+
       {/* Send options bottom sheet */}
       <BottomSheetOptionsModal
         ref={sendOptionsRef}
@@ -135,9 +151,41 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
         onPressSecondBtn={() => {
           navigation.navigate("MeltInput", {});
         }}
+        // NFC Payment option
+        button3Txt={t("nfcPayment", {
+          ns: NS.wallet,
+          defaultValue: "NFC Payment",
+        })}
+        button3Description={t("nfcPaymentDescription", {
+          ns: NS.wallet,
+          defaultValue: "Tap to pay at a terminal",
+        })}
+        button3Icon={<NfcIcon width={s(20)} color={mainColors.VALID} />}
+        onPressThirdBtn={handleNfcOptionPress}
+        onLongPressThirdBtn={handleNfcOptionLongPress}
         onPressCancel={() => {}}
         isSend
       />
+
+      {/* NFC Payment modal - self-contained with payment logic */}
+      <NfcPaymentModal
+        ref={nfcModalRef}
+        onSuccess={(result) => {
+          openPromptAutoClose({
+            msg: result.amount
+              ? `Sent ${result.amount.toLocaleString()} sats via NFC!`
+              : "NFC payment sent successfully!",
+            success: true,
+          });
+        }}
+        onError={(result) => {
+          openPromptAutoClose({
+            msg: result.error || "NFC payment failed",
+            success: false,
+          });
+        }}
+      />
+
       {/* Receive options bottom sheet */}
       <BottomSheetOptionsModal
         ref={receiveOptionsRef}

@@ -15,6 +15,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.cypherbase.eNuts",
+      "entitlements": {
+        "com.apple.developer.nfc.readersession.formats": ["TAG"]
+      },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -26,7 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": ["android.permission.CAMERA"],
+      "permissions": ["android.permission.CAMERA", "android.permission.NFC"],
       "package": "com.cypherbase.eNuts"
     },
     "web": {
@@ -42,6 +45,13 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to scan QR codes",
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for video recording",
           "recordAudioAndroid": false
+        }
+      ],
+      [
+        "react-native-nfc-manager",
+        {
+          "selectIdentifiers": ["D2760000850101", "D2760000850100"],
+          "includeNdefEntitlement": false
         }
       ]
     ],

@@ -5,6 +5,7 @@ import {
   KeyIcon,
   LockIcon,
   MintBoardIcon,
+  NfcIcon,
   PaletteIcon,
   SettingsIcon,
   SwapCurrencyIcon,
@@ -88,6 +89,11 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             txt={t("currency")}
             icon={<SwapCurrencyIcon color={color.TEXT} />}
             onPress={() => navigation.navigate("Currency settings")}
+          />
+          <MenuItem
+            txt={t("nfcSettings", { defaultValue: "NFC Payments" })}
+            icon={<NfcIcon width={s(18)} color={color.TEXT} />}
+            onPress={() => navigation.navigate("NFC settings")}
           />
         </View>
         {/* SECURITY */}

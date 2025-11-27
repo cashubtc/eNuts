@@ -10,6 +10,7 @@ import {
 import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 // Balance is now provided by CocoCashuProvider
 import { CurrencyProvider } from "@src/context/Currency";
+import { NfcAmountLimitsProvider } from "@src/context/NfcAmountLimits";
 import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
 import { ThemeProvider, useThemeContext } from "@src/context/Theme";
@@ -39,6 +40,7 @@ import { seedService } from "@src/services/SeedService";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { appLogger } from "@src/logger";
 import { AppState } from "react-native";
+import NfcManager from "react-native-nfc-manager";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -87,6 +89,11 @@ function useAppInitialization() {
       // Initialise app
 
       try {
+        // Initialize NFC manager (non-blocking, OK if device doesn't support NFC)
+        NfcManager.start().catch((err) => {
+          appLogger.warn("NFC initialization failed:", err);
+        });
+
         appLogger.debug("Loading languages...");
         const lang = await store.get(STORE_KEYS.lang);
         if (lang?.length) {
@@ -144,19 +151,21 @@ function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <CurrencyProvider>
-        <PrivacyProvider>
-          <MenuProvider>
-            <BottomSheetModalProvider>
-              <TrustMintModalProvider>
-                <ThemedNavigationContainer>
-                  <PromptProvider>
-                    <KeyboardProvider>{children}</KeyboardProvider>
-                  </PromptProvider>
-                </ThemedNavigationContainer>
-              </TrustMintModalProvider>
-            </BottomSheetModalProvider>
-          </MenuProvider>
-        </PrivacyProvider>
+        <NfcAmountLimitsProvider>
+          <PrivacyProvider>
+            <MenuProvider>
+              <BottomSheetModalProvider>
+                <TrustMintModalProvider>
+                  <ThemedNavigationContainer>
+                    <PromptProvider>
+                      <KeyboardProvider>{children}</KeyboardProvider>
+                    </PromptProvider>
+                  </ThemedNavigationContainer>
+                </TrustMintModalProvider>
+              </BottomSheetModalProvider>
+            </MenuProvider>
+          </PrivacyProvider>
+        </NfcAmountLimitsProvider>
       </CurrencyProvider>
     </ThemeProvider>
   );
