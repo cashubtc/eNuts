@@ -1,5 +1,6 @@
 import Screen from "@comps/Screen";
 import Progress from "@comps/Progress";
+import CameraPermission from "@src/screens/QRScan/components/CameraPermission";
 import useScanResult from "@src/screens/QRScan/hooks/useScanResult";
 import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 import { usePromptContext } from "@src/context/Prompt";
@@ -7,7 +8,13 @@ import { QRScannerScreenProps } from "@src/nav/navTypes";
 import { CameraView, ScanningResult, useCameraPermissions } from "expo-camera";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { Button, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 
 function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   const [permission, requestPermission] = useCameraPermissions();
@@ -101,10 +108,11 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
         withBackBtn
         handlePress={() => navigation.goBack()}
       >
-        <Text style={styles.message}>
-          We need your permission to show the camera
-        </Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <CameraPermission
+          canAskAgain={permission.canAskAgain}
+          onRequestPermission={requestPermission}
+          onOpenSettings={() => Linking.openSettings()}
+        />
       </Screen>
     );
   }
@@ -152,10 +160,6 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
 export default QrScannerScreen;
 
 const styles = StyleSheet.create({
-  message: {
-    textAlign: "center",
-    paddingBottom: 10,
-  },
   camera: {
     flex: 1,
   },
