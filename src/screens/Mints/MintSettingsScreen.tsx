@@ -18,13 +18,13 @@ import { ScrollView, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 import { Image } from "expo-image";
 import Button from "@comps/Button";
-import { useManager } from "coco-cashu-react";
+import { useTrustedMints } from "coco-cashu-react";
 
 export default function MintSettingsScreen({ navigation, route }: any) {
   const { t } = useTranslation([NS.common]);
+  const { untrustMint } = useTrustedMints();
   const { openPromptAutoClose } = usePromptContext();
   const { color } = useThemeContext();
-  const manager = useManager();
   const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
 
   const { knownMints } = useKnownMints();
@@ -33,7 +33,8 @@ export default function MintSettingsScreen({ navigation, route }: any) {
   const handleMintDelete = () => {
     void (async () => {
       try {
-        await manager.mint.untrustMint(route.params.mintUrl);
+        await untrustMint(route.params.mintUrl);
+        navigation.goBack();
       } catch (e) {
         l(e);
       }
@@ -166,7 +167,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                 txt: t("delMintSure", { ns: NS.mints }),
                 confirmTxt: t("confirm", { ns: NS.common }),
                 cancelTxt: t("cancel", { ns: NS.common }),
-                onConfirm: () => {},
+                onConfirm: handleMintDelete,
                 destructive: true,
               });
             }}
