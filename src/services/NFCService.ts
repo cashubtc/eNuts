@@ -223,13 +223,18 @@ export default class NfcCashuPayment {
    * });
    * ```
    */
-  static async performPayment(createToken: TokenCreator): Promise<PaymentRequestResult> {
+  static async performPayment(
+    createToken: TokenCreator
+  ): Promise<PaymentRequestResult> {
     log.info("Starting NFC payment flow...");
 
     // Pre-flight checks
     const supported = await this.isSupported();
     if (!supported) {
-      throw new NfcError("NFC is not supported on this device", "NOT_SUPPORTED");
+      throw new NfcError(
+        "NFC is not supported on this device",
+        "NOT_SUPPORTED"
+      );
     }
 
     const enabled = await this.isEnabled();
@@ -248,7 +253,9 @@ export default class NfcCashuPayment {
     } catch (error) {
       log.error("Failed to acquire IsoDep technology:", error);
       throw new NfcError(
-        `Failed to connect to NFC tag: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to connect to NFC tag: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
         "TECHNOLOGY_REQUEST_FAILED"
       );
     }
@@ -320,7 +327,10 @@ export default class NfcCashuPayment {
 
         while (remaining > 0) {
           const chunkSize = Math.min(remaining, MAX_READ_SIZE);
-          r = await sendApdu(READ_BINARY(offset, chunkSize), `READ chunk @${offset}`);
+          r = await sendApdu(
+            READ_BINARY(offset, chunkSize),
+            `READ chunk @${offset}`
+          );
           if (!r.ok) {
             throw new NfcError(
               `Failed reading NDEF chunk at offset ${offset}`,
@@ -345,14 +355,16 @@ export default class NfcCashuPayment {
         token = await createToken(paymentRequest);
       } catch (error) {
         log.error("Token creation failed:", error);
-        throw new NfcError(
-          `Failed to create token: ${error instanceof Error ? error.message : String(error)}`,
-          "TOKEN_CREATION_FAILED"
-        );
+        // Re-throw the original error to preserve custom error types (e.g., LimitExceededError)
+        // The caller can handle these errors appropriately
+        throw error;
       }
 
       if (!token || token.length === 0) {
-        throw new NfcError("Token callback returned empty token", "INVALID_TOKEN");
+        throw new NfcError(
+          "Token callback returned empty token",
+          "INVALID_TOKEN"
+        );
       }
 
       log.info(`Token created (${token.length} chars)`);
@@ -397,9 +409,14 @@ export default class NfcCashuPayment {
       while (offset - 2 < body.length) {
         const chunk = body.slice(offset - 2, offset - 2 + CHUNK_SIZE);
         chunkNum++;
-        log.debug(`Writing chunk ${chunkNum}/${totalChunks}: ${chunk.length} bytes`);
+        log.debug(
+          `Writing chunk ${chunkNum}/${totalChunks}: ${chunk.length} bytes`
+        );
 
-        r = await sendApdu(UPDATE_BINARY(offset, chunk), `WRITE chunk ${chunkNum}`);
+        r = await sendApdu(
+          UPDATE_BINARY(offset, chunk),
+          `WRITE chunk ${chunkNum}`
+        );
         if (!r.ok) {
           throw new NfcError(
             `Failed writing chunk ${chunkNum} (${getStatusMessage(r.sw)})`,
@@ -412,7 +429,6 @@ export default class NfcCashuPayment {
 
       log.info("✓ NFC payment completed successfully!");
       return { request: paymentRequest };
-
     } finally {
       log.debug("Releasing NFC technology...");
       try {
@@ -424,157 +440,9 @@ export default class NfcCashuPayment {
   }
 
   /**
-   * Read a Cashu payment request from an NFC tag (PoS terminal)
-   * @returns The payment request string (e.g., "creqA...")
-   */
-  static async readPaymentRequest(): Promise<string> {
-    log.info("Starting NFC payment request read...");
-
-    // Pre-flight checks
-    const supported = await this.isSupported();
-    if (!supported) {
-      throw new NfcError(
-        "NFC is not supported on this device",
-        "NOT_SUPPORTED"
-      );
-    }
-
-    const enabled = await this.isEnabled();
-    if (!enabled) {
-      throw new NfcError(
-        "NFC is disabled. Please enable NFC in your device settings.",
-        "NOT_ENABLED"
-      );
-    }
-
-    log.debug("Requesting IsoDep technology...");
-
-    try {
-      await NfcManager.requestTechnology(NfcTech.IsoDep);
-      log.info("IsoDep technology acquired, communicating with tag...");
-    } catch (error) {
-      log.error("Failed to acquire IsoDep technology:", error);
-      throw new NfcError(
-        `Failed to connect to NFC tag: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        "TECHNOLOGY_REQUEST_FAILED"
-      );
-    }
-
-    try {
-      // 1) SELECT AID
-      log.debug("Step 1: SELECT NDEF Tag Application AID");
-      let r = await sendApdu(SELECT_AID, "SELECT AID");
-      if (!r.ok) {
-        throw new NfcError(
-          `AID not accepted by tag (${getStatusMessage(r.sw)})`,
-          "AID_SELECT_FAILED",
-          r.sw
-        );
-      }
-
-      // 2) SELECT NDEF FILE
-      log.debug("Step 2: SELECT NDEF File (E104)");
-      r = await sendApdu(SELECT_NDEF, "SELECT NDEF");
-      if (!r.ok) {
-        throw new NfcError(
-          `NDEF file not accessible (${getStatusMessage(r.sw)})`,
-          "NDEF_SELECT_FAILED",
-          r.sw
-        );
-      }
-
-      // 3) Read NLEN (first 2 bytes)
-      log.debug("Step 3: READ BINARY - NLEN (offset=0, len=2)");
-      r = await sendApdu(READ_BINARY(0, 2), "READ NLEN");
-      if (!r.ok) {
-        throw new NfcError(
-          `Failed reading NLEN (${getStatusMessage(r.sw)})`,
-          "READ_NLEN_FAILED",
-          r.sw
-        );
-      }
-
-      const nlen = (r.payload[0] << 8) | r.payload[1];
-      log.debug(`NLEN = ${nlen} bytes`);
-
-      if (nlen === 0) {
-        throw new NfcError(
-          "NDEF file is empty (NLEN=0). No payment request available.",
-          "EMPTY_NDEF"
-        );
-      }
-
-      if (nlen > 65534) {
-        throw new NfcError(`Invalid NLEN value: ${nlen}`, "INVALID_NLEN");
-      }
-
-      // 4) Read NDEF body (may need chunking for large messages)
-      log.debug(`Step 4: READ BINARY - NDEF body (offset=2, len=${nlen})`);
-
-      let ndefBytes: number[] = [];
-      const MAX_READ_SIZE = 250; // Safe chunk size
-
-      if (nlen <= MAX_READ_SIZE) {
-        // Single read
-        r = await sendApdu(READ_BINARY(2, nlen), "READ NDEF");
-        if (!r.ok) {
-          throw new NfcError(
-            `Failed reading NDEF content (${getStatusMessage(r.sw)})`,
-            "READ_NDEF_FAILED",
-            r.sw
-          );
-        }
-        ndefBytes = r.payload;
-      } else {
-        // Chunked read for large messages
-        log.debug(`Large NDEF message, reading in chunks...`);
-        let offset = 2;
-        let remaining = nlen;
-
-        while (remaining > 0) {
-          const chunkSize = Math.min(remaining, MAX_READ_SIZE);
-          r = await sendApdu(
-            READ_BINARY(offset, chunkSize),
-            `READ NDEF chunk @${offset}`
-          );
-          if (!r.ok) {
-            throw new NfcError(
-              `Failed reading NDEF chunk at offset ${offset} (${getStatusMessage(
-                r.sw
-              )})`,
-              "READ_NDEF_CHUNK_FAILED",
-              r.sw
-            );
-          }
-          ndefBytes.push(...r.payload);
-          offset += chunkSize;
-          remaining -= chunkSize;
-          log.debug(`Read ${chunkSize} bytes, ${remaining} remaining`);
-        }
-      }
-
-      log.debug(`Read ${ndefBytes.length} NDEF bytes, parsing Text record...`);
-
-      // Parse the Text record
-      const text = decodeTextRecord(ndefBytes);
-      log.info(`Successfully read payment request (${text.length} chars)`);
-      log.debug(`Payment request preview: ${text.substring(0, 50)}...`);
-
-      return text;
-    } finally {
-      log.debug("Releasing NFC technology...");
-      try {
-        await NfcManager.cancelTechnologyRequest();
-      } catch (cleanupError) {
-        log.warn("Failed to release NFC technology:", cleanupError);
-      }
-    }
-  }
-
-  /**
-   * Write a Cashu token to an NFC tag (PoS terminal)
+   * Write a Cashu token to an NFC tag (PoS terminal).
+   * Used for completing over-limit payments after user confirmation.
+   *
    * @param token The Cashu token string (e.g., "cashuA..." or "cashuB...")
    */
   static async writeCashuToken(token: string): Promise<void> {

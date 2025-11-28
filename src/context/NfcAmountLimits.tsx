@@ -1,28 +1,31 @@
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
-
-// Default preset amounts (in sats)
-export const DEFAULT_PRESETS = [
-  5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000,
-];
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 // Special value for "no limit"
 export const NO_LIMIT = -1;
 
+// Default limit in sats (50k sats)
+const DEFAULT_LIMIT = 50_000;
+
 interface INfcAmountLimitsContext {
+  /** The configured default max amount (-1 = no limit) */
   defaultMaxAmount: number;
-  customAmounts: number[];
+  /** Whether settings are still loading */
   isLoading: boolean;
-  selectDefault: (amount: number) => Promise<void>;
-  addAmount: (amount: number) => Promise<boolean>;
-  removeAmount: (amount: number) => Promise<void>;
-  resetToDefaults: () => Promise<void>;
+  /** Set the default max amount */
+  setDefaultMaxAmount: (amount: number) => Promise<void>;
 }
 
 const useNfcAmountLimitsState = () => {
-  const [defaultMaxAmount, setDefaultMaxAmount] = useState<number>(NO_LIMIT);
-  const [customAmounts, setCustomAmounts] = useState<number[]>(DEFAULT_PRESETS);
+  const [defaultMaxAmount, setDefaultMaxAmountState] =
+    useState<number>(DEFAULT_LIMIT);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load saved settings on mount
@@ -31,15 +34,7 @@ const useNfcAmountLimitsState = () => {
       try {
         const savedMaxAmount = await store.get(STORE_KEYS.nfcDefaultMaxAmount);
         if (savedMaxAmount !== null) {
-          setDefaultMaxAmount(parseInt(savedMaxAmount, 10));
-        }
-
-        const savedCustomAmounts = await store.get(STORE_KEYS.nfcCustomAmounts);
-        if (savedCustomAmounts) {
-          const parsed = JSON.parse(savedCustomAmounts);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setCustomAmounts(parsed);
-          }
+          setDefaultMaxAmountState(parseInt(savedMaxAmount, 10));
         }
       } catch (error) {
         console.error("Failed to load NFC settings:", error);
@@ -51,83 +46,26 @@ const useNfcAmountLimitsState = () => {
   }, []);
 
   // Save default max amount
-  const selectDefault = useCallback(async (amount: number) => {
-    setDefaultMaxAmount(amount);
+  const setDefaultMaxAmount = useCallback(async (amount: number) => {
+    setDefaultMaxAmountState(amount);
     await store.set(STORE_KEYS.nfcDefaultMaxAmount, amount.toString());
-  }, []);
-
-  // Add new amount - returns true if added, false if invalid or duplicate
-  const addAmount = useCallback(
-    async (amount: number): Promise<boolean> => {
-      if (isNaN(amount) || amount <= 0) {
-        return false;
-      }
-
-      // Don't add duplicates
-      if (customAmounts.includes(amount)) {
-        return false;
-      }
-
-      const newAmounts = [...customAmounts, amount].sort((a, b) => a - b);
-      setCustomAmounts(newAmounts);
-      await store.set(STORE_KEYS.nfcCustomAmounts, JSON.stringify(newAmounts));
-      return true;
-    },
-    [customAmounts]
-  );
-
-  // Remove custom amount
-  const removeAmount = useCallback(
-    async (amount: number) => {
-      // Don't allow removing if it's the only one left
-      if (customAmounts.length <= 1) return;
-
-      const newAmounts = customAmounts.filter((a) => a !== amount);
-      setCustomAmounts(newAmounts);
-      await store.set(STORE_KEYS.nfcCustomAmounts, JSON.stringify(newAmounts));
-
-      // If the removed amount was the default, reset to no limit
-      if (defaultMaxAmount === amount) {
-        setDefaultMaxAmount(NO_LIMIT);
-        await store.set(STORE_KEYS.nfcDefaultMaxAmount, NO_LIMIT.toString());
-      }
-    },
-    [customAmounts, defaultMaxAmount]
-  );
-
-  // Reset to defaults
-  const resetToDefaults = useCallback(async () => {
-    setCustomAmounts(DEFAULT_PRESETS);
-    setDefaultMaxAmount(NO_LIMIT);
-    await store.set(
-      STORE_KEYS.nfcCustomAmounts,
-      JSON.stringify(DEFAULT_PRESETS)
-    );
-    await store.set(STORE_KEYS.nfcDefaultMaxAmount, NO_LIMIT.toString());
   }, []);
 
   return {
     defaultMaxAmount,
-    customAmounts,
     isLoading,
-    selectDefault,
-    addAmount,
-    removeAmount,
-    resetToDefaults,
+    setDefaultMaxAmount,
   };
 };
 
 const NfcAmountLimitsContext = createContext<INfcAmountLimitsContext>({
-  defaultMaxAmount: NO_LIMIT,
-  customAmounts: DEFAULT_PRESETS,
+  defaultMaxAmount: DEFAULT_LIMIT,
   isLoading: true,
-  selectDefault: async () => {},
-  addAmount: async () => false,
-  removeAmount: async () => {},
-  resetToDefaults: async () => {},
+  setDefaultMaxAmount: async () => {},
 });
 
-export const useNfcAmountLimitsContext = () => useContext(NfcAmountLimitsContext);
+export const useNfcAmountLimitsContext = () =>
+  useContext(NfcAmountLimitsContext);
 
 export const NfcAmountLimitsProvider = ({
   children,
@@ -140,4 +78,3 @@ export const NfcAmountLimitsProvider = ({
 );
 
 export type { INfcAmountLimitsContext };
-

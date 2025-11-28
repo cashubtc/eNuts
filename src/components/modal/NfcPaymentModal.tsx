@@ -7,14 +7,13 @@ import React, {
 } from "react";
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetScrollView,
+  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { View, TouchableOpacity, Text } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { s, ScaledSheet } from "react-native-size-matters";
 import { useTranslation } from "react-i18next";
 
-import { TxtButton } from "@comps/Button";
-import { NfcIcon } from "@comps/Icons";
+import { NfcIcon, ExclamationIcon } from "@comps/Icons";
 import {
   useNfcAmountLimitsContext,
   NO_LIMIT,
@@ -22,6 +21,7 @@ import {
 import {
   useNfcPayment,
   type NfcPaymentResult,
+  type LimitExceededError,
 } from "@comps/hooks/useNfcPayment";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
@@ -31,10 +31,8 @@ import { NS } from "@src/i18n";
 import { highlight as hi } from "@styles";
 
 export interface NfcPaymentModalRef {
-  /** Open the modal with amount selection */
+  /** Open the modal and start NFC payment with the default limit */
   open: () => void;
-  /** Open the modal and immediately start payment with default amount */
-  openWithDefault: () => void;
   /** Close the modal */
   close: () => void;
 }
@@ -48,6 +46,14 @@ interface INfcPaymentModalProps {
   onClose?: () => void;
 }
 
+/** Info stored when a payment exceeds the configured limit and needs confirmation */
+interface PendingConfirmation {
+  paymentRequest: string;
+  amount: number;
+  mint: string;
+  maxAmount: number;
+}
+
 const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
   ({ onSuccess, onError, onClose }, ref) => {
     const { t } = useTranslation([NS.common]);
@@ -56,70 +62,75 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
       useCurrencyContext();
 
     const bottomSheetRef = useRef<BottomSheet>(null);
-    const [useDefaultOnOpen, setUseDefaultOnOpen] = useState(false);
+    const [pendingConfirmation, setPendingConfirmation] =
+      useState<PendingConfirmation | null>(null);
 
-    const { customAmounts, defaultMaxAmount } = useNfcAmountLimitsContext();
+    const { defaultMaxAmount } = useNfcAmountLimitsContext();
     const currencySymbol =
       rates?.[selectedCurrency]?.symbol || selectedCurrency;
 
     // NFC Payment logic
-    const {
-      isActive,
-      statusMessage,
-      startPayment,
-      cancel: cancelPayment,
-    } = useNfcPayment({
-      onPaymentSuccess: (result) => {
-        setUseDefaultOnOpen(false);
-        bottomSheetRef.current?.close();
-        onSuccess?.(result);
-      },
-      onPaymentError: (result) => {
-        setUseDefaultOnOpen(false);
-        bottomSheetRef.current?.close();
-        onError?.(result);
-      },
-    });
+    const { isActive, statusMessage, startPayment, completeOverLimitPayment } =
+      useNfcPayment({
+        onPaymentSuccess: (result) => {
+          setPendingConfirmation(null);
+          bottomSheetRef.current?.close();
+          onSuccess?.(result);
+        },
+        onPaymentError: (result) => {
+          setPendingConfirmation(null);
+          bottomSheetRef.current?.close();
+          onError?.(result);
+        },
+        onLimitExceeded: (error: LimitExceededError) => {
+          // Store the payment details and show confirmation UI
+          setPendingConfirmation({
+            paymentRequest: error.paymentRequest,
+            amount: error.amount,
+            mint: error.mint,
+            maxAmount: error.maxAmount,
+          });
+        },
+      });
 
-    // Handle amount selection (from list or auto-start)
-    const handleSelectAmount = useCallback(
-      (amount: number | undefined) => {
-        void startPayment({ maxAmount: amount });
-      },
-      [startPayment]
-    );
+    // Start payment with default limit
+    const startPaymentWithDefaultLimit = useCallback(() => {
+      const maxAmount =
+        defaultMaxAmount === NO_LIMIT ? undefined : defaultMaxAmount;
+      void startPayment({ maxAmount });
+    }, [defaultMaxAmount, startPayment]);
+
+    // Handle confirmation of over-limit payment
+    const handleConfirmOverLimit = useCallback(() => {
+      if (!pendingConfirmation) return;
+      const { paymentRequest, amount, mint } = pendingConfirmation;
+      void completeOverLimitPayment(paymentRequest, amount, mint);
+    }, [pendingConfirmation, completeOverLimitPayment]);
+
+    // Handle declining the over-limit payment
+    const handleDeclineOverLimit = useCallback(() => {
+      setPendingConfirmation(null);
+      bottomSheetRef.current?.close();
+      onClose?.();
+    }, [onClose]);
 
     // Expose imperative API
     useImperativeHandle(
       ref,
       () => ({
         open: () => {
-          setUseDefaultOnOpen(false);
+          setPendingConfirmation(null);
           bottomSheetRef.current?.snapToIndex(0);
-        },
-        openWithDefault: () => {
-          setUseDefaultOnOpen(true);
-          bottomSheetRef.current?.snapToIndex(0);
-          // Start payment after sheet opens - don't rely on onChange
-          setTimeout(() => {
-            const amount =
-              defaultMaxAmount === NO_LIMIT ? undefined : defaultMaxAmount;
-            handleSelectAmount(amount);
-          }, 100);
+          // Start payment after sheet opens
+          setTimeout(startPaymentWithDefaultLimit, 100);
         },
         close: () => {
+          setPendingConfirmation(null);
           bottomSheetRef.current?.close();
         },
       }),
-      [defaultMaxAmount, handleSelectAmount]
+      [startPaymentWithDefaultLimit]
     );
-
-    const handleCancel = useCallback(() => {
-      cancelPayment();
-      setUseDefaultOnOpen(false);
-      bottomSheetRef.current?.close();
-      onClose?.();
-    }, [cancelPayment, onClose]);
 
     const renderBackdrop = useCallback(
       (props: any) => (
@@ -133,44 +144,29 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
       []
     );
 
-    const isDefault = (amount: number | undefined) =>
-      amount === undefined
-        ? defaultMaxAmount === NO_LIMIT
-        : defaultMaxAmount === amount;
+    const showConfirmation = pendingConfirmation !== null && !isActive;
+    const showNfcWaiting = isActive || !pendingConfirmation;
 
-    const renderRow = (
-      amount: number | undefined,
-      label: string,
-      sublabel?: string,
-      isLast = false
-    ) => (
-      <View key={amount ?? "no-limit"}>
-        <TouchableOpacity
-          style={styles.row}
-          onPress={() => handleSelectAmount(amount)}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.label, { color: color.TEXT }]}>{label}</Text>
-          <View style={styles.rowRight}>
-            {sublabel && (
-              <Text style={[styles.sublabel, { color: color.TEXT_SECONDARY }]}>
-                {sublabel}
-              </Text>
-            )}
-            {isDefault(amount) && (
-              <View style={[styles.badge, { backgroundColor: hi[highlight] }]}>
-                <Text style={styles.badgeText}>
-                  {t("default", { defaultValue: "Default" })}
-                </Text>
-              </View>
-            )}
-          </View>
-        </TouchableOpacity>
-        {!isLast && <Separator style={styles.separator} />}
-      </View>
-    );
+    // Format the pending amount for display
+    const pendingAmountFiat =
+      pendingConfirmation && formatBalance && rates
+        ? formatSatsAsCurrency(pendingConfirmation.amount)
+        : null;
+    const pendingLimitFiat =
+      pendingConfirmation && formatBalance && rates
+        ? formatSatsAsCurrency(pendingConfirmation.maxAmount)
+        : null;
 
-    const showAmountSelection = !isActive && !useDefaultOnOpen;
+    // Header title
+    const headerTitle = showConfirmation
+      ? t("nfcConfirmPayment", {
+          ns: NS.wallet,
+          defaultValue: "Confirm Payment",
+        })
+      : t("nfcPayment", {
+          ns: NS.wallet,
+          defaultValue: "NFC Payment",
+        });
 
     return (
       <BottomSheet
@@ -182,55 +178,144 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
         backgroundStyle={{ backgroundColor: color.BACKGROUND }}
         handleIndicatorStyle={{ backgroundColor: color.TEXT_SECONDARY }}
       >
-        <BottomSheetScrollView
-          style={{ backgroundColor: color.BACKGROUND }}
-          contentContainerStyle={styles.container}
-          showsVerticalScrollIndicator={false}
+        <BottomSheetView
+          style={[styles.container, { backgroundColor: color.BACKGROUND }]}
         >
           <View style={styles.header}>
-            <NfcIcon width={s(28)} color={hi[highlight]} />
-            <Txt
-              txt={
-                showAmountSelection
-                  ? t("nfcSelectMaxAmount", {
-                      ns: NS.wallet,
-                      defaultValue: "Select maximum amount",
-                    })
-                  : t("nfcPayment", {
-                      ns: NS.wallet,
-                      defaultValue: "NFC Payment",
-                    })
-              }
-              bold
-              styles={[styles.title]}
-            />
+            {showConfirmation ? (
+              <ExclamationIcon width={s(28)} color={hi[highlight]} />
+            ) : (
+              <NfcIcon width={s(28)} color={hi[highlight]} />
+            )}
+            <Txt txt={headerTitle} bold styles={[styles.title]} />
           </View>
 
-          {showAmountSelection && (
-            <View
-              style={[
-                styles.list,
-                { backgroundColor: color.INPUT_BG, borderColor: color.BORDER },
-              ]}
-            >
-              {renderRow(
-                undefined,
-                t("noLimit", { ns: NS.wallet, defaultValue: "No limit" })
-              )}
-              {customAmounts.map((amount, i) => {
-                const fiat =
-                  formatBalance && rates ? formatSatsAsCurrency(amount) : null;
-                return renderRow(
-                  amount,
-                  `${amount.toLocaleString()} sats`,
-                  fiat ? `≈ ${currencySymbol}${fiat}` : undefined,
-                  i === customAmounts.length - 1
-                );
-              })}
+          {showConfirmation && pendingConfirmation && (
+            <View style={styles.confirmationContainer}>
+              <Txt
+                txt={t("nfcAmountExceedsLimit", {
+                  ns: NS.wallet,
+                  defaultValue: "This payment exceeds your configured limit.",
+                })}
+                styles={[
+                  styles.confirmationText,
+                  { color: color.TEXT_SECONDARY },
+                ]}
+              />
+
+              <View
+                style={[
+                  styles.confirmationBox,
+                  {
+                    backgroundColor: color.INPUT_BG,
+                    borderColor: color.BORDER,
+                  },
+                ]}
+              >
+                <View style={styles.confirmationRow}>
+                  <Txt
+                    txt={t("amount", { ns: NS.common, defaultValue: "Amount" })}
+                    styles={[
+                      styles.confirmationLabel,
+                      { color: color.TEXT_SECONDARY },
+                    ]}
+                  />
+                  <View style={styles.confirmationValue}>
+                    <Txt
+                      txt={`${pendingConfirmation.amount.toLocaleString()} sats`}
+                      bold
+                      styles={[{ color: color.TEXT }]}
+                    />
+                    {pendingAmountFiat && (
+                      <Txt
+                        txt={`≈ ${currencySymbol}${pendingAmountFiat}`}
+                        styles={[
+                          styles.confirmationFiat,
+                          { color: color.TEXT_SECONDARY },
+                        ]}
+                      />
+                    )}
+                  </View>
+                </View>
+
+                <Separator style={styles.confirmationSeparator} />
+
+                <View style={styles.confirmationRow}>
+                  <Txt
+                    txt={t("yourLimit", {
+                      ns: NS.wallet,
+                      defaultValue: "Your limit",
+                    })}
+                    styles={[
+                      styles.confirmationLabel,
+                      { color: color.TEXT_SECONDARY },
+                    ]}
+                  />
+                  <View style={styles.confirmationValue}>
+                    <Txt
+                      txt={`${pendingConfirmation.maxAmount.toLocaleString()} sats`}
+                      styles={[{ color: color.TEXT }]}
+                    />
+                    {pendingLimitFiat && (
+                      <Txt
+                        txt={`≈ ${currencySymbol}${pendingLimitFiat}`}
+                        styles={[
+                          styles.confirmationFiat,
+                          { color: color.TEXT_SECONDARY },
+                        ]}
+                      />
+                    )}
+                  </View>
+                </View>
+              </View>
+
+              <Txt
+                txt={t("nfcTapAgainAfterConfirm", {
+                  ns: NS.wallet,
+                  defaultValue:
+                    "You will need to tap the terminal again after confirming.",
+                })}
+                styles={[
+                  styles.confirmationHint,
+                  { color: color.TEXT_SECONDARY },
+                ]}
+              />
+
+              <View style={styles.confirmationButtons}>
+                <TouchableOpacity
+                  style={[
+                    styles.confirmationButton,
+                    styles.declineButton,
+                    { borderColor: color.BORDER },
+                  ]}
+                  onPress={handleDeclineOverLimit}
+                  activeOpacity={0.7}
+                >
+                  <Text
+                    style={[styles.declineButtonText, { color: color.TEXT }]}
+                  >
+                    {t("cancel", { ns: NS.common, defaultValue: "Cancel" })}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.confirmationButton,
+                    styles.confirmButton,
+                    { backgroundColor: hi[highlight] },
+                  ]}
+                  onPress={handleConfirmOverLimit}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.confirmButtonText}>
+                    {t("confirm", { ns: NS.common, defaultValue: "Confirm" })}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
 
-          {!showAmountSelection && (
+          {showNfcWaiting && (
             <View style={styles.loading}>
               <View style={[styles.pulse, { borderColor: hi[highlight] }]}>
                 <NfcIcon width={s(40)} color={hi[highlight]} />
@@ -241,7 +326,7 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
               />
             </View>
           )}
-        </BottomSheetScrollView>
+        </BottomSheetView>
       </BottomSheet>
     );
   }
@@ -265,43 +350,6 @@ const styles = ScaledSheet.create({
   title: {
     fontSize: "18@vs",
   },
-  list: {
-    borderRadius: "12@s",
-    borderWidth: 1,
-    marginBottom: "8@vs",
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: "12@vs",
-    paddingHorizontal: "14@s",
-  },
-  rowRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: "8@s",
-  },
-  label: {
-    fontSize: "14@vs",
-    fontWeight: "500",
-  },
-  sublabel: {
-    fontSize: "12@vs",
-  },
-  badge: {
-    paddingHorizontal: "6@s",
-    paddingVertical: "2@vs",
-    borderRadius: "4@s",
-  },
-  badgeText: {
-    fontSize: "9@vs",
-    color: "#fff",
-    fontWeight: "600",
-  },
-  separator: {
-    marginHorizontal: "14@s",
-  },
   loading: {
     alignItems: "center",
     paddingVertical: "32@vs",
@@ -314,6 +362,70 @@ const styles = ScaledSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: "16@vs",
+  },
+  // Confirmation UI styles
+  confirmationContainer: {
+    paddingVertical: "8@vs",
+  },
+  confirmationText: {
+    fontSize: "14@vs",
+    textAlign: "center",
+    marginBottom: "16@vs",
+  },
+  confirmationBox: {
+    borderRadius: "12@s",
+    borderWidth: 1,
+    marginBottom: "12@vs",
+  },
+  confirmationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: "14@vs",
+    paddingHorizontal: "16@s",
+  },
+  confirmationLabel: {
+    fontSize: "14@vs",
+  },
+  confirmationValue: {
+    alignItems: "flex-end",
+  },
+  confirmationFiat: {
+    fontSize: "12@vs",
+    marginTop: "2@vs",
+  },
+  confirmationSeparator: {
+    marginHorizontal: "16@s",
+  },
+  confirmationHint: {
+    fontSize: "12@vs",
+    textAlign: "center",
+    marginBottom: "20@vs",
+    fontStyle: "italic",
+  },
+  confirmationButtons: {
+    flexDirection: "row",
+    gap: "12@s",
+  },
+  confirmationButton: {
+    flex: 1,
+    paddingVertical: "14@vs",
+    borderRadius: "12@s",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  declineButton: {
+    borderWidth: 1,
+  },
+  confirmButton: {},
+  declineButtonText: {
+    fontSize: "15@vs",
+    fontWeight: "600",
+  },
+  confirmButtonText: {
+    fontSize: "15@vs",
+    fontWeight: "600",
+    color: "#fff",
   },
 });
 

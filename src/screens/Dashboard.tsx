@@ -64,13 +64,6 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
     }, 200);
   };
 
-  const handleNfcOptionLongPress = () => {
-    sendOptionsRef.current?.close();
-    setTimeout(() => {
-      nfcModalRef.current?.openWithDefault();
-    }, 200);
-  };
-
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) =>
@@ -162,7 +155,6 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
         })}
         button3Icon={<NfcIcon width={s(20)} color={mainColors.VALID} />}
         onPressThirdBtn={handleNfcOptionPress}
-        onLongPressThirdBtn={handleNfcOptionLongPress}
         onPressCancel={() => {}}
         isSend
       />

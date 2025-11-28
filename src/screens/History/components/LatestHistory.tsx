@@ -13,7 +13,7 @@ type LatestHistoryProps = {
 export const LatestHistory = memo(function LatestHistory({
   history,
 }: LatestHistoryProps) {
-  return <View>{history.map((h) => renderHistoryEntry(h))}</View>;
+  return <View>{history.slice(0, 4).map((h) => renderHistoryEntry(h))}</View>;
 });
 
 function renderHistoryEntry(history: HistoryEntry) {

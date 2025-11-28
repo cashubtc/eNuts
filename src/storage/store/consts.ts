@@ -22,7 +22,6 @@ export const STORE_KEYS = {
   formatBalance: "format_balance",
   // NFC settings
   nfcDefaultMaxAmount: "nfc_default_max_amount",
-  nfcCustomAmounts: "nfc_custom_amounts",
   // secure store keys
   mnemonic: "mnemonic",
   seed: "seed",
