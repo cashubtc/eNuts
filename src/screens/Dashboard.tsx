@@ -21,6 +21,7 @@ import { getStrFromClipboard } from "@util";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { s, ScaledSheet } from "react-native-size-matters";
 import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 
@@ -73,128 +74,149 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
   }, [navigation]);
 
   return (
-    <View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-      {/* Dashboard top bar */}
-      <DashboardTopBar
-        onSettingsPress={() =>
-          navigation.navigate("Settings", { screen: "SettingsMain" })
-        }
-      />
-      {/* Balance section - takes 2/3 of available space */}
-      <View style={styles.balanceSection}>
-        <Balance nav={navigation} />
-      </View>
-      {/* Action buttons section - takes 1/3 of available space */}
-      <View style={styles.actionsSection}>
-        <View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
-          {/* Send button or add first mint */}
-          {knownMints.length > 0 ? (
-            <ActionBtn
-              icon={
-                <SendIcon width={s(32)} height={s(32)} color={hi[highlight]} />
-              }
-              txt={t("send", { ns: NS.wallet })}
-              color={hi[highlight]}
-              onPress={() => {
-                sendOptionsRef.current?.snapToIndex(0);
-              }}
-            />
-          ) : (
-            <ActionBtn
-              icon={
-                <PlusIcon width={s(36)} height={s(36)} color={hi[highlight]} />
-              }
-              txt={t("mint")}
-              color={hi[highlight]}
-              onPress={() => {
-                navigation.navigate("Mint", { screen: "MintHome" });
-              }}
-            />
-          )}
-          <ActionBtn
-            icon={
-              <ScanQRIcon width={s(32)} height={s(32)} color={hi[highlight]} />
-            }
-            txt={t("scan")}
-            color={hi[highlight]}
-            onPress={() => navigation.navigate("QRScanner")}
-          />
-          <ActionBtn
-            icon={
-              <ReceiveIcon width={s(32)} height={s(32)} color={hi[highlight]} />
-            }
-            txt={t("receive", { ns: NS.wallet })}
-            color={hi[highlight]}
-            disabled={isReceiving}
-            onPress={() => {
-              receiveOptionsRef.current?.snapToIndex(0);
-            }}
-          />
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: color.BACKGROUND }]}
+      edges={["bottom"]}
+    >
+      <View style={styles.container}>
+        {/* Dashboard top bar */}
+        <DashboardTopBar
+          onSettingsPress={() =>
+            navigation.navigate("Settings", { screen: "SettingsMain" })
+          }
+        />
+        {/* Balance section - takes 2/3 of available space */}
+        <View style={styles.balanceSection}>
+          <Balance nav={navigation} />
         </View>
+        {/* Action buttons section - takes 1/3 of available space */}
+        <View style={styles.actionsSection}>
+          <View style={[styles.actionWrap, { paddingHorizontal: s(20) }]}>
+            {/* Send button or add first mint */}
+            {knownMints.length > 0 ? (
+              <ActionBtn
+                icon={
+                  <SendIcon
+                    width={s(32)}
+                    height={s(32)}
+                    color={hi[highlight]}
+                  />
+                }
+                txt={t("send", { ns: NS.wallet })}
+                color={hi[highlight]}
+                onPress={() => {
+                  sendOptionsRef.current?.snapToIndex(0);
+                }}
+              />
+            ) : (
+              <ActionBtn
+                icon={
+                  <PlusIcon
+                    width={s(36)}
+                    height={s(36)}
+                    color={hi[highlight]}
+                  />
+                }
+                txt={t("mint")}
+                color={hi[highlight]}
+                onPress={() => {
+                  navigation.navigate("Mint", { screen: "MintHome" });
+                }}
+              />
+            )}
+            <ActionBtn
+              icon={
+                <ScanQRIcon
+                  width={s(32)}
+                  height={s(32)}
+                  color={hi[highlight]}
+                />
+              }
+              txt={t("scan")}
+              color={hi[highlight]}
+              onPress={() => navigation.navigate("QRScanner")}
+            />
+            <ActionBtn
+              icon={
+                <ReceiveIcon
+                  width={s(32)}
+                  height={s(32)}
+                  color={hi[highlight]}
+                />
+              }
+              txt={t("receive", { ns: NS.wallet })}
+              color={hi[highlight]}
+              disabled={isReceiving}
+              onPress={() => {
+                receiveOptionsRef.current?.snapToIndex(0);
+              }}
+            />
+          </View>
+        </View>
+
+        {/* Send options bottom sheet */}
+        <BottomSheetOptionsModal
+          ref={sendOptionsRef}
+          button1Txt={t("sendEcash")}
+          onPressFirstBtn={() => {
+            navigation.navigate("SendSelectAmount");
+          }}
+          button2Txt={t("payLNInvoice", { ns: NS.wallet })}
+          onPressSecondBtn={() => {
+            navigation.navigate("MeltInput", {});
+          }}
+          // NFC Payment option
+          button3Txt={t("nfcPayment", {
+            ns: NS.wallet,
+            defaultValue: "NFC Payment",
+          })}
+          button3Description={t("nfcPaymentDescription", {
+            ns: NS.wallet,
+            defaultValue: "Tap to pay at a terminal",
+          })}
+          button3Icon={<NfcIcon width={s(20)} color={mainColors.VALID} />}
+          onPressThirdBtn={handleNfcOptionPress}
+          onPressCancel={() => {}}
+          isSend
+        />
+
+        {/* NFC Payment modal - self-contained with payment logic */}
+        <NfcPaymentModal
+          ref={nfcModalRef}
+          onSuccess={(result) => {
+            openPromptAutoClose({
+              msg: result.amount
+                ? `Sent ${result.amount.toLocaleString()} sats via NFC!`
+                : "NFC payment sent successfully!",
+              success: true,
+            });
+          }}
+          onError={(result) => {
+            openPromptAutoClose({
+              msg: result.error || "NFC payment failed",
+              success: false,
+            });
+          }}
+        />
+
+        {/* Receive options bottom sheet */}
+        <BottomSheetOptionsModal
+          ref={receiveOptionsRef}
+          button1Txt={
+            loading
+              ? t("claiming", { ns: NS.wallet })
+              : t("pasteToken", { ns: NS.wallet })
+          }
+          onPressFirstBtn={() => void handleClaimBtnPress()}
+          button2Txt={t("createLnInvoice")}
+          onPressSecondBtn={() => {
+            navigation.navigate("MintSelectAmount");
+          }}
+          onPressCancel={() => {}}
+          loading={loading}
+        />
       </View>
-
-      {/* Send options bottom sheet */}
-      <BottomSheetOptionsModal
-        ref={sendOptionsRef}
-        button1Txt={t("sendEcash")}
-        onPressFirstBtn={() => {
-          navigation.navigate("SendSelectAmount");
-        }}
-        button2Txt={t("payLNInvoice", { ns: NS.wallet })}
-        onPressSecondBtn={() => {
-          navigation.navigate("MeltInput", {});
-        }}
-        // NFC Payment option
-        button3Txt={t("nfcPayment", {
-          ns: NS.wallet,
-          defaultValue: "NFC Payment",
-        })}
-        button3Description={t("nfcPaymentDescription", {
-          ns: NS.wallet,
-          defaultValue: "Tap to pay at a terminal",
-        })}
-        button3Icon={<NfcIcon width={s(20)} color={mainColors.VALID} />}
-        onPressThirdBtn={handleNfcOptionPress}
-        onPressCancel={() => {}}
-        isSend
-      />
-
-      {/* NFC Payment modal - self-contained with payment logic */}
-      <NfcPaymentModal
-        ref={nfcModalRef}
-        onSuccess={(result) => {
-          openPromptAutoClose({
-            msg: result.amount
-              ? `Sent ${result.amount.toLocaleString()} sats via NFC!`
-              : "NFC payment sent successfully!",
-            success: true,
-          });
-        }}
-        onError={(result) => {
-          openPromptAutoClose({
-            msg: result.error || "NFC payment failed",
-            success: false,
-          });
-        }}
-      />
-
-      {/* Receive options bottom sheet */}
-      <BottomSheetOptionsModal
-        ref={receiveOptionsRef}
-        button1Txt={
-          loading
-            ? t("claiming", { ns: NS.wallet })
-            : t("pasteToken", { ns: NS.wallet })
-        }
-        onPressFirstBtn={() => void handleClaimBtnPress()}
-        button2Txt={t("createLnInvoice")}
-        onPressSecondBtn={() => {
-          navigation.navigate("MintSelectAmount");
-        }}
-        onPressCancel={() => {}}
-        loading={loading}
-      />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -227,6 +249,9 @@ function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
 }
 
 const styles = ScaledSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
   },
