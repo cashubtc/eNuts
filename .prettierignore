@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+.expo
+
+# Native builds
+android
+ios
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Coverage
+coverage
+
+# Generated files
+*.generated.*
+.expo-shared
+
+# Misc
+.git
+*.log
