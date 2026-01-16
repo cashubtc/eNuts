@@ -1,4 +1,4 @@
-import { SendIcon } from "@comps/Icons";
+import { SendIcon, ClockIcon, CheckmarkIcon } from "@comps/Icons";
 import { LatestHistoryWrapper } from "./LatestHistoryWrapper";
 import { useThemeContext } from "@src/context/Theme";
 import { SendHistoryEntry } from "coco-cashu-core";
@@ -19,9 +19,23 @@ export const LatestHistorySendEntry = memo(
     const iconColor =
       variant === "highlight" ? getColor(highlight, color) : color.TEXT;
 
+    let icon;
+    switch (history.state) {
+      case "prepared":
+      case "pending":
+        icon = <ClockIcon color={iconColor} />;
+        break;
+      case "finalized":
+        icon = <CheckmarkIcon color={iconColor} />;
+        break;
+      case "rolledBack":
+      default:
+        icon = <SendIcon color={iconColor} />;
+    }
+
     return (
       <LatestHistoryWrapper
-        icon={<SendIcon color={iconColor} />}
+        icon={icon}
         name={history.type}
         createdAt={history.createdAt}
         amount={history.amount}
@@ -32,6 +46,7 @@ export const LatestHistorySendEntry = memo(
   },
   (prev, next) =>
     prev.history.id === next.history.id &&
+    prev.history.state === next.history.state &&
     prev.history.amount === next.history.amount &&
     prev.history.createdAt === next.history.createdAt
 );

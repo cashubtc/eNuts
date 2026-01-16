@@ -20,7 +20,7 @@ import { STORE_KEYS } from "@store/consts";
 import { dark, light } from "@styles";
 import { isErr } from "@util";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MenuProvider } from "react-native-popup-menu";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -41,6 +41,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { appLogger } from "@src/logger";
 import { AppState } from "react-native";
 import NfcManager from "react-native-nfc-manager";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -148,6 +149,8 @@ function useAppInitialization() {
 }
 
 function AppProviders({ children }: { children: React.ReactNode }) {
+  const db = useMemo(() => dbProvider.getDatabase(), []);
+  useDrizzleStudio(db);
   return (
     <ThemeProvider>
       <CurrencyProvider>

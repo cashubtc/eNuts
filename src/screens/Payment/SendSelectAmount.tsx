@@ -31,7 +31,7 @@ export default function SendSelectAmountScreen({
   const manager = useManager();
   const amountInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
-  const { isSending, isError: isSendError, send } = useSend();
+  const { isSending, prepareSend, executePreparedSend } = useSend();
   const { openPromptAutoClose } = usePromptContext();
 
   const [amountInput, setAmountInput] = useState("");
@@ -97,7 +97,8 @@ export default function SendSelectAmountScreen({
       }, 500);
       return;
     }
-    const token = await send(selectedMint.mintUrl, amountValue, {
+    const preparedSend = await prepareSend(selectedMint.mintUrl, amountValue);
+    const { token } = await executePreparedSend(preparedSend.id, {
       onError: (e) => {
         console.error(e);
         openPromptAutoClose({
@@ -109,7 +110,18 @@ export default function SendSelectAmountScreen({
     return navigation.navigate("encodedToken", {
       token,
     });
-  }, [amountValue, selectedMint, manager, navigation, selectedMintBalance, shake, send, openPromptAutoClose, t]);
+  }, [
+    amountValue,
+    selectedMint,
+    manager,
+    navigation,
+    selectedMintBalance,
+    shake,
+    prepareSend,
+    executePreparedSend,
+    openPromptAutoClose,
+    t,
+  ]);
 
   // Early return after all hooks
   if (noMintsAvailable) {
@@ -199,7 +211,7 @@ export function MeltOverview({
   const { formatAmount } = useCurrencyContext();
   const total = shouldEstimate ? 0 : amount + fee;
   const { formatted, symbol } = formatAmount(total);
-  
+
   return (
     <View style={styles.overview}>
       <Txt

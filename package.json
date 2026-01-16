@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@cashu/cashu-ts": "^2.5.2",
@@ -21,9 +22,9 @@
     "@types/react-native-onboarding-swiper": "^1.1.9",
     "bech32": "^2.0.0",
     "cashu-kym": "^0.4.1",
-    "coco-cashu-core": "^1.1.2-rc.30",
-    "coco-cashu-expo-sqlite": "^1.1.2-rc.30",
-    "coco-cashu-react": "^1.1.2-rc.30",
+    "coco-cashu-core": "^1.1.2-rc.35",
+    "coco-cashu-expo-sqlite": "^1.1.2-rc.35",
+    "coco-cashu-react": "^1.1.2-rc.35",
     "crypto-js": "^4.2.0",
     "expo": "~54.0.25",
     "expo-application": "~7.0.7",
@@ -31,6 +32,7 @@
     "expo-clipboard": "~8.0.7",
     "expo-crypto": "~15.0.7",
     "expo-dev-client": "~6.0.18",
+    "expo-drizzle-studio-plugin": "^0.2.1",
     "expo-file-system": "~19.0.19",
     "expo-image": "~3.0.10",
     "expo-localization": "~17.0.7",

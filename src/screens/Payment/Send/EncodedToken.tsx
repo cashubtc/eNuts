@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
+import { useManager } from "@src/context/Manager";
 
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
@@ -35,6 +36,7 @@ export default function EncodedTokenPage({
     () => token.proofs.reduce((r, c) => r + c.amount, 0),
     [token]
   );
+  const manager = useManager();
 
   // For tokens, always show sats as primary (tokens ARE in sats)
   // Show fiat equivalent as secondary info if user prefers fiat
@@ -50,6 +52,13 @@ export default function EncodedTokenPage({
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
+
+  useEffect(() => {
+    const unsub = manager.on("send:finalized", () => {
+      navigation.navigate("dashboard");
+    });
+    return () => unsub();
+  }, []);
 
   return (
     <Screen

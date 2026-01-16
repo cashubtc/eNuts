@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useManager } from "coco-cashu-react";
-import { getEncodedToken, PaymentRequest } from "@cashu/cashu-ts";
+import { getEncodedToken, PaymentRequest, Token } from "@cashu/cashu-ts";
 import NfcCashuPayment, { NfcError } from "@src/services/NFCService";
 import { appLogger } from "@src/logger";
 
@@ -139,36 +139,43 @@ export function useNfcPayment(
           paymentRequest = request;
           log.info("Payment request received");
           setStatusMessage("Processing payment...");
-
-          const pr = PaymentRequest.fromEncodedRequest(request);
-
-          if (!pr.mints || pr.mints.length === 0) {
-            throw new Error("Payment request has no mints specified");
+          const parsedPr = await manager.wallet.processPaymentRequest(request);
+          if (parsedPr.matchingMints.length === 0) {
+            throw new Error("No matching mints found");
           }
-          if (!pr.amount) {
+          if (!parsedPr.amount) {
             throw new Error("Payment request has no amount specified");
           }
-
-          paymentAmount = pr.amount;
-          paymentMint = pr.mints[0]!;
-
-          // Check max amount limit - throw special error with payment details
-          if (maxAmount !== undefined && pr.amount > maxAmount) {
+          if (maxAmount !== undefined && parsedPr.amount > maxAmount) {
             log.warn(
-              `Payment amount ${pr.amount} exceeds max allowed ${maxAmount}`
+              `Payment amount ${parsedPr.amount} exceeds max allowed ${maxAmount}`
             );
             throw new LimitExceededError(
               request,
-              pr.amount,
-              paymentMint,
+              parsedPr.amount,
+              parsedPr.matchingMints[0],
               maxAmount
             );
           }
-
-          log.info(`Creating token for ${pr.amount} sats from ${paymentMint}`);
-          setStatusMessage(`Sending ${pr.amount} sats...`);
-
-          const token = await manager.wallet.send(paymentMint, pr.amount);
+          const prTransaction =
+            await manager.wallet.preparePaymentRequestTransaction(
+              parsedPr.matchingMints[0],
+              parsedPr
+            );
+          paymentAmount = prTransaction.sendOperation.amount;
+          paymentMint = prTransaction.sendOperation.mintUrl;
+          log.info(
+            `Creating token for ${parsedPr.amount} sats from ${parsedPr.matchingMints[0]}`
+          );
+          setStatusMessage(`Sending ${parsedPr.amount} sats...`);
+          const token = await new Promise<Token>((resolve) => {
+            manager.wallet.handleInbandPaymentRequest(
+              prTransaction,
+              async (t) => {
+                resolve(t);
+              }
+            );
+          });
 
           setStatusMessage("Writing to terminal...");
           return getEncodedToken(token);
