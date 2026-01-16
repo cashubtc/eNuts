@@ -3,6 +3,7 @@ import {
   HistoryIcon,
   LanguageIcon,
   KeyIcon,
+  LinkIcon,
   LockIcon,
   MintBoardIcon,
   NfcIcon,
@@ -18,6 +19,8 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { dropAllData } from "@src/storage/dev";
 import { appVersion } from "@src/consts/env";
+import { reportIssueUrl } from "@src/consts/urls";
+import { isErr, openUrl } from "@util";
 import { secureStore, store } from "@store";
 import { SECURESTORE_KEY, STORE_KEYS } from "@store/consts";
 import { globals } from "@styles";
@@ -32,6 +35,7 @@ import Loading from "@comps/Loading";
 
 export default function Settings({ navigation }: TSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
+  const { openPromptAutoClose } = usePromptContext();
   const { color } = useThemeContext();
   const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
 
@@ -113,6 +117,17 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             txt={t("github")}
             icon={<GithubIcon color={color.TEXT} />}
             onPress={() => {}}
+          />
+          <MenuItem
+            txt={t("reportIssue", { defaultValue: "Report an issue" })}
+            icon={<LinkIcon color={color.TEXT} />}
+            onPress={() =>
+              void openUrl(reportIssueUrl)?.catch((err: unknown) =>
+                openPromptAutoClose({
+                  msg: isErr(err) ? err.message : t("deepLinkErr", { ns: NS.common }),
+                }),
+              )
+            }
           />
         </View>
         <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
