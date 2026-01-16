@@ -1,6 +1,7 @@
 import de from "@assets/translations/de.json";
 import en from "@assets/translations/en.json";
 import es from "@assets/translations/es.json";
+import de from "@assets/translations/de.json";
 import it from "@assets/translations/it.json";
 import ru from "@assets/translations/ru.json";
 import th from "@assets/translations/th.json";

@@ -38,6 +38,7 @@
     "counterIncreased": "¡Contadores incrementados en {{counterIncreased}}!",
     "doneSafety": "Casi terminado... Verificación de seguridad",
     "restoreErr": "Ocurrió un error al restaurar tu cartera.",
+    "restoreSameSeed": "Esta frase de recuperación ya está en uso en esta cartera.",
     "noProofsRestored": "No se encontraron pruebas para restaurar la cartera.",
     "dontClose": "Por favor, no cierre la aplicación durante el proceso.",
     "recoveryHint": "Escribe o pega tu mnemotecnia de 12 palabras en el orden correcto, separadas por espacios en blanco.",
