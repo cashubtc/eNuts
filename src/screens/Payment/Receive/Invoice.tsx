@@ -19,10 +19,7 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 
-export default function InvoiceScreen({
-  navigation,
-  route,
-}: TMintInvoicePageProps) {
+export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
   const { mintUrl, quote } = route.params;
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
@@ -40,7 +37,7 @@ export default function InvoiceScreen({
     useCallback(() => {
       manager.on("mint-quote:redeemed", handlePaidInvoice);
       return () => manager.off("mint-quote:redeemed", handlePaidInvoice);
-    }, [])
+    }, []),
   );
 
   return (

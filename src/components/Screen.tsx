@@ -3,10 +3,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { globals } from "@styles";
 import { View, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-  KeyboardAvoidingView,
-  useKeyboardState,
-} from "react-native-keyboard-controller";
+import { KeyboardAvoidingView, useKeyboardState } from "react-native-keyboard-controller";
 import { isIOS } from "@consts";
 
 interface IContainerProps {

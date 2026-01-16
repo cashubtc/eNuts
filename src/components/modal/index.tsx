@@ -39,12 +39,7 @@ export default function MyModal({
     if (type === "bottom") {
       return styles(color, highlight).bottomView;
     }
-    if (
-      type === "question" ||
-      type === "success" ||
-      type === "error" ||
-      type === "invoiceAmount"
-    ) {
+    if (type === "question" || type === "success" || type === "error" || type === "invoiceAmount") {
       return styles(color, highlight).centeredView;
     }
   };
@@ -101,17 +96,9 @@ export default function MyModal({
           activeOpacity={1}
           onPressOut={close}
         >
-          <KeyboardAvoidingView
-            style={getCorrectStyle()}
-            behavior={isIOS ? "height" : undefined}
-          >
+          <KeyboardAvoidingView style={getCorrectStyle()} behavior={isIOS ? "height" : undefined}>
             <TouchableWithoutFeedback>
-              <View
-                style={[
-                  getViewStyle(),
-                  success ? { backgroundColor: hi[highlight] } : {},
-                ]}
-              >
+              <View style={[getViewStyle(), success ? { backgroundColor: hi[highlight] } : {}]}>
                 {children}
               </View>
             </TouchableWithoutFeedback>

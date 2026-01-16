@@ -16,8 +16,7 @@ export const LatestHistoryReceiveEntry = memo(
     variant = "highlight",
   }: LatestHistoryReceiveEntryProps) {
     const { color, highlight } = useThemeContext();
-    const iconColor =
-      variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+    const iconColor = variant === "highlight" ? getColor(highlight, color) : color.TEXT;
 
     return (
       <LatestHistoryWrapper
@@ -33,5 +32,5 @@ export const LatestHistoryReceiveEntry = memo(
   (prev, next) =>
     prev.history.id === next.history.id &&
     prev.history.amount === next.history.amount &&
-    prev.history.createdAt === next.history.createdAt
+    prev.history.createdAt === next.history.createdAt,
 );

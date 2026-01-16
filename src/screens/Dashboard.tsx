@@ -5,9 +5,7 @@ import useLoading from "@comps/hooks/Loading";
 import { PlusIcon, ReceiveIcon, ScanQRIcon, SendIcon } from "@comps/Icons";
 import BottomSheetOptionsModal from "@comps/modal/BottomSheetOptionsModal";
 import { NfcIcon } from "@comps/Icons";
-import NfcPaymentModal, {
-  type NfcPaymentModalRef,
-} from "@comps/modal/NfcPaymentModal";
+import NfcPaymentModal, { type NfcPaymentModalRef } from "@comps/modal/NfcPaymentModal";
 import Txt from "@comps/Txt";
 import BottomSheet from "@gorhom/bottom-sheet";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
@@ -67,8 +65,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
-    const backHandler = (e: TBeforeRemoveEvent) =>
-      preventBack(e, navigation.dispatch);
+    const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
@@ -81,9 +78,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
       <View style={styles.container}>
         {/* Dashboard top bar */}
         <DashboardTopBar
-          onSettingsPress={() =>
-            navigation.navigate("Settings", { screen: "SettingsMain" })
-          }
+          onSettingsPress={() => navigation.navigate("Settings", { screen: "SettingsMain" })}
         />
         {/* Balance section - takes 2/3 of available space */}
         <View style={styles.balanceSection}>
@@ -95,13 +90,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
             {/* Send button or add first mint */}
             {knownMints.length > 0 ? (
               <ActionBtn
-                icon={
-                  <SendIcon
-                    width={s(32)}
-                    height={s(32)}
-                    color={hi[highlight]}
-                  />
-                }
+                icon={<SendIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
                 txt={t("send", { ns: NS.wallet })}
                 color={hi[highlight]}
                 onPress={() => {
@@ -110,13 +99,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               />
             ) : (
               <ActionBtn
-                icon={
-                  <PlusIcon
-                    width={s(36)}
-                    height={s(36)}
-                    color={hi[highlight]}
-                  />
-                }
+                icon={<PlusIcon width={s(36)} height={s(36)} color={hi[highlight]} />}
                 txt={t("mint")}
                 color={hi[highlight]}
                 onPress={() => {
@@ -125,25 +108,13 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               />
             )}
             <ActionBtn
-              icon={
-                <ScanQRIcon
-                  width={s(32)}
-                  height={s(32)}
-                  color={hi[highlight]}
-                />
-              }
+              icon={<ScanQRIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
               txt={t("scan")}
               color={hi[highlight]}
               onPress={() => navigation.navigate("QRScanner")}
             />
             <ActionBtn
-              icon={
-                <ReceiveIcon
-                  width={s(32)}
-                  height={s(32)}
-                  color={hi[highlight]}
-                />
-              }
+              icon={<ReceiveIcon width={s(32)} height={s(32)} color={hi[highlight]} />}
               txt={t("receive", { ns: NS.wallet })}
               color={hi[highlight]}
               disabled={isReceiving}
@@ -203,9 +174,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
         <BottomSheetOptionsModal
           ref={receiveOptionsRef}
           button1Txt={
-            loading
-              ? t("claiming", { ns: NS.wallet })
-              : t("pasteToken", { ns: NS.wallet })
+            loading ? t("claiming", { ns: NS.wallet }) : t("pasteToken", { ns: NS.wallet })
           }
           onPressFirstBtn={() => void handleClaimBtnPress()}
           button2Txt={t("createLnInvoice")}
@@ -239,11 +208,7 @@ function ActionBtn({ icon, onPress, txt, color, disabled }: IActionBtnsProps) {
         disabled={disabled}
         testId={`${txt}-btn`}
       />
-      <Txt
-        txt={txt}
-        bold
-        styles={[styles.btnTxt, { color, opacity: disabled ? 0.5 : 1 }]}
-      />
+      <Txt txt={txt} bold styles={[styles.btnTxt, { color, opacity: disabled ? 0.5 : 1 }]} />
     </View>
   );
 }

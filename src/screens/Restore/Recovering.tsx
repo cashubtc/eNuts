@@ -22,10 +22,7 @@ import { s, ScaledSheet, vs } from "react-native-size-matters";
 // show internet connection status
 // show different quotes messages during the process
 
-export default function RecoveringScreen({
-  navigation,
-  route,
-}: IRecoveringPageProps) {
+export default function RecoveringScreen({ navigation, route }: IRecoveringPageProps) {
   const manager = useManager();
   const { t } = useTranslation([NS.common]);
   const insets = useSafeAreaInsets();
@@ -58,8 +55,7 @@ export default function RecoveringScreen({
   const { color } = useThemeContext();
 
   useEffect(() => {
-    const backHandler = (e: TBeforeRemoveEvent) =>
-      preventBack(e, navigation.dispatch);
+    const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
@@ -71,9 +67,7 @@ export default function RecoveringScreen({
 
   if (isDone) {
     return (
-      <View
-        style={[styles.containerSuccess, { backgroundColor: color.BACKGROUND }]}
-      >
+      <View style={[styles.containerSuccess, { backgroundColor: color.BACKGROUND }]}>
         <View pointerEvents="none" style={styles.confetti}>
           <LottieView
             source={require("../../../assets/lottie/confetti.json")}
@@ -84,9 +78,7 @@ export default function RecoveringScreen({
         </View>
         <Logo size={s(230)} style={styles.img} success />
         <View style={{ width: "100%" }}>
-          <Text style={[styles.successTxt, { color: color.TEXT }]}>
-            Wallet restored!
-          </Text>
+          <Text style={[styles.successTxt, { color: color.TEXT }]}>Wallet restored!</Text>
           <View style={styles.successAnim}>
             <LottieView
               source={require("../../../assets/lottie/success.json")}
@@ -97,10 +89,7 @@ export default function RecoveringScreen({
           </View>
         </View>
         <View style={[styles.btnWrap, { marginBottom: insets.bottom || 20 }]}>
-          <Button
-            txt={t("backToDashboard")}
-            onPress={() => navigation.navigate("dashboard")}
-          />
+          <Button txt={t("backToDashboard")} onPress={() => navigation.navigate("dashboard")} />
         </View>
       </View>
     );
@@ -119,10 +108,7 @@ export default function RecoveringScreen({
         />
         <Txt
           center
-          styles={[
-            styles.hint,
-            { color: color.TEXT_SECONDARY, marginTop: vs(6) },
-          ]}
+          styles={[styles.hint, { color: color.TEXT_SECONDARY, marginTop: vs(6) }]}
           txt={t("dontClose")}
         />
       </View>

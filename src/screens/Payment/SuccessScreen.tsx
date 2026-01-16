@@ -27,7 +27,7 @@ import { s, ScaledSheet, vs } from "react-native-size-matters";
 // ─────────────────────────────────────────────────────────────────────────────
 
 function hasPaymentDetails(
-  config: SuccessConfig
+  config: SuccessConfig,
 ): config is MeltSuccessConfig | AutoSwapSuccessConfig {
   return config.type === "melt" || config.type === "autoSwap";
 }
@@ -69,9 +69,7 @@ function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
     <View style={styles.detailsWrap}>
       <DetailsRow
         label={t(isSwap ? "swapped" : "paidOut", { ns: NS.wallet })}
-        value={`${formatAmount(amount).formatted} ${
-          formatAmount(amount).symbol
-        }`}
+        value={`${formatAmount(amount).formatted} ${formatAmount(amount).symbol}`}
       />
       <DetailsRow
         label={t("fee")}
@@ -79,16 +77,12 @@ function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
       />
       <DetailsRow
         label={t("totalInclFee")}
-        value={`${formatAmount(amount + fee).formatted} ${
-          formatAmount(amount + fee).symbol
-        }`}
+        value={`${formatAmount(amount + fee).formatted} ${formatAmount(amount + fee).symbol}`}
       />
       {isNum(change) && (
         <DetailsRow
           label={t("change")}
-          value={`${formatAmount(change).formatted} ${
-            formatAmount(change).symbol
-          }`}
+          value={`${formatAmount(change).formatted} ${formatAmount(change).symbol}`}
         />
       )}
     </View>
@@ -99,10 +93,7 @@ function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
 // Main Screen Component
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function SuccessScreen({
-  navigation,
-  route,
-}: TSuccessScreenProps) {
+export default function SuccessScreen({ navigation, route }: TSuccessScreenProps) {
   const config = route.params;
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
@@ -140,8 +131,7 @@ export default function SuccessScreen({
 
   // Prevent back navigation
   useEffect(() => {
-    const backHandler = (e: TBeforeRemoveEvent) =>
-      preventBack(e, navigation.dispatch);
+    const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
@@ -184,12 +174,7 @@ export default function SuccessScreen({
         {/* Amount Display (for simple success types) */}
         {hasSimpleAmount(config) && (
           <View style={styles.amountWrap}>
-            <Txt
-              txt={formatAmount(config.amount).formatted}
-              bold
-              center
-              styles={[styles.amount]}
-            />
+            <Txt txt={formatAmount(config.amount).formatted} bold center styles={[styles.amount]} />
             <Txt
               txt={formatAmount(config.amount).symbol}
               center
@@ -205,13 +190,8 @@ export default function SuccessScreen({
       </View>
 
       {/* Back to Dashboard Button */}
-      <View
-        style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}
-      >
-        <Button
-          txt={t("backToDashboard")}
-          onPress={() => navigation.navigate("dashboard")}
-        />
+      <View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
+        <Button txt={t("backToDashboard")} onPress={() => navigation.navigate("dashboard")} />
       </View>
     </Screen>
   );

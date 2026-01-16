@@ -1,7 +1,4 @@
-import {
-  CompositeScreenProps,
-  NavigatorScreenParams,
-} from "@react-navigation/native";
+import { CompositeScreenProps, NavigatorScreenParams } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@src/model/nav";
 import { HistoryEntry } from "coco-cashu-core";
@@ -18,13 +15,12 @@ export type SettingsStackParamList = {
   "View mnemonic": undefined;
 };
 
-export type TNfcSettingsPageProps = NativeStackScreenProps<
-  SettingsStackParamList,
-  "NFC settings"
->;
+export type TNfcSettingsPageProps = NativeStackScreenProps<SettingsStackParamList, "NFC settings">;
 
-type SettingsStackScreenProps<T extends keyof SettingsStackParamList> =
-  NativeStackScreenProps<SettingsStackParamList, T>;
+type SettingsStackScreenProps<T extends keyof SettingsStackParamList> = NativeStackScreenProps<
+  SettingsStackParamList,
+  T
+>;
 
 // Mint Screens
 
@@ -34,8 +30,10 @@ export type MintStackParamList = {
   MintSettings: { mintUrl: string };
 };
 
-type MintStackScreenProps<T extends keyof MintStackParamList> =
-  NativeStackScreenProps<MintStackParamList, T>;
+type MintStackScreenProps<T extends keyof MintStackParamList> = NativeStackScreenProps<
+  MintStackParamList,
+  T
+>;
 
 export type HistoryStackParamList = {
   HistoryMain: undefined;
@@ -60,8 +58,10 @@ export type RestoreStackParamList = {
   Recovering: { bip39seed: Uint8Array; mintUrls: string[] };
 };
 
-type RestoreStackScreenProps<T extends keyof RestoreStackParamList> =
-  NativeStackScreenProps<RestoreStackParamList, T>;
+type RestoreStackScreenProps<T extends keyof RestoreStackParamList> = NativeStackScreenProps<
+  RestoreStackParamList,
+  T
+>;
 
 export type RecoverScreenProps = CompositeScreenProps<
   RestoreStackScreenProps<"Recover">,
@@ -73,32 +73,14 @@ export type RecoverMintsScreenProps = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList>
 >;
 
-export type SendSelectAmountProps = NativeStackScreenProps<
-  RootStackParamList,
-  "SendSelectAmount"
->;
+export type SendSelectAmountProps = NativeStackScreenProps<RootStackParamList, "SendSelectAmount">;
 
-export type MintSelectAmountProps = NativeStackScreenProps<
-  RootStackParamList,
-  "MintSelectAmount"
->;
+export type MintSelectAmountProps = NativeStackScreenProps<RootStackParamList, "MintSelectAmount">;
 
-export type MeltInputProps = NativeStackScreenProps<
-  RootStackParamList,
-  "MeltInput"
->;
+export type MeltInputProps = NativeStackScreenProps<RootStackParamList, "MeltInput">;
 
-export type MeltConfirmationProps = NativeStackScreenProps<
-  RootStackParamList,
-  "MeltConfirmation"
->;
+export type MeltConfirmationProps = NativeStackScreenProps<RootStackParamList, "MeltConfirmation">;
 
-export type RestoreScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Restore"
->;
+export type RestoreScreenProps = NativeStackScreenProps<RootStackParamList, "Restore">;
 
-export type QRScannerScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "QRScanner"
->;
+export type QRScannerScreenProps = NativeStackScreenProps<RootStackParamList, "QRScanner">;

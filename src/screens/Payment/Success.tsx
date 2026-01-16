@@ -17,17 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
-  const {
-    amount,
-    memo,
-    fee,
-    change,
-    mint,
-    isClaim,
-    isMelt,
-    isAutoSwap,
-    isScanned,
-  } = route.params;
+  const { amount, memo, fee, change, mint, isClaim, isMelt, isAutoSwap, isScanned } = route.params;
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
   const { formatAmount } = useCurrencyContext();
@@ -40,8 +30,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
-    const backHandler = (e: TBeforeRemoveEvent) =>
-      preventBack(e, navigation.dispatch);
+    const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
@@ -57,10 +46,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
         />
       </View>
       <View style={{ width: "100%" }}>
-        <Text
-          testID={`amount: ${amount}`}
-          style={[styles.successTxt, { color: color.TEXT }]}
-        >
+        <Text testID={`amount: ${amount}`} style={[styles.successTxt, { color: color.TEXT }]}>
           {(() => {
             if (isMelt && !isAutoSwap) {
               return t("paymentSuccess");
@@ -71,16 +57,9 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             return null;
           })()}
         </Text>
-        {memo && (
-          <Text style={[styles.mints, { color: color.TEXT_SECONDARY }]}>
-            {memo}
-          </Text>
-        )}
+        {memo && <Text style={[styles.mints, { color: color.TEXT_SECONDARY }]}>{memo}</Text>}
         {mint && mint.length > 0 && (
-          <Text
-            testID={`mint: ${mint}`}
-            style={[styles.mints, { color: color.TEXT_SECONDARY }]}
-          >
+          <Text testID={`mint: ${mint}`} style={[styles.mints, { color: color.TEXT_SECONDARY }]}>
             {mint}
           </Text>
         )}
@@ -98,15 +77,11 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
               txt={t(isAutoSwap ? "swapped" : "paidOut", {
                 ns: NS.wallet,
               })}
-              value={`${formatAmount(amount).formatted} ${
-                formatAmount(amount).symbol
-              }`}
+              value={`${formatAmount(amount).formatted} ${formatAmount(amount).symbol}`}
             />
             <Details
               txt={t("fee")}
-              value={`${formatAmount(fee || 0).formatted} ${
-                formatAmount(fee || 0).symbol
-              }`}
+              value={`${formatAmount(fee || 0).formatted} ${formatAmount(fee || 0).symbol}`}
             />
             <Details
               txt={t("totalInclFee")}
@@ -117,17 +92,13 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             {isNum(change) && (
               <Details
                 txt={t("change")}
-                value={`${formatAmount(change).formatted} ${
-                  formatAmount(change).symbol
-                }`}
+                value={`${formatAmount(change).formatted} ${formatAmount(change).symbol}`}
               />
             )}
           </View>
         )}
       </View>
-      <View
-        style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}
-      >
+      <View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
         <Button
           txt={t("backToDashboard")}
           onPress={() => {

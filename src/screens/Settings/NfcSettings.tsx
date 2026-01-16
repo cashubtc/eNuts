@@ -2,10 +2,7 @@ import RadioBtn from "@comps/RadioBtn";
 import Screen from "@comps/Screen";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
-import {
-  useNfcAmountLimitsContext,
-  NO_LIMIT,
-} from "@src/context/NfcAmountLimits";
+import { useNfcAmountLimitsContext, NO_LIMIT } from "@src/context/NfcAmountLimits";
 import type { TNfcSettingsPageProps } from "@src/nav/navTypes";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useThemeContext } from "@src/context/Theme";
@@ -13,23 +10,15 @@ import { NS } from "@src/i18n";
 import { globals, highlight as hi } from "@styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ScrollView,
-  TouchableOpacity,
-  View,
-  Text,
-  TextInput,
-} from "react-native";
+import { ScrollView, TouchableOpacity, View, Text, TextInput } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
-  const { formatBalance, formatSatsAsCurrency, rates, selectedCurrency } =
-    useCurrencyContext();
+  const { formatBalance, formatSatsAsCurrency, rates, selectedCurrency } = useCurrencyContext();
 
-  const { defaultMaxAmount, isLoading, setDefaultMaxAmount } =
-    useNfcAmountLimitsContext();
+  const { defaultMaxAmount, isLoading, setDefaultMaxAmount } = useNfcAmountLimitsContext();
 
   const inputRef = useRef<TextInput>(null);
   const [inputValue, setInputValue] = useState("");
@@ -50,7 +39,7 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
       if (!formatBalance || !rates || amount <= 0) return null;
       return formatSatsAsCurrency(amount);
     },
-    [formatBalance, rates, formatSatsAsCurrency]
+    [formatBalance, rates, formatSatsAsCurrency],
   );
 
   // Handle selecting "No Limit"
@@ -84,16 +73,14 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
         }
       }
     },
-    [hasNoLimit, setDefaultMaxAmount]
+    [hasNoLimit, setDefaultMaxAmount],
   );
 
   const currentAmount = parseInt(inputValue, 10);
   const fiatValue = !isNaN(currentAmount) ? getFiatValue(currentAmount) : null;
 
   // Format display value with thousand separators
-  const displayValue = !isNaN(currentAmount)
-    ? currentAmount.toLocaleString()
-    : "50,000";
+  const displayValue = !isNaN(currentAmount) ? currentAmount.toLocaleString() : "50,000";
 
   if (isLoading) {
     return (
@@ -141,10 +128,7 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
           <Separator style={[{ marginBottom: s(15) }]} />
 
           {/* Custom Limit option */}
-          <TouchableOpacity
-            style={[globals().wrapRow]}
-            onPress={handleSelectCustomLimit}
-          >
+          <TouchableOpacity style={[globals().wrapRow]} onPress={handleSelectCustomLimit}>
             <View style={styles.customLimitRow}>
               <Txt txt={t("customLimit", { defaultValue: "Custom" })} />
               {!hasNoLimit && (
@@ -158,11 +142,7 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
                     selectionColor={hi[highlight]}
                     returnKeyType="done"
                   />
-                  <Text
-                    style={[styles.satsLabel, { color: color.TEXT_SECONDARY }]}
-                  >
-                    sats
-                  </Text>
+                  <Text style={[styles.satsLabel, { color: color.TEXT_SECONDARY }]}>sats</Text>
                 </View>
               )}
             </View>

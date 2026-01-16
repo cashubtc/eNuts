@@ -2,11 +2,7 @@ import RadioBtn from "@comps/RadioBtn";
 import Screen from "@comps/Screen";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
-import type {
-  ILangsOpt,
-  TranslationLangCodes,
-  TTlLangNames,
-} from "@model/i18n";
+import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from "@model/i18n";
 import type { TLanguageSettingsPageProps } from "@model/nav";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
@@ -27,9 +23,7 @@ const langs: ILangsOpt[] = [
   { name: "thai", code: "th", flag: "th" },
 ];
 
-export default function LanguageSettings({
-  navigation,
-}: TLanguageSettingsPageProps) {
+export default function LanguageSettings({ navigation }: TLanguageSettingsPageProps) {
   const { t, i18n } = useTranslation([NS.common]);
   const { color } = useThemeContext();
   return (
@@ -64,13 +58,7 @@ interface ILangSelectionProps {
   hasSeparator?: boolean;
 }
 
-function LangSelection({
-  code,
-  name,
-  flag,
-  selected,
-  hasSeparator,
-}: ILangSelectionProps) {
+function LangSelection({ code, name, flag, selected, hasSeparator }: ILangSelectionProps) {
   const { t, i18n } = useTranslation([NS.common]);
   const handleLangChange = async () => {
     await i18n.changeLanguage(code);

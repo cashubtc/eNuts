@@ -1,15 +1,5 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
-import {
-  BottomSheetModal,
-  BottomSheetBackdrop,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { TxtButton } from "@comps/Button";
 import { ReceiveIcon } from "@comps/Icons";
 import Loading from "@comps/Loading";
@@ -32,147 +22,127 @@ export type TrustMintBottomSheetRef = {
   close: () => void;
 };
 
-const TrustMintBottomSheet = forwardRef<
-  TrustMintBottomSheetRef,
-  { loading?: boolean }
->((_props, ref) => {
-  const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
-  const { formatAmount } = useCurrencyContext();
+const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boolean }>(
+  (_props, ref) => {
+    const { t } = useTranslation([NS.common]);
+    const { color, highlight } = useThemeContext();
+    const { formatAmount } = useCurrencyContext();
 
-  const sheetRef = useRef<BottomSheetModal>(null);
-  const [loading, setLoading] = useState(false);
-  const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>(undefined);
-  const resolverRef = useRef<((action: TrustMintAction) => void) | null>(null);
+    const sheetRef = useRef<BottomSheetModal>(null);
+    const [loading, setLoading] = useState(false);
+    const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>(undefined);
+    const resolverRef = useRef<((action: TrustMintAction) => void) | null>(null);
 
-  const close = useCallback(() => {
-    sheetRef.current?.dismiss();
-  }, []);
+    const close = useCallback(() => {
+      sheetRef.current?.dismiss();
+    }, []);
 
-  const open = useCallback((token: Token) => {
-    setLoading(false);
-    setTokenInfo({
-      mints: [token.mint],
-      value: token.proofs.reduce((r, c) => r + c.amount, 0),
-      decoded: token,
-    });
-    setTimeout(() => {
-      try {
-        sheetRef.current?.present();
-      } catch {
-        /* ignore */
-      }
-    }, 0);
-    return new Promise<TrustMintAction>((resolve) => {
-      resolverRef.current = resolve;
-    });
-  }, []);
-
-  useImperativeHandle(ref, () => ({ open, close }), [open, close]);
-
-  const handleBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        appearsOnIndex={0}
-        disappearsOnIndex={-1}
-        opacity={0.5}
-      />
-    ),
-    []
-  );
-
-  const resolveAndClose = (action: TrustMintAction) => {
-    if (resolverRef.current) {
-      resolverRef.current(action);
-      resolverRef.current = null;
-    }
-    close();
-  };
-
-  const handleTrust = () => {
-    setLoading(true);
-    resolveAndClose("trust");
-  };
-
-  const handleCancel = () => resolveAndClose("cancel");
-
-  return (
-    <BottomSheetModal
-      ref={sheetRef}
-      enableDynamicSizing
-      backdropComponent={handleBackdrop}
-      backgroundStyle={{ backgroundColor: color.BACKGROUND }}
-      handleIndicatorStyle={{ backgroundColor: color.TEXT_SECONDARY }}
-      enableDismissOnClose
-      enablePanDownToClose
-      onDismiss={() => {
-        if (resolverRef.current) {
-          resolverRef.current("cancel");
-          resolverRef.current = null;
+    const open = useCallback((token: Token) => {
+      setLoading(false);
+      setTokenInfo({
+        mints: [token.mint],
+        value: token.proofs.reduce((r, c) => r + c.amount, 0),
+        decoded: token,
+      });
+      setTimeout(() => {
+        try {
+          sheetRef.current?.present();
+        } catch {
+          /* ignore */
         }
-      }}
-    >
-      <BottomSheetScrollView
-        style={[styles.scrollContainer, { backgroundColor: color.BACKGROUND }]}
-        contentContainerStyle={[styles.container]}
-        showsVerticalScrollIndicator={false}
+      }, 0);
+      return new Promise<TrustMintAction>((resolve) => {
+        resolverRef.current = resolve;
+      });
+    }, []);
+
+    useImperativeHandle(ref, () => ({ open, close }), [open, close]);
+
+    const handleBackdrop = useCallback(
+      (props: any) => (
+        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
+      ),
+      [],
+    );
+
+    const resolveAndClose = (action: TrustMintAction) => {
+      if (resolverRef.current) {
+        resolverRef.current(action);
+        resolverRef.current = null;
+      }
+      close();
+    };
+
+    const handleTrust = () => {
+      setLoading(true);
+      resolveAndClose("trust");
+    };
+
+    const handleCancel = () => resolveAndClose("cancel");
+
+    return (
+      <BottomSheetModal
+        ref={sheetRef}
+        enableDynamicSizing
+        backdropComponent={handleBackdrop}
+        backgroundStyle={{ backgroundColor: color.BACKGROUND }}
+        handleIndicatorStyle={{ backgroundColor: color.TEXT_SECONDARY }}
+        enableDismissOnClose
+        enablePanDownToClose
+        onDismiss={() => {
+          if (resolverRef.current) {
+            resolverRef.current("cancel");
+            resolverRef.current = null;
+          }
+        }}
       >
-        <Text
-          style={[
-            globals(color, highlight).modalHeader,
-            { marginBottom: vs(15) },
-          ]}
+        <BottomSheetScrollView
+          style={[styles.scrollContainer, { backgroundColor: color.BACKGROUND }]}
+          contentContainerStyle={[styles.container]}
+          showsVerticalScrollIndicator={false}
         >
-          {t("trustMint")}
-        </Text>
-        {tokenInfo && (
-          <Text style={[styles.mintPrompt, { color: color.TEXT }]}>
-            {formatAmount(tokenInfo.value).formatted} {formatAmount(tokenInfo.value).symbol} {t("from")}:
+          <Text style={[globals(color, highlight).modalHeader, { marginBottom: vs(15) }]}>
+            {t("trustMint")}
           </Text>
-        )}
-        <View style={styles.tokenMintsView}>
-          {tokenInfo?.mints.map((m) => (
-            <Text style={[styles.mintPrompt, { color: color.TEXT }]} key={m}>
-              {formatMintUrl(m)}
+          {tokenInfo && (
+            <Text style={[styles.mintPrompt, { color: color.TEXT }]}>
+              {formatAmount(tokenInfo.value).formatted} {formatAmount(tokenInfo.value).symbol}{" "}
+              {t("from")}:
             </Text>
-          ))}
-        </View>
-        <Separator style={[styles.separator]} />
-        <TouchableOpacity style={styles.row} onPress={handleTrust}>
-          <View style={styles.iconContainer}>
-            {loading ? (
-              <View>
-                <Loading size="small" color={mainColors.VALID} />
-              </View>
-            ) : (
-              <ReceiveIcon
-                width={s(26)}
-                height={s(26)}
-                color={mainColors.VALID}
-              />
-            )}
+          )}
+          <View style={styles.tokenMintsView}>
+            {tokenInfo?.mints.map((m) => (
+              <Text style={[styles.mintPrompt, { color: color.TEXT }]} key={m}>
+                {formatMintUrl(m)}
+              </Text>
+            ))}
           </View>
-          <View style={styles.txtWrap}>
-            <Text style={[styles.actionText, { color: color.TEXT }]}>
-              {loading ? t("claiming", { ns: NS.wallet }) : t("trustMintOpt")}
-            </Text>
-            <Text
-              style={[styles.descriptionText, { color: color.TEXT_SECONDARY }]}
-            >
-              {t("trustHint")}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <TxtButton
-          txt={t("cancel")}
-          onPress={handleCancel}
-          style={[styles.TxtButton]}
-        />
-      </BottomSheetScrollView>
-    </BottomSheetModal>
-  );
-});
+          <Separator style={[styles.separator]} />
+          <TouchableOpacity style={styles.row} onPress={handleTrust}>
+            <View style={styles.iconContainer}>
+              {loading ? (
+                <View>
+                  <Loading size="small" color={mainColors.VALID} />
+                </View>
+              ) : (
+                <ReceiveIcon width={s(26)} height={s(26)} color={mainColors.VALID} />
+              )}
+            </View>
+            <View style={styles.txtWrap}>
+              <Text style={[styles.actionText, { color: color.TEXT }]}>
+                {loading ? t("claiming", { ns: NS.wallet }) : t("trustMintOpt")}
+              </Text>
+              <Text style={[styles.descriptionText, { color: color.TEXT_SECONDARY }]}>
+                {t("trustHint")}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TxtButton txt={t("cancel")} onPress={handleCancel} style={[styles.TxtButton]} />
+        </BottomSheetScrollView>
+      </BottomSheetModal>
+    );
+  },
+);
 
 TrustMintBottomSheet.displayName = "TrustMintBottomSheet";
 

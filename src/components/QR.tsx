@@ -26,13 +26,7 @@ interface QRProps {
   onError: () => void;
 }
 
-export default function QR({
-  size,
-  value,
-  animate,
-  truncateNum,
-  onError,
-}: QRProps) {
+export default function QR({ size, value, animate, truncateNum, onError }: QRProps) {
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
   const { copied, copy } = useCopy();
@@ -60,11 +54,7 @@ export default function QR({
         ]}
       >
         <View style={styles.iconCon}>
-          {copied ? (
-            <CheckmarkIcon color={mainColors.VALID} />
-          ) : (
-            <CopyIcon color={color.TEXT} />
-          )}
+          {copied ? <CheckmarkIcon color={mainColors.VALID} /> : <CopyIcon color={color.TEXT} />}
         </View>
         <Txt
           txt={copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}

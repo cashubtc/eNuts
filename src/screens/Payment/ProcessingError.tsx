@@ -6,9 +6,7 @@ import { preventBack } from "@nav/utils";
 import { isIOS } from "@src/consts";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import TrustMintBottomSheet, {
-  type TrustMintBottomSheetRef,
-} from "@modal/TrustMintBottomSheet";
+import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
 import { globals, mainColors } from "@styles";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,10 +15,7 @@ import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 const alreadySpentErr = "Token already spent.";
 
-export default function ProcessingErrorScreen({
-  navigation,
-  route,
-}: TProcessingErrorPageProps) {
+export default function ProcessingErrorScreen({ navigation, route }: TProcessingErrorPageProps) {
   const { scan, comingFromOnboarding, errorMsg } = route.params;
 
   const { t } = useTranslation([NS.common]);
@@ -29,8 +24,7 @@ export default function ProcessingErrorScreen({
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
-    const backHandler = (e: TBeforeRemoveEvent) =>
-      preventBack(e, navigation.dispatch);
+    const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
@@ -39,11 +33,7 @@ export default function ProcessingErrorScreen({
     <View style={[globals(color).container, styles.container]}>
       <View />
       <View style={styles.section}>
-        <ExclamationIcon
-          width={s(60)}
-          height={s(60)}
-          color={mainColors.ERROR}
-        />
+        <ExclamationIcon width={s(60)} height={s(60)} color={mainColors.ERROR} />
         <Txt
           txt={errorMsg}
           bold
@@ -57,11 +47,7 @@ export default function ProcessingErrorScreen({
           ]}
         />
         {!scan && errorMsg !== alreadySpentErr && (
-          <Txt
-            center
-            styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-            txt={t("tryLater")}
-          />
+          <Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t("tryLater")} />
         )}
         {errorMsg === alreadySpentErr && (
           <Txt

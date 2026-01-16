@@ -1,9 +1,6 @@
 import type { IExpoConfig } from "@model";
 import { IEnv } from "@model/env";
-import {
-  default as Consts,
-  ExecutionEnvironment as ExecEnv,
-} from "expo-constants";
+import { default as Consts, ExecutionEnvironment as ExecEnv } from "expo-constants";
 import { Platform } from "react-native";
 
 import { version } from "../../package.json";
@@ -11,11 +8,9 @@ import { expo } from "../../app.json";
 
 const { executionEnvironment: execEnv } = Consts;
 // `true` when running in Expo Go.
-const isExpoDev =
-  execEnv && ExecEnv?.StoreClient && execEnv === ExecEnv?.StoreClient;
+const isExpoDev = execEnv && ExecEnv?.StoreClient && execEnv === ExecEnv?.StoreClient;
 // `true` when running in preview/production mode.
-const isExpoProd =
-  execEnv && ExecEnv?.Standalone && execEnv === ExecEnv?.Standalone;
+const isExpoProd = execEnv && ExecEnv?.Standalone && execEnv === ExecEnv?.Standalone;
 // True if the app is running in an `expo build` app or if it's running in Expo Go.
 const isExpo = isExpoDev || isExpoProd;
 
@@ -70,36 +65,28 @@ function appVariant(): AppVariant {
 
 const config: Readonly<IExpoConfig | undefined | null> = Consts?.expoConfig;
 
-export const env /* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> */ =
-  {
-    DEBUG: typedEnv?.DEBUG || config?.extra?.DEBUG,
+export const env /* : Readonly<IExpoConfig['extra'] & { BUGSNAG_API_KEY?: string }> */ = {
+  DEBUG: typedEnv?.DEBUG || config?.extra?.DEBUG,
 
-    NODE_ENV: typedEnv?.NODE_ENV || config?.extra?.NODE_ENV,
+  NODE_ENV: typedEnv?.NODE_ENV || config?.extra?.NODE_ENV,
 
-    NODE_ENV_SHORT:
-      typedEnv?.NODE_ENV_SHORT ||
-      config?.extra?.NODE_ENV_SHORT ||
-      nodeEnvShort() ||
-      appVariant(),
+  NODE_ENV_SHORT:
+    typedEnv?.NODE_ENV_SHORT || config?.extra?.NODE_ENV_SHORT || nodeEnvShort() || appVariant(),
 
-    APP_VARIANT:
-      typedEnv?.APP_VARIANT ||
-      config?.extra?.APP_VARIANT ||
-      appVariant() ||
-      nodeEnvShort(),
+  APP_VARIANT:
+    typedEnv?.APP_VARIANT || config?.extra?.APP_VARIANT || appVariant() || nodeEnvShort(),
 
-    SENTRY_DSN:
-      typedEnv?.SENTRY_DSN || typedEnv?.SENTRY_DSN || config?.extra?.SENTRY_DSN,
+  SENTRY_DSN: typedEnv?.SENTRY_DSN || typedEnv?.SENTRY_DSN || config?.extra?.SENTRY_DSN,
 
-    isExpo,
-    isExpoDev,
-    isExpoBeta:
-      typedEnv?.APP_VARIANT === "beta" ||
-      config?.extra?.APP_VARIANT === "beta" ||
-      appVariant() === "beta",
-    isExpoProd,
-    isReactNativeDevMode,
-  } as const;
+  isExpo,
+  isExpoDev,
+  isExpoBeta:
+    typedEnv?.APP_VARIANT === "beta" ||
+    config?.extra?.APP_VARIANT === "beta" ||
+    appVariant() === "beta",
+  isExpoProd,
+  isReactNativeDevMode,
+} as const;
 
 export const isTestMode =
   (typeof __TEST__ === "boolean" && __TEST__) ||
@@ -114,6 +101,4 @@ export const isTestMode =
 
 export const isIOS = Platform.OS === "ios";
 export const isNotIosStore = __DEV__ || env.isExpoBeta || !isIOS;
-export const appVersion = `eNuts v${expo.version}${
-  env.isExpoBeta ? "-beta" : ""
-}`;
+export const appVersion = `eNuts v${expo.version}${env.isExpoBeta ? "-beta" : ""}`;

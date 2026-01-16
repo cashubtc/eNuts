@@ -13,10 +13,7 @@ type ReceiveHistoryDetailsProps = {
   onGoBack: () => void;
 };
 
-export function ReceiveHistoryDetails({
-  entry,
-  onGoBack,
-}: ReceiveHistoryDetailsProps) {
+export function ReceiveHistoryDetails({ entry, onGoBack }: ReceiveHistoryDetailsProps) {
   const { t } = useTranslation([NS.history, NS.common]);
 
   return (
@@ -30,17 +27,9 @@ export function ReceiveHistoryDetails({
       />
       <Separator />
       <DetailsSection>
-        <DetailRow
-          label={t("date")}
-          value={new Date(entry.createdAt).toLocaleString()}
-        />
-        <DetailRow
-          label={t("mint", { ns: NS.common })}
-          value={formatMintUrl(entry.mintUrl)}
-        />
-        {entry.unit && (
-          <DetailRow label={t("unit", { ns: NS.common })} value={entry.unit} />
-        )}
+        <DetailRow label={t("date")} value={new Date(entry.createdAt).toLocaleString()} />
+        <DetailRow label={t("mint", { ns: NS.common })} value={formatMintUrl(entry.mintUrl)} />
+        {entry.unit && <DetailRow label={t("unit", { ns: NS.common })} value={entry.unit} />}
       </DetailsSection>
     </HistoryDetailsScreen>
   );

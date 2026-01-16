@@ -1,12 +1,7 @@
 import { useThemeContext } from "@src/context/Theme";
 import { globals, highlight as hi, mainColors } from "@styles";
 import { getColor } from "@styles/colors";
-import {
-  View,
-  type StyleProp,
-  TouchableOpacity,
-  type ViewStyle,
-} from "react-native";
+import { View, type StyleProp, TouchableOpacity, type ViewStyle } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 
 import Loading from "./Loading";
@@ -124,8 +119,8 @@ export default function Button({
               destructive && (outlined || ghost)
                 ? { color: mainColors.ERROR }
                 : destructive
-                ? { color: mainColors.WHITE }
-                : {},
+                  ? { color: mainColors.WHITE }
+                  : {},
             ]}
           />
         )}
@@ -137,8 +132,8 @@ export default function Button({
                 filled || outlined || ghost
                   ? hi[highlight]
                   : destructive
-                  ? mainColors.WHITE
-                  : getColor(highlight, color)
+                    ? mainColors.WHITE
+                    : getColor(highlight, color)
               }
             />
           </View>
@@ -158,14 +153,7 @@ interface IIconBtnProps {
   testId?: string;
 }
 
-export function IconBtn({
-  icon,
-  size,
-  outlined,
-  disabled,
-  onPress,
-  testId,
-}: IIconBtnProps) {
+export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIconBtnProps) {
   const { color, highlight } = useThemeContext();
   return (
     <View>
@@ -202,14 +190,7 @@ interface ITxtBtnProps {
   txtColor?: string;
 }
 
-export function TxtButton({
-  txt,
-  onPress,
-  icon,
-  disabled,
-  style,
-  txtColor,
-}: ITxtBtnProps) {
+export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITxtBtnProps) {
   const { color, highlight } = useThemeContext();
   return (
     <TouchableOpacity

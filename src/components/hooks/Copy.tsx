@@ -24,7 +24,7 @@ export default function useCopy() {
         clearTimer();
       }, 3000);
     },
-    [clearTimer]
+    [clearTimer],
   );
 
   return {

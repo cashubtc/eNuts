@@ -3,10 +3,7 @@ import "../shim";
 
 import { l } from "@log";
 import Navigator from "@nav/Navigator";
-import {
-  NavigationContainer,
-  useNavigationState,
-} from "@react-navigation/native";
+import { NavigationContainer, useNavigationState } from "@react-navigation/native";
 import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 // Balance is now provided by CocoCashuProvider
 import { CurrencyProvider } from "@src/context/Currency";
@@ -78,8 +75,7 @@ function useAppInitialization() {
         if (!dbFingerprint) {
           appLogger.info("Found missmatch in db and seed. Rerolling mnemonic");
           // Fresh database, but old seed. Reroll seed and persist new fingerprint
-          const { fingerprint: newFingerprint } =
-            await seedService.createNewMnemonic();
+          const { fingerprint: newFingerprint } = await seedService.createNewMnemonic();
           dbProvider.setFingerprint(newFingerprint);
         } else if (seedFingerprint !== dbFingerprint) {
           // This state should never happen, if it does we need to display an error to the user
@@ -195,11 +191,7 @@ function RootApp() {
   );
 }
 
-function ThemedNavigationContainer({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function ThemedNavigationContainer({ children }: { children: React.ReactNode }) {
   const { activeTheme } = useThemeContext();
   return (
     <NavigationContainer theme={activeTheme === "light" ? light : dark}>

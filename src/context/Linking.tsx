@@ -1,11 +1,11 @@
-import { isCashuToken, isLnInvoice } from '@util'
-import { useCallback, useEffect, useState } from 'react'
-import type { EmitterSubscription } from 'react-native'
-import { Linking } from 'react-native'
+import { isCashuToken, isLnInvoice } from "@util";
+import { useCallback, useEffect, useState } from "react";
+import type { EmitterSubscription } from "react-native";
+import { Linking } from "react-native";
 
 export interface EventType {
-	url: string
-	nativeEvent?: MessageEvent
+  url: string;
+  nativeEvent?: MessageEvent;
 }
 /**
  * stolen from expo
@@ -17,39 +17,46 @@ export interface EventType {
  * @return An EmitterSubscription that has the remove method from EventSubscription
  * @see [React Native Docs Linking page](https://reactnative.dev/docs/linking#addeventlistener).
  */
-export function addEventListener(type: 'url', handler: (event: EventType) => void): EmitterSubscription {
-	return Linking.addEventListener(type, (e) => {
-		// alert('calling link event')
-		handler(e)
-	})
+export function addEventListener(
+  type: "url",
+  handler: (event: EventType) => void,
+): EmitterSubscription {
+  return Linking.addEventListener(type, (e) => {
+    // alert('calling link event')
+    handler(e);
+  });
 }
 export const useInitialURL = () => {
-	const [url, setUrl] = useState<string>('')
-	const [processing, setProcessing] = useState(true)
+  const [url, setUrl] = useState<string>("");
+  const [processing, setProcessing] = useState(true);
 
-	function onChange(event: { url: string }) {
-		if (!event?.url) { return setUrl('') }
-		if (isCashuToken(event.url) || isLnInvoice(event.url)) {
-			return setUrl(event.url)
-		}
-		setUrl('')
-	}
+  function onChange(event: { url: string }) {
+    if (!event?.url) {
+      return setUrl("");
+    }
+    if (isCashuToken(event.url) || isLnInvoice(event.url)) {
+      return setUrl(event.url);
+    }
+    setUrl("");
+  }
 
-	const clearUrl = useCallback(() => setUrl(''), [])
+  const clearUrl = useCallback(() => setUrl(""), []);
 
-	useEffect(() => {
-		const getUrlAsync = async () => {
-			// Get the deep link used to open the app
-			let initialUrl = await Linking.getInitialURL() || ''
-			if (!initialUrl) { return }
-			initialUrl = isCashuToken(initialUrl) || isLnInvoice(initialUrl) || ''
-			setProcessing(false)
-			return setUrl(initialUrl)
-		}
-		void getUrlAsync()
-		const subscription = addEventListener('url', onChange)
-		return () => subscription.remove()
-	}, [])
+  useEffect(() => {
+    const getUrlAsync = async () => {
+      // Get the deep link used to open the app
+      let initialUrl = (await Linking.getInitialURL()) || "";
+      if (!initialUrl) {
+        return;
+      }
+      initialUrl = isCashuToken(initialUrl) || isLnInvoice(initialUrl) || "";
+      setProcessing(false);
+      return setUrl(initialUrl);
+    };
+    void getUrlAsync();
+    const subscription = addEventListener("url", onChange);
+    return () => subscription.remove();
+  }, []);
 
-	return { url, clearUrl, processing }
-}
+  return { url, clearUrl, processing };
+};

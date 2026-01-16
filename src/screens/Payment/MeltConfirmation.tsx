@@ -16,10 +16,7 @@ import Screen from "@comps/Screen";
 import { usePromptContext } from "@src/context/Prompt";
 import { useManager } from "@src/context/Manager";
 
-export default function MeltConfirmationScreen({
-  navigation,
-  route,
-}: MeltConfirmationProps) {
+export default function MeltConfirmationScreen({ navigation, route }: MeltConfirmationProps) {
   const { quote, mintUrl } = route.params;
   const { knownMints } = useKnownMints();
   const manager = useManager();
@@ -69,9 +66,7 @@ export default function MeltConfirmationScreen({
           <OverviewRow txt1={t("mint")} txt2={mintName} />
           <OverviewRow
             txt1={t("amount")}
-            txt2={`${formatAmount(quote.amount).formatted} ${
-              formatAmount(quote.amount).symbol
-            }`}
+            txt2={`${formatAmount(quote.amount).formatted} ${formatAmount(quote.amount).symbol}`}
           />
           <OverviewRow
             txt1={t("estimatedFees")}
@@ -81,9 +76,7 @@ export default function MeltConfirmationScreen({
           />
           <OverviewRow
             txt1={t("totalInclFee")}
-            txt2={`${formatAmount(totalWithFees).formatted} ${
-              formatAmount(totalWithFees).symbol
-            }`}
+            txt2={`${formatAmount(totalWithFees).formatted} ${formatAmount(totalWithFees).symbol}`}
           />
         </View>
       </ScrollView>

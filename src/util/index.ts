@@ -33,29 +33,24 @@ export function unixTimestamp() {
 /**
  * Return the unique values found in the passed iterable
  */
-export function uniq<T extends string | number | bigint | boolean | symbol>(
-  iter: Iterable<T>
-) {
+export function uniq<T extends string | number | bigint | boolean | symbol>(iter: Iterable<T>) {
   return [...new Set(iter)];
 }
 
 export function uniqByIContacts(iter: Iterable<IContact>, key: keyof IContact) {
   // l()
-  const o = [...iter].reduce<{ [k: string | number | symbol]: IContact }>(
-    (acc, cur) => {
-      const hex = cur?.[key];
-      if (!hex) {
-        return acc;
-      }
-      if (!acc[hex] || Object.keys(cur).length > Object.keys(acc[hex]).length) {
-        // l({ cur, hex, accItem: acc[hex] })
-        acc[hex] = cur;
-        return acc;
-      }
+  const o = [...iter].reduce<{ [k: string | number | symbol]: IContact }>((acc, cur) => {
+    const hex = cur?.[key];
+    if (!hex) {
       return acc;
-    },
-    {}
-  );
+    }
+    if (!acc[hex] || Object.keys(cur).length > Object.keys(acc[hex]).length) {
+      // l({ cur, hex, accItem: acc[hex] })
+      acc[hex] = cur;
+      return acc;
+    }
+    return acc;
+  }, {});
   // l({o})
   return Object.values(o);
 }
@@ -85,7 +80,7 @@ export function formatBalance(bal: number) {
 export function formatInt(
   val: number,
   notation: "standard" | "engineering" | "scientific" | "compact" = "standard",
-  locale?: string
+  locale?: string,
 ): string {
   try {
     const lan = getLanguageCode();
@@ -142,9 +137,7 @@ export function formatMintUrl(url: string) {
 export function formatSeconds(time: number) {
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
-  return `${minutes.toString().padStart(2, "0")}:${seconds
-    .toString()
-    .padStart(2, "0")}`;
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
 export function getSelectedAmount(proofs: IProofSelection[]) {
@@ -155,30 +148,18 @@ export function vib(pattern?: number | number[]) {
   Vibration.vibrate(pattern);
 }
 
-export function hasTrustedMint(
-  userMints: string[],
-  tokenMints: string[]
-): boolean;
+export function hasTrustedMint(userMints: string[], tokenMints: string[]): boolean;
 
-export function hasTrustedMint(
-  userMints: { mintUrl: string }[],
-  tokenMints: string[]
-): boolean;
+export function hasTrustedMint(userMints: { mintUrl: string }[], tokenMints: string[]): boolean;
 
-export function hasTrustedMint(
-  uMints: ({ mintUrl: string } | string)[],
-  tMints: string[]
-) {
+export function hasTrustedMint(uMints: ({ mintUrl: string } | string)[], tMints: string[]) {
   if (!uMints?.length || !isArr(uMints) || !tMints?.length || !isArr(tMints)) {
     return false;
   }
   return uMints.some((m) => tMints.includes(isStr(m) ? m : m.mintUrl));
 }
 
-export async function getInvoiceFromLnurl(
-  lnUrlOrAddress: string,
-  amount: number
-) {
+export async function getInvoiceFromLnurl(lnUrlOrAddress: string, amount: number) {
   try {
     lnUrlOrAddress = lnTrim(lnUrlOrAddress);
     if (!isLnurlOrAddress(lnUrlOrAddress)) {
@@ -190,14 +171,9 @@ export async function getInvoiceFromLnurl(
     }
     amount *= 1000;
     const resp = await fetch(url);
-    const { tag, callback, minSendable, maxSendable } =
-      await resp.json<ILnUrl>();
+    const { tag, callback, minSendable, maxSendable } = await resp.json<ILnUrl>();
     // const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json<ILnUrl>()
-    if (
-      tag === "payRequest" &&
-      minSendable <= amount &&
-      amount <= maxSendable
-    ) {
+    if (tag === "payRequest" && minSendable <= amount && amount <= maxSendable) {
       const resp = await fetch(`${callback}?amount=${amount}`);
       const { pr } = await resp.json<{ pr: string }>();
       // const resp = await (await fetch(`${callback}?amount=${amount}`)).json<{ pr: string }>()
@@ -395,10 +371,7 @@ export function normalizeMintUrl(url: string) {
   return res;
 }
 
-export function sortMintsByDefault(
-  mints: IMintBalWithName[],
-  defaultMint: string
-) {
+export function sortMintsByDefault(mints: IMintBalWithName[], defaultMint: string) {
   return mints.sort((a, b) => {
     if (a.mintUrl === defaultMint) {
       return -1;
@@ -413,7 +386,7 @@ export function sortMintsByDefault(
 
 export function debounce<T extends (...args: any[]) => void>(
   func: T,
-  timeout = 300
+  timeout = 300,
 ): (...args: Parameters<T>) => void {
   let timer: NodeJS.Timeout;
 
@@ -428,7 +401,7 @@ export function debounce<T extends (...args: any[]) => void>(
 export function formatSatStr(
   amount: number,
   notation: "standard" | "engineering" | "scientific" | "compact" = "standard",
-  showAmount = true
+  showAmount = true,
 ) {
   return `${showAmount ? `${formatInt(amount, notation, "en")} ` : " "}${
     amount < 2 && amount > -2 ? "Sat" : "Sats"
@@ -457,8 +430,6 @@ export async function timeout<T>(ms = 1000) {
 }
 
 export function getFlagEmoji(code: string) {
-  const codePoints = Array.from(code.toUpperCase()).map(
-    (char) => 0x1f1a5 + char.charCodeAt(0)
-  );
+  const codePoints = Array.from(code.toUpperCase()).map((char) => 0x1f1a5 + char.charCodeAt(0));
   return String.fromCodePoint(...codePoints);
 }

@@ -37,11 +37,7 @@ export function l(msg?: unknown, ...optionalParams: unknown[]) {
   if (fnName) {
     fnName = `[${fnName}]`;
   }
-  appLogger.debug(
-    `${new Date().toLocaleTimeString()}${fnName}`,
-    msg,
-    ...optionalParams
-  );
+  appLogger.debug(`${new Date().toLocaleTimeString()}${fnName}`, msg, ...optionalParams);
 }
 
 function debug(msg?: unknown, ...optionalParams: unknown[]) {

@@ -4,9 +4,7 @@ export type LnAddressMetadata = {
   maxSendable?: number;
 };
 
-export async function requestLnAddressMetadata(
-  lnAdress: string
-): Promise<LnAddressMetadata> {
+export async function requestLnAddressMetadata(lnAdress: string): Promise<LnAddressMetadata> {
   const [username, domain] = lnAdress.split("@");
   if (!username || !domain) {
     throw new Error("Invalid LN address");
@@ -19,7 +17,7 @@ export async function requestLnAddressMetadata(
 
 export async function getInvoiceFromLnAddress(
   data: LnAddressMetadata,
-  amountInMsats: number
+  amountInMsats: number,
 ): Promise<string> {
   if (!data.callback) {
     throw new Error("Callback URL is required");

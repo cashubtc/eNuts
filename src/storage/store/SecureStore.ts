@@ -18,36 +18,19 @@ export class SecureStore {
   constructor(options?: SecureStoreOptions) {
     this.#options = options;
   }
-  public static set(
-    key: string,
-    value: string,
-    options?: SecureStoreOptions
-  ): Promise<void> {
+  public static set(key: string, value: string, options?: SecureStoreOptions): Promise<void> {
     return _SecureStore.setItemAsync(key, value, options);
   }
-  public set(
-    key: string,
-    value: string,
-    options?: SecureStoreOptions
-  ): Promise<void> {
+  public set(key: string, value: string, options?: SecureStoreOptions): Promise<void> {
     return SecureStore.set(key, value, options ? options : this.#options);
   }
-  public static get(
-    key: string,
-    options?: SecureStoreOptions
-  ): Promise<string | null> {
+  public static get(key: string, options?: SecureStoreOptions): Promise<string | null> {
     return _SecureStore.getItemAsync(key, options);
   }
-  public get(
-    key: string,
-    options?: SecureStoreOptions
-  ): Promise<string | null> {
+  public get(key: string, options?: SecureStoreOptions): Promise<string | null> {
     return SecureStore.get(key, options ? options : this.#options);
   }
-  public static delete(
-    key: string,
-    options?: SecureStoreOptions
-  ): Promise<void> {
+  public static delete(key: string, options?: SecureStoreOptions): Promise<void> {
     return _SecureStore.deleteItemAsync(key, options);
   }
   public delete(key: string, options?: SecureStoreOptions): Promise<void> {

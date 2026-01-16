@@ -10,9 +10,7 @@ interface IDashboardTopBarProps {
   onSettingsPress: () => void;
 }
 
-export default function DashboardTopBar({
-  onSettingsPress,
-}: IDashboardTopBarProps) {
+export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarProps) {
   const { color, highlight, activeTheme } = useThemeContext();
   const { handleLogoPress } = usePrivacyContext();
   const insets = useSafeAreaInsets();
@@ -21,8 +19,7 @@ export default function DashboardTopBar({
 
   // Logo source logic (same as Logo component)
   const logoSrc =
-    activeTheme === "dark" &&
-    (highlight === "Zap" || highlight === "Azyre" || highlight === "Rosy")
+    activeTheme === "dark" && (highlight === "Zap" || highlight === "Azyre" || highlight === "Rosy")
       ? require("@assets/icon_transparent_dark.png")
       : require("@assets/icon_transparent.png");
 
@@ -39,15 +36,8 @@ export default function DashboardTopBar({
       <View style={styles.topBarContent}>
         {/* Logo - absolutely centered */}
         <View style={styles.logoCenterContainer}>
-          <TouchableOpacity
-            onPress={() => void handleLogoPress()}
-            style={styles.logoBtn}
-          >
-            <Image
-              source={logoSrc}
-              style={styles.logoImage}
-              resizeMode="contain"
-            />
+          <TouchableOpacity onPress={() => void handleLogoPress()} style={styles.logoBtn}>
+            <Image source={logoSrc} style={styles.logoImage} resizeMode="contain" />
           </TouchableOpacity>
         </View>
 

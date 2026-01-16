@@ -11,13 +11,9 @@ type LatestHistoryMintEntryProps = {
 };
 
 export const LatestHistoryMintEntry = memo(
-  function LatestHistoryMintEntry({
-    history,
-    variant = "highlight",
-  }: LatestHistoryMintEntryProps) {
+  function LatestHistoryMintEntry({ history, variant = "highlight" }: LatestHistoryMintEntryProps) {
     const { color, highlight } = useThemeContext();
-    const iconColor =
-      variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+    const iconColor = variant === "highlight" ? getColor(highlight, color) : color.TEXT;
 
     let icon;
     switch (history.state) {
@@ -45,5 +41,5 @@ export const LatestHistoryMintEntry = memo(
     prev.history.id === next.history.id &&
     prev.history.state === next.history.state &&
     prev.history.amount === next.history.amount &&
-    prev.history.createdAt === next.history.createdAt
+    prev.history.createdAt === next.history.createdAt,
 );

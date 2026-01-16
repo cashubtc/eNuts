@@ -4,10 +4,7 @@ import { MintHistoryDetails } from "./components/MintHistoryDetails";
 import { MeltHistoryDetails } from "./components/MeltHistoryDetails";
 import { ReceiveHistoryDetails } from "./components/ReceiveHistoryDetails";
 
-export default function HistoryEntryDetails({
-  navigation,
-  route,
-}: THistoryEntryPageProps) {
+export default function HistoryEntryDetails({ navigation, route }: THistoryEntryPageProps) {
   const { entry } = route.params;
   const goBack = () => navigation.goBack();
 

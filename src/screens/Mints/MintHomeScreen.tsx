@@ -44,17 +44,13 @@ export default function MintHomeScreen({ navigation }: any) {
     >
       <View style={styles.container}>
         {knownMints.length > 0 ? (
-          <View
-            style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}
-          >
+          <View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
             {/* Mints list */}
             <ScrollView alwaysBounceVertical={false}>
               {knownMints.map((m, i) => {
                 const displayName = m.mintInfo.name || formatMintUrl(m.mintUrl);
                 const { formatted, symbol } = formatAmount(m.balance);
-                const displayBalance = hidden.balance
-                  ? "****"
-                  : `${formatted} ${symbol}`;
+                const displayBalance = hidden.balance ? "****" : `${formatted} ${symbol}`;
 
                 return (
                   <TouchableOpacity
@@ -85,11 +81,7 @@ export default function MintHomeScreen({ navigation }: any) {
 
                         {/* Center: Mint name and balance */}
                         <View style={styles.infoContainer}>
-                          <Txt
-                            txt={displayName}
-                            bold
-                            styles={[{ color: color.TEXT }]}
-                          />
+                          <Txt txt={displayName} bold styles={[{ color: color.TEXT }]} />
                           <Txt
                             txt={displayBalance}
                             styles={[

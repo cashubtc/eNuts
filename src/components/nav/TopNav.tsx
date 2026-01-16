@@ -77,9 +77,7 @@ export default function TopNav({
               handleCancel?.();
             }}
           >
-            <Text style={globals(color, highlight).pressTxt}>
-              {txt || t("cancel")}
-            </Text>
+            <Text style={globals(color, highlight).pressTxt}>{txt || t("cancel")}</Text>
           </TouchableOpacity>
         )}
       </View>

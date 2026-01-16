@@ -22,10 +22,7 @@ export function DetailRow({ label, value }: DetailRowProps) {
 
   return (
     <View style={styles.detailRow}>
-      <Txt
-        txt={label}
-        styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]}
-      />
+      <Txt txt={label} styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]} />
       <Txt txt={value} styles={[styles.detailValue, { color: color.TEXT }]} />
     </View>
   );
@@ -48,11 +45,3 @@ const styles = ScaledSheet.create({
     fontSize: "14@vs",
   },
 });
-
-
-
-
-
-
-
-

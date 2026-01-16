@@ -24,15 +24,8 @@ import { mainColors } from "@styles";
 import { vib } from "@util";
 import { getInvoiceFromLnAddress } from "@src/util/lud16";
 
-export default function MeltLnAddressScreen({
-  navigation,
-  route,
-}: TMeltLnAddressPageProps) {
-  const {
-    lnAddress,
-    selectedMint: preselection,
-    metadata,
-  } = route.params || {};
+export default function MeltLnAddressScreen({ navigation, route }: TMeltLnAddressPageProps) {
+  const { lnAddress, selectedMint: preselection, metadata } = route.params || {};
   const { knownMints } = useKnownMints();
   const manager = useManager();
   const { color } = useThemeContext();
@@ -46,7 +39,7 @@ export default function MeltLnAddressScreen({
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
 
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
-    knownMints.find((m) => m.mintUrl === preselection) || null
+    knownMints.find((m) => m.mintUrl === preselection) || null,
   );
   const [amountInput, setAmountInput] = useState("");
   const [err, setErr] = useState(false);
@@ -84,10 +77,8 @@ export default function MeltLnAddressScreen({
 
     const amountInMsats = amountValue * 1000;
     const isAmountTooLow = amountValue < 1;
-    const isBelowMin =
-      metadata.minSendable && metadata.minSendable > amountInMsats;
-    const isAboveMax =
-      metadata.maxSendable && metadata.maxSendable < amountInMsats;
+    const isBelowMin = metadata.minSendable && metadata.minSendable > amountInMsats;
+    const isAboveMax = metadata.maxSendable && metadata.maxSendable < amountInMsats;
 
     if (isAmountTooLow || isBelowMin || isAboveMax) {
       vib(400);
@@ -102,10 +93,7 @@ export default function MeltLnAddressScreen({
 
     try {
       const invoice = await getInvoiceFromLnAddress(metadata, amountInMsats);
-      const quote = await manager.quotes.createMeltQuote(
-        selectedMint.mintUrl,
-        invoice
-      );
+      const quote = await manager.quotes.createMeltQuote(selectedMint.mintUrl, invoice);
 
       navigation.navigate("MeltConfirmation", {
         quote,
@@ -118,16 +106,7 @@ export default function MeltLnAddressScreen({
     } finally {
       stopLoading();
     }
-  }, [
-    amountValue,
-    selectedMint,
-    metadata,
-    navigation,
-    shake,
-    manager,
-    openPromptAutoClose,
-    t,
-  ]);
+  }, [amountValue, selectedMint, metadata, navigation, shake, manager, openPromptAutoClose, t]);
 
   if (noMintsAvailable) {
     return (
@@ -185,10 +164,7 @@ export default function MeltLnAddressScreen({
                     <View style={styles.rangeItem}>
                       <Txt
                         txt="Min"
-                        styles={[
-                          styles.rangeLabel,
-                          { color: color.TEXT_SECONDARY },
-                        ]}
+                        styles={[styles.rangeLabel, { color: color.TEXT_SECONDARY }]}
                       />
                       <Txt
                         txt={`${Math.floor(metadata.minSendable / 1000)} sats`}
@@ -200,10 +176,7 @@ export default function MeltLnAddressScreen({
                     <View style={styles.rangeItem}>
                       <Txt
                         txt="Max"
-                        styles={[
-                          styles.rangeLabel,
-                          { color: color.TEXT_SECONDARY },
-                        ]}
+                        styles={[styles.rangeLabel, { color: color.TEXT_SECONDARY }]}
                       />
                       <Txt
                         txt={`${Math.floor(metadata.maxSendable / 1000)} sats`}
@@ -215,21 +188,12 @@ export default function MeltLnAddressScreen({
               )}
             </Card>
           </View>
-          <MintSelector
-            mint={selectedMint!}
-            onPress={handleMintSelectionOpen}
-          />
+          <MintSelector mint={selectedMint!} onPress={handleMintSelectionOpen} />
           <Button
             disabled={loading || !amountValue}
             txt={t("continue")}
             onPress={handleSubmit}
-            icon={
-              loading ? (
-                <Loading size={20} />
-              ) : (
-                <ChevronRightIcon color={mainColors.WHITE} />
-              )
-            }
+            icon={loading ? <Loading size={20} /> : <ChevronRightIcon color={mainColors.WHITE} />}
           />
         </View>
       </View>

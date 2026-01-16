@@ -25,18 +25,9 @@ export default function SettingsNavigator() {
       }}
     >
       <SettingsStack.Screen name="SettingsMain" component={Settings} />
-      <SettingsStack.Screen
-        name="Display settings"
-        component={DisplaySettings}
-      />
-      <SettingsStack.Screen
-        name="Language settings"
-        component={LanguageSettings}
-      />
-      <SettingsStack.Screen
-        name="Currency settings"
-        component={CurrencySettings}
-      />
+      <SettingsStack.Screen name="Display settings" component={DisplaySettings} />
+      <SettingsStack.Screen name="Language settings" component={LanguageSettings} />
+      <SettingsStack.Screen name="Currency settings" component={CurrencySettings} />
       <SettingsStack.Screen name="NFC settings" component={NfcSettings} />
       <SettingsStack.Screen name="View mnemonic" component={ViewMnemonic} />
     </SettingsStack.Navigator>

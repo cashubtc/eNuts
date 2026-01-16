@@ -64,24 +64,12 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
           }}
         />
         <Stack.Screen name="Settings" component={SettingsNavigator} />
-        <Stack.Screen
-          name="selectMintToSwapTo"
-          component={SelectMintToSwapToScreen}
-        />
+        <Stack.Screen name="selectMintToSwapTo" component={SelectMintToSwapToScreen} />
         <Stack.Screen name="MeltInput" component={MeltInputScreen} />
         <Stack.Screen name="MeltLnAddress" component={MeltLnAddressScreen} />
-        <Stack.Screen
-          name="MeltConfirmation"
-          component={MeltConfirmationScreen}
-        />
-        <Stack.Screen
-          name="SendSelectAmount"
-          component={SendSelectAmountScreen}
-        />
-        <Stack.Screen
-          name="MintSelectAmount"
-          component={MintSelectAmountScreen}
-        />
+        <Stack.Screen name="MeltConfirmation" component={MeltConfirmationScreen} />
+        <Stack.Screen name="SendSelectAmount" component={SendSelectAmountScreen} />
+        <Stack.Screen name="MintSelectAmount" component={MintSelectAmountScreen} />
         <Stack.Screen name="coinSelection" component={CoinSelectionScreen} />
         <Stack.Screen
           name="processing"
@@ -89,10 +77,7 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
           options={{ gestureEnabled: false }}
         />
         <Stack.Screen name="QRScanner" component={QrScannerScreen} />
-        <Stack.Screen
-          name="processingError"
-          component={ProcessingErrorScreen}
-        />
+        <Stack.Screen name="processingError" component={ProcessingErrorScreen} />
         <Stack.Screen name="mintInvoice" component={InvoiceScreen} />
         {/* sendable token created page */}
         <Stack.Screen
@@ -104,11 +89,7 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
             gestureEnabled: false,
           }}
         />
-        <Stack.Screen
-          name="success"
-          component={SuccessPage}
-          options={{ gestureEnabled: false }}
-        />
+        <Stack.Screen name="success" component={SuccessPage} options={{ gestureEnabled: false }} />
         <Stack.Screen
           name="successScreen"
           component={SuccessScreen}

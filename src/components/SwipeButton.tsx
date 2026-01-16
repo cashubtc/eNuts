@@ -40,10 +40,7 @@ export interface SwipeButtonHandle {
   reset: () => void;
 }
 
-function SwipeButton(
-  { txt, onToggle }: ISwipeButtonProps,
-  ref: React.Ref<SwipeButtonHandle>
-) {
+function SwipeButton({ txt, onToggle }: ISwipeButtonProps, ref: React.Ref<SwipeButtonHandle>) {
   const { color, highlight } = useThemeContext();
   const { width: windowWidth } = useWindowDimensions();
   const X = useSharedValue(0);
@@ -51,8 +48,7 @@ function SwipeButton(
 
   const BUTTON_WIDTH = windowWidth - HORIZONTAL_MARGIN * 2;
   const H_WAVE_RANGE = SWIPEABLE_DIMENSIONS + 2 * BUTTON_PADDING;
-  const H_SWIPE_RANGE =
-    BUTTON_WIDTH - 2 * BUTTON_PADDING - SWIPEABLE_DIMENSIONS;
+  const H_SWIPE_RANGE = BUTTON_WIDTH - 2 * BUTTON_PADDING - SWIPEABLE_DIMENSIONS;
   const SWIPE_THRESHOLD = H_SWIPE_RANGE / 2;
 
   const handleComplete = (isToggled: boolean) => {
@@ -114,64 +110,43 @@ function SwipeButton(
       backgroundColor: interpolateColor(
         X.value,
         [0, H_SWIPE_RANGE],
-        [hi[highlight], mainColors.WHITE]
+        [hi[highlight], mainColors.WHITE],
       ),
       transform: [{ translateX: X.value }],
     })),
     swipeText: useAnimatedStyle(() => ({
-      opacity: interpolate(
-        X.value,
-        [0, H_SWIPE_RANGE / 2],
-        [1, 0],
-        Extrapolation.CLAMP
-      ),
+      opacity: interpolate(X.value, [0, H_SWIPE_RANGE / 2], [1, 0], Extrapolation.CLAMP),
       transform: [
         {
           translateX: interpolate(
             X.value,
             InterpolateXInput,
             [0, H_SWIPE_RANGE / 2],
-            Extrapolation.CLAMP
+            Extrapolation.CLAMP,
           ),
         },
       ],
     })),
     chevron: useAnimatedStyle(() => ({
-      opacity: interpolate(
-        X.value,
-        [0, H_SWIPE_RANGE],
-        [1, 0],
-        Extrapolation.CLAMP
-      ),
+      opacity: interpolate(X.value, [0, H_SWIPE_RANGE], [1, 0], Extrapolation.CLAMP),
     })),
   };
 
   return (
     <View style={styles.container}>
       <Animated.View
-        style={[
-          styles.swipeCont,
-          { backgroundColor: color.INPUT_BG, width: BUTTON_WIDTH },
-        ]}
+        style={[styles.swipeCont, { backgroundColor: color.INPUT_BG, width: BUTTON_WIDTH }]}
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel={txt}
         accessibilityHint="Swipe right to confirm"
       >
         <AnimatedView
-          style={[
-            AnimatedStyles.colorWave,
-            styles.colorWave,
-            { backgroundColor: hi[highlight] },
-          ]}
+          style={[AnimatedStyles.colorWave, styles.colorWave, { backgroundColor: hi[highlight] }]}
         />
         <GestureDetector gesture={panGesture}>
           <Animated.View
-            style={[
-              styles.swipeable,
-              AnimatedStyles.swipeable,
-              { borderColor: color.INPUT_PH },
-            ]}
+            style={[styles.swipeable, AnimatedStyles.swipeable, { borderColor: color.INPUT_PH }]}
             testID="swipe-confirm-button"
           >
             <Animated.View style={AnimatedStyles.chevron}>
@@ -179,13 +154,7 @@ function SwipeButton(
             </Animated.View>
           </Animated.View>
         </GestureDetector>
-        <Animated.Text
-          style={[
-            styles.swipeText,
-            AnimatedStyles.swipeText,
-            { color: color.TEXT },
-          ]}
-        >
+        <Animated.Text style={[styles.swipeText, AnimatedStyles.swipeText, { color: color.TEXT }]}>
           {txt}
         </Animated.Text>
       </Animated.View>

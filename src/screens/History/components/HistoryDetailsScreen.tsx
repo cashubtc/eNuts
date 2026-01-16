@@ -10,10 +10,7 @@ type HistoryDetailsScreenProps = {
   children: ReactNode;
 };
 
-export function HistoryDetailsScreen({
-  onGoBack,
-  children,
-}: HistoryDetailsScreenProps) {
+export function HistoryDetailsScreen({ onGoBack, children }: HistoryDetailsScreenProps) {
   const { t } = useTranslation([NS.history]);
 
   return (

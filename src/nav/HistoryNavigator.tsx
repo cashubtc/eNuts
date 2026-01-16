@@ -21,10 +21,7 @@ export default function HistoryNavigator() {
       }}
     >
       <HistoryStack.Screen name="HistoryMain" component={HistoryPage} />
-      <HistoryStack.Screen
-        name="HistoryEntryDetails"
-        component={HistoryEntryDetails}
-      />
+      <HistoryStack.Screen name="HistoryEntryDetails" component={HistoryEntryDetails} />
     </HistoryStack.Navigator>
   );
 }

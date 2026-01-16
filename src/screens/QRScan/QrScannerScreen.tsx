@@ -8,13 +8,7 @@ import { QRScannerScreenProps } from "@src/nav/navTypes";
 import { CameraView, ScanningResult, useCameraPermissions } from "expo-camera";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Linking } from "react-native";
 
 function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   const [permission, requestPermission] = useCameraPermissions();
@@ -48,7 +42,7 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
         isHandlingScanRef.current = false;
         setIsScanningEnabled(true);
       };
-    }, [reset])
+    }, [reset]),
   );
 
   useEffect(() => {
@@ -74,13 +68,7 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
       return;
     }
     openPromptAutoClose({ msg: "Unsupported format", success: false });
-  }, [
-    complete,
-    scanResult,
-    navigation,
-    openPromptAutoClose,
-    claimFromTokenString,
-  ]);
+  }, [complete, scanResult, navigation, openPromptAutoClose, claimFromTokenString]);
 
   const handleCodeScanned = (result: ScanningResult) => {
     if (isHandlingScanRef.current) {
@@ -103,11 +91,7 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   if (!permission.granted) {
     // Camera permissions are not granted yet.
     return (
-      <Screen
-        screenName="QR Scanner"
-        withBackBtn
-        handlePress={() => navigation.goBack()}
-      >
+      <Screen screenName="QR Scanner" withBackBtn handlePress={() => navigation.goBack()}>
         <CameraPermission
           canAskAgain={permission.canAskAgain}
           onRequestPermission={requestPermission}

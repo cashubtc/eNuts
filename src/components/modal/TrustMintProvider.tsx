@@ -1,28 +1,14 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-} from "react";
-import TrustMintBottomSheet, {
-  type TrustMintBottomSheetRef,
-} from "@modal/TrustMintBottomSheet";
+import React, { createContext, useCallback, useContext, useMemo, useRef } from "react";
+import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
 import type { Token } from "@cashu/cashu-ts";
 
 type TrustMintContextValue = {
   open: (token: Token) => Promise<"trust" | "cancel" | "swap">;
 };
 
-const TrustMintContext = createContext<TrustMintContextValue | undefined>(
-  undefined
-);
+const TrustMintContext = createContext<TrustMintContextValue | undefined>(undefined);
 
-export function TrustMintModalProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function TrustMintModalProvider({ children }: { children: React.ReactNode }) {
   const ref = useRef<TrustMintBottomSheetRef>(null);
 
   const open = useCallback((token: Token) => {

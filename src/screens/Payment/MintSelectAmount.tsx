@@ -20,9 +20,7 @@ import MintSelector from "@comps/MintSelector";
 import { useThemeContext } from "@src/context/Theme";
 import useLoading from "@comps/hooks/Loading";
 
-export default function MintSelectAmountScreen({
-  navigation,
-}: MintSelectAmountProps) {
+export default function MintSelectAmountScreen({ navigation }: MintSelectAmountProps) {
   const { t } = useTranslation([NS.wallet]);
   const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
@@ -38,7 +36,7 @@ export default function MintSelectAmountScreen({
   }, [knownMints]);
 
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
-    defaultMint ?? null
+    defaultMint ?? null,
   );
 
   const noMintsAvailable = useMemo(() => {
@@ -64,7 +62,7 @@ export default function MintSelectAmountScreen({
     (mint: KnownMintWithBalance) => {
       setSelectedMint(mint);
     },
-    [setSelectedMint]
+    [setSelectedMint],
   );
 
   const handleMintSelectionOpen = useCallback(() => {
@@ -95,10 +93,7 @@ export default function MintSelectAmountScreen({
       return;
     }
     try {
-      const quote = await manager.quotes.createMintQuote(
-        selectedMint.mintUrl,
-        amountValue
-      );
+      const quote = await manager.quotes.createMintQuote(selectedMint.mintUrl, amountValue);
       return navigation.navigate("mintInvoice", {
         mintUrl: selectedMint.mintUrl,
         quote,
@@ -155,10 +150,7 @@ export default function MintSelectAmountScreen({
 
       <View style={styles.actionWrap}>
         <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
-          <MintSelector
-            mint={selectedMint!}
-            onPress={handleMintSelectionOpen}
-          />
+          <MintSelector mint={selectedMint!} onPress={handleMintSelectionOpen} />
           <Button
             txt={t("continue", { ns: NS.common })}
             onPress={handleSubmit}
@@ -217,8 +209,8 @@ export function MeltOverview({
               !shouldEstimate && balTooLow
                 ? mainColors.ERROR
                 : shouldEstimate
-                ? color.TEXT
-                : mainColors.VALID,
+                  ? color.TEXT
+                  : mainColors.VALID,
           },
         ]}
       />

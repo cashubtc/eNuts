@@ -35,27 +35,15 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
   }, []);
 
   return (
-    <Screen
-      screenName={"Mnemonic"}
-      noIcons
-      withBackBtn
-      handlePress={() => navigation.goBack()}
-    >
+    <Screen screenName={"Mnemonic"} noIcons withBackBtn handlePress={() => navigation.goBack()}>
       <View style={styles.content}>
         {loading ? (
-          <View
-            style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}
-          >
+          <View style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}>
             <Loading size="large" />
           </View>
         ) : !mnemonic ? (
-          <View
-            style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}
-          >
-            <Txt
-              txt={"No mnemonic found"}
-              styles={[{ color: color.TEXT_SECONDARY }]}
-            />
+          <View style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}>
+            <Txt txt={"No mnemonic found"} styles={[{ color: color.TEXT_SECONDARY }]} />
           </View>
         ) : (
           <>
@@ -85,17 +73,9 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
                 disabled={copied}
                 icon={
                   copied ? (
-                    <CheckmarkIcon
-                      width={s(18)}
-                      height={s(18)}
-                      color={mainColors.WHITE}
-                    />
+                    <CheckmarkIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />
                   ) : (
-                    <CopyIcon
-                      width={s(18)}
-                      height={s(18)}
-                      color={mainColors.WHITE}
-                    />
+                    <CopyIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />
                   )
                 }
               />

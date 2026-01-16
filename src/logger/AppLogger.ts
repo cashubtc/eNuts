@@ -3,12 +3,7 @@ export type LogLevel = "error" | "warn" | "info" | "debug";
 type LogBindings = Record<string, unknown>;
 
 export interface LogTransport {
-  write(
-    level: LogLevel,
-    message: string,
-    meta: unknown[],
-    bindings?: LogBindings
-  ): void;
+  write(level: LogLevel, message: string, meta: unknown[], bindings?: LogBindings): void;
 }
 
 const levelPriority: Record<LogLevel, number> = {
@@ -20,30 +15,19 @@ const levelPriority: Record<LogLevel, number> = {
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return (
-    typeof value === "object" &&
-    value !== null &&
-    Object.getPrototypeOf(value) === Object.prototype
+    typeof value === "object" && value !== null && Object.getPrototypeOf(value) === Object.prototype
   );
 }
 
 class ConsoleTransport implements LogTransport {
-  write(
-    level: LogLevel,
-    message: string,
-    meta: unknown[],
-    bindings?: LogBindings
-  ) {
+  write(level: LogLevel, message: string, meta: unknown[], bindings?: LogBindings) {
     const ts = new Date().toISOString();
     const prefixParts: string[] = [ts];
-    const name =
-      typeof bindings?.name === "string" ? bindings?.name : undefined;
+    const name = typeof bindings?.name === "string" ? bindings?.name : undefined;
     if (name) prefixParts.push(name);
     const prefix = `[${prefixParts.join("] [")}]`;
 
-    const payload =
-      bindings && Object.keys(bindings).length > 0
-        ? [{ bindings }, ...meta]
-        : meta;
+    const payload = bindings && Object.keys(bindings).length > 0 ? [{ bindings }, ...meta] : meta;
 
     switch (level) {
       case "error":
@@ -103,8 +87,7 @@ export class AppLogger {
 
   private write(level: LogLevel, message: string, meta: unknown[]) {
     if (!this.shouldLog(level)) return;
-    for (const transport of this.transports)
-      transport.write(level, message, meta, this.bindings);
+    for (const transport of this.transports) transport.write(level, message, meta, this.bindings);
   }
 
   // Overloads to satisfy both libraries

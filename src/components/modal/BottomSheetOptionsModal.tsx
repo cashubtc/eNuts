@@ -1,8 +1,5 @@
 import React, { forwardRef, useCallback } from "react";
-import BottomSheet, {
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { TouchableOpacity, View, Text } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import { useTranslation } from "react-i18next";
@@ -34,10 +31,7 @@ interface IBottomSheetOptionsModal {
   button3Loading?: boolean;
 }
 
-const BottomSheetOptionsModal = forwardRef<
-  BottomSheet,
-  IBottomSheetOptionsModal
->(
+const BottomSheetOptionsModal = forwardRef<BottomSheet, IBottomSheetOptionsModal>(
   (
     {
       button1Txt,
@@ -55,7 +49,7 @@ const BottomSheetOptionsModal = forwardRef<
       button3Disabled,
       button3Loading,
     },
-    ref
+    ref,
   ) => {
     const { t } = useTranslation([NS.common]);
     const { color } = useThemeContext();
@@ -88,14 +82,9 @@ const BottomSheetOptionsModal = forwardRef<
 
     const renderBackdrop = useCallback(
       (props: any) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-          opacity={0.5}
-        />
+        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
       ),
-      []
+      [],
     );
 
     return (
@@ -114,19 +103,12 @@ const BottomSheetOptionsModal = forwardRef<
         animateOnMount={true}
       >
         <BottomSheetScrollView
-          style={[
-            styles.scrollContainer,
-            { backgroundColor: color.BACKGROUND },
-          ]}
+          style={[styles.scrollContainer, { backgroundColor: color.BACKGROUND }]}
           contentContainerStyle={[styles.container]}
           showsVerticalScrollIndicator={false}
         >
           <Txt
-            txt={
-              isSend
-                ? t("send", { ns: NS.wallet })
-                : t("receive", { ns: NS.wallet })
-            }
+            txt={isSend ? t("send", { ns: NS.wallet }) : t("receive", { ns: NS.wallet })}
             bold
             center
             styles={[styles.hint]}
@@ -139,11 +121,7 @@ const BottomSheetOptionsModal = forwardRef<
           >
             <View style={styles.iconContainer}>
               {isSend ? (
-                <SendMsgIcon
-                  width={s(16)}
-                  height={s(16)}
-                  color={mainColors.VALID}
-                />
+                <SendMsgIcon width={s(16)} height={s(16)} color={mainColors.VALID} />
               ) : loading ? (
                 <View>
                   <Loading size="small" color={mainColors.VALID} />
@@ -153,15 +131,8 @@ const BottomSheetOptionsModal = forwardRef<
               )}
             </View>
             <View style={styles.txtWrap}>
-              <Text style={[styles.actionText, { color: color.TEXT }]}>
-                {button1Txt}
-              </Text>
-              <Text
-                style={[
-                  styles.descriptionText,
-                  { color: color.TEXT_SECONDARY },
-                ]}
-              >
+              <Text style={[styles.actionText, { color: color.TEXT }]}>{button1Txt}</Text>
+              <Text style={[styles.descriptionText, { color: color.TEXT_SECONDARY }]}>
                 {isSend ? t("sendEcashDashboard") : t("receiveEcashDashboard")}
               </Text>
             </View>
@@ -178,18 +149,9 @@ const BottomSheetOptionsModal = forwardRef<
               <ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />
             </View>
             <View style={styles.txtWrap}>
-              <Text style={[styles.actionText, { color: color.TEXT }]}>
-                {button2Txt}
-              </Text>
-              <Text
-                style={[
-                  styles.descriptionText,
-                  { color: color.TEXT_SECONDARY },
-                ]}
-              >
-                {isSend
-                  ? t("payInvoiceDashboard")
-                  : t("createInvoiceDashboard")}
+              <Text style={[styles.actionText, { color: color.TEXT }]}>{button2Txt}</Text>
+              <Text style={[styles.descriptionText, { color: color.TEXT_SECONDARY }]}>
+                {isSend ? t("payInvoiceDashboard") : t("createInvoiceDashboard")}
               </Text>
             </View>
           </TouchableOpacity>
@@ -200,10 +162,7 @@ const BottomSheetOptionsModal = forwardRef<
               <Separator style={[styles.separator]} />
 
               <TouchableOpacity
-                style={[
-                  styles.optionContainer,
-                  button3Disabled && styles.optionDisabled,
-                ]}
+                style={[styles.optionContainer, button3Disabled && styles.optionDisabled]}
                 onPress={handleThirdBtnPress}
                 onLongPress={handleThirdBtnLongPress}
                 delayLongPress={400}
@@ -211,11 +170,7 @@ const BottomSheetOptionsModal = forwardRef<
                 testID="third-option"
               >
                 <View style={styles.iconContainer}>
-                  {button3Loading ? (
-                    <Loading size="small" color={mainColors.VALID} />
-                  ) : (
-                    button3Icon
-                  )}
+                  {button3Loading ? <Loading size="small" color={mainColors.VALID} /> : button3Icon}
                 </View>
                 <View style={styles.txtWrap}>
                   <Text
@@ -251,7 +206,7 @@ const BottomSheetOptionsModal = forwardRef<
         </BottomSheetScrollView>
       </BottomSheet>
     );
-  }
+  },
 );
 
 BottomSheetOptionsModal.displayName = "BottomSheetOptionsModal";

@@ -22,8 +22,7 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
-  const { history, loadMore, hasMore, isFetching, refresh } =
-    usePaginatedHistory(5);
+  const { history, loadMore, hasMore, isFetching, refresh } = usePaginatedHistory(5);
 
   const renderHistoryEntry = (entry: HistoryEntry) => {
     switch (entry.type) {
@@ -54,28 +53,28 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
     >
       <View style={styles.container}>
         <View style={styles.listContainer}>
-        {/* History list with infinite scroll */}
-        <FlashList
-          data={history}
-          estimatedItemSize={80}
-          renderItem={({ item }) => (
-            <View style={[styles.entryCard, { backgroundColor: color.DRAWER }]}>
-              {renderHistoryEntry(item)}
-            </View>
-          )}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          ListEmptyComponent={<Empty txt={t("noTX") + "..."} />}
-          ListFooterComponent={
-            isFetching && hasMore ? (
-              <View style={styles.loaderWrap}>
-                <ActivityIndicator size="small" color={color.TEXT} />
+          {/* History list with infinite scroll */}
+          <FlashList
+            data={history}
+            estimatedItemSize={80}
+            renderItem={({ item }) => (
+              <View style={[styles.entryCard, { backgroundColor: color.DRAWER }]}>
+                {renderHistoryEntry(item)}
               </View>
-            ) : null
-          }
-          onRefresh={() => void refresh()}
-          refreshing={isFetching && history.length === 0}
-        />
+            )}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListEmptyComponent={<Empty txt={t("noTX") + "..."} />}
+            ListFooterComponent={
+              isFetching && hasMore ? (
+                <View style={styles.loaderWrap}>
+                  <ActivityIndicator size="small" color={color.TEXT} />
+                </View>
+              ) : null
+            }
+            onRefresh={() => void refresh()}
+            refreshing={isFetching && history.length === 0}
+          />
         </View>
       </View>
     </Screen>

@@ -18,10 +18,7 @@ interface IErrorProps {
   customMsg?: "requestMintErr" | "generalMeltingErr" | "invoiceFromLnurlError";
 }
 
-export default function ProcessingScreen({
-  navigation,
-  route,
-}: TProcessingPageProps) {
+export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
   const { t } = useTranslation([NS.mints]);
   const { color } = useThemeContext();
   const { clearUrl } = useInitialURL();
@@ -64,25 +61,21 @@ export default function ProcessingScreen({
       errorMsg: customMsg
         ? t(customMsg, { ns: NS.error })
         : isErr(e)
-        ? e.message
-        : t("generalMeltingErr", { ns: NS.error }),
+          ? e.message
+          : t("generalMeltingErr", { ns: NS.error }),
     });
   };
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
-    const backHandler = (e: TBeforeRemoveEvent) =>
-      preventBack(e, navigation.dispatch);
+    const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
 
   return (
     <View style={[globals(color).container, styles.container]}>
-      <Txt
-        txt={t(processingTxt, { ns: NS.wallet })}
-        styles={[{ color: color.TEXT }]}
-      />
+      <Txt txt={t(processingTxt, { ns: NS.wallet })} styles={[{ color: color.TEXT }]} />
       <Loading size={s(35)} />
     </View>
   );

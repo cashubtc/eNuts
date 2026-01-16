@@ -14,15 +14,9 @@ import { useInitialURL } from "@src/context/Linking";
 import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import TrustMintBottomSheet, {
-  type TrustMintBottomSheetRef,
-} from "@modal/TrustMintBottomSheet";
+import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
 import { globals } from "@styles";
-import {
-  formatMintUrl,
-  getSelectedAmount,
-  isNum,
-} from "@util";
+import { formatMintUrl, getSelectedAmount, isNum } from "@util";
 import { isLightningAddress } from "@util/lnurl";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,10 +25,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { s, ScaledSheet } from "react-native-size-matters";
 import { OverviewRow } from "@comps/OverviewRow";
 
-export default function CoinSelectionScreen({
-  navigation,
-  route,
-}: TCoinSelectionPageProps) {
+export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
   const {
     mint,
     balance,
@@ -84,9 +75,7 @@ export default function CoinSelectionScreen({
 
   const getRecipient = () => {
     if (recipient) {
-      return !isLightningAddress(recipient)
-        ? truncateStr(recipient, 16)
-        : recipient;
+      return !isLightningAddress(recipient) ? truncateStr(recipient, 16) : recipient;
     }
     return t("n/a");
   };
@@ -131,20 +120,18 @@ export default function CoinSelectionScreen({
       <ScrollView alwaysBounceVertical={false} style={{ marginBottom: s(90) }}>
         <View style={globals(color).wrapContainer}>
           <OverviewRow txt1={t("paymentType")} txt2={t(getPaymentType())} />
-          <OverviewRow
-            txt1={t("mint")}
-            txt2={mint.customName || formatMintUrl(mint.mintUrl)}
-          />
-          {recipient && (
-            <OverviewRow txt1={t("recipient")} txt2={getRecipient()} />
-          )}
+          <OverviewRow txt1={t("mint")} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
+          {recipient && <OverviewRow txt1={t("recipient")} txt2={getRecipient()} />}
           {isSwap && targetMint && (
             <OverviewRow
               txt1={t("recipient")}
               txt2={targetMint.customName || formatMintUrl(targetMint.mintUrl)}
             />
           )}
-          <OverviewRow txt1={t("amount")} txt2={`${formatAmount(amount).formatted} ${formatAmount(amount).symbol}`} />
+          <OverviewRow
+            txt1={t("amount")}
+            txt2={`${formatAmount(amount).formatted} ${formatAmount(amount).symbol}`}
+          />
           {isNum(estFee) && !isSendEcash && (
             <OverviewRow
               txt1={t("estimatedFees")}
@@ -152,15 +139,12 @@ export default function CoinSelectionScreen({
             />
           )}
           <View>
-            <Txt
-              txt={t("balanceAfterTX")}
-              styles={[{ fontWeight: "500", marginBottom: s(5) }]}
-            />
+            <Txt txt={t("balanceAfterTX")} styles={[{ fontWeight: "500", marginBottom: s(5) }]} />
             <Txt
               txt={
                 estFee > 0
                   ? `${formatAmount(balance - amount - estFee).formatted} ${t(
-                      "to"
+                      "to",
                     )} ${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
                   : `${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
               }

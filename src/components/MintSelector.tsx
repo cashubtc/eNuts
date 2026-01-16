@@ -2,12 +2,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
 import { formatMintUrl } from "@util";
-import {
-  TouchableOpacity,
-  View,
-  type ViewStyle,
-  type StyleProp,
-} from "react-native";
+import { TouchableOpacity, View, type ViewStyle, type StyleProp } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { ChevronRightIcon } from "./Icons";
@@ -39,11 +34,7 @@ export default function MintSelector({
   const displayBalance = hidden.balance ? "****" : `${formatted} ${symbol}`;
 
   return (
-    <TouchableOpacity
-      onPress={() => onPress(mint)}
-      activeOpacity={0.7}
-      style={style}
-    >
+    <TouchableOpacity onPress={() => onPress(mint)} activeOpacity={0.7} style={style}>
       <Card variant={variant} style={styles.cardContent}>
         {label && (
           <Txt

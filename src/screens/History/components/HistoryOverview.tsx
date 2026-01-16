@@ -27,18 +27,9 @@ export function HistoryOverview({
 
   return (
     <View style={styles.overview}>
-      <Txt
-        txt={amountDisplay}
-        styles={[styles.amount, { color: amountColor }]}
-      />
-      <Txt
-        txt={typeLabel}
-        styles={[styles.type, { color: color.TEXT_SECONDARY }]}
-      />
-      <Txt
-        txt={description}
-        styles={[styles.description, { color: color.TEXT_SECONDARY }]}
-      />
+      <Txt txt={amountDisplay} styles={[styles.amount, { color: amountColor }]} />
+      <Txt txt={typeLabel} styles={[styles.type, { color: color.TEXT_SECONDARY }]} />
+      <Txt txt={description} styles={[styles.description, { color: color.TEXT_SECONDARY }]} />
     </View>
   );
 }

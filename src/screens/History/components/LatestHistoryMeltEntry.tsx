@@ -11,13 +11,9 @@ type LatestHistoryMeltEntryProps = {
 };
 
 export const LatestHistoryMeltEntry = memo(
-  function LatestHistoryMeltEntry({
-    history,
-    variant = "highlight",
-  }: LatestHistoryMeltEntryProps) {
+  function LatestHistoryMeltEntry({ history, variant = "highlight" }: LatestHistoryMeltEntryProps) {
     const { color, highlight } = useThemeContext();
-    const iconColor =
-      variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+    const iconColor = variant === "highlight" ? getColor(highlight, color) : color.TEXT;
 
     let icon;
     switch (history.state) {
@@ -48,5 +44,5 @@ export const LatestHistoryMeltEntry = memo(
     prev.history.id === next.history.id &&
     prev.history.state === next.history.state &&
     prev.history.amount === next.history.amount &&
-    prev.history.createdAt === next.history.createdAt
+    prev.history.createdAt === next.history.createdAt,
 );

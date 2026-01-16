@@ -10,10 +10,7 @@ interface MetadataItemProps {
   hasSeparator?: boolean;
 }
 
-export default function MetadataItem({
-  text,
-  hasSeparator,
-}: MetadataItemProps) {
+export default function MetadataItem({ text, hasSeparator }: MetadataItemProps) {
   const { color } = useThemeContext();
   return (
     <>

@@ -99,11 +99,7 @@ export enum txType {
   RESTORE = 4,
 }
 
-export type TTXType =
-  | txType.SEND_RECEIVE
-  | txType.LIGHTNING
-  | txType.SWAP
-  | txType.RESTORE;
+export type TTXType = txType.SEND_RECEIVE | txType.LIGHTNING | txType.SWAP | txType.RESTORE;
 
 /**
  * type: 1 | 2 | 3

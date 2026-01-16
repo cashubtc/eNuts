@@ -11,29 +11,13 @@ import { NS } from "@src/i18n";
 import type { TCurrencyCode } from "@model";
 import { globals, mainColors } from "@styles";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 // Common currencies to display at the top
-const COMMON_CURRENCIES: TCurrencyCode[] = [
-  "USD",
-  "EUR",
-  "GBP",
-  "JPY",
-  "CHF",
-  "CAD",
-  "AUD",
-  "CNY",
-];
+const COMMON_CURRENCIES: TCurrencyCode[] = ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "CNY"];
 
-export default function CurrencySettings({
-  navigation,
-}: TCurrencySettingsPageProps) {
+export default function CurrencySettings({ navigation }: TCurrencySettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const { color } = useThemeContext();
   const {
@@ -100,23 +84,10 @@ export default function CurrencySettings({
       <ScrollView alwaysBounceVertical={false}>
         {/* Error Banner */}
         {hasRatesError && (
-          <View
-            style={[
-              styles.errorContainer,
-              { backgroundColor: mainColors.ERROR },
-            ]}
-          >
+          <View style={[styles.errorContainer, { backgroundColor: mainColors.ERROR }]}>
             <Txt txt={t("ratesUnavailable")} styles={[styles.errorText]} />
-            <Txt
-              txt={t("ratesUnavailableDesc")}
-              styles={[styles.errorDescription]}
-            />
-            <Button
-              txt={t("retry")}
-              onPress={handleRetry}
-              outlined
-              loading={isLoading}
-            />
+            <Txt txt={t("ratesUnavailableDesc")} styles={[styles.errorDescription]} />
+            <Button txt={t("retry")} onPress={handleRetry} outlined loading={isLoading} />
           </View>
         )}
 
@@ -138,11 +109,7 @@ export default function CurrencySettings({
                 ]}
               />
               <Txt
-                txt={
-                  ratesUnavailable
-                    ? t("ratesRequiredForFiat")
-                    : t("showFiatBalanceDesc")
-                }
+                txt={ratesUnavailable ? t("ratesRequiredForFiat") : t("showFiatBalanceDesc")}
                 styles={[styles.description, { color: color.TEXT_SECONDARY }]}
               />
             </View>
@@ -229,11 +196,7 @@ function CurrencySelection({
         disabled={disabled}
       >
         <View style={styles.currencyInfo}>
-          <Txt
-            txt={code}
-            bold
-            styles={[{ color: disabled ? color.TEXT_SECONDARY : color.TEXT }]}
-          />
+          <Txt txt={code} bold styles={[{ color: disabled ? color.TEXT_SECONDARY : color.TEXT }]} />
           <Txt
             txt={symbol}
             styles={[

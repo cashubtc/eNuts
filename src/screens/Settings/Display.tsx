@@ -11,9 +11,7 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 
-export default function DisplaySettings({
-  navigation,
-}: TDisplaySettingsPageProps) {
+export default function DisplaySettings({ navigation }: TDisplaySettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const { updateMode, mode, color, highlight } = useThemeContext();
   return (
@@ -25,25 +23,16 @@ export default function DisplaySettings({
       <ScrollView alwaysBounceVertical={false}>
         <Txt txt="Theme" bold styles={[styles.subHeader]} />
         <View style={globals(color).wrapContainer}>
-          <TouchableOpacity
-            style={[globals().wrapRow]}
-            onPress={() => updateMode("dark")}
-          >
+          <TouchableOpacity style={[globals().wrapRow]} onPress={() => updateMode("dark")}>
             <Txt txt={t("darkMode")} />
             <RadioBtn selected={mode === "dark"} />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[globals().wrapRow]}
-            onPress={() => updateMode("light")}
-          >
+          <TouchableOpacity style={[globals().wrapRow]} onPress={() => updateMode("light")}>
             <Txt txt={t("lightMode")} />
             <RadioBtn selected={mode === "light"} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[globals().wrapRow]}
-            onPress={() => updateMode("auto")}
-          >
+          <TouchableOpacity style={[globals().wrapRow]} onPress={() => updateMode("auto")}>
             <Txt txt={t("autoMode")} />
             <RadioBtn selected={mode === "auto"} />
           </TouchableOpacity>
@@ -70,11 +59,7 @@ interface IThemeSelectionProps {
   hasSeparator?: boolean;
 }
 
-function ThemeSelection({
-  name,
-  selected,
-  hasSeparator,
-}: IThemeSelectionProps) {
+function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
   const { t } = useTranslation([NS.common]);
   const { updateHighlight } = useThemeContext();
   return (

@@ -25,9 +25,7 @@ export function useUrDecoder(options: UseUrDecoderOptions = {}) {
   const [receivedCount, setReceivedCount] = useState(0);
   const [lastIndexes, setLastIndexes] = useState<number[]>([]);
   const [resultUr, setResultUr] = useState<UR | undefined>(undefined);
-  const [decodedString, setDecodedString] = useState<string | undefined>(
-    undefined
-  );
+  const [decodedString, setDecodedString] = useState<string | undefined>(undefined);
 
   const reset = useCallback(() => {
     decoderRef.current = new URDecoder();
@@ -132,7 +130,7 @@ export function useUrDecoder(options: UseUrDecoderOptions = {}) {
         };
       }
     },
-    [allowedTypes]
+    [allowedTypes],
   );
 
   return useMemo(
@@ -163,6 +161,6 @@ export function useUrDecoder(options: UseUrDecoderOptions = {}) {
       lastIndexes,
       resultUr,
       decodedString,
-    ]
+    ],
   );
 }

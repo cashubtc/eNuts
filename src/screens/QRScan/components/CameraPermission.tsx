@@ -21,9 +21,7 @@ export default function CameraPermission({
 
   return (
     <View style={styles.container}>
-      <View
-        style={[styles.iconContainer, { backgroundColor: color.DRAWER }]}
-      >
+      <View style={[styles.iconContainer, { backgroundColor: color.DRAWER }]}>
         <MaterialIcons name="camera-alt" size={s(48)} color={hi[highlight]} />
       </View>
       <Txt
@@ -81,4 +79,3 @@ const styles = ScaledSheet.create({
     paddingHorizontal: "20@s",
   },
 });
-

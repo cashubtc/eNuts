@@ -23,15 +23,10 @@ export function TokenSection({ label, value }: TokenSectionProps) {
       <Separator style={styles.separator} />
       <View style={styles.tokenSection}>
         <View style={styles.tokenHeader}>
-          <Txt
-            txt={label}
-            styles={[styles.sectionTitle, { color: color.TEXT }]}
-          />
+          <Txt txt={label} styles={[styles.sectionTitle, { color: color.TEXT }]} />
           <Copy txt={value} />
         </View>
-        <View
-          style={[styles.tokenContainer, { backgroundColor: color.INPUT_BG }]}
-        >
+        <View style={[styles.tokenContainer, { backgroundColor: color.INPUT_BG }]}>
           <Txt
             txt={truncateStr(value, 100)}
             styles={[styles.tokenValue, { color: color.TEXT_SECONDARY }]}

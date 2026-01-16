@@ -22,16 +22,12 @@ interface ICurrencyContext {
   formatBalance: boolean;
   setFormatBalance: (value: boolean) => Promise<void>;
   formatAmount: (sats: number) => IFormattedAmount;
-  convertFiatToSats: (
-    fiatAmount: number,
-    currencyCode?: TCurrencyCode
-  ) => number;
+  convertFiatToSats: (fiatAmount: number, currencyCode?: TCurrencyCode) => number;
 }
 
 const useCurrency = () => {
   const [rates, setRates] = useState<IExchangeRates | null>(null);
-  const [selectedCurrency, setSelectedCurrencyState] =
-    useState<TCurrencyCode>(DEFAULT_CURRENCY);
+  const [selectedCurrency, setSelectedCurrencyState] = useState<TCurrencyCode>(DEFAULT_CURRENCY);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [lastUpdate, setLastUpdate] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -59,9 +55,7 @@ const useCurrency = () => {
       }
 
       // Load cached timestamp
-      const cachedTimestamp = await store.get(
-        STORE_KEYS.exchangeRatesTimestamp
-      );
+      const cachedTimestamp = await store.get(STORE_KEYS.exchangeRatesTimestamp);
       if (cachedTimestamp) {
         setLastUpdate(parseInt(cachedTimestamp, 10));
       }
@@ -122,9 +116,7 @@ const useCurrency = () => {
       // If we have no cached rates, this is a critical error
       // Use ref to avoid stale closure issue
       if (!ratesRef.current) {
-        setError(
-          "Unable to load exchange rates. Please check your internet connection."
-        );
+        setError("Unable to load exchange rates. Please check your internet connection.");
       }
     }
   };
@@ -181,10 +173,7 @@ const useCurrency = () => {
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       // App coming back to foreground
-      if (
-        appStateRef.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
+      if (appStateRef.current.match(/inactive|background/) && nextAppState === "active") {
         appLogger.debug("Currency: App resumed, fetching fresh rates");
         void fetchRates();
       }
@@ -235,10 +224,7 @@ const useCurrency = () => {
       await store.set(STORE_KEYS.formatBalance, value.toString());
       appLogger.info("Currency: Format balance preference updated", { value });
     } catch (err) {
-      appLogger.error(
-        "Currency: Failed to update format balance preference",
-        err
-      );
+      appLogger.error("Currency: Failed to update format balance preference", err);
     }
   };
 
@@ -248,10 +234,7 @@ const useCurrency = () => {
    * @param currencyCode - Optional currency code (defaults to selectedCurrency)
    * @returns Formatted number (e.g., "123.45", "0.11") without currency symbol
    */
-  const formatSatsAsCurrency = (
-    sats: number,
-    currencyCode?: TCurrencyCode
-  ): string => {
+  const formatSatsAsCurrency = (sats: number, currencyCode?: TCurrencyCode): string => {
     // Use provided currency or fall back to selected currency
     const currency = currencyCode || selectedCurrency;
 
@@ -302,10 +285,7 @@ const useCurrency = () => {
    * @param currencyCode - Optional currency code (defaults to selectedCurrency)
    * @returns Amount in satoshis (rounded to whole number)
    */
-  const convertFiatToSats = (
-    fiatAmount: number,
-    currencyCode?: TCurrencyCode
-  ): number => {
+  const convertFiatToSats = (fiatAmount: number, currencyCode?: TCurrencyCode): number => {
     // Use provided currency or fall back to selected currency
     const currency = currencyCode || selectedCurrency;
 
@@ -361,14 +341,8 @@ const CurrencyContext = createContext<UseCurrencyType>({
 
 export const useCurrencyContext = () => useContext(CurrencyContext);
 
-export const CurrencyProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => (
-  <CurrencyContext.Provider value={useCurrency()}>
-    {children}
-  </CurrencyContext.Provider>
+export const CurrencyProvider = ({ children }: { children: React.ReactNode }) => (
+  <CurrencyContext.Provider value={useCurrency()}>{children}</CurrencyContext.Provider>
 );
 
 // Export types for consumers

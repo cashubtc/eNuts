@@ -15,22 +15,18 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 import { vs } from "react-native-size-matters";
 
-export default function SelectRecoveryMintScreen({
-  navigation,
-}: RecoverMintsScreenProps) {
+export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScreenProps) {
   const { t } = useTranslation([NS.common]);
   const { highlight, color } = useThemeContext();
 
   const { knownMints } = useKnownMints();
   const [selectedMints, setSelectedMints] = useState<string[]>(
-    knownMints.map((mint) => mint.mintUrl)
+    knownMints.map((mint) => mint.mintUrl),
   );
 
   const toggleMintSelection = (mintUrl: string) => {
     setSelectedMints((prev) =>
-      prev.includes(mintUrl)
-        ? prev.filter((m) => m !== mintUrl)
-        : [...prev, mintUrl]
+      prev.includes(mintUrl) ? prev.filter((m) => m !== mintUrl) : [...prev, mintUrl],
     );
   };
 
@@ -63,11 +59,7 @@ export default function SelectRecoveryMintScreen({
                     <View style={styles.mintContent}>
                       <Txt txt={mint.mintUrl} styles={[{ flex: 1 }]} />
                       {isSelected && (
-                        <CheckmarkIcon
-                          width={vs(14)}
-                          height={vs(14)}
-                          color={hi[highlight]}
-                        />
+                        <CheckmarkIcon width={vs(14)} height={vs(14)} color={hi[highlight]} />
                       )}
                     </View>
                   </TouchableOpacity>

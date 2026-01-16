@@ -9,13 +9,7 @@ import { globals, highlight as hi } from "@src/styles";
 import { formatMintUrl, isErr } from "@util";
 import { useState } from "react";
 import useDiscoverMints from "@comps/hooks/useDiscoverMints";
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-  ScrollView,
-} from "react-native";
+import { View, TouchableOpacity, Text, ActivityIndicator, ScrollView } from "react-native";
 import { s, vs } from "react-native-size-matters";
 import Screen from "@comps/Screen";
 import { usePromptContext } from "@src/context/Prompt";
@@ -45,12 +39,7 @@ type MintRecommendation = {
   n_melts: number;
 };
 
-function RecommendedMintItem({
-  mint,
-  color,
-  highlight,
-  onPress,
-}: RecommendedMintItemProps) {
+function RecommendedMintItem({ mint, color, highlight, onPress }: RecommendedMintItemProps) {
   const displayName = mint.name || formatMintUrl(mint.url);
   return (
     <TouchableOpacity
@@ -206,10 +195,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
               paddingVertical: vs(20),
             }}
           >
-            <ActivityIndicator
-              size="small"
-              color={hi[highlight as keyof typeof hi]}
-            />
+            <ActivityIndicator size="small" color={hi[highlight as keyof typeof hi]} />
             <Txt
               txt="Loading recommendations..."
               styles={[{ marginLeft: s(8), color: color.TEXT_SECONDARY }]}
@@ -219,10 +205,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
 
         {isError && (
           <View style={{ paddingVertical: vs(20), alignItems: "center" }}>
-            <Txt
-              txt="Failed to load recommendations"
-              styles={[{ color: color.TEXT_SECONDARY }]}
-            />
+            <Txt txt="Failed to load recommendations" styles={[{ color: color.TEXT_SECONDARY }]} />
             <Text
               style={{
                 color: color.TEXT_SECONDARY,

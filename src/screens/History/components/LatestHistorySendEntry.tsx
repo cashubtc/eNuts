@@ -11,13 +11,9 @@ type LatestHistorySendEntryProps = {
 };
 
 export const LatestHistorySendEntry = memo(
-  function LatestHistorySendEntry({
-    history,
-    variant = "highlight",
-  }: LatestHistorySendEntryProps) {
+  function LatestHistorySendEntry({ history, variant = "highlight" }: LatestHistorySendEntryProps) {
     const { color, highlight } = useThemeContext();
-    const iconColor =
-      variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+    const iconColor = variant === "highlight" ? getColor(highlight, color) : color.TEXT;
 
     let icon;
     switch (history.state) {
@@ -48,5 +44,5 @@ export const LatestHistorySendEntry = memo(
     prev.history.id === next.history.id &&
     prev.history.state === next.history.state &&
     prev.history.amount === next.history.amount &&
-    prev.history.createdAt === next.history.createdAt
+    prev.history.createdAt === next.history.createdAt,
 );

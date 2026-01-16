@@ -10,10 +10,7 @@ type AnimatedQrOptions = {
   minLengthToAnimate?: number;
 };
 
-export const useAnimatedQr = (
-  payload: string,
-  options: AnimatedQrOptions = {}
-): string => {
+export const useAnimatedQr = (payload: string, options: AnimatedQrOptions = {}): string => {
   const {
     intervalMs = 250,
     maxFragmentLen = 200,
@@ -71,14 +68,7 @@ export const useAnimatedQr = (
         }
         setChunk(payload);
       }
-    }, [
-      payload,
-      intervalMs,
-      maxFragmentLen,
-      startWithUr,
-      animate,
-      minLengthToAnimate,
-    ])
+    }, [payload, intervalMs, maxFragmentLen, startWithUr, animate, minLengthToAnimate]),
   );
 
   return chunk || payload;

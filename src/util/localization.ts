@@ -5,8 +5,8 @@ import { getLocales } from "expo-localization";
  * Retrieves the primary language code from the current locale.
  */
 export function getLanguageCode() {
-    const locales = getLocales();
-    return locales[0].languageCode?.split("-")[0] ?? "en";
+  const locales = getLocales();
+  return locales[0].languageCode?.split("-")[0] ?? "en";
 }
 
 /**
@@ -14,8 +14,6 @@ export function getLanguageCode() {
  * If the primary language code is not supported, 'en' (English) is returned as the default.
  */
 export function getTranslationLangCode() {
-    const lang = getLanguageCode();
-    return (
-        translationLangCodes.includes(lang) ? lang : "en"
-    ) as TranslationLangCodes;
+  const lang = getLanguageCode();
+  return (translationLangCodes.includes(lang) ? lang : "en") as TranslationLangCodes;
 }

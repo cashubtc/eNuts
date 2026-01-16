@@ -16,9 +16,7 @@ interface ITxtInputProps {
   keyboardType?: KeyboardTypeOptions;
   placeholder: string;
   onChangeText: (text: string) => void;
-  onSubmitEditing?: (
-    e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
-  ) => void;
+  onSubmitEditing?: (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void;
   innerRef?: LegacyRef<TextInput>;
   autoFocus?: boolean;
   ms?: number;

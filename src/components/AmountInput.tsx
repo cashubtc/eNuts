@@ -5,14 +5,7 @@ import { useCurrencyContext } from "@src/context/Currency";
 import { globals, highlight as hi, mainColors } from "@styles";
 import { formatSatStr } from "@util";
 import { getLanguageCode } from "@util/localization";
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  forwardRef,
-  useState,
-  useCallback,
-} from "react";
+import { useEffect, useMemo, useRef, forwardRef, useState, useCallback } from "react";
 import { Animated, TextInput, View, Pressable } from "react-native";
 import { ScaledSheet } from "react-native-size-matters";
 import { SwapCurrencyIcon } from "@comps/Icons";
@@ -77,9 +70,7 @@ function normalizeDecimalInput(input: string): string {
   // Case: Multiple periods - first ones are thousand separators, last is decimal
   else if (periods > 1) {
     const lastPeriodIdx = text.lastIndexOf(".");
-    text =
-      text.slice(0, lastPeriodIdx).replace(/\./g, "") +
-      text.slice(lastPeriodIdx);
+    text = text.slice(0, lastPeriodIdx).replace(/\./g, "") + text.slice(lastPeriodIdx);
   }
   // Single period or no separators - already normalized
 
@@ -110,16 +101,11 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       autoFocus = true,
       testID = "amount-input",
     },
-    ref
+    ref,
   ) => {
     const { color, highlight } = useThemeContext();
-    const {
-      formatBalance,
-      setFormatBalance,
-      convertFiatToSats,
-      rates,
-      selectedCurrency,
-    } = useCurrencyContext();
+    const { formatBalance, setFormatBalance, convertFiatToSats, rates, selectedCurrency } =
+      useCurrencyContext();
     const { anim } = useShakeAnimation();
     const internalRef = useRef<TextInput>(null);
 
@@ -287,7 +273,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
           onChange(sanitized);
         }
       },
-      [isFiatMode, convertFiatToSats, onChange, localDecimalSep]
+      [isFiatMode, convertFiatToSats, onChange, localDecimalSep],
     );
 
     // Auto-focus keyboard if requested
@@ -318,15 +304,12 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
     }, [isFiatMode, amountInSats]);
 
     // Keyboard type
-    const keyboardType = useMemo(
-      () => (isFiatMode ? "decimal-pad" : "numeric"),
-      [isFiatMode]
-    );
+    const keyboardType = useMemo(() => (isFiatMode ? "decimal-pad" : "numeric"), [isFiatMode]);
 
     // Max length - allow more for fiat to accommodate decimals
     const effectiveMaxLength = useMemo(
       () => (isFiatMode ? 12 : maxLength),
-      [isFiatMode, maxLength]
+      [isFiatMode, maxLength],
     );
 
     // Placeholder - show appropriate for mode
@@ -352,12 +335,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               ]}
             />
           )}
-          <Animated.View
-            style={[
-              styles.amountWrap,
-              { transform: [{ translateX: anim.current }] },
-            ]}
-          >
+          <Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
             <TextInput
               keyboardType={keyboardType}
               ref={inputRef}
@@ -412,10 +390,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
           )}
         </View>
         {secondaryLabel && (
-          <Pressable
-            onPress={handleToggleCurrency}
-            disabled={!canToggleCurrency}
-          >
+          <Pressable onPress={handleToggleCurrency} disabled={!canToggleCurrency}>
             <Txt
               txt={secondaryLabel}
               styles={[styles.secondaryLabel, { color: color.TEXT_SECONDARY }]}
@@ -424,7 +399,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
         )}
       </View>
     );
-  }
+  },
 );
 
 AmountInput.displayName = "AmountInput";

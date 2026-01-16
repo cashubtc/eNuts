@@ -25,9 +25,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
 import { s, vs } from "react-native-size-matters";
-import ConfirmBottomSheet, {
-  ConfirmBottomSheetRef,
-} from "@comps/modal/ConfirmBottomSheet";
+import ConfirmBottomSheet, { ConfirmBottomSheetRef } from "@comps/modal/ConfirmBottomSheet";
 
 import MenuItem from "./MenuItem";
 import Loading from "@comps/Loading";
@@ -67,9 +65,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             header={t("wallet")}
             txt={t("history", { ns: NS.topNav })}
             icon={<HistoryIcon color={color.TEXT} />}
-            onPress={() =>
-              navigation.navigate("History", { screen: "HistoryMain" })
-            }
+            onPress={() => navigation.navigate("History", { screen: "HistoryMain" })}
           />
         </View>
         {/* PREFERENCES */}
@@ -107,9 +103,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
           <MenuItem
             txt={t("restore")}
             icon={<LockIcon color={color.TEXT} />}
-            onPress={() =>
-              navigation.navigate("Restore", { screen: "RecoverMints" })
-            }
+            onPress={() => navigation.navigate("Restore", { screen: "RecoverMints" })}
           />
         </View>
         {/* ABOUT */}

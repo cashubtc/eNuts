@@ -11,10 +11,7 @@ import type {
   ITokenInfo,
 } from ".";
 import { MintQuoteResponse, Token, MeltQuoteResponse } from "@cashu/cashu-ts";
-import type {
-  HistoryStackParamList,
-  MintStackParamList,
-} from "@src/nav/navTypes";
+import type { HistoryStackParamList, MintStackParamList } from "@src/nav/navTypes";
 import type { RestoreStackParamList } from "@src/nav/navTypes";
 import type { SettingsStackParamList } from "@src/nav/navTypes";
 import { l } from "@src/logger";
@@ -304,11 +301,7 @@ export type TEncodedTokenPageProps = NativeStackScreenProps<
   "encodedToken",
   "MyStack"
 >;
-export type TSuccessPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "success",
-  "MyStack"
->;
+export type TSuccessPageProps = NativeStackScreenProps<RootStackParamList, "success", "MyStack">;
 export type TSuccessScreenProps = NativeStackScreenProps<
   RootStackParamList,
   "successScreen",
@@ -319,11 +312,7 @@ export type TMintManagementPageProps = NativeStackScreenProps<
   "mintmanagement",
   "MyStack"
 >;
-export type TMintInfoPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "mint info",
-  "MyStack"
->;
+export type TMintInfoPageProps = NativeStackScreenProps<RootStackParamList, "mint info", "MyStack">;
 export type TMintProofsPageProps = NativeStackScreenProps<
   RootStackParamList,
   "mint proofs",
@@ -361,8 +350,10 @@ export type THistoryEntryPageProps = CompositeScreenProps<
   NativeStackScreenProps<HistoryStackParamList, "HistoryEntryDetails">,
   NativeStackScreenProps<RootStackParamList>
 >;
-type RestoreStackScreenProps<T extends keyof RestoreStackParamList> =
-  NativeStackScreenProps<RestoreStackParamList, T>;
+type RestoreStackScreenProps<T extends keyof RestoreStackParamList> = NativeStackScreenProps<
+  RestoreStackParamList,
+  T
+>;
 
 export type ISeedPageProps = CompositeScreenProps<
   RestoreStackScreenProps<"Seed">,

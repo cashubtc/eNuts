@@ -18,10 +18,7 @@ type SendHistoryDetailsProps = {
   onGoBack: () => void;
 };
 
-export function SendHistoryDetails({
-  entry,
-  onGoBack,
-}: SendHistoryDetailsProps) {
+export function SendHistoryDetails({ entry, onGoBack }: SendHistoryDetailsProps) {
   const { t } = useTranslation([NS.history, NS.common]);
   const [reactiveEntry, setReactiveEntry] = useState(entry);
   const manager = useManager();
@@ -51,9 +48,7 @@ export function SendHistoryDetails({
     }
   };
 
-  const tokenValue = reactiveEntry.token
-    ? getEncodedToken(reactiveEntry.token)
-    : null;
+  const tokenValue = reactiveEntry.token ? getEncodedToken(reactiveEntry.token) : null;
 
   return (
     <HistoryDetailsScreen onGoBack={onGoBack}>
@@ -66,23 +61,14 @@ export function SendHistoryDetails({
       />
       <Separator />
       <DetailsSection>
-        <DetailRow
-          label={t("date")}
-          value={new Date(reactiveEntry.createdAt).toLocaleString()}
-        />
-        <DetailRow
-          label={t("status", { ns: NS.common })}
-          value={reactiveEntry.state}
-        />
+        <DetailRow label={t("date")} value={new Date(reactiveEntry.createdAt).toLocaleString()} />
+        <DetailRow label={t("status", { ns: NS.common })} value={reactiveEntry.state} />
         <DetailRow
           label={t("mint", { ns: NS.common })}
           value={formatMintUrl(reactiveEntry.mintUrl)}
         />
         {reactiveEntry.unit && (
-          <DetailRow
-            label={t("unit", { ns: NS.common })}
-            value={reactiveEntry.unit}
-          />
+          <DetailRow label={t("unit", { ns: NS.common })} value={reactiveEntry.unit} />
         )}
       </DetailsSection>
 

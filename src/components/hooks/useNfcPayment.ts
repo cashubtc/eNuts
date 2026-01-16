@@ -31,12 +31,7 @@ export class LimitExceededError extends Error {
   mint: string;
   maxAmount: number;
 
-  constructor(
-    paymentRequest: string,
-    amount: number,
-    mint: string,
-    maxAmount: number
-  ) {
+  constructor(paymentRequest: string, amount: number, mint: string, maxAmount: number) {
     super(`Amount ${amount} sats exceeds limit of ${maxAmount} sats`);
     this.name = "LimitExceededError";
     this.paymentRequest = paymentRequest;
@@ -70,7 +65,7 @@ export interface UseNfcPaymentReturn {
   completeOverLimitPayment: (
     paymentRequest: string,
     amount: number,
-    mint: string
+    mint: string,
   ) => Promise<NfcPaymentResult>;
   /** Cancel the current payment (if possible) */
   cancel: () => void;
@@ -97,24 +92,15 @@ export interface UseNfcPaymentReturn {
  * <Button onPress={() => startPayment({ maxAmount: 1000 })} title="Pay (max 1000 sats)" />
  * ```
  */
-export function useNfcPayment(
-  options: UseNfcPaymentOptions = {}
-): UseNfcPaymentReturn {
-  const {
-    onPaymentStart,
-    onPaymentSuccess,
-    onPaymentError,
-    onLimitExceeded,
-    onPaymentEnd,
-  } = options;
+export function useNfcPayment(options: UseNfcPaymentOptions = {}): UseNfcPaymentReturn {
+  const { onPaymentStart, onPaymentSuccess, onPaymentError, onLimitExceeded, onPaymentEnd } =
+    options;
   const manager = useManager();
   const [isActive, setIsActive] = useState(false);
   const [statusMessage, setStatusMessage] = useState("Ready");
 
   const startPayment = useCallback(
-    async (
-      paymentOptions: StartPaymentOptions = {}
-    ): Promise<NfcPaymentResult> => {
+    async (paymentOptions: StartPaymentOptions = {}): Promise<NfcPaymentResult> => {
       const { maxAmount } = paymentOptions;
 
       if (isActive) {
@@ -147,34 +133,26 @@ export function useNfcPayment(
             throw new Error("Payment request has no amount specified");
           }
           if (maxAmount !== undefined && parsedPr.amount > maxAmount) {
-            log.warn(
-              `Payment amount ${parsedPr.amount} exceeds max allowed ${maxAmount}`
-            );
+            log.warn(`Payment amount ${parsedPr.amount} exceeds max allowed ${maxAmount}`);
             throw new LimitExceededError(
               request,
               parsedPr.amount,
               parsedPr.matchingMints[0],
-              maxAmount
+              maxAmount,
             );
           }
-          const prTransaction =
-            await manager.wallet.preparePaymentRequestTransaction(
-              parsedPr.matchingMints[0],
-              parsedPr
-            );
+          const prTransaction = await manager.wallet.preparePaymentRequestTransaction(
+            parsedPr.matchingMints[0],
+            parsedPr,
+          );
           paymentAmount = prTransaction.sendOperation.amount;
           paymentMint = prTransaction.sendOperation.mintUrl;
-          log.info(
-            `Creating token for ${parsedPr.amount} sats from ${parsedPr.matchingMints[0]}`
-          );
+          log.info(`Creating token for ${parsedPr.amount} sats from ${parsedPr.matchingMints[0]}`);
           setStatusMessage(`Sending ${parsedPr.amount} sats...`);
           const token = await new Promise<Token>((resolve) => {
-            manager.wallet.handleInbandPaymentRequest(
-              prTransaction,
-              async (t) => {
-                resolve(t);
-              }
-            );
+            manager.wallet.handleInbandPaymentRequest(prTransaction, async (t) => {
+              resolve(t);
+            });
           });
 
           setStatusMessage("Writing to terminal...");
@@ -197,7 +175,7 @@ export function useNfcPayment(
         // Handle limit exceeded separately - don't treat as error
         if (error instanceof LimitExceededError) {
           log.info(
-            `Payment requires confirmation: ${error.amount} sats exceeds limit of ${error.maxAmount} sats`
+            `Payment requires confirmation: ${error.amount} sats exceeds limit of ${error.maxAmount} sats`,
           );
           setStatusMessage("Confirmation required");
           onLimitExceeded?.(error);
@@ -212,8 +190,7 @@ export function useNfcPayment(
           };
         }
 
-        const errorMessage =
-          error instanceof Error ? error.message : "NFC payment failed";
+        const errorMessage = error instanceof Error ? error.message : "NFC payment failed";
         const errorCode = error instanceof NfcError ? error.code : "UNKNOWN";
 
         log.error("NFC payment failed:", errorMessage);
@@ -244,7 +221,7 @@ export function useNfcPayment(
       onPaymentError,
       onLimitExceeded,
       onPaymentEnd,
-    ]
+    ],
   );
 
   /**
@@ -252,11 +229,7 @@ export function useNfcPayment(
    * This creates the token and writes it to the NFC tag in a new session.
    */
   const completeOverLimitPayment = useCallback(
-    async (
-      paymentRequest: string,
-      amount: number,
-      mint: string
-    ): Promise<NfcPaymentResult> => {
+    async (paymentRequest: string, amount: number, mint: string): Promise<NfcPaymentResult> => {
       if (isActive) {
         log.warn("Payment already in progress");
         return {
@@ -271,9 +244,7 @@ export function useNfcPayment(
 
       try {
         // Create the token
-        log.info(
-          `Creating token for confirmed payment: ${amount} sats from ${mint}`
-        );
+        log.info(`Creating token for confirmed payment: ${amount} sats from ${mint}`);
         setStatusMessage(`Sending ${amount} sats...`);
         const token = await manager.wallet.send(mint, amount);
         const encodedToken = getEncodedToken(token);
@@ -296,8 +267,7 @@ export function useNfcPayment(
         onPaymentSuccess?.(successResult);
         return successResult;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "NFC payment failed";
+        const errorMessage = error instanceof Error ? error.message : "NFC payment failed";
         const errorCode = error instanceof NfcError ? error.code : "UNKNOWN";
 
         log.error("Over-limit payment failed:", errorMessage);
@@ -320,14 +290,7 @@ export function useNfcPayment(
         onPaymentEnd?.();
       }
     },
-    [
-      isActive,
-      manager,
-      onPaymentStart,
-      onPaymentSuccess,
-      onPaymentError,
-      onPaymentEnd,
-    ]
+    [isActive, manager, onPaymentStart, onPaymentSuccess, onPaymentError, onPaymentEnd],
   );
 
   const cancel = useCallback(() => {

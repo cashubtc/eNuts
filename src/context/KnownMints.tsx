@@ -14,7 +14,7 @@ export const useKnownMints = () => {
         ...mint,
         balance: balance[mint.mintUrl] || 0,
       })),
-    [trustedMints, balance]
+    [trustedMints, balance],
   );
 
   return { knownMints, loading: false };

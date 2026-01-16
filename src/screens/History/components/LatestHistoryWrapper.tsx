@@ -34,13 +34,11 @@ export function LatestHistoryWrapper({
   const { hidden } = usePrivacyContext();
   const { formatAmount } = useCurrencyContext();
   const { t } = useTranslation([NS.history, NS.common]);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList, "History">>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, "History">>();
 
   // Use white/background color for highlight mode (colored background)
   // Use theme text colors for standard mode (white/drawer background)
-  const textColor =
-    variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+  const textColor = variant === "highlight" ? getColor(highlight, color) : color.TEXT;
   const secondaryTextColor =
     variant === "highlight" ? getColor(highlight, color) : color.TEXT_SECONDARY;
 

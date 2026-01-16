@@ -1,8 +1,4 @@
-import {
-  BottomSheetModal,
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import Txt from "@comps/Txt";
 import Button from "@comps/Button";
 import { CheckmarkIcon } from "@comps/Icons";
@@ -65,49 +61,32 @@ const MintItem = memo(
             txt={mint.name || new URL(mint.mintUrl).hostname}
             styles={[styles.mintAlias, { color: textColor }]}
           />
-          <Txt
-            txt={mint.mintUrl}
-            styles={[styles.mintUrl, { color: secondaryTextColor }]}
-          />
+          <Txt txt={mint.mintUrl} styles={[styles.mintUrl, { color: secondaryTextColor }]} />
         </View>
         <View style={styles.rightSection}>
-          <Txt
-            txt={formattedBalance}
-            styles={[styles.balance, { color: mainColors.VALID }]}
-          />
+          <Txt txt={formattedBalance} styles={[styles.balance, { color: mainColors.VALID }]} />
           {multiSelect && (
             <View
               style={[
                 styles.checkbox,
                 {
-                  backgroundColor: isSelected
-                    ? mainColors.VALID
-                    : "transparent",
+                  backgroundColor: isSelected ? mainColors.VALID : "transparent",
                   borderColor: isSelected ? mainColors.VALID : textColor,
                 },
               ]}
             >
-              {isSelected && (
-                <CheckmarkIcon
-                  color={mainColors.WHITE}
-                  width={14}
-                  height={14}
-                />
-              )}
+              {isSelected && <CheckmarkIcon color={mainColors.WHITE} width={14} height={14} />}
             </View>
           )}
         </View>
       </TouchableOpacity>
     );
-  }
+  },
 );
 
 MintItem.displayName = "MintItem";
 
-const MintSelectionSheet = forwardRef<
-  BottomSheetModal,
-  MintSelectionSheetProps
->(
+const MintSelectionSheet = forwardRef<BottomSheetModal, MintSelectionSheetProps>(
   (
     {
       selectedMint,
@@ -117,7 +96,7 @@ const MintSelectionSheet = forwardRef<
       multiSelect = false,
       showZeroBalanceMints = false,
     },
-    ref
+    ref,
   ) => {
     const { t } = useTranslation([NS.common]);
     const { color } = useThemeContext();
@@ -126,24 +105,19 @@ const MintSelectionSheet = forwardRef<
     const insets = useSafeAreaInsets();
 
     // Internal state for multi-select mode
-    const [internalSelectedMints, setInternalSelectedMints] = useState<
-      KnownMintWithBalance[]
-    >([]);
+    const [internalSelectedMints, setInternalSelectedMints] = useState<KnownMintWithBalance[]>([]);
 
     // Determine which mints to display based on balance visibility setting
     const displayMints = useMemo(
-      () =>
-        showZeroBalanceMints
-          ? knownMints
-          : knownMints.filter((mint) => mint.balance > 0),
-      [knownMints, showZeroBalanceMints]
+      () => (showZeroBalanceMints ? knownMints : knownMints.filter((mint) => mint.balance > 0)),
+      [knownMints, showZeroBalanceMints],
     );
 
     // Initialize internal state when controlled selectedMints change
     React.useEffect(() => {
       if (multiSelect && selectedMints) {
         const controlledSelectedMints = displayMints.filter((mint) =>
-          selectedMints.some((selected) => selected.mintUrl === mint.mintUrl)
+          selectedMints.some((selected) => selected.mintUrl === mint.mintUrl),
         );
         setInternalSelectedMints(controlledSelectedMints);
       }
@@ -155,9 +129,7 @@ const MintSelectionSheet = forwardRef<
         return internalSelectedMints;
       }
       return selectedMint
-        ? [displayMints.find((m) => m.mintUrl === selectedMint.mintUrl)].filter(
-            Boolean
-          )
+        ? [displayMints.find((m) => m.mintUrl === selectedMint.mintUrl)].filter(Boolean)
         : [];
     }, [multiSelect, internalSelectedMints, selectedMint, displayMints]);
 
@@ -172,13 +144,9 @@ const MintSelectionSheet = forwardRef<
       (mint: KnownMintWithBalance) => {
         if (multiSelect) {
           setInternalSelectedMints((prev) => {
-            const isAlreadySelected = prev.some(
-              (selected) => selected.mintUrl === mint.mintUrl
-            );
+            const isAlreadySelected = prev.some((selected) => selected.mintUrl === mint.mintUrl);
             if (isAlreadySelected) {
-              return prev.filter(
-                (selected) => selected.mintUrl !== mint.mintUrl
-              );
+              return prev.filter((selected) => selected.mintUrl !== mint.mintUrl);
             } else {
               return [...prev, mint];
             }
@@ -189,7 +157,7 @@ const MintSelectionSheet = forwardRef<
           (ref as React.RefObject<BottomSheetModal>)?.current?.dismiss();
         }
       },
-      [multiSelect, onMintSelect, ref]
+      [multiSelect, onMintSelect, ref],
     );
 
     const handleConfirmMultiSelect = useCallback(() => {
@@ -202,25 +170,18 @@ const MintSelectionSheet = forwardRef<
     const isMintSelected = useCallback(
       (mint: KnownMintWithBalance) => {
         if (multiSelect) {
-          return internalSelectedMints.some(
-            (selected) => selected.mintUrl === mint.mintUrl
-          );
+          return internalSelectedMints.some((selected) => selected.mintUrl === mint.mintUrl);
         }
         return selectedMint?.mintUrl === mint.mintUrl;
       },
-      [multiSelect, internalSelectedMints, selectedMint]
+      [multiSelect, internalSelectedMints, selectedMint],
     );
 
     const renderBackdrop = useCallback(
       (props: any) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-          opacity={0.5}
-        />
+        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
       ),
-      []
+      [],
     );
 
     return (
@@ -240,10 +201,7 @@ const MintSelectionSheet = forwardRef<
       >
         <BottomSheetScrollView
           style={[styles.scrollView, { backgroundColor: color.BACKGROUND }]}
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingBottom: insets.bottom },
-          ]}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom }]}
           showsVerticalScrollIndicator={false}
         >
           <View
@@ -277,7 +235,7 @@ const MintSelectionSheet = forwardRef<
               {displayMints.map((mint) => {
                 const { formatted, symbol } = formatAmount(mint.balance);
                 const formattedBalance = `${formatted} ${symbol}`;
-                
+
                 return (
                   <MintItem
                     key={mint.mintUrl}
@@ -294,12 +252,7 @@ const MintSelectionSheet = forwardRef<
               })}
 
               {multiSelect && (
-                <View
-                  style={[
-                    styles.buttonContainer,
-                    { paddingBottom: insets.bottom + vs(16) },
-                  ]}
-                >
+                <View style={[styles.buttonContainer, { paddingBottom: insets.bottom + vs(16) }]}>
                   <Button
                     txt={t("confirm", { ns: NS.common })}
                     onPress={handleConfirmMultiSelect}
@@ -312,7 +265,7 @@ const MintSelectionSheet = forwardRef<
         </BottomSheetScrollView>
       </BottomSheetModal>
     );
-  }
+  },
 );
 
 const styles = ScaledSheet.create({

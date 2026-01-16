@@ -7,10 +7,7 @@ import { useTrustMint } from "@modal/TrustMintProvider";
 import { isErr } from "@src/util";
 import { useReceive, useSend } from "coco-cashu-react";
 
-export type ClaimResult =
-  | SuccessClaimResult
-  | CancelledClaimResult
-  | ErrorClaimResult;
+export type ClaimResult = SuccessClaimResult | CancelledClaimResult | ErrorClaimResult;
 type SuccessClaimResult = {
   token: Token;
   amount: number;
@@ -31,9 +28,7 @@ export function useCashuClaimFlow() {
   const { open: openTrustMint } = useTrustMint();
   const { receive, isReceiving, isError: isReceiveError } = useReceive();
 
-  const claimFromTokenString = async (
-    tokenStr: string
-  ): Promise<ClaimResult> => {
+  const claimFromTokenString = async (tokenStr: string): Promise<ClaimResult> => {
     try {
       const decoded = getDecodedToken(tokenStr);
       const isKnown = await manager.mint.isTrustedMint(decoded.mint);

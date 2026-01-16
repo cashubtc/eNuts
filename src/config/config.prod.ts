@@ -6,6 +6,6 @@
  * https://reactnative.dev/docs/security#storing-sensitive-info
  */
 export default {
-	API_URL: 'CHANGEME',
-	skipVerification: false
-}
+  API_URL: "CHANGEME",
+  skipVerification: false,
+};

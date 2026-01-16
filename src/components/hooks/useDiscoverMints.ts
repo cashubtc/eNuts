@@ -25,9 +25,7 @@ interface UseDiscoverMintsResult {
 }
 
 export default function useDiscoverMints(): UseDiscoverMintsResult {
-  const [allRecommendations, setAllRecommendations] = useState<
-    MintRecommendation[]
-  >([]);
+  const [allRecommendations, setAllRecommendations] = useState<MintRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const { mints } = useMints();
@@ -58,9 +56,7 @@ export default function useDiscoverMints(): UseDiscoverMintsResult {
   // Filter out mints that are already trusted
   const recommendations = useMemo(() => {
     const trustedMintUrls = new Set(
-      mints
-        .filter((mint) => mint.trusted)
-        .map((mint) => normalizeMintUrl(mint.mintUrl))
+      mints.filter((mint) => mint.trusted).map((mint) => normalizeMintUrl(mint.mintUrl)),
     );
 
     return allRecommendations.filter((recommendation) => {

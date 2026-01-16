@@ -27,20 +27,14 @@ export default function Balance({ nav }: IBalanceProps) {
   const { hidden } = usePrivacyContext();
   const { balance } = useBalanceContext();
   const { history: latestHistory, hasMore } = usePaginatedHistory(3);
-  const { formatAmount, formatBalance, setFormatBalance } =
-    useCurrencyContext();
+  const { formatAmount, formatBalance, setFormatBalance } = useCurrencyContext();
 
   const toggleBalanceFormat = () => {
     void setFormatBalance(!formatBalance);
   };
 
   return (
-    <View
-      style={[
-        styles.board,
-        { borderColor: color.BORDER, backgroundColor: hi[highlight] },
-      ]}
-    >
+    <View style={[styles.board, { borderColor: color.BORDER, backgroundColor: hi[highlight] }]}>
       <TouchableOpacity
         style={styles.balanceWrap}
         onPress={toggleBalanceFormat}
@@ -55,19 +49,10 @@ export default function Balance({ nav }: IBalanceProps) {
         <View style={styles.balAssetNameWrap}>
           {!hidden.balance && (
             <>
-              <Text
-                style={[
-                  styles.balAssetName,
-                  { color: getColor(highlight, color) },
-                ]}
-              >
+              <Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
                 {formatAmount(balance.total).symbol}
               </Text>
-              <SwapCurrencyIcon
-                width={s(20)}
-                height={s(20)}
-                color={getColor(highlight, color)}
-              />
+              <SwapCurrencyIcon width={s(20)} height={s(20)} color={getColor(highlight, color)} />
             </>
           )}
         </View>
@@ -77,10 +62,7 @@ export default function Balance({ nav }: IBalanceProps) {
         <View style={styles.txOverview}>
           <Txt
             txt={t("noTX")}
-            styles={[
-              globals(color).pressTxt,
-              { color: getColor(highlight, color) },
-            ]}
+            styles={[globals(color).pressTxt, { color: getColor(highlight, color) }]}
           />
         </View>
       )}

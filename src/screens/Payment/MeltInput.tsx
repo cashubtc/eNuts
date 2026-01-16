@@ -3,12 +3,7 @@ import useLoading from "@comps/hooks/Loading";
 import Loading from "@comps/Loading";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
-import {
-  ChevronRightIcon,
-  ConnectionErrorIcon,
-  CopyIcon,
-  ScanQRIcon,
-} from "@comps/Icons";
+import { ChevronRightIcon, ConnectionErrorIcon, CopyIcon, ScanQRIcon } from "@comps/Icons";
 // Lazy load the MintSelectionSheet to improve initial render
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
 import { isIOS } from "@consts";
@@ -17,20 +12,8 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { highlight as hi, mainColors } from "@styles";
 import { getStrFromClipboard } from "@util";
-import {
-  isLightningAddress,
-  isLnurlOrAddress,
-  parseLightningAddress,
-} from "@util/lnurl";
-import {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  lazy,
-  Suspense,
-  useMemo,
-} from "react";
+import { isLightningAddress, isLnurlOrAddress, parseLightningAddress } from "@util/lnurl";
+import { useEffect, useState, useRef, useCallback, lazy, Suspense, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import { ScaledSheet, vs } from "react-native-size-matters";
@@ -51,7 +34,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const insets = useSafeAreaInsets();
 
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
-    knownMints.length > 0 ? knownMints[0] : null
+    knownMints.length > 0 ? knownMints[0] : null,
   );
 
   // Use refs for better performance
@@ -88,7 +71,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     (mint: KnownMintWithBalance) => {
       setSelectedMint(mint);
     },
-    [setSelectedMint]
+    [setSelectedMint],
   );
 
   // Paste from clipboard
@@ -125,10 +108,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       return openPromptAutoClose({ msg: t("invalidInvoice") });
     }
     try {
-      const quote = await manager.quotes.createMeltQuote(
-        currentMint.mintUrl,
-        input
-      );
+      const quote = await manager.quotes.createMeltQuote(currentMint.mintUrl, input);
       return navigation.navigate("MeltConfirmation", {
         quote,
         mintUrl: currentMint.mintUrl,
@@ -181,10 +161,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       withBottomInset={false}
       withKeyboard={true}
       rightAction={
-        <TouchableOpacity
-          onPress={handleScanQR}
-          style={{ paddingHorizontal: 20 }}
-        >
+        <TouchableOpacity onPress={handleScanQR} style={{ paddingHorizontal: 20 }}>
           <ScanQRIcon color={hi[highlight]} />
         </TouchableOpacity>
       }
@@ -222,13 +199,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
             disabled={loading || !input.length}
             txt={t("continue")}
             onPress={() => void handleBtnPress()}
-            icon={
-              loading ? (
-                <Loading size={20} />
-              ) : (
-                <ChevronRightIcon color={mainColors.WHITE} />
-              )
-            }
+            icon={loading ? <Loading size={20} /> : <ChevronRightIcon color={mainColors.WHITE} />}
           />
         </View>
       </View>

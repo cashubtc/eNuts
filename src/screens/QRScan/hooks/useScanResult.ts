@@ -78,7 +78,7 @@ const useScanResult = () => {
       setResult(parsed);
       handledRef.current = true;
     },
-    [addPart]
+    [addPart],
   );
 
   const complete = useMemo(() => Boolean(result), [result]);

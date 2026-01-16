@@ -1,15 +1,5 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
-import {
-  BottomSheetModal,
-  BottomSheetBackdrop,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Text, View } from "react-native";
 import { ScaledSheet, vs } from "react-native-size-matters";
 import { useThemeContext } from "@src/context/Theme";
@@ -63,14 +53,9 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
 
   const handleBackdrop = useCallback(
     (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        appearsOnIndex={0}
-        disappearsOnIndex={-1}
-        opacity={0.5}
-      />
+      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
     ),
-    []
+    [],
   );
 
   const handleConfirm = useCallback(() => {
@@ -109,17 +94,10 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
       >
         {options && (
           <>
-            <Text
-              style={[
-                globals(color, highlight).modalHeader,
-                { marginBottom: vs(15) },
-              ]}
-            >
+            <Text style={[globals(color, highlight).modalHeader, { marginBottom: vs(15) }]}>
               {options.header}
             </Text>
-            <Text style={[styles.message, { color: color.TEXT }]}>
-              {options.txt}
-            </Text>
+            <Text style={[styles.message, { color: color.TEXT }]}>{options.txt}</Text>
             <View style={styles.buttonContainer}>
               <Button
                 txt={options.confirmTxt}

@@ -2,9 +2,7 @@ import Txt from "@comps/Txt";
 import Screen from "@comps/Screen";
 
 import { l } from "@log";
-import ConfirmBottomSheet, {
-  ConfirmBottomSheetRef,
-} from "@comps/modal/ConfirmBottomSheet";
+import ConfirmBottomSheet, { ConfirmBottomSheetRef } from "@comps/modal/ConfirmBottomSheet";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
@@ -61,10 +59,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
             )}
             <View style={styles.headerTextContainer}>
               {mint?.mintInfo?.name && (
-                <Txt
-                  txt={mint.mintInfo.name}
-                  styles={[styles.mintName, { color: color.TEXT }]}
-                />
+                <Txt txt={mint.mintInfo.name} styles={[styles.mintName, { color: color.TEXT }]} />
               )}
               {mint?.mintInfo?.version && (
                 <Txt
@@ -108,10 +103,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                     value={mint.mintInfo.description}
                     hasSeparator={
                       !!mint.mintInfo.description_long ||
-                      !!(
-                        mint.mintInfo.contact &&
-                        mint.mintInfo.contact.length > 0
-                      ) ||
+                      !!(mint.mintInfo.contact && mint.mintInfo.contact.length > 0) ||
                       !!mint.mintInfo.motd
                     }
                   />
@@ -121,18 +113,15 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                     label="Details"
                     value={mint.mintInfo.description_long}
                     hasSeparator={
-                      !!(
-                        mint.mintInfo.contact &&
-                        mint.mintInfo.contact.length > 0
-                      ) || !!mint.mintInfo.motd
+                      !!(mint.mintInfo.contact && mint.mintInfo.contact.length > 0) ||
+                      !!mint.mintInfo.motd
                     }
                   />
                 )}
                 {mint.mintInfo.contact && mint.mintInfo.contact.length > 0 && (
                   <>
                     {mint.mintInfo.contact.map((contact, index) => {
-                      const isLast =
-                        index === mint.mintInfo.contact!.length - 1;
+                      const isLast = index === mint.mintInfo.contact!.length - 1;
                       const hasMotd = !!mint.mintInfo.motd;
                       return (
                         <InfoRow
@@ -145,9 +134,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                     })}
                   </>
                 )}
-                {mint.mintInfo.motd && (
-                  <InfoRow label="Message" value={mint.mintInfo.motd} />
-                )}
+                {mint.mintInfo.motd && <InfoRow label="Message" value={mint.mintInfo.motd} />}
               </View>
             </View>
           )}
@@ -190,17 +177,10 @@ function InfoRow({ label, value, hasSeparator }: IInfoRow) {
   return (
     <>
       <View style={styles.infoRow}>
-        <Txt
-          txt={label}
-          styles={[styles.infoLabel, { color: color.TEXT_SECONDARY }]}
-        />
+        <Txt txt={label} styles={[styles.infoLabel, { color: color.TEXT_SECONDARY }]} />
         <Txt txt={value} styles={[styles.infoValue, { color: color.TEXT }]} />
       </View>
-      {hasSeparator && (
-        <View
-          style={[styles.infoSeparator, { backgroundColor: color.BORDER }]}
-        />
-      )}
+      {hasSeparator && <View style={[styles.infoSeparator, { backgroundColor: color.BORDER }]} />}
     </>
   );
 }

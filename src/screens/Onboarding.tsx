@@ -75,12 +75,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
         {
           backgroundColor: "#8038CA",
 
-          image: (
-            <Image
-              style={styles.cashuImg}
-              source={require("@assets/cashu.png")}
-            />
-          ),
+          image: <Image style={styles.cashuImg} source={require("@assets/cashu.png")} />,
           title: "Cashu & Mints",
           subtitle: t("explainer2"),
         },
@@ -88,10 +83,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
           backgroundColor: H_Colors.Nuts,
 
           image: (
-            <Image
-              style={styles.sendReceiveImg}
-              source={require("@assets/send_receive.png")}
-            />
+            <Image style={styles.sendReceiveImg} source={require("@assets/send_receive.png")} />
           ),
           title: t("send&receive"),
           subtitle: t("explainer3"),

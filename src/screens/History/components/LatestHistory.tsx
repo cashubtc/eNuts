@@ -10,9 +10,7 @@ type LatestHistoryProps = {
   history: ReadonlyArray<HistoryEntry>;
 };
 
-export const LatestHistory = memo(function LatestHistory({
-  history,
-}: LatestHistoryProps) {
+export const LatestHistory = memo(function LatestHistory({ history }: LatestHistoryProps) {
   return <View>{history.slice(0, 4).map((h) => renderHistoryEntry(h))}</View>;
 });
 

@@ -22,20 +22,14 @@ import { useManager } from "@src/context/Manager";
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
  */
-export default function EncodedTokenPage({
-  navigation,
-  route,
-}: TEncodedTokenPageProps) {
+export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
   const { token } = route.params || {};
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
   const { formatBalance, formatAmount } = useCurrencyContext();
   const [error, setError] = useState({ msg: "", open: false });
   const encodedToken = useMemo(() => getEncodedToken(token), [token]);
-  const tokenAmount = useMemo(
-    () => token.proofs.reduce((r, c) => r + c.amount, 0),
-    [token]
-  );
+  const tokenAmount = useMemo(() => token.proofs.reduce((r, c) => r + c.amount, 0), [token]);
   const manager = useManager();
 
   // For tokens, always show sats as primary (tokens ARE in sats)
@@ -47,8 +41,7 @@ export default function EncodedTokenPage({
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
-    const backHandler = (e: TBeforeRemoveEvent) =>
-      preventBack(e, navigation.dispatch);
+    const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
@@ -85,10 +78,7 @@ export default function EncodedTokenPage({
                 />
               </View>
             </View>
-            <Button
-              txt={t("backToDashboard")}
-              onPress={() => navigation.navigate("dashboard")}
-            />
+            <Button txt={t("backToDashboard")} onPress={() => navigation.navigate("dashboard")} />
           </>
         ) : (
           <>
@@ -105,18 +95,12 @@ export default function EncodedTokenPage({
               {fiatEquivalent && (
                 <Txt
                   txt={`≈ ${fiatEquivalent.symbol}${fiatEquivalent.formatted}`}
-                  styles={[
-                    styles.fiatEquivalent,
-                    { color: color.TEXT_SECONDARY },
-                  ]}
+                  styles={[styles.fiatEquivalent, { color: color.TEXT_SECONDARY }]}
                 />
               )}
               {/* The QR code */}
               {error.open ? (
-                <Txt
-                  txt={error.msg}
-                  styles={[globals(color).navTxt, styles.errorMsg]}
-                />
+                <Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
               ) : (
                 <QR
                   size={s(280)}
@@ -128,7 +112,7 @@ export default function EncodedTokenPage({
                           msg: t("bigQrMsg"),
                           open: true,
                         }),
-                      0
+                      0,
                     )
                   }
                 />
@@ -140,13 +124,7 @@ export default function EncodedTokenPage({
                   <Button
                     txt={t(copied ? "copied" : "copyToken")}
                     onPress={() => void copy(encodedToken)}
-                    icon={
-                      <CopyIcon
-                        width={s(18)}
-                        height={s(18)}
-                        color={mainColors.WHITE}
-                      />
-                    }
+                    icon={<CopyIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />}
                   />
                   <View style={{ marginVertical: s(10) }} />
                 </>
@@ -154,16 +132,8 @@ export default function EncodedTokenPage({
               <Button
                 outlined
                 txt={t("share")}
-                onPress={() =>
-                  void share(encodedToken, `cashu://${encodedToken}`)
-                }
-                icon={
-                  <ShareIcon
-                    width={s(18)}
-                    height={s(18)}
-                    color={hi[highlight]}
-                  />
-                }
+                onPress={() => void share(encodedToken, `cashu://${encodedToken}`)}
+                icon={<ShareIcon width={s(18)} height={s(18)} color={hi[highlight]} />}
               />
             </View>
           </>

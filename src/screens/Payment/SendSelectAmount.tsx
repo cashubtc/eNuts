@@ -21,9 +21,7 @@ import { useSend } from "coco-cashu-react";
 import { usePromptContext } from "@src/context/Prompt";
 import MintSelector from "@comps/MintSelector";
 
-export default function SendSelectAmountScreen({
-  navigation,
-}: SendSelectAmountProps) {
+export default function SendSelectAmountScreen({ navigation }: SendSelectAmountProps) {
   const { t } = useTranslation([NS.wallet]);
   const { color } = useThemeContext();
   const { shake } = useShakeAnimation();
@@ -41,7 +39,7 @@ export default function SendSelectAmountScreen({
   }, [knownMints]);
 
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
-    defaultMint ?? null
+    defaultMint ?? null,
   );
 
   const noMintsAvailable = useMemo(() => {
@@ -68,7 +66,7 @@ export default function SendSelectAmountScreen({
     (mint: KnownMintWithBalance) => {
       setSelectedMint(mint);
     },
-    [setSelectedMint]
+    [setSelectedMint],
   );
 
   const handleMintSelectionOpen = useCallback(() => {
@@ -167,10 +165,7 @@ export default function SendSelectAmountScreen({
       {/* Mint Selection */}
       <View style={styles.actionWrap}>
         <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
-          <MintSelector
-            mint={selectedMint!}
-            onPress={handleMintSelectionOpen}
-          />
+          <MintSelector mint={selectedMint!} onPress={handleMintSelectionOpen} />
           <Button
             txt={t("continue", { ns: NS.common })}
             onPress={handleAmountSubmit}
@@ -230,8 +225,8 @@ export function MeltOverview({
               !shouldEstimate && balTooLow
                 ? mainColors.ERROR
                 : shouldEstimate
-                ? color.TEXT
-                : mainColors.VALID,
+                  ? color.TEXT
+                  : mainColors.VALID,
           },
         ]}
       />

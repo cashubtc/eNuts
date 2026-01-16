@@ -6,9 +6,7 @@ import { appLogger } from "@src/logger";
 const log = appLogger.child({ name: "NFC" });
 
 // ---------- CONSTANTS FROM SPEC ----------
-const SELECT_AID = [
-  0x00, 0xa4, 0x04, 0x00, 0x07, 0xd2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01, 0x00,
-];
+const SELECT_AID = [0x00, 0xa4, 0x04, 0x00, 0x07, 0xd2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01, 0x00];
 
 const SELECT_NDEF = [0x00, 0xa4, 0x00, 0x0c, 0x02, 0xe1, 0x04];
 
@@ -111,10 +109,7 @@ interface ApduResponse {
   sw: string;
 }
 
-async function sendApdu(
-  command: number[],
-  label?: string
-): Promise<ApduResponse> {
+async function sendApdu(command: number[], label?: string): Promise<ApduResponse> {
   const cmdHex = hex(command);
   log.debug(`>> APDU${label ? ` [${label}]` : ""}: ${cmdHex}`);
 
@@ -135,10 +130,8 @@ async function sendApdu(
   } catch (error) {
     log.error(`APDU transceive failed:`, error);
     throw new NfcError(
-      `APDU communication failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-      "TRANSCEIVE_FAILED"
+      `APDU communication failed: ${error instanceof Error ? error.message : String(error)}`,
+      "TRANSCEIVE_FAILED",
     );
   }
 }
@@ -223,25 +216,20 @@ export default class NfcCashuPayment {
    * });
    * ```
    */
-  static async performPayment(
-    createToken: TokenCreator
-  ): Promise<PaymentRequestResult> {
+  static async performPayment(createToken: TokenCreator): Promise<PaymentRequestResult> {
     log.info("Starting NFC payment flow...");
 
     // Pre-flight checks
     const supported = await this.isSupported();
     if (!supported) {
-      throw new NfcError(
-        "NFC is not supported on this device",
-        "NOT_SUPPORTED"
-      );
+      throw new NfcError("NFC is not supported on this device", "NOT_SUPPORTED");
     }
 
     const enabled = await this.isEnabled();
     if (!enabled) {
       throw new NfcError(
         "NFC is disabled. Please enable NFC in your device settings.",
-        "NOT_ENABLED"
+        "NOT_ENABLED",
       );
     }
 
@@ -253,10 +241,8 @@ export default class NfcCashuPayment {
     } catch (error) {
       log.error("Failed to acquire IsoDep technology:", error);
       throw new NfcError(
-        `Failed to connect to NFC tag: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        "TECHNOLOGY_REQUEST_FAILED"
+        `Failed to connect to NFC tag: ${error instanceof Error ? error.message : String(error)}`,
+        "TECHNOLOGY_REQUEST_FAILED",
       );
     }
 
@@ -271,7 +257,7 @@ export default class NfcCashuPayment {
         throw new NfcError(
           `AID not accepted by tag (${getStatusMessage(r.sw)})`,
           "AID_SELECT_FAILED",
-          r.sw
+          r.sw,
         );
       }
 
@@ -282,7 +268,7 @@ export default class NfcCashuPayment {
         throw new NfcError(
           `NDEF file not accessible (${getStatusMessage(r.sw)})`,
           "NDEF_SELECT_FAILED",
-          r.sw
+          r.sw,
         );
       }
 
@@ -292,7 +278,7 @@ export default class NfcCashuPayment {
         throw new NfcError(
           `Failed reading NLEN (${getStatusMessage(r.sw)})`,
           "READ_NLEN_FAILED",
-          r.sw
+          r.sw,
         );
       }
 
@@ -302,7 +288,7 @@ export default class NfcCashuPayment {
       if (nlen === 0) {
         throw new NfcError(
           "NDEF file is empty (NLEN=0). No payment request available.",
-          "EMPTY_NDEF"
+          "EMPTY_NDEF",
         );
       }
 
@@ -316,7 +302,7 @@ export default class NfcCashuPayment {
           throw new NfcError(
             `Failed reading NDEF content (${getStatusMessage(r.sw)})`,
             "READ_NDEF_FAILED",
-            r.sw
+            r.sw,
           );
         }
         ndefBytes = r.payload;
@@ -327,15 +313,12 @@ export default class NfcCashuPayment {
 
         while (remaining > 0) {
           const chunkSize = Math.min(remaining, MAX_READ_SIZE);
-          r = await sendApdu(
-            READ_BINARY(offset, chunkSize),
-            `READ chunk @${offset}`
-          );
+          r = await sendApdu(READ_BINARY(offset, chunkSize), `READ chunk @${offset}`);
           if (!r.ok) {
             throw new NfcError(
               `Failed reading NDEF chunk at offset ${offset}`,
               "READ_NDEF_CHUNK_FAILED",
-              r.sw
+              r.sw,
             );
           }
           ndefBytes.push(...r.payload);
@@ -361,10 +344,7 @@ export default class NfcCashuPayment {
       }
 
       if (!token || token.length === 0) {
-        throw new NfcError(
-          "Token callback returned empty token",
-          "INVALID_TOKEN"
-        );
+        throw new NfcError("Token callback returned empty token", "INVALID_TOKEN");
       }
 
       log.info(`Token created (${token.length} chars)`);
@@ -380,7 +360,7 @@ export default class NfcCashuPayment {
         throw new NfcError(
           `NDEF file not accessible for write (${getStatusMessage(r.sw)})`,
           "NDEF_SELECT_FAILED",
-          r.sw
+          r.sw,
         );
       }
 
@@ -395,7 +375,7 @@ export default class NfcCashuPayment {
         throw new NfcError(
           `Failed writing NLEN (${getStatusMessage(r.sw)})`,
           "WRITE_NLEN_FAILED",
-          r.sw
+          r.sw,
         );
       }
 
@@ -409,19 +389,14 @@ export default class NfcCashuPayment {
       while (offset - 2 < body.length) {
         const chunk = body.slice(offset - 2, offset - 2 + CHUNK_SIZE);
         chunkNum++;
-        log.debug(
-          `Writing chunk ${chunkNum}/${totalChunks}: ${chunk.length} bytes`
-        );
+        log.debug(`Writing chunk ${chunkNum}/${totalChunks}: ${chunk.length} bytes`);
 
-        r = await sendApdu(
-          UPDATE_BINARY(offset, chunk),
-          `WRITE chunk ${chunkNum}`
-        );
+        r = await sendApdu(UPDATE_BINARY(offset, chunk), `WRITE chunk ${chunkNum}`);
         if (!r.ok) {
           throw new NfcError(
             `Failed writing chunk ${chunkNum} (${getStatusMessage(r.sw)})`,
             "WRITE_CHUNK_FAILED",
-            r.sw
+            r.sw,
           );
         }
         offset += chunk.length;
@@ -452,17 +427,14 @@ export default class NfcCashuPayment {
     // Pre-flight checks
     const supported = await this.isSupported();
     if (!supported) {
-      throw new NfcError(
-        "NFC is not supported on this device",
-        "NOT_SUPPORTED"
-      );
+      throw new NfcError("NFC is not supported on this device", "NOT_SUPPORTED");
     }
 
     const enabled = await this.isEnabled();
     if (!enabled) {
       throw new NfcError(
         "NFC is disabled. Please enable NFC in your device settings.",
-        "NOT_ENABLED"
+        "NOT_ENABLED",
       );
     }
 
@@ -478,10 +450,8 @@ export default class NfcCashuPayment {
     } catch (error) {
       log.error("Failed to acquire IsoDep technology:", error);
       throw new NfcError(
-        `Failed to connect to NFC tag: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        "TECHNOLOGY_REQUEST_FAILED"
+        `Failed to connect to NFC tag: ${error instanceof Error ? error.message : String(error)}`,
+        "TECHNOLOGY_REQUEST_FAILED",
       );
     }
 
@@ -493,7 +463,7 @@ export default class NfcCashuPayment {
         throw new NfcError(
           `AID not accepted by tag (${getStatusMessage(r.sw)})`,
           "AID_SELECT_FAILED",
-          r.sw
+          r.sw,
         );
       }
 
@@ -504,7 +474,7 @@ export default class NfcCashuPayment {
         throw new NfcError(
           `NDEF file not accessible (${getStatusMessage(r.sw)})`,
           "NDEF_SELECT_FAILED",
-          r.sw
+          r.sw,
         );
       }
 
@@ -521,7 +491,7 @@ export default class NfcCashuPayment {
         throw new NfcError(
           `Failed writing NLEN (${getStatusMessage(r.sw)})`,
           "WRITE_NLEN_FAILED",
-          r.sw
+          r.sw,
         );
       }
 
@@ -532,28 +502,21 @@ export default class NfcCashuPayment {
       const totalChunks = Math.ceil(body.length / CHUNK_SIZE);
       let chunkNum = 0;
 
-      log.debug(
-        `Step 5: Writing ${body.length} bytes in ${totalChunks} chunk(s)...`
-      );
+      log.debug(`Step 5: Writing ${body.length} bytes in ${totalChunks} chunk(s)...`);
 
       while (offset - 2 < body.length) {
         const chunk = body.slice(offset - 2, offset - 2 + CHUNK_SIZE);
         chunkNum++;
         log.debug(
-          `Writing chunk ${chunkNum}/${totalChunks}: ${chunk.length} bytes at offset ${offset}`
+          `Writing chunk ${chunkNum}/${totalChunks}: ${chunk.length} bytes at offset ${offset}`,
         );
 
-        r = await sendApdu(
-          UPDATE_BINARY(offset, chunk),
-          `WRITE chunk ${chunkNum}`
-        );
+        r = await sendApdu(UPDATE_BINARY(offset, chunk), `WRITE chunk ${chunkNum}`);
         if (!r.ok) {
           throw new NfcError(
-            `Failed writing chunk ${chunkNum} at offset ${offset} (${getStatusMessage(
-              r.sw
-            )})`,
+            `Failed writing chunk ${chunkNum} at offset ${offset} (${getStatusMessage(r.sw)})`,
             "WRITE_CHUNK_FAILED",
-            r.sw
+            r.sw,
           );
         }
         offset += chunk.length;
@@ -579,7 +542,7 @@ function decodeTextRecord(ndef: number[]): string {
   if (!ndef || ndef.length < 4) {
     throw new NfcError(
       `Invalid NDEF data: too short (${ndef?.length || 0} bytes)`,
-      "INVALID_NDEF_FORMAT"
+      "INVALID_NDEF_FORMAT",
     );
   }
 
@@ -589,9 +552,7 @@ function decodeTextRecord(ndef: number[]): string {
   const isShortRecord = (header & SHORT_RECORD_FLAG) !== 0;
 
   log.debug(
-    `Parsing NDEF: header=0x${header.toString(
-      16
-    )}, typeLen=${typeLen}, SR=${isShortRecord}`
+    `Parsing NDEF: header=0x${header.toString(16)}, typeLen=${typeLen}, SR=${isShortRecord}`,
   );
 
   // Validate TNF (Type Name Format) - should be 0x01 (NFC Forum well-known type)
@@ -610,25 +571,16 @@ function decodeTextRecord(ndef: number[]): string {
   } else {
     // Normal format: 4-byte big-endian payload length at offset 2-5
     if (ndef.length < 7) {
-      throw new NfcError(
-        "Invalid NDEF: normal record header too short",
-        "INVALID_NDEF_FORMAT"
-      );
+      throw new NfcError("Invalid NDEF: normal record header too short", "INVALID_NDEF_FORMAT");
     }
-    payloadLen =
-      ((ndef[2] << 24) | (ndef[3] << 16) | (ndef[4] << 8) | ndef[5]) >>> 0;
+    payloadLen = ((ndef[2] << 24) | (ndef[3] << 16) | (ndef[4] << 8) | ndef[5]) >>> 0;
     typeFieldStart = 6;
   }
 
-  log.debug(
-    `Payload length: ${payloadLen}, type field starts at: ${typeFieldStart}`
-  );
+  log.debug(`Payload length: ${payloadLen}, type field starts at: ${typeFieldStart}`);
 
   if (typeFieldStart >= ndef.length) {
-    throw new NfcError(
-      "Invalid NDEF: type field offset out of bounds",
-      "INVALID_NDEF_FORMAT"
-    );
+    throw new NfcError("Invalid NDEF: type field offset out of bounds", "INVALID_NDEF_FORMAT");
   }
 
   const type = ndef[typeFieldStart];
@@ -636,28 +588,21 @@ function decodeTextRecord(ndef: number[]): string {
     // 0x54 = 'T' for Text
     throw new NfcError(
       `Not a Text record (type=0x${type.toString(16)}, expected 0x54 'T')`,
-      "NOT_TEXT_RECORD"
+      "NOT_TEXT_RECORD",
     );
   }
 
   const payloadStart = typeFieldStart + typeLen;
 
   if (payloadStart >= ndef.length) {
-    throw new NfcError(
-      "Invalid NDEF: payload start out of bounds",
-      "INVALID_NDEF_FORMAT"
-    );
+    throw new NfcError("Invalid NDEF: payload start out of bounds", "INVALID_NDEF_FORMAT");
   }
 
   const status = ndef[payloadStart];
   const langLen = status & 0x3f;
   const isUtf16 = (status & 0x80) !== 0;
 
-  log.debug(
-    `Text record: status=0x${status.toString(
-      16
-    )}, langLen=${langLen}, UTF-16=${isUtf16}`
-  );
+  log.debug(`Text record: status=0x${status.toString(16)}, langLen=${langLen}, UTF-16=${isUtf16}`);
 
   if (isUtf16) {
     log.warn("UTF-16 encoding detected - this implementation assumes UTF-8");
@@ -669,7 +614,7 @@ function decodeTextRecord(ndef: number[]): string {
   if (textStart + textLen > ndef.length) {
     throw new NfcError(
       `Invalid NDEF: text data out of bounds (textStart=${textStart}, textLen=${textLen}, ndefLen=${ndef.length})`,
-      "INVALID_NDEF_FORMAT"
+      "INVALID_NDEF_FORMAT",
     );
   }
 

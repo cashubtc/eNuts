@@ -2,14 +2,7 @@ import { getPreferences, setPreferences } from "@src/storage/store/theme";
 import { l } from "@log";
 import type { IPreferences } from "@model";
 import { dark, HighlightKey, light, lightTheme } from "@styles";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useColorScheme } from "react-native";
 
 type ThemeMode = "dark" | "light" | "auto";
@@ -34,7 +27,7 @@ const useTheme = () => {
   // Memoize color object to avoid unnecessary re-renders
   const color = useMemo(
     () => (activeTheme === "light" ? light.custom : dark.custom),
-    [activeTheme]
+    [activeTheme],
   );
 
   // Initialize preferences from database

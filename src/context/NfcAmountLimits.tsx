@@ -1,12 +1,6 @@
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 // Special value for "no limit"
 export const NO_LIMIT = -1;
@@ -24,8 +18,7 @@ interface INfcAmountLimitsContext {
 }
 
 const useNfcAmountLimitsState = () => {
-  const [defaultMaxAmount, setDefaultMaxAmountState] =
-    useState<number>(DEFAULT_LIMIT);
+  const [defaultMaxAmount, setDefaultMaxAmountState] = useState<number>(DEFAULT_LIMIT);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load saved settings on mount
@@ -64,14 +57,9 @@ const NfcAmountLimitsContext = createContext<INfcAmountLimitsContext>({
   setDefaultMaxAmount: async () => {},
 });
 
-export const useNfcAmountLimitsContext = () =>
-  useContext(NfcAmountLimitsContext);
+export const useNfcAmountLimitsContext = () => useContext(NfcAmountLimitsContext);
 
-export const NfcAmountLimitsProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => (
+export const NfcAmountLimitsProvider = ({ children }: { children: React.ReactNode }) => (
   <NfcAmountLimitsContext.Provider value={useNfcAmountLimitsState()}>
     {children}
   </NfcAmountLimitsContext.Provider>

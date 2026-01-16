@@ -14,10 +14,7 @@ interface IAnimatedSpinnerProps {
   size?: number;
 }
 
-export default function AnimatedSpinner({
-  color,
-  size = 24,
-}: IAnimatedSpinnerProps) {
+export default function AnimatedSpinner({ color, size = 24 }: IAnimatedSpinnerProps) {
   const rotation = useSharedValue(0);
 
   useEffect(() => {
@@ -27,7 +24,7 @@ export default function AnimatedSpinner({
         easing: Easing.linear,
       }),
       -1, // infinite
-      false
+      false,
     );
   }, [rotation]);
 
@@ -59,10 +56,7 @@ export default function AnimatedSpinner({
             borderRadius: dotSize / 2,
             backgroundColor: color,
             opacity,
-            transform: [
-              { translateX: x },
-              { translateY: y },
-            ],
+            transform: [{ translateX: x }, { translateY: y }],
           },
         ]}
       />
@@ -71,9 +65,7 @@ export default function AnimatedSpinner({
 
   return (
     <View style={[styles.container, { width: size, height: size }]}>
-      <Animated.View style={[styles.spinner, animatedStyle]}>
-        {dots}
-      </Animated.View>
+      <Animated.View style={[styles.spinner, animatedStyle]}>{dots}</Animated.View>
     </View>
   );
 }
@@ -93,15 +85,3 @@ const styles = ScaledSheet.create({
     position: "absolute",
   },
 });
-
-
-
-
-
-
-
-
-
-
-
-

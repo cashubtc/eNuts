@@ -19,10 +19,7 @@ type MintHistoryDetailsProps = {
   onGoBack: () => void;
 };
 
-export function MintHistoryDetails({
-  entry,
-  onGoBack,
-}: MintHistoryDetailsProps) {
+export function MintHistoryDetails({ entry, onGoBack }: MintHistoryDetailsProps) {
   const { t } = useTranslation([NS.history, NS.common]);
 
   const getDescription = () => {
@@ -43,29 +40,15 @@ export function MintHistoryDetails({
       />
       <Separator />
       <DetailsSection>
-        <DetailRow
-          label={t("date")}
-          value={new Date(entry.createdAt).toLocaleString()}
-        />
+        <DetailRow label={t("date")} value={new Date(entry.createdAt).toLocaleString()} />
         <DetailRow label={t("status", { ns: NS.common })} value={entry.state} />
-        <DetailRow
-          label={t("mint", { ns: NS.common })}
-          value={formatMintUrl(entry.mintUrl)}
-        />
-        {entry.unit && (
-          <DetailRow label={t("unit", { ns: NS.common })} value={entry.unit} />
-        )}
-        <DetailRow
-          label={t("quoteId", { ns: NS.common })}
-          value={truncateStr(entry.quoteId, 20)}
-        />
+        <DetailRow label={t("mint", { ns: NS.common })} value={formatMintUrl(entry.mintUrl)} />
+        {entry.unit && <DetailRow label={t("unit", { ns: NS.common })} value={entry.unit} />}
+        <DetailRow label={t("quoteId", { ns: NS.common })} value={truncateStr(entry.quoteId, 20)} />
       </DetailsSection>
 
       {entry.paymentRequest && (
-        <TokenSection
-          label={t("invoice", { ns: NS.common })}
-          value={entry.paymentRequest}
-        />
+        <TokenSection label={t("invoice", { ns: NS.common })} value={entry.paymentRequest} />
       )}
     </HistoryDetailsScreen>
   );

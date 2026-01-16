@@ -14,10 +14,7 @@ class SeedService {
     SecureStore.setItem("mnemonic", mnemonic);
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     this._seed = seed;
-    const fingerprint = await Crypto.digestStringAsync(
-      Crypto.CryptoDigestAlgorithm.MD5,
-      mnemonic
-    );
+    const fingerprint = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.MD5, mnemonic);
     return { mnemonic, fingerprint };
   }
 
@@ -42,10 +39,7 @@ class SeedService {
     if (!mnemonic) {
       return null;
     }
-    const fingerprint = await Crypto.digestStringAsync(
-      Crypto.CryptoDigestAlgorithm.MD5,
-      mnemonic
-    );
+    const fingerprint = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.MD5, mnemonic);
     return fingerprint;
   }
   async ensureMnemonicSet() {

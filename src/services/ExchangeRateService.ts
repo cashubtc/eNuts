@@ -12,11 +12,11 @@ class ExchangeRateService {
   async fetchRates(): Promise<IExchangeRates> {
     try {
       appLogger.debug("ExchangeRateService: Fetching exchange rates from blockchain.info");
-      
+
       const response = await fetch(BLOCKCHAIN_INFO_API, {
         method: "GET",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
         },
       });
 
@@ -25,7 +25,7 @@ class ExchangeRateService {
       }
 
       const rates: IExchangeRates = await response.json();
-      
+
       appLogger.debug("ExchangeRateService: Successfully fetched exchange rates", {
         currencyCount: Object.keys(rates).length,
       });
@@ -60,7 +60,7 @@ class ExchangeRateService {
     }
 
     // Check required fields
-    const hasRequiredFields = 
+    const hasRequiredFields =
       typeof firstCurrency.last === "number" &&
       typeof firstCurrency.buy === "number" &&
       typeof firstCurrency.sell === "number" &&
@@ -71,15 +71,3 @@ class ExchangeRateService {
 }
 
 export const exchangeRateService = new ExchangeRateService();
-
-
-
-
-
-
-
-
-
-
-
-
