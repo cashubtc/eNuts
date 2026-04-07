@@ -310,6 +310,7 @@
   "error": {
     "checkSpendableErr": "Error while checking if token is spendable",
     "claimTokenErr": "Error while claiming token",
+    "sendTokenErr": "Error while sending token",
     "header": "An error occured",
     "msg": "We are sorry that you encountered this problem. You can help us improve the software by taking a screenshot and creating a short bug report.",
     "reportBug": "Report the bug",

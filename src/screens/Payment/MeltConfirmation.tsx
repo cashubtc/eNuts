@@ -17,7 +17,7 @@ import { usePromptContext } from "@src/context/Prompt";
 import { useManager } from "@src/context/Manager";
 
 export default function MeltConfirmationScreen({ navigation, route }: MeltConfirmationProps) {
-  const { quote, mintUrl } = route.params;
+  const { operation, mintUrl } = route.params;
   const { knownMints } = useKnownMints();
   const manager = useManager();
   const { t } = useTranslation([NS.common]);
@@ -28,17 +28,23 @@ export default function MeltConfirmationScreen({ navigation, route }: MeltConfir
 
   const mint = knownMints.find((m) => m.mintUrl === mintUrl);
   const mintName = mint?.mintInfo.name || formatMintUrl(mintUrl);
-  const totalWithFees = (quote?.amount || 0) + (quote?.fee_reserve || 0);
+  const totalWithFees = (operation?.amount || 0) + (operation?.fee_reserve || 0);
 
   async function handleConfirm() {
     try {
       startLoading();
-      await manager.quotes.payMeltQuote(mintUrl, quote.quote);
+      const result = await manager.ops.melt.execute(operation.id);
+      const fee =
+        result.state === "finalized" && typeof result.changeAmount === "number"
+          ? result.inputAmount - result.amount - result.changeAmount
+          : operation.fee_reserve;
+
       navigation.navigate("successScreen", {
         type: "melt",
         mint: mintName,
-        amount: quote.amount,
-        fee: quote.fee_reserve,
+        amount: operation.amount,
+        fee,
+        change: result.state === "finalized" ? result.changeAmount : undefined,
       });
     } catch (e) {
       if (isErr(e)) {
@@ -66,12 +72,12 @@ export default function MeltConfirmationScreen({ navigation, route }: MeltConfir
           <OverviewRow txt1={t("mint")} txt2={mintName} />
           <OverviewRow
             txt1={t("amount")}
-            txt2={`${formatAmount(quote.amount).formatted} ${formatAmount(quote.amount).symbol}`}
+            txt2={`${formatAmount(operation.amount).formatted} ${formatAmount(operation.amount).symbol}`}
           />
           <OverviewRow
             txt1={t("estimatedFees")}
-            txt2={`${formatAmount(quote.fee_reserve).formatted} ${
-              formatAmount(quote.fee_reserve).symbol
+            txt2={`${formatAmount(operation.fee_reserve).formatted} ${
+              formatAmount(operation.fee_reserve).symbol
             }`}
           />
           <OverviewRow

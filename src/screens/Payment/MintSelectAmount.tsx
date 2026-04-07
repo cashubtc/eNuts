@@ -80,7 +80,6 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    startLoading();
     if (!selectedMint) return;
     if (!amountValue || amountValue < 1) {
       vib(400);
@@ -92,18 +91,23 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
       }, 500);
       return;
     }
+    startLoading();
     try {
-      const quote = await manager.quotes.createMintQuote(selectedMint.mintUrl, amountValue);
+      const operation = await manager.ops.mint.prepare({
+        mintUrl: selectedMint.mintUrl,
+        amount: amountValue,
+        method: "bolt11",
+      });
       return navigation.navigate("mintInvoice", {
         mintUrl: selectedMint.mintUrl,
-        quote,
+        operation,
       });
     } catch (error) {
       console.error(error);
     } finally {
       stopLoading();
     }
-  }, [amountValue, selectedMint, manager, navigation, shake]);
+  }, [amountValue, selectedMint, manager, navigation, shake, startLoading, stopLoading]);
 
   // Early return after all hooks
   if (noMintsAvailable) {

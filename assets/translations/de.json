@@ -309,6 +309,7 @@
   "error": {
     "checkSpendableErr": "Fehler beim Überprüfen, ob der Token ausgegeben werden kann",
     "claimTokenErr": "Fehler beim Beanspruchen des Tokens",
+    "sendTokenErr": "Fehler beim Senden des Tokens",
     "header": "Ein Fehler ist aufgetreten",
     "msg": "Es tut uns leid, dass dieses Problem bei Ihnen aufgetreten ist. Sie können uns helfen, die Software zu verbessern, indem Sie einen Screenshot machen und einen kurzen Fehlerbericht erstellen.",
     "reportBug": "Fehler melden",

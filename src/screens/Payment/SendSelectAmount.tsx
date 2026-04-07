@@ -4,6 +4,7 @@ import { ChevronRightIcon } from "@comps/Icons";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
+import { useSendOperation } from "@cashu/coco-react";
 import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
@@ -15,21 +16,18 @@ import { useTranslation } from "react-i18next";
 import { TextInput, View } from "react-native";
 import { ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useManager } from "@src/context/Manager";
 import { SendSelectAmountProps } from "@src/nav/navTypes";
-import { useSend } from "coco-cashu-react";
 import { usePromptContext } from "@src/context/Prompt";
 import MintSelector from "@comps/MintSelector";
 
 export default function SendSelectAmountScreen({ navigation }: SendSelectAmountProps) {
-  const { t } = useTranslation([NS.wallet]);
+  const { t } = useTranslation([NS.wallet, NS.error]);
   const { color } = useThemeContext();
   const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
-  const manager = useManager();
   const amountInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
-  const { isSending, prepareSend, executePreparedSend } = useSend();
+  const { isLoading: isSending, prepare, execute } = useSendOperation();
   const { openPromptAutoClose } = usePromptContext();
 
   const [amountInput, setAmountInput] = useState("");
@@ -95,28 +93,27 @@ export default function SendSelectAmountScreen({ navigation }: SendSelectAmountP
       }, 500);
       return;
     }
-    const preparedSend = await prepareSend(selectedMint.mintUrl, amountValue);
-    const { token } = await executePreparedSend(preparedSend.id, {
-      onError: (e) => {
-        console.error(e);
-        openPromptAutoClose({
-          msg: isErr(e) ? e.message : t("sendTokenErr", { ns: NS.error }),
-        });
-        shake();
-      },
-    });
-    return navigation.navigate("encodedToken", {
-      token,
-    });
+    try {
+      await prepare({ mintUrl: selectedMint.mintUrl, amount: amountValue });
+      const { token } = await execute();
+      return navigation.navigate("encodedToken", {
+        token,
+      });
+    } catch (e) {
+      console.error(e);
+      openPromptAutoClose({
+        msg: isErr(e) ? e.message : t("sendTokenErr", { ns: NS.error }),
+      });
+      shake();
+    }
   }, [
     amountValue,
     selectedMint,
-    manager,
     navigation,
     selectedMintBalance,
     shake,
-    prepareSend,
-    executePreparedSend,
+    prepare,
+    execute,
     openPromptAutoClose,
     t,
   ]);

@@ -72,7 +72,6 @@ export default function MeltLnAddressScreen({ navigation, route }: TMeltLnAddres
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    startLoading();
     if (!selectedMint) return;
 
     const amountInMsats = amountValue * 1000;
@@ -91,12 +90,17 @@ export default function MeltLnAddressScreen({ navigation, route }: TMeltLnAddres
       return;
     }
 
+    startLoading();
     try {
       const invoice = await getInvoiceFromLnAddress(metadata, amountInMsats);
-      const quote = await manager.quotes.createMeltQuote(selectedMint.mintUrl, invoice);
+      const operation = await manager.ops.melt.prepare({
+        mintUrl: selectedMint.mintUrl,
+        method: "bolt11",
+        methodData: { invoice },
+      });
 
       navigation.navigate("MeltConfirmation", {
-        quote,
+        operation,
         mintUrl: selectedMint.mintUrl,
       });
     } catch (error) {

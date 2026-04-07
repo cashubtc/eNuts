@@ -211,7 +211,8 @@ export default class NfcCashuPayment {
    * ```typescript
    * await NfcCashuPayment.performPayment(async (paymentRequest) => {
    *   const pr = PaymentRequest.fromEncodedRequest(paymentRequest);
-   *   const token = await manager.wallet.send(pr.mints![0]!, pr.amount!);
+   *   const prepared = await manager.ops.send.prepare({ mintUrl: pr.mints![0]!, amount: pr.amount! });
+   *   const { token } = await manager.ops.send.execute(prepared.id);
    *   return getEncodedToken(token);
    * });
    * ```

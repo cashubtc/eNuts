@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useManager } from "coco-cashu-react";
+import { useManager } from "@cashu/coco-react";
 import { getEncodedToken, PaymentRequest, Token } from "@cashu/cashu-ts";
 import NfcCashuPayment, { NfcError } from "@src/services/NFCService";
 import { appLogger } from "@src/logger";
@@ -125,8 +125,8 @@ export function useNfcPayment(options: UseNfcPaymentOptions = {}): UseNfcPayment
           paymentRequest = request;
           log.info("Payment request received");
           setStatusMessage("Processing payment...");
-          const parsedPr = await manager.wallet.processPaymentRequest(request);
-          if (parsedPr.matchingMints.length === 0) {
+          const parsedPr = await manager.paymentRequests.parse(request);
+          if (parsedPr.payableMints.length === 0) {
             throw new Error("No matching mints found");
           }
           if (!parsedPr.amount) {
@@ -137,23 +137,22 @@ export function useNfcPayment(options: UseNfcPaymentOptions = {}): UseNfcPayment
             throw new LimitExceededError(
               request,
               parsedPr.amount,
-              parsedPr.matchingMints[0],
+              parsedPr.payableMints[0],
               maxAmount,
             );
           }
-          const prTransaction = await manager.wallet.preparePaymentRequestTransaction(
-            parsedPr.matchingMints[0],
-            parsedPr,
-          );
-          paymentAmount = prTransaction.sendOperation.amount;
-          paymentMint = prTransaction.sendOperation.mintUrl;
-          log.info(`Creating token for ${parsedPr.amount} sats from ${parsedPr.matchingMints[0]}`);
-          setStatusMessage(`Sending ${parsedPr.amount} sats...`);
-          const token = await new Promise<Token>((resolve) => {
-            manager.wallet.handleInbandPaymentRequest(prTransaction, async (t) => {
-              resolve(t);
-            });
+          const preparedRequest = await manager.paymentRequests.prepare(parsedPr, {
+            mintUrl: parsedPr.payableMints[0],
           });
+          paymentAmount = preparedRequest.sendOperation.amount;
+          paymentMint = preparedRequest.sendOperation.mintUrl;
+          log.info(`Creating token for ${parsedPr.amount} sats from ${parsedPr.payableMints[0]}`);
+          setStatusMessage(`Sending ${parsedPr.amount} sats...`);
+          const executionResult = await manager.paymentRequests.execute(preparedRequest);
+          if (executionResult.type !== "inband") {
+            throw new Error("Terminal returned an unsupported payment transport");
+          }
+          const token = executionResult.token;
 
           setStatusMessage("Writing to terminal...");
           return getEncodedToken(token);
@@ -246,7 +245,8 @@ export function useNfcPayment(options: UseNfcPaymentOptions = {}): UseNfcPayment
         // Create the token
         log.info(`Creating token for confirmed payment: ${amount} sats from ${mint}`);
         setStatusMessage(`Sending ${amount} sats...`);
-        const token = await manager.wallet.send(mint, amount);
+        const preparedSend = await manager.ops.send.prepare({ mintUrl: mint, amount });
+        const { token } = await manager.ops.send.execute(preparedSend.id);
         const encodedToken = getEncodedToken(token);
 
         // Write to NFC in a new session

@@ -309,6 +309,7 @@
   "error": {
     "checkSpendableErr": "Error al comprobar si el token puede ser gastado",
     "claimTokenErr": "Error al reclamar el token",
+    "sendTokenErr": "Error al enviar el token",
     "header": "Ocurrió un error",
     "msg": "Sentimos que hayas experimentado este problema. Puedes ayudarnos a mejorar el programa realizando una captura de pantalla y creando un pequeño informe de errores.",
     "reportBug": "Reportar el bug",

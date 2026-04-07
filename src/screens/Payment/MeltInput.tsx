@@ -108,9 +108,13 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       return openPromptAutoClose({ msg: t("invalidInvoice") });
     }
     try {
-      const quote = await manager.quotes.createMeltQuote(currentMint.mintUrl, input);
+      const operation = await manager.ops.melt.prepare({
+        mintUrl: currentMint.mintUrl,
+        method: "bolt11",
+        methodData: { invoice: input },
+      });
       return navigation.navigate("MeltConfirmation", {
-        quote,
+        operation,
         mintUrl: currentMint.mintUrl,
       });
     } catch (e) {

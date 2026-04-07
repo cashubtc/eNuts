@@ -309,6 +309,7 @@
   "error": {
     "checkSpendableErr": "Errore di verifica del token",
     "claimTokenErr": "Errore nel riscatto del token",
+    "sendTokenErr": "Errore durante l'invio del token",
     "header": "Errore",
     "msg": "Purtroppo si è verificato un errore. Puoi aiutarci a migliorare eNuts facendo uno screenshot e riportandoci il bug.",
     "reportBug": "Segnalare il bug",

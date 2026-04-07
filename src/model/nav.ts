@@ -1,3 +1,5 @@
+import type { Manager } from "@cashu/coco-core";
+import { Token } from "@cashu/cashu-ts";
 import type { EventArg, NavigatorScreenParams } from "@react-navigation/core";
 import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -10,7 +12,6 @@ import type {
   IProofSelection,
   ITokenInfo,
 } from ".";
-import { MintQuoteResponse, Token, MeltQuoteResponse } from "@cashu/cashu-ts";
 import type { HistoryStackParamList, MintStackParamList } from "@src/nav/navTypes";
 import type { RestoreStackParamList } from "@src/nav/navTypes";
 import type { SettingsStackParamList } from "@src/nav/navTypes";
@@ -22,6 +23,9 @@ interface ILnurlNavData {
   url?: string;
   data?: ILnUrlPayRequest;
 }
+
+type TMintInvoiceOperation = Awaited<ReturnType<Manager["ops"]["mint"]["prepare"]>>;
+type TMeltConfirmationOperation = Awaited<ReturnType<Manager["ops"]["melt"]["prepare"]>>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Success Screen Config Types (Tagged Union)
@@ -126,7 +130,7 @@ export type RootStackParamList = {
   MintSelectAmount: undefined;
   MeltInput: { invoice?: string };
   MeltConfirmation: {
-    quote: MeltQuoteResponse;
+    operation: TMeltConfirmationOperation;
     mintUrl: string;
   };
   MeltLnAddress: {
@@ -191,7 +195,7 @@ export type RootStackParamList = {
   };
   mintInvoice: {
     mintUrl: string;
-    quote: MintQuoteResponse;
+    operation: TMintInvoiceOperation;
   };
   encodedToken: {
     token: Token;
