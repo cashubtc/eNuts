@@ -1,7 +1,7 @@
 import { ReceiveIcon } from "@comps/Icons";
 import { LatestHistoryWrapper } from "./LatestHistoryWrapper";
 import { useThemeContext } from "@src/context/Theme";
-import { ReceiveHistoryEntry } from "coco-cashu-core";
+import { ReceiveHistoryEntry } from "@cashu/coco-core";
 import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 

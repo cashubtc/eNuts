@@ -1,4 +1,5 @@
 import Txt from "@comps/Txt";
+import { HistoryEntry } from "@cashu/coco-core";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
@@ -8,7 +9,6 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 import EntryTime from "@screens/History/entryTime";
 import { NS } from "@src/i18n";
-import { HistoryEntry } from "coco-cashu-core";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@src/model/nav";

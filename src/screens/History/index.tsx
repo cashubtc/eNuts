@@ -2,6 +2,8 @@ import Empty from "@comps/Empty";
 import { isIOS } from "@consts";
 import type { THistoryPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
+import { HistoryEntry } from "@cashu/coco-core";
+import { usePaginatedHistory } from "@cashu/coco-react";
 import { FlashList } from "@shopify/flash-list";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
@@ -10,8 +12,6 @@ import { useTranslation } from "react-i18next";
 import { ActivityIndicator, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScaledSheet } from "react-native-size-matters";
-import { usePaginatedHistory } from "coco-cashu-react";
-import { HistoryEntry } from "coco-cashu-core";
 
 import { LatestHistoryMintEntry } from "./components/LatestHistoryMintEntry";
 import { LatestHistorySendEntry } from "./components/LatestHistorySendEntry";
@@ -56,7 +56,6 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
           {/* History list with infinite scroll */}
           <FlashList
             data={history}
-            estimatedItemSize={80}
             renderItem={({ item }) => (
               <View style={[styles.entryCard, { backgroundColor: color.DRAWER }]}>
                 {renderHistoryEntry(item)}

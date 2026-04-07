@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
+import { useMints } from "@cashu/coco-react";
 import { appLogger } from "@src/logger";
-import { useMints } from "coco-cashu-react";
 import { normalizeMintUrl } from "@util";
 
 type MintRecommendation = {

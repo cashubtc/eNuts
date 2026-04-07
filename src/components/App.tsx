@@ -4,6 +4,9 @@ import "../shim";
 import { l } from "@log";
 import Navigator from "@nav/Navigator";
 import { NavigationContainer, useNavigationState } from "@react-navigation/native";
+import { Manager, initializeCoco } from "@cashu/coco-core";
+import { ExpoSqliteRepositories } from "@cashu/coco-expo-sqlite";
+import { CocoCashuProvider } from "@cashu/coco-react";
 import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 // Balance is now provided by CocoCashuProvider
 import { CurrencyProvider } from "@src/context/Currency";
@@ -29,9 +32,6 @@ import Blank from "./Blank";
 import Toaster from "./Toaster";
 
 import * as SplashScreen from "expo-splash-screen";
-import { CocoCashuProvider } from "coco-cashu-react";
-import { ExpoSqliteRepositories } from "coco-cashu-expo-sqlite";
-import { Manager, initializeCoco } from "coco-cashu-core";
 import { dbProvider } from "@src/storage/DbProvider";
 import { seedService } from "@src/services/SeedService";
 import { KeyboardProvider } from "react-native-keyboard-controller";

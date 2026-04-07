@@ -1,5 +1,6 @@
 import Txt from "@comps/Txt";
 import Screen from "@comps/Screen";
+import { useTrustedMints } from "@cashu/coco-react";
 
 import { l } from "@log";
 import ConfirmBottomSheet, { ConfirmBottomSheetRef } from "@comps/modal/ConfirmBottomSheet";
@@ -16,7 +17,6 @@ import { ScrollView, View } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 import { Image } from "expo-image";
 import Button from "@comps/Button";
-import { useTrustedMints } from "coco-cashu-react";
 
 export default function MintSettingsScreen({ navigation, route }: any) {
   const { t } = useTranslation([NS.common]);

@@ -1,7 +1,7 @@
 import { ZapIcon, CheckmarkIcon } from "@comps/Icons";
 import { LatestHistoryWrapper } from "./LatestHistoryWrapper";
 import { useThemeContext } from "@src/context/Theme";
-import { MeltHistoryEntry } from "coco-cashu-core";
+import { MeltHistoryEntry } from "@cashu/coco-core";
 import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 

@@ -1,7 +1,7 @@
 import { SendIcon, ClockIcon, CheckmarkIcon } from "@comps/Icons";
 import { LatestHistoryWrapper } from "./LatestHistoryWrapper";
 import { useThemeContext } from "@src/context/Theme";
-import { SendHistoryEntry } from "coco-cashu-core";
+import { SendHistoryEntry } from "@cashu/coco-core";
 import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 
