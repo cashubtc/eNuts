@@ -6,6 +6,7 @@ import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { globals } from "@styles";
 import { formatMintUrl, isErr } from "@util";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 import { ScaledSheet } from "react-native-size-matters";
@@ -15,16 +16,18 @@ import { OverviewRow } from "../../components/OverviewRow";
 import Screen from "@comps/Screen";
 import { usePromptContext } from "@src/context/Prompt";
 import { useManager } from "@src/context/Manager";
+import Txt from "@comps/Txt";
 
 export default function MeltConfirmationScreen({ navigation, route }: MeltConfirmationProps) {
   const { operation, mintUrl } = route.params;
   const { knownMints } = useKnownMints();
   const manager = useManager();
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const { color } = useThemeContext();
   const { formatAmount } = useCurrencyContext();
   const { loading, startLoading, stopLoading } = useLoading();
   const { openPromptAutoClose } = usePromptContext();
+  const [isPending, setIsPending] = useState(false);
 
   const mint = knownMints.find((m) => m.mintUrl === mintUrl);
   const mintName = mint?.mintInfo.name || formatMintUrl(mintUrl);
@@ -33,9 +36,15 @@ export default function MeltConfirmationScreen({ navigation, route }: MeltConfir
   async function handleConfirm() {
     try {
       startLoading();
+      setIsPending(false);
       const result = await manager.ops.melt.execute(operation.id);
+      if (result.state !== "finalized") {
+        setIsPending(true);
+        return;
+      }
+
       const fee =
-        result.state === "finalized" && typeof result.changeAmount === "number"
+        typeof result.changeAmount === "number"
           ? result.inputAmount - result.amount - result.changeAmount
           : operation.fee_reserve;
 
@@ -44,7 +53,7 @@ export default function MeltConfirmationScreen({ navigation, route }: MeltConfir
         mint: mintName,
         amount: operation.amount,
         fee,
-        change: result.state === "finalized" ? result.changeAmount : undefined,
+        change: result.changeAmount,
       });
     } catch (e) {
       if (isErr(e)) {
@@ -86,7 +95,23 @@ export default function MeltConfirmationScreen({ navigation, route }: MeltConfir
           />
         </View>
       </ScrollView>
-      <Button txt={t("confirm")} onPress={handleConfirm} />
+      <View style={styles.actionWrap}>
+        {isPending && (
+          <Txt
+            txt={t("paymentPending") + "."}
+            center
+            styles={[styles.pendingNote, { color: color.TEXT_SECONDARY }]}
+          />
+        )}
+        <Button txt={t("confirm")} onPress={handleConfirm} disabled={isPending} loading={loading} />
+        {isPending && (
+          <Button
+            txt={t("backToDashboard")}
+            onPress={() => navigation.navigate("dashboard")}
+            ghost
+          />
+        )}
+      </View>
     </Screen>
   );
 }
@@ -105,6 +130,10 @@ const styles = ScaledSheet.create({
   },
   actionWrap: {
     paddingHorizontal: "20@s",
+    gap: "10@vs",
+  },
+  pendingNote: {
+    marginBottom: "4@vs",
   },
   placeholder: {
     height: "20@vs",
