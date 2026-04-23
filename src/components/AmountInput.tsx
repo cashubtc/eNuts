@@ -355,7 +355,6 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               autoCorrect={false}
               autoCapitalize="none"
               spellCheck={false}
-              returnKeyType="done"
               allowFontScaling={false}
             />
           </Animated.View>
