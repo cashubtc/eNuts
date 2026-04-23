@@ -3,35 +3,34 @@ import useLoading from "@comps/hooks/Loading";
 import Loading from "@comps/Loading";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
-import { ChevronRightIcon, ConnectionErrorIcon, CopyIcon, ScanQRIcon } from "@comps/Icons";
+import { ChevronRightIcon, ScanQRIcon } from "@comps/Icons";
 // Lazy load the MintSelectionSheet to improve initial render
 const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
-import { isIOS } from "@consts";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { highlight as hi, mainColors } from "@styles";
 import { getStrFromClipboard } from "@util";
-import { isLightningAddress, isLnurlOrAddress, parseLightningAddress } from "@util/lnurl";
+import { isLightningAddress, isLnurl, isLnurlOrAddress } from "@util/lnurl";
 import { useEffect, useState, useRef, useCallback, lazy, Suspense, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import { ScaledSheet, vs } from "react-native-size-matters";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
-import { useManager } from "@src/context/Manager";
 import { MeltInputProps } from "@src/nav/navTypes";
 import Screen from "@comps/Screen";
 import MintSelector from "@comps/MintSelector";
 import { requestLnAddressMetadata } from "@src/util/lud16";
+import { useMeltOperation } from "@cashu/coco-react";
 
 export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const { invoice } = route.params || {};
   const { knownMints } = useKnownMints();
-  const manager = useManager();
-  const insets = useSafeAreaInsets();
+  const { prepare } = useMeltOperation();
+
+  const { loading, startLoading, stopLoading } = useLoading();
 
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
     knownMints.length > 0 ? knownMints[0] : null,
@@ -43,8 +42,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
-  const { color, highlight } = useThemeContext();
-  const { loading } = useLoading();
+  const { highlight } = useThemeContext();
   const [input, setInput] = useState(invoice || "");
 
   // Check if we have mints available
@@ -89,6 +87,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   }, [navigation]);
 
   const handleBtnPress = async () => {
+    startLoading();
     const currentMint = selectedMint;
     if (loading || !currentMint) {
       return;
@@ -104,11 +103,11 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       });
     }
     // user pasted an encoded LNURL, we need to get the amount by the user
-    if (isLnurlOrAddress(input)) {
+    if (isLnurl(input)) {
       return openPromptAutoClose({ msg: t("invalidInvoice") });
     }
     try {
-      const operation = await manager.ops.melt.prepare({
+      const operation = await prepare({
         mintUrl: currentMint.mintUrl,
         method: "bolt11",
         methodData: { invoice: input },
@@ -119,6 +118,8 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       });
     } catch (e) {
       return openPromptAutoClose({ msg: t("invalidInvoice") });
+    } finally {
+      stopLoading();
     }
   };
 

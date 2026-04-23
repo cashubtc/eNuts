@@ -1,69 +1,118 @@
 import Button from "@comps/Button";
-import useLoading from "@comps/hooks/Loading";
-import { useThemeContext } from "@src/context/Theme";
-import { useCurrencyContext } from "@src/context/Currency";
+import Screen from "@comps/Screen";
+import Txt from "@comps/Txt";
+import type { MeltOperation } from "@cashu/coco-core";
+import { useMeltOperation } from "@cashu/coco-react";
+import type { TBeforeRemoveEvent } from "@model/nav";
 import { useKnownMints } from "@src/context/KnownMints";
+import { usePromptContext } from "@src/context/Prompt";
+import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
+import { MeltConfirmationProps } from "@src/nav/navTypes";
 import { formatMintUrl, isErr } from "@util";
-import { useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 import { ScaledSheet } from "react-native-size-matters";
-import { isIOS } from "@consts";
-import { MeltConfirmationProps } from "@src/nav/navTypes";
-import { OverviewRow } from "../../components/OverviewRow";
-import Screen from "@comps/Screen";
-import { usePromptContext } from "@src/context/Prompt";
-import { useManager } from "@src/context/Manager";
-import Txt from "@comps/Txt";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import MeltConfirmationDetails from "./components/MeltConfirmationDetails";
+
+type TFinalizedMeltOperation = Extract<MeltOperation, { state: "finalized" }>;
 
 export default function MeltConfirmationScreen({ navigation, route }: MeltConfirmationProps) {
   const { operation, mintUrl } = route.params;
   const { knownMints } = useKnownMints();
-  const manager = useManager();
-  const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
-  const { formatAmount } = useCurrencyContext();
-  const { loading, startLoading, stopLoading } = useLoading();
   const { openPromptAutoClose } = usePromptContext();
-  const [isPending, setIsPending] = useState(false);
+  const { t } = useTranslation([NS.common, NS.auth]);
+  const { color } = useThemeContext();
+  const insets = useSafeAreaInsets();
+  const hasNavigatedRef = useRef(false);
+  const { cancel, currentOperation, execute, isLoading } = useMeltOperation(operation);
 
-  const mint = knownMints.find((m) => m.mintUrl === mintUrl);
+  const mint = knownMints.find((item) => item.mintUrl === mintUrl);
   const mintName = mint?.mintInfo.name || formatMintUrl(mintUrl);
-  const totalWithFees = (operation?.amount || 0) + (operation?.fee_reserve || 0);
+  const displayOperation = currentOperation || operation;
+  const isPending = displayOperation.state === "pending";
+  const canCancelOnExit = displayOperation.state === "prepared";
 
-  async function handleConfirm() {
-    try {
-      startLoading();
-      setIsPending(false);
-      const result = await manager.ops.melt.execute(operation.id);
-      if (result.state !== "finalized") {
-        setIsPending(true);
+  const showError = useCallback(
+    (error: unknown) => {
+      if (isErr(error)) {
+        openPromptAutoClose({ msg: error.message || "Something went wrong" });
+      }
+      console.error(error);
+    },
+    [openPromptAutoClose],
+  );
+
+  const navigateToSuccess = useCallback(
+    (finalizedOperation: TFinalizedMeltOperation) => {
+      if (hasNavigatedRef.current) {
         return;
       }
 
-      const fee =
-        typeof result.changeAmount === "number"
-          ? result.inputAmount - result.amount - result.changeAmount
-          : operation.fee_reserve;
+      hasNavigatedRef.current = true;
 
       navigation.navigate("successScreen", {
         type: "melt",
         mint: mintName,
-        amount: operation.amount,
-        fee,
-        change: result.changeAmount,
+        amount: finalizedOperation.amount,
+        fee: finalizedOperation.effectiveFee ?? operation.fee_reserve,
+        change: finalizedOperation.changeAmount,
       });
-    } catch (e) {
-      if (isErr(e)) {
-        openPromptAutoClose({ msg: e.message || "Somethine went wront" });
-      }
-      console.error(e);
-    } finally {
-      stopLoading();
+    },
+    [mintName, navigation, operation.fee_reserve],
+  );
+
+  const cancelPreparedOperation = useCallback(async () => {
+    if (!canCancelOnExit || isLoading) {
+      return true;
     }
-  }
+
+    try {
+      await cancel();
+      return true;
+    } catch (error) {
+      showError(error);
+      return false;
+    }
+  }, [canCancelOnExit, cancel, isLoading, showError]);
+
+  useEffect(() => {
+    if (currentOperation && currentOperation.state === "finalized") {
+      navigateToSuccess(currentOperation);
+    }
+  }, [currentOperation]);
+
+  useEffect(() => {
+    const handleBeforeRemove = (e: TBeforeRemoveEvent) => {
+      if (!canCancelOnExit) {
+        return;
+      }
+
+      e.preventDefault();
+
+      if (isLoading) {
+        return;
+      }
+
+      void cancelPreparedOperation().then((didCancel) => {
+        if (didCancel) {
+          navigation.dispatch(e.data.action);
+        }
+      });
+    };
+
+    return navigation.addListener("beforeRemove", handleBeforeRemove);
+  }, [canCancelOnExit, cancelPreparedOperation, isLoading, navigation]);
+
+  const handleConfirm = useCallback(async () => {
+    try {
+      await execute();
+    } catch (error) {
+      showError(error);
+    }
+  }, [execute, navigateToSuccess, showError]);
 
   return (
     <Screen
@@ -71,46 +120,46 @@ export default function MeltConfirmationScreen({ navigation, route }: MeltConfir
       withBackBtn
       handlePress={() => navigation.goBack()}
       disableMintBalance
+      withPadding={false}
+      withBottomInset={false}
     >
-      <ScrollView
-        alwaysBounceVertical={false}
-        style={{ marginBottom: 90 }}
-        contentContainerStyle={{ paddingHorizontal: 20 }}
-      >
-        <View style={globals(color).wrapContainer}>
-          <OverviewRow txt1={t("mint")} txt2={mintName} />
-          <OverviewRow
-            txt1={t("amount")}
-            txt2={`${formatAmount(operation.amount).formatted} ${formatAmount(operation.amount).symbol}`}
-          />
-          <OverviewRow
-            txt1={t("estimatedFees")}
-            txt2={`${formatAmount(operation.fee_reserve).formatted} ${
-              formatAmount(operation.fee_reserve).symbol
-            }`}
-          />
-          <OverviewRow
-            txt1={t("totalInclFee")}
-            txt2={`${formatAmount(totalWithFees).formatted} ${formatAmount(totalWithFees).symbol}`}
-          />
-        </View>
-      </ScrollView>
-      <View style={styles.actionWrap}>
-        {isPending && (
-          <Txt
-            txt={t("paymentPending") + "."}
-            center
-            styles={[styles.pendingNote, { color: color.TEXT_SECONDARY }]}
-          />
-        )}
-        <Button txt={t("confirm")} onPress={handleConfirm} disabled={isPending} loading={loading} />
-        {isPending && (
+      <View style={styles.container}>
+        <ScrollView
+          alwaysBounceVertical={false}
+          showsVerticalScrollIndicator={false}
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={styles.headerWrap}>
+            <Txt txt={t("confirmAction", { ns: NS.auth })} bold styles={[styles.headerTitle]} />
+            <Txt txt={mintName} styles={[styles.headerSubtitle, { color: color.TEXT_SECONDARY }]} />
+          </View>
+          <MeltConfirmationDetails mintName={mintName} operation={displayOperation} />
+        </ScrollView>
+        <View
+          style={[
+            styles.actionWrap,
+            {
+              backgroundColor: color.BACKGROUND,
+              borderTopColor: color.BORDER,
+              paddingBottom: Math.max(insets.bottom, 20),
+            },
+          ]}
+        >
           <Button
-            txt={t("backToDashboard")}
-            onPress={() => navigation.navigate("dashboard")}
-            ghost
+            txt={t("confirm")}
+            onPress={handleConfirm}
+            disabled={isPending}
+            loading={isLoading}
           />
-        )}
+          {isPending && (
+            <Button
+              txt={t("backToDashboard")}
+              onPress={() => navigation.navigate("dashboard")}
+              ghost
+            />
+          )}
+        </View>
       </View>
     </Screen>
   );
@@ -118,46 +167,33 @@ export default function MeltConfirmationScreen({ navigation, route }: MeltConfir
 
 const styles = ScaledSheet.create({
   container: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    paddingBottom: isIOS ? "50@vs" : "20@vs",
+    flex: 1,
   },
-  pasteInputTxtWrap: {
-    position: "absolute",
-    right: "10@s",
-    top: "10@vs",
-    padding: "10@s",
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingTop: "10@vs",
+    paddingBottom: "24@vs",
+    gap: "12@vs",
+  },
+  headerWrap: {
+    gap: "6@vs",
+    paddingHorizontal: "20@s",
+    paddingTop: "6@vs",
+    paddingBottom: "4@vs",
+  },
+  headerTitle: {
+    fontSize: "24@vs",
+    lineHeight: "30@vs",
+  },
+  headerSubtitle: {
+    fontSize: "14@vs",
   },
   actionWrap: {
     paddingHorizontal: "20@s",
+    paddingTop: "14@vs",
     gap: "10@vs",
-  },
-  pendingNote: {
-    marginBottom: "4@vs",
-  },
-  placeholder: {
-    height: "20@vs",
-  },
-  // Mint selector styles - Same as SelectAmount.tsx
-  seamlessMintSelector: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: "20@s",
-    paddingVertical: "12@vs",
-    marginHorizontal: "20@s",
-    marginTop: "16@vs",
-    borderBottomWidth: 1,
-  },
-  mintSelectorInfo: {
-    flex: 1,
-  },
-  seamlessMintName: {
-    fontSize: "12@s",
-    marginBottom: "2@vs",
-  },
-  seamlessMintBalance: {
-    fontSize: "14@s",
-    fontWeight: "500",
+    borderTopWidth: 1,
   },
 });
