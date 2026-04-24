@@ -87,24 +87,31 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   }, [navigation]);
 
   const handleBtnPress = async () => {
-    startLoading();
     const currentMint = selectedMint;
     if (loading || !currentMint) {
       return;
     }
-    if (isLightningAddress(input)) {
-      inputRef.current?.blur();
-      await new Promise((resolve) => setTimeout(resolve, 400));
-      const metadata = await requestLnAddressMetadata(input);
-      return navigation.navigate("MeltLnAddress", {
-        lnAddress: input,
-        metadata,
-        selectedMint: currentMint.mintUrl,
-      });
-    }
     // user pasted an encoded LNURL, we need to get the amount by the user
     if (isLnurl(input)) {
       return openPromptAutoClose({ msg: t("invalidInvoice") });
+    }
+
+    startLoading();
+    if (isLightningAddress(input)) {
+      try {
+        inputRef.current?.blur();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        const metadata = await requestLnAddressMetadata(input);
+        return navigation.navigate("MeltLnAddress", {
+          lnAddress: input,
+          metadata,
+          selectedMint: currentMint.mintUrl,
+        });
+      } catch (e) {
+        return openPromptAutoClose({ msg: t("invalidInvoice") });
+      } finally {
+        stopLoading();
+      }
     }
     try {
       const operation = await prepare({

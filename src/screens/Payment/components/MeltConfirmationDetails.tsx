@@ -38,7 +38,8 @@ export default function MeltConfirmationDetails({
     return null;
   }
 
-  const totalWithFees = operation.amount + operation.fee_reserve;
+  const swapFee = operation.needsSwap ? operation.swap_fee : 0;
+  const totalWithFees = operation.amount + operation.fee_reserve + swapFee;
   const invoice = "invoice" in operation.methodData ? operation.methodData.invoice : "";
 
   const formatDisplayAmount = useCallback(
@@ -63,7 +64,7 @@ export default function MeltConfirmationDetails({
       { label: t("amount"), value: formatDisplayAmount(operation.amount) },
       { label: t("estimatedFees"), value: formatDisplayAmount(operation.fee_reserve) },
       ...(operation.needsSwap
-        ? [{ label: t("swapFee"), value: formatDisplayAmount(operation.swap_fee) }]
+        ? [{ label: t("swapFee"), value: formatDisplayAmount(swapFee) }]
         : []),
       { label: t("totalInclFee"), value: formatDisplayAmount(totalWithFees) },
       { label: t("reservedTotal"), value: formatDisplayAmount(operation.inputAmount) },
@@ -74,7 +75,7 @@ export default function MeltConfirmationDetails({
       operation.fee_reserve,
       operation.inputAmount,
       operation.needsSwap,
-      operation.swap_fee,
+      swapFee,
       t,
       totalWithFees,
     ],
