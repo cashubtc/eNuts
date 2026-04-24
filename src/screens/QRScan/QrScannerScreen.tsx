@@ -5,10 +5,26 @@ import useScanResult from "@src/screens/QRScan/hooks/useScanResult";
 import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 import { usePromptContext } from "@src/context/Prompt";
 import { QRScannerScreenProps } from "@src/nav/navTypes";
+import type { PaymentCandidateKind, PaymentStringCandidate } from "@util/paymentStringParser";
+import { useFocusEffect } from "@react-navigation/native";
 import { CameraView, ScanningResult, useCameraPermissions } from "expo-camera";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
 import { StyleSheet, Text, View, TouchableOpacity, Linking } from "react-native";
+
+const QR_CANDIDATE_PRIORITY: PaymentCandidateKind[] = [
+  "cashuToken",
+  "lightningInvoice",
+  "lightningAddress",
+  "lnurl",
+  "cashuPaymentRequest",
+  "bitcoinAddress",
+];
+
+function selectQrCandidate(candidates: PaymentStringCandidate[]) {
+  return QR_CANDIDATE_PRIORITY.map((kind) =>
+    candidates.find((candidate) => candidate.kind === kind),
+  ).find((candidate): candidate is PaymentStringCandidate => Boolean(candidate));
+}
 
 function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   const [permission, requestPermission] = useCameraPermissions();
@@ -25,7 +41,7 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
     expectedCount,
     receivedCount,
     error: urError,
-    result: scanResult,
+    candidates,
   } = useScanResult();
 
   const { claimFromTokenString } = useCashuClaimFlow();
@@ -46,17 +62,27 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
   );
 
   useEffect(() => {
-    if (!complete || !scanResult || isHandlingScanRef.current) return;
+    if (!complete || !candidates || isHandlingScanRef.current) return;
     isHandlingScanRef.current = true;
     setIsScanningEnabled(false);
-    const { type, content: parsedContent } = scanResult;
-    if (type === "LIGHTNING_INVOICE") {
-      navigation.replace("MeltInput", { invoice: parsedContent });
+    const selectedCandidate = selectQrCandidate(candidates);
+    if (!selectedCandidate) {
+      openPromptAutoClose({ msg: "Unsupported format", success: false });
       return;
     }
-    if (type === "CASHU_TOKEN") {
+
+    if (
+      selectedCandidate.kind === "lightningInvoice" ||
+      selectedCandidate.kind === "lightningAddress" ||
+      selectedCandidate.kind === "lnurl"
+    ) {
+      navigation.replace("MeltInput", { invoice: selectedCandidate.value });
+      return;
+    }
+
+    if (selectedCandidate.kind === "cashuToken") {
       (async () => {
-        const result = await claimFromTokenString(parsedContent);
+        const result = await claimFromTokenString(selectedCandidate.value);
         if (result.status === "success") {
           navigation.replace("successScreen", {
             type: "claim",
@@ -67,8 +93,20 @@ function QrScannerScreen({ route, navigation }: QRScannerScreenProps) {
       })();
       return;
     }
-    openPromptAutoClose({ msg: "Unsupported format", success: false });
-  }, [complete, scanResult, navigation, openPromptAutoClose, claimFromTokenString]);
+
+    if (selectedCandidate.kind === "cashuPaymentRequest") {
+      openPromptAutoClose({
+        msg: "Cashu payment requests are not supported from QR yet",
+        success: false,
+      });
+      return;
+    }
+
+    if (selectedCandidate.kind === "bitcoinAddress") {
+      openPromptAutoClose({ msg: "Bitcoin address payments are not supported", success: false });
+      return;
+    }
+  }, [complete, candidates, navigation, openPromptAutoClose, claimFromTokenString]);
 
   const handleCodeScanned = (result: ScanningResult) => {
     if (isHandlingScanRef.current) {

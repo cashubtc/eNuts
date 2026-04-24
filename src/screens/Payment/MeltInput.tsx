@@ -33,7 +33,7 @@ import { MeltInputProps } from "@src/nav/navTypes";
 import Screen from "@comps/Screen";
 import {
   getInvoiceFromLnAddress,
-  requestLnAddressMetadata,
+  requestLnurlPayMetadata,
   type LnAddressMetadata,
 } from "@src/util/lud16";
 import { useMeltOperation } from "@cashu/coco-react";
@@ -316,13 +316,28 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 
     // user pasted an encoded LNURL, we need to get the amount by the user
     if (isLnurl(trimmedInput)) {
-      return openPromptAutoClose({ msg: t("invalidInvoice") });
+      startLoading();
+      try {
+        const metadata = await requestLnurlPayMetadata(trimmedInput);
+        setLnAddress(trimmedInput);
+        setLnAddressMetadata(metadata);
+        setAmountInput("");
+        setAmountErr(false);
+        setInputStep("amount");
+        inputRef.current?.blur();
+      } catch (e) {
+        return openPromptAutoClose({ msg: t("invalidInvoice") });
+      } finally {
+        stopLoading();
+      }
+
+      return;
     }
 
     if (isLightningAddress(trimmedInput)) {
       startLoading();
       try {
-        const metadata = await requestLnAddressMetadata(trimmedInput);
+        const metadata = await requestLnurlPayMetadata(trimmedInput);
         setLnAddress(trimmedInput);
         setLnAddressMetadata(metadata);
         setAmountInput("");

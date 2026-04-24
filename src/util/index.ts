@@ -1,10 +1,9 @@
-import { getDecodedToken } from "@cashu/cashu-ts";
 import { l } from "@log";
-import type { ILnUrl, IMintBalWithName, IProofSelection } from "@model";
+import type { IMintBalWithName, IProofSelection } from "@model";
 import * as Clipboard from "expo-clipboard";
 import { Linking, Share, Vibration } from "react-native";
 
-import { decodeUrlOrAddress, isLnurlOrAddress, isUrl } from "./lnurl";
+import { isUrl } from "./lnurl";
 import { getLanguageCode } from "./localization";
 import { isArr, isStr } from "./typeguards";
 
@@ -25,6 +24,7 @@ export {
   isStr,
   isUndef,
 } from "./typeguards";
+export * from "./paymentStringParser";
 
 export function unixTimestamp() {
   return Math.ceil(new Date().getTime() / 1000);
@@ -157,112 +157,6 @@ export function hasTrustedMint(uMints: ({ mintUrl: string } | string)[], tMints:
     return false;
   }
   return uMints.some((m) => tMints.includes(isStr(m) ? m : m.mintUrl));
-}
-
-export async function getInvoiceFromLnurl(lnUrlOrAddress: string, amount: number) {
-  try {
-    lnUrlOrAddress = lnTrim(lnUrlOrAddress);
-    if (!isLnurlOrAddress(lnUrlOrAddress)) {
-      throw new Error("invalid address");
-    }
-    const url = decodeUrlOrAddress(lnUrlOrAddress);
-    if (!url || !isUrl(url)) {
-      throw new Error("Invalid lnUrlOrAddress");
-    }
-    amount *= 1000;
-    const resp = await fetch(url);
-    const { tag, callback, minSendable, maxSendable } = await resp.json<ILnUrl>();
-    // const { tag, callback, minSendable, maxSendable } = await (await fetch(`https://${host}/.well-known/lnurlp/${user}`)).json<ILnUrl>()
-    if (tag === "payRequest" && minSendable <= amount && amount <= maxSendable) {
-      const resp = await fetch(`${callback}?amount=${amount}`);
-      const { pr } = await resp.json<{ pr: string }>();
-      // const resp = await (await fetch(`${callback}?amount=${amount}`)).json<{ pr: string }>()
-      if (!pr) {
-        l("[getInvoiceFromLnurl]", { resp });
-      }
-      return pr || "";
-    }
-  } catch (err) {
-    l("[getInvoiceFromLnurl]", err);
-  }
-  return "";
-}
-
-export function isCashuToken(token: string) {
-  if (!token || !isStr(token)) {
-    return;
-  }
-  token = token.trim();
-  const idx = token.indexOf("cashuA");
-  if (idx !== -1) {
-    token = token.slice(idx);
-  }
-  const uriPrefixes = [
-    "https://wallet.nutstash.app/#",
-    "https://wallet.cashu.me/?token=",
-    "web+cashu://",
-    "cashu://",
-    "cashu:",
-  ];
-  uriPrefixes.forEach((prefix) => {
-    if (!token.startsWith(prefix)) {
-      return;
-    }
-    token = token.slice(prefix.length).trim();
-  });
-  if (!token) {
-    return;
-  }
-  try {
-    getDecodedToken(token.trim());
-  } catch {
-    return;
-  }
-  return token.trim();
-}
-
-export function lnTrim(str: string) {
-  if (!str || !isStr(str)) {
-    return "";
-  }
-  str = str.trim().toLowerCase();
-  const uriPrefixes = [
-    "lightning:",
-    "lightning=",
-    "lightning://",
-    "lnurlp://",
-    "lnurlp=",
-    "lnurlp:",
-    "lnurl:",
-    "lnurl=",
-    "lnurl://",
-  ];
-  uriPrefixes.forEach((prefix) => {
-    if (!str.startsWith(prefix)) {
-      return;
-    }
-    str = str.slice(prefix.length).trim();
-  });
-  return str.trim();
-}
-
-export function isLnInvoice(str: string) {
-  if (!str || !isStr(str)) {
-    return;
-  }
-  str = lnTrim(str);
-  if (!str) {
-    return;
-  }
-  if (isLnurlOrAddress(str.trim())) {
-    return str.trim();
-  }
-  try {
-    decodeInvoice(str.trim());
-  } catch {
-    return;
-  }
-  return str.trim();
 }
 
 export function extractStrFromURL(url?: string) {

@@ -23,20 +23,6 @@ export function isUrl(url: string) {
   return false;
 }
 
-export function isLnurlOrAddress(lnUrlOrAddress: string) {
-  return isLnurl(lnUrlOrAddress) || isLnurlAddress(lnUrlOrAddress);
-}
-
-export function isLnurlAddress(str: string) {
-  const address = parseLightningAddress(str);
-  if (address) {
-    const { username, domain } = address;
-    const protocol = domain.endsWith(".onion") ? "http" : "https";
-    return isUrl(`${protocol}://${domain}/.well-known/lnurlp/${username}`);
-  }
-  return false;
-}
-
 export function isLnurl(str: string) {
   const bech32Url: string | null = parseLnUrl(str);
   if (bech32Url) {

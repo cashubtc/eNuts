@@ -1,17 +1,21 @@
+import { decodeUrlOrAddress } from "@util/lnurl";
+
 export type LnAddressMetadata = {
   callback: string;
   minSendable?: number;
   maxSendable?: number;
 };
 
-export async function requestLnAddressMetadata(lnAdress: string): Promise<LnAddressMetadata> {
-  const [username, domain] = lnAdress.split("@");
-  if (!username || !domain) {
-    throw new Error("Invalid LN address");
+export async function requestLnurlPayMetadata(lnUrlOrAddress: string): Promise<LnAddressMetadata> {
+  const url = decodeUrlOrAddress(lnUrlOrAddress);
+  if (!url) {
+    throw new Error("Invalid LNURL or Lightning address");
   }
-  const url = `https://${domain}/.well-known/lnurlp/${username}`;
   const response = await fetch(url);
   const data = (await response.json()) as LnAddressMetadata;
+  if (!data.callback) {
+    throw new Error("No invoice callback found");
+  }
   return data;
 }
 
