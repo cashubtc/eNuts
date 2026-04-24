@@ -31,6 +31,10 @@ export function useCashuClaimFlow() {
   const claimFromTokenString = async (tokenStr: string): Promise<ClaimResult> => {
     try {
       const decoded = getDecodedToken(tokenStr);
+      const amount = decoded.proofs.reduce(
+        (acc: number, proof: { amount: number }) => acc + proof.amount,
+        0,
+      );
       const isKnown = await manager.mint.isTrustedMint(decoded.mint);
       if (isKnown) {
         await prepare({ token: decoded });
@@ -38,10 +42,7 @@ export function useCashuClaimFlow() {
         return {
           status: "success",
           token: decoded,
-          amount: decoded.proofs.reduce(
-            (acc: number, proof: { amount: number }) => acc + proof.amount,
-            0,
-          ),
+          amount,
         };
       }
 
@@ -49,7 +50,7 @@ export function useCashuClaimFlow() {
       if (action === "trust") {
         await manager.mint.addMint(decoded.mint, { trusted: true });
         await manager.wallet.receive(decoded);
-        return { status: "success", token: decoded, amount: decoded.amount };
+        return { status: "success", token: decoded, amount };
       }
       // If cancelled or any other action, just abort as per requirement
       return { status: "cancelled" };

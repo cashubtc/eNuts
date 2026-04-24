@@ -10,7 +10,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@cashu/cashu-ts": "^2.5.2",
+    "@cashu/cashu-ts": "^3.6.4",
     "@cashu/coco-core": "^1.0.0-rc.2",
     "@cashu/coco-expo-sqlite": "^1.0.0-rc.2",
     "@cashu/coco-react": "^1.0.0-rc.2",

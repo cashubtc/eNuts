@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useManager } from "@cashu/coco-react";
-import { getEncodedToken, PaymentRequest, Token } from "@cashu/cashu-ts";
+import { getEncodedToken } from "@cashu/cashu-ts";
 import NfcCashuPayment, { NfcError } from "@src/services/NFCService";
 import { appLogger } from "@src/logger";
 import { parsePaymentString } from "@util/paymentStringParser";
