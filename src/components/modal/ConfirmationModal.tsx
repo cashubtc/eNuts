@@ -19,6 +19,8 @@ interface IConfirmationModalProps {
   confirmText: string;
   cancelText: string;
   loading?: boolean;
+  confirmDisabled?: boolean;
+  dismissible?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
   children: ReactNode;
@@ -26,7 +28,18 @@ interface IConfirmationModalProps {
 
 const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalProps>(
   (
-    { title, subtitle, confirmText, cancelText, loading = false, onConfirm, onCancel, children },
+    {
+      title,
+      subtitle,
+      confirmText,
+      cancelText,
+      loading = false,
+      confirmDisabled = false,
+      dismissible = true,
+      onConfirm,
+      onCancel,
+      children,
+    },
     ref,
   ) => {
     const { color, highlight } = useThemeContext();
@@ -66,10 +79,10 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
           appearsOnIndex={0}
           disappearsOnIndex={-1}
           opacity={0.5}
-          pressBehavior={loading ? "none" : "close"}
+          pressBehavior={loading || !dismissible ? "none" : "close"}
         />
       ),
-      [loading],
+      [dismissible, loading],
     );
 
     return (
@@ -77,7 +90,7 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
         ref={sheetRef}
         enableDynamicSizing
         enableDismissOnClose
-        enablePanDownToClose={!loading}
+        enablePanDownToClose={!loading && dismissible}
         backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: color.BACKGROUND }}
         handleIndicatorStyle={{ backgroundColor: color.TEXT_SECONDARY }}
@@ -105,7 +118,12 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
           {children}
 
           <View style={styles.buttonContainer}>
-            <Button txt={confirmText} onPress={onConfirm} loading={loading} />
+            <Button
+              txt={confirmText}
+              onPress={onConfirm}
+              loading={loading}
+              disabled={confirmDisabled}
+            />
             <Button txt={cancelText} onPress={handleCancel} outlined disabled={loading} />
           </View>
         </BottomSheetScrollView>
