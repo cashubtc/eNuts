@@ -418,8 +418,6 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
         screenName={t("cashOut")}
         withBackBtn
         handlePress={handleBack}
-        mintBalance={0}
-        disableMintBalance
         withCancelBtn
         withPadding={true}
       >

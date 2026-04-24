@@ -35,7 +35,7 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
   }, []);
 
   return (
-    <Screen screenName={"Mnemonic"} noIcons withBackBtn handlePress={() => navigation.goBack()}>
+    <Screen screenName={"Mnemonic"} withBackBtn handlePress={() => navigation.goBack()}>
       <View style={styles.content}>
         {loading ? (
           <View style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}>
