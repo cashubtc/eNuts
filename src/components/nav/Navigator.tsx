@@ -8,7 +8,6 @@ import ProcessingErrorScreen from "@screens/Payment/ProcessingError";
 import InvoiceScreen from "@screens/Payment/Receive/Invoice";
 import CoinSelectionScreen from "@screens/Payment/Send/CoinSelection";
 import EncodedTokenPage from "@screens/Payment/Send/EncodedToken";
-import SelectMintToSwapToScreen from "@screens/Payment/Send/SelectMintToSwapTo";
 import SuccessPage from "@screens/Payment/Success";
 import SuccessScreen from "@screens/Payment/SuccessScreen";
 import QrScannerScreen from "@screens/QRScan/QrScannerScreen";
@@ -62,7 +61,6 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
           }}
         />
         <Stack.Screen name="Settings" component={SettingsNavigator} />
-        <Stack.Screen name="selectMintToSwapTo" component={SelectMintToSwapToScreen} />
         <Stack.Screen name="MeltInput" component={MeltInputScreen} />
         <Stack.Screen name="SendSelectAmount" component={SendSelectAmountScreen} />
         <Stack.Screen name="MintSelectAmount" component={MintSelectAmountScreen} />

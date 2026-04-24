@@ -118,11 +118,6 @@ export type RootStackParamList = {
     isSendEcash?: boolean;
     remainingMints?: IMintUrl[];
   };
-  selectMintToSwapTo: {
-    mint: IMintUrl;
-    balance: number;
-    remainingMints?: IMintUrl[];
-  };
   SendSelectAmount: undefined;
   MintSelectAmount: undefined;
   MeltInput: { invoice?: string };
@@ -231,11 +226,6 @@ export type TSelectMintPageProps = NativeStackScreenProps<
 export type TSelectTargetPageProps = NativeStackScreenProps<
   RootStackParamList,
   "selectTarget",
-  "MyStack"
->;
-export type TSelectMintToSwapToPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "selectMintToSwapTo",
   "MyStack"
 >;
 export type SendSelectAmountProps = NativeStackScreenProps<
