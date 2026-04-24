@@ -15,8 +15,6 @@ import type {
 import type { HistoryStackParamList, MintStackParamList } from "@src/nav/navTypes";
 import type { RestoreStackParamList } from "@src/nav/navTypes";
 import type { SettingsStackParamList } from "@src/nav/navTypes";
-import { l } from "@src/logger";
-import { LnAddressMetadata } from "@src/util/lud16";
 
 interface ILnurlNavData {
   userInput: string;
@@ -25,7 +23,6 @@ interface ILnurlNavData {
 }
 
 type TMintInvoiceOperation = Awaited<ReturnType<Manager["ops"]["mint"]["prepare"]>>;
-type TMeltConfirmationOperation = Awaited<ReturnType<Manager["ops"]["melt"]["prepare"]>>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Success Screen Config Types (Tagged Union)
@@ -129,15 +126,6 @@ export type RootStackParamList = {
   SendSelectAmount: undefined;
   MintSelectAmount: undefined;
   MeltInput: { invoice?: string };
-  MeltConfirmation: {
-    operation: TMeltConfirmationOperation;
-    mintUrl: string;
-  };
-  MeltLnAddress: {
-    lnAddress: string;
-    metadata: LnAddressMetadata;
-    selectedMint: string;
-  };
   History: NavigatorScreenParams<HistoryStackParamList>;
   selectAmount: {
     isMelt?: boolean;
@@ -391,10 +379,4 @@ export type TBeforeRemoveEvent = EventArg<
       target?: string | undefined;
     }>;
   }
->;
-
-export type TMeltLnAddressPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "MeltLnAddress",
-  "MyStack"
 >;

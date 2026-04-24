@@ -79,8 +79,6 @@ export type MintSelectAmountProps = NativeStackScreenProps<RootStackParamList, "
 
 export type MeltInputProps = NativeStackScreenProps<RootStackParamList, "MeltInput">;
 
-export type MeltConfirmationProps = NativeStackScreenProps<RootStackParamList, "MeltConfirmation">;
-
 export type RestoreScreenProps = NativeStackScreenProps<RootStackParamList, "Restore">;
 
 export type QRScannerScreenProps = NativeStackScreenProps<RootStackParamList, "QRScanner">;
