@@ -3,8 +3,21 @@ import { useManager } from "@cashu/coco-react";
 import { getEncodedToken, PaymentRequest, Token } from "@cashu/cashu-ts";
 import NfcCashuPayment, { NfcError } from "@src/services/NFCService";
 import { appLogger } from "@src/logger";
+import { parsePaymentString } from "@util/paymentStringParser";
 
 const log = appLogger.child({ name: "useNfcPayment" });
+
+function extractCashuPaymentRequest(request: string): string {
+  const candidate = parsePaymentString(request).find(
+    (parsedCandidate) => parsedCandidate.kind === "cashuPaymentRequest",
+  );
+
+  if (!candidate) {
+    throw new Error("NFC payload does not contain a Cashu payment request");
+  }
+
+  return candidate.value;
+}
 
 export interface NfcPaymentResult {
   success: boolean;
@@ -122,10 +135,11 @@ export function useNfcPayment(options: UseNfcPaymentOptions = {}): UseNfcPayment
 
       try {
         const result = await NfcCashuPayment.performPayment(async (request) => {
-          paymentRequest = request;
+          const cashuPaymentRequest = extractCashuPaymentRequest(request);
+          paymentRequest = cashuPaymentRequest;
           log.info("Payment request received");
           setStatusMessage("Processing payment...");
-          const parsedPr = await manager.paymentRequests.parse(request);
+          const parsedPr = await manager.paymentRequests.parse(cashuPaymentRequest);
           if (parsedPr.payableMints.length === 0) {
             throw new Error("No matching mints found");
           }
@@ -135,7 +149,7 @@ export function useNfcPayment(options: UseNfcPaymentOptions = {}): UseNfcPayment
           if (maxAmount !== undefined && parsedPr.amount > maxAmount) {
             log.warn(`Payment amount ${parsedPr.amount} exceeds max allowed ${maxAmount}`);
             throw new LimitExceededError(
-              request,
+              cashuPaymentRequest,
               parsedPr.amount,
               parsedPr.payableMints[0],
               maxAmount,
