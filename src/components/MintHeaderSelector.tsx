@@ -17,6 +17,7 @@ interface IMintHeaderSelectorProps {
   onMintSelect: (mint: KnownMintWithBalance) => void;
   onOpen?: () => void;
   multiSelect?: boolean;
+  showZeroBalanceMints?: boolean;
 }
 
 export default function MintHeaderSelector({
@@ -24,6 +25,7 @@ export default function MintHeaderSelector({
   onMintSelect,
   onOpen,
   multiSelect = false,
+  showZeroBalanceMints = false,
 }: IMintHeaderSelectorProps) {
   const { color, highlight } = useThemeContext();
   const { formatAmount } = useCurrencyContext();
@@ -90,6 +92,7 @@ export default function MintHeaderSelector({
         selectedMint={selectedMint}
         onMintSelect={onMintSelect}
         multiSelect={multiSelect}
+        showZeroBalanceMints={showZeroBalanceMints}
       />
     </>
   );

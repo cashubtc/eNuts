@@ -1,61 +1,61 @@
 import AmountInput, { useShakeAnimation } from "@comps/AmountInput";
 import Button from "@comps/Button";
 import { ChevronRightIcon } from "@comps/Icons";
+import MintHeaderSelector from "@comps/MintHeaderSelector";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
-import MintSelectionSheet from "@comps/MintSelectionSheet";
-import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
+import { useKnownMints } from "@src/context/KnownMints";
+import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { mainColors } from "@styles";
 import { vib } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useCallback, useRef, useState, useMemo, lazy, Suspense } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { TextInput, View } from "react-native";
-import { ScaledSheet, vs } from "react-native-size-matters";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Keyboard, TextInput, View } from "react-native";
+import { ScaledSheet } from "react-native-size-matters";
 import { useManager } from "@src/context/Manager";
-import { MintSelectAmountProps } from "@src/nav/navTypes";
-import MintSelector from "@comps/MintSelector";
+import type { MintSelectAmountProps } from "@src/nav/navTypes";
 import { useThemeContext } from "@src/context/Theme";
 import useLoading from "@comps/hooks/Loading";
 
 export default function MintSelectAmountScreen({ navigation }: MintSelectAmountProps) {
-  const { t } = useTranslation([NS.wallet]);
+  const { t } = useTranslation([NS.wallet, NS.common]);
   const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
   const { loading, startLoading, stopLoading } = useLoading();
   const manager = useManager();
   const amountInputRef = useRef<TextInput>(null);
-  const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
 
   const [amountInput, setAmountInput] = useState("");
 
-  const defaultMint = useMemo(() => {
-    return knownMints.length > 0 ? knownMints[0] : null;
-  }, [knownMints]);
-
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
-    defaultMint ?? null,
+    knownMints[0] ?? null,
   );
+
+  useEffect(() => {
+    setSelectedMint((currentMint) => {
+      const updatedMint = currentMint
+        ? knownMints.find((mint) => mint.mintUrl === currentMint.mintUrl)
+        : null;
+
+      return updatedMint ?? knownMints[0] ?? null;
+    });
+  }, [knownMints]);
 
   const noMintsAvailable = useMemo(() => {
     return !selectedMint || knownMints.length === 0;
   }, [selectedMint, knownMints.length]);
 
-  // Defer non-critical state initialization
   const [err, setErr] = useState(false);
 
-  // Derived numeric amount
   const amountValue = useMemo(() => {
     const parsed = parseInt(amountInput || "0", 10);
     return Number.isNaN(parsed) ? 0 : parsed;
   }, [amountInput]);
 
-  // Memoize screen name computation
   const screenName = "createInvoice";
 
-  // Back navigation handler
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const handleMintSelect = useCallback(
@@ -65,32 +65,30 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
     [setSelectedMint],
   );
 
-  const handleMintSelectionOpen = useCallback(() => {
-    // Blur the input when opening the sheet
+  const handleMintSelectorOpen = useCallback(() => {
     amountInputRef.current?.blur();
-
-    // Try expand method first, fallback to snapToIndex
-    if (mintSelectionSheetRef.current) {
-      try {
-        mintSelectionSheetRef.current.present();
-      } catch (error) {
-        /* ignore */
-      }
-    }
   }, []);
 
+  const triggerAmountError = useCallback(() => {
+    vib(400);
+    setErr(true);
+    shake();
+    const timeout = setTimeout(() => {
+      setErr(false);
+      clearTimeout(timeout);
+    }, 500);
+  }, [shake]);
+
   const handleSubmit = useCallback(async () => {
-    if (!selectedMint) return;
-    if (!amountValue || amountValue < 1) {
-      vib(400);
-      setErr(true);
-      shake();
-      const t = setTimeout(() => {
-        setErr(false);
-        clearTimeout(t);
-      }, 500);
+    if (loading || !selectedMint) {
       return;
     }
+
+    if (!amountValue || amountValue < 1) {
+      triggerAmountError();
+      return;
+    }
+
     startLoading();
     try {
       const operation = await manager.ops.mint.prepare({
@@ -98,6 +96,8 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
         amount: amountValue,
         method: "bolt11",
       });
+      amountInputRef.current?.blur();
+      Keyboard.dismiss();
       return navigation.navigate("mintInvoice", {
         mintUrl: selectedMint.mintUrl,
         operation,
@@ -107,7 +107,16 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
     } finally {
       stopLoading();
     }
-  }, [amountValue, selectedMint, manager, navigation, shake, startLoading, stopLoading]);
+  }, [
+    amountValue,
+    loading,
+    manager,
+    navigation,
+    selectedMint,
+    startLoading,
+    stopLoading,
+    triggerAmountError,
+  ]);
 
   // Early return after all hooks
   if (noMintsAvailable) {
@@ -139,6 +148,14 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
       withPadding={false}
       withBottomInset={false}
       withKeyboard={true}
+      rightAction={
+        <MintHeaderSelector
+          selectedMint={selectedMint!}
+          onMintSelect={handleMintSelect}
+          onOpen={handleMintSelectorOpen}
+          showZeroBalanceMints
+        />
+      }
     >
       <AmountInput
         ref={amountInputRef}
@@ -150,26 +167,14 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
         testID="mint-amount-input"
       />
 
-      {/* Mint Selection Button - More seamless design */}
-
       <View style={styles.actionWrap}>
-        <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
-          <MintSelector mint={selectedMint!} onPress={handleMintSelectionOpen} />
-          <Button
-            txt={t("continue", { ns: NS.common })}
-            onPress={handleSubmit}
-            icon={<ChevronRightIcon color={mainColors.WHITE} />}
-            loading={loading}
-          />
-        </View>
+        <Button
+          txt={t("continue", { ns: NS.common })}
+          onPress={handleSubmit}
+          icon={<ChevronRightIcon color={mainColors.WHITE} />}
+          loading={loading}
+        />
       </View>
-
-      <MintSelectionSheet
-        ref={mintSelectionSheetRef}
-        selectedMint={selectedMint!}
-        onMintSelect={handleMintSelect}
-        showZeroBalanceMints={true}
-      />
     </Screen>
   );
 }
@@ -233,5 +238,6 @@ const styles = ScaledSheet.create({
     width: "100%",
     justifyContent: "flex-end",
     paddingHorizontal: "20@s",
+    paddingBottom: "10@vs",
   },
 });
