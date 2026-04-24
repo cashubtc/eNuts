@@ -3,7 +3,7 @@ import ConfirmationModal, { type ConfirmationModalRef } from "@modal/Confirmatio
 import OperationMintPanel, { type IOperationMintPanelRow } from "@modal/OperationMintPanel";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
-import type { PreparedSendOperation } from "@cashu/coco-core";
+import type { SendOperation } from "@cashu/coco-core";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
@@ -16,9 +16,10 @@ import { useTranslation } from "react-i18next";
 import { ScaledSheet } from "react-native-size-matters";
 
 export type SendConfirmationModalRef = ConfirmationModalRef;
+type TPreparedOrLaterSendOperation = Exclude<SendOperation, { state: "init" }>;
 
 interface ISendConfirmationModalProps {
-  operation: PreparedSendOperation | null;
+  operation: TPreparedOrLaterSendOperation | null;
   mint: KnownMintWithBalance | null;
   loading?: boolean;
   onConfirm: () => void;
