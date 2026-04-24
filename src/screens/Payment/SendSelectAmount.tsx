@@ -1,36 +1,41 @@
 import AmountInput, { useShakeAnimation } from "@comps/AmountInput";
 import Button from "@comps/Button";
 import { ChevronRightIcon } from "@comps/Icons";
+const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
+import MintSelector from "@comps/MintSelector";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
-const MintSelectionSheet = lazy(() => import("@comps/MintSelectionSheet"));
+import type { PreparedSendOperation } from "@cashu/coco-core";
 import { useSendOperation } from "@cashu/coco-react";
-import { useThemeContext } from "@src/context/Theme";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import SendConfirmationModal, { type SendConfirmationModalRef } from "@modal/SendConfirmationModal";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
+import { SendSelectAmountProps } from "@src/nav/navTypes";
+import { usePromptContext } from "@src/context/Prompt";
+import { useThemeContext } from "@src/context/Theme";
 import { mainColors } from "@styles";
 import { isErr, vib } from "@util";
 import { useCallback, useRef, useState, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { TextInput, View } from "react-native";
 import { ScaledSheet, vs } from "react-native-size-matters";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { SendSelectAmountProps } from "@src/nav/navTypes";
-import { usePromptContext } from "@src/context/Prompt";
-import MintSelector from "@comps/MintSelector";
+import { useCancelSendOnUnmount } from "./hooks/useCancelSendOnUnmount";
 
 export default function SendSelectAmountScreen({ navigation }: SendSelectAmountProps) {
-  const { t } = useTranslation([NS.wallet, NS.error]);
-  const { color } = useThemeContext();
+  const { t } = useTranslation([NS.wallet, NS.common, NS.error]);
   const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
   const amountInputRef = useRef<TextInput>(null);
   const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
-  const { isLoading: isSending, prepare, execute } = useSendOperation();
+  const sendConfirmationRef = useRef<SendConfirmationModalRef>(null);
+  const { isLoading: isSending, prepare, execute, cancel, reset } = useSendOperation();
   const { openPromptAutoClose } = usePromptContext();
 
   const [amountInput, setAmountInput] = useState("");
+  const [preparedOperation, setPreparedOperation] = useState<PreparedSendOperation | null>(null);
+  useCancelSendOnUnmount(preparedOperation?.id);
 
   const defaultMint = useMemo(() => {
     return knownMints.length > 0 ? knownMints[0] : null;
@@ -94,9 +99,30 @@ export default function SendSelectAmountScreen({ navigation }: SendSelectAmountP
       return;
     }
     try {
-      await prepare({ mintUrl: selectedMint.mintUrl, amount: amountValue });
+      const operation = await prepare({ mintUrl: selectedMint.mintUrl, amount: amountValue });
+      setPreparedOperation(operation);
+      setTimeout(() => {
+        sendConfirmationRef.current?.present();
+      }, 0);
+    } catch (e) {
+      console.error(e);
+      openPromptAutoClose({
+        msg: isErr(e) ? e.message : t("sendTokenErr", { ns: NS.error }),
+      });
+      shake();
+    }
+  }, [amountValue, selectedMint, selectedMintBalance, shake, prepare, openPromptAutoClose, t]);
+
+  const handleOperationConfirm = useCallback(async () => {
+    if (!preparedOperation) {
+      return;
+    }
+
+    try {
       const { token } = await execute();
-      return navigation.navigate("encodedToken", {
+      sendConfirmationRef.current?.close();
+      setPreparedOperation(null);
+      navigation.navigate("encodedToken", {
         token,
       });
     } catch (e) {
@@ -106,17 +132,28 @@ export default function SendSelectAmountScreen({ navigation }: SendSelectAmountP
       });
       shake();
     }
-  }, [
-    amountValue,
-    selectedMint,
-    navigation,
-    selectedMintBalance,
-    shake,
-    prepare,
-    execute,
-    openPromptAutoClose,
-    t,
-  ]);
+  }, [preparedOperation, execute, navigation, openPromptAutoClose, shake, t]);
+
+  const handleOperationCancel = useCallback(async () => {
+    if (!preparedOperation) {
+      setPreparedOperation(null);
+      return;
+    }
+
+    try {
+      await cancel();
+      setPreparedOperation(null);
+      reset();
+    } catch (e) {
+      console.error(e);
+      openPromptAutoClose({
+        msg: isErr(e) ? e.message : t("sendTokenErr", { ns: NS.error }),
+      });
+      setTimeout(() => {
+        sendConfirmationRef.current?.present();
+      }, 0);
+    }
+  }, [preparedOperation, cancel, openPromptAutoClose, reset, t]);
 
   // Early return after all hooks
   if (noMintsAvailable) {
@@ -179,6 +216,15 @@ export default function SendSelectAmountScreen({ navigation }: SendSelectAmountP
           onMintSelect={handleMintSelect}
         />
       </Suspense>
+
+      <SendConfirmationModal
+        ref={sendConfirmationRef}
+        operation={preparedOperation}
+        mint={selectedMint}
+        loading={isSending}
+        onConfirm={() => void handleOperationConfirm()}
+        onCancel={() => void handleOperationCancel()}
+      />
     </Screen>
   );
 }
