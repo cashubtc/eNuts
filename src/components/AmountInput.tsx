@@ -19,6 +19,7 @@ interface AmountInputProps {
   maxLength?: number;
   autoFocus?: boolean;
   testID?: string;
+  compact?: boolean;
 }
 
 /**
@@ -100,6 +101,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       maxLength = 8,
       autoFocus = true,
       testID = "amount-input",
+      compact = false,
     },
     ref,
   ) => {
@@ -321,14 +323,14 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
     }, [isFiatMode, placeholder, localDecimalSep]);
 
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, compact ? styles.containerCompact : null]}>
         <View style={styles.inputRow}>
           {/* Currency symbol prefix for fiat */}
           {currencySymbol && (
             <Txt
               txt={currencySymbol}
               styles={[
-                styles.currencySymbol,
+                compact ? styles.currencySymbolCompact : styles.currencySymbol,
                 {
                   color: error ? mainColors.ERROR : hi[highlight],
                 },
@@ -345,6 +347,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               placeholderTextColor={error ? mainColors.ERROR : hi[highlight]}
               style={[
                 globalStyles.selectAmount,
+                compact ? styles.amountInputCompact : null,
                 { color: error ? mainColors.ERROR : hi[highlight] },
               ]}
               onChangeText={handleAmountChange}
@@ -363,7 +366,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
             <Txt
               txt="Sats"
               styles={[
-                styles.satsSuffix,
+                compact ? styles.satsSuffixCompact : styles.satsSuffix,
                 {
                   color: error ? mainColors.ERROR : hi[highlight],
                 },
@@ -392,7 +395,10 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
           <Pressable onPress={handleToggleCurrency} disabled={!canToggleCurrency}>
             <Txt
               txt={secondaryLabel}
-              styles={[styles.secondaryLabel, { color: color.TEXT_SECONDARY }]}
+              styles={[
+                compact ? styles.secondaryLabelCompact : styles.secondaryLabel,
+                { color: color.TEXT_SECONDARY },
+              ]}
             />
           </Pressable>
         )}
@@ -414,6 +420,9 @@ const styles = ScaledSheet.create({
     alignItems: "center",
     paddingVertical: "20@vs",
   },
+  containerCompact: {
+    paddingVertical: "8@vs",
+  },
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -427,10 +436,25 @@ const styles = ScaledSheet.create({
     fontWeight: "600",
     marginRight: "4@s",
   },
+  currencySymbolCompact: {
+    fontSize: "24@s",
+    fontWeight: "600",
+    marginRight: "4@s",
+  },
+  amountInputCompact: {
+    fontSize: "36@vs",
+    marginBottom: 0,
+  },
   satsSuffix: {
     fontSize: "24@s",
     fontWeight: "500",
     marginLeft: "8@s",
+    opacity: 0.8,
+  },
+  satsSuffixCompact: {
+    fontSize: "18@s",
+    fontWeight: "500",
+    marginLeft: "6@s",
     opacity: 0.8,
   },
   toggleButton: {
@@ -442,5 +466,10 @@ const styles = ScaledSheet.create({
     fontSize: "14@vs",
     textAlign: "center",
     marginTop: "8@vs",
+  },
+  secondaryLabelCompact: {
+    fontSize: "12@vs",
+    textAlign: "center",
+    marginTop: "4@vs",
   },
 });

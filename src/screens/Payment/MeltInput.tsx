@@ -1,23 +1,30 @@
 import Button from "@comps/Button";
 import AmountInput, { useShakeAnimation } from "@comps/AmountInput";
-import Card from "@comps/Card";
 import useLoading from "@comps/hooks/Loading";
 import Loading from "@comps/Loading";
 import MintHeaderSelector from "@comps/MintHeaderSelector";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
-import { ChevronRightIcon } from "@comps/Icons";
+import { BoltIcon, ChevronRightIcon, CopyIcon } from "@comps/Icons";
 import type { MeltOperation } from "@cashu/coco-core";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { highlight as hi, mainColors } from "@styles";
 import { formatMintUrl, getStrFromClipboard, isErr, vib } from "@util";
 import { isLightningAddress, isLnurl } from "@util/lnurl";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TextInput, View } from "react-native";
-import { ScaledSheet, vs } from "react-native-size-matters";
+import {
+  Animated,
+  Easing,
+  Keyboard,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { ScaledSheet } from "react-native-size-matters";
 import MeltConfirmationModal, { type MeltConfirmationModalRef } from "@modal/MeltConfirmationModal";
 
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
@@ -32,6 +39,7 @@ import {
 import { useMeltOperation } from "@cashu/coco-react";
 
 type TFinalizedMeltOperation = Extract<MeltOperation, { state: "finalized" }>;
+type TMeltInputStep = "request" | "amount";
 
 export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const { invoice } = route.params || {};
@@ -54,9 +62,9 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const [preparedMint, setPreparedMint] = useState<KnownMintWithBalance | null>(null);
   const [amountInput, setAmountInput] = useState("");
   const [amountErr, setAmountErr] = useState(false);
+  const [inputStep, setInputStep] = useState<TMeltInputStep>("request");
+  const [lnAddress, setLnAddress] = useState("");
   const [lnAddressMetadata, setLnAddressMetadata] = useState<LnAddressMetadata | null>(null);
-  const [lnAddressLoading, setLnAddressLoading] = useState(false);
-  const [lnAddressMetadataError, setLnAddressMetadataError] = useState(false);
 
   // Use refs for better performance
   const inputRef = useRef<TextInput>(null);
@@ -64,28 +72,18 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const meltConfirmationRef = useRef<MeltConfirmationModalRef>(null);
   const hasNavigatedRef = useRef(false);
   const hasCancelledRef = useRef(false);
-  const lnAddressRequestRef = useRef(0);
+  const lnAddressAnim = useRef(new Animated.Value(0)).current;
 
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
-  const { color } = useThemeContext();
+  const { color, highlight } = useThemeContext();
   const { shake } = useShakeAnimation();
   const [input, setInput] = useState(invoice || "");
-  const [debouncedInput, setDebouncedInput] = useState(invoice || "");
   const trimmedInput = input.trim();
-  const debouncedTrimmedInput = debouncedInput.trim();
-  const isCurrentLnAddressInput = useMemo(() => isLightningAddress(trimmedInput), [trimmedInput]);
-  const isLnAddressInput = useMemo(
-    () => isLightningAddress(debouncedTrimmedInput),
-    [debouncedTrimmedInput],
-  );
-  const isLnAddressMetadataCurrent =
-    isCurrentLnAddressInput && debouncedTrimmedInput === trimmedInput;
-  const hasCurrentLnAddressMetadata = isLnAddressMetadataCurrent && !!lnAddressMetadata;
+  const isAmountStep = inputStep === "amount";
   const displayOperation = currentOperation || preparedOperation;
   const canCancelPreparedOperation = displayOperation?.state === "prepared";
   const isBusy = loading || operationLoading;
-  const isCurrentLnAddressLoading = isCurrentLnAddressInput && lnAddressLoading;
 
   const amountValue = useMemo(() => {
     const parsed = parseInt(amountInput || "0", 10);
@@ -93,7 +91,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   }, [amountInput]);
 
   const isAmountInvalid = useMemo(() => {
-    if (!isCurrentLnAddressInput) {
+    if (!isAmountStep) {
       return false;
     }
 
@@ -105,7 +103,15 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       !!lnAddressMetadata?.maxSendable && lnAddressMetadata.maxSendable < amountInMsats;
 
     return isAmountTooLow || isBelowMin || isAboveMax;
-  }, [amountValue, isCurrentLnAddressInput, lnAddressMetadata]);
+  }, [amountValue, isAmountStep, lnAddressMetadata]);
+
+  const minSendable = lnAddressMetadata?.minSendable;
+  const maxSendable = lnAddressMetadata?.maxSendable;
+  const shouldShowAmountLimits = isAmountStep && (!!minSendable || !!maxSendable);
+  const isContinueLoading = isBusy;
+  const isContinueDisabled =
+    isBusy ||
+    (isAmountStep ? !lnAddressMetadata || !amountValue || isAmountInvalid : !trimmedInput.length);
 
   // Check if we have mints available
   const noMintsAvailable = useMemo(() => {
@@ -126,6 +132,10 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 
   // Paste from clipboard
   const handlePaste = async () => {
+    if (isAmountStep) {
+      return;
+    }
+
     const clipboard = await getStrFromClipboard();
     if (!clipboard) {
       return;
@@ -155,6 +165,16 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     },
     [openPromptAutoClose, t],
   );
+
+  const presentMeltConfirmation = useCallback(() => {
+    inputRef.current?.blur();
+    amountInputRef.current?.blur();
+    Keyboard.dismiss();
+
+    setTimeout(() => {
+      meltConfirmationRef.current?.present();
+    }, 0);
+  }, []);
 
   const navigateToSuccess = useCallback(
     (finalizedOperation: TFinalizedMeltOperation) => {
@@ -206,15 +226,23 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const handleOperationCancel = useCallback(async () => {
     const didCancel = await cancelPreparedOperation();
     if (!didCancel) {
-      setTimeout(() => {
-        meltConfirmationRef.current?.present();
-      }, 0);
+      presentMeltConfirmation();
     }
-  }, [cancelPreparedOperation]);
+  }, [cancelPreparedOperation, presentMeltConfirmation]);
 
   const handleBackToDashboard = useCallback(() => {
     navigation.navigate("dashboard");
   }, [navigation]);
+
+  const handleCancelLnAddress = useCallback(() => {
+    amountInputRef.current?.blur();
+    Keyboard.dismiss();
+    setInputStep("request");
+    setLnAddress("");
+    setLnAddressMetadata(null);
+    setAmountInput("");
+    setAmountErr(false);
+  }, []);
 
   const handleBack = useCallback(() => {
     if (displayOperation) {
@@ -222,8 +250,13 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       return;
     }
 
+    if (isAmountStep) {
+      handleCancelLnAddress();
+      return;
+    }
+
     navigation.goBack();
-  }, [displayOperation, navigation]);
+  }, [displayOperation, handleCancelLnAddress, isAmountStep, navigation]);
 
   const handleOperationConfirm = useCallback(async () => {
     if (!displayOperation) {
@@ -237,47 +270,77 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     }
   }, [displayOperation, execute, showError]);
 
-  const handleBtnPress = async () => {
-    const currentMint = selectedMint;
-    if (isBusy || !currentMint) {
-      return;
-    }
-    // user pasted an encoded LNURL, we need to get the amount by the user
-    if (isLnurl(trimmedInput)) {
-      return openPromptAutoClose({ msg: t("invalidInvoice") });
-    }
-
-    const currentLnAddressMetadata = isLnAddressMetadataCurrent ? lnAddressMetadata : null;
-    const currentIsLnAddressInput = isLightningAddress(trimmedInput);
-    let lnAddressMetadataToUse: LnAddressMetadata | null = null;
-
-    if (currentIsLnAddressInput) {
-      if (!currentLnAddressMetadata || isAmountInvalid) {
-        triggerAmountError();
-        return;
-      }
-
-      lnAddressMetadataToUse = currentLnAddressMetadata;
-    }
-
-    startLoading();
-    try {
-      const invoiceToPrepare = lnAddressMetadataToUse
-        ? await getInvoiceFromLnAddress(lnAddressMetadataToUse, amountValue * 1000)
-        : trimmedInput;
-
+  const prepareMelt = useCallback(
+    async (invoiceToPrepare: string, currentMint: KnownMintWithBalance) => {
       const operation = await prepare({
         mintUrl: currentMint.mintUrl,
         method: "bolt11",
         methodData: { invoice: invoiceToPrepare },
       });
+
       hasCancelledRef.current = false;
       hasNavigatedRef.current = false;
       setPreparedMint(currentMint);
       setPreparedOperation(operation);
-      setTimeout(() => {
-        meltConfirmationRef.current?.present();
-      }, 0);
+      presentMeltConfirmation();
+    },
+    [prepare, presentMeltConfirmation],
+  );
+
+  const handleBtnPress = async () => {
+    const currentMint = selectedMint;
+    if (isBusy || !currentMint) {
+      return;
+    }
+
+    if (isAmountStep) {
+      if (!lnAddressMetadata || isAmountInvalid) {
+        triggerAmountError();
+        return;
+      }
+
+      startLoading();
+      try {
+        const invoiceToPrepare = await getInvoiceFromLnAddress(
+          lnAddressMetadata,
+          amountValue * 1000,
+        );
+        await prepareMelt(invoiceToPrepare, currentMint);
+      } catch (e) {
+        return openPromptAutoClose({ msg: t("invalidInvoice") });
+      } finally {
+        stopLoading();
+      }
+      return;
+    }
+
+    // user pasted an encoded LNURL, we need to get the amount by the user
+    if (isLnurl(trimmedInput)) {
+      return openPromptAutoClose({ msg: t("invalidInvoice") });
+    }
+
+    if (isLightningAddress(trimmedInput)) {
+      startLoading();
+      try {
+        const metadata = await requestLnAddressMetadata(trimmedInput);
+        setLnAddress(trimmedInput);
+        setLnAddressMetadata(metadata);
+        setAmountInput("");
+        setAmountErr(false);
+        setInputStep("amount");
+        inputRef.current?.blur();
+      } catch (e) {
+        return openPromptAutoClose({ msg: t("invalidInvoice") });
+      } finally {
+        stopLoading();
+      }
+
+      return;
+    }
+
+    startLoading();
+    try {
+      await prepareMelt(trimmedInput, currentMint);
     } catch (e) {
       return openPromptAutoClose({ msg: t("invalidInvoice") });
     } finally {
@@ -285,54 +348,31 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     }
   };
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setDebouncedInput(input);
-    }, 500);
+  const lnAddressMotionStyle = {
+    opacity: lnAddressAnim,
+    transform: [
+      {
+        translateY: lnAddressAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [10, 0],
+        }),
+      },
+    ],
+  };
 
-    return () => clearTimeout(timeout);
-  }, [input]);
-
   useEffect(() => {
-    if (!isLnAddressInput) {
-      lnAddressRequestRef.current += 1;
-      setLnAddressMetadata(null);
-      setLnAddressMetadataError(false);
-      setLnAddressLoading(false);
+    if (!isAmountStep) {
+      lnAddressAnim.setValue(0);
       return;
     }
 
-    const requestId = lnAddressRequestRef.current + 1;
-    lnAddressRequestRef.current = requestId;
-    setLnAddressMetadata(null);
-    setLnAddressMetadataError(false);
-    setLnAddressLoading(true);
-
-    void requestLnAddressMetadata(debouncedTrimmedInput)
-      .then((metadata) => {
-        if (lnAddressRequestRef.current !== requestId) {
-          return;
-        }
-
-        setLnAddressMetadata(metadata);
-      })
-      .catch(() => {
-        if (lnAddressRequestRef.current !== requestId) {
-          return;
-        }
-
-        setLnAddressMetadataError(true);
-      })
-      .finally(() => {
-        if (lnAddressRequestRef.current === requestId) {
-          setLnAddressLoading(false);
-        }
-      });
-
-    return () => {
-      lnAddressRequestRef.current += 1;
-    };
-  }, [debouncedTrimmedInput, isLnAddressInput]);
+    Animated.timing(lnAddressAnim, {
+      toValue: 1,
+      duration: 180,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [isAmountStep, lnAddressAnim]);
 
   useEffect(() => {
     if (currentOperation?.state === "finalized") {
@@ -418,100 +458,161 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Input field */}
-        <TxtInput
-          innerRef={inputRef}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholder={t("invoiceOrLnAddress")}
-          value={input}
-          onChangeText={(text) => {
-            setInput(text);
-          }}
-          onSubmitEditing={() => void handleBtnPress()}
-          autoFocus
-          ms={200}
-        />
-
-        {isLnAddressInput ? (
-          <>
-            <AmountInput
-              ref={amountInputRef}
-              value={amountInput}
-              onChange={setAmountInput}
-              onSubmit={handleBtnPress}
-              error={amountErr}
-              autoFocus={false}
-              testID="melt-ln-address-amount-input"
-            />
-            <Card style={styles.lnAddressCard}>
-              <View style={styles.addressSection}>
-                <Txt txt={trimmedInput} styles={[styles.addressText]} bold />
+        {!isAmountStep ? (
+          <View
+            key="request-input"
+            style={[
+              styles.inputSurface,
+              {
+                backgroundColor: color.DRAWER,
+                borderColor: color.BORDER,
+              },
+            ]}
+          >
+            <View style={styles.inputRow}>
+              <TxtInput
+                innerRef={inputRef}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder={t("invoiceOrLnAddress")}
+                value={input}
+                onChangeText={(text) => {
+                  setInput(text);
+                }}
+                onSubmitEditing={() => void handleBtnPress()}
+                autoFocus
+                ms={200}
+                style={styles.inputField}
+              />
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel={t("paste")}
+                activeOpacity={0.7}
+                onPress={() => void handlePaste()}
+                style={[
+                  styles.pasteButton,
+                  {
+                    backgroundColor: color.INPUT_BG,
+                    borderColor: color.BORDER,
+                  },
+                ]}
+              >
+                <CopyIcon width={18} height={18} color={hi[highlight]} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <Animated.View
+            key="ln-address-amount"
+            style={[
+              styles.lnAddressPanel,
+              {
+                backgroundColor: color.DRAWER,
+                borderColor: color.BORDER,
+              },
+              lnAddressMotionStyle,
+            ]}
+          >
+            <View style={styles.panelHeader}>
+              <View style={[styles.panelIcon, { backgroundColor: color.INPUT_BG }]}>
+                <BoltIcon width={18} height={18} color={hi[highlight]} />
               </View>
+              <View style={styles.panelCopy}>
+                <Txt txt={t("amount", { ns: NS.common })} bold styles={[styles.panelTitle]} />
+                <Txt
+                  txt={lnAddress}
+                  styles={[styles.addressText, { color: color.TEXT_SECONDARY }]}
+                />
+              </View>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel={t("cancel", { ns: NS.common })}
+                activeOpacity={0.7}
+                onPress={handleCancelLnAddress}
+                style={[
+                  styles.cancelButton,
+                  {
+                    backgroundColor: color.INPUT_BG,
+                    borderColor: color.BORDER,
+                  },
+                ]}
+              >
+                <Txt
+                  txt={t("cancel", { ns: NS.common })}
+                  bold
+                  styles={[styles.cancelText, { color: hi[highlight] }]}
+                />
+              </TouchableOpacity>
+            </View>
 
-              {isLnAddressMetadataCurrent && lnAddressLoading ? (
-                <View style={styles.metadataLoading}>
-                  <Loading size={18} />
-                </View>
-              ) : null}
+            <View style={styles.amountStage}>
+              <View style={[styles.amountDivider, { backgroundColor: color.DARK_BORDER }]} />
+              <AmountInput
+                ref={amountInputRef}
+                value={amountInput}
+                onChange={setAmountInput}
+                onSubmit={handleBtnPress}
+                error={amountErr}
+                autoFocus
+                compact
+                testID="melt-ln-address-amount-input"
+              />
+            </View>
 
-              {isLnAddressMetadataCurrent && lnAddressMetadataError ? (
-                <Txt txt={t("invalidInvoice")} styles={[styles.errorText]} />
-              ) : null}
-
-              {hasCurrentLnAddressMetadata &&
-              (lnAddressMetadata.minSendable || lnAddressMetadata.maxSendable) ? (
-                <View style={[styles.amountRangeSection, { borderTopColor: color.BORDER }]}>
-                  {lnAddressMetadata.minSendable ? (
-                    <View style={styles.rangeItem}>
+            {shouldShowAmountLimits ? (
+              <View style={[styles.amountRangeSection, { borderTopColor: color.DARK_BORDER }]}>
+                <Txt
+                  txt={t("amountLimits", { ns: NS.common })}
+                  bold
+                  styles={[styles.rangeTitle, { color: color.TEXT }]}
+                />
+                <View style={styles.rangeGrid}>
+                  {minSendable ? (
+                    <View style={[styles.rangeItem, { backgroundColor: color.INPUT_BG }]}>
                       <Txt
                         txt="Min"
                         styles={[styles.rangeLabel, { color: color.TEXT_SECONDARY }]}
                       />
                       <Txt
-                        txt={`${Math.floor(lnAddressMetadata.minSendable / 1000)} sats`}
+                        txt={`${Math.floor(minSendable / 1000)} sats`}
                         styles={[styles.rangeValue]}
                       />
                     </View>
                   ) : null}
-                  {lnAddressMetadata.maxSendable ? (
-                    <View style={styles.rangeItem}>
+                  {maxSendable ? (
+                    <View style={[styles.rangeItem, { backgroundColor: color.INPUT_BG }]}>
                       <Txt
                         txt="Max"
                         styles={[styles.rangeLabel, { color: color.TEXT_SECONDARY }]}
                       />
                       <Txt
-                        txt={`${Math.floor(lnAddressMetadata.maxSendable / 1000)} sats`}
+                        txt={`${Math.floor(maxSendable / 1000)} sats`}
                         styles={[styles.rangeValue]}
                       />
                     </View>
                   ) : null}
                 </View>
-              ) : null}
-            </Card>
-          </>
-        ) : null}
-      </ScrollView>
+              </View>
+            ) : null}
+          </Animated.View>
+        )}
 
-      {/* Paste and Continue Buttons at bottom */}
-      <View style={styles.actionWrap}>
-        <View style={{ width: "100%", gap: vs(10), paddingBottom: vs(10) }}>
-          <Button txt={t("paste")} onPress={() => void handlePaste()} ghost />
+        <View style={styles.actionWrap}>
           <Button
-            disabled={
-              isBusy ||
-              isCurrentLnAddressLoading ||
-              !trimmedInput.length ||
-              (isCurrentLnAddressInput &&
-                (!hasCurrentLnAddressMetadata || !amountValue || isAmountInvalid))
-            }
+            disabled={isContinueDisabled}
             txt={t("continue")}
             onPress={() => void handleBtnPress()}
-            icon={isBusy ? <Loading size={20} /> : <ChevronRightIcon color={mainColors.WHITE} />}
+            icon={
+              isContinueLoading ? (
+                <Loading size={20} />
+              ) : (
+                <ChevronRightIcon color={mainColors.WHITE} />
+              )
+            }
           />
         </View>
-      </View>
+      </ScrollView>
 
       {displayOperation ? (
         <MeltConfirmationModal
@@ -530,36 +631,108 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 
 const styles = ScaledSheet.create({
   contentContainer: {
-    gap: "8@vs",
-    paddingBottom: "16@vs",
+    flexGrow: 1,
+    gap: "12@vs",
+    paddingTop: "6@vs",
+    paddingBottom: "14@vs",
   },
   formScroll: {
     flex: 1,
   },
-  lnAddressCard: {
-    gap: "10@vs",
+  inputSurface: {
+    borderRadius: "28@s",
+    borderWidth: 1,
+    paddingHorizontal: "18@s",
+    paddingVertical: "18@vs",
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: "12@s",
+  },
+  inputField: {
+    flex: 1,
+    width: "auto",
+    backgroundColor: "transparent",
+    borderRadius: 0,
+    paddingHorizontal: 0,
+    paddingVertical: "4@vs",
+    fontSize: "16@ms",
+  },
+  pasteButton: {
+    width: "42@s",
+    height: "42@s",
+    borderRadius: "21@s",
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  lnAddressPanel: {
+    borderRadius: "24@s",
+    borderWidth: 1,
     paddingHorizontal: "16@s",
     paddingVertical: "14@vs",
   },
-  addressSection: {
+  panelHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: "12@s",
+  },
+  panelIcon: {
+    width: "34@s",
+    height: "34@s",
+    borderRadius: "17@s",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  panelCopy: {
+    flex: 1,
+    gap: "3@vs",
+  },
+  panelTitle: {
+    fontSize: "14@ms",
+  },
+  cancelButton: {
+    borderRadius: "16@s",
+    borderWidth: 1,
+    paddingHorizontal: "10@s",
+    paddingVertical: "7@vs",
+  },
+  cancelText: {
+    fontSize: "11@ms",
+  },
+  amountStage: {
     width: "100%",
+    paddingTop: "6@vs",
+  },
+  amountDivider: {
+    height: 1,
+    width: "100%",
+    marginBottom: "1@vs",
   },
   addressText: {
-    fontSize: "14@ms",
+    fontSize: "12@ms",
+    lineHeight: "17@vs",
     flexShrink: 1,
   },
-  metadataLoading: {
-    alignItems: "flex-start",
-    paddingTop: "2@vs",
-  },
   amountRangeSection: {
-    flexDirection: "row",
-    gap: "25@s",
+    gap: "8@vs",
     paddingTop: "10@vs",
     borderTopWidth: 1,
   },
+  rangeTitle: {
+    fontSize: "12@ms",
+  },
+  rangeGrid: {
+    flexDirection: "row",
+    gap: "10@s",
+  },
   rangeItem: {
-    gap: "3@vs",
+    flex: 1,
+    gap: "2@vs",
+    borderRadius: "14@s",
+    paddingHorizontal: "10@s",
+    paddingVertical: "8@vs",
   },
   rangeLabel: {
     fontSize: "10@ms",
@@ -568,11 +741,9 @@ const styles = ScaledSheet.create({
   rangeValue: {
     fontSize: "13@ms",
   },
-  errorText: {
-    color: mainColors.ERROR,
-    fontSize: "13@ms",
-  },
   actionWrap: {
     width: "100%",
+    marginTop: "auto",
+    paddingTop: "14@vs",
   },
 });

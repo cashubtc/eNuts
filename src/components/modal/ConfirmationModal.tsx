@@ -4,7 +4,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { globals } from "@styles";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, type ReactNode } from "react";
-import { Text, View } from "react-native";
+import { Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScaledSheet, vs } from "react-native-size-matters";
 
@@ -44,8 +44,10 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
   ) => {
     const { color, highlight } = useThemeContext();
     const insets = useSafeAreaInsets();
+    const { height } = useWindowDimensions();
     const sheetRef = useRef<BottomSheetModal>(null);
     const notifyCancelOnDismissRef = useRef(true);
+    const maxDynamicContentSize = Math.floor(height * 0.9);
 
     const present = useCallback(() => {
       notifyCancelOnDismissRef.current = true;
@@ -89,6 +91,7 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
       <BottomSheetModal
         ref={sheetRef}
         enableDynamicSizing
+        maxDynamicContentSize={maxDynamicContentSize}
         enableDismissOnClose
         enablePanDownToClose={!loading && dismissible}
         backdropComponent={renderBackdrop}
