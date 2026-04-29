@@ -175,6 +175,8 @@
     "noMint": "ไม่พบ mint",
     "notQrCode": "ไม่ใช่รหัส QR!",
     "noTX": "ยังไม่มีธุรกรรม",
+    "activity": "กิจกรรม",
+    "allHistory": "ทั้งหมด",
     "optionalMemo": "หมายเหตุที่ไม่บังคับ",
     "paste": "วาง",
     "paymentPending": "การชำระเงินรอดำเนินการ",

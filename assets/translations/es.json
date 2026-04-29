@@ -175,6 +175,8 @@
     "noMint": "No se encontró ninguna ceca",
     "notQrCode": "¡No es un código QR!",
     "noTX": "No hay transacciones todavía",
+    "activity": "Actividad",
+    "allHistory": "Todo",
     "optionalMemo": "Nota opcional",
     "paste": "Pegar",
     "paymentPending": "Pago pendiente",

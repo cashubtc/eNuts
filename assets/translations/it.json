@@ -175,6 +175,8 @@
     "noMint": "Nessuna mint trovata",
     "notQrCode": "Non è un codice QR!",
     "noTX": "Nessuna transazione",
+    "activity": "Attività",
+    "allHistory": "Tutto",
     "optionalMemo": "Nota opzionale",
     "paste": "Incolla",
     "paymentPending": "Pagamento in sospeso",

@@ -1,7 +1,7 @@
 import { SettingsIcon } from "@comps/Icons";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi, mainColors } from "@styles";
+import { highlight as hi } from "@styles";
 import { Image, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
@@ -14,10 +14,8 @@ export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarPro
   const { color, highlight, activeTheme } = useThemeContext();
   const { handleLogoPress } = usePrivacyContext();
   const insets = useSafeAreaInsets();
-  // Use white color for better visibility against highlight backgrounds
-  const iconColor = mainColors.WHITE;
+  const iconColor = hi[highlight];
 
-  // Logo source logic (same as Logo component)
   const logoSrc =
     activeTheme === "dark" && (highlight === "Zap" || highlight === "Azyre" || highlight === "Rosy")
       ? require("@assets/icon_transparent_dark.png")
@@ -29,20 +27,17 @@ export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarPro
         styles.topBar,
         {
           paddingTop: insets.top,
-          backgroundColor: hi[highlight],
+          backgroundColor: color.BACKGROUND,
         },
       ]}
     >
       <View style={styles.topBarContent}>
-        {/* Logo - absolutely centered */}
-        <View style={styles.logoCenterContainer}>
-          <TouchableOpacity onPress={() => void handleLogoPress()} style={styles.logoBtn}>
+        <TouchableOpacity onPress={() => void handleLogoPress()} style={styles.controlBtn}>
+          <View style={[styles.logoMark, { backgroundColor: hi[highlight] }]}>
             <Image source={logoSrc} style={styles.logoImage} resizeMode="contain" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Settings button - positioned on the right */}
-        <TouchableOpacity onPress={onSettingsPress} style={styles.settingsBtn}>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onSettingsPress} style={styles.controlBtn}>
           <SettingsIcon width={s(24)} height={s(24)} color={iconColor} />
         </TouchableOpacity>
       </View>
@@ -53,31 +48,29 @@ export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarPro
 const styles = ScaledSheet.create({
   topBar: {
     paddingHorizontal: "20@s",
-    paddingBottom: "10@vs",
+    paddingBottom: "4@vs",
   },
   topBarContent: {
-    position: "relative",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-end",
-    minHeight: "56@s",
+    justifyContent: "space-between",
+    minHeight: "50@s",
   },
-  logoCenterContainer: {
-    position: "absolute",
-    left: 0,
-    right: 0,
+  controlBtn: {
+    width: "48@s",
+    height: "48@s",
     alignItems: "center",
     justifyContent: "center",
   },
-  logoBtn: {
-    padding: "8@s",
+  logoMark: {
+    width: "36@s",
+    height: "36@s",
+    borderRadius: "18@s",
+    alignItems: "center",
+    justifyContent: "center",
   },
   logoImage: {
-    width: "40@s",
-    height: "40@s",
-  },
-  settingsBtn: {
-    padding: "8@s",
-    zIndex: 1,
+    width: "27@s",
+    height: "27@s",
   },
 });
