@@ -1,7 +1,8 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { Text, View } from "react-native";
-import { ScaledSheet, vs } from "react-native-size-matters";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
+import { ScrollView, Text, View } from "react-native";
+import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeContext } from "@src/context/Theme";
 import { globals } from "@styles";
 import Button from "@comps/Button";
@@ -31,18 +32,22 @@ interface SheetOptions {
 
 const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
   const { color, highlight } = useThemeContext();
-  const sheetRef = useRef<BottomSheetModal>(null);
+  const insets = useSafeAreaInsets();
+  const sheetRef = useRef<TrueSheet>(null);
+  const notifyCancelOnDismissRef = useRef(false);
   const [options, setOptions] = useState<SheetOptions | null>(null);
 
-  const close = useCallback(() => {
-    sheetRef.current?.dismiss();
+  const close = useCallback((closeOptions?: { notifyCancel?: boolean }) => {
+    notifyCancelOnDismissRef.current = closeOptions?.notifyCancel ?? false;
+    void sheetRef.current?.dismiss();
   }, []);
 
   const open = useCallback((newOptions: SheetOptions) => {
     setOptions(newOptions);
+    notifyCancelOnDismissRef.current = false;
     setTimeout(() => {
       try {
-        sheetRef.current?.present();
+        void sheetRef.current?.present();
       } catch {
         /* ignore */
       }
@@ -50,13 +55,6 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
   }, []);
 
   useImperativeHandle(ref, () => ({ open, close }), [open, close]);
-
-  const handleBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
-    ),
-    [],
-  );
 
   const handleConfirm = useCallback(() => {
     if (options?.onConfirm) {
@@ -66,30 +64,35 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
   }, [options, close]);
 
   const handleCancel = useCallback(() => {
-    if (options?.onCancel) {
+    close({ notifyCancel: true });
+  }, [close]);
+
+  const handleDismiss = useCallback(() => {
+    const shouldNotifyCancel = notifyCancelOnDismissRef.current;
+    notifyCancelOnDismissRef.current = false;
+
+    if (shouldNotifyCancel && options?.onCancel) {
       options.onCancel();
     }
-    close();
-  }, [options, close]);
+  }, [options]);
 
   return (
-    <BottomSheetModal
+    <TrueSheet
       ref={sheetRef}
-      enableDynamicSizing
-      backdropComponent={handleBackdrop}
-      backgroundStyle={{ backgroundColor: color.BACKGROUND }}
-      handleIndicatorStyle={{ backgroundColor: color.TEXT_SECONDARY }}
-      enableDismissOnClose
-      enablePanDownToClose
-      onDismiss={() => {
-        if (options?.onCancel) {
-          options.onCancel();
-        }
-      }}
+      detents={["auto"]}
+      dismissible={false}
+      draggable={false}
+      backgroundColor={color.BACKGROUND}
+      cornerRadius={s(26)}
+      grabberOptions={{ color: color.TEXT_SECONDARY }}
+      onDidDismiss={handleDismiss}
     >
-      <BottomSheetScrollView
-        style={[styles.scrollContainer, { backgroundColor: color.BACKGROUND }]}
-        contentContainerStyle={[styles.container]}
+      <ScrollView
+        style={{ backgroundColor: color.BACKGROUND }}
+        contentContainerStyle={[
+          styles.container,
+          { paddingBottom: Math.max(insets.bottom, vs(20)) },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {options && (
@@ -109,20 +112,17 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
             </View>
           </>
         )}
-      </BottomSheetScrollView>
-    </BottomSheetModal>
+      </ScrollView>
+    </TrueSheet>
   );
 });
 
 ConfirmBottomSheet.displayName = "ConfirmBottomSheet";
 
 const styles = ScaledSheet.create({
-  scrollContainer: {
-    flex: 1,
-  },
   container: {
     paddingHorizontal: "20@s",
-    paddingBottom: "20@vs",
+    paddingTop: "30@vs",
   },
   message: {
     fontSize: "14@vs",
