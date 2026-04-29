@@ -157,13 +157,24 @@ export class NfcError extends Error {
 export interface PaymentRequestResult {
   /** The raw payment request string (e.g., "creqA...") */
   request: string;
+  /** Whether a response was written back to the NFC tag */
+  wroteResponse: boolean;
 }
 
 /**
- * Callback to create a token from the payment request.
- * Return the Cashu token string to write back to the PoS.
+ * Callback to handle the text read from the NFC tag.
+ * Return writeText to write a response back, or finish to close the session without writing.
  */
-export type TokenCreator = (request: string) => Promise<string>;
+export type NfcTextExchangeAction =
+  | {
+      type: "writeText";
+      text: string;
+    }
+  | {
+      type: "finish";
+    };
+
+export type NfcTextHandler = (request: string) => Promise<NfcTextExchangeAction>;
 
 export default class NfcCashuPayment {
   /**
@@ -198,13 +209,13 @@ export default class NfcCashuPayment {
    * Perform a complete NFC Cashu payment flow:
    * 1. Connect to the PoS terminal
    * 2. Read the payment request
-   * 3. Call your callback to create a token
-   * 4. Write the token back to the PoS
+   * 3. Call your callback to decide how to handle the request
+   * 4. Optionally write text back to the PoS
    * 5. Close the connection
    *
    * This keeps the NFC session open throughout the entire flow.
    *
-   * @param createToken Async callback that receives the payment request and returns a Cashu token
+   * @param handleRequest Async callback that receives the payment request and returns the next action
    * @returns The payment request that was read
    *
    * @example
@@ -213,11 +224,11 @@ export default class NfcCashuPayment {
    *   const pr = PaymentRequest.fromEncodedRequest(paymentRequest);
    *   const prepared = await manager.ops.send.prepare({ mintUrl: pr.mints![0]!, amount: pr.amount! });
    *   const { token } = await manager.ops.send.execute(prepared.id);
-   *   return getEncodedToken(token);
+   *   return { type: "writeText", text: getEncodedToken(token) };
    * });
    * ```
    */
-  static async performPayment(createToken: TokenCreator): Promise<PaymentRequestResult> {
+  static async performPayment(handleRequest: NfcTextHandler): Promise<PaymentRequestResult> {
     log.info("Starting NFC payment flow...");
 
     // Pre-flight checks
@@ -332,27 +343,33 @@ export default class NfcCashuPayment {
       log.info(`Read payment request (${paymentRequest.length} chars)`);
       log.debug(`Payment request: ${paymentRequest.substring(0, 60)}...`);
 
-      // ===== PHASE 2: CREATE TOKEN (user callback) =====
-      log.info("Phase 2: Creating token (calling user callback)...");
-      let token: string;
+      // ===== PHASE 2: HANDLE REQUEST (user callback) =====
+      log.info("Phase 2: Handling payment request (calling user callback)...");
+      let action: NfcTextExchangeAction;
       try {
-        token = await createToken(paymentRequest);
+        action = await handleRequest(paymentRequest);
       } catch (error) {
-        log.error("Token creation failed:", error);
+        log.error("Payment request handling failed:", error);
         // Re-throw the original error to preserve custom error types (e.g., LimitExceededError)
         // The caller can handle these errors appropriately
         throw error;
       }
 
-      if (!token || token.length === 0) {
-        throw new NfcError("Token callback returned empty token", "INVALID_TOKEN");
+      if (action.type === "finish") {
+        log.info("NFC exchange completed without writing a response");
+        return { request: paymentRequest, wroteResponse: false };
       }
 
-      log.info(`Token created (${token.length} chars)`);
-      log.debug(`Token preview: ${token.substring(0, 50)}...`);
+      const token = action.text;
+      if (!token || token.length === 0) {
+        throw new NfcError("NFC callback returned empty response text", "INVALID_RESPONSE_TEXT");
+      }
 
-      // ===== PHASE 3: WRITE TOKEN BACK =====
-      log.info("Phase 3: Writing token back to PoS...");
+      log.info(`Response text created (${token.length} chars)`);
+      log.debug(`Response preview: ${token.substring(0, 50)}...`);
+
+      // ===== PHASE 3: WRITE RESPONSE BACK =====
+      log.info("Phase 3: Writing response back to PoS...");
 
       // Re-select NDEF file (may be needed after the callback took time)
       log.debug("Re-SELECT NDEF File for writing");
@@ -404,7 +421,7 @@ export default class NfcCashuPayment {
       }
 
       log.info("✓ NFC payment completed successfully!");
-      return { request: paymentRequest };
+      return { request: paymentRequest, wroteResponse: true };
     } finally {
       log.debug("Releasing NFC technology...");
       try {
