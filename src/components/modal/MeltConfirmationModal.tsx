@@ -170,7 +170,6 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
         cancelText={cancelText}
         loading={loading}
         confirmDisabled={isPending}
-        dismissible={!isPending}
         onConfirm={onConfirm}
         onCancel={isPending ? onBackToDashboard : onCancel}
       >
