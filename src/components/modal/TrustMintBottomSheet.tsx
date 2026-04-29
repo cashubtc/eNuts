@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { TxtButton } from "@comps/Button";
 import { ReceiveIcon } from "@comps/Icons";
 import Loading from "@comps/Loading";
@@ -12,7 +12,8 @@ import { NS } from "@src/i18n";
 import { globals, mainColors } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export type TrustMintAction = "trust" | "cancel" | "swap";
@@ -27,14 +28,15 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
     const { t } = useTranslation([NS.common]);
     const { color, highlight } = useThemeContext();
     const { formatAmount } = useCurrencyContext();
+    const insets = useSafeAreaInsets();
 
-    const sheetRef = useRef<BottomSheetModal>(null);
+    const sheetRef = useRef<TrueSheet>(null);
     const [loading, setLoading] = useState(false);
     const [tokenInfo, setTokenInfo] = useState<ITokenInfo | undefined>(undefined);
     const resolverRef = useRef<((action: TrustMintAction) => void) | null>(null);
 
     const close = useCallback(() => {
-      sheetRef.current?.dismiss();
+      void sheetRef.current?.dismiss();
     }, []);
 
     const open = useCallback((token: Token) => {
@@ -46,7 +48,7 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
       });
       setTimeout(() => {
         try {
-          sheetRef.current?.present();
+          void sheetRef.current?.present();
         } catch {
           /* ignore */
         }
@@ -57,13 +59,6 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
     }, []);
 
     useImperativeHandle(ref, () => ({ open, close }), [open, close]);
-
-    const handleBackdrop = useCallback(
-      (props: any) => (
-        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
-      ),
-      [],
-    );
 
     const resolveAndClose = (action: TrustMintAction) => {
       if (resolverRef.current) {
@@ -80,25 +75,28 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
 
     const handleCancel = () => resolveAndClose("cancel");
 
+    const handleDismiss = useCallback(() => {
+      if (resolverRef.current) {
+        resolverRef.current("cancel");
+        resolverRef.current = null;
+      }
+    }, []);
+
     return (
-      <BottomSheetModal
+      <TrueSheet
         ref={sheetRef}
-        enableDynamicSizing
-        backdropComponent={handleBackdrop}
-        backgroundStyle={{ backgroundColor: color.BACKGROUND }}
-        handleIndicatorStyle={{ backgroundColor: color.TEXT_SECONDARY }}
-        enableDismissOnClose
-        enablePanDownToClose
-        onDismiss={() => {
-          if (resolverRef.current) {
-            resolverRef.current("cancel");
-            resolverRef.current = null;
-          }
-        }}
+        detents={["auto"]}
+        backgroundColor={color.BACKGROUND}
+        cornerRadius={s(26)}
+        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        onDidDismiss={handleDismiss}
       >
-        <BottomSheetScrollView
-          style={[styles.scrollContainer, { backgroundColor: color.BACKGROUND }]}
-          contentContainerStyle={[styles.container]}
+        <ScrollView
+          style={{ backgroundColor: color.BACKGROUND }}
+          contentContainerStyle={[
+            styles.container,
+            { paddingBottom: Math.max(insets.bottom, vs(20)) },
+          ]}
           showsVerticalScrollIndicator={false}
         >
           <Text style={[globals(color, highlight).modalHeader, { marginBottom: vs(15) }]}>
@@ -138,8 +136,8 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
             </View>
           </TouchableOpacity>
           <TxtButton txt={t("cancel")} onPress={handleCancel} style={[styles.TxtButton]} />
-        </BottomSheetScrollView>
-      </BottomSheetModal>
+        </ScrollView>
+      </TrueSheet>
     );
   },
 );
@@ -147,12 +145,9 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
 TrustMintBottomSheet.displayName = "TrustMintBottomSheet";
 
 const styles = ScaledSheet.create({
-  scrollContainer: {
-    flex: 1,
-  },
   container: {
     paddingHorizontal: "20@s",
-    paddingBottom: "20@vs",
+    paddingTop: "30@vs",
   },
   row: {
     flexDirection: "row",
