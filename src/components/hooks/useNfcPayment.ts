@@ -181,6 +181,9 @@ export function useNfcPayment(options: UseNfcPaymentOptions = {}): UseNfcPayment
           log.info("Payment request received");
           setStatusMessage("Processing payment...");
           const parsedPr = await manager.paymentRequests.parse(cashuPaymentRequest);
+          if (parsedPr.transport.type !== "inband") {
+            throw new Error("NFC payment request uses an unsupported payment transport");
+          }
           if (parsedPr.payableMints.length === 0) {
             throw new Error("No matching mints found");
           }
