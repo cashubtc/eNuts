@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { View, TouchableOpacity, Text } from "react-native";
 import { s, ScaledSheet } from "react-native-size-matters";
 import { useTranslation } from "react-i18next";
@@ -51,7 +51,7 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
     const { color, highlight } = useThemeContext();
     const { formatBalance, formatSatsAsCurrency, rates, selectedCurrency } = useCurrencyContext();
 
-    const bottomSheetRef = useRef<BottomSheet>(null);
+    const sheetRef = useRef<TrueSheet>(null);
     const [pendingConfirmation, setPendingConfirmation] = useState<PendingConfirmation | null>(
       null,
     );
@@ -63,17 +63,17 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
     const { isActive, statusMessage, startPayment, completeOverLimitPayment } = useNfcPayment({
       onPaymentSuccess: (result) => {
         setPendingConfirmation(null);
-        bottomSheetRef.current?.close();
+        void sheetRef.current?.dismiss();
         onSuccess?.(result);
       },
       onPaymentError: (result) => {
         setPendingConfirmation(null);
-        bottomSheetRef.current?.close();
+        void sheetRef.current?.dismiss();
         onError?.(result);
       },
       onPaymentHandoff: (handoff) => {
         setPendingConfirmation(null);
-        bottomSheetRef.current?.close();
+        void sheetRef.current?.dismiss();
         onPaymentHandoff?.(handoff);
       },
       onLimitExceeded: (error: LimitExceededError) => {
@@ -103,7 +103,7 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
     // Handle declining the over-limit payment
     const handleDeclineOverLimit = useCallback(() => {
       setPendingConfirmation(null);
-      bottomSheetRef.current?.close();
+      void sheetRef.current?.dismiss();
       onClose?.();
     }, [onClose]);
 
@@ -113,23 +113,14 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
       () => ({
         open: () => {
           setPendingConfirmation(null);
-          bottomSheetRef.current?.snapToIndex(0);
-          // Start payment after sheet opens
-          setTimeout(startPaymentWithDefaultLimit, 100);
+          void sheetRef.current?.present().then(startPaymentWithDefaultLimit);
         },
         close: () => {
           setPendingConfirmation(null);
-          bottomSheetRef.current?.close();
+          void sheetRef.current?.dismiss();
         },
       }),
       [startPaymentWithDefaultLimit],
-    );
-
-    const renderBackdrop = useCallback(
-      (props: any) => (
-        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
-      ),
-      [],
     );
 
     const showConfirmation = pendingConfirmation !== null && !isActive;
@@ -157,16 +148,16 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
         });
 
     return (
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        enablePanDownToClose={!isActive}
-        enableDynamicSizing
-        backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: color.BACKGROUND }}
-        handleIndicatorStyle={{ backgroundColor: color.TEXT_SECONDARY }}
+      <TrueSheet
+        ref={sheetRef}
+        detents={["auto"]}
+        dismissible={!isActive}
+        draggable={!isActive}
+        backgroundColor={color.BACKGROUND}
+        cornerRadius={s(26)}
+        grabberOptions={{ color: color.TEXT_SECONDARY }}
       >
-        <BottomSheetView style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+        <View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
           <View style={styles.header}>
             {showConfirmation ? (
               <ExclamationIcon width={s(28)} color={hi[highlight]} />
@@ -288,8 +279,8 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
               <Txt txt={statusMessage} styles={[{ color: color.TEXT_SECONDARY }]} />
             </View>
           )}
-        </BottomSheetView>
-      </BottomSheet>
+        </View>
+      </TrueSheet>
     );
   },
 );
@@ -299,6 +290,7 @@ NfcPaymentModal.displayName = "NfcPaymentModal";
 const styles = ScaledSheet.create({
   container: {
     paddingHorizontal: "20@s",
+    paddingTop: "30@vs",
     paddingBottom: "16@vs",
   },
   header: {
