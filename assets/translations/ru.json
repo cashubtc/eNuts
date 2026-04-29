@@ -213,6 +213,7 @@
     "selectAmount": "Выберите сумму",
     "selected": "Выбрано",
     "selectMint": "Выберите монетный двор для отправки",
+    "selectMints": "Выберите монетные дворы",
     "sendEcash": "Отправить Ecash",
     "share": "Поделиться",
     "submitPaymentReq": "Обналичить",

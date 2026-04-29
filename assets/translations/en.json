@@ -213,6 +213,7 @@
     "selectAmount": "Select amount",
     "selected": "Selected",
     "selectMint": "Select a mint to send from",
+    "selectMints": "Select mints",
     "noMintsWithBalance": "No mints with balance available",
     "sendEcash": "Send Ecash",
     "share": "Share",
