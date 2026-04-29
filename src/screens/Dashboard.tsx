@@ -2,19 +2,23 @@ import DashboardTopBar from "@comps/DashboardTopBar";
 import useLoading from "@comps/hooks/Loading";
 import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 import {
+  CopyIcon,
   NfcIcon,
   PlusIcon,
   ReceiveIcon,
   ScanQRIcon,
   SendIcon,
+  SendMsgIcon,
   SwapCurrencyIcon,
+  ZapIcon,
 } from "@comps/Icons";
-import BottomSheetOptionsModal from "@comps/modal/BottomSheetOptionsModal";
+import Loading from "@comps/Loading";
 import NfcPaymentModal, { type NfcPaymentModalRef } from "@comps/modal/NfcPaymentModal";
+import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
 import type { HistoryEntry } from "@cashu/coco-core";
 import { usePaginatedHistory } from "@cashu/coco-react";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import type { TBeforeRemoveEvent, TDashboardPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useBalanceContext } from "@src/context/Balance";
@@ -36,6 +40,7 @@ import { LatestHistoryMeltEntry } from "./History/components/LatestHistoryMeltEn
 import { LatestHistoryMintEntry } from "./History/components/LatestHistoryMintEntry";
 import { LatestHistoryReceiveEntry } from "./History/components/LatestHistoryReceiveEntry";
 import { LatestHistorySendEntry } from "./History/components/LatestHistorySendEntry";
+import DashboardActionSheet, { DashboardActionSheetOption } from "./DashboardActionSheet";
 
 export default function Dashboard({ navigation }: TDashboardPageProps) {
   const { t } = useTranslation([NS.common, NS.wallet]);
@@ -55,8 +60,8 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
   const { balances } = useBalanceContext();
   const { formatAmount, formatBalance, setFormatBalance } = useCurrencyContext();
   const { history: latestHistory, hasMore } = usePaginatedHistory(10);
-  const sendOptionsRef = useRef<BottomSheet>(null);
-  const receiveOptionsRef = useRef<BottomSheet>(null);
+  const sendOptionsRef = useRef<TrueSheet>(null);
+  const receiveOptionsRef = useRef<TrueSheet>(null);
   const nfcModalRef = useRef<NfcPaymentModalRef>(null);
   const { claimFromTokenString, isReceiving } = useCashuClaimFlow();
   const balanceAmount = formatAmount(balances.total.total);
@@ -85,7 +90,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
   };
 
   const handleNfcOptionPress = () => {
-    sendOptionsRef.current?.close();
+    void sendOptionsRef.current?.dismiss();
     setTimeout(() => {
       nfcModalRef.current?.open();
     }, 200);
@@ -206,7 +211,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                 iconBackgroundColor={actionIconBackground}
                 iconBorderColor={actionIconBorderColor}
                 onPress={() => {
-                  sendOptionsRef.current?.snapToIndex(0);
+                  void sendOptionsRef.current?.present();
                 }}
               />
             ) : (
@@ -237,35 +242,65 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               iconBorderColor={actionIconBorderColor}
               disabled={isReceiving}
               onPress={() => {
-                receiveOptionsRef.current?.snapToIndex(0);
+                void receiveOptionsRef.current?.present();
               }}
             />
           </View>
         </View>
 
-        <BottomSheetOptionsModal
-          ref={sendOptionsRef}
-          button1Txt={t("sendEcash")}
-          onPressFirstBtn={() => {
-            navigation.navigate("SendSelectAmount");
-          }}
-          button2Txt={t("payLNInvoice", { ns: NS.wallet })}
-          onPressSecondBtn={() => {
-            navigation.navigate("MeltInput", {});
-          }}
-          button3Txt={t("nfcPayment", {
-            ns: NS.wallet,
-            defaultValue: "NFC Payment",
-          })}
-          button3Description={t("nfcPaymentDescription", {
-            ns: NS.wallet,
-            defaultValue: "Tap to pay at a terminal",
-          })}
-          button3Icon={<NfcIcon width={s(20)} color={mainColors.VALID} />}
-          onPressThirdBtn={handleNfcOptionPress}
-          onPressCancel={() => {}}
-          isSend
-        />
+        <DashboardActionSheet
+          sheetRef={sendOptionsRef}
+          title={t("send", { ns: NS.wallet })}
+          closeAccessibilityLabel={t("cancel")}
+          backgroundColor={color.BACKGROUND}
+          closeIconColor={color.TEXT_SECONDARY}
+        >
+          <DashboardActionSheetOption
+            icon={<SendMsgIcon width={s(16)} height={s(16)} color={mainColors.VALID} />}
+            title={t("sendEcash")}
+            description={t("sendEcashDashboard")}
+            textColor={color.TEXT}
+            descriptionColor={color.TEXT_SECONDARY}
+            onPress={() => {
+              void sendOptionsRef.current?.dismiss();
+              navigation.navigate("SendSelectAmount");
+            }}
+            testID="send-ecash-option"
+          />
+
+          <Separator style={styles.sheetSeparator} />
+
+          <DashboardActionSheetOption
+            icon={<ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />}
+            title={t("payLNInvoice", { ns: NS.wallet })}
+            description={t("payInvoiceDashboard")}
+            textColor={color.TEXT}
+            descriptionColor={color.TEXT_SECONDARY}
+            onPress={() => {
+              void sendOptionsRef.current?.dismiss();
+              navigation.navigate("MeltInput", {});
+            }}
+            testID="pay-invoice-option"
+          />
+
+          <Separator style={styles.sheetSeparator} />
+
+          <DashboardActionSheetOption
+            icon={<NfcIcon width={s(20)} color={mainColors.VALID} />}
+            title={t("nfcPayment", {
+              ns: NS.wallet,
+              defaultValue: "NFC Payment",
+            })}
+            description={t("nfcPaymentDescription", {
+              ns: NS.wallet,
+              defaultValue: "Tap to pay at a terminal",
+            })}
+            textColor={color.TEXT}
+            descriptionColor={color.TEXT_SECONDARY}
+            onPress={handleNfcOptionPress}
+            testID="third-option"
+          />
+        </DashboardActionSheet>
 
         <NfcPaymentModal
           ref={nfcModalRef}
@@ -288,19 +323,47 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           }}
         />
 
-        <BottomSheetOptionsModal
-          ref={receiveOptionsRef}
-          button1Txt={
-            loading ? t("claiming", { ns: NS.wallet }) : t("pasteToken", { ns: NS.wallet })
-          }
-          onPressFirstBtn={() => void handleClaimBtnPress()}
-          button2Txt={t("createLnInvoice")}
-          onPressSecondBtn={() => {
-            navigation.navigate("MintSelectAmount");
-          }}
-          onPressCancel={() => {}}
-          loading={loading}
-        />
+        <DashboardActionSheet
+          sheetRef={receiveOptionsRef}
+          title={t("receive", { ns: NS.wallet })}
+          closeAccessibilityLabel={t("cancel")}
+          backgroundColor={color.BACKGROUND}
+          closeIconColor={color.TEXT_SECONDARY}
+        >
+          <DashboardActionSheetOption
+            icon={
+              loading ? (
+                <Loading size="small" color={mainColors.VALID} />
+              ) : (
+                <CopyIcon color={mainColors.VALID} />
+              )
+            }
+            title={loading ? t("claiming", { ns: NS.wallet }) : t("pasteToken", { ns: NS.wallet })}
+            description={t("receiveEcashDashboard")}
+            textColor={color.TEXT}
+            descriptionColor={color.TEXT_SECONDARY}
+            onPress={() => {
+              void handleClaimBtnPress();
+              void receiveOptionsRef.current?.dismiss();
+            }}
+            testID="send-ecash-option"
+          />
+
+          <Separator style={styles.sheetSeparator} />
+
+          <DashboardActionSheetOption
+            icon={<ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />}
+            title={t("createLnInvoice")}
+            description={t("createInvoiceDashboard")}
+            textColor={color.TEXT}
+            descriptionColor={color.TEXT_SECONDARY}
+            onPress={() => {
+              void receiveOptionsRef.current?.dismiss();
+              navigation.navigate("MintSelectAmount");
+            }}
+            testID="pay-invoice-option"
+          />
+        </DashboardActionSheet>
       </View>
     </SafeAreaView>
   );
@@ -450,6 +513,11 @@ const styles = ScaledSheet.create({
   actionTxt: {
     fontSize: "12@vs",
     textAlign: "center",
+  },
+  sheetSeparator: {
+    width: "100%",
+    marginTop: "10@vs",
+    marginBottom: "10@vs",
   },
   historySection: {
     flex: 1,
