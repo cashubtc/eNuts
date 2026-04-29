@@ -25,7 +25,6 @@ import { useTranslation } from "react-i18next";
 import { MenuProvider } from "react-native-popup-menu";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { TrustMintModalProvider } from "@modal/TrustMintProvider";
 
 import Blank from "./Blank";
@@ -153,15 +152,13 @@ function AppProviders({ children }: { children: React.ReactNode }) {
         <NfcAmountLimitsProvider>
           <PrivacyProvider>
             <MenuProvider>
-              <BottomSheetModalProvider>
-                <TrustMintModalProvider>
-                  <ThemedNavigationContainer>
-                    <PromptProvider>
-                      <KeyboardProvider>{children}</KeyboardProvider>
-                    </PromptProvider>
-                  </ThemedNavigationContainer>
-                </TrustMintModalProvider>
-              </BottomSheetModalProvider>
+              <TrustMintModalProvider>
+                <ThemedNavigationContainer>
+                  <PromptProvider>
+                    <KeyboardProvider>{children}</KeyboardProvider>
+                  </PromptProvider>
+                </ThemedNavigationContainer>
+              </TrustMintModalProvider>
             </MenuProvider>
           </PrivacyProvider>
         </NfcAmountLimitsProvider>
