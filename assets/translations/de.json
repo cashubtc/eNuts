@@ -175,6 +175,8 @@
     "noMint": "Keine Mint gefunden",
     "notQrCode": "Kein QR-Code!",
     "noTX": "Noch keine Transaktionen",
+    "activity": "Aktivität",
+    "allHistory": "Alle",
     "optionalMemo": "Optionales Memo",
     "paste": "Einfügen",
     "paymentPending": "Zahlung ausstehend",
