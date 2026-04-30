@@ -35,7 +35,6 @@ interface INpcContext {
   deriveAccount: () => Promise<void>;
   importPrivateKeyAccount: (privateKey: string) => Promise<void>;
   removeAccount: (accountId: string) => Promise<void>;
-  refreshAccount: (accountId: string) => Promise<void>;
   syncAccount: (accountId: string) => Promise<void>;
   syncAll: () => Promise<void>;
   saveUsername: (accountId: string, username: string) => Promise<void>;
@@ -224,7 +223,14 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
       const nextAccounts = [...storedAccounts, nextAccount];
 
       await secureStore.set(privateKeyStorageKey, normalizedPrivateKey);
-      await saveStoredAccounts(nextAccounts);
+      try {
+        await saveStoredAccounts(nextAccounts);
+      } catch (error) {
+        try {
+          await secureStore.delete(privateKeyStorageKey);
+        } catch {}
+        throw error;
+      }
       await reloadAccounts(nextAccounts);
     },
     [reloadAccounts, storedAccounts],
@@ -251,18 +257,6 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
       }
     },
     [manager, reloadAccounts, storedAccounts],
-  );
-
-  const refreshAccount = useCallback(
-    async (accountId: string) => {
-      setBusyAccountId(accountId);
-      try {
-        await reloadAccounts(storedAccounts);
-      } finally {
-        setBusyAccountId(null);
-      }
-    },
-    [reloadAccounts, storedAccounts],
   );
 
   const syncAccount = useCallback(
@@ -323,7 +317,6 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
       deriveAccount,
       importPrivateKeyAccount,
       removeAccount,
-      refreshAccount,
       syncAccount,
       syncAll,
       saveUsername,
@@ -334,7 +327,6 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
       deriveAccount,
       importPrivateKeyAccount,
       isLoading,
-      refreshAccount,
       removeAccount,
       saveUsername,
       syncAccount,

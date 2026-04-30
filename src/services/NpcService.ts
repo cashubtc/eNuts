@@ -113,12 +113,16 @@ function bytesToHex(bytes: Uint8Array) {
     .join("");
 }
 
-function hexToBytes(hex: string) {
-  const normalized = hex.trim().toLowerCase();
+function normalizeHexPrivateKey(hex: string) {
+  const normalized = hex.trim().toLowerCase().replace(/^0x/, "");
   if (!/^[0-9a-f]{64}$/.test(normalized)) {
     throw new Error("Private key must be a 64-character hex key or nsec.");
   }
+  return normalized;
+}
 
+function hexToBytes(hex: string) {
+  const normalized = normalizeHexPrivateKey(hex);
   const bytes = new Uint8Array(32);
   for (let i = 0; i < bytes.length; i++) {
     bytes[i] = parseInt(normalized.slice(i * 2, i * 2 + 2), 16);
@@ -128,14 +132,15 @@ function hexToBytes(hex: string) {
 
 export function normalizeNpcPrivateKey(input: string) {
   const trimmed = input.trim();
-  if (trimmed.startsWith("nsec1")) {
-    const decoded = decode(trimmed);
+  const normalized = trimmed.toLowerCase();
+  if (normalized.startsWith("nsec1")) {
+    const decoded = decode(normalized);
     if (decoded.type !== "nsec") {
       throw new Error("Private key must be a valid nsec.");
     }
     return bytesToHex(decoded.data);
   }
-  return bytesToHex(hexToBytes(trimmed));
+  return normalizeHexPrivateKey(trimmed);
 }
 
 async function getSeedNpcIdentity(accountIndex: number): Promise<INpcIdentity> {

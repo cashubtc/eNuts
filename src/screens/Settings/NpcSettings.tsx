@@ -196,6 +196,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       return;
     }
 
+    setPrivateKeyInput("");
     void addAccountSheetRef.current?.dismiss();
     runAction(
       () => importPrivateKeyAccount(input),
@@ -218,7 +219,13 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           accessibilityRole="button"
           onPress={handleOpenAddAccountSheet}
           disabled={busyAccountId !== null}
-          style={[styles.headerButton, { backgroundColor: hi[highlight] }]}
+          style={[
+            styles.headerButton,
+            {
+              backgroundColor: hi[highlight],
+              opacity: busyAccountId !== null ? 0.5 : 1,
+            },
+          ]}
         >
           <PlusIcon width={s(20)} color={color.BACKGROUND} />
         </TouchableOpacity>
@@ -232,7 +239,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         <ScrollView alwaysBounceVertical={false}>
           <View style={[globals(color).wrapContainer, styles.summaryCard]}>
             <View style={styles.summaryHeader}>
-              <View>
+              <View style={styles.summaryText}>
                 <Txt
                   txt={t("npcReceiveTitle", { defaultValue: "NPC Lightning addresses" })}
                   bold
@@ -302,6 +309,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         backgroundColor={color.BACKGROUND}
         cornerRadius={s(26)}
         grabberOptions={{ color: color.TEXT_SECONDARY }}
+        onDidDismiss={() => setPrivateKeyInput("")}
       >
         <ScrollView
           style={{ backgroundColor: color.BACKGROUND }}
@@ -385,6 +393,9 @@ const styles = ScaledSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     gap: "12@s",
+  },
+  summaryText: {
+    flex: 1,
   },
   summaryTitle: {
     marginBottom: "6@vs",
