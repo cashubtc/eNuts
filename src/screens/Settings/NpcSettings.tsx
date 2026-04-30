@@ -7,7 +7,7 @@ import { CopyIcon, KeyIcon, PlusIcon, RefreshIcon, TrashbinIcon } from "@comps/I
 import type { TNpcSettingsPageProps } from "@src/nav/navTypes";
 import { useBalanceContext } from "@src/context/Balance";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useNpcContext, type INpcAccount } from "@src/context/Npc";
+import { useNpcContext, type INpcAccount, type TNpcUsernameAccountRequest } from "@src/context/Npc";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
@@ -15,7 +15,7 @@ import { isErr } from "@util";
 import { globals, highlight as hi, mainColors } from "@styles";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import * as Clipboard from "expo-clipboard";
-import { useRef, useEffect, useMemo, useState } from "react";
+import { useRef, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -26,7 +26,7 @@ interface INpcAccountCardProps {
   busy: boolean;
   onCopy: (value: string) => void;
   onRemove: (accountId: string) => void;
-  onSaveUsername: (accountId: string, username: string) => void;
+  onSetUsername: (account: INpcAccount) => void;
   onSync: (accountId: string) => void;
 }
 
@@ -35,18 +35,12 @@ function NpcAccountCard({
   busy,
   onCopy,
   onRemove,
-  onSaveUsername,
+  onSetUsername,
   onSync,
 }: INpcAccountCardProps) {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
-  const [username, setUsername] = useState(account.username || "");
 
-  useEffect(() => {
-    setUsername(account.username || "");
-  }, [account.username]);
-
-  const hasUsernameInput = username.trim().length > 0;
   const accountSourceLabel =
     account.source === "privateKey"
       ? t("npcImportedKey", { defaultValue: "Imported key" })
@@ -131,27 +125,13 @@ function NpcAccountCard({
         />
       </TouchableOpacity>
 
-      <View style={styles.fieldBlock}>
-        <Txt
-          txt={t("npcUsernameLabel", { defaultValue: "Custom username" })}
-          styles={[styles.label, { color: color.TEXT_SECONDARY }]}
-        />
-        <TxtInput
-          placeholder={t("npcUsernamePlaceholder", { defaultValue: "optional username" })}
-          value={username}
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={setUsername}
-        />
-      </View>
-
       <View style={styles.actions}>
         <View style={styles.primaryAction}>
           <Button
-            txt={t("npcPurchaseUsername", { defaultValue: "Save username" })}
-            onPress={() => onSaveUsername(account.id, username)}
-            disabled={!hasUsernameInput || busy}
-            loading={busy && hasUsernameInput}
+            txt={t("npcSetUsername", { defaultValue: "Set Username" })}
+            onPress={() => onSetUsername(account)}
+            disabled={busy}
+            loading={busy}
             size="small"
           />
         </View>
@@ -185,15 +165,21 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
   const { balances } = useBalanceContext();
   const { formatAmount } = useCurrencyContext();
   const addAccountSheetRef = useRef<TrueSheet>(null);
+  const usernameSheetRef = useRef<TrueSheet>(null);
   const [privateKeyInput, setPrivateKeyInput] = useState("");
+  const [selectedUsernameAccount, setSelectedUsernameAccount] = useState<INpcAccount | null>(null);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [usernameRequest, setUsernameRequest] = useState<TNpcUsernameAccountRequest | null>(null);
+  const [usernameBusy, setUsernameBusy] = useState(false);
   const {
     accounts,
     busyAccountId,
+    confirmUsername,
     deriveAccount,
     importPrivateKeyAccount,
     isLoading,
     removeAccount,
-    saveUsername,
+    requestUsername,
     syncAccount,
     syncAll,
   } = useNpcContext();
@@ -260,6 +246,70 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         defaultValue: "NPC account added",
       }),
     );
+  };
+
+  const handleOpenUsernameSheet = (account: INpcAccount) => {
+    setSelectedUsernameAccount(account);
+    setUsernameInput(account.username || "");
+    setUsernameRequest(null);
+    void usernameSheetRef.current?.present();
+  };
+
+  const handleCloseUsernameSheet = () => {
+    void usernameSheetRef.current?.dismiss();
+  };
+
+  const handleRequestUsername = () => {
+    const account = selectedUsernameAccount;
+    const username = usernameInput.trim();
+    if (!account) {
+      return;
+    }
+
+    setUsernameBusy(true);
+    void requestUsername(account.id, username)
+      .then((request) => {
+        if (request.type === "free") {
+          void usernameSheetRef.current?.dismiss();
+          openPromptAutoClose({
+            msg: t("npcUsernameSaved", { defaultValue: "Username saved" }),
+          });
+          return;
+        }
+
+        setUsernameRequest(request);
+      })
+      .catch((err: unknown) => {
+        openPromptAutoClose({
+          msg: isErr(err) ? err.message : t("tryLater"),
+        });
+      })
+      .finally(() => {
+        setUsernameBusy(false);
+      });
+  };
+
+  const handleConfirmUsername = () => {
+    if (!usernameRequest) {
+      return;
+    }
+
+    setUsernameBusy(true);
+    void confirmUsername(usernameRequest)
+      .then(() => {
+        void usernameSheetRef.current?.dismiss();
+        openPromptAutoClose({
+          msg: t("npcUsernameSaved", { defaultValue: "Username saved" }),
+        });
+      })
+      .catch((err: unknown) => {
+        openPromptAutoClose({
+          msg: isErr(err) ? err.message : t("tryLater"),
+        });
+      })
+      .finally(() => {
+        setUsernameBusy(false);
+      });
   };
 
   return (
@@ -366,12 +416,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                   t("npcAccountRemoved", { defaultValue: "NPC account removed" }),
                 )
               }
-              onSaveUsername={(accountId, username) =>
-                runAction(
-                  () => saveUsername(accountId, username),
-                  t("npcUsernameSaved", { defaultValue: "Username saved" }),
-                )
-              }
+              onSetUsername={handleOpenUsernameSheet}
               onSync={(accountId) =>
                 runAction(
                   () => syncAccount(accountId),
@@ -453,6 +498,122 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
               outlined
             />
           </View>
+        </ScrollView>
+      </TrueSheet>
+      <TrueSheet
+        ref={usernameSheetRef}
+        detents={["auto"]}
+        backgroundColor={color.BACKGROUND}
+        cornerRadius={s(26)}
+        dismissible={!usernameBusy}
+        draggable={!usernameBusy}
+        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        onDidDismiss={() => {
+          setSelectedUsernameAccount(null);
+          setUsernameInput("");
+          setUsernameRequest(null);
+          setUsernameBusy(false);
+        }}
+      >
+        <ScrollView
+          style={{ backgroundColor: color.BACKGROUND }}
+          contentContainerStyle={[
+            styles.sheetContainer,
+            { paddingBottom: Math.max(insets.bottom, s(22)) },
+          ]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.sheetHeader}>
+            <View style={[styles.sheetIcon, { backgroundColor: hi[highlight] }]}>
+              <KeyIcon width={s(22)} color={color.BACKGROUND} />
+            </View>
+            <View style={styles.sheetTitleBlock}>
+              <Txt
+                txt={t("npcSetUsername", { defaultValue: "Set Username" })}
+                bold
+                styles={[styles.sheetTitle]}
+              />
+              <Txt
+                txt={selectedUsernameAccount?.address || ""}
+                styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
+              />
+            </View>
+          </View>
+
+          {usernameRequest?.type === "payment" ? (
+            <View>
+              <View
+                style={[
+                  styles.usernamePreview,
+                  { backgroundColor: color.INPUT_BG, borderColor: color.DARK_BORDER },
+                ]}
+              >
+                <Txt
+                  txt={usernameRequest.username}
+                  bold
+                  center
+                  styles={[styles.usernamePreviewText, { color: hi[highlight] }]}
+                />
+              </View>
+              <Txt
+                txt={t("npcUsernameFeePrompt", {
+                  defaultValue: "Do you want to set this username for a fee of {{amount}} sats?",
+                  amount: usernameRequest.amount.toLocaleString(),
+                })}
+                center
+                styles={[styles.usernamePrompt, { color: color.TEXT_SECONDARY }]}
+              />
+              <View style={styles.sheetActions}>
+                <Button
+                  txt={t("confirm", { defaultValue: "Confirm" })}
+                  onPress={handleConfirmUsername}
+                  loading={usernameBusy}
+                  disabled={usernameBusy}
+                  size="small"
+                />
+                <Button
+                  txt={t("cancel", { defaultValue: "Cancel" })}
+                  onPress={handleCloseUsernameSheet}
+                  disabled={usernameBusy}
+                  size="small"
+                  outlined
+                />
+              </View>
+            </View>
+          ) : (
+            <View>
+              <View style={styles.fieldBlock}>
+                <Txt
+                  txt={t("npcUsernameLabel", { defaultValue: "Custom username" })}
+                  styles={[styles.label, { color: color.TEXT_SECONDARY }]}
+                />
+                <TxtInput
+                  placeholder={t("npcUsernamePlaceholder", { defaultValue: "optional username" })}
+                  value={usernameInput}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  onChangeText={setUsernameInput}
+                />
+              </View>
+              <View style={styles.sheetActions}>
+                <Button
+                  txt={t("npcRequestUsername", { defaultValue: "Request username" })}
+                  onPress={handleRequestUsername}
+                  loading={usernameBusy}
+                  disabled={usernameBusy}
+                  size="small"
+                />
+                <Button
+                  txt={t("cancel", { defaultValue: "Cancel" })}
+                  onPress={handleCloseUsernameSheet}
+                  disabled={usernameBusy}
+                  size="small"
+                  outlined
+                />
+              </View>
+            </View>
+          )}
         </ScrollView>
       </TrueSheet>
     </Screen>
@@ -641,6 +802,21 @@ const styles = ScaledSheet.create({
   removeText: {
     fontSize: "13@vs",
     fontWeight: "600",
+  },
+  usernamePreview: {
+    borderWidth: 1,
+    borderRadius: "18@s",
+    paddingHorizontal: "16@s",
+    paddingVertical: "18@vs",
+    marginBottom: "14@vs",
+  },
+  usernamePreviewText: {
+    fontSize: "20@vs",
+  },
+  usernamePrompt: {
+    fontSize: "14@vs",
+    lineHeight: "20@vs",
+    marginBottom: "18@vs",
   },
   sheetContainer: {
     paddingHorizontal: "20@s",

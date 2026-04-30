@@ -10,10 +10,12 @@ import {
   type IStoredNpcAccount,
   NPC_DEFAULT_ACCOUNT_ID,
   normalizeNpcPrivateKey,
+  payNpcUsernameRequest,
   registerNpcAccount,
   removeNpcAccount,
-  setNpcUsernameWithLocalBalance,
+  requestNpcUsername,
   syncNpcAccount,
+  type TNpcUsernameRequest,
 } from "@src/services/NpcService";
 import { secureStore, store } from "@store";
 import { STORE_KEYS } from "@store/consts";
@@ -28,6 +30,10 @@ export type INpcAccount = IStoredNpcAccount & {
   isSyncing: boolean;
 };
 
+export type TNpcUsernameAccountRequest = TNpcUsernameRequest & {
+  accountId: string;
+};
+
 interface INpcContext {
   accounts: INpcAccount[];
   isLoading: boolean;
@@ -37,7 +43,8 @@ interface INpcContext {
   removeAccount: (accountId: string) => Promise<void>;
   syncAccount: (accountId: string) => Promise<void>;
   syncAll: () => Promise<void>;
-  saveUsername: (accountId: string, username: string) => Promise<void>;
+  requestUsername: (accountId: string, username: string) => Promise<TNpcUsernameAccountRequest>;
+  confirmUsername: (usernameRequest: TNpcUsernameAccountRequest) => Promise<void>;
 }
 
 const NpcCtx = createContext<INpcContext | null>(null);
@@ -282,7 +289,18 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
     }
   }, [manager, reloadAccounts, storedAccounts]);
 
-  const saveUsername = useCallback(
+  const persistUsername = useCallback(
+    async (accountId: string, username: string) => {
+      const nextAccounts = storedAccounts.map((item) =>
+        item.id === accountId ? { ...item, username } : item,
+      );
+      await saveStoredAccounts(nextAccounts);
+      await reloadAccounts(nextAccounts);
+    },
+    [reloadAccounts, storedAccounts],
+  );
+
+  const requestUsername = useCallback(
     async (accountId: string, username: string) => {
       const trimmed = username.trim();
       if (!isValidNpcUsername(trimmed) || trimmed.length === 0) {
@@ -296,17 +314,38 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
 
       setBusyAccountId(accountId);
       try {
-        await setNpcUsernameWithLocalBalance(manager, account, trimmed);
-        const nextAccounts = storedAccounts.map((item) =>
-          item.id === accountId ? { ...item, username: trimmed } : item,
-        );
-        await saveStoredAccounts(nextAccounts);
-        await reloadAccounts(nextAccounts);
+        const usernameRequest = await requestNpcUsername(manager, account, trimmed);
+        if (usernameRequest.type === "free") {
+          await persistUsername(accountId, trimmed);
+        }
+
+        return {
+          ...usernameRequest,
+          accountId,
+        };
       } finally {
         setBusyAccountId(null);
       }
     },
-    [manager, reloadAccounts, storedAccounts],
+    [manager, persistUsername, storedAccounts],
+  );
+
+  const confirmUsername = useCallback(
+    async (usernameRequest: TNpcUsernameAccountRequest) => {
+      const account = storedAccounts.find((item) => item.id === usernameRequest.accountId);
+      if (!account) {
+        throw new Error("NPC account not found.");
+      }
+
+      setBusyAccountId(usernameRequest.accountId);
+      try {
+        await payNpcUsernameRequest(manager, account, usernameRequest);
+        await persistUsername(usernameRequest.accountId, usernameRequest.username);
+      } finally {
+        setBusyAccountId(null);
+      }
+    },
+    [manager, persistUsername, storedAccounts],
   );
 
   const value = useMemo(
@@ -319,16 +358,18 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
       removeAccount,
       syncAccount,
       syncAll,
-      saveUsername,
+      requestUsername,
+      confirmUsername,
     }),
     [
       accounts,
       busyAccountId,
+      confirmUsername,
       deriveAccount,
       importPrivateKeyAccount,
       isLoading,
       removeAccount,
-      saveUsername,
+      requestUsername,
       syncAccount,
       syncAll,
     ],

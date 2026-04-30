@@ -1,4 +1,4 @@
-import type { Manager, Plugin } from "@cashu/coco-core";
+import type { Manager, Plugin, ResolvedPaymentRequest } from "@cashu/coco-core";
 import { getEncodedToken } from "@cashu/coco-core";
 import {
   NPCPlugin,
@@ -46,6 +46,19 @@ export interface INpcIdentity {
   publicKey: string;
   npub: string;
 }
+
+export type TNpcUsernameRequest =
+  | {
+      type: "free";
+      username: string;
+    }
+  | {
+      type: "payment";
+      username: string;
+      amount: number;
+      mintUrl: string;
+      request: ResolvedPaymentRequest;
+    };
 
 interface INpcManager extends Manager {
   ext: Manager["ext"] & {
@@ -237,17 +250,24 @@ export async function getNpcAccountInfo(api: NPCAccountApi) {
   return api.getInfo();
 }
 
-export async function setNpcUsernameWithLocalBalance(
+function createNpcClient(identity: INpcIdentity) {
+  return new NPCClient(NPC_BASE_URL, new JWTAuthProvider(NPC_BASE_URL, identity.signer));
+}
+
+export async function requestNpcUsername(
   manager: Manager,
   account: IStoredNpcAccount,
   username: string,
-) {
+): Promise<TNpcUsernameRequest> {
   const identity = await getNpcIdentity(account);
-  const client = new NPCClient(NPC_BASE_URL, new JWTAuthProvider(NPC_BASE_URL, identity.signer));
+  const client = createNpcClient(identity);
 
   try {
     await client.setUsername(username);
-    return;
+    return {
+      type: "free",
+      username,
+    };
   } catch (error) {
     if (!(error instanceof PaymentRequiredError)) {
       throw error;
@@ -255,22 +275,62 @@ export async function setNpcUsernameWithLocalBalance(
 
     const encodedRequest = error.paymentRequest.toEncodedRequest();
     const request = await manager.paymentRequests.parse(encodedRequest);
+
+    if (request.transport.type !== "inband") {
+      throw new Error("NPC username purchase uses an unsupported payment transport.");
+    }
+
+    if (request.paymentRequest.unit && request.paymentRequest.unit !== "sat") {
+      throw new Error("NPC username purchase uses an unsupported payment unit.");
+    }
+
     const mintUrl = request.payableMints[0];
 
     if (!mintUrl) {
       throw new Error("No local mint can pay for this username.");
     }
 
-    const transaction = await manager.paymentRequests.prepare(request, {
-      mintUrl,
-      amount: request.amount,
-    });
-    const result = await manager.paymentRequests.execute(transaction);
-
-    if (result.type !== "inband") {
-      throw new Error("NPC username purchase did not return an in-band token.");
+    if (!request.amount) {
+      throw new Error("NPC username purchase did not include a fee amount.");
     }
 
-    await client.setUsername(username, getEncodedToken(result.token));
+    return {
+      type: "payment",
+      username,
+      amount: request.amount,
+      mintUrl,
+      request,
+    };
+  }
+}
+
+export async function payNpcUsernameRequest(
+  manager: Manager,
+  account: IStoredNpcAccount,
+  usernameRequest: TNpcUsernameRequest,
+) {
+  if (usernameRequest.type === "free") {
+    return;
+  }
+
+  const identity = await getNpcIdentity(account);
+  const client = createNpcClient(identity);
+  const transaction = await manager.paymentRequests.prepare(usernameRequest.request, {
+    mintUrl: usernameRequest.mintUrl,
+    amount: usernameRequest.amount,
+  });
+  const result = await manager.paymentRequests.execute(transaction);
+
+  if (result.type !== "inband") {
+    throw new Error("NPC username purchase did not return an in-band token.");
+  }
+
+  try {
+    await client.setUsername(usernameRequest.username, getEncodedToken(result.token));
+  } catch (error) {
+    if (error instanceof PaymentRequiredError) {
+      throw new Error("NPC username purchase was not accepted by the server.");
+    }
+    throw error;
   }
 }
