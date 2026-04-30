@@ -9,24 +9,37 @@ import {
 } from "coco-cashu-plugin-npc";
 import { JWTAuthProvider, NPCClient, PaymentRequiredError } from "npubcash-sdk";
 import { accountFromSeedWords } from "nostr-tools/nip06";
-import { finalizeEvent } from "nostr-tools/pure";
-import { npubEncode } from "nostr-tools/nip19";
+import { finalizeEvent, getPublicKey } from "nostr-tools/pure";
+import { decode, npubEncode } from "nostr-tools/nip19";
 
 import { appLogger } from "@src/logger";
 import { seedService } from "@src/services/SeedService";
-import { store } from "@store";
+import { secureStore, store } from "@store";
 
 export const NPC_BASE_URL = "https://npubx.cash";
 export const NPC_DOMAIN = new URL(NPC_BASE_URL).host;
 export const NPC_SYNC_INTERVAL_MS = 25_000;
 export const NPC_DEFAULT_ACCOUNT_ID = "npc-seed-0";
 
-export interface IStoredNpcAccount {
+export type TNpcAccountSource = "seed" | "privateKey";
+
+interface IBaseStoredNpcAccount {
   id: string;
-  accountIndex: number;
   label: string;
   username?: string;
 }
+
+export interface ISeedNpcAccount extends IBaseStoredNpcAccount {
+  source: "seed";
+  accountIndex: number;
+}
+
+export interface IPrivateKeyNpcAccount extends IBaseStoredNpcAccount {
+  source: "privateKey";
+  privateKeyStorageKey: string;
+}
+
+export type IStoredNpcAccount = ISeedNpcAccount | IPrivateKeyNpcAccount;
 
 export interface INpcIdentity {
   signer: Signer;
@@ -70,6 +83,7 @@ export function createNpcPlugin(): Plugin {
 export function createDefaultNpcAccount(): IStoredNpcAccount {
   return {
     id: NPC_DEFAULT_ACCOUNT_ID,
+    source: "seed",
     accountIndex: 0,
     label: "Main account",
   };
@@ -89,7 +103,42 @@ export function getNpcSinceStore(accountId: string) {
   return new StoreSinceStore(`npc_since:${accountId}`);
 }
 
-export async function getNpcIdentity(accountIndex: number): Promise<INpcIdentity> {
+export function getNpcPrivateKeyStorageKey(accountId: string) {
+  return `npc_private_key:${accountId}`;
+}
+
+function bytesToHex(bytes: Uint8Array) {
+  return Array.from(bytes)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function hexToBytes(hex: string) {
+  const normalized = hex.trim().toLowerCase();
+  if (!/^[0-9a-f]{64}$/.test(normalized)) {
+    throw new Error("Private key must be a 64-character hex key or nsec.");
+  }
+
+  const bytes = new Uint8Array(32);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(normalized.slice(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
+}
+
+export function normalizeNpcPrivateKey(input: string) {
+  const trimmed = input.trim();
+  if (trimmed.startsWith("nsec1")) {
+    const decoded = decode(trimmed);
+    if (decoded.type !== "nsec") {
+      throw new Error("Private key must be a valid nsec.");
+    }
+    return bytesToHex(decoded.data);
+  }
+  return bytesToHex(hexToBytes(trimmed));
+}
+
+async function getSeedNpcIdentity(accountIndex: number): Promise<INpcIdentity> {
   const mnemonic = await seedService.getMnemonic();
   if (!mnemonic) {
     throw new Error("No mnemonic found");
@@ -104,6 +153,30 @@ export async function getNpcIdentity(accountIndex: number): Promise<INpcIdentity
   };
 }
 
+async function getPrivateKeyNpcIdentity(privateKeyStorageKey: string): Promise<INpcIdentity> {
+  const savedKey = await secureStore.get(privateKeyStorageKey);
+  if (!savedKey) {
+    throw new Error("NPC private key not found.");
+  }
+
+  const privateKey = hexToBytes(savedKey);
+  const signer: Signer = async (template) => finalizeEvent(template, privateKey);
+  const publicKey = getPublicKey(privateKey);
+
+  return {
+    signer,
+    publicKey,
+    npub: npubEncode(publicKey),
+  };
+}
+
+export async function getNpcIdentity(account: IStoredNpcAccount): Promise<INpcIdentity> {
+  if (account.source === "privateKey") {
+    return getPrivateKeyNpcIdentity(account.privateKeyStorageKey);
+  }
+  return getSeedNpcIdentity(account.accountIndex);
+}
+
 export function getNpcExtension(manager: Manager) {
   const npc = (manager as INpcManager).ext.npc;
   if (!npc) {
@@ -114,7 +187,7 @@ export function getNpcExtension(manager: Manager) {
 
 export async function registerNpcAccount(manager: Manager, account: IStoredNpcAccount) {
   const npc = getNpcExtension(manager);
-  const identity = await getNpcIdentity(account.accountIndex);
+  const identity = await getNpcIdentity(account);
   const existing = npc.getAccount(account.id);
 
   if (existing) {
@@ -164,7 +237,7 @@ export async function setNpcUsernameWithLocalBalance(
   account: IStoredNpcAccount,
   username: string,
 ) {
-  const identity = await getNpcIdentity(account.accountIndex);
+  const identity = await getNpcIdentity(account);
   const client = new NPCClient(NPC_BASE_URL, new JWTAuthProvider(NPC_BASE_URL, identity.signer));
 
   try {

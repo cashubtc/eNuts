@@ -3,7 +3,7 @@ import Loading from "@comps/Loading";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
-import { PlusIcon, RefreshIcon, TrashbinIcon } from "@comps/Icons";
+import { KeyIcon, PlusIcon, RefreshIcon, TrashbinIcon } from "@comps/Icons";
 import type { TNpcSettingsPageProps } from "@src/nav/navTypes";
 import { useBalanceContext } from "@src/context/Balance";
 import { useCurrencyContext } from "@src/context/Currency";
@@ -13,10 +13,12 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { isErr } from "@util";
 import { globals, highlight as hi, mainColors } from "@styles";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import * as Clipboard from "expo-clipboard";
-import { useEffect, useMemo, useState } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { s, ScaledSheet } from "react-native-size-matters";
 
 interface INpcAccountCardProps {
@@ -123,13 +125,17 @@ function NpcAccountCard({
 export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
+  const insets = useSafeAreaInsets();
   const { openPromptAutoClose } = usePromptContext();
   const { balances } = useBalanceContext();
   const { formatAmount } = useCurrencyContext();
+  const addAccountSheetRef = useRef<TrueSheet>(null);
+  const [privateKeyInput, setPrivateKeyInput] = useState("");
   const {
     accounts,
-    addAccount,
     busyAccountId,
+    deriveAccount,
+    importPrivateKeyAccount,
     isLoading,
     removeAccount,
     saveUsername,
@@ -164,6 +170,41 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
     );
   };
 
+  const handleOpenAddAccountSheet = () => {
+    setPrivateKeyInput("");
+    void addAccountSheetRef.current?.present();
+  };
+
+  const handleDeriveAccount = () => {
+    void addAccountSheetRef.current?.dismiss();
+    runAction(
+      deriveAccount,
+      t("npcAccountAdded", {
+        defaultValue: "NPC account added",
+      }),
+    );
+  };
+
+  const handleImportPrivateKey = () => {
+    const input = privateKeyInput.trim();
+    if (!input) {
+      openPromptAutoClose({
+        msg: t("npcPrivateKeyRequired", {
+          defaultValue: "Enter an nsec or hex private key.",
+        }),
+      });
+      return;
+    }
+
+    void addAccountSheetRef.current?.dismiss();
+    runAction(
+      () => importPrivateKeyAccount(input),
+      t("npcAccountAdded", {
+        defaultValue: "NPC account added",
+      }),
+    );
+  };
+
   return (
     <Screen
       screenName={t("npcSettingsTitle", {
@@ -172,6 +213,16 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       })}
       withBackBtn
       handlePress={() => navigation.goBack()}
+      rightAction={
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={handleOpenAddAccountSheet}
+          disabled={busyAccountId !== null}
+          style={[styles.headerButton, { backgroundColor: hi[highlight] }]}
+        >
+          <PlusIcon width={s(20)} color={color.BACKGROUND} />
+        </TouchableOpacity>
+      }
     >
       {isLoading ? (
         <View style={styles.loadingContainer}>
@@ -214,16 +265,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                   outlined
                 />
               </View>
-              <TouchableOpacity
-                accessibilityRole="button"
-                onPress={() =>
-                  runAction(addAccount, t("npcAccountAdded", { defaultValue: "NPC account added" }))
-                }
-                disabled={busyAccountId !== null}
-                style={[styles.addButton, { backgroundColor: hi[highlight] }]}
-              >
-                <PlusIcon width={s(20)} color={color.BACKGROUND} />
-              </TouchableOpacity>
             </View>
           </View>
 
@@ -255,6 +296,78 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           ))}
         </ScrollView>
       )}
+      <TrueSheet
+        ref={addAccountSheetRef}
+        detents={["auto"]}
+        backgroundColor={color.BACKGROUND}
+        cornerRadius={s(26)}
+        grabberOptions={{ color: color.TEXT_SECONDARY }}
+      >
+        <ScrollView
+          style={{ backgroundColor: color.BACKGROUND }}
+          contentContainerStyle={[
+            styles.sheetContainer,
+            { paddingBottom: Math.max(insets.bottom, s(22)) },
+          ]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.sheetHeader}>
+            <View style={[styles.sheetIcon, { backgroundColor: hi[highlight] }]}>
+              <KeyIcon width={s(22)} color={color.BACKGROUND} />
+            </View>
+            <View style={styles.sheetTitleBlock}>
+              <Txt
+                txt={t("npcAddAccountTitle", { defaultValue: "Add NPC account" })}
+                bold
+                styles={[styles.sheetTitle]}
+              />
+              <Txt
+                txt={t("npcAddAccountHint", {
+                  defaultValue: "Import an existing Nostr key or derive a new key from your seed.",
+                })}
+                styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
+              />
+            </View>
+          </View>
+
+          <View style={styles.fieldBlock}>
+            <Txt
+              txt={t("npcPrivateKeyLabel", { defaultValue: "Private key" })}
+              styles={[styles.label, { color: color.TEXT_SECONDARY }]}
+            />
+            <TxtInput
+              placeholder={t("npcPrivateKeyPlaceholder", { defaultValue: "nsec or hex" })}
+              value={privateKeyInput}
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={setPrivateKeyInput}
+            />
+            <Txt
+              txt={t("npcPrivateKeyHint", {
+                defaultValue: "Imported keys are stored in secure storage on this device.",
+              })}
+              styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
+            />
+          </View>
+
+          <View style={styles.sheetActions}>
+            <Button
+              txt={t("npcImportPrivateKey", { defaultValue: "Import private key" })}
+              onPress={handleImportPrivateKey}
+              disabled={busyAccountId !== null}
+              size="small"
+            />
+            <Button
+              txt={t("npcDeriveAccount", { defaultValue: "Derive new key" })}
+              onPress={handleDeriveAccount}
+              disabled={busyAccountId !== null}
+              size="small"
+              outlined
+            />
+          </View>
+        </ScrollView>
+      </TrueSheet>
     </Screen>
   );
 }
@@ -285,7 +398,7 @@ const styles = ScaledSheet.create({
   summaryAction: {
     flex: 1,
   },
-  addButton: {
+  headerButton: {
     width: "44@s",
     height: "44@s",
     borderRadius: "22@s",
@@ -365,5 +478,32 @@ const styles = ScaledSheet.create({
   },
   primaryAction: {
     flex: 1,
+  },
+  sheetContainer: {
+    paddingHorizontal: "20@s",
+    paddingTop: "26@vs",
+  },
+  sheetHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: "12@s",
+    marginBottom: "22@vs",
+  },
+  sheetIcon: {
+    width: "44@s",
+    height: "44@s",
+    borderRadius: "22@s",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sheetTitleBlock: {
+    flex: 1,
+  },
+  sheetTitle: {
+    fontSize: "17@vs",
+    marginBottom: "4@vs",
+  },
+  sheetActions: {
+    gap: "10@vs",
   },
 });

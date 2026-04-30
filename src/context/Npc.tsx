@@ -5,32 +5,35 @@ import {
   getNpcAccountInfo,
   getNpcAddress,
   getNpcExtension,
+  getNpcPrivateKeyStorageKey,
   isValidNpcUsername,
   type IStoredNpcAccount,
   NPC_DEFAULT_ACCOUNT_ID,
+  normalizeNpcPrivateKey,
   registerNpcAccount,
   removeNpcAccount,
   setNpcUsernameWithLocalBalance,
   syncNpcAccount,
 } from "@src/services/NpcService";
-import { store } from "@store";
+import { secureStore, store } from "@store";
 import { STORE_KEYS } from "@store/consts";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type React from "react";
 
-export interface INpcAccount extends IStoredNpcAccount {
+export type INpcAccount = IStoredNpcAccount & {
   npub: string;
   address: string;
   isDefault: boolean;
   isRunning: boolean;
   isSyncing: boolean;
-}
+};
 
 interface INpcContext {
   accounts: INpcAccount[];
   isLoading: boolean;
   busyAccountId: string | null;
-  addAccount: () => Promise<void>;
+  deriveAccount: () => Promise<void>;
+  importPrivateKeyAccount: (privateKey: string) => Promise<void>;
   removeAccount: (accountId: string) => Promise<void>;
   refreshAccount: (accountId: string) => Promise<void>;
   syncAccount: (accountId: string) => Promise<void>;
@@ -39,6 +42,19 @@ interface INpcContext {
 }
 
 const NpcCtx = createContext<INpcContext | null>(null);
+
+function sortAccounts(accounts: IStoredNpcAccount[]) {
+  return [...accounts].sort((a, b) => {
+    if (a.id === NPC_DEFAULT_ACCOUNT_ID) return -1;
+    if (b.id === NPC_DEFAULT_ACCOUNT_ID) return 1;
+    if (a.source === "seed" && b.source === "seed") {
+      return a.accountIndex - b.accountIndex;
+    }
+    if (a.source === "seed") return -1;
+    if (b.source === "seed") return 1;
+    return a.id.localeCompare(b.id);
+  });
+}
 
 function parseAccounts(raw: string | null): IStoredNpcAccount[] {
   if (!raw) {
@@ -52,21 +68,43 @@ function parseAccounts(raw: string | null): IStoredNpcAccount[] {
     }
 
     const accounts = parsed
-      .filter((account): account is IStoredNpcAccount => {
-        return (
-          account &&
-          typeof account.id === "string" &&
-          typeof account.accountIndex === "number" &&
-          typeof account.label === "string"
-        );
+      .map((account): IStoredNpcAccount | null => {
+        if (!account || typeof account.id !== "string" || typeof account.label !== "string") {
+          return null;
+        }
+
+        if (
+          (account.source === "seed" || account.source === undefined) &&
+          typeof account.accountIndex === "number"
+        ) {
+          return {
+            id: account.id,
+            source: "seed",
+            accountIndex: account.accountIndex,
+            label: account.label,
+            username: typeof account.username === "string" ? account.username : undefined,
+          };
+        }
+
+        if (account.source === "privateKey" && typeof account.privateKeyStorageKey === "string") {
+          return {
+            id: account.id,
+            source: "privateKey",
+            privateKeyStorageKey: account.privateKeyStorageKey,
+            label: account.label,
+            username: typeof account.username === "string" ? account.username : undefined,
+          };
+        }
+
+        return null;
       })
-      .sort((a, b) => a.accountIndex - b.accountIndex);
+      .filter((account): account is IStoredNpcAccount => account !== null);
 
     if (!accounts.some((account) => account.id === NPC_DEFAULT_ACCOUNT_ID)) {
       accounts.unshift(createDefaultNpcAccount());
     }
 
-    return accounts.length ? accounts : [createDefaultNpcAccount()];
+    return sortAccounts(accounts.length ? accounts : [createDefaultNpcAccount()]);
   } catch {
     return [createDefaultNpcAccount()];
   }
@@ -79,7 +117,7 @@ async function loadStoredAccounts() {
 }
 
 async function saveStoredAccounts(accounts: IStoredNpcAccount[]) {
-  await store.set(STORE_KEYS.npcAccounts, JSON.stringify(accounts));
+  await store.set(STORE_KEYS.npcAccounts, JSON.stringify(sortAccounts(accounts)));
 }
 
 async function hydrateAccount(manager: Manager, account: IStoredNpcAccount): Promise<INpcAccount> {
@@ -152,11 +190,15 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
     };
   }, [manager]);
 
-  const addAccount = useCallback(async () => {
+  const deriveAccount = useCallback(async () => {
     const nextIndex =
-      storedAccounts.reduce((max, account) => Math.max(max, account.accountIndex), 0) + 1;
+      storedAccounts.reduce(
+        (max, account) => (account.source === "seed" ? Math.max(max, account.accountIndex) : max),
+        0,
+      ) + 1;
     const nextAccount: IStoredNpcAccount = {
       id: `npc-seed-${nextIndex}`,
+      source: "seed",
       accountIndex: nextIndex,
       label: `Account ${nextIndex + 1}`,
     };
@@ -164,6 +206,29 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
     await saveStoredAccounts(nextAccounts);
     await reloadAccounts(nextAccounts);
   }, [reloadAccounts, storedAccounts]);
+
+  const importPrivateKeyAccount = useCallback(
+    async (privateKey: string) => {
+      const normalizedPrivateKey = normalizeNpcPrivateKey(privateKey);
+      const importedCount = storedAccounts.filter(
+        (account) => account.source === "privateKey",
+      ).length;
+      const accountId = `npc-key-${Date.now()}`;
+      const privateKeyStorageKey = getNpcPrivateKeyStorageKey(accountId);
+      const nextAccount: IStoredNpcAccount = {
+        id: accountId,
+        source: "privateKey",
+        privateKeyStorageKey,
+        label: `Imported account ${importedCount + 1}`,
+      };
+      const nextAccounts = [...storedAccounts, nextAccount];
+
+      await secureStore.set(privateKeyStorageKey, normalizedPrivateKey);
+      await saveStoredAccounts(nextAccounts);
+      await reloadAccounts(nextAccounts);
+    },
+    [reloadAccounts, storedAccounts],
+  );
 
   const removeAccount = useCallback(
     async (accountId: string) => {
@@ -173,7 +238,11 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
 
       setBusyAccountId(accountId);
       try {
+        const account = storedAccounts.find((item) => item.id === accountId);
         await removeNpcAccount(manager, accountId);
+        if (account?.source === "privateKey") {
+          await secureStore.delete(account.privateKeyStorageKey);
+        }
         const nextAccounts = storedAccounts.filter((account) => account.id !== accountId);
         await saveStoredAccounts(nextAccounts);
         await reloadAccounts(nextAccounts);
@@ -251,7 +320,8 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
       accounts,
       isLoading,
       busyAccountId,
-      addAccount,
+      deriveAccount,
+      importPrivateKeyAccount,
       removeAccount,
       refreshAccount,
       syncAccount,
@@ -260,8 +330,9 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       accounts,
-      addAccount,
       busyAccountId,
+      deriveAccount,
+      importPrivateKeyAccount,
       isLoading,
       refreshAccount,
       removeAccount,

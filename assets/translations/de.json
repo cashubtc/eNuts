@@ -452,7 +452,15 @@
     "npcSynced": "NPC account synced",
     "npcAccountAdded": "NPC account added",
     "npcAccountRemoved": "NPC account removed",
-    "npcUsernameSaved": "Username saved"
+    "npcUsernameSaved": "Username saved",
+    "npcAddAccountTitle": "Add NPC account",
+    "npcAddAccountHint": "Import an existing Nostr key or derive a new key from your seed.",
+    "npcPrivateKeyLabel": "Private key",
+    "npcPrivateKeyPlaceholder": "nsec or hex",
+    "npcPrivateKeyHint": "Imported keys are stored in secure storage on this device.",
+    "npcPrivateKeyRequired": "Enter an nsec or hex private key.",
+    "npcImportPrivateKey": "Import private key",
+    "npcDeriveAccount": "Derive new key"
   },
   "topNav": {
     "about": "Über uns",
