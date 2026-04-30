@@ -1,7 +1,7 @@
 import { MintBoardIcon } from "@comps/Icons";
 import MintSelectionSheet from "@comps/MintSelectionSheet";
 import Txt from "@comps/Txt";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
@@ -30,7 +30,7 @@ export default function MintHeaderSelector({
   const { color, highlight } = useThemeContext();
   const { formatAmount } = useCurrencyContext();
   const { hidden } = usePrivacyContext();
-  const mintSelectionSheetRef = useRef<BottomSheetModal>(null);
+  const mintSelectionSheetRef = useRef<TrueSheet>(null);
 
   const headerBalance = useMemo(() => {
     if (hidden.balance) {

@@ -20,7 +20,6 @@
 - `npm run start` (Expo dev server)
 - `npm run android` (run Android device/emulator)
 - `npm run ios` (run iOS simulator)
-- `npm run web` (run web)
 
 ### Formatting
 

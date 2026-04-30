@@ -1,15 +1,23 @@
-import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import Txt from "@comps/Txt";
 import Button from "@comps/Button";
 import { CheckmarkIcon } from "@comps/Icons";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
+import { useKnownMints, type KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
 import { mainColors } from "@styles";
-import React, { forwardRef, useMemo, useCallback, memo, useState } from "react";
+import React, {
+  forwardRef,
+  useMemo,
+  useCallback,
+  memo,
+  useState,
+  useRef,
+  type MutableRefObject,
+} from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View, Dimensions } from "react-native";
+import { TouchableOpacity, View, ScrollView } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -86,7 +94,7 @@ const MintItem = memo(
 
 MintItem.displayName = "MintItem";
 
-const MintSelectionSheet = forwardRef<BottomSheetModal, MintSelectionSheetProps>(
+const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
   (
     {
       selectedMint,
@@ -103,9 +111,26 @@ const MintSelectionSheet = forwardRef<BottomSheetModal, MintSelectionSheetProps>
     const { formatAmount } = useCurrencyContext();
     const { knownMints } = useKnownMints();
     const insets = useSafeAreaInsets();
+    const sheetRef = useRef<TrueSheet>(null);
 
     // Internal state for multi-select mode
     const [internalSelectedMints, setInternalSelectedMints] = useState<KnownMintWithBalance[]>([]);
+
+    const setSheetRef = useCallback(
+      (sheet: TrueSheet | null) => {
+        sheetRef.current = sheet;
+
+        if (typeof ref === "function") {
+          ref(sheet);
+          return;
+        }
+
+        if (ref) {
+          (ref as MutableRefObject<TrueSheet | null>).current = sheet;
+        }
+      },
+      [ref],
+    );
 
     // Determine which mints to display based on balance visibility setting
     const displayMints = useMemo(
@@ -133,13 +158,6 @@ const MintSelectionSheet = forwardRef<BottomSheetModal, MintSelectionSheetProps>
         : [];
     }, [multiSelect, internalSelectedMints, selectedMint, displayMints]);
 
-    // Use dynamic sizing for optimal height calculation
-    const maxHeight = useMemo(() => {
-      // Cap height at 80% of screen height to prevent overly tall sheets
-      const screenHeight = Dimensions.get("window").height;
-      return Math.floor(screenHeight * 0.8);
-    }, []);
-
     const handleMintPress = useCallback(
       (mint: KnownMintWithBalance) => {
         if (multiSelect) {
@@ -154,18 +172,18 @@ const MintSelectionSheet = forwardRef<BottomSheetModal, MintSelectionSheetProps>
         } else {
           // Single select mode - close immediately
           onMintSelect(mint);
-          (ref as React.RefObject<BottomSheetModal>)?.current?.dismiss();
+          void sheetRef.current?.dismiss();
         }
       },
-      [multiSelect, onMintSelect, ref],
+      [multiSelect, onMintSelect],
     );
 
     const handleConfirmMultiSelect = useCallback(() => {
       if (onMultipleMintSelect) {
         onMultipleMintSelect(internalSelectedMints);
       }
-      (ref as React.RefObject<BottomSheetModal>)?.current?.dismiss();
-    }, [onMultipleMintSelect, internalSelectedMints, ref]);
+      void sheetRef.current?.dismiss();
+    }, [onMultipleMintSelect, internalSelectedMints]);
 
     const isMintSelected = useCallback(
       (mint: KnownMintWithBalance) => {
@@ -177,30 +195,21 @@ const MintSelectionSheet = forwardRef<BottomSheetModal, MintSelectionSheetProps>
       [multiSelect, internalSelectedMints, selectedMint],
     );
 
-    const renderBackdrop = useCallback(
-      (props: any) => (
-        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
-      ),
-      [],
-    );
-
     return (
-      <BottomSheetModal
-        ref={ref}
-        enablePanDownToClose={true}
-        enableDismissOnClose
-        enableDynamicSizing
-        maxDynamicContentSize={maxHeight}
-        backdropComponent={renderBackdrop}
-        backgroundStyle={{
-          backgroundColor: color.BACKGROUND,
-        }}
-        handleIndicatorStyle={{
-          backgroundColor: color.TEXT_SECONDARY,
+      <TrueSheet
+        ref={setSheetRef}
+        detents={[0.5, 1]}
+        backgroundColor={color.BACKGROUND}
+        cornerRadius={s(26)}
+        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        scrollable
+        scrollableOptions={{
+          topScrollEdgeEffect: "hidden",
+          bottomScrollEdgeEffect: "hidden",
         }}
       >
-        <BottomSheetScrollView
-          style={[styles.scrollView, { backgroundColor: color.BACKGROUND }]}
+        <ScrollView
+          style={{ backgroundColor: color.BACKGROUND }}
           contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom }]}
           showsVerticalScrollIndicator={false}
         >
@@ -214,9 +223,11 @@ const MintSelectionSheet = forwardRef<BottomSheetModal, MintSelectionSheetProps>
             ]}
           >
             <Txt
-              txt={t(multiSelect ? "selectMints" : "selectMint", {
-                ns: NS.common,
-              })}
+              txt={
+                multiSelect
+                  ? t("selectMints", { ns: NS.common })
+                  : t("selectMint", { ns: NS.common })
+              }
               styles={[styles.headerText, { color: color.TEXT }]}
             />
           </View>
@@ -262,8 +273,8 @@ const MintSelectionSheet = forwardRef<BottomSheetModal, MintSelectionSheetProps>
               )}
             </>
           )}
-        </BottomSheetScrollView>
-      </BottomSheetModal>
+        </ScrollView>
+      </TrueSheet>
     );
   },
 );
@@ -283,12 +294,9 @@ const styles = ScaledSheet.create({
     fontSize: "12@s",
     marginTop: "4@vs",
   },
-  scrollView: {
-    flex: 1,
-  },
   scrollContent: {
-    flexGrow: 1,
     paddingHorizontal: "16@s",
+    paddingTop: "30@vs",
   },
   emptyState: {
     padding: "20@s",

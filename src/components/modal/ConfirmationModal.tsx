@@ -1,12 +1,12 @@
 import Button from "@comps/Button";
 import Txt from "@comps/Txt";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useThemeContext } from "@src/context/Theme";
 import { globals } from "@styles";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, type ReactNode } from "react";
-import { Text, useWindowDimensions, View } from "react-native";
+import { ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ScaledSheet, vs } from "react-native-size-matters";
+import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export type ConfirmationModalRef = {
   present: () => void;
@@ -20,7 +20,6 @@ interface IConfirmationModalProps {
   cancelText: string;
   loading?: boolean;
   confirmDisabled?: boolean;
-  dismissible?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
   children: ReactNode;
@@ -35,7 +34,6 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
       cancelText,
       loading = false,
       confirmDisabled = false,
-      dismissible = true,
       onConfirm,
       onCancel,
       children,
@@ -45,18 +43,18 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
     const { color, highlight } = useThemeContext();
     const insets = useSafeAreaInsets();
     const { height } = useWindowDimensions();
-    const sheetRef = useRef<BottomSheetModal>(null);
+    const sheetRef = useRef<TrueSheet>(null);
     const notifyCancelOnDismissRef = useRef(true);
     const maxDynamicContentSize = Math.floor(height * 0.9);
 
     const present = useCallback(() => {
       notifyCancelOnDismissRef.current = true;
-      sheetRef.current?.present();
+      void sheetRef.current?.present();
     }, []);
 
     const close = useCallback((options?: { notifyCancel?: boolean }) => {
       notifyCancelOnDismissRef.current = options?.notifyCancel ?? false;
-      sheetRef.current?.dismiss();
+      void sheetRef.current?.dismiss();
     }, []);
 
     useImperativeHandle(ref, () => ({ present, close }), [present, close]);
@@ -74,32 +72,20 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
       }
     }, [onCancel]);
 
-    const renderBackdrop = useCallback(
-      (props: any) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-          opacity={0.5}
-          pressBehavior={loading || !dismissible ? "none" : "close"}
-        />
-      ),
-      [dismissible, loading],
-    );
-
     return (
-      <BottomSheetModal
+      <TrueSheet
         ref={sheetRef}
-        enableDynamicSizing
-        maxDynamicContentSize={maxDynamicContentSize}
-        enableDismissOnClose
-        enablePanDownToClose={!loading && dismissible}
-        backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: color.BACKGROUND }}
-        handleIndicatorStyle={{ backgroundColor: color.TEXT_SECONDARY }}
-        onDismiss={handleDismiss}
+        detents={["auto"]}
+        maxContentHeight={maxDynamicContentSize}
+        dismissible={false}
+        draggable={false}
+        backgroundColor={color.BACKGROUND}
+        cornerRadius={s(26)}
+        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        scrollable
+        onDidDismiss={handleDismiss}
       >
-        <BottomSheetScrollView
+        <ScrollView
           style={[styles.scrollContainer, { backgroundColor: color.BACKGROUND }]}
           contentContainerStyle={[
             styles.container,
@@ -129,8 +115,8 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
             />
             <Button txt={cancelText} onPress={handleCancel} outlined disabled={loading} />
           </View>
-        </BottomSheetScrollView>
-      </BottomSheetModal>
+        </ScrollView>
+      </TrueSheet>
     );
   },
 );
@@ -143,9 +129,9 @@ const styles = ScaledSheet.create({
   },
   container: {
     paddingHorizontal: "20@s",
+    paddingTop: "30@vs",
   },
   headerWrap: {
-    marginTop: "6@vs",
     marginBottom: "18@vs",
   },
   headerTitle: {
