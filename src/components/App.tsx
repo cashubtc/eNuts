@@ -11,10 +11,12 @@ import { CustomErrorBoundary } from "@screens/ErrorScreen/ErrorBoundary";
 // Balance is now provided by CocoCashuProvider
 import { CurrencyProvider } from "@src/context/Currency";
 import { NfcAmountLimitsProvider } from "@src/context/NfcAmountLimits";
+import { NpcProvider } from "@src/context/Npc";
 import { PrivacyProvider } from "@src/context/Privacy";
 import { PromptProvider } from "@src/context/Prompt";
 import { ThemeProvider, useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
+import { createNpcPlugin } from "@src/services/NpcService";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
 import { dark, light } from "@styles";
@@ -107,6 +109,7 @@ function useAppInitialization() {
           seedGetter: async () => seedService.getSeed(),
           logger: appLogger.child({ name: "Manager" }),
         });
+        mgr.use(createNpcPlugin());
         // Handle app state changes for subscription management
         AppState.addEventListener("change", (state) => {
           if (state === "background") {
@@ -179,11 +182,13 @@ function RootApp() {
   }
   return (
     <CocoCashuProvider manager={manager}>
-      <AppProviders>
-        <Navigator shouldOnboard={shouldOnboard} />
-        <ThemedStatusBar />
-        <Toaster />
-      </AppProviders>
+      <NpcProvider>
+        <AppProviders>
+          <Navigator shouldOnboard={shouldOnboard} />
+          <ThemedStatusBar />
+          <Toaster />
+        </AppProviders>
+      </NpcProvider>
     </CocoCashuProvider>
   );
 }

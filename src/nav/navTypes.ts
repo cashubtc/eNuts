@@ -11,11 +11,13 @@ export type SettingsStackParamList = {
   "Language settings": undefined;
   "Currency settings": undefined;
   "NFC settings": undefined;
+  "NPC settings": undefined;
   "Advanced settings": undefined;
   "View mnemonic": undefined;
 };
 
 export type TNfcSettingsPageProps = NativeStackScreenProps<SettingsStackParamList, "NFC settings">;
+export type TNpcSettingsPageProps = NativeStackScreenProps<SettingsStackParamList, "NPC settings">;
 
 type SettingsStackScreenProps<T extends keyof SettingsStackParamList> = NativeStackScreenProps<
   SettingsStackParamList,

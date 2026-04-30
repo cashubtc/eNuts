@@ -24,6 +24,7 @@
     "@types/react-native-onboarding-swiper": "^1.1.9",
     "bech32": "^2.0.0",
     "cashu-kym": "^0.4.1",
+    "coco-cashu-plugin-npc": "^3.0.0-rc.20260430.1.1.sha.211bc4c",
     "crypto-js": "^4.2.0",
     "expo": "~54.0.25",
     "expo-application": "~7.0.7",
