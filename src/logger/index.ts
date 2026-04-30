@@ -90,7 +90,7 @@ export function callerInfo(skipOf = 3) {
   return null;
 }
 
-// Application-wide structured logger instance compatible with coco-cashu-core and cashu-kym
+// Application-wide structured logger instance compatible with @cashu/coco-core and cashu-kym
 export const appLogger = new AppLogger({
   level: env.DEBUG === "full" || env.isReactNativeDevMode ? "debug" : "info",
   name: "eNuts",

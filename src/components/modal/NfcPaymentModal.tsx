@@ -8,6 +8,7 @@ import { NfcIcon, ExclamationIcon } from "@comps/Icons";
 import { useNfcAmountLimitsContext, NO_LIMIT } from "@src/context/NfcAmountLimits";
 import {
   useNfcPayment,
+  type NfcPaymentHandoff,
   type NfcPaymentResult,
   type LimitExceededError,
 } from "@comps/hooks/useNfcPayment";
@@ -30,6 +31,8 @@ interface INfcPaymentModalProps {
   onSuccess?: (result: NfcPaymentResult) => void;
   /** Called when payment fails */
   onError?: (result: NfcPaymentResult) => void;
+  /** Called when the NFC payload should be handled by another payment flow */
+  onPaymentHandoff?: (handoff: NfcPaymentHandoff) => void;
   /** Called when modal is closed/cancelled */
   onClose?: () => void;
 }
@@ -43,7 +46,7 @@ interface PendingConfirmation {
 }
 
 const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
-  ({ onSuccess, onError, onClose }, ref) => {
+  ({ onSuccess, onError, onPaymentHandoff, onClose }, ref) => {
     const { t } = useTranslation([NS.common]);
     const { color, highlight } = useThemeContext();
     const { formatBalance, formatSatsAsCurrency, rates, selectedCurrency } = useCurrencyContext();
@@ -67,6 +70,11 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
         setPendingConfirmation(null);
         bottomSheetRef.current?.close();
         onError?.(result);
+      },
+      onPaymentHandoff: (handoff) => {
+        setPendingConfirmation(null);
+        bottomSheetRef.current?.close();
+        onPaymentHandoff?.(handoff);
       },
       onLimitExceeded: (error: LimitExceededError) => {
         // Store the payment details and show confirmation UI

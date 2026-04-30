@@ -1,9 +1,9 @@
 import Separator from "@comps/Separator";
+import { SendHistoryEntry } from "@cashu/coco-core";
 import { NS } from "@src/i18n";
 import { mainColors } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
-import { SendHistoryEntry } from "coco-cashu-core";
 import { getEncodedToken } from "@cashu/cashu-ts";
 import { HistoryDetailsScreen } from "./HistoryDetailsScreen";
 import { HistoryOverview } from "./HistoryOverview";
@@ -11,7 +11,7 @@ import { DetailsSection, DetailRow } from "./DetailsSection";
 import { TokenSection } from "./TokenSection";
 import { useEffect, useState } from "react";
 import Button from "@comps/Button";
-import { useManager, useSend } from "coco-cashu-react";
+import { useManager } from "@cashu/coco-react";
 
 type SendHistoryDetailsProps = {
   entry: SendHistoryEntry;
@@ -22,7 +22,6 @@ export function SendHistoryDetails({ entry, onGoBack }: SendHistoryDetailsProps)
   const { t } = useTranslation([NS.history, NS.common]);
   const [reactiveEntry, setReactiveEntry] = useState(entry);
   const manager = useManager();
-  const { rollback } = useSend();
 
   useEffect(() => {
     const unsub = manager.on("history:updated", ({ entry: updatedEntry }) => {
@@ -78,7 +77,7 @@ export function SendHistoryDetails({ entry, onGoBack }: SendHistoryDetailsProps)
           txt="Abort Send"
           onPress={async () => {
             try {
-              await rollback(reactiveEntry.operationId);
+              await manager.ops.send.reclaim(reactiveEntry.operationId);
             } catch (error) {
               console.error("Error aborting send", error);
             }

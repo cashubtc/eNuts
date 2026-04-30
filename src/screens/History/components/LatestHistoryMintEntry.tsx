@@ -1,7 +1,7 @@
 import { CheckmarkIcon, ClockIcon, EcashIcon } from "@comps/Icons";
 import { LatestHistoryWrapper } from "./LatestHistoryWrapper";
 import { useThemeContext } from "@src/context/Theme";
-import { MintHistoryEntry } from "coco-cashu-core";
+import { MintHistoryEntry } from "@cashu/coco-core";
 import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 

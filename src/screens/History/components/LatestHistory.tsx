@@ -1,4 +1,4 @@
-import { HistoryEntry } from "coco-cashu-core";
+import { HistoryEntry } from "@cashu/coco-core";
 import { View } from "react-native";
 import { memo } from "react";
 import { LatestHistoryMintEntry } from "./LatestHistoryMintEntry";

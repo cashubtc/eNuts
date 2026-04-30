@@ -1,3 +1,5 @@
+import type { Manager } from "@cashu/coco-core";
+import { Token } from "@cashu/cashu-ts";
 import type { EventArg, NavigatorScreenParams } from "@react-navigation/core";
 import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -10,18 +12,17 @@ import type {
   IProofSelection,
   ITokenInfo,
 } from ".";
-import { MintQuoteResponse, Token, MeltQuoteResponse } from "@cashu/cashu-ts";
 import type { HistoryStackParamList, MintStackParamList } from "@src/nav/navTypes";
 import type { RestoreStackParamList } from "@src/nav/navTypes";
 import type { SettingsStackParamList } from "@src/nav/navTypes";
-import { l } from "@src/logger";
-import { LnAddressMetadata } from "@src/util/lud16";
 
 interface ILnurlNavData {
   userInput: string;
   url?: string;
   data?: ILnUrlPayRequest;
 }
+
+type TMintInvoiceOperation = Awaited<ReturnType<Manager["ops"]["mint"]["prepare"]>>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Success Screen Config Types (Tagged Union)
@@ -117,23 +118,9 @@ export type RootStackParamList = {
     isSendEcash?: boolean;
     remainingMints?: IMintUrl[];
   };
-  selectMintToSwapTo: {
-    mint: IMintUrl;
-    balance: number;
-    remainingMints?: IMintUrl[];
-  };
   SendSelectAmount: undefined;
   MintSelectAmount: undefined;
   MeltInput: { invoice?: string };
-  MeltConfirmation: {
-    quote: MeltQuoteResponse;
-    mintUrl: string;
-  };
-  MeltLnAddress: {
-    lnAddress: string;
-    metadata: LnAddressMetadata;
-    selectedMint: string;
-  };
   History: NavigatorScreenParams<HistoryStackParamList>;
   selectAmount: {
     isMelt?: boolean;
@@ -191,7 +178,7 @@ export type RootStackParamList = {
   };
   mintInvoice: {
     mintUrl: string;
-    quote: MintQuoteResponse;
+    operation: TMintInvoiceOperation;
   };
   encodedToken: {
     token: Token;
@@ -239,11 +226,6 @@ export type TSelectMintPageProps = NativeStackScreenProps<
 export type TSelectTargetPageProps = NativeStackScreenProps<
   RootStackParamList,
   "selectTarget",
-  "MyStack"
->;
-export type TSelectMintToSwapToPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "selectMintToSwapTo",
   "MyStack"
 >;
 export type SendSelectAmountProps = NativeStackScreenProps<
@@ -387,10 +369,4 @@ export type TBeforeRemoveEvent = EventArg<
       target?: string | undefined;
     }>;
   }
->;
-
-export type TMeltLnAddressPageProps = NativeStackScreenProps<
-  RootStackParamList,
-  "MeltLnAddress",
-  "MyStack"
 >;

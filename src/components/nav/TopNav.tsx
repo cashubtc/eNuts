@@ -1,85 +1,68 @@
-import { LeftArrow, SearchIcon } from "@comps/Icons";
+import { LeftArrow } from "@comps/Icons";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals, highlight as hi } from "@styles";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { ScaledSheet } from "react-native-size-matters";
 
-interface TTopNavProps {
+interface ITopNavProps {
   screenName?: string;
   withBackBtn?: boolean;
   handlePress?: () => void;
-
-  showSearch?: boolean;
-  toggleSearch?: () => void;
   cancel?: boolean;
   handleCancel?: () => void;
-  openProfile?: () => void;
-  handleMintBalancePress?: () => void;
-  disableMintBalance?: boolean;
-  txt?: string;
-  mintBalance?: number;
-  loading?: boolean;
-  noIcons?: boolean;
-  rightAction?: React.ReactNode;
+  rightAction?: ReactNode;
 }
 
 export default function TopNav({
   screenName,
   withBackBtn,
   handlePress,
-  showSearch,
-  toggleSearch,
   cancel,
   handleCancel,
-  txt,
   rightAction,
-}: TTopNavProps) {
+}: ITopNavProps) {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
+
   return (
     <View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>
-      {/* Placeholder */}
-      {!screenName && !withBackBtn && <View />}
-      <View style={styles.wrap}>
-        {withBackBtn && !txt?.length && (
+      <View style={styles.leftSlot}>
+        {withBackBtn ? (
           <TouchableOpacity
+            accessibilityRole="button"
+            activeOpacity={0.7}
             onPress={handlePress}
             style={styles.backiconWrap}
             testID="back-btn-top-nav"
           >
             <LeftArrow color={hi[highlight]} />
           </TouchableOpacity>
-        )}
-        {screenName && <Text style={globals(color).navTxt}>{screenName}</Text>}
+        ) : null}
       </View>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+
+      <View style={styles.titleSlot}>
+        {screenName ? (
+          <Text numberOfLines={1} style={[globals(color).navTxt, styles.title]}>
+            {screenName}
+          </Text>
+        ) : null}
+      </View>
+
+      <View style={styles.rightSlot}>
         {rightAction}
-        {showSearch && (
+        {cancel ? (
           <TouchableOpacity
-            onPress={() => toggleSearch?.()}
-            style={{
-              paddingHorizontal: s(5),
-              paddingVertical: vs(5),
-            }}
+            accessibilityRole="button"
+            activeOpacity={0.7}
+            style={styles.cancel}
+            onPress={handleCancel}
           >
-            <SearchIcon color={color.TEXT} />
+            <Text style={globals(color, highlight).pressTxt}>{t("cancel")}</Text>
           </TouchableOpacity>
-        )}
-        {(cancel || (txt && txt.length > 0)) && (
-          <TouchableOpacity
-            style={[styles.right, styles.cancel]}
-            onPress={() => {
-              if (txt?.length) {
-                return handlePress?.();
-              }
-              handleCancel?.();
-            }}
-          >
-            <Text style={globals(color, highlight).pressTxt}>{txt || t("cancel")}</Text>
-          </TouchableOpacity>
-        )}
+        ) : null}
       </View>
     </View>
   );
@@ -89,22 +72,38 @@ const styles = ScaledSheet.create({
   topNav: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: "10@vs",
-    paddingHorizontal: "8@s",
+    minHeight: "48@vs",
+    paddingHorizontal: "6@s",
   },
-  wrap: {
+  leftSlot: {
+    width: "44@s",
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  titleSlot: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: "6@s",
+  },
+  title: {
+    fontSize: "17@ms",
+    lineHeight: "22@vs",
+  },
+  rightSlot: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: "12@s",
+    justifyContent: "flex-end",
+    minWidth: "44@s",
   },
   backiconWrap: {
-    paddingRight: "20@s",
-  },
-  right: {
-    paddingLeft: "20@s",
+    width: "44@s",
+    height: "44@s",
+    alignItems: "center",
+    justifyContent: "center",
   },
   cancel: {
-    paddingHorizontal: "20@s",
+    minHeight: "44@vs",
+    justifyContent: "center",
+    paddingHorizontal: "10@s",
   },
 });

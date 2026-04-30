@@ -1,32 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUrDecoder } from "@comps/hooks/useUrDecoder";
-
-type ScanResultType = "LIGHTNING_INVOICE" | "CASHU_TOKEN" | "UNKNOWN";
-
-type ScanResult = {
-  type: ScanResultType;
-  content: string;
-};
-
-function parseScannerContent(content: string): ScanResult {
-  const trimmed = content.trim();
-  const normalized = trimmed.toLowerCase();
-
-  if (normalized.startsWith("lnbc")) {
-    return { type: "LIGHTNING_INVOICE", content: trimmed };
-  }
-  if (normalized.startsWith("lightning:")) {
-    return { type: "LIGHTNING_INVOICE", content: trimmed.slice(10) };
-  }
-  if (normalized.startsWith("cashua") || normalized.startsWith("cashub")) {
-    return { type: "CASHU_TOKEN", content: trimmed };
-  }
-  if (normalized.startsWith("cashu:")) {
-    return { type: "CASHU_TOKEN", content: trimmed.slice(6) };
-  }
-
-  return { type: "UNKNOWN", content: "" };
-}
+import { parsePaymentString, type PaymentStringCandidate } from "@util/paymentStringParser";
 
 const useScanResult = () => {
   const {
@@ -41,20 +15,19 @@ const useScanResult = () => {
     error: urError,
   } = useUrDecoder({ allowedTypes: ["bytes"] });
 
-  const [result, setResult] = useState<ScanResult | undefined>(undefined);
+  const [candidates, setCandidates] = useState<PaymentStringCandidate[] | undefined>(undefined);
   const handledRef = useRef(false);
 
   const reset = useCallback(() => {
     handledRef.current = false;
-    setResult(undefined);
+    setCandidates(undefined);
     resetUr();
   }, [resetUr]);
 
   // When UR completes, parse the decoded string
   useEffect(() => {
     if (!urComplete || !decodedString || handledRef.current) return;
-    const parsed = parseScannerContent(decodedString);
-    setResult(parsed);
+    setCandidates(parsePaymentString(decodedString));
     handledRef.current = true;
   }, [urComplete, decodedString]);
 
@@ -74,14 +47,13 @@ const useScanResult = () => {
         // Fall through to normal parsing if not accepted
       }
 
-      const parsed = parseScannerContent(content);
-      setResult(parsed);
+      setCandidates(parsePaymentString(content));
       handledRef.current = true;
     },
     [addPart],
   );
 
-  const complete = useMemo(() => Boolean(result), [result]);
+  const complete = useMemo(() => Boolean(candidates), [candidates]);
   const active = urActive;
   const error = urError;
 
@@ -94,7 +66,7 @@ const useScanResult = () => {
     expectedCount,
     receivedCount,
     error,
-    result,
+    candidates,
   };
 };
 

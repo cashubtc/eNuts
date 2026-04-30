@@ -1,26 +1,23 @@
 import TopNav from "@nav/TopNav";
+import { isIOS } from "@consts";
 import { useThemeContext } from "@src/context/Theme";
 import { globals } from "@styles";
-import { View, Platform } from "react-native";
+import type { ReactNode } from "react";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { KeyboardAvoidingView, useKeyboardState } from "react-native-keyboard-controller";
-import { isIOS } from "@consts";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 interface IContainerProps {
-  children: React.ReactNode;
+  children: ReactNode;
   screenName?: string;
   withBackBtn?: boolean;
   withCancelBtn?: boolean;
   handlePress?: () => void;
   handleCancel?: () => void;
-  mintBalance?: number;
-  handleMintBalancePress?: () => void;
-  disableMintBalance?: boolean;
-  noIcons?: boolean;
-  rightAction?: React.ReactNode;
+  rightAction?: ReactNode;
   withPadding?: boolean;
   withBottomInset?: boolean;
-  withKeyboard?: boolean; // New prop to enable keyboard handling
+  withKeyboard?: boolean;
 }
 
 export default function Screen({
@@ -30,14 +27,10 @@ export default function Screen({
   withCancelBtn,
   handlePress,
   handleCancel,
-  mintBalance,
-  handleMintBalancePress,
-  disableMintBalance,
-  noIcons,
   rightAction,
   withPadding = true,
   withBottomInset = true,
-  withKeyboard = false, // Default to false for backward compatibility
+  withKeyboard = false,
 }: IContainerProps) {
   const { color } = useThemeContext();
   const insets = useSafeAreaInsets();
@@ -75,10 +68,6 @@ export default function Screen({
         cancel={withCancelBtn}
         handleCancel={handleCancel}
         handlePress={handlePress}
-        mintBalance={mintBalance}
-        handleMintBalancePress={handleMintBalancePress}
-        disableMintBalance={disableMintBalance}
-        noIcons={noIcons}
         rightAction={rightAction}
       />
       {content}
@@ -86,8 +75,6 @@ export default function Screen({
   );
 }
 
-// Legacy export for backward compatibility
-// This now just calls the main Screen component with withKeyboard=true
 export function ScreenWithKeyboard(props: IContainerProps) {
   return <Screen {...props} withKeyboard={true} />;
 }

@@ -59,7 +59,7 @@ export type AppLoggerOptions = {
 };
 
 /**
- * App-wide logger compatible with coco-cashu-core and cashu-kym Logger interfaces.
+ * App-wide logger compatible with @cashu/coco-core and cashu-kym Logger interfaces.
  * - Level filtering
  * - Child loggers with inherited bindings
  * - Pluggable transports (console by default)

@@ -1,4 +1,4 @@
-import { isCashuToken, isLnInvoice } from "@util";
+import { parsePaymentString, type PaymentStringCandidate } from "@util";
 import { useCallback, useEffect, useState } from "react";
 import type { EmitterSubscription } from "react-native";
 import { Linking } from "react-native";
@@ -26,6 +26,23 @@ export function addEventListener(
     handler(e);
   });
 }
+
+const LINK_CANDIDATE_PRIORITY: PaymentStringCandidate["kind"][] = [
+  "cashuToken",
+  "lightningInvoice",
+  "lightningAddress",
+  "lnurl",
+];
+
+function normalizePaymentLink(url: string) {
+  const candidates = parsePaymentString(url);
+  const selected = LINK_CANDIDATE_PRIORITY.map((kind) =>
+    candidates.find((candidate) => candidate.kind === kind),
+  ).find((candidate): candidate is PaymentStringCandidate => Boolean(candidate));
+
+  return selected?.value || "";
+}
+
 export const useInitialURL = () => {
   const [url, setUrl] = useState<string>("");
   const [processing, setProcessing] = useState(true);
@@ -34,10 +51,7 @@ export const useInitialURL = () => {
     if (!event?.url) {
       return setUrl("");
     }
-    if (isCashuToken(event.url) || isLnInvoice(event.url)) {
-      return setUrl(event.url);
-    }
-    setUrl("");
+    return setUrl(normalizePaymentLink(event.url));
   }
 
   const clearUrl = useCallback(() => setUrl(""), []);
@@ -49,7 +63,7 @@ export const useInitialURL = () => {
       if (!initialUrl) {
         return;
       }
-      initialUrl = isCashuToken(initialUrl) || isLnInvoice(initialUrl) || "";
+      initialUrl = normalizePaymentLink(initialUrl);
       setProcessing(false);
       return setUrl(initialUrl);
     };

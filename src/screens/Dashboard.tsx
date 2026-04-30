@@ -168,6 +168,9 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               success: false,
             });
           }}
+          onPaymentHandoff={(handoff) => {
+            navigation.navigate("MeltInput", { invoice: handoff.value });
+          }}
         />
 
         {/* Receive options bottom sheet */}

@@ -1,17 +1,39 @@
+import { decodeUrlOrAddress } from "@util/lnurl";
+
 export type LnAddressMetadata = {
+  tag: "payRequest";
   callback: string;
-  minSendable?: number;
-  maxSendable?: number;
+  minSendable: number;
+  maxSendable: number;
+  metadata: string;
 };
 
-export async function requestLnAddressMetadata(lnAdress: string): Promise<LnAddressMetadata> {
-  const [username, domain] = lnAdress.split("@");
-  if (!username || !domain) {
-    throw new Error("Invalid LN address");
+function isLnurlPayMetadata(data: unknown): data is LnAddressMetadata {
+  if (!data || typeof data !== "object") {
+    return false;
   }
-  const url = `https://${domain}/.well-known/lnurlp/${username}`;
+
+  const metadata = data as Partial<LnAddressMetadata>;
+  return (
+    metadata.tag === "payRequest" &&
+    typeof metadata.callback === "string" &&
+    metadata.callback.length > 0 &&
+    typeof metadata.minSendable === "number" &&
+    typeof metadata.maxSendable === "number" &&
+    typeof metadata.metadata === "string"
+  );
+}
+
+export async function requestLnurlPayMetadata(lnUrlOrAddress: string): Promise<LnAddressMetadata> {
+  const url = decodeUrlOrAddress(lnUrlOrAddress);
+  if (!url) {
+    throw new Error("Invalid LNURL or Lightning address");
+  }
   const response = await fetch(url);
-  const data = (await response.json()) as LnAddressMetadata;
+  const data = (await response.json()) as unknown;
+  if (!isLnurlPayMetadata(data)) {
+    throw new Error("Invalid LNURL pay request");
+  }
   return data;
 }
 

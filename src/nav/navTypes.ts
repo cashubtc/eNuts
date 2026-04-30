@@ -1,7 +1,7 @@
+import { HistoryEntry } from "@cashu/coco-core";
 import { CompositeScreenProps, NavigatorScreenParams } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@src/model/nav";
-import { HistoryEntry } from "coco-cashu-core";
 
 // Settings Stack
 
@@ -78,8 +78,6 @@ export type SendSelectAmountProps = NativeStackScreenProps<RootStackParamList, "
 export type MintSelectAmountProps = NativeStackScreenProps<RootStackParamList, "MintSelectAmount">;
 
 export type MeltInputProps = NativeStackScreenProps<RootStackParamList, "MeltInput">;
-
-export type MeltConfirmationProps = NativeStackScreenProps<RootStackParamList, "MeltConfirmation">;
 
 export type RestoreScreenProps = NativeStackScreenProps<RootStackParamList, "Restore">;
 

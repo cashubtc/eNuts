@@ -20,24 +20,31 @@ import { View } from "react-native";
 import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
-  const { mintUrl, quote } = route.params;
+  const { operation } = route.params;
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
   const manager = useManager();
 
-  const handlePaidInvoice = async () => {
-    console.log("handlePaidInvoice", quote);
-    navigation.navigate("successScreen", {
-      type: "receive",
-      amount: quote.amount,
-    });
-  };
-
   useFocusEffect(
     useCallback(() => {
-      manager.on("mint-quote:redeemed", handlePaidInvoice);
-      return () => manager.off("mint-quote:redeemed", handlePaidInvoice);
-    }, []),
+      const handlePaidInvoice = ({
+        operation: finalizedOperation,
+      }: {
+        operation: { id: string };
+      }) => {
+        if (finalizedOperation.id !== operation.id) {
+          return;
+        }
+
+        navigation.navigate("successScreen", {
+          type: "receive",
+          amount: operation.amount,
+        });
+      };
+
+      manager.on("mint-op:finalized", handlePaidInvoice);
+      return () => manager.off("mint-op:finalized", handlePaidInvoice);
+    }, [manager, navigation, operation.amount, operation.id]),
   );
 
   return (
@@ -53,7 +60,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
         <View style={styles.content}>
           <QR
             size={vs(250)}
-            value={quote.request}
+            value={operation.request}
             onError={() => l("Error while generating the LN QR code")}
             isInvoice
             animate={false}
@@ -69,7 +76,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
           </View>
           <Button
             txt={t("shareInvoice")}
-            onPress={() => void share(quote.request)}
+            onPress={() => void share(operation.request)}
             icon={<ShareIcon color={getColor(highlight, color)} />}
             outlined
           />

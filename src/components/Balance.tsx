@@ -1,6 +1,7 @@
 import { SwapCurrencyIcon } from "@comps/Icons";
 import type { RootStackParamList } from "@model/nav";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { usePaginatedHistory } from "@cashu/coco-react";
 import { useBalanceContext } from "@src/context/Balance";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
@@ -13,7 +14,6 @@ import { s, ScaledSheet } from "react-native-size-matters";
 
 import { TxtButton } from "./Button";
 import Txt from "./Txt";
-import { usePaginatedHistory } from "coco-cashu-react";
 import { LatestHistory } from "@screens/History/components/LatestHistory";
 import { useCurrencyContext } from "@src/context/Currency";
 
@@ -25,7 +25,7 @@ export default function Balance({ nav }: IBalanceProps) {
   const { t } = useTranslation([NS.common]);
   const { color, highlight } = useThemeContext();
   const { hidden } = usePrivacyContext();
-  const { balance } = useBalanceContext();
+  const { balances } = useBalanceContext();
   const { history: latestHistory, hasMore } = usePaginatedHistory(3);
   const { formatAmount, formatBalance, setFormatBalance } = useCurrencyContext();
 
@@ -41,16 +41,16 @@ export default function Balance({ nav }: IBalanceProps) {
         disabled={hidden.balance}
       >
         <Text
-          testID={`balance: ${balance}`}
+          testID={`balance: ${balances.total.total}`}
           style={[styles.balAmount, { color: getColor(highlight, color) }]}
         >
-          {hidden.balance ? "****" : formatAmount(balance.total).formatted}
+          {hidden.balance ? "****" : formatAmount(balances.total.total).formatted}
         </Text>
         <View style={styles.balAssetNameWrap}>
           {!hidden.balance && (
             <>
               <Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
-                {formatAmount(balance.total).symbol}
+                {formatAmount(balances.total.total).symbol}
               </Text>
               <SwapCurrencyIcon width={s(20)} height={s(20)} color={getColor(highlight, color)} />
             </>

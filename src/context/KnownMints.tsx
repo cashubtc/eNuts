@@ -1,20 +1,20 @@
 import { useMemo } from "react";
-import { Mint } from "coco-cashu-core";
-import { useMints, useBalanceContext } from "coco-cashu-react";
+import { Mint } from "@cashu/coco-core";
+import { useMints, useBalanceContext } from "@cashu/coco-react";
 
 export type KnownMintWithBalance = Mint & { balance: number };
 
 export const useKnownMints = () => {
   const { trustedMints } = useMints();
-  const { balance } = useBalanceContext();
+  const { balances } = useBalanceContext();
 
   const knownMints: KnownMintWithBalance[] = useMemo(
     () =>
       trustedMints.map((mint) => ({
         ...mint,
-        balance: balance[mint.mintUrl] || 0,
+        balance: balances.byMint[mint.mintUrl]?.total || 0,
       })),
-    [trustedMints, balance],
+    [trustedMints, balances],
   );
 
   return { knownMints, loading: false };

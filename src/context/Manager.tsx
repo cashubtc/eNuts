@@ -5,5 +5,5 @@ export {
   ManagerGate,
   useManager,
   useManagerContext,
-} from "coco-cashu-react";
-export type { ManagerContextValue } from "coco-cashu-react";
+} from "@cashu/coco-react";
+export type { ManagerContextValue } from "@cashu/coco-react";

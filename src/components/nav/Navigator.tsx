@@ -8,7 +8,6 @@ import ProcessingErrorScreen from "@screens/Payment/ProcessingError";
 import InvoiceScreen from "@screens/Payment/Receive/Invoice";
 import CoinSelectionScreen from "@screens/Payment/Send/CoinSelection";
 import EncodedTokenPage from "@screens/Payment/Send/EncodedToken";
-import SelectMintToSwapToScreen from "@screens/Payment/Send/SelectMintToSwapTo";
 import SuccessPage from "@screens/Payment/Success";
 import SuccessScreen from "@screens/Payment/SuccessScreen";
 import QrScannerScreen from "@screens/QRScan/QrScannerScreen";
@@ -19,9 +18,7 @@ import { View } from "react-native";
 import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
 import MintSelectAmountScreen from "@screens/Payment/MintSelectAmount";
 import MeltInputScreen from "@screens/Payment/MeltInput";
-import MeltConfirmationScreen from "@screens/Payment/MeltConfirmation";
 import HistoryNavigator from "@src/nav/HistoryNavigator";
-import MeltLnAddressScreen from "@screens/Payment/MeltLnAddress";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -64,10 +61,7 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
           }}
         />
         <Stack.Screen name="Settings" component={SettingsNavigator} />
-        <Stack.Screen name="selectMintToSwapTo" component={SelectMintToSwapToScreen} />
         <Stack.Screen name="MeltInput" component={MeltInputScreen} />
-        <Stack.Screen name="MeltLnAddress" component={MeltLnAddressScreen} />
-        <Stack.Screen name="MeltConfirmation" component={MeltConfirmationScreen} />
         <Stack.Screen name="SendSelectAmount" component={SendSelectAmountScreen} />
         <Stack.Screen name="MintSelectAmount" component={MintSelectAmountScreen} />
         <Stack.Screen name="coinSelection" component={CoinSelectionScreen} />
