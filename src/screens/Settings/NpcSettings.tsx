@@ -1,9 +1,9 @@
-import Button, { TxtButton } from "@comps/Button";
+import Button from "@comps/Button";
 import Loading from "@comps/Loading";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
-import { KeyIcon, PlusIcon, RefreshIcon, TrashbinIcon } from "@comps/Icons";
+import { CopyIcon, KeyIcon, PlusIcon, RefreshIcon, TrashbinIcon } from "@comps/Icons";
 import type { TNpcSettingsPageProps } from "@src/nav/navTypes";
 import { useBalanceContext } from "@src/context/Balance";
 import { useCurrencyContext } from "@src/context/Currency";
@@ -47,39 +47,86 @@ function NpcAccountCard({
   }, [account.username]);
 
   const hasUsernameInput = username.trim().length > 0;
+  const accountSourceLabel =
+    account.source === "privateKey"
+      ? t("npcImportedKey", { defaultValue: "Imported key" })
+      : t("npcSeedKey", { defaultValue: "Seed key" });
+  const statusLabel = account.isSyncing
+    ? t("npcSyncing", { defaultValue: "Syncing" })
+    : account.isRunning
+      ? t("npcActive", { defaultValue: "Active" })
+      : t("npcPaused", { defaultValue: "Paused" });
 
   return (
     <View style={[globals(color).wrapContainer, styles.accountCard]}>
       <View style={styles.accountHeader}>
         <View style={styles.accountTitleWrap}>
-          <Txt txt={account.label} bold />
-          {account.isDefault && (
-            <View style={[styles.badge, { backgroundColor: hi[highlight] }]}>
+          <Txt txt={account.label} bold styles={[styles.accountTitle]} />
+          <View style={styles.badgeRow}>
+            <View style={[styles.sourceBadge, { borderColor: color.BORDER }]}>
               <Txt
-                txt={t("npcDefaultAccount", { defaultValue: "Default" })}
-                styles={[styles.badgeText, { color: color.BACKGROUND }]}
+                txt={accountSourceLabel}
+                styles={[styles.sourceBadgeText, { color: color.TEXT_SECONDARY }]}
               />
             </View>
-          )}
+            {account.isDefault && (
+              <View style={[styles.badge, { backgroundColor: hi[highlight] }]}>
+                <Txt
+                  txt={t("npcDefaultAccount", { defaultValue: "Default" })}
+                  styles={[styles.badgeText, { color: color.BACKGROUND }]}
+                />
+              </View>
+            )}
+          </View>
         </View>
         <TouchableOpacity
           accessibilityRole="button"
           onPress={() => onSync(account.id)}
           disabled={busy}
-          style={[styles.iconButton, { borderColor: color.BORDER }]}
+          style={[styles.iconButton, { borderColor: color.BORDER, opacity: busy ? 0.7 : 1 }]}
         >
           {busy ? <Loading size={s(16)} /> : <RefreshIcon width={s(18)} color={hi[highlight]} />}
         </TouchableOpacity>
       </View>
 
+      <View style={styles.statusRow}>
+        <View
+          style={[
+            styles.statusDot,
+            { backgroundColor: account.isRunning ? hi[highlight] : color.TEXT_SECONDARY },
+          ]}
+        />
+        <Txt txt={statusLabel} styles={[styles.statusText, { color: color.TEXT_SECONDARY }]} />
+      </View>
+
       <TouchableOpacity
         accessibilityRole="button"
         onPress={() => onCopy(account.address)}
-        style={[styles.addressBox, { borderColor: color.BORDER }]}
+        style={[
+          styles.addressBox,
+          { borderColor: color.DARK_BORDER, backgroundColor: color.BACKGROUND },
+        ]}
       >
-        <Txt txt={account.address} styles={[styles.addressText]} />
+        <View style={styles.addressHeader}>
+          <Txt
+            txt={t("npcReceiveAddress", { defaultValue: "Receive address" })}
+            styles={[styles.addressLabel, { color: color.TEXT_SECONDARY }]}
+          />
+          <View style={styles.copyHint}>
+            <Txt
+              txt={t("copy", { defaultValue: "Copy" })}
+              styles={[styles.copyText, { color: hi[highlight] }]}
+            />
+            <CopyIcon width={s(16)} color={hi[highlight]} />
+          </View>
+        </View>
+        <Txt txt={account.address} bold styles={[styles.addressText, { color: hi[highlight] }]} />
         <Txt
-          txt={account.username ? account.npub : t("npcTapToCopy", { defaultValue: "Tap to copy" })}
+          txt={
+            account.username
+              ? account.npub
+              : t("npcNpubFallback", { defaultValue: "Using your npub until a username is saved" })
+          }
           styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
         />
       </TouchableOpacity>
@@ -109,13 +156,21 @@ function NpcAccountCard({
           />
         </View>
         {!account.isDefault && (
-          <TxtButton
-            txt={t("remove", { defaultValue: "Remove" })}
+          <TouchableOpacity
+            accessibilityRole="button"
             onPress={() => onRemove(account.id)}
             disabled={busy}
-            txtColor={mainColors.ERROR}
-            icon={<TrashbinIcon width={s(18)} color={mainColors.ERROR} />}
-          />
+            style={[
+              styles.removeButton,
+              { borderColor: mainColors.ERROR, opacity: busy ? 0.5 : 1 },
+            ]}
+          >
+            <TrashbinIcon width={s(16)} color={mainColors.ERROR} />
+            <Txt
+              txt={t("remove", { defaultValue: "Remove" })}
+              styles={[styles.removeText, { color: mainColors.ERROR }]}
+            />
+          </TouchableOpacity>
         )}
       </View>
     </View>
@@ -147,6 +202,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
     () => formatAmount(balances.total.total),
     [balances.total.total, formatAmount],
   );
+  const accountCount = accounts.length.toString();
 
   const runAction = (action: () => Promise<void>, success?: string) => {
     void action()
@@ -213,21 +269,17 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         defaultValue: "Lightning address",
       })}
       withBackBtn
+      withPadding={false}
+      withBottomInset={false}
       handlePress={() => navigation.goBack()}
       rightAction={
         <TouchableOpacity
           accessibilityRole="button"
           onPress={handleOpenAddAccountSheet}
           disabled={busyAccountId !== null}
-          style={[
-            styles.headerButton,
-            {
-              backgroundColor: hi[highlight],
-              opacity: busyAccountId !== null ? 0.5 : 1,
-            },
-          ]}
+          style={[styles.headerAddAction, { opacity: busyAccountId !== null ? 0.5 : 1 }]}
         >
-          <PlusIcon width={s(20)} color={color.BACKGROUND} />
+          <PlusIcon width={s(30)} height={s(30)} color={hi[highlight]} />
         </TouchableOpacity>
       }
     >
@@ -236,7 +288,14 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           <Loading />
         </View>
       ) : (
-        <ScrollView alwaysBounceVertical={false}>
+        <ScrollView
+          alwaysBounceVertical={false}
+          contentContainerStyle={{
+            paddingHorizontal: 8,
+            paddingTop: 8,
+            paddingBottom: Math.max(insets.bottom, s(18)),
+          }}
+        >
           <View style={[globals(color).wrapContainer, styles.summaryCard]}>
             <View style={styles.summaryHeader}>
               <View style={styles.summaryText}>
@@ -252,10 +311,30 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                   styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
                 />
               </View>
-              <View style={[styles.balancePill, { borderColor: hi[highlight] }]}>
+            </View>
+            <View
+              style={[
+                styles.summaryStats,
+                { borderTopColor: color.DARK_BORDER, borderBottomColor: color.DARK_BORDER },
+              ]}
+            >
+              <View style={styles.summaryStat}>
+                <Txt
+                  txt={t("npcAccountsLabel", { defaultValue: "Accounts" })}
+                  styles={[styles.statLabel, { color: color.TEXT_SECONDARY }]}
+                />
+                <Txt txt={accountCount} bold styles={[styles.statValue]} />
+              </View>
+              <View style={[styles.statDivider, { backgroundColor: color.DARK_BORDER }]} />
+              <View style={styles.summaryStat}>
+                <Txt
+                  txt={t("npcLocalBalance", { defaultValue: "Local balance" })}
+                  styles={[styles.statLabel, { color: color.TEXT_SECONDARY }]}
+                />
                 <Txt
                   txt={`${balance.formatted} ${balance.symbol}`}
-                  styles={[styles.balanceText, { color: hi[highlight] }]}
+                  bold
+                  styles={[styles.statValue, { color: hi[highlight] }]}
                 />
               </View>
             </View>
@@ -392,13 +471,35 @@ const styles = ScaledSheet.create({
   summaryHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: "12@s",
   },
   summaryText: {
     flex: 1,
   },
   summaryTitle: {
     marginBottom: "6@vs",
+  },
+  summaryStats: {
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: "18@vs",
+    paddingVertical: "14@vs",
+  },
+  summaryStat: {
+    flex: 1,
+    paddingHorizontal: "14@s",
+  },
+  statDivider: {
+    width: 1,
+    height: "34@vs",
+  },
+  statLabel: {
+    fontSize: "11@vs",
+    marginBottom: "5@vs",
+  },
+  statValue: {
+    fontSize: "16@vs",
   },
   summaryActions: {
     flexDirection: "row",
@@ -409,23 +510,10 @@ const styles = ScaledSheet.create({
   summaryAction: {
     flex: 1,
   },
-  headerButton: {
-    width: "44@s",
-    height: "44@s",
-    borderRadius: "22@s",
+  headerAddAction: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  balancePill: {
-    borderWidth: 1,
-    borderRadius: "16@s",
-    paddingHorizontal: "10@s",
-    paddingVertical: "7@vs",
-    alignSelf: "flex-start",
-  },
-  balanceText: {
-    fontSize: "12@vs",
-    fontWeight: "600",
   },
   accountCard: {
     paddingBottom: "20@vs",
@@ -438,6 +526,13 @@ const styles = ScaledSheet.create({
   },
   accountTitleWrap: {
     flex: 1,
+    paddingRight: "12@s",
+  },
+  accountTitle: {
+    fontSize: "16@vs",
+    marginBottom: "8@vs",
+  },
+  badgeRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: "8@s",
@@ -451,6 +546,16 @@ const styles = ScaledSheet.create({
     fontSize: "10@vs",
     fontWeight: "600",
   },
+  sourceBadge: {
+    borderWidth: 1,
+    borderRadius: "12@s",
+    paddingHorizontal: "8@s",
+    paddingVertical: "3@vs",
+  },
+  sourceBadgeText: {
+    fontSize: "10@vs",
+    fontWeight: "600",
+  },
   iconButton: {
     width: "36@s",
     height: "36@s",
@@ -459,12 +564,42 @@ const styles = ScaledSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: "12@vs",
+    gap: "7@s",
+  },
+  statusDot: {
+    width: "7@s",
+    height: "7@s",
+    borderRadius: "4@s",
+  },
+  statusText: {
+    fontSize: "12@vs",
+  },
   addressBox: {
     borderWidth: 1,
     borderRadius: "16@s",
     paddingHorizontal: "14@s",
     paddingVertical: "12@vs",
     marginBottom: "16@vs",
+  },
+  addressHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: "8@vs",
+    gap: "12@s",
+  },
+  copyHint: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: "5@s",
+  },
+  copyText: {
+    fontSize: "12@vs",
+    fontWeight: "600",
   },
   addressText: {
     fontSize: "14@vs",
@@ -481,6 +616,9 @@ const styles = ScaledSheet.create({
     fontSize: "12@vs",
     marginBottom: "7@vs",
   },
+  addressLabel: {
+    fontSize: "12@vs",
+  },
   actions: {
     flexDirection: "row",
     alignItems: "center",
@@ -489,6 +627,20 @@ const styles = ScaledSheet.create({
   },
   primaryAction: {
     flex: 1,
+  },
+  removeButton: {
+    minHeight: "42@vs",
+    borderWidth: 1,
+    borderRadius: "22@s",
+    paddingHorizontal: "13@s",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6@s",
+  },
+  removeText: {
+    fontSize: "13@vs",
+    fontWeight: "600",
   },
   sheetContainer: {
     paddingHorizontal: "20@s",
