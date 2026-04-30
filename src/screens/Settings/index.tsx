@@ -10,6 +10,7 @@ import {
   PaletteIcon,
   SettingsIcon,
   SwapCurrencyIcon,
+  ZapIcon,
 } from "@comps/Icons";
 import type { TSettingsPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
@@ -94,6 +95,11 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             txt={t("nfcSettings", { defaultValue: "NFC Payments" })}
             icon={<NfcIcon width={s(18)} color={color.TEXT} />}
             onPress={() => navigation.navigate("NFC settings")}
+          />
+          <MenuItem
+            txt={t("npcSettings", { defaultValue: "Lightning address" })}
+            icon={<ZapIcon width={s(18)} color={color.TEXT} />}
+            onPress={() => navigation.navigate("NPC settings")}
           />
         </View>
         {/* SECURITY */}
