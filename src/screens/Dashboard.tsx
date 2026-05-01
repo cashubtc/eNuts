@@ -446,7 +446,7 @@ const styles = ScaledSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: "20@s",
+    paddingHorizontal: "8@s",
     paddingTop: "2@vs",
   },
   balanceSection: {
@@ -481,7 +481,7 @@ const styles = ScaledSheet.create({
     marginTop: "12@vs",
   },
   actionDockWrap: {
-    paddingHorizontal: "20@s",
+    paddingHorizontal: "8@s",
     paddingTop: "8@vs",
     paddingBottom: "10@vs",
     backgroundColor: "transparent",
