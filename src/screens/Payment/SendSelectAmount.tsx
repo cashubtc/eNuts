@@ -13,8 +13,7 @@ import { NS } from "@src/i18n";
 import type { TBeforeRemoveEvent } from "@model/nav";
 import { SendSelectAmountProps } from "@src/nav/navTypes";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { isErr, vib } from "@util";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -30,6 +29,7 @@ function isPreparedOrLaterSendOperation(
 
 export default function SendSelectAmountScreen({ navigation }: SendSelectAmountProps) {
   const { t } = useTranslation([NS.wallet, NS.common, NS.error]);
+  const theme = useAppThemeTokens();
   const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
   const amountInputRef = useRef<TextInput>(null);
@@ -290,7 +290,7 @@ export default function SendSelectAmountScreen({ navigation }: SendSelectAmountP
         <Button
           txt={t("continue", { ns: NS.common })}
           onPress={handleAmountSubmit}
-          icon={<ChevronRightIcon color={mainColors.WHITE} />}
+          icon={<ChevronRightIcon color={theme.white} />}
           loading={isSending}
         />
       </View>
@@ -323,7 +323,7 @@ export function MeltOverview({
   fee,
 }: IMeltOverviewProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const total = shouldEstimate ? 0 : amount + fee;
   const { formatted, symbol } = formatAmount(total);
@@ -344,10 +344,10 @@ export function MeltOverview({
           {
             color:
               !shouldEstimate && balTooLow
-                ? mainColors.ERROR
+                ? theme.error
                 : shouldEstimate
-                  ? color.TEXT
-                  : mainColors.VALID,
+                  ? theme.text
+                  : theme.valid,
           },
         ]}
       />

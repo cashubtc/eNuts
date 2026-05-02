@@ -1,7 +1,7 @@
 import Separator from "@comps/Separator";
 import { SendHistoryEntry } from "@cashu/coco-core";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
 import { getEncodedToken } from "@cashu/cashu-ts";
@@ -20,6 +20,7 @@ type SendHistoryDetailsProps = {
 
 export function SendHistoryDetails({ entry, onGoBack }: SendHistoryDetailsProps) {
   const { t } = useTranslation([NS.history, NS.common]);
+  const theme = useAppThemeTokens();
   const [reactiveEntry, setReactiveEntry] = useState(entry);
   const manager = useManager();
 
@@ -54,7 +55,7 @@ export function SendHistoryDetails({ entry, onGoBack }: SendHistoryDetailsProps)
       <HistoryOverview
         amount={reactiveEntry.amount}
         amountPrefix="-"
-        amountColor={mainColors.ERROR}
+        amountColor={theme.error}
         typeLabel={t("send")}
         description={getDescription()}
       />

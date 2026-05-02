@@ -5,9 +5,8 @@ import Screen from "@comps/Screen";
 import { HistoryEntry } from "@cashu/coco-core";
 import { usePaginatedHistory } from "@cashu/coco-react";
 import { FlashList } from "@shopify/flash-list";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -20,7 +19,7 @@ import { LatestHistoryReceiveEntry } from "./components/LatestHistoryReceiveEntr
 export default function HistoryPage({ navigation }: THistoryPageProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { history, loadMore, hasMore, isFetching, refresh } = usePaginatedHistory(5);
 
   const renderHistoryEntry = (entry: HistoryEntry) => {
@@ -56,7 +55,7 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
           <FlashList
             data={history}
             renderItem={({ item }) => (
-              <View style={[styles.entryCard, { backgroundColor: color.DRAWER }]}>
+              <View style={[styles.entryCard, { backgroundColor: theme.drawer }]}>
                 {renderHistoryEntry(item)}
               </View>
             )}
@@ -66,7 +65,7 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
             ListFooterComponent={
               isFetching && hasMore ? (
                 <View style={styles.loaderWrap}>
-                  <ActivityIndicator size="small" color={color.TEXT} />
+                  <ActivityIndicator size="small" color={theme.text} />
                 </View>
               ) : null
             }

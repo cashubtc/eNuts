@@ -1,42 +1,33 @@
 import type { TextStyle, ViewStyle } from "react-native";
 
-import { highlight, type HighlightKey, mainColors, type Theme } from "./colors";
-
 type TGlobalStyle = TextStyle & ViewStyle;
 type TGlobalStyles = Record<string, TGlobalStyle>;
 
-export const globalStyles = (color?: Theme, h?: HighlightKey) =>
+export const globalStyles = () =>
   ({
     container: {
       flex: 1,
-      backgroundColor: color?.BACKGROUND,
     },
     fullWidth: {
       width: "100%",
     },
     txt: {
       fontSize: 14,
-      color: color?.TEXT,
     },
     txtBold: {
       fontSize: 14,
       fontWeight: "500",
-      color: color?.TEXT,
     },
     pressTxt: {
       fontSize: 14,
       fontWeight: "500",
       textAlign: "center",
-      color: h ? highlight[h] : mainColors.BLACK,
     },
     navTxt: {
       fontSize: 18,
       fontWeight: "500",
-      color: color?.TEXT,
     },
     input: {
-      color: color?.TEXT,
-      backgroundColor: color?.INPUT_BG,
       paddingHorizontal: 18,
       paddingVertical: 18,
       borderRadius: 50,
@@ -49,12 +40,10 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) =>
       marginBottom: 30,
       marginTop: 10,
       textAlign: "center",
-      color: color?.TEXT,
     },
     modalTxt: {
       fontSize: 14,
       textAlign: "center",
-      color: color?.TEXT,
       marginHorizontal: 20,
       marginTop: -15,
       marginBottom: 30,
@@ -62,7 +51,6 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) =>
     scrollContainer: {
       flex: 1,
       borderRadius: 20,
-      backgroundColor: color?.DRAWER,
       padding: 0,
     },
     scrollRow: {
@@ -74,7 +62,6 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) =>
     },
     wrapContainer: {
       borderRadius: 20,
-      backgroundColor: color?.DRAWER,
       paddingHorizontal: 20,
       paddingTop: 20,
       paddingBottom: 5,
@@ -93,7 +80,6 @@ export const globalStyles = (color?: Theme, h?: HighlightKey) =>
       width: 20,
       height: 20,
       borderRadius: 10,
-      borderColor: color?.BORDER,
     },
     bold: {
       fontWeight: "500",

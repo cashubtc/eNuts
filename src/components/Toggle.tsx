@@ -1,6 +1,5 @@
 import { isIOS } from "@consts";
-import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { Switch } from "react-native";
 
 interface IToggleProps {
@@ -10,11 +9,11 @@ interface IToggleProps {
 }
 
 export default function Toggle({ value, onChange, disabled }: IToggleProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <Switch
-      trackColor={{ false: color.BORDER, true: hi[highlight] }}
-      thumbColor={color.TEXT}
+      trackColor={{ false: theme.border, true: theme.accent }}
+      thumbColor={theme.text}
       onValueChange={onChange}
       value={value}
       style={[

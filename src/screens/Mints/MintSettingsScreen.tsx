@@ -6,10 +6,9 @@ import { l } from "@log";
 import ConfirmBottomSheet, { ConfirmBottomSheetRef } from "@comps/modal/ConfirmBottomSheet";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,7 +20,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
   const { t } = useTranslation([NS.common]);
   const { untrustMint } = useTrustedMints();
   const { openPromptAutoClose } = usePromptContext();
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
 
   const { knownMints } = useKnownMints();
@@ -46,7 +45,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Mint Header Card */}
-        <View style={[styles.headerCard, { backgroundColor: color.INPUT_BG }]}>
+        <View style={[styles.headerCard, { backgroundColor: theme.inputBackground }]}>
           <View style={styles.headerContent}>
             {mint?.mintInfo?.icon_url && (
               <Image
@@ -58,12 +57,12 @@ export default function MintSettingsScreen({ navigation, route }: any) {
             )}
             <View style={styles.headerTextContainer}>
               {mint?.mintInfo?.name && (
-                <Txt txt={mint.mintInfo.name} styles={[styles.mintName, { color: color.TEXT }]} />
+                <Txt txt={mint.mintInfo.name} styles={[styles.mintName, { color: theme.text }]} />
               )}
               {mint?.mintInfo?.version && (
                 <Txt
                   txt={`Version ${mint.mintInfo.version}`}
-                  styles={[styles.mintVersion, { color: color.TEXT_SECONDARY }]}
+                  styles={[styles.mintVersion, { color: theme.textSecondary }]}
                 />
               )}
             </View>
@@ -74,12 +73,12 @@ export default function MintSettingsScreen({ navigation, route }: any) {
         <View style={styles.section}>
           <Txt
             txt={t("general", { ns: NS.mints })}
-            styles={[styles.sectionTitle, { color: color.TEXT_SECONDARY }]}
+            styles={[styles.sectionTitle, { color: theme.textSecondary }]}
           />
-          <View style={[styles.card, { backgroundColor: color.INPUT_BG }]}>
+          <View style={[styles.card, { backgroundColor: theme.inputBackground }]}>
             <Txt
               txt={formatMintUrl(route.params.mintUrl)}
-              styles={[styles.urlText, { color: color.TEXT }]}
+              styles={[styles.urlText, { color: theme.text }]}
             />
           </View>
         </View>
@@ -93,9 +92,9 @@ export default function MintSettingsScreen({ navigation, route }: any) {
             <View style={styles.section}>
               <Txt
                 txt={t("metadata", { ns: NS.mints })}
-                styles={[styles.sectionTitle, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.sectionTitle, { color: theme.textSecondary }]}
               />
-              <View style={[styles.card, { backgroundColor: color.INPUT_BG }]}>
+              <View style={[styles.card, { backgroundColor: theme.inputBackground }]}>
                 {mint.mintInfo.description && (
                   <InfoRow
                     label="Description"
@@ -142,7 +141,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
         <View style={styles.section}>
           <Txt
             txt={t("dangerZone", { ns: NS.mints })}
-            styles={[styles.sectionTitle, { color: mainColors.ERROR }]}
+            styles={[styles.sectionTitle, { color: theme.error }]}
           />
           <Button
             txt={t("delMint", { ns: NS.mints })}
@@ -172,14 +171,14 @@ interface IInfoRow {
 }
 
 function InfoRow({ label, value, hasSeparator }: IInfoRow) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <>
       <View style={styles.infoRow}>
-        <Txt txt={label} styles={[styles.infoLabel, { color: color.TEXT_SECONDARY }]} />
-        <Txt txt={value} styles={[styles.infoValue, { color: color.TEXT }]} />
+        <Txt txt={label} styles={[styles.infoLabel, { color: theme.textSecondary }]} />
+        <Txt txt={value} styles={[styles.infoValue, { color: theme.text }]} />
       </View>
-      {hasSeparator && <View style={[styles.infoSeparator, { backgroundColor: color.BORDER }]} />}
+      {hasSeparator && <View style={[styles.infoSeparator, { backgroundColor: theme.border }]} />}
     </>
   );
 }

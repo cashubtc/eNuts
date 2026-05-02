@@ -1,3 +1,4 @@
+import { useAppThemeTokens } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
 import Txt from "@comps/Txt";
@@ -5,7 +6,6 @@ import { isIOS } from "@consts";
 import type { TBeforeRemoveEvent, TSuccessPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useBalanceContext } from "@src/context/Balance";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import { isNum, vib } from "@util";
@@ -18,7 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
   const { amount, memo, fee, change, mint, isClaim, isMelt, isAutoSwap, isScanned } = route.params;
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
 
@@ -35,7 +35,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
   }, [navigation]);
 
   return (
-    <View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View pointerEvents="none" style={styles.confetti}>
         <LottieView
           source={require("../../../assets/lottie/confetti.json")}
@@ -45,7 +45,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
         />
       </View>
       <View style={{ width: "100%" }}>
-        <Text testID={`amount: ${amount}`} style={[styles.successTxt, { color: color.TEXT }]}>
+        <Text testID={`amount: ${amount}`} style={[styles.successTxt, { color: theme.text }]}>
           {(() => {
             if (isMelt && !isAutoSwap) {
               return t("paymentSuccess");
@@ -56,9 +56,9 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             return null;
           })()}
         </Text>
-        {memo && <Text style={[styles.mints, { color: color.TEXT_SECONDARY }]}>{memo}</Text>}
+        {memo && <Text style={[styles.mints, { color: theme.textSecondary }]}>{memo}</Text>}
         {mint && mint.length > 0 && (
-          <Text testID={`mint: ${mint}`} style={[styles.mints, { color: color.TEXT_SECONDARY }]}>
+          <Text testID={`mint: ${mint}`} style={[styles.mints, { color: theme.textSecondary }]}>
             {mint}
           </Text>
         )}

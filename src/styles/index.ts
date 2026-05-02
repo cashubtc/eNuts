@@ -1,5 +1,5 @@
 export type { HighlightKey, Theme } from "./colors";
-export { dark, getPinpadBg, highlight, light, lightTheme, mainColors, themeColors } from "./colors";
+export { themeColors } from "./colors";
 export { globalStyles as globals } from "./globals";
 export {
   AppText,
@@ -14,5 +14,6 @@ export {
   Surface,
   XStack,
   YStack,
+  useAppThemeTokens,
 } from "./tamagui";
 export { getTamaguiThemeName, tamaguiConfig } from "./tamagui.config";

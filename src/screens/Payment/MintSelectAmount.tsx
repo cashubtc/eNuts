@@ -7,7 +7,7 @@ import Txt from "@comps/Txt";
 import { useKnownMints } from "@src/context/KnownMints";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { vib } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
@@ -15,11 +15,11 @@ import { useTranslation } from "react-i18next";
 import { Keyboard, TextInput, View, StyleSheet } from "react-native";
 import { useManager } from "@src/context/Manager";
 import type { MintSelectAmountProps } from "@src/nav/navTypes";
-import { useThemeContext } from "@src/context/Theme";
 import useLoading from "@comps/hooks/Loading";
 
 export default function MintSelectAmountScreen({ navigation }: MintSelectAmountProps) {
   const { t } = useTranslation([NS.wallet, NS.common]);
+  const theme = useAppThemeTokens();
   const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
   const { loading, startLoading, stopLoading } = useLoading();
@@ -170,7 +170,7 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
         <Button
           txt={t("continue", { ns: NS.common })}
           onPress={handleSubmit}
-          icon={<ChevronRightIcon color={mainColors.WHITE} />}
+          icon={<ChevronRightIcon color={theme.white} />}
           loading={loading}
         />
       </View>
@@ -194,7 +194,7 @@ export function MeltOverview({
   fee,
 }: IMeltOverviewProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const total = shouldEstimate ? 0 : amount + fee;
   const { formatted, symbol } = formatAmount(total);
@@ -215,10 +215,10 @@ export function MeltOverview({
           {
             color:
               !shouldEstimate && balTooLow
-                ? mainColors.ERROR
+                ? theme.error
                 : shouldEstimate
-                  ? color.TEXT
-                  : mainColors.VALID,
+                  ? theme.text
+                  : theme.valid,
           },
         ]}
       />

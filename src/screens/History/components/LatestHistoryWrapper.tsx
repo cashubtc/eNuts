@@ -1,9 +1,8 @@
+import { useAppThemeTokens } from "@styles";
 import Txt from "@comps/Txt";
 import { HistoryEntry } from "@cashu/coco-core";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
-import { getColor } from "@src/styles/colors";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import EntryTime from "@screens/History/entryTime";
@@ -29,7 +28,7 @@ export function LatestHistoryWrapper({
   variant = "highlight",
   entry,
 }: LatestHistoryWrapperProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { hidden } = usePrivacyContext();
   const { formatAmount } = useCurrencyContext();
   const { t } = useTranslation([NS.history, NS.common]);
@@ -37,9 +36,8 @@ export function LatestHistoryWrapper({
 
   // Use white/background color for highlight mode (colored background)
   // Use theme text colors for standard mode (white/drawer background)
-  const textColor = variant === "highlight" ? getColor(highlight, color) : color.TEXT;
-  const secondaryTextColor =
-    variant === "highlight" ? getColor(highlight, color) : color.TEXT_SECONDARY;
+  const textColor = variant === "highlight" ? theme.accentContrast : theme.text;
+  const secondaryTextColor = variant === "highlight" ? theme.accentContrast : theme.textSecondary;
 
   const handlePress = () => {
     navigation.navigate("History", {

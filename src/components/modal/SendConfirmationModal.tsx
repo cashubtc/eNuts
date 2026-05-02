@@ -8,8 +8,7 @@ import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { useThemeContext } from "@src/context/Theme";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -36,7 +35,7 @@ interface IDetailRow {
 const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirmationModalProps>(
   ({ operation, mint, loading = false, onConfirm, onCancel }, ref) => {
     const { t } = useTranslation([NS.common, NS.auth]);
-    const { color } = useThemeContext();
+    const theme = useAppThemeTokens();
     const { hidden } = usePrivacyContext();
     const { formatAmount } = useCurrencyContext();
 
@@ -121,7 +120,7 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
               <Txt
                 txt={t("amount", { ns: NS.common })}
                 center
-                styles={[styles.amountLabel, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.amountLabel, { color: theme.textSecondary }]}
               />
               <Txt
                 txt={formatDisplayAmount(operation.amount)}
@@ -145,7 +144,7 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
               <View style={styles.mintSection}>
                 <Txt
                   txt={t("sendingFrom", { ns: NS.common, defaultValue: "Sending from" })}
-                  styles={[styles.sectionLabel, { color: color.TEXT_SECONDARY }]}
+                  styles={[styles.sectionLabel, { color: theme.textSecondary }]}
                 />
                 <OperationMintPanel mint={mint} rows={mintRows} />
               </View>
@@ -160,22 +159,22 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
 );
 
 function DetailRow({ row }: { row: IDetailRow }) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   const valueColor = useMemo(() => {
     switch (row.tone) {
       case "success":
-        return mainColors.VALID;
+        return theme.valid;
       case "danger":
-        return mainColors.ERROR;
+        return theme.error;
       default:
-        return color.TEXT;
+        return theme.text;
     }
-  }, [color.TEXT, row.tone]);
+  }, [theme.text, row.tone]);
 
   return (
     <View style={styles.detailRow}>
-      <Txt txt={row.label} styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]} />
+      <Txt txt={row.label} styles={[styles.detailLabel, { color: theme.textSecondary }]} />
       <Txt txt={row.value} bold styles={[styles.detailValue, { color: valueColor }]} />
     </View>
   );

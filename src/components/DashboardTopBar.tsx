@@ -1,7 +1,7 @@
 import { SettingsIcon } from "@comps/Icons";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
-import { Stack, highlight as hi } from "@styles";
+import { Stack, useAppThemeTokens } from "@styles";
 import { Image, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -10,10 +10,10 @@ interface IDashboardTopBarProps {
 }
 
 export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarProps) {
-  const { color, highlight, activeTheme } = useThemeContext();
+  const { highlight, activeTheme } = useThemeContext();
   const { handleLogoPress } = usePrivacyContext();
   const insets = useSafeAreaInsets();
-  const iconColor = hi[highlight];
+  const theme = useAppThemeTokens();
 
   const logoSrc =
     activeTheme === "dark" && (highlight === "Zap" || highlight === "Azyre" || highlight === "Rosy")
@@ -24,7 +24,8 @@ export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarPro
     <Stack
       paddingHorizontal={20}
       paddingBottom={4}
-      style={{ paddingTop: insets.top, backgroundColor: color.BACKGROUND }}
+      backgroundColor="$background"
+      style={{ paddingTop: insets.top }}
     >
       <Stack flexDirection="row" alignItems="center" justifyContent="space-between" minHeight={50}>
         <TouchableOpacity
@@ -37,7 +38,7 @@ export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarPro
             borderRadius={18}
             alignItems="center"
             justifyContent="center"
-            style={{ backgroundColor: hi[highlight] }}
+            backgroundColor="$accent"
           >
             <Image source={logoSrc} style={{ width: 27, height: 27 }} resizeMode="contain" />
           </Stack>
@@ -46,7 +47,7 @@ export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarPro
           onPress={onSettingsPress}
           style={{ width: 48, height: 48, alignItems: "center", justifyContent: "center" }}
         >
-          <SettingsIcon width={24} height={24} color={iconColor} />
+          <SettingsIcon width={24} height={24} color={theme.accent} />
         </TouchableOpacity>
       </Stack>
     </Stack>

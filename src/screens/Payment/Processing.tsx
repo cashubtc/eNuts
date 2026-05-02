@@ -4,9 +4,8 @@ import Txt from "@comps/Txt";
 import type { TBeforeRemoveEvent, TProcessingPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useInitialURL } from "@src/context/Linking";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { decodeLnInvoice, isErr } from "@util";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,7 +18,7 @@ interface IErrorProps {
 
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
   const { t } = useTranslation([NS.mints]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { clearUrl } = useInitialURL();
   const {
     mint,
@@ -73,8 +72,8 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
   }, [navigation]);
 
   return (
-    <View style={[globals(color).container, styles.container]}>
-      <Txt txt={t(processingTxt, { ns: NS.wallet })} styles={[{ color: color.TEXT }]} />
+    <View style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
+      <Txt txt={t(processingTxt, { ns: NS.wallet })} styles={[{ color: theme.text }]} />
       <Loading size={35} />
     </View>
   );

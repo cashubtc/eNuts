@@ -6,11 +6,9 @@ import CameraPermission from "@src/screens/QRScan/components/CameraPermission";
 import useScanResult from "@src/screens/QRScan/hooks/useScanResult";
 import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import type { QRScannerScreenProps } from "@src/nav/navTypes";
-import { highlight as hi, mainColors } from "@styles";
-import { getColor } from "@styles/colors";
+import { useAppThemeTokens } from "@styles";
 import type { PaymentCandidateKind, PaymentStringCandidate } from "@util/paymentStringParser";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -39,7 +37,7 @@ function selectQrCandidate(candidates: PaymentStringCandidate[]) {
 function QrScannerScreen({ navigation }: QRScannerScreenProps) {
   const [permission, requestPermission] = useCameraPermissions();
   const { t } = useTranslation([NS.common, NS.wallet]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { openPromptAutoClose } = usePromptContext();
   const [isScanningEnabled, setIsScanningEnabled] = useState(true);
   const [isClaimingScannedToken, setIsClaimingScannedToken] = useState(false);
@@ -161,10 +159,10 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
       accessibilityRole="button"
       activeOpacity={0.7}
       onPress={handleNfcPress}
-      style={[styles.headerAction, { borderColor: `${hi[highlight]}55` }]}
+      style={[styles.headerAction, { borderColor: `${theme.accent}55` }]}
       testID="nfc-btn-top-nav"
     >
-      <NfcIcon width={20} color={hi[highlight]} />
+      <NfcIcon width={20} color={theme.accent} />
     </TouchableOpacity>
   );
 
@@ -227,7 +225,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
       withPadding={false}
       withBottomInset={false}
     >
-      <View style={[styles.cameraContainer, { backgroundColor: color.BACKGROUND }]}>
+      <View style={[styles.cameraContainer, { backgroundColor: theme.background }]}>
         <CameraView
           style={styles.camera}
           onBarcodeScanned={isScanningEnabled ? handleCodeScanned : undefined}
@@ -245,7 +243,8 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                       ? t("qrScanReady")
                       : t("qrScanPaused")
               }
-              color={hi[highlight]}
+              color={theme.accent}
+              textColor={theme.white}
               iconName={
                 isClaimingToken
                   ? "hourglass-top"
@@ -254,31 +253,35 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                     : "center-focus-strong"
               }
             />
-            <Text style={styles.title}>{t("qrScanHint")}</Text>
+            <Text style={[styles.title, { color: theme.white }]}>{t("qrScanHint")}</Text>
             <Text style={styles.subtitle}>{t("qrScanFormats")}</Text>
           </View>
 
-          <View style={[styles.focusFrame, { borderColor: `${hi[highlight]}66` }]}>
-            <FrameCorner position="topLeft" color={hi[highlight]} />
-            <FrameCorner position="topRight" color={hi[highlight]} />
-            <FrameCorner position="bottomLeft" color={hi[highlight]} />
-            <FrameCorner position="bottomRight" color={hi[highlight]} />
+          <View style={[styles.focusFrame, { borderColor: `${theme.accent}66` }]}>
+            <FrameCorner position="topLeft" color={theme.accent} />
+            <FrameCorner position="topRight" color={theme.accent} />
+            <FrameCorner position="bottomLeft" color={theme.accent} />
+            <FrameCorner position="bottomRight" color={theme.accent} />
           </View>
 
           <View style={styles.bottomDock}>
             {isClaimingToken && (
               <View style={styles.progressWrap}>
                 <View style={styles.loadingState}>
-                  <Loading size={24} color={hi[highlight]} />
-                  <Text style={styles.progressTitle}>{t("claiming", { ns: NS.wallet })}</Text>
+                  <Loading size={24} color={theme.accent} />
+                  <Text style={[styles.progressTitle, { color: theme.white }]}>
+                    {t("claiming", { ns: NS.wallet })}
+                  </Text>
                 </View>
               </View>
             )}
             {!isClaimingToken && urActive && (
               <View style={styles.progressWrap}>
                 <View style={styles.progressHeader}>
-                  <Text style={styles.progressTitle}>{t("receivingAnimatedQr")}</Text>
-                  <Text style={[styles.progressCount, { color: hi[highlight] }]}>
+                  <Text style={[styles.progressTitle, { color: theme.white }]}>
+                    {t("receivingAnimatedQr")}
+                  </Text>
+                  <Text style={[styles.progressCount, { color: theme.accent }]}>
                     {receivedCount}/{expectedCount || "-"}
                   </Text>
                 </View>
@@ -286,22 +289,24 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                   <View
                     style={[
                       styles.progressFill,
-                      { width: `${Math.min(estimated, 1) * 100}%`, backgroundColor: hi[highlight] },
+                      { width: `${Math.min(estimated, 1) * 100}%`, backgroundColor: theme.accent },
                     ]}
                   />
                 </View>
-                {urError && <Text style={styles.errorText}>{urError}</Text>}
+                {urError && (
+                  <Text style={[styles.errorText, { color: theme.error }]}>{urError}</Text>
+                )}
               </View>
             )}
             {!isClaimingToken && !isScanningEnabled && (
               <TouchableOpacity
                 accessibilityRole="button"
-                style={[styles.rescanButton, { backgroundColor: hi[highlight] }]}
+                style={[styles.rescanButton, { backgroundColor: theme.accent }]}
                 onPress={handleRescan}
                 activeOpacity={0.75}
               >
-                <MaterialIcons name="refresh" size={18} color={getColor(highlight, color)} />
-                <Text style={[styles.rescanButtonText, { color: getColor(highlight, color) }]}>
+                <MaterialIcons name="refresh" size={18} color={theme.accentContrast} />
+                <Text style={[styles.rescanButtonText, { color: theme.accentContrast }]}>
                   {t("scanAgain")}
                 </Text>
               </TouchableOpacity>
@@ -319,14 +324,15 @@ export default QrScannerScreen;
 interface IStatusPillProps {
   label: string;
   color: string;
+  textColor?: string;
   iconName: ComponentProps<typeof MaterialIcons>["name"];
 }
 
-function StatusPill({ label, color, iconName }: IStatusPillProps) {
+function StatusPill({ label, color, textColor = color, iconName }: IStatusPillProps) {
   return (
     <View style={[styles.statusPill, { borderColor: `${color}55` }]}>
       <MaterialIcons name={iconName} size={16} color={color} />
-      <Text style={styles.statusText}>{label}</Text>
+      <Text style={[styles.statusText, { color: textColor }]}>{label}</Text>
     </View>
   );
 }
@@ -397,12 +403,10 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   statusText: {
-    color: mainColors.WHITE,
     fontSize: 12,
     fontWeight: "600",
   },
   title: {
-    color: mainColors.WHITE,
     fontSize: 24,
     lineHeight: 30,
     fontWeight: "600",
@@ -486,7 +490,6 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   progressTitle: {
-    color: mainColors.WHITE,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -515,12 +518,10 @@ const styles = StyleSheet.create({
     columnGap: 8,
   },
   rescanButtonText: {
-    color: mainColors.WHITE,
     fontSize: 15,
     fontWeight: "600",
   },
   errorText: {
-    color: mainColors.ERROR,
     marginTop: 10,
     textAlign: "center",
     fontSize: 12,

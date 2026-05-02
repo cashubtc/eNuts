@@ -4,7 +4,7 @@ import Txt from "@comps/Txt";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { Text, TouchableOpacity, View } from "react-native";
-import { globals, highlight as hi } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import type { NavigationProp } from "@react-navigation/native";
 import type { RootStackParamList } from "@model/nav";
 
@@ -46,6 +46,7 @@ export default function MintItem({
   formatAmount,
 }: MintItemProps) {
   const { formatted, symbol } = formatAmount(mint.balance);
+  const theme = useAppThemeTokens();
 
   return (
     <View key={mint.mintUrl}>
@@ -72,10 +73,10 @@ export default function MintItem({
             <Txt txt={mint.name || formatMintUrl(mint.mintUrl)} bold />
           </View>
           <View style={styles.mintBal}>
-            {mint.balance > 0 && <ZapIcon color={hi[highlight as keyof typeof hi]} />}
+            {mint.balance > 0 && <ZapIcon color={theme.accent} />}
             <Text
               style={{
-                color: mint.balance > 0 ? color.TEXT : color.TEXT_SECONDARY,
+                color: mint.balance > 0 ? theme.text : theme.textSecondary,
                 marginLeft: mint.balance > 0 ? 5 : 0,
                 marginBottom: 5,
               }}
@@ -88,7 +89,7 @@ export default function MintItem({
             </Text>
           </View>
         </View>
-        <ChevronRightIcon color={color.TEXT} />
+        <ChevronRightIcon color={theme.text} />
       </TouchableOpacity>
       {!isLast && <Separator style={[{ marginBottom: 15 }]} />}
     </View>

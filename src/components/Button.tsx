@@ -1,18 +1,7 @@
-import { useThemeContext } from "@src/context/Theme";
-import {
-  AppText,
-  ButtonSurface,
-  Stack,
-  XStack,
-  globals,
-  highlight as hi,
-  mainColors,
-} from "@styles";
-import { getColor } from "@styles/colors";
+import { AppText, ButtonSurface, Stack, XStack, useAppThemeTokens } from "@styles";
 import { type StyleProp, TouchableOpacity, type ViewStyle } from "react-native";
 
 import Loading from "./Loading";
-import Txt from "./Txt";
 
 interface IButtonProps {
   txt: string;
@@ -41,7 +30,7 @@ export default function Button({
   icon,
   size = "medium",
 }: IButtonProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   // Define size variants
   const sizeStyles = {
@@ -69,6 +58,23 @@ export default function Button({
 
   // Automatically disable button when loading
   const isDisabled = disabled || loading;
+  const isSecondary = filled || outlined || ghost;
+  const textColor = isSecondary
+    ? destructive
+      ? theme.error
+      : theme.accent
+    : destructive
+      ? theme.white
+      : theme.accentContrast;
+  const buttonBackground =
+    outlined || ghost
+      ? "transparent"
+      : destructive
+        ? theme.error
+        : filled
+          ? theme.white
+          : theme.accent;
+  const buttonBorderColor = destructive ? theme.error : border ? theme.white : theme.accent;
 
   return (
     <Stack width="100%">
@@ -84,66 +90,35 @@ export default function Button({
           size={size}
           style={[
             {
-              backgroundColor: hi[highlight],
+              backgroundColor: buttonBackground,
               paddingHorizontal: currentSize.paddingHorizontal,
               paddingVertical: currentSize.paddingVertical,
             },
-            border ? { borderWidth: 1, borderColor: mainColors.WHITE } : {},
-            filled ? { backgroundColor: mainColors.WHITE } : {},
-            destructive && !outlined && !ghost
+            border || outlined
               ? {
-                  backgroundColor: mainColors.ERROR,
-                }
-              : {},
-            outlined
-              ? {
-                  backgroundColor: "transparent",
-                  paddingHorizontal: currentSize.paddingHorizontal,
-                  paddingVertical: currentSize.paddingVertical,
                   borderWidth: 1,
-                  borderColor: destructive ? mainColors.ERROR : hi[highlight],
-                }
-              : {},
-            ghost
-              ? {
-                  backgroundColor: "transparent",
-                  paddingHorizontal: currentSize.paddingHorizontal,
-                  paddingVertical: currentSize.paddingVertical,
+                  borderColor: buttonBorderColor,
                 }
               : {},
           ]}
         >
           {!loading && (
-            <Txt
-              txt={txt}
-              bold
-              center
-              styles={[
+            <AppText
+              weight="medium"
+              align="center"
+              style={[
                 {
-                  color: getColor(highlight, color),
+                  color: textColor,
                   fontSize: currentSize.fontSize,
                 },
-                filled || outlined || ghost ? { color: hi[highlight] } : {},
-                destructive && (outlined || ghost)
-                  ? { color: mainColors.ERROR }
-                  : destructive
-                    ? { color: mainColors.WHITE }
-                    : {},
               ]}
-            />
+            >
+              {txt}
+            </AppText>
           )}
           {loading && (
             <Stack alignItems="center" justifyContent="center">
-              <Loading
-                size={currentSize.spinnerSize}
-                color={
-                  filled || outlined || ghost
-                    ? hi[highlight]
-                    : destructive
-                      ? mainColors.WHITE
-                      : getColor(highlight, color)
-                }
-              />
+              <Loading size={currentSize.spinnerSize} color={textColor} />
             </Stack>
           )}
           {!loading && icon && (
@@ -167,7 +142,7 @@ interface IIconBtnProps {
 }
 
 export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIconBtnProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <Stack>
       <TouchableOpacity
@@ -183,8 +158,8 @@ export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIc
             width: size || 60,
             height: size || 60,
             borderRadius: (size || 60) / 2,
-            backgroundColor: outlined ? color.BACKGROUND : hi[highlight],
-            borderColor: hi[highlight],
+            backgroundColor: outlined ? theme.background : theme.accent,
+            borderColor: theme.accent,
             // opacity: disabled ? .6 : 1
           },
         ]}
@@ -208,7 +183,7 @@ interface ITxtBtnProps {
 }
 
 export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITxtBtnProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <TouchableOpacity
       style={[
@@ -229,10 +204,8 @@ export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITx
         <AppText
           weight="medium"
           testID={`${txt}-txt`}
-          style={[
-            globals(color).pressTxt,
-            { color: txtColor || hi[highlight], marginRight: icon ? 10 : 0 },
-          ]}
+          align="center"
+          style={{ color: txtColor || theme.accent, marginRight: icon ? 10 : 0 }}
         >
           {txt}
         </AppText>

@@ -1,7 +1,6 @@
 import { LeftArrow } from "@comps/Icons";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { AppText, Stack, globals, highlight as hi } from "@styles";
+import { AppText, Stack, useAppThemeTokens } from "@styles";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
@@ -24,7 +23,7 @@ export default function TopNav({
   rightAction,
 }: ITopNavProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   return (
     <Stack
@@ -32,7 +31,7 @@ export default function TopNav({
       alignItems="center"
       minHeight={48}
       paddingHorizontal={6}
-      style={{ backgroundColor: color.BACKGROUND }}
+      backgroundColor="$background"
     >
       <Stack width={44} alignItems="flex-start" justifyContent="center">
         {withBackBtn ? (
@@ -48,7 +47,7 @@ export default function TopNav({
             }}
             testID="back-btn-top-nav"
           >
-            <LeftArrow color={hi[highlight]} />
+            <LeftArrow color={theme.accent} />
           </TouchableOpacity>
         ) : null}
       </Stack>
@@ -58,7 +57,8 @@ export default function TopNav({
           <AppText
             numberOfLines={1}
             weight="medium"
-            style={[globals(color).navTxt, { fontSize: 17, lineHeight: 22 }]}
+            size="nav"
+            style={{ fontSize: 17, lineHeight: 22 }}
           >
             {screenName}
           </AppText>
@@ -74,7 +74,7 @@ export default function TopNav({
             style={{ minHeight: 44, justifyContent: "center", paddingHorizontal: 10 }}
             onPress={handleCancel}
           >
-            <AppText weight="medium" style={globals(color, highlight).pressTxt}>
+            <AppText weight="medium" tone="accent" align="center">
               {t("cancel")}
             </AppText>
           </TouchableOpacity>

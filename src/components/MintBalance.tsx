@@ -1,7 +1,6 @@
 import { usePrivacyContext } from "@src/context/Privacy";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
-import { Stack, highlight as hi } from "@styles";
+import { Stack, useAppThemeTokens } from "@styles";
 
 import { MintBoardIcon } from "./Icons";
 import Txt from "./Txt";
@@ -13,9 +12,9 @@ interface IMintBalanceProps {
 }
 
 export default function MintBalance({ balance, txtColor, disabled }: IMintBalanceProps) {
-  const { color, highlight } = useThemeContext();
   const { hidden } = usePrivacyContext();
   const { formatAmount } = useCurrencyContext();
+  const theme = useAppThemeTokens();
 
   const { formatted, symbol } = formatAmount(balance);
 
@@ -27,13 +26,9 @@ export default function MintBalance({ balance, txtColor, disabled }: IMintBalanc
       paddingVertical={4}
       paddingHorizontal={6}
       borderRadius={20}
-      style={{ borderColor: disabled ? color.TEXT_SECONDARY : hi[highlight] }}
+      style={{ borderColor: disabled ? theme.textSecondary : theme.accent }}
     >
-      <MintBoardIcon
-        width={16}
-        height={16}
-        color={disabled ? color.TEXT_SECONDARY : hi[highlight]}
-      />
+      <MintBoardIcon width={16} height={16} color={disabled ? theme.textSecondary : theme.accent} />
       <Txt
         txt={hidden.balance ? "****" : `${formatted} ${symbol}`}
         styles={[{ fontSize: 10, color: txtColor, marginLeft: 5 }]}

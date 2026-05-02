@@ -1,5 +1,4 @@
-import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi, mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { useEffect, useImperativeHandle, forwardRef } from "react";
 import { View, useWindowDimensions, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -40,7 +39,7 @@ export interface SwipeButtonHandle {
 }
 
 function SwipeButton({ txt, onToggle }: ISwipeButtonProps, ref: React.Ref<SwipeButtonHandle>) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { width: windowWidth } = useWindowDimensions();
   const X = useSharedValue(0);
   const toggled = useSharedValue(false);
@@ -106,11 +105,7 @@ function SwipeButton({ txt, onToggle }: ISwipeButtonProps, ref: React.Ref<SwipeB
       opacity: interpolate(X.value, InterpolateXInput, [0, 1]),
     })),
     swipeable: useAnimatedStyle(() => ({
-      backgroundColor: interpolateColor(
-        X.value,
-        [0, H_SWIPE_RANGE],
-        [hi[highlight], mainColors.WHITE],
-      ),
+      backgroundColor: interpolateColor(X.value, [0, H_SWIPE_RANGE], [theme.accent, theme.white]),
       transform: [{ translateX: X.value }],
     })),
     swipeText: useAnimatedStyle(() => ({
@@ -134,26 +129,26 @@ function SwipeButton({ txt, onToggle }: ISwipeButtonProps, ref: React.Ref<SwipeB
   return (
     <View style={styles.container}>
       <Animated.View
-        style={[styles.swipeCont, { backgroundColor: color.INPUT_BG, width: BUTTON_WIDTH }]}
+        style={[styles.swipeCont, { backgroundColor: theme.inputBackground, width: BUTTON_WIDTH }]}
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel={txt}
         accessibilityHint="Swipe right to confirm"
       >
         <AnimatedView
-          style={[AnimatedStyles.colorWave, styles.colorWave, { backgroundColor: hi[highlight] }]}
+          style={[AnimatedStyles.colorWave, styles.colorWave, { backgroundColor: theme.accent }]}
         />
         <GestureDetector gesture={panGesture}>
           <Animated.View
-            style={[styles.swipeable, AnimatedStyles.swipeable, { borderColor: color.INPUT_PH }]}
+            style={[styles.swipeable, AnimatedStyles.swipeable, { borderColor: theme.placeholder }]}
             testID="swipe-confirm-button"
           >
             <Animated.View style={AnimatedStyles.chevron}>
-              <ChevronRightIcon color={mainColors.WHITE} />
+              <ChevronRightIcon color={theme.white} />
             </Animated.View>
           </Animated.View>
         </GestureDetector>
-        <Animated.Text style={[styles.swipeText, AnimatedStyles.swipeText, { color: color.TEXT }]}>
+        <Animated.Text style={[styles.swipeText, AnimatedStyles.swipeText, { color: theme.text }]}>
           {txt}
         </Animated.Text>
       </Animated.View>

@@ -13,7 +13,7 @@ import SuccessScreen from "@screens/Payment/SuccessScreen";
 import QrScannerScreen from "@screens/QRScan/QrScannerScreen";
 import RestoreNavigator from "@src/nav/RestoreNavigator";
 import SettingsNavigator from "@src/nav/SettingsNavigator";
-import { useThemeContext } from "@src/context/Theme";
+import { useAppThemeTokens } from "@styles";
 import { View } from "react-native";
 import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
 import MintSelectAmountScreen from "@screens/Payment/MintSelectAmount";
@@ -25,7 +25,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const animationDuration = 250;
 
 export default function Navigator({ shouldOnboard }: INavigatorProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   return (
     <View
@@ -33,7 +33,7 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
         position: "absolute",
         height: "100%",
         width: "100%",
-        backgroundColor: color.BACKGROUND,
+        backgroundColor: theme.background,
       }}
     >
       <Stack.Navigator
@@ -42,7 +42,7 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
           headerShown: false,
           animation: "fade",
           animationDuration,
-          navigationBarColor: color.BACKGROUND,
+          navigationBarColor: theme.background,
         }}
       >
         <Stack.Screen

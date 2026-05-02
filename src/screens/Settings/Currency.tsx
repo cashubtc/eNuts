@@ -6,10 +6,9 @@ import Toggle from "@comps/Toggle";
 import Txt from "@comps/Txt";
 import type { TCurrencySettingsPageProps } from "@model/nav";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import type { TCurrencyCode } from "@model";
-import { globals, mainColors } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 
@@ -18,7 +17,7 @@ const COMMON_CURRENCIES: TCurrencyCode[] = ["USD", "EUR", "GBP", "JPY", "CHF", "
 
 export default function CurrencySettings({ navigation }: TCurrencySettingsPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const {
     rates,
     selectedCurrency,
@@ -83,7 +82,7 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
       <ScrollView alwaysBounceVertical={false}>
         {/* Error Banner */}
         {hasRatesError && (
-          <View style={[styles.errorContainer, { backgroundColor: mainColors.ERROR }]}>
+          <View style={[styles.errorContainer, { backgroundColor: theme.error }]}>
             <Txt txt={t("ratesUnavailable")} styles={[styles.errorText]} />
             <Txt txt={t("ratesUnavailableDesc")} styles={[styles.errorDescription]} />
             <Button txt={t("retry")} onPress={handleRetry} outlined loading={isLoading} />
@@ -92,7 +91,7 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
 
         {/* Enable Currency Conversion Toggle */}
         <Txt txt={t("currencyConversion")} bold styles={[styles.subHeader]} />
-        <View style={globals(color).wrapContainer}>
+        <View style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
           <TouchableOpacity
             style={styles.toggleRow}
             onPress={handleToggleFormatBalance}
@@ -103,13 +102,13 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
                 txt={t("showFiatBalance")}
                 styles={[
                   {
-                    color: ratesUnavailable ? color.TEXT_SECONDARY : color.TEXT,
+                    color: ratesUnavailable ? theme.textSecondary : theme.text,
                   },
                 ]}
               />
               <Txt
                 txt={ratesUnavailable ? t("ratesRequiredForFiat") : t("showFiatBalanceDesc")}
-                styles={[styles.description, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.description, { color: theme.textSecondary }]}
               />
             </View>
             <View style={styles.toggleContainer}>
@@ -128,28 +127,40 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
           {lastUpdate && (
             <Txt
               txt={`${t("lastUpdate")}: ${formatLastUpdate()}`}
-              styles={[styles.lastUpdate, { color: color.TEXT_SECONDARY }]}
+              styles={[styles.lastUpdate, { color: theme.textSecondary }]}
             />
           )}
         </View>
 
         {isLoading && !rates ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={color.TEXT} />
+            <ActivityIndicator size="large" color={theme.text} />
             <Txt
               txt={t("loadingRates")}
-              styles={[styles.loadingText, { color: color.TEXT_SECONDARY }]}
+              styles={[styles.loadingText, { color: theme.textSecondary }]}
             />
           </View>
         ) : hasRatesError ? (
-          <View style={[globals(color).wrapContainer, styles.emptyContainer]}>
+          <View
+            style={[
+              globals().wrapContainer,
+              { backgroundColor: theme.drawer },
+              styles.emptyContainer,
+            ]}
+          >
             <Txt
               txt={t("noCurrenciesAvailable")}
-              styles={[styles.emptyText, { color: color.TEXT_SECONDARY }]}
+              styles={[styles.emptyText, { color: theme.textSecondary }]}
             />
           </View>
         ) : (
-          <View style={[globals(color).wrapContainer, { marginBottom: 80 }]}>
+          <View
+            style={[
+              globals().wrapContainer,
+              { backgroundColor: theme.drawer },
+              { marginBottom: 80 },
+            ]}
+          >
             {sortedCurrencies.map((currency, i) => (
               <CurrencySelection
                 key={currency}
@@ -185,7 +196,7 @@ function CurrencySelection({
   onSelect,
   disabled,
 }: ICurrencySelectionProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   return (
     <>
@@ -195,12 +206,12 @@ function CurrencySelection({
         disabled={disabled}
       >
         <View style={styles.currencyInfo}>
-          <Txt txt={code} bold styles={[{ color: disabled ? color.TEXT_SECONDARY : color.TEXT }]} />
+          <Txt txt={code} bold styles={[{ color: disabled ? theme.textSecondary : theme.text }]} />
           <Txt
             txt={symbol}
             styles={[
               styles.currencySymbol,
-              { color: disabled ? color.TEXT_SECONDARY : color.TEXT_SECONDARY },
+              { color: disabled ? theme.textSecondary : theme.textSecondary },
             ]}
           />
         </View>

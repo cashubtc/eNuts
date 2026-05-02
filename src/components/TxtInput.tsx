@@ -1,5 +1,4 @@
-import { useThemeContext } from "@src/context/Theme";
-import { InputFrame, globals, highlight as hi } from "@styles";
+import { InputFrame, useAppThemeTokens } from "@styles";
 import { createRef, type LegacyRef, useEffect } from "react";
 import {
   type KeyboardTypeOptions,
@@ -43,7 +42,7 @@ export default function TxtInput({
   autoCorrect,
   autoCapitalize,
 }: ITxtInputProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const inputRef = createRef<TextInput>();
   // auto-focus
   useEffect(() => {
@@ -61,17 +60,17 @@ export default function TxtInput({
       ref={innerRef || inputRef}
       keyboardType={keyboardType || "default"}
       placeholder={placeholder}
-      placeholderTextColor={color.INPUT_PH as never}
+      placeholderTextColor={theme.placeholder as never}
       autoCorrect={autoCorrect}
-      selectionColor={hi[highlight]}
-      cursorColor={hi[highlight]}
+      selectionColor={theme.accent}
+      cursorColor={theme.accent}
       onChangeText={onChangeText}
       onSubmitEditing={onSubmitEditing}
       maxLength={maxLength}
       value={value}
       multiline={multiline}
       numberOfLines={numberOfLines}
-      style={[globals(color).input, style]}
+      style={style}
       testID={`${placeholder}-input`}
       autoCapitalize={autoCapitalize}
     />

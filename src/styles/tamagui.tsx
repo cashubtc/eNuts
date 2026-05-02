@@ -1,4 +1,4 @@
-import { Text, View, styled } from "@tamagui/core";
+import { Text, View, styled, useTheme } from "@tamagui/core";
 import { TextInput } from "react-native";
 
 export const Stack = styled(View, {
@@ -176,3 +176,37 @@ export const ProgressFill = styled(Stack, {
   backgroundColor: "$accent",
   height: 5,
 });
+
+export function useAppThemeTokens() {
+  const theme = useTheme();
+
+  return {
+    accent: getThemeColor(theme.accent),
+    accentContrast: getThemeColor(theme.accentContrast),
+    background: getThemeColor(theme.background),
+    border: getThemeColor(theme.borderColor),
+    darkBorder: getThemeColor(theme.darkBorder),
+    drawer: getThemeColor(theme.drawer),
+    error: getThemeColor(theme.error),
+    inputBackground: getThemeColor(theme.inputBackground),
+    onboardingCashu: getThemeColor(theme.onboardingCashu),
+    onboardingDefault: getThemeColor(theme.onboardingDefault),
+    onboardingNuts: getThemeColor(theme.onboardingNuts),
+    placeholder: getThemeColor(theme.placeholder),
+    text: getThemeColor(theme.text),
+    textSecondary: getThemeColor(theme.textSecondary),
+    valid: getThemeColor(theme.valid),
+    warn: getThemeColor(theme.warn),
+    white: getThemeColor(theme.white),
+    black: getThemeColor(theme.black),
+    blue: getThemeColor(theme.blue),
+    grey: getThemeColor(theme.grey),
+    star: getThemeColor(theme.star),
+    zap: getThemeColor(theme.zap),
+  };
+}
+
+function getThemeColor(value: { get?: (platform?: "web") => string | number } | undefined) {
+  const resolved = value?.get?.("web");
+  return typeof resolved === "number" ? `${resolved}` : resolved || "";
+}

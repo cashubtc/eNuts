@@ -6,11 +6,10 @@ import Txt from "@comps/Txt";
 import type { IRecoveringPageProps, TBeforeRemoveEvent } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useManager } from "@src/context/Manager";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { appLogger } from "@src/logger";
 import { vib } from "@src/util";
-import { globals } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -50,8 +49,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
     };
     restore();
   }, []);
-
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
@@ -66,7 +64,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 
   if (isDone) {
     return (
-      <View style={[styles.containerSuccess, { backgroundColor: color.BACKGROUND }]}>
+      <View style={[styles.containerSuccess, { backgroundColor: theme.background }]}>
         <View pointerEvents="none" style={styles.confetti}>
           <LottieView
             source={require("../../../assets/lottie/confetti.json")}
@@ -77,7 +75,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
         </View>
         <Logo size={230} style={styles.img} success />
         <View style={{ width: "100%" }}>
-          <Text style={[styles.successTxt, { color: color.TEXT }]}>Wallet restored!</Text>
+          <Text style={[styles.successTxt, { color: theme.text }]}>Wallet restored!</Text>
           <View style={styles.successAnim}>
             <LottieView
               source={require("../../../assets/lottie/success.json")}
@@ -95,19 +93,19 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
   }
 
   return (
-    <View style={[globals(color).container, styles.container]}>
+    <View style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
       <Loading size={35} />
       <Txt styles={[styles.descText]} txt={t("recoveringWallet")} />
       <View style={{ width: "100%", paddingHorizontal: 20 }}>
         <Progress progress={progress} />
         <Txt
           center
-          styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+          styles={[styles.hint, { color: theme.textSecondary }]}
           txt={`${t("restored")} ${current}/${mintUrls.length}`}
         />
         <Txt
           center
-          styles={[styles.hint, { color: color.TEXT_SECONDARY, marginTop: 6 }]}
+          styles={[styles.hint, { color: theme.textSecondary, marginTop: 6 }]}
           txt={t("dontClose")}
         />
       </View>

@@ -1,8 +1,7 @@
 import { useShakeAnimation } from "@comps/animation/Shake";
 import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
-import { globals, highlight as hi, mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { formatSatStr } from "@util";
 import { getLanguageCode } from "@util/localization";
 import { useEffect, useMemo, useRef, forwardRef, useState, useCallback } from "react";
@@ -104,9 +103,9 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
     },
     ref,
   ) => {
-    const { color, highlight } = useThemeContext();
     const { formatBalance, setFormatBalance, convertFiatToSats, rates, selectedCurrency } =
       useCurrencyContext();
+    const theme = useAppThemeTokens();
     const { anim } = useShakeAnimation();
     const internalRef = useRef<TextInput>(null);
 
@@ -131,9 +130,6 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
 
     // Track if we need to sync display from external value change
     const lastExternalValue = useRef<string>("");
-
-    // Memoize style objects to prevent recreation
-    const globalStyles = useMemo(() => globals(), []);
 
     // Get the locale decimal separator for this user
     const localDecimalSep = useMemo(() => getLocalDecimalSeparator(), []);
@@ -331,7 +327,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               styles={[
                 compact ? styles.currencySymbolCompact : styles.currencySymbol,
                 {
-                  color: error ? mainColors.ERROR : hi[highlight],
+                  color: error ? theme.error : theme.accent,
                 },
               ]}
             />
@@ -342,12 +338,12 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               ref={inputRef}
               placeholder={displayPlaceholder}
               autoFocus={autoFocus}
-              cursorColor={hi[highlight]}
-              placeholderTextColor={error ? mainColors.ERROR : hi[highlight]}
+              cursorColor={theme.accent}
+              placeholderTextColor={error ? theme.error : theme.accent}
               style={[
-                globalStyles.selectAmount,
+                styles.selectAmount,
                 compact ? styles.amountInputCompact : null,
-                { color: error ? mainColors.ERROR : hi[highlight] },
+                { color: error ? theme.error : theme.accent },
               ]}
               onChangeText={handleAmountChange}
               onSubmitEditing={onSubmit}
@@ -367,7 +363,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               styles={[
                 compact ? styles.satsSuffixCompact : styles.satsSuffix,
                 {
-                  color: error ? mainColors.ERROR : hi[highlight],
+                  color: error ? theme.error : theme.accent,
                 },
               ]}
             />
@@ -379,14 +375,14 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               style={({ pressed }) => [
                 styles.toggleButton,
                 {
-                  backgroundColor: pressed ? color.INPUT_BG : "transparent",
+                  backgroundColor: pressed ? theme.inputBackground : "transparent",
                 },
               ]}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               accessibilityLabel="Toggle currency"
               accessibilityHint="Switch between sats and fiat currency"
             >
-              <SwapCurrencyIcon width={20} height={20} color={hi[highlight]} />
+              <SwapCurrencyIcon width={20} height={20} color={theme.accent} />
             </Pressable>
           )}
         </View>
@@ -396,7 +392,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               txt={secondaryLabel}
               styles={[
                 compact ? styles.secondaryLabelCompact : styles.secondaryLabel,
-                { color: color.TEXT_SECONDARY },
+                { color: theme.textSecondary },
               ]}
             />
           </Pressable>
@@ -429,6 +425,14 @@ const styles = StyleSheet.create({
   },
   amountWrap: {
     alignItems: "center",
+  },
+  selectAmount: {
+    width: "100%",
+    fontSize: 48,
+    marginBottom: 5,
+    fontWeight: "600",
+    padding: 0,
+    textAlign: "center",
   },
   currencySymbol: {
     fontSize: 32,

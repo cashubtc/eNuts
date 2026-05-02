@@ -1,8 +1,7 @@
 import Button from "@comps/Button";
 import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { highlight as hi } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -18,7 +17,7 @@ export default function CameraPermission({
   onRequestPermission,
   onOpenSettings,
 }: ICameraPermissionProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { t } = useTranslation([NS.common]);
 
   return (
@@ -27,41 +26,41 @@ export default function CameraPermission({
         style={[
           styles.stage,
           {
-            backgroundColor: color.DRAWER,
-            borderColor: color.DARK_BORDER,
+            backgroundColor: theme.drawer,
+            borderColor: theme.darkBorder,
           },
         ]}
       >
-        <View style={[styles.iconContainer, { backgroundColor: `${hi[highlight]}18` }]}>
-          <MaterialIcons name="photo-camera" size={36} color={hi[highlight]} />
+        <View style={[styles.iconContainer, { backgroundColor: `${theme.accent}18` }]}>
+          <MaterialIcons name="photo-camera" size={36} color={theme.accent} />
         </View>
         <View style={styles.framePreview}>
           <View
             style={[
               styles.previewCorner,
               styles.previewCornerTopLeft,
-              { borderColor: hi[highlight] },
+              { borderColor: theme.accent },
             ]}
           />
           <View
             style={[
               styles.previewCorner,
               styles.previewCornerTopRight,
-              { borderColor: hi[highlight] },
+              { borderColor: theme.accent },
             ]}
           />
           <View
             style={[
               styles.previewCorner,
               styles.previewCornerBottomLeft,
-              { borderColor: hi[highlight] },
+              { borderColor: theme.accent },
             ]}
           />
           <View
             style={[
               styles.previewCorner,
               styles.previewCornerBottomRight,
-              { borderColor: hi[highlight] },
+              { borderColor: theme.accent },
             ]}
           />
         </View>
@@ -75,7 +74,7 @@ export default function CameraPermission({
       <Txt
         txt={canAskAgain ? t("cameraAccessRequiredHint") : t("cameraAccessDeniedHint")}
         center
-        styles={[styles.description, { color: color.TEXT_SECONDARY }]}
+        styles={[styles.description, { color: theme.textSecondary }]}
       />
       <View style={styles.buttonContainer}>
         <Button

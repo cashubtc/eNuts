@@ -2,8 +2,7 @@ import { MintBoardIcon } from "@comps/Icons";
 import Txt from "@comps/Txt";
 import { Image } from "expo-image";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
-import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi, mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
@@ -22,7 +21,7 @@ interface IOperationMintPanelProps {
 }
 
 export default function OperationMintPanel({ mint, rows }: IOperationMintPanelProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   const mintLabel = useMemo(() => {
     return mint.mintInfo.name || mint.name || formatMintUrl(mint.mintUrl);
@@ -33,8 +32,8 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
       style={[
         styles.panel,
         {
-          backgroundColor: color.DRAWER,
-          borderColor: color.BORDER,
+          backgroundColor: theme.drawer,
+          borderColor: theme.border,
         },
       ]}
     >
@@ -44,8 +43,8 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
             style={[
               styles.iconWrap,
               {
-                backgroundColor: color.INPUT_BG,
-                borderColor: color.BORDER,
+                backgroundColor: theme.inputBackground,
+                borderColor: theme.border,
               },
             ]}
           >
@@ -61,12 +60,12 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
             style={[
               styles.iconWrap,
               {
-                backgroundColor: color.INPUT_BG,
-                borderColor: color.BORDER,
+                backgroundColor: theme.inputBackground,
+                borderColor: theme.border,
               },
             ]}
           >
-            <MintBoardIcon width={18} height={18} color={hi[highlight]} />
+            <MintBoardIcon width={18} height={18} color={theme.accent} />
           </View>
         )}
 
@@ -74,13 +73,13 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
           <Txt txt={mintLabel} bold styles={[styles.mintName]} />
           <Txt
             txt={formatMintUrl(mint.mintUrl)}
-            styles={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}
+            styles={[styles.mintUrl, { color: theme.textSecondary }]}
           />
         </View>
       </View>
 
       {rows.length ? (
-        <View style={[styles.metaWrap, { borderTopColor: color.BORDER }]}>
+        <View style={[styles.metaWrap, { borderTopColor: theme.border }]}>
           {rows.map((row, index) => (
             <View
               key={`${row.label}-${index}`}
@@ -96,22 +95,22 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
 }
 
 function MetaRow({ row }: { row: IOperationMintPanelRow }) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   const valueColor = useMemo(() => {
     switch (row.tone) {
       case "success":
-        return mainColors.VALID;
+        return theme.valid;
       case "danger":
-        return mainColors.ERROR;
+        return theme.error;
       default:
-        return color.TEXT;
+        return theme.text;
     }
-  }, [color.TEXT, row.tone]);
+  }, [theme.text, row.tone]);
 
   return (
     <View style={styles.metaRow}>
-      <Txt txt={row.label} styles={[styles.balanceLabel, { color: color.TEXT_SECONDARY }]} />
+      <Txt txt={row.label} styles={[styles.balanceLabel, { color: theme.textSecondary }]} />
       <Txt txt={row.value} bold styles={[styles.balanceValue, { color: valueColor }]} />
     </View>
   );

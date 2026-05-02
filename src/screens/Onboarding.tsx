@@ -5,7 +5,7 @@ import type { TOnboardingPageProps } from "@model/nav";
 import { NS } from "@src/i18n";
 import { store } from "@src/storage/store";
 import { STORE_KEYS } from "@src/storage/store/consts";
-import { H_Colors, mainColors } from "@styles/colors";
+import { useAppThemeTokens } from "@styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
@@ -13,6 +13,7 @@ import Onboarding from "react-native-onboarding-swiper";
 
 export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
   const { t } = useTranslation([NS.common]);
+  const theme = useAppThemeTokens();
   const [accepted, setAccepted] = useState(false);
   const handleDone = async () => {
     await store.set(STORE_KEYS.explainer, "1");
@@ -66,20 +67,20 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
           ),
         },
         {
-          backgroundColor: H_Colors.Default,
+          backgroundColor: theme.onboardingDefault,
           image: <Logo size={130} />,
           title: "eNuts & Ecash",
           subtitle: t("explainer1"),
         },
         {
-          backgroundColor: "#8038CA",
+          backgroundColor: theme.onboardingCashu,
 
           image: <Image style={styles.cashuImg} source={require("@assets/cashu.png")} />,
           title: "Cashu & Mints",
           subtitle: t("explainer2"),
         },
         {
-          backgroundColor: H_Colors.Nuts,
+          backgroundColor: theme.onboardingNuts,
 
           image: (
             <Image style={styles.sendReceiveImg} source={require("@assets/send_receive.png")} />
@@ -100,7 +101,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
           style={{ marginRight: 20 }}
           testID="onboarding-done"
         >
-          <Txt txt={t("next")} styles={[{ color: mainColors.WHITE }]} />
+          <Txt txt={t("next")} styles={[{ color: theme.white }]} />
         </TouchableOpacity>
       )}
     />

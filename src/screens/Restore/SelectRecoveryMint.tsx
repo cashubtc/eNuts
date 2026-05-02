@@ -1,12 +1,11 @@
 import Button from "@comps/Button";
-import { highlight as hi } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { CheckmarkIcon } from "@comps/Icons";
 import { ScreenWithKeyboard } from "@comps/Screen";
 import Txt from "@comps/Txt";
 import { isIOS } from "@consts";
 import type { RecoverMintsScreenProps } from "@src/nav/navTypes";
 import { useKnownMints } from "@src/context/KnownMints";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals } from "@styles";
 import { useState } from "react";
@@ -15,7 +14,7 @@ import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 
 export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScreenProps) {
   const { t } = useTranslation([NS.common]);
-  const { highlight, color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   const { knownMints } = useKnownMints();
   const [selectedMints, setSelectedMints] = useState<string[]>(
@@ -47,8 +46,8 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
                     style={[
                       styles.mintItem,
                       isSelected && {
-                        backgroundColor: hi[highlight] + "20",
-                        borderColor: hi[highlight],
+                        backgroundColor: theme.accent + "20",
+                        borderColor: theme.accent,
                       },
                     ]}
                     onPress={() => toggleMintSelection(mint.mintUrl)}
@@ -56,7 +55,7 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
                   >
                     <View style={styles.mintContent}>
                       <Txt txt={mint.mintUrl} styles={[{ flex: 1 }]} />
-                      {isSelected && <CheckmarkIcon width={14} height={14} color={hi[highlight]} />}
+                      {isSelected && <CheckmarkIcon width={14} height={14} color={theme.accent} />}
                     </View>
                   </TouchableOpacity>
                 );

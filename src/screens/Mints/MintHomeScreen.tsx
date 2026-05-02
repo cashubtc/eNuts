@@ -6,10 +6,8 @@ import Txt from "@comps/Txt";
 import Screen from "@comps/Screen";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi } from "@styles";
-import { getColor } from "@styles/colors";
+import { globals, useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { Image } from "expo-image";
@@ -20,7 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function MintHomeScreen({ navigation }: any) {
   const { t } = useTranslation([NS.common]);
   const { knownMints } = useKnownMints();
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
   const { hidden } = usePrivacyContext();
@@ -37,7 +35,7 @@ export default function MintHomeScreen({ navigation }: any) {
           }}
           style={{ flexDirection: "row", alignItems: "center" }}
         >
-          <PlusIcon width={30} height={30} color={hi[highlight]} />
+          <PlusIcon width={30} height={30} color={theme.accent} />
         </TouchableOpacity>
       }
     >
@@ -80,12 +78,12 @@ export default function MintHomeScreen({ navigation }: any) {
 
                         {/* Center: Mint name and balance */}
                         <View style={styles.infoContainer}>
-                          <Txt txt={displayName} bold styles={[{ color: color.TEXT }]} />
+                          <Txt txt={displayName} bold styles={[{ color: theme.text }]} />
                           <Txt
                             txt={displayBalance}
                             styles={[
                               {
-                                color: color.TEXT_SECONDARY,
+                                color: theme.textSecondary,
                                 fontSize: 12,
                                 marginTop: 2,
                               },
@@ -95,7 +93,7 @@ export default function MintHomeScreen({ navigation }: any) {
 
                         {/* Right side: Chevron icon */}
                         <View style={styles.chevronContainer}>
-                          <ChevronRightIcon color={color.TEXT} />
+                          <ChevronRightIcon color={theme.text} />
                         </View>
                       </View>
                     </Card>

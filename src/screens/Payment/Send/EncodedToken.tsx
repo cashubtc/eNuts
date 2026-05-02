@@ -7,10 +7,9 @@ import Txt from "@comps/Txt";
 import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
 import { preventBack } from "@nav/utils";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi, mainColors } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { formatInt, formatSatStr, share } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
@@ -24,7 +23,7 @@ import { useManager } from "@src/context/Manager";
 export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
   const { token } = route.params || {};
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatBalance, formatAmount } = useCurrencyContext();
   const [error, setError] = useState({ msg: "", open: false });
   const encodedToken = useMemo(() => getEncodedToken(token), [token]);
@@ -64,7 +63,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
           <>
             <View />
             <View>
-              <Text style={[styles.successTxt, { color: color.TEXT }]}>
+              <Text style={[styles.successTxt, { color: theme.text }]}>
                 {t("isSpent", { ns: NS.history })}
               </Text>
               <View style={styles.successAnim}>
@@ -85,7 +84,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
             <View style={styles.qrWrap}>
               <Txt
                 txt={formatInt(tokenAmount)}
-                styles={[styles.tokenAmount, { color: hi[highlight] }]}
+                styles={[styles.tokenAmount, { color: theme.accent }]}
               />
               <Txt
                 txt={formatSatStr(tokenAmount, "standard", false)}
@@ -94,12 +93,15 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
               {fiatEquivalent && (
                 <Txt
                   txt={`≈ ${fiatEquivalent.symbol}${fiatEquivalent.formatted}`}
-                  styles={[styles.fiatEquivalent, { color: color.TEXT_SECONDARY }]}
+                  styles={[styles.fiatEquivalent, { color: theme.textSecondary }]}
                 />
               )}
               {/* The QR code */}
               {error.open ? (
-                <Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
+                <Txt
+                  txt={error.msg}
+                  styles={[globals().navTxt, { color: theme.text }, styles.errorMsg]}
+                />
               ) : (
                 <QR
                   size={280}
@@ -123,7 +125,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
                   <Button
                     txt={t(copied ? "copied" : "copyToken")}
                     onPress={() => void copy(encodedToken)}
-                    icon={<CopyIcon width={18} height={18} color={mainColors.WHITE} />}
+                    icon={<CopyIcon width={18} height={18} color={theme.white} />}
                   />
                   <View style={{ marginVertical: 10 }} />
                 </>
@@ -132,7 +134,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
                 outlined
                 txt={t("share")}
                 onPress={() => void share(encodedToken, `cashu://${encodedToken}`)}
-                icon={<ShareIcon width={18} height={18} color={hi[highlight]} />}
+                icon={<ShareIcon width={18} height={18} color={theme.accent} />}
               />
             </View>
           </>

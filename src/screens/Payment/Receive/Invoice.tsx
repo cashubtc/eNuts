@@ -9,10 +9,8 @@ import type { TMintInvoicePageProps } from "@model/nav";
 import Screen from "@comps/Screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useManager } from "@src/context/Manager";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
-import { getColor } from "@styles/colors";
+import { globals, useAppThemeTokens } from "@styles";
 import { formatMintUrl, share } from "@util";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,7 +19,7 @@ import { View, StyleSheet } from "react-native";
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
   const { operation } = route.params;
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const manager = useManager();
 
   useFocusEffect(
@@ -76,7 +74,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
           <Button
             txt={t("shareInvoice")}
             onPress={() => void share(operation.request)}
-            icon={<ShareIcon color={getColor(highlight, color)} />}
+            icon={<ShareIcon color={theme.accentContrast} />}
             outlined
           />
           {isIOS && <View style={styles.placeholder} />}

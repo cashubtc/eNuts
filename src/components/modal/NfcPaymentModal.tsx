@@ -14,9 +14,8 @@ import {
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { highlight as hi } from "@styles";
+import { useAppThemeTokens } from "@styles";
 
 export interface NfcPaymentModalRef {
   /** Open the modal and start NFC payment with the default limit */
@@ -47,7 +46,7 @@ interface PendingConfirmation {
 const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
   ({ onSuccess, onError, onPaymentHandoff, onClose }, ref) => {
     const { t } = useTranslation([NS.common]);
-    const { color, highlight } = useThemeContext();
+    const theme = useAppThemeTokens();
     const { formatBalance, formatSatsAsCurrency, rates, selectedCurrency } = useCurrencyContext();
 
     const sheetRef = useRef<TrueSheet>(null);
@@ -152,16 +151,16 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
         detents={["auto"]}
         dismissible={!isActive}
         draggable={!isActive}
-        backgroundColor={color.BACKGROUND}
+        backgroundColor={theme.background}
         cornerRadius={26}
-        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        grabberOptions={{ color: theme.textSecondary }}
       >
-        <View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
           <View style={styles.header}>
             {showConfirmation ? (
-              <ExclamationIcon width={28} color={hi[highlight]} />
+              <ExclamationIcon width={28} color={theme.accent} />
             ) : (
-              <NfcIcon width={28} color={hi[highlight]} />
+              <NfcIcon width={28} color={theme.accent} />
             )}
             <Txt txt={headerTitle} bold styles={[styles.title]} />
           </View>
@@ -173,33 +172,33 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                   ns: NS.wallet,
                   defaultValue: "This payment exceeds your configured limit.",
                 })}
-                styles={[styles.confirmationText, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.confirmationText, { color: theme.textSecondary }]}
               />
 
               <View
                 style={[
                   styles.confirmationBox,
                   {
-                    backgroundColor: color.INPUT_BG,
-                    borderColor: color.BORDER,
+                    backgroundColor: theme.inputBackground,
+                    borderColor: theme.border,
                   },
                 ]}
               >
                 <View style={styles.confirmationRow}>
                   <Txt
                     txt={t("amount", { ns: NS.common, defaultValue: "Amount" })}
-                    styles={[styles.confirmationLabel, { color: color.TEXT_SECONDARY }]}
+                    styles={[styles.confirmationLabel, { color: theme.textSecondary }]}
                   />
                   <View style={styles.confirmationValue}>
                     <Txt
                       txt={`${pendingConfirmation.amount.toLocaleString()} sats`}
                       bold
-                      styles={[{ color: color.TEXT }]}
+                      styles={[{ color: theme.text }]}
                     />
                     {pendingAmountFiat && (
                       <Txt
                         txt={`≈ ${currencySymbol}${pendingAmountFiat}`}
-                        styles={[styles.confirmationFiat, { color: color.TEXT_SECONDARY }]}
+                        styles={[styles.confirmationFiat, { color: theme.textSecondary }]}
                       />
                     )}
                   </View>
@@ -213,17 +212,17 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                       ns: NS.wallet,
                       defaultValue: "Your limit",
                     })}
-                    styles={[styles.confirmationLabel, { color: color.TEXT_SECONDARY }]}
+                    styles={[styles.confirmationLabel, { color: theme.textSecondary }]}
                   />
                   <View style={styles.confirmationValue}>
                     <Txt
                       txt={`${pendingConfirmation.maxAmount.toLocaleString()} sats`}
-                      styles={[{ color: color.TEXT }]}
+                      styles={[{ color: theme.text }]}
                     />
                     {pendingLimitFiat && (
                       <Txt
                         txt={`≈ ${currencySymbol}${pendingLimitFiat}`}
-                        styles={[styles.confirmationFiat, { color: color.TEXT_SECONDARY }]}
+                        styles={[styles.confirmationFiat, { color: theme.textSecondary }]}
                       />
                     )}
                   </View>
@@ -235,7 +234,7 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                   ns: NS.wallet,
                   defaultValue: "You will need to tap the terminal again after confirming.",
                 })}
-                styles={[styles.confirmationHint, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.confirmationHint, { color: theme.textSecondary }]}
               />
 
               <View style={styles.confirmationButtons}>
@@ -243,12 +242,12 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                   style={[
                     styles.confirmationButton,
                     styles.declineButton,
-                    { borderColor: color.BORDER },
+                    { borderColor: theme.border },
                   ]}
                   onPress={handleDeclineOverLimit}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.declineButtonText, { color: color.TEXT }]}>
+                  <Text style={[styles.declineButtonText, { color: theme.text }]}>
                     {t("cancel", { ns: NS.common, defaultValue: "Cancel" })}
                   </Text>
                 </TouchableOpacity>
@@ -257,7 +256,7 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                   style={[
                     styles.confirmationButton,
                     styles.confirmButton,
-                    { backgroundColor: hi[highlight] },
+                    { backgroundColor: theme.accent },
                   ]}
                   onPress={handleConfirmOverLimit}
                   activeOpacity={0.7}
@@ -272,10 +271,10 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
 
           {showNfcWaiting && (
             <View style={styles.loading}>
-              <View style={[styles.pulse, { borderColor: hi[highlight] }]}>
-                <NfcIcon width={40} color={hi[highlight]} />
+              <View style={[styles.pulse, { borderColor: theme.accent }]}>
+                <NfcIcon width={40} color={theme.accent} />
               </View>
-              <Txt txt={statusMessage} styles={[{ color: color.TEXT_SECONDARY }]} />
+              <Txt txt={statusMessage} styles={[{ color: theme.textSecondary }]} />
             </View>
           )}
         </View>

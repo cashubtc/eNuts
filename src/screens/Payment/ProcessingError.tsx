@@ -4,10 +4,9 @@ import Txt from "@comps/Txt";
 import type { TBeforeRemoveEvent, TProcessingErrorPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { isIOS } from "@src/consts";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
-import { globals, mainColors } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -18,7 +17,7 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
   const { scan, comingFromOnboarding, errorMsg } = route.params;
 
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
@@ -29,29 +28,29 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
   }, [navigation]);
 
   return (
-    <View style={[globals(color).container, styles.container]}>
+    <View style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
       <View />
       <View style={styles.section}>
-        <ExclamationIcon width={60} height={60} color={mainColors.ERROR} />
+        <ExclamationIcon width={60} height={60} color={theme.error} />
         <Txt
           txt={errorMsg}
           bold
           center
           styles={[
             {
-              color: mainColors.ERROR,
+              color: theme.error,
               marginVertical: 15,
               fontSize: 18,
             },
           ]}
         />
         {!scan && errorMsg !== alreadySpentErr && (
-          <Txt center styles={[styles.hint, { color: color.TEXT_SECONDARY }]} txt={t("tryLater")} />
+          <Txt center styles={[styles.hint, { color: theme.textSecondary }]} txt={t("tryLater")} />
         )}
         {errorMsg === alreadySpentErr && (
           <Txt
             center
-            styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
+            styles={[styles.hint, { color: theme.textSecondary }]}
             txt={t("alreadySpentHint")}
           />
         )}
@@ -80,11 +79,6 @@ const styles = StyleSheet.create({
   },
   section: {
     alignItems: "center",
-  },
-  errMsg: {
-    color: mainColors.ERROR,
-    marginVertical: 15,
-    fontSize: 18,
   },
   hint: {
     fontSize: 14,

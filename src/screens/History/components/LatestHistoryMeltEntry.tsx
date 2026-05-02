@@ -1,8 +1,7 @@
+import { useAppThemeTokens } from "@styles";
 import { ZapIcon, CheckmarkIcon } from "@comps/Icons";
 import { LatestHistoryWrapper } from "./LatestHistoryWrapper";
-import { useThemeContext } from "@src/context/Theme";
 import { MeltHistoryEntry } from "@cashu/coco-core";
-import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 
 type LatestHistoryMeltEntryProps = {
@@ -12,8 +11,8 @@ type LatestHistoryMeltEntryProps = {
 
 export const LatestHistoryMeltEntry = memo(
   function LatestHistoryMeltEntry({ history, variant = "highlight" }: LatestHistoryMeltEntryProps) {
-    const { color, highlight } = useThemeContext();
-    const iconColor = variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+    const theme = useAppThemeTokens();
+    const iconColor = variant === "highlight" ? theme.accentContrast : theme.text;
 
     let icon;
     switch (history.state) {

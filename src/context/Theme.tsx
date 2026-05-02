@@ -1,9 +1,9 @@
 import { getPreferences, setPreferences } from "@src/storage/store/theme";
 import { l } from "@log";
 import type { IPreferences } from "@model";
-import { dark, getTamaguiThemeName, HighlightKey, light, lightTheme, tamaguiConfig } from "@styles";
-import { TamaguiProvider } from "@tamagui/core";
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { getTamaguiThemeName, tamaguiConfig, type HighlightKey } from "@styles";
+import { TamaguiProvider, Theme as TamaguiTheme, type ThemeName } from "@tamagui/core";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useColorScheme } from "react-native";
 
 type ThemeMode = "dark" | "light" | "auto";
@@ -24,12 +24,6 @@ const useTheme = () => {
   // Derive the actual theme to display based on mode and device theme
   const deviceColorScheme = useColorScheme() || "light";
   const activeTheme = pref.mode === "auto" ? deviceColorScheme : pref.mode;
-
-  // Memoize color object to avoid unnecessary re-renders
-  const color = useMemo(
-    () => (activeTheme === "light" ? light.custom : dark.custom),
-    [activeTheme],
-  );
 
   // Initialize preferences from database
   useEffect(() => {
@@ -69,8 +63,6 @@ const useTheme = () => {
     activeTheme,
     mode: pref.mode,
     updateMode,
-    // Colors
-    color,
     // Highlight
     highlight: pref.theme,
     updateHighlight,
@@ -90,7 +82,6 @@ const ThemeContext = createContext<useThemeType>({
   activeTheme: "light",
   mode: "auto",
   updateMode: () => l(""),
-  color: lightTheme,
   highlight: "Default",
   updateHighlight: () => l(""),
 });
@@ -99,14 +90,12 @@ export const useThemeContext = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
+  const tamaguiTheme = getTamaguiThemeName(theme.activeTheme, theme.highlight) as ThemeName;
 
   return (
     <ThemeContext.Provider value={theme}>
-      <TamaguiProvider
-        config={tamaguiConfig}
-        defaultTheme={getTamaguiThemeName(theme.activeTheme, theme.highlight)}
-      >
-        {children}
+      <TamaguiProvider config={tamaguiConfig} defaultTheme={tamaguiTheme}>
+        <TamaguiTheme name={tamaguiTheme}>{children}</TamaguiTheme>
       </TamaguiProvider>
     </ThemeContext.Provider>
   );

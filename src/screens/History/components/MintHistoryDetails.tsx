@@ -1,7 +1,7 @@
 import Separator from "@comps/Separator";
 import { MintHistoryEntry } from "@cashu/coco-core";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
 import { HistoryDetailsScreen } from "./HistoryDetailsScreen";
@@ -21,6 +21,7 @@ type MintHistoryDetailsProps = {
 
 export function MintHistoryDetails({ entry, onGoBack }: MintHistoryDetailsProps) {
   const { t } = useTranslation([NS.history, NS.common]);
+  const theme = useAppThemeTokens();
 
   const getDescription = () => {
     if (entry.state === "UNPAID") {
@@ -34,7 +35,7 @@ export function MintHistoryDetails({ entry, onGoBack }: MintHistoryDetailsProps)
       <HistoryOverview
         amount={entry.amount}
         amountPrefix="+"
-        amountColor={mainColors.VALID}
+        amountColor={theme.valid}
         typeLabel={t("mint", { ns: NS.common })}
         description={getDescription()}
       />

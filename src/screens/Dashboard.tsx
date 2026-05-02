@@ -28,7 +28,7 @@ import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi, mainColors } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { getStrFromClipboard } from "@util";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -43,12 +43,13 @@ import DashboardActionSheet, { DashboardActionSheetOption } from "./DashboardAct
 
 export default function Dashboard({ navigation }: TDashboardPageProps) {
   const { t } = useTranslation([NS.common, NS.wallet]);
-  const { activeTheme, color, highlight } = useThemeContext();
-  const accentColor = hi[highlight];
+  const { activeTheme } = useThemeContext();
+  const theme = useAppThemeTokens();
+  const accentColor = theme.accent;
   const isDarkTheme = activeTheme === "dark";
   const balanceTextColor = accentColor;
-  const balanceMetaColor = color.TEXT_SECONDARY;
-  const actionTextColor = color.TEXT;
+  const balanceMetaColor = theme.textSecondary;
+  const actionTextColor = theme.text;
   const actionIconColor = accentColor;
   const actionIconBackground = withAlpha(accentColor, isDarkTheme ? 0.14 : 0.12);
   const actionIconBorderColor = withAlpha(accentColor, isDarkTheme ? 0.24 : 0.18);
@@ -103,7 +104,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
 
   return (
     <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: color.BACKGROUND }]}
+      style={[styles.safeArea, { backgroundColor: theme.background }]}
       edges={["bottom"]}
     >
       <View style={styles.container}>
@@ -145,7 +146,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
 
           <View style={styles.historySection}>
             <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: color.TEXT }]} numberOfLines={1}>
+              <Text style={[styles.sectionTitle, { color: theme.text }]} numberOfLines={1}>
                 {t("activity")}
               </Text>
               {hasMore && (
@@ -168,12 +169,15 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               )}
             </View>
             {!latestHistory.length ? (
-              <View style={[styles.emptyHistory, { backgroundColor: color.DRAWER }]}>
-                <Txt txt={t("noTX")} styles={[globals(color).txt, styles.emptyHistoryTxt]} />
+              <View style={[styles.emptyHistory, { backgroundColor: theme.drawer }]}>
+                <Txt
+                  txt={t("noTX")}
+                  styles={[globals().txt, { color: theme.text }, styles.emptyHistoryTxt]}
+                />
               </View>
             ) : (
               <ScrollView
-                style={[styles.historyList, { backgroundColor: color.DRAWER }]}
+                style={[styles.historyList, { backgroundColor: theme.drawer }]}
                 contentContainerStyle={styles.historyListContent}
                 showsVerticalScrollIndicator={false}
               >
@@ -182,7 +186,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                     {renderHistoryEntry(entry)}
                     {index < latestHistory.length - 1 && index < 9 ? (
                       <View
-                        style={[styles.historyDivider, { backgroundColor: color.DARK_BORDER }]}
+                        style={[styles.historyDivider, { backgroundColor: theme.darkBorder }]}
                       />
                     ) : null}
                   </View>
@@ -197,8 +201,8 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
             style={[
               styles.actionDock,
               {
-                backgroundColor: color.DRAWER,
-                borderColor: isDarkTheme ? color.DARK_BORDER : color.BORDER,
+                backgroundColor: theme.drawer,
+                borderColor: isDarkTheme ? theme.darkBorder : theme.border,
               },
             ]}
           >
@@ -251,15 +255,15 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           sheetRef={sendOptionsRef}
           title={t("send", { ns: NS.wallet })}
           closeAccessibilityLabel={t("cancel")}
-          backgroundColor={color.BACKGROUND}
-          closeIconColor={color.TEXT_SECONDARY}
+          backgroundColor={theme.background}
+          closeIconColor={theme.textSecondary}
         >
           <DashboardActionSheetOption
-            icon={<SendMsgIcon width={16} height={16} color={mainColors.VALID} />}
+            icon={<SendMsgIcon width={16} height={16} color={theme.valid} />}
             title={t("sendEcash")}
             description={t("sendEcashDashboard")}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={() => {
               void sendOptionsRef.current?.dismiss();
               navigation.navigate("SendSelectAmount");
@@ -270,11 +274,11 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           <Separator style={styles.sheetSeparator} />
 
           <DashboardActionSheetOption
-            icon={<ZapIcon width={26} height={26} color={mainColors.ZAP} />}
+            icon={<ZapIcon width={26} height={26} color={theme.zap} />}
             title={t("payLNInvoice", { ns: NS.wallet })}
             description={t("payInvoiceDashboard")}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={() => {
               void sendOptionsRef.current?.dismiss();
               navigation.navigate("MeltInput", {});
@@ -285,7 +289,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           <Separator style={styles.sheetSeparator} />
 
           <DashboardActionSheetOption
-            icon={<NfcIcon width={20} color={mainColors.VALID} />}
+            icon={<NfcIcon width={20} color={theme.valid} />}
             title={t("nfcPayment", {
               ns: NS.wallet,
               defaultValue: "NFC Payment",
@@ -294,8 +298,8 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               ns: NS.wallet,
               defaultValue: "Tap to pay at a terminal",
             })}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={handleNfcOptionPress}
             testID="third-option"
           />
@@ -326,21 +330,21 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           sheetRef={receiveOptionsRef}
           title={t("receive", { ns: NS.wallet })}
           closeAccessibilityLabel={t("cancel")}
-          backgroundColor={color.BACKGROUND}
-          closeIconColor={color.TEXT_SECONDARY}
+          backgroundColor={theme.background}
+          closeIconColor={theme.textSecondary}
         >
           <DashboardActionSheetOption
             icon={
               loading ? (
-                <Loading size="small" color={mainColors.VALID} />
+                <Loading size="small" color={theme.valid} />
               ) : (
-                <CopyIcon color={mainColors.VALID} />
+                <CopyIcon color={theme.valid} />
               )
             }
             title={loading ? t("claiming", { ns: NS.wallet }) : t("pasteToken", { ns: NS.wallet })}
             description={t("receiveEcashDashboard")}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={() => {
               void handleClaimBtnPress();
               void receiveOptionsRef.current?.dismiss();
@@ -351,11 +355,11 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           <Separator style={styles.sheetSeparator} />
 
           <DashboardActionSheetOption
-            icon={<ZapIcon width={26} height={26} color={mainColors.ZAP} />}
+            icon={<ZapIcon width={26} height={26} color={theme.zap} />}
             title={t("createLnInvoice")}
             description={t("createInvoiceDashboard")}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={() => {
               void receiveOptionsRef.current?.dismiss();
               navigation.navigate("MintSelectAmount");

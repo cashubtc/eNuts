@@ -1,7 +1,6 @@
 import type { RootStackParamList } from "@model/nav";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useThemeContext } from "@src/context/Theme";
-import { Stack } from "@styles";
+import { Stack, useAppThemeTokens } from "@styles";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
 
@@ -30,7 +29,7 @@ export default function Empty({
   nav,
 }: IEmptyProps) {
   const { t } = useTranslation();
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <Stack paddingHorizontal={20} alignItems="center">
       <Image
@@ -50,11 +49,11 @@ export default function Empty({
             bold
             center
             styles={[
-              { fontSize: 18, opacity: 0.8, color: color.TEXT, marginBottom: hasOk ? 10 : 0 },
+              { fontSize: 18, opacity: 0.8, color: theme.text, marginBottom: hasOk ? 10 : 0 },
             ]}
           />
           {hint && hint.length > 0 && (
-            <Txt txt={hint} center styles={[{ color: color.TEXT_SECONDARY, fontSize: 12 }]} />
+            <Txt txt={hint} center styles={[{ color: theme.textSecondary, fontSize: 12 }]} />
           )}
         </>
       )}

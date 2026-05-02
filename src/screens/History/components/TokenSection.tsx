@@ -1,7 +1,7 @@
+import { useAppThemeTokens } from "@styles";
 import Copy from "@comps/Copy";
 import Txt from "@comps/Txt";
 import Separator from "@comps/Separator";
-import { useThemeContext } from "@src/context/Theme";
 import { View, StyleSheet } from "react-native";
 
 const truncateStr = (str: string, maxLength: number) => {
@@ -15,20 +15,20 @@ type TokenSectionProps = {
 };
 
 export function TokenSection({ label, value }: TokenSectionProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   return (
     <>
       <Separator style={styles.separator} />
       <View style={styles.tokenSection}>
         <View style={styles.tokenHeader}>
-          <Txt txt={label} styles={[styles.sectionTitle, { color: color.TEXT }]} />
+          <Txt txt={label} styles={[styles.sectionTitle, { color: theme.text }]} />
           <Copy txt={value} />
         </View>
-        <View style={[styles.tokenContainer, { backgroundColor: color.INPUT_BG }]}>
+        <View style={[styles.tokenContainer, { backgroundColor: theme.inputBackground }]}>
           <Txt
             txt={truncateStr(value, 100)}
-            styles={[styles.tokenValue, { color: color.TEXT_SECONDARY }]}
+            styles={[styles.tokenValue, { color: theme.textSecondary }]}
           />
         </View>
       </View>

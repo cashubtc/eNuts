@@ -1,5 +1,5 @@
+import { useAppThemeTokens } from "@styles";
 import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { View, StyleSheet } from "react-native";
 
@@ -18,7 +18,7 @@ export function HistoryOverview({
   typeLabel,
   description,
 }: HistoryOverviewProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
 
   const { formatted, symbol } = formatAmount(amount);
@@ -27,8 +27,8 @@ export function HistoryOverview({
   return (
     <View style={styles.overview}>
       <Txt txt={amountDisplay} styles={[styles.amount, { color: amountColor }]} />
-      <Txt txt={typeLabel} styles={[styles.type, { color: color.TEXT_SECONDARY }]} />
-      <Txt txt={description} styles={[styles.description, { color: color.TEXT_SECONDARY }]} />
+      <Txt txt={typeLabel} styles={[styles.type, { color: theme.textSecondary }]} />
+      <Txt txt={description} styles={[styles.description, { color: theme.textSecondary }]} />
     </View>
   );
 }

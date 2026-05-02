@@ -1,5 +1,4 @@
-import { useThemeContext } from "@src/context/Theme";
-import { Stack, globals } from "@styles";
+import { Stack, globals, useAppThemeTokens } from "@styles";
 import { TouchableOpacity } from "react-native";
 
 import { ChevronRightIcon } from "./Icons";
@@ -26,7 +25,7 @@ export default function Option({
   loading,
   secondIcon,
 }: IOptionProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <>
       <TouchableOpacity style={globals().wrapRow} onPress={onPress} testID={`send-option-${txt}`}>
@@ -34,7 +33,7 @@ export default function Option({
           {icon ? <Stack style={{ minWidth: 40 }}>{icon}</Stack> : null}
           <Stack>
             <Txt txt={txt} bold />
-            <Txt styles={[{ fontSize: 10, color: color.TEXT_SECONDARY }]} txt={hint} />
+            <Txt styles={[{ fontSize: 10, color: theme.textSecondary }]} txt={hint} />
           </Stack>
         </Stack>
         {loading ? (
@@ -42,7 +41,7 @@ export default function Option({
         ) : secondIcon ? (
           <Stack marginRight={-5}>{secondIcon}</Stack>
         ) : (
-          <ChevronRightIcon color={color.TEXT} />
+          <ChevronRightIcon color={theme.text} />
         )}
       </TouchableOpacity>
       {hasSeparator && <Separator />}

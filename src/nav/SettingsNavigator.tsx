@@ -6,7 +6,7 @@ import CurrencySettings from "@screens/Settings/Currency";
 import NfcSettings from "@screens/Settings/NfcSettings";
 import NpcSettings from "@screens/Settings/NpcSettings";
 import ViewMnemonic from "@screens/Settings/ViewMnemonic";
-import { useThemeContext } from "@src/context/Theme";
+import { useAppThemeTokens } from "@styles";
 import { SettingsStackParamList } from "./navTypes";
 
 const SettingsStack = createNativeStackNavigator<SettingsStackParamList>();
@@ -14,7 +14,7 @@ const SettingsStack = createNativeStackNavigator<SettingsStackParamList>();
 const animationDuration = 250;
 
 export default function SettingsNavigator() {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   return (
     <SettingsStack.Navigator
@@ -22,7 +22,7 @@ export default function SettingsNavigator() {
         headerShown: false,
         animation: "fade",
         animationDuration,
-        navigationBarColor: color.BACKGROUND,
+        navigationBarColor: theme.background,
       }}
     >
       <SettingsStack.Screen name="SettingsMain" component={Settings} />

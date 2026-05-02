@@ -1,5 +1,4 @@
-import { useThemeContext } from "@src/context/Theme";
-import { ProgressFill, ProgressTrack, highlight as hi } from "@styles";
+import { ProgressFill, ProgressTrack } from "@styles";
 
 import Txt from "./Txt";
 
@@ -16,11 +15,10 @@ export default function Progress({
   contactsCount,
   doneCount,
 }: IProgressProps) {
-  const { color, highlight } = useThemeContext();
   return (
     <>
-      <ProgressTrack style={{ backgroundColor: color.INPUT_BG }}>
-        <ProgressFill style={{ width: `${progress * 100}%`, backgroundColor: hi[highlight] }} />
+      <ProgressTrack>
+        <ProgressFill style={{ width: `${progress * 100}%` }} />
       </ProgressTrack>
       {withIndicator && (
         <Txt

@@ -16,7 +16,6 @@ import type { TSettingsPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
 import Txt from "@comps/Txt";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { dropAllData } from "@src/storage/dev";
 import { appVersion } from "@src/consts/env";
@@ -24,7 +23,7 @@ import { reportIssueUrl } from "@src/consts/urls";
 import { isErr, openUrl } from "@util";
 import { secureStore, store } from "@store";
 import { SECURESTORE_KEY, STORE_KEYS } from "@store/consts";
-import { globals } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
@@ -36,7 +35,7 @@ import Loading from "@comps/Loading";
 export default function Settings({ navigation }: TSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
 
   const handleReset = async () => {
@@ -55,77 +54,87 @@ export default function Settings({ navigation }: TSettingsPageProps) {
     >
       <ScrollView alwaysBounceVertical={false}>
         {/* MINT */}
-        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
+        <View
+          style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
+        >
           <MenuItem
             header={t("mint")}
             txt={t("mintSettings", { ns: NS.topNav })}
-            icon={<MintBoardIcon color={color.TEXT} />}
+            icon={<MintBoardIcon color={theme.text} />}
             onPress={() => navigation.navigate("Mint", { screen: "MintHome" })}
           />
         </View>
         {/* WALLET */}
-        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
+        <View
+          style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
+        >
           <MenuItem
             header={t("wallet")}
             txt={t("history", { ns: NS.topNav })}
-            icon={<HistoryIcon color={color.TEXT} />}
+            icon={<HistoryIcon color={theme.text} />}
             onPress={() => navigation.navigate("History", { screen: "HistoryMain" })}
           />
         </View>
         {/* PREFERENCES */}
-        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
+        <View
+          style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
+        >
           <MenuItem
             header={t("preferences")}
             txt={t("display")}
-            icon={<PaletteIcon color={color.TEXT} />}
+            icon={<PaletteIcon color={theme.text} />}
             onPress={() => navigation.navigate("Display settings")}
           />
           <MenuItem
             txt={t("language")}
-            icon={<LanguageIcon color={color.TEXT} />}
+            icon={<LanguageIcon color={theme.text} />}
             onPress={() => navigation.navigate("Language settings")}
           />
           <MenuItem
             txt={t("currency")}
-            icon={<SwapCurrencyIcon color={color.TEXT} />}
+            icon={<SwapCurrencyIcon color={theme.text} />}
             onPress={() => navigation.navigate("Currency settings")}
           />
           <MenuItem
             txt={t("nfcSettings", { defaultValue: "NFC Payments" })}
-            icon={<NfcIcon width={18} color={color.TEXT} />}
+            icon={<NfcIcon width={18} color={theme.text} />}
             onPress={() => navigation.navigate("NFC settings")}
           />
           <MenuItem
             txt={t("npcSettings", { defaultValue: "Lightning address" })}
-            icon={<ZapIcon width={18} color={color.TEXT} />}
+            icon={<ZapIcon width={18} color={theme.text} />}
             onPress={() => navigation.navigate("NPC settings")}
           />
         </View>
         {/* SECURITY */}
-        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
+        <View
+          style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
+        >
           <MenuItem
             header={t("restore")}
             txt={t("viewMnemonic")}
-            icon={<KeyIcon color={color.TEXT} />}
+            icon={<KeyIcon color={theme.text} />}
             onPress={() => navigation.navigate("View mnemonic")}
           />
           <MenuItem
             txt={t("restore")}
-            icon={<LockIcon color={color.TEXT} />}
+            icon={<LockIcon color={theme.text} />}
             onPress={() => navigation.navigate("Restore", { screen: "RecoverMints" })}
           />
         </View>
         {/* ABOUT */}
-        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
+        <View
+          style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
+        >
           <MenuItem
             header={t("about")}
             txt={t("github")}
-            icon={<GithubIcon color={color.TEXT} />}
+            icon={<GithubIcon color={theme.text} />}
             onPress={() => {}}
           />
           <MenuItem
             txt={t("reportIssue", { defaultValue: "Report an issue" })}
-            icon={<LinkIcon color={color.TEXT} />}
+            icon={<LinkIcon color={theme.text} />}
             onPress={() =>
               void openUrl(reportIssueUrl)?.catch((err: unknown) =>
                 openPromptAutoClose({
@@ -135,7 +144,9 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             }
           />
         </View>
-        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
+        <View
+          style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
+        >
           <MenuItem
             header="DEV"
             txt={t("factoryReset")}

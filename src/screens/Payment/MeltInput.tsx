@@ -8,9 +8,8 @@ import TxtInput from "@comps/TxtInput";
 import { BoltIcon, ChevronRightIcon, CopyIcon } from "@comps/Icons";
 import type { MeltOperation } from "@cashu/coco-core";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { highlight as hi, mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { formatMintUrl, getStrFromClipboard, isErr, vib } from "@util";
 import { isLightningAddress, isLnurl } from "@util/lnurl";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
@@ -76,7 +75,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
 
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { shake } = useShakeAnimation();
   const [input, setInput] = useState(invoice || "");
   const trimmedInput = input.trim();
@@ -477,8 +476,8 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
             style={[
               styles.inputSurface,
               {
-                backgroundColor: color.DRAWER,
-                borderColor: color.BORDER,
+                backgroundColor: theme.drawer,
+                borderColor: theme.border,
               },
             ]}
           >
@@ -506,12 +505,12 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 style={[
                   styles.pasteButton,
                   {
-                    backgroundColor: color.INPUT_BG,
-                    borderColor: color.BORDER,
+                    backgroundColor: theme.inputBackground,
+                    borderColor: theme.border,
                   },
                 ]}
               >
-                <CopyIcon width={18} height={18} color={hi[highlight]} />
+                <CopyIcon width={18} height={18} color={theme.accent} />
               </TouchableOpacity>
             </View>
           </View>
@@ -521,21 +520,21 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
             style={[
               styles.lnAddressPanel,
               {
-                backgroundColor: color.DRAWER,
-                borderColor: color.BORDER,
+                backgroundColor: theme.drawer,
+                borderColor: theme.border,
               },
               lnAddressMotionStyle,
             ]}
           >
             <View style={styles.panelHeader}>
-              <View style={[styles.panelIcon, { backgroundColor: color.INPUT_BG }]}>
-                <BoltIcon width={18} height={18} color={hi[highlight]} />
+              <View style={[styles.panelIcon, { backgroundColor: theme.inputBackground }]}>
+                <BoltIcon width={18} height={18} color={theme.accent} />
               </View>
               <View style={styles.panelCopy}>
                 <Txt txt={t("amount", { ns: NS.common })} bold styles={[styles.panelTitle]} />
                 <Txt
                   txt={lnAddress}
-                  styles={[styles.addressText, { color: color.TEXT_SECONDARY }]}
+                  styles={[styles.addressText, { color: theme.textSecondary }]}
                 />
               </View>
               <TouchableOpacity
@@ -546,21 +545,21 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 style={[
                   styles.cancelButton,
                   {
-                    backgroundColor: color.INPUT_BG,
-                    borderColor: color.BORDER,
+                    backgroundColor: theme.inputBackground,
+                    borderColor: theme.border,
                   },
                 ]}
               >
                 <Txt
                   txt={t("cancel", { ns: NS.common })}
                   bold
-                  styles={[styles.cancelText, { color: hi[highlight] }]}
+                  styles={[styles.cancelText, { color: theme.accent }]}
                 />
               </TouchableOpacity>
             </View>
 
             <View style={styles.amountStage}>
-              <View style={[styles.amountDivider, { backgroundColor: color.DARK_BORDER }]} />
+              <View style={[styles.amountDivider, { backgroundColor: theme.darkBorder }]} />
               <AmountInput
                 ref={amountInputRef}
                 value={amountInput}
@@ -574,19 +573,16 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
             </View>
 
             {shouldShowAmountLimits ? (
-              <View style={[styles.amountRangeSection, { borderTopColor: color.DARK_BORDER }]}>
+              <View style={[styles.amountRangeSection, { borderTopColor: theme.darkBorder }]}>
                 <Txt
                   txt={t("amountLimits", { ns: NS.common })}
                   bold
-                  styles={[styles.rangeTitle, { color: color.TEXT }]}
+                  styles={[styles.rangeTitle, { color: theme.text }]}
                 />
                 <View style={styles.rangeGrid}>
                   {minSendable ? (
-                    <View style={[styles.rangeItem, { backgroundColor: color.INPUT_BG }]}>
-                      <Txt
-                        txt="Min"
-                        styles={[styles.rangeLabel, { color: color.TEXT_SECONDARY }]}
-                      />
+                    <View style={[styles.rangeItem, { backgroundColor: theme.inputBackground }]}>
+                      <Txt txt="Min" styles={[styles.rangeLabel, { color: theme.textSecondary }]} />
                       <Txt
                         txt={`${Math.floor(minSendable / 1000)} sats`}
                         styles={[styles.rangeValue]}
@@ -594,11 +590,8 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                     </View>
                   ) : null}
                   {maxSendable ? (
-                    <View style={[styles.rangeItem, { backgroundColor: color.INPUT_BG }]}>
-                      <Txt
-                        txt="Max"
-                        styles={[styles.rangeLabel, { color: color.TEXT_SECONDARY }]}
-                      />
+                    <View style={[styles.rangeItem, { backgroundColor: theme.inputBackground }]}>
+                      <Txt txt="Max" styles={[styles.rangeLabel, { color: theme.textSecondary }]} />
                       <Txt
                         txt={`${Math.floor(maxSendable / 1000)} sats`}
                         styles={[styles.rangeValue]}
@@ -617,11 +610,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
             txt={t("continue")}
             onPress={() => void handleBtnPress()}
             icon={
-              isContinueLoading ? (
-                <Loading size={20} />
-              ) : (
-                <ChevronRightIcon color={mainColors.WHITE} />
-              )
+              isContinueLoading ? <Loading size={20} /> : <ChevronRightIcon color={theme.white} />
             }
           />
         </View>

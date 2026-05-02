@@ -6,13 +6,14 @@ import Txt from "@comps/Txt";
 import type { TDisplaySettingsPageProps } from "@model/nav";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, HighlightKey, themeColors } from "@styles";
+import { globals, HighlightKey, themeColors, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 
 export default function DisplaySettings({ navigation }: TDisplaySettingsPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { updateMode, mode, color, highlight } = useThemeContext();
+  const { updateMode, mode, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <Screen
       screenName={t("display", { ns: NS.topNav })}
@@ -21,7 +22,7 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
     >
       <ScrollView alwaysBounceVertical={false}>
         <Txt txt="Theme" bold styles={[styles.subHeader]} />
-        <View style={globals(color).wrapContainer}>
+        <View style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
           <TouchableOpacity style={[globals().wrapRow]} onPress={() => updateMode("dark")}>
             <Txt txt={t("darkMode")} />
             <RadioBtn selected={mode === "dark"} />
@@ -37,7 +38,9 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
           </TouchableOpacity>
         </View>
         <Txt txt="Highlight" bold styles={[styles.subHeader]} />
-        <View style={[globals(color).wrapContainer, { marginBottom: 80 }]}>
+        <View
+          style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 80 }]}
+        >
           {themeColors.map((t, i) => (
             <ThemeSelection
               key={t}

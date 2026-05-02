@@ -3,7 +3,7 @@ import "../shim";
 
 import { l } from "@log";
 import Navigator from "@nav/Navigator";
-import { NavigationContainer, useNavigationState } from "@react-navigation/native";
+import { DefaultTheme, NavigationContainer, useNavigationState } from "@react-navigation/native";
 import { Manager, initializeCoco } from "@cashu/coco-core";
 import { ExpoSqliteRepositories } from "@cashu/coco-expo-sqlite";
 import { CocoCashuProvider } from "@cashu/coco-react";
@@ -19,7 +19,7 @@ import { NS } from "@src/i18n";
 import { createNpcPlugin } from "@src/services/NpcService";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
-import { dark, light } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { isErr } from "@util";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useMemo, useState } from "react";
@@ -178,7 +178,11 @@ function RootApp() {
     }
   }, [ready, manager]);
   if (!ready || !manager) {
-    return <Blank />;
+    return (
+      <ThemeProvider>
+        <Blank />
+      </ThemeProvider>
+    );
   }
   return (
     <CocoCashuProvider manager={manager}>
@@ -195,11 +199,25 @@ function RootApp() {
 
 function ThemedNavigationContainer({ children }: { children: React.ReactNode }) {
   const { activeTheme } = useThemeContext();
-  return (
-    <NavigationContainer theme={activeTheme === "light" ? light : dark}>
-      {children}
-    </NavigationContainer>
+  const theme = useAppThemeTokens();
+  const navigationTheme = useMemo(
+    () => ({
+      ...DefaultTheme,
+      dark: activeTheme === "dark",
+      colors: {
+        ...DefaultTheme.colors,
+        primary: theme.accent,
+        background: theme.background,
+        card: theme.drawer,
+        text: theme.text,
+        border: theme.border,
+        notification: theme.error,
+      },
+    }),
+    [activeTheme, theme],
   );
+
+  return <NavigationContainer theme={navigationTheme}>{children}</NavigationContainer>;
 }
 
 function ThemedStatusBar() {

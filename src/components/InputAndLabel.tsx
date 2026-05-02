@@ -1,5 +1,4 @@
-import { useThemeContext } from "@src/context/Theme";
-import { Stack } from "@styles";
+import { Stack, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
 import type { KeyboardTypeOptions } from "react-native";
 
@@ -26,7 +25,7 @@ export default function InputAndLabel({
   isEmptyInput,
 }: IInputAndLabelProps) {
   const { t } = useTranslation();
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <Stack position="relative" width="100%">
       <TxtInput
@@ -47,7 +46,7 @@ export default function InputAndLabel({
             top: 10,
             paddingTop: 10,
             marginHorizontal: 10,
-            backgroundColor: color.INPUT_BG,
+            backgroundColor: theme.inputBackground,
           },
         ]}
       />

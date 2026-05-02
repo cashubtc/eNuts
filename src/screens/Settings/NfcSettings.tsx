@@ -5,16 +5,15 @@ import Txt from "@comps/Txt";
 import { useNfcAmountLimitsContext, NO_LIMIT } from "@src/context/NfcAmountLimits";
 import type { TNfcSettingsPageProps } from "@src/nav/navTypes";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View, Text, TextInput, StyleSheet } from "react-native";
 
 export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatBalance, formatSatsAsCurrency, rates, selectedCurrency } = useCurrencyContext();
 
   const { defaultMaxAmount, isLoading, setDefaultMaxAmount } = useNfcAmountLimitsContext();
@@ -114,7 +113,7 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
           styles={[styles.subHeader]}
         />
 
-        <View style={globals(color).wrapContainer}>
+        <View style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
           {/* No Limit option */}
           <TouchableOpacity
             style={[globals().wrapRow, { paddingBottom: 15 }]}
@@ -137,11 +136,11 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
                     value={inputValue}
                     onChangeText={handleInputChange}
                     keyboardType="number-pad"
-                    style={[styles.inlineInput, { color: hi[highlight] }]}
-                    selectionColor={hi[highlight]}
+                    style={[styles.inlineInput, { color: theme.accent }]}
+                    selectionColor={theme.accent}
                     returnKeyType="done"
                   />
-                  <Text style={[styles.satsLabel, { color: color.TEXT_SECONDARY }]}>sats</Text>
+                  <Text style={[styles.satsLabel, { color: theme.textSecondary }]}>sats</Text>
                 </View>
               )}
             </View>
@@ -150,7 +149,7 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
 
           {/* Fiat value hint */}
           {!hasNoLimit && fiatValue && (
-            <Text style={[styles.fiatHint, { color: color.TEXT_SECONDARY }]}>
+            <Text style={[styles.fiatHint, { color: theme.textSecondary }]}>
               ≈ {currencySymbol}
               {fiatValue}
             </Text>

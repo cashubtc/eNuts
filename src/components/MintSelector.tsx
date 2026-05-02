@@ -1,6 +1,6 @@
-import { useThemeContext } from "@src/context/Theme";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
+import { useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { TouchableOpacity, View, type ViewStyle, type StyleProp, StyleSheet } from "react-native";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
@@ -23,9 +23,9 @@ export default function MintSelector({
   style,
   label,
 }: IMintSelectorProps) {
-  const { color } = useThemeContext();
   const { hidden } = usePrivacyContext();
   const { formatAmount } = useCurrencyContext();
+  const theme = useAppThemeTokens();
 
   const displayName = mint.mintInfo.name || formatMintUrl(mint.mintUrl);
 
@@ -40,7 +40,7 @@ export default function MintSelector({
             txt={label}
             styles={[
               {
-                color: color.TEXT_SECONDARY,
+                color: theme.textSecondary,
                 fontSize: 12,
                 marginBottom: 8,
               },
@@ -50,12 +50,12 @@ export default function MintSelector({
         <View style={styles.container}>
           {/* Mint name and balance container */}
           <View style={styles.infoContainer}>
-            <Txt txt={displayName} bold styles={[{ color: color.TEXT }]} />
+            <Txt txt={displayName} bold styles={[{ color: theme.text }]} />
             <Txt
               txt={displayBalance}
               styles={[
                 {
-                  color: color.TEXT_SECONDARY,
+                  color: theme.textSecondary,
                   fontSize: 12,
                 },
               ]}
@@ -64,7 +64,7 @@ export default function MintSelector({
 
           {/* Chevron icon */}
           <View style={styles.chevronContainer}>
-            <ChevronRightIcon color={color.TEXT} />
+            <ChevronRightIcon color={theme.text} />
           </View>
         </View>
       </Card>

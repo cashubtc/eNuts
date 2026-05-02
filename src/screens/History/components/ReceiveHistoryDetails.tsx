@@ -1,7 +1,7 @@
 import Separator from "@comps/Separator";
 import { ReceiveHistoryEntry } from "@cashu/coco-core";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
 import { HistoryDetailsScreen } from "./HistoryDetailsScreen";
@@ -15,13 +15,14 @@ type ReceiveHistoryDetailsProps = {
 
 export function ReceiveHistoryDetails({ entry, onGoBack }: ReceiveHistoryDetailsProps) {
   const { t } = useTranslation([NS.history, NS.common]);
+  const theme = useAppThemeTokens();
 
   return (
     <HistoryDetailsScreen onGoBack={onGoBack}>
       <HistoryOverview
         amount={entry.amount}
         amountPrefix="+"
-        amountColor={mainColors.VALID}
+        amountColor={theme.valid}
         typeLabel={t("receive")}
         description={t("receivedEcash")}
       />

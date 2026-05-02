@@ -1,7 +1,7 @@
 import Separator from "@comps/Separator";
 import { MeltHistoryEntry } from "@cashu/coco-core";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
 import { HistoryDetailsScreen } from "./HistoryDetailsScreen";
@@ -20,6 +20,7 @@ type MeltHistoryDetailsProps = {
 
 export function MeltHistoryDetails({ entry, onGoBack }: MeltHistoryDetailsProps) {
   const { t } = useTranslation([NS.history, NS.common]);
+  const theme = useAppThemeTokens();
 
   const getDescription = () => {
     switch (entry.state) {
@@ -39,7 +40,7 @@ export function MeltHistoryDetails({ entry, onGoBack }: MeltHistoryDetailsProps)
       <HistoryOverview
         amount={entry.amount}
         amountPrefix="-"
-        amountColor={mainColors.ZAP}
+        amountColor={theme.zap}
         typeLabel={t("melt")}
         description={getDescription()}
       />

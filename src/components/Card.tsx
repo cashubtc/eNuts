@@ -1,5 +1,4 @@
-import { useThemeContext } from "@src/context/Theme";
-import { Surface, highlight as hi } from "@styles";
+import { Surface } from "@styles";
 import type { ReactNode } from "react";
 import { type StyleProp, type ViewStyle } from "react-native";
 
@@ -10,21 +9,12 @@ interface ICardProps {
 }
 
 export default function Card({ children, variant = "base", style }: ICardProps) {
-  const { color, highlight } = useThemeContext();
-
   return (
     <Surface
-      style={[
-        {
-          borderWidth: 2,
-          padding: 20,
-        },
-        {
-          backgroundColor: color.DRAWER,
-          borderColor: variant === "accent" ? hi[highlight] : color.BORDER,
-        },
-        style,
-      ]}
+      borderWidth={2}
+      padding={20}
+      borderColor={variant === "accent" ? "$accent" : "$borderColor"}
+      style={[style]}
     >
       {children}
     </Surface>

@@ -2,8 +2,7 @@ import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState }
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { ScrollView, Text, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useThemeContext } from "@src/context/Theme";
-import { globals } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import Button from "@comps/Button";
 
 export type ConfirmBottomSheetRef = {
@@ -30,7 +29,7 @@ interface SheetOptions {
 }
 
 const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const insets = useSafeAreaInsets();
   const sheetRef = useRef<TrueSheet>(null);
   const notifyCancelOnDismissRef = useRef(false);
@@ -81,22 +80,22 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
       detents={["auto"]}
       dismissible={false}
       draggable={false}
-      backgroundColor={color.BACKGROUND}
+      backgroundColor={theme.background}
       cornerRadius={26}
-      grabberOptions={{ color: color.TEXT_SECONDARY }}
+      grabberOptions={{ color: theme.textSecondary }}
       onDidDismiss={handleDismiss}
     >
       <ScrollView
-        style={{ backgroundColor: color.BACKGROUND }}
+        style={{ backgroundColor: theme.background }}
         contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 20) }]}
         showsVerticalScrollIndicator={false}
       >
         {options && (
           <>
-            <Text style={[globals(color, highlight).modalHeader, { marginBottom: 15 }]}>
+            <Text style={[globals().modalHeader, { color: theme.text }, { marginBottom: 15 }]}>
               {options.header}
             </Text>
-            <Text style={[styles.message, { color: color.TEXT }]}>{options.txt}</Text>
+            <Text style={[styles.message, { color: theme.text }]}>{options.txt}</Text>
             <View style={styles.buttonContainer}>
               <Button
                 txt={options.confirmTxt}

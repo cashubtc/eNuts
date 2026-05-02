@@ -3,7 +3,6 @@ import Txt from "@comps/Txt";
 import Loading from "@comps/Loading";
 import Button from "@comps/Button";
 import { isIOS } from "@consts";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { seedService } from "@src/services/SeedService";
 import { useEffect, useState } from "react";
@@ -12,11 +11,11 @@ import { useTranslation } from "react-i18next";
 import { FlatList, View, StyleSheet } from "react-native";
 import useCopy from "@comps/hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "@comps/Icons";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 
 export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { copied, copy } = useCopy();
   const [mnemonic, setMnemonic] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,12 +36,12 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
     <Screen screenName={"Mnemonic"} withBackBtn handlePress={() => navigation.goBack()}>
       <View style={styles.content}>
         {loading ? (
-          <View style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}>
+          <View style={[styles.warnContainer, { backgroundColor: theme.drawer }]}>
             <Loading size="large" />
           </View>
         ) : !mnemonic ? (
-          <View style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}>
-            <Txt txt={"No mnemonic found"} styles={[{ color: color.TEXT_SECONDARY }]} />
+          <View style={[styles.warnContainer, { backgroundColor: theme.drawer }]}>
+            <Txt txt={"No mnemonic found"} styles={[{ color: theme.textSecondary }]} />
           </View>
         ) : (
           <>
@@ -55,7 +54,7 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
                   style={[
                     styles.mnemonicWord,
                     {
-                      backgroundColor: color.DRAWER,
+                      backgroundColor: theme.drawer,
                       marginRight: index % 2 === 0 ? 10 : 0,
                     },
                   ]}
@@ -72,9 +71,9 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
                 disabled={copied}
                 icon={
                   copied ? (
-                    <CheckmarkIcon width={18} height={18} color={mainColors.WHITE} />
+                    <CheckmarkIcon width={18} height={18} color={theme.white} />
                   ) : (
-                    <CopyIcon width={18} height={18} color={mainColors.WHITE} />
+                    <CopyIcon width={18} height={18} color={theme.white} />
                   )
                 }
               />

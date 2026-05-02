@@ -9,10 +9,9 @@ import { useBalanceContext } from "@src/context/Balance";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useNpcContext, type INpcAccount, type TNpcUsernameAccountRequest } from "@src/context/Npc";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { isErr } from "@util";
-import { globals, highlight as hi, mainColors } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import * as Clipboard from "expo-clipboard";
 import { useRef, useMemo, useState } from "react";
@@ -38,7 +37,7 @@ function NpcAccountCard({
   onSync,
 }: INpcAccountCardProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   const accountSourceLabel =
     account.source === "privateKey"
@@ -51,22 +50,22 @@ function NpcAccountCard({
       : t("npcPaused", { defaultValue: "Paused" });
 
   return (
-    <View style={[globals(color).wrapContainer, styles.accountCard]}>
+    <View style={[globals().wrapContainer, { backgroundColor: theme.drawer }, styles.accountCard]}>
       <View style={styles.accountHeader}>
         <View style={styles.accountTitleWrap}>
           <Txt txt={account.label} bold styles={[styles.accountTitle]} />
           <View style={styles.badgeRow}>
-            <View style={[styles.sourceBadge, { borderColor: color.BORDER }]}>
+            <View style={[styles.sourceBadge, { borderColor: theme.border }]}>
               <Txt
                 txt={accountSourceLabel}
-                styles={[styles.sourceBadgeText, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.sourceBadgeText, { color: theme.textSecondary }]}
               />
             </View>
             {account.isDefault && (
-              <View style={[styles.badge, { backgroundColor: hi[highlight] }]}>
+              <View style={[styles.badge, { backgroundColor: theme.accent }]}>
                 <Txt
                   txt={t("npcDefaultAccount", { defaultValue: "Default" })}
-                  styles={[styles.badgeText, { color: color.BACKGROUND }]}
+                  styles={[styles.badgeText, { color: theme.background }]}
                 />
               </View>
             )}
@@ -76,9 +75,9 @@ function NpcAccountCard({
           accessibilityRole="button"
           onPress={() => onSync(account.id)}
           disabled={busy}
-          style={[styles.iconButton, { borderColor: color.BORDER, opacity: busy ? 0.7 : 1 }]}
+          style={[styles.iconButton, { borderColor: theme.border, opacity: busy ? 0.7 : 1 }]}
         >
-          {busy ? <Loading size={16} /> : <RefreshIcon width={18} color={hi[highlight]} />}
+          {busy ? <Loading size={16} /> : <RefreshIcon width={18} color={theme.accent} />}
         </TouchableOpacity>
       </View>
 
@@ -86,10 +85,10 @@ function NpcAccountCard({
         <View
           style={[
             styles.statusDot,
-            { backgroundColor: account.isRunning ? hi[highlight] : color.TEXT_SECONDARY },
+            { backgroundColor: account.isRunning ? theme.accent : theme.textSecondary },
           ]}
         />
-        <Txt txt={statusLabel} styles={[styles.statusText, { color: color.TEXT_SECONDARY }]} />
+        <Txt txt={statusLabel} styles={[styles.statusText, { color: theme.textSecondary }]} />
       </View>
 
       <TouchableOpacity
@@ -97,30 +96,30 @@ function NpcAccountCard({
         onPress={() => onCopy(account.address)}
         style={[
           styles.addressBox,
-          { borderColor: color.DARK_BORDER, backgroundColor: color.BACKGROUND },
+          { borderColor: theme.darkBorder, backgroundColor: theme.background },
         ]}
       >
         <View style={styles.addressHeader}>
           <Txt
             txt={t("npcReceiveAddress", { defaultValue: "Receive address" })}
-            styles={[styles.addressLabel, { color: color.TEXT_SECONDARY }]}
+            styles={[styles.addressLabel, { color: theme.textSecondary }]}
           />
           <View style={styles.copyHint}>
             <Txt
               txt={t("copy", { defaultValue: "Copy" })}
-              styles={[styles.copyText, { color: hi[highlight] }]}
+              styles={[styles.copyText, { color: theme.accent }]}
             />
-            <CopyIcon width={16} color={hi[highlight]} />
+            <CopyIcon width={16} color={theme.accent} />
           </View>
         </View>
-        <Txt txt={account.address} bold styles={[styles.addressText, { color: hi[highlight] }]} />
+        <Txt txt={account.address} bold styles={[styles.addressText, { color: theme.accent }]} />
         <Txt
           txt={
             account.username
               ? account.npub
               : t("npcNpubFallback", { defaultValue: "Using your npub until a username is saved" })
           }
-          styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
+          styles={[styles.mutedText, { color: theme.textSecondary }]}
         />
       </TouchableOpacity>
 
@@ -139,15 +138,12 @@ function NpcAccountCard({
             accessibilityRole="button"
             onPress={() => onRemove(account.id)}
             disabled={busy}
-            style={[
-              styles.removeButton,
-              { borderColor: mainColors.ERROR, opacity: busy ? 0.5 : 1 },
-            ]}
+            style={[styles.removeButton, { borderColor: theme.error, opacity: busy ? 0.5 : 1 }]}
           >
-            <TrashbinIcon width={16} color={mainColors.ERROR} />
+            <TrashbinIcon width={16} color={theme.error} />
             <Txt
               txt={t("remove", { defaultValue: "Remove" })}
-              styles={[styles.removeText, { color: mainColors.ERROR }]}
+              styles={[styles.removeText, { color: theme.error }]}
             />
           </TouchableOpacity>
         )}
@@ -158,7 +154,7 @@ function NpcAccountCard({
 
 export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const insets = useSafeAreaInsets();
   const { openPromptAutoClose } = usePromptContext();
   const { balances } = useBalanceContext();
@@ -328,7 +324,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           disabled={busyAccountId !== null}
           style={[styles.headerAddAction, { opacity: busyAccountId !== null ? 0.5 : 1 }]}
         >
-          <PlusIcon width={30} height={30} color={hi[highlight]} />
+          <PlusIcon width={30} height={30} color={theme.accent} />
         </TouchableOpacity>
       }
     >
@@ -345,7 +341,9 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
             paddingBottom: Math.max(insets.bottom, 18),
           }}
         >
-          <View style={[globals(color).wrapContainer, styles.summaryCard]}>
+          <View
+            style={[globals().wrapContainer, { backgroundColor: theme.drawer }, styles.summaryCard]}
+          >
             <View style={styles.summaryHeader}>
               <View style={styles.summaryText}>
                 <Txt
@@ -357,33 +355,33 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                   txt={t("npcReceiveHint", {
                     defaultValue: "Receive Lightning payments into your local Cashu wallet.",
                   })}
-                  styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
+                  styles={[styles.mutedText, { color: theme.textSecondary }]}
                 />
               </View>
             </View>
             <View
               style={[
                 styles.summaryStats,
-                { borderTopColor: color.DARK_BORDER, borderBottomColor: color.DARK_BORDER },
+                { borderTopColor: theme.darkBorder, borderBottomColor: theme.darkBorder },
               ]}
             >
               <View style={styles.summaryStat}>
                 <Txt
                   txt={t("npcAccountsLabel", { defaultValue: "Accounts" })}
-                  styles={[styles.statLabel, { color: color.TEXT_SECONDARY }]}
+                  styles={[styles.statLabel, { color: theme.textSecondary }]}
                 />
                 <Txt txt={accountCount} bold styles={[styles.statValue]} />
               </View>
-              <View style={[styles.statDivider, { backgroundColor: color.DARK_BORDER }]} />
+              <View style={[styles.statDivider, { backgroundColor: theme.darkBorder }]} />
               <View style={styles.summaryStat}>
                 <Txt
                   txt={t("npcLocalBalance", { defaultValue: "Local balance" })}
-                  styles={[styles.statLabel, { color: color.TEXT_SECONDARY }]}
+                  styles={[styles.statLabel, { color: theme.textSecondary }]}
                 />
                 <Txt
                   txt={`${balance.formatted} ${balance.symbol}`}
                   bold
-                  styles={[styles.statValue, { color: hi[highlight] }]}
+                  styles={[styles.statValue, { color: theme.accent }]}
                 />
               </View>
             </View>
@@ -429,13 +427,13 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       <TrueSheet
         ref={addAccountSheetRef}
         detents={["auto"]}
-        backgroundColor={color.BACKGROUND}
+        backgroundColor={theme.background}
         cornerRadius={26}
-        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        grabberOptions={{ color: theme.textSecondary }}
         onDidDismiss={() => setPrivateKeyInput("")}
       >
         <ScrollView
-          style={{ backgroundColor: color.BACKGROUND }}
+          style={{ backgroundColor: theme.background }}
           contentContainerStyle={[
             styles.sheetContainer,
             { paddingBottom: Math.max(insets.bottom, 22) },
@@ -444,8 +442,8 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.sheetHeader}>
-            <View style={[styles.sheetIcon, { backgroundColor: hi[highlight] }]}>
-              <KeyIcon width={22} color={color.BACKGROUND} />
+            <View style={[styles.sheetIcon, { backgroundColor: theme.accent }]}>
+              <KeyIcon width={22} color={theme.background} />
             </View>
             <View style={styles.sheetTitleBlock}>
               <Txt
@@ -457,7 +455,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                 txt={t("npcAddAccountHint", {
                   defaultValue: "Import an existing Nostr key or derive a new key from your seed.",
                 })}
-                styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.mutedText, { color: theme.textSecondary }]}
               />
             </View>
           </View>
@@ -465,7 +463,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           <View style={styles.fieldBlock}>
             <Txt
               txt={t("npcPrivateKeyLabel", { defaultValue: "Private key" })}
-              styles={[styles.label, { color: color.TEXT_SECONDARY }]}
+              styles={[styles.label, { color: theme.textSecondary }]}
             />
             <TxtInput
               placeholder={t("npcPrivateKeyPlaceholder", { defaultValue: "nsec or hex" })}
@@ -478,7 +476,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
               txt={t("npcPrivateKeyHint", {
                 defaultValue: "Imported keys are stored in secure storage on this device.",
               })}
-              styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
+              styles={[styles.mutedText, { color: theme.textSecondary }]}
             />
           </View>
 
@@ -502,11 +500,11 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       <TrueSheet
         ref={usernameSheetRef}
         detents={["auto"]}
-        backgroundColor={color.BACKGROUND}
+        backgroundColor={theme.background}
         cornerRadius={26}
         dismissible={!usernameBusy}
         draggable={!usernameBusy}
-        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        grabberOptions={{ color: theme.textSecondary }}
         onDidDismiss={() => {
           setSelectedUsernameAccount(null);
           setUsernameInput("");
@@ -515,7 +513,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         }}
       >
         <ScrollView
-          style={{ backgroundColor: color.BACKGROUND }}
+          style={{ backgroundColor: theme.background }}
           contentContainerStyle={[
             styles.sheetContainer,
             { paddingBottom: Math.max(insets.bottom, 22) },
@@ -524,8 +522,8 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.sheetHeader}>
-            <View style={[styles.sheetIcon, { backgroundColor: hi[highlight] }]}>
-              <KeyIcon width={22} color={color.BACKGROUND} />
+            <View style={[styles.sheetIcon, { backgroundColor: theme.accent }]}>
+              <KeyIcon width={22} color={theme.background} />
             </View>
             <View style={styles.sheetTitleBlock}>
               <Txt
@@ -535,7 +533,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
               />
               <Txt
                 txt={selectedUsernameAccount?.address || ""}
-                styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.mutedText, { color: theme.textSecondary }]}
               />
             </View>
           </View>
@@ -545,14 +543,14 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
               <View
                 style={[
                   styles.usernamePreview,
-                  { backgroundColor: color.INPUT_BG, borderColor: color.DARK_BORDER },
+                  { backgroundColor: theme.inputBackground, borderColor: theme.darkBorder },
                 ]}
               >
                 <Txt
                   txt={usernameRequest.username}
                   bold
                   center
-                  styles={[styles.usernamePreviewText, { color: hi[highlight] }]}
+                  styles={[styles.usernamePreviewText, { color: theme.accent }]}
                 />
               </View>
               <Txt
@@ -561,7 +559,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                   amount: usernameRequest.amount.toLocaleString(),
                 })}
                 center
-                styles={[styles.usernamePrompt, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.usernamePrompt, { color: theme.textSecondary }]}
               />
               <View style={styles.sheetActions}>
                 <Button
@@ -585,7 +583,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
               <View style={styles.fieldBlock}>
                 <Txt
                   txt={t("npcUsernameLabel", { defaultValue: "Custom username" })}
-                  styles={[styles.label, { color: color.TEXT_SECONDARY }]}
+                  styles={[styles.label, { color: theme.textSecondary }]}
                 />
                 <TxtInput
                   placeholder={t("npcUsernamePlaceholder", { defaultValue: "optional username" })}

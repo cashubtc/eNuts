@@ -1,8 +1,7 @@
 import Button from "@comps/Button";
 import Txt from "@comps/Txt";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { useThemeContext } from "@src/context/Theme";
-import { globals } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, type ReactNode } from "react";
 import { ScrollView, Text, useWindowDimensions, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -39,7 +38,7 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
     },
     ref,
   ) => {
-    const { color, highlight } = useThemeContext();
+    const theme = useAppThemeTokens();
     const insets = useSafeAreaInsets();
     const { height } = useWindowDimensions();
     const sheetRef = useRef<TrueSheet>(null);
@@ -78,24 +77,26 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
         maxContentHeight={maxDynamicContentSize}
         dismissible={false}
         draggable={false}
-        backgroundColor={color.BACKGROUND}
+        backgroundColor={theme.background}
         cornerRadius={26}
-        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        grabberOptions={{ color: theme.textSecondary }}
         scrollable
         onDidDismiss={handleDismiss}
       >
         <ScrollView
-          style={[styles.scrollContainer, { backgroundColor: color.BACKGROUND }]}
+          style={[styles.scrollContainer, { backgroundColor: theme.background }]}
           contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 20) }]}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.headerWrap}>
-            <Text style={[globals(color, highlight).modalHeader, styles.headerTitle]}>{title}</Text>
+            <Text style={[globals().modalHeader, { color: theme.text }, styles.headerTitle]}>
+              {title}
+            </Text>
             {subtitle ? (
               <Txt
                 txt={subtitle}
                 center
-                styles={[styles.subtitle, { color: color.TEXT_SECONDARY }]}
+                styles={[styles.subtitle, { color: theme.textSecondary }]}
               />
             ) : null}
           </View>

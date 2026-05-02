@@ -1,6 +1,5 @@
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { mainColors } from "@src/styles";
+import { useAppThemeTokens } from "@src/styles";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
@@ -27,18 +26,18 @@ interface QRProps {
 
 export default function QR({ size, value, animate, truncateNum, onError }: QRProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { copied, copy } = useCopy();
   const chunk = useAnimatedQr(value, { animate });
   return (
     <TouchableOpacity onPress={() => void copy(value)}>
-      <View style={styles.qrWrap}>
+      <View style={[styles.qrWrap, { borderColor: theme.white }]}>
         <QRCode
           size={size}
           value={chunk}
           testID="qr-code"
           logoBorderRadius={10}
-          logoBackgroundColor={mainColors.WHITE}
+          logoBackgroundColor={theme.white}
           logoMargin={6}
           onError={onError}
         />
@@ -47,17 +46,17 @@ export default function QR({ size, value, animate, truncateNum, onError }: QRPro
         style={[
           styles.txtContainer,
           {
-            borderColor: color.BORDER,
-            backgroundColor: color.INPUT_BG,
+            borderColor: theme.border,
+            backgroundColor: theme.inputBackground,
           },
         ]}
       >
         <View style={styles.iconCon}>
-          {copied ? <CheckmarkIcon color={mainColors.VALID} /> : <CopyIcon color={color.TEXT} />}
+          {copied ? <CheckmarkIcon color={theme.valid} /> : <CopyIcon color={theme.text} />}
         </View>
         <Txt
           txt={copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}
-          styles={[{ color: copied ? mainColors.VALID : color.TEXT }]}
+          styles={[{ color: copied ? theme.valid : theme.text }]}
         />
       </View>
     </TouchableOpacity>
@@ -67,7 +66,6 @@ export default function QR({ size, value, animate, truncateNum, onError }: QRPro
 const styles = StyleSheet.create({
   qrWrap: {
     borderWidth: 10,
-    borderColor: mainColors.WHITE,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },

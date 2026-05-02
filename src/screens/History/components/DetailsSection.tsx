@@ -1,5 +1,5 @@
+import { useAppThemeTokens } from "@styles";
 import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
 import { View, StyleSheet } from "react-native";
 import { ReactNode } from "react";
 
@@ -17,12 +17,12 @@ type DetailRowProps = {
 };
 
 export function DetailRow({ label, value }: DetailRowProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   return (
     <View style={styles.detailRow}>
-      <Txt txt={label} styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]} />
-      <Txt txt={value} styles={[styles.detailValue, { color: color.TEXT }]} />
+      <Txt txt={label} styles={[styles.detailLabel, { color: theme.textSecondary }]} />
+      <Txt txt={value} styles={[styles.detailValue, { color: theme.text }]} />
     </View>
   );
 }

@@ -2,11 +2,10 @@ import Txt from "@comps/Txt";
 import Button from "@comps/Button";
 import { CheckmarkIcon } from "@comps/Icons";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints, type KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import React, {
   forwardRef,
   useMemo,
@@ -38,6 +37,8 @@ const MintItem = memo(
     textColor,
     secondaryTextColor,
     inputBgColor,
+    validColor,
+    whiteColor,
     multiSelect,
     formattedBalance,
   }: {
@@ -47,6 +48,8 @@ const MintItem = memo(
     textColor: string;
     secondaryTextColor: string;
     inputBgColor: string;
+    validColor: string;
+    whiteColor: string;
     multiSelect?: boolean;
     formattedBalance: string;
   }) => {
@@ -58,7 +61,7 @@ const MintItem = memo(
           styles.mintItem,
           {
             backgroundColor: inputBgColor,
-            borderColor: isSelected ? mainColors.VALID : "transparent",
+            borderColor: isSelected ? validColor : "transparent",
           },
         ]}
         onPress={handlePress}
@@ -71,18 +74,18 @@ const MintItem = memo(
           <Txt txt={mint.mintUrl} styles={[styles.mintUrl, { color: secondaryTextColor }]} />
         </View>
         <View style={styles.rightSection}>
-          <Txt txt={formattedBalance} styles={[styles.balance, { color: mainColors.VALID }]} />
+          <Txt txt={formattedBalance} styles={[styles.balance, { color: validColor }]} />
           {multiSelect && (
             <View
               style={[
                 styles.checkbox,
                 {
-                  backgroundColor: isSelected ? mainColors.VALID : "transparent",
-                  borderColor: isSelected ? mainColors.VALID : textColor,
+                  backgroundColor: isSelected ? validColor : "transparent",
+                  borderColor: isSelected ? validColor : textColor,
                 },
               ]}
             >
-              {isSelected && <CheckmarkIcon color={mainColors.WHITE} width={14} height={14} />}
+              {isSelected && <CheckmarkIcon color={whiteColor} width={14} height={14} />}
             </View>
           )}
         </View>
@@ -106,7 +109,7 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
     ref,
   ) => {
     const { t } = useTranslation([NS.common]);
-    const { color } = useThemeContext();
+    const theme = useAppThemeTokens();
     const { formatAmount } = useCurrencyContext();
     const { knownMints } = useKnownMints();
     const insets = useSafeAreaInsets();
@@ -198,9 +201,9 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
       <TrueSheet
         ref={setSheetRef}
         detents={[0.5, 1]}
-        backgroundColor={color.BACKGROUND}
+        backgroundColor={theme.background}
         cornerRadius={26}
-        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        grabberOptions={{ color: theme.textSecondary }}
         scrollable
         scrollableOptions={{
           topScrollEdgeEffect: "hidden",
@@ -208,7 +211,7 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
         }}
       >
         <ScrollView
-          style={{ backgroundColor: color.BACKGROUND }}
+          style={{ backgroundColor: theme.background }}
           contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom }]}
           showsVerticalScrollIndicator={false}
         >
@@ -216,8 +219,8 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
             style={[
               styles.header,
               {
-                backgroundColor: color.BACKGROUND,
-                borderBottomColor: color.BORDER || "rgba(0,0,0,0.1)",
+                backgroundColor: theme.background,
+                borderBottomColor: theme.border || "rgba(0,0,0,0.1)",
               },
             ]}
           >
@@ -227,7 +230,7 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
                   ? t("selectMints", { ns: NS.common })
                   : t("selectMint", { ns: NS.common })
               }
-              styles={[styles.headerText, { color: color.TEXT }]}
+              styles={[styles.headerText, { color: theme.text }]}
             />
           </View>
 
@@ -237,7 +240,7 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
                 txt={t("noMintsWithBalance", {
                   ns: NS.common,
                 })}
-                styles={[{ color: color.TEXT_SECONDARY }]}
+                styles={[{ color: theme.textSecondary }]}
               />
             </View>
           ) : (
@@ -252,9 +255,11 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
                     mint={mint}
                     isSelected={isMintSelected(mint)}
                     onPress={handleMintPress}
-                    textColor={color.TEXT}
-                    secondaryTextColor={color.TEXT_SECONDARY}
-                    inputBgColor={color.INPUT_BG}
+                    textColor={theme.text}
+                    secondaryTextColor={theme.textSecondary}
+                    inputBgColor={theme.inputBackground}
+                    validColor={theme.valid}
+                    whiteColor={theme.white}
                     multiSelect={multiSelect}
                     formattedBalance={formattedBalance}
                   />

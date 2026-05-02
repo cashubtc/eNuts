@@ -11,11 +11,10 @@ function truncateStr(str: string, len: number): string {
   return str.slice(0, len) + "...";
 }
 import { useInitialURL } from "@src/context/Linking";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
-import { globals } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { formatMintUrl, getSelectedAmount, isNum } from "@util";
 import { isLightningAddress } from "@util/lnurl";
 import { useEffect, useRef, useState } from "react";
@@ -41,7 +40,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
   } = route.params;
   const insets = useSafeAreaInsets();
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const { url, clearUrl } = useInitialURL();
   const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
@@ -117,7 +116,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
       withBackBtn
     >
       <ScrollView alwaysBounceVertical={false} style={{ marginBottom: 90 }}>
-        <View style={globals(color).wrapContainer}>
+        <View style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
           <OverviewRow txt1={t("paymentType")} txt2={t(getPaymentType())} />
           <OverviewRow txt1={t("mint")} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
           {recipient && <OverviewRow txt1={t("recipient")} txt2={getRecipient()} />}
@@ -147,7 +146,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
                     )} ${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
                   : `${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
               }
-              styles={[{ color: color.TEXT_SECONDARY }]}
+              styles={[{ color: theme.textSecondary }]}
             />
           </View>
           <Separator style={[{ marginTop: 20 }]} />
@@ -160,7 +159,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
         style={[
           styles.swipeContainer,
           {
-            backgroundColor: color.BACKGROUND,
+            backgroundColor: theme.background,
             bottom: insets.bottom,
           },
         ]}

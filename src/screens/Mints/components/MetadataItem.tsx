@@ -1,8 +1,8 @@
+import { useAppThemeTokens } from "@styles";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
 
 interface MetadataItemProps {
   text: string;
@@ -10,11 +10,11 @@ interface MetadataItemProps {
 }
 
 export default function MetadataItem({ text, hasSeparator }: MetadataItemProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <>
       <View style={[styles.metadataItem, { paddingBottom: 15 }]}>
-        <Txt txt={text} styles={[styles.metadataText, { color: color.TEXT }]} />
+        <Txt txt={text} styles={[styles.metadataText, { color: theme.text }]} />
       </View>
       {hasSeparator && <Separator style={[styles.separator]} />}
     </>

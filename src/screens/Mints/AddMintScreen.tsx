@@ -2,10 +2,9 @@ import Txt from "@comps/Txt";
 import TxtInput from "@comps/TxtInput";
 import { ChevronRightIcon, ZapIcon, PlusIcon } from "@comps/Icons";
 import { IconBtn } from "@comps/Button";
-import { useThemeContext } from "@src/context/Theme";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MintStackParamList } from "@src/nav/navTypes";
-import { globals, highlight as hi } from "@src/styles";
+import { globals, useAppThemeTokens } from "@src/styles";
 import { formatMintUrl, isErr } from "@util";
 import { useState } from "react";
 import useDiscoverMints from "@comps/hooks/useDiscoverMints";
@@ -19,8 +18,6 @@ import { useManager } from "@src/context/Manager";
 interface RecommendedMintItemProps {
   mint: MintRecommendation;
   onPress: (url: string) => void;
-  color: any;
-  highlight: string;
 }
 
 type MintRecommendation = {
@@ -38,8 +35,10 @@ type MintRecommendation = {
   n_melts: number;
 };
 
-function RecommendedMintItem({ mint, color, highlight, onPress }: RecommendedMintItemProps) {
+function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
   const displayName = mint.name || formatMintUrl(mint.url);
+  const theme = useAppThemeTokens();
+
   return (
     <TouchableOpacity
       style={[
@@ -48,7 +47,7 @@ function RecommendedMintItem({ mint, color, highlight, onPress }: RecommendedMin
           alignItems: "center",
           paddingVertical: 12,
           paddingHorizontal: 16,
-          backgroundColor: color.INPUT_BG,
+          backgroundColor: theme.inputBackground,
           marginVertical: 4,
           borderRadius: 8,
         },
@@ -63,10 +62,10 @@ function RecommendedMintItem({ mint, color, highlight, onPress }: RecommendedMin
             marginBottom: 4,
           }}
         >
-          <Txt txt={displayName} bold styles={[{ color: color.TEXT }]} />
+          <Txt txt={displayName} bold styles={[{ color: theme.text }]} />
           <View
             style={{
-              backgroundColor: hi[highlight as keyof typeof hi],
+              backgroundColor: theme.accent,
               paddingHorizontal: 6,
               paddingVertical: 2,
               borderRadius: 4,
@@ -86,7 +85,7 @@ function RecommendedMintItem({ mint, color, highlight, onPress }: RecommendedMin
         </View>
         <Text
           style={{
-            color: color.TEXT_SECONDARY,
+            color: theme.textSecondary,
             fontSize: 12,
             marginBottom: 2,
           }}
@@ -94,7 +93,7 @@ function RecommendedMintItem({ mint, color, highlight, onPress }: RecommendedMin
           {mint.url}
         </Text>
       </View>
-      <ChevronRightIcon color={color.TEXT_SECONDARY} />
+      <ChevronRightIcon color={theme.textSecondary} />
     </TouchableOpacity>
   );
 }
@@ -103,7 +102,7 @@ type MintAddScreenProps = NativeStackScreenProps<MintStackParamList, "MintAdd">;
 
 function AddMintScreen({ navigation, route }: MintAddScreenProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const [inputUrl, setInputUrl] = useState("");
   const { recommendations, isLoading, isError } = useDiscoverMints();
   const { openPromptAutoClose } = usePromptContext();
@@ -142,9 +141,9 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
         style={{
           paddingHorizontal: 16,
           paddingBottom: 12,
-          backgroundColor: color.BACKGROUND,
+          backgroundColor: theme.background,
           borderBottomWidth: 1,
-          borderBottomColor: color.BORDER || color.INPUT_BG,
+          borderBottomColor: theme.border || theme.inputBackground,
         }}
       >
         <View
@@ -194,20 +193,20 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
               paddingVertical: 20,
             }}
           >
-            <ActivityIndicator size="small" color={hi[highlight as keyof typeof hi]} />
+            <ActivityIndicator size="small" color={theme.accent} />
             <Txt
               txt="Loading recommendations..."
-              styles={[{ marginLeft: 8, color: color.TEXT_SECONDARY }]}
+              styles={[{ marginLeft: 8, color: theme.textSecondary }]}
             />
           </View>
         )}
 
         {isError && (
           <View style={{ paddingVertical: 20, alignItems: "center" }}>
-            <Txt txt="Failed to load recommendations" styles={[{ color: color.TEXT_SECONDARY }]} />
+            <Txt txt="Failed to load recommendations" styles={[{ color: theme.textSecondary }]} />
             <Text
               style={{
-                color: color.TEXT_SECONDARY,
+                color: theme.textSecondary,
                 fontSize: 12,
                 textAlign: "center",
                 marginTop: 4,
@@ -225,20 +224,14 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
               bold
               styles={[
                 {
-                  color: color.TEXT,
+                  color: theme.text,
                   marginBottom: 12,
                   fontSize: 16,
                 },
               ]}
             />
             {recommendations.map((mint) => (
-              <RecommendedMintItem
-                key={mint.id}
-                mint={mint}
-                onPress={handleMintSelect}
-                color={color}
-                highlight={highlight}
-              />
+              <RecommendedMintItem key={mint.id} mint={mint} onPress={handleMintSelect} />
             ))}
           </View>
         )}

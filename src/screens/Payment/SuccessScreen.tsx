@@ -1,3 +1,4 @@
+import { useAppThemeTokens } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
 import Txt from "@comps/Txt";
@@ -11,7 +12,6 @@ import type {
   AutoSwapSuccessConfig,
 } from "@model/nav";
 import { preventBack } from "@nav/utils";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import { isNum, vib } from "@util";
@@ -95,7 +95,7 @@ function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
 export default function SuccessScreen({ navigation, route }: TSuccessScreenProps) {
   const config = route.params;
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
 
@@ -157,7 +157,7 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
           <Txt
             txt={config.memo}
             center
-            styles={[styles.subtitle, { color: color.TEXT_SECONDARY }]}
+            styles={[styles.subtitle, { color: theme.textSecondary }]}
           />
         )}
 
@@ -166,7 +166,7 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
           <Txt
             txt={config.mint}
             center
-            styles={[styles.subtitle, { color: color.TEXT_SECONDARY }]}
+            styles={[styles.subtitle, { color: theme.textSecondary }]}
           />
         )}
 
@@ -177,7 +177,7 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
             <Txt
               txt={formatAmount(config.amount).symbol}
               center
-              styles={[styles.amountSymbol, { color: color.TEXT_SECONDARY }]}
+              styles={[styles.amountSymbol, { color: theme.textSecondary }]}
             />
           </View>
         )}

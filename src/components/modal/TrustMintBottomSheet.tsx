@@ -6,10 +6,9 @@ import Loading from "@comps/Loading";
 import Separator from "@comps/Separator";
 import type { Token } from "@cashu/cashu-ts";
 import type { ITokenInfo } from "@model";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { globals, mainColors } from "@styles";
+import { globals, useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View, StyleSheet } from "react-native";
@@ -25,7 +24,7 @@ export type TrustMintBottomSheetRef = {
 const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boolean }>(
   (_props, ref) => {
     const { t } = useTranslation([NS.common]);
-    const { color, highlight } = useThemeContext();
+    const theme = useAppThemeTokens();
     const { formatAmount } = useCurrencyContext();
     const insets = useSafeAreaInsets();
 
@@ -85,28 +84,28 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
       <TrueSheet
         ref={sheetRef}
         detents={["auto"]}
-        backgroundColor={color.BACKGROUND}
+        backgroundColor={theme.background}
         cornerRadius={26}
-        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        grabberOptions={{ color: theme.textSecondary }}
         onDidDismiss={handleDismiss}
       >
         <ScrollView
-          style={{ backgroundColor: color.BACKGROUND }}
+          style={{ backgroundColor: theme.background }}
           contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 20) }]}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={[globals(color, highlight).modalHeader, { marginBottom: 15 }]}>
+          <Text style={[globals().modalHeader, { color: theme.text }, { marginBottom: 15 }]}>
             {t("trustMint")}
           </Text>
           {tokenInfo && (
-            <Text style={[styles.mintPrompt, { color: color.TEXT }]}>
+            <Text style={[styles.mintPrompt, { color: theme.text }]}>
               {formatAmount(tokenInfo.value).formatted} {formatAmount(tokenInfo.value).symbol}{" "}
               {t("from")}:
             </Text>
           )}
           <View style={styles.tokenMintsView}>
             {tokenInfo?.mints.map((m) => (
-              <Text style={[styles.mintPrompt, { color: color.TEXT }]} key={m}>
+              <Text style={[styles.mintPrompt, { color: theme.text }]} key={m}>
                 {formatMintUrl(m)}
               </Text>
             ))}
@@ -116,17 +115,17 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
             <View style={styles.iconContainer}>
               {loading ? (
                 <View>
-                  <Loading size="small" color={mainColors.VALID} />
+                  <Loading size="small" color={theme.valid} />
                 </View>
               ) : (
-                <ReceiveIcon width={26} height={26} color={mainColors.VALID} />
+                <ReceiveIcon width={26} height={26} color={theme.valid} />
               )}
             </View>
             <View style={styles.txtWrap}>
-              <Text style={[styles.actionText, { color: color.TEXT }]}>
+              <Text style={[styles.actionText, { color: theme.text }]}>
                 {loading ? t("claiming", { ns: NS.wallet }) : t("trustMintOpt")}
               </Text>
-              <Text style={[styles.descriptionText, { color: color.TEXT_SECONDARY }]}>
+              <Text style={[styles.descriptionText, { color: theme.textSecondary }]}>
                 {t("trustHint")}
               </Text>
             </View>

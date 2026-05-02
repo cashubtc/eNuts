@@ -8,9 +8,8 @@ import type { MeltOperation } from "@cashu/coco-core";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -39,7 +38,7 @@ interface IDetailRow {
 const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirmationModalProps>(
   ({ operation, mint, loading = false, onConfirm, onCancel, onBackToDashboard }, ref) => {
     const { t } = useTranslation([NS.common, NS.auth]);
-    const { color } = useThemeContext();
+    const theme = useAppThemeTokens();
     const { hidden } = usePrivacyContext();
     const { formatAmount } = useCurrencyContext();
     const isPending = operation.state === "pending";
@@ -176,14 +175,14 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
           <Txt
             txt={t("amount", { ns: NS.common })}
             center
-            styles={[styles.amountLabel, { color: color.TEXT_SECONDARY }]}
+            styles={[styles.amountLabel, { color: theme.textSecondary }]}
           />
           <Txt txt={formatDisplayAmount(operation.amount)} center bold styles={[styles.amount]} />
           {isPending ? (
             <Txt
               txt={t("paymentPending", { ns: NS.common }) + "."}
               center
-              styles={[styles.pendingBadge, { color: color.TEXT_SECONDARY }]}
+              styles={[styles.pendingBadge, { color: theme.textSecondary }]}
             />
           ) : null}
           <View style={styles.rowsWrap}>
@@ -202,7 +201,7 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
           <View style={styles.mintSection}>
             <Txt
               txt={t("mint", { ns: NS.common })}
-              styles={[styles.sectionLabel, { color: color.TEXT_SECONDARY }]}
+              styles={[styles.sectionLabel, { color: theme.textSecondary }]}
             />
             <OperationMintPanel mint={mint} rows={mintRows} />
           </View>
@@ -226,22 +225,22 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
 );
 
 function DetailRow({ row }: { row: IDetailRow }) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   const valueColor = useMemo(() => {
     switch (row.tone) {
       case "success":
-        return mainColors.VALID;
+        return theme.valid;
       case "danger":
-        return mainColors.ERROR;
+        return theme.error;
       default:
-        return color.TEXT;
+        return theme.text;
     }
-  }, [color.TEXT, row.tone]);
+  }, [theme.text, row.tone]);
 
   return (
     <View style={styles.detailRow}>
-      <Txt txt={row.label} styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]} />
+      <Txt txt={row.label} styles={[styles.detailLabel, { color: theme.textSecondary }]} />
       <View style={styles.detailValueWrap}>
         <Text
           numberOfLines={1}

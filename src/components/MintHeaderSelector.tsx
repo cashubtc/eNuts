@@ -5,8 +5,7 @@ import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { Image } from "expo-image";
 import { useMemo, useRef } from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
@@ -26,9 +25,9 @@ export default function MintHeaderSelector({
   multiSelect = false,
   showZeroBalanceMints = false,
 }: IMintHeaderSelectorProps) {
-  const { color, highlight } = useThemeContext();
   const { formatAmount } = useCurrencyContext();
   const { hidden } = usePrivacyContext();
+  const theme = useAppThemeTokens();
   const mintSelectionSheetRef = useRef<TrueSheet>(null);
 
   const headerBalance = useMemo(() => {
@@ -58,8 +57,8 @@ export default function MintHeaderSelector({
         style={[
           styles.button,
           {
-            backgroundColor: color.INPUT_BG,
-            borderColor: color.BORDER,
+            backgroundColor: theme.inputBackground,
+            borderColor: theme.border,
           },
         ]}
       >
@@ -67,8 +66,8 @@ export default function MintHeaderSelector({
           style={[
             styles.iconWrap,
             {
-              backgroundColor: color.INPUT_BG,
-              borderColor: color.BORDER,
+              backgroundColor: theme.inputBackground,
+              borderColor: theme.border,
             },
           ]}
         >
@@ -80,10 +79,10 @@ export default function MintHeaderSelector({
               transition={200}
             />
           ) : (
-            <MintBoardIcon width={18} height={18} color={hi[highlight]} />
+            <MintBoardIcon width={18} height={18} color={theme.accent} />
           )}
         </View>
-        <Txt txt={headerBalance} bold styles={[styles.balance, { color: color.TEXT }]} />
+        <Txt txt={headerBalance} bold styles={[styles.balance, { color: theme.text }]} />
       </TouchableOpacity>
 
       <MintSelectionSheet
