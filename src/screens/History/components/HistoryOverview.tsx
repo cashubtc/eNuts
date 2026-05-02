@@ -1,8 +1,7 @@
 import Txt from "@comps/Txt";
 import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
-import { View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { View, StyleSheet } from "react-native";
 
 type HistoryOverviewProps = {
   amount: number;
@@ -34,23 +33,23 @@ export function HistoryOverview({
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   overview: {
     alignItems: "center",
-    paddingVertical: "20@vs",
-    paddingHorizontal: "15@s",
+    paddingVertical: 20,
+    paddingHorizontal: 15,
   },
   amount: {
-    fontSize: "40@vs",
+    fontSize: 40,
     fontWeight: "600",
   },
   type: {
-    fontSize: "14@vs",
-    marginTop: "5@vs",
+    fontSize: 14,
+    marginTop: 5,
   },
   description: {
-    fontSize: "14@vs",
-    marginTop: "5@vs",
+    fontSize: 14,
+    marginTop: 5,
     textAlign: "center",
   },
 });

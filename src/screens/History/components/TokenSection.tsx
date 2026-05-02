@@ -2,8 +2,7 @@ import Copy from "@comps/Copy";
 import Txt from "@comps/Txt";
 import Separator from "@comps/Separator";
 import { useThemeContext } from "@src/context/Theme";
-import { View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { View, StyleSheet } from "react-native";
 
 const truncateStr = (str: string, maxLength: number) => {
   if (str.length <= maxLength) return str;
@@ -37,29 +36,29 @@ export function TokenSection({ label, value }: TokenSectionProps) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   separator: {
-    marginVertical: "10@vs",
+    marginVertical: 10,
   },
   tokenSection: {
-    paddingHorizontal: "15@s",
-    paddingBottom: "15@vs",
+    paddingHorizontal: 15,
+    paddingBottom: 15,
   },
   tokenHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "10@vs",
+    marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: "16@vs",
+    fontSize: 16,
     fontWeight: "600",
   },
   tokenValue: {
-    fontSize: "14@vs",
+    fontSize: 14,
   },
   tokenContainer: {
-    padding: "10@s",
-    borderRadius: "8@s",
+    padding: 10,
+    borderRadius: 8,
   },
 });

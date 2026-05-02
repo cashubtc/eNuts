@@ -13,8 +13,7 @@ import { mainColors } from "@styles";
 import { formatMintUrl } from "@util";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { ScrollView, View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import Button from "@comps/Button";
 
@@ -185,35 +184,35 @@ function InfoRow({ label, value, hasSeparator }: IInfoRow) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   headerCard: {
-    borderRadius: "16@s",
-    padding: "20@s",
-    marginTop: "16@vs",
-    marginBottom: "24@vs",
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 16,
+    marginBottom: 24,
   },
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
   },
   mintIcon: {
-    width: "48@s",
-    height: "48@s",
-    borderRadius: "12@s",
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     backgroundColor: "rgba(0,0,0,0.05)",
   },
   headerTextContainer: {
     flex: 1,
-    marginLeft: "16@s",
+    marginLeft: 16,
   },
   mintName: {
-    fontSize: "20@vs",
+    fontSize: 20,
     fontWeight: "700",
-    marginBottom: "4@vs",
+    marginBottom: 4,
     letterSpacing: 0.3,
   },
   mintVersion: {
-    fontSize: "13@vs",
+    fontSize: 13,
     fontWeight: "500",
     opacity: 0.7,
   },
@@ -221,65 +220,65 @@ const styles = ScaledSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: "12@vs",
-    paddingHorizontal: "16@s",
-    borderRadius: "12@s",
-    gap: "8@s",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    gap: 8,
   },
   balanceText: {
-    fontSize: "18@vs",
+    fontSize: 18,
     fontWeight: "600",
   },
   section: {
-    marginBottom: "24@vs",
+    marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: "12@vs",
+    fontSize: 12,
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
-    marginBottom: "12@vs",
-    paddingHorizontal: "4@s",
+    marginBottom: 12,
+    paddingHorizontal: 4,
   },
   card: {
-    borderRadius: "16@s",
-    padding: "20@s",
+    borderRadius: 16,
+    padding: 20,
   },
   urlText: {
-    fontSize: "14@vs",
+    fontSize: 14,
     fontWeight: "500",
-    lineHeight: "20@vs",
+    lineHeight: 20,
   },
   infoRow: {
-    paddingVertical: "8@vs",
+    paddingVertical: 8,
   },
   infoLabel: {
-    fontSize: "12@vs",
+    fontSize: 12,
     fontWeight: "600",
     textTransform: "capitalize",
-    marginBottom: "6@vs",
+    marginBottom: 6,
   },
   infoValue: {
-    fontSize: "14@vs",
+    fontSize: 14,
     fontWeight: "400",
-    lineHeight: "20@vs",
+    lineHeight: 20,
   },
   infoSeparator: {
     height: 1,
-    marginVertical: "12@vs",
+    marginVertical: 12,
     opacity: 0.2,
   },
   deleteButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: "16@s",
-    padding: "16@s",
+    borderRadius: 16,
+    padding: 16,
     borderWidth: 1.5,
-    gap: "10@s",
+    gap: 10,
   },
   deleteButtonText: {
-    fontSize: "15@vs",
+    fontSize: 15,
     fontWeight: "600",
   },
 });

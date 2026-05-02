@@ -14,9 +14,8 @@ import { globals } from "@styles";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 // TODO
 // show internet connection status
@@ -76,7 +75,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
             style={{ width: "100%", height: "100%" }}
           />
         </View>
-        <Logo size={s(230)} style={styles.img} success />
+        <Logo size={230} style={styles.img} success />
         <View style={{ width: "100%" }}>
           <Text style={[styles.successTxt, { color: color.TEXT }]}>Wallet restored!</Text>
           <View style={styles.successAnim}>
@@ -97,9 +96,9 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
 
   return (
     <View style={[globals(color).container, styles.container]}>
-      <Loading size={s(35)} />
+      <Loading size={35} />
       <Txt styles={[styles.descText]} txt={t("recoveringWallet")} />
-      <View style={{ width: "100%", paddingHorizontal: s(20) }}>
+      <View style={{ width: "100%", paddingHorizontal: 20 }}>
         <Progress progress={progress} />
         <Txt
           center
@@ -108,7 +107,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
         />
         <Txt
           center
-          styles={[styles.hint, { color: color.TEXT_SECONDARY, marginTop: vs(6) }]}
+          styles={[styles.hint, { color: color.TEXT_SECONDARY, marginTop: 6 }]}
           txt={t("dontClose")}
         />
       </View>
@@ -117,59 +116,59 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingTop: 0,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   descText: {
-    marginTop: "20@s",
-    marginBottom: "30@s",
+    marginTop: 20,
+    marginBottom: 30,
     textAlign: "center",
-    fontSize: "20@s",
+    fontSize: 20,
   },
   hint: {
-    fontSize: "12@s",
-    marginTop: "10@s",
+    fontSize: 12,
+    marginTop: 10,
   },
   errorTxt: {
-    fontSize: "12@s",
-    marginTop: "14@s",
+    fontSize: 12,
+    marginTop: 14,
     color: "#ff5a5f",
   },
   // Success styles
   containerSuccess: {
     flex: 1,
-    padding: "20@s",
+    padding: 20,
   },
   img: {
-    marginTop: "90@s",
-    height: "90@s",
+    marginTop: 90,
+    height: 90,
     opacity: 0.8,
   },
   successTxt: {
-    fontSize: "28@vs",
+    fontSize: 28,
     fontWeight: "800",
     textAlign: "center",
-    marginTop: "30@vs",
+    marginTop: 30,
   },
   successAnim: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   lottie: {
-    width: "100@s",
-    height: "100@s",
+    width: 100,
+    height: 100,
   },
   btnWrap: {
     position: "absolute",
     bottom: 0,
     right: 0,
     left: 0,
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   confetti: {
     position: "absolute",

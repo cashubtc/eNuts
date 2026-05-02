@@ -1,7 +1,8 @@
 import { getPreferences, setPreferences } from "@src/storage/store/theme";
 import { l } from "@log";
 import type { IPreferences } from "@model";
-import { dark, HighlightKey, light, lightTheme } from "@styles";
+import { dark, getTamaguiThemeName, HighlightKey, light, lightTheme, tamaguiConfig } from "@styles";
+import { TamaguiProvider } from "@tamagui/core";
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useColorScheme } from "react-native";
 
@@ -96,6 +97,17 @@ const ThemeContext = createContext<useThemeType>({
 
 export const useThemeContext = () => useContext(ThemeContext);
 
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => (
-  <ThemeContext.Provider value={useTheme()}>{children}</ThemeContext.Provider>
-);
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const theme = useTheme();
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <TamaguiProvider
+        config={tamaguiConfig}
+        defaultTheme={getTamaguiThemeName(theme.activeTheme, theme.highlight)}
+      >
+        {children}
+      </TamaguiProvider>
+    </ThemeContext.Provider>
+  );
+};

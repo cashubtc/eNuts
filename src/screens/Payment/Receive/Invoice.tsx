@@ -16,8 +16,7 @@ import { getColor } from "@styles/colors";
 import { formatMintUrl, share } from "@util";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { View, StyleSheet } from "react-native";
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
   const { operation } = route.params;
@@ -59,7 +58,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
       <View style={styles.container}>
         <View style={styles.content}>
           <QR
-            size={vs(250)}
+            size={250}
             value={operation.request}
             onError={() => l("Error while generating the LN QR code")}
             isInvoice
@@ -69,7 +68,7 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
             <View style={styles.awaitingWrap}>
               <Txt
                 txt={t("paymentPending") + "..."}
-                styles={[{ fontWeight: "500", marginRight: s(10) }]}
+                styles={[{ fontWeight: "500", marginRight: 10 }]}
               />
               <Loading />
             </View>
@@ -87,11 +86,11 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: "20@s",
-    paddingBottom: "20@s",
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   content: {
     flex: 1,
@@ -99,7 +98,7 @@ const styles = ScaledSheet.create({
     justifyContent: "space-between",
   },
   lnExpiry: {
-    fontSize: "34@vs",
+    fontSize: 34,
     fontWeight: "600",
     textAlign: "center",
   },
@@ -107,9 +106,9 @@ const styles = ScaledSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: "5@vs",
+    marginTop: 5,
   },
   placeholder: {
-    height: "20@vs",
+    height: 20,
   },
 });

@@ -1,5 +1,5 @@
 import { useThemeContext } from "@src/context/Theme";
-import { globals, highlight as hi } from "@styles";
+import { InputFrame, globals, highlight as hi } from "@styles";
 import { createRef, type LegacyRef, useEffect } from "react";
 import {
   type KeyboardTypeOptions,
@@ -9,7 +9,6 @@ import {
   type TextInputSubmitEditingEventData,
   type TextStyle,
 } from "react-native";
-import { vs } from "react-native-size-matters";
 
 interface ITxtInputProps {
   autoCorrect?: boolean;
@@ -58,11 +57,11 @@ export default function TxtInput({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <TextInput
+    <InputFrame
       ref={innerRef || inputRef}
       keyboardType={keyboardType || "default"}
       placeholder={placeholder}
-      placeholderTextColor={color.INPUT_PH}
+      placeholderTextColor={color.INPUT_PH as never}
       autoCorrect={autoCorrect}
       selectionColor={hi[highlight]}
       cursorColor={hi[highlight]}

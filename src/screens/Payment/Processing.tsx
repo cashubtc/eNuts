@@ -10,8 +10,7 @@ import { globals } from "@styles";
 import { decodeLnInvoice, isErr } from "@util";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { View, StyleSheet } from "react-native";
 
 interface IErrorProps {
   e?: unknown;
@@ -76,24 +75,24 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
   return (
     <View style={[globals(color).container, styles.container]}>
       <Txt txt={t(processingTxt, { ns: NS.wallet })} styles={[{ color: color.TEXT }]} />
-      <Loading size={s(35)} />
+      <Loading size={35} />
     </View>
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingTop: 0,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   descText: {
-    marginTop: "20@vs",
+    marginTop: 20,
     textAlign: "center",
   },
   hint: {
-    fontSize: "12@vs",
-    marginTop: "10@vs",
+    fontSize: 12,
+    marginTop: 10,
   },
 });

@@ -6,8 +6,7 @@ import { globals, highlight as hi, mainColors } from "@styles";
 import { formatSatStr } from "@util";
 import { getLanguageCode } from "@util/localization";
 import { useEffect, useMemo, useRef, forwardRef, useState, useCallback } from "react";
-import { Animated, TextInput, View, Pressable } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { Animated, TextInput, View, Pressable, StyleSheet } from "react-native";
 import { SwapCurrencyIcon } from "@comps/Icons";
 
 interface AmountInputProps {
@@ -414,14 +413,14 @@ export default AmountInput;
 // Export the shake function for parent components to use
 export { useShakeAnimation };
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     width: "100%",
     alignItems: "center",
-    paddingVertical: "20@vs",
+    paddingVertical: 20,
   },
   containerCompact: {
-    paddingVertical: "8@vs",
+    paddingVertical: 8,
   },
   inputRow: {
     flexDirection: "row",
@@ -432,44 +431,44 @@ const styles = ScaledSheet.create({
     alignItems: "center",
   },
   currencySymbol: {
-    fontSize: "32@s",
+    fontSize: 32,
     fontWeight: "600",
-    marginRight: "4@s",
+    marginRight: 4,
   },
   currencySymbolCompact: {
-    fontSize: "24@s",
+    fontSize: 24,
     fontWeight: "600",
-    marginRight: "4@s",
+    marginRight: 4,
   },
   amountInputCompact: {
-    fontSize: "36@vs",
+    fontSize: 36,
     marginBottom: 0,
   },
   satsSuffix: {
-    fontSize: "24@s",
+    fontSize: 24,
     fontWeight: "500",
-    marginLeft: "8@s",
+    marginLeft: 8,
     opacity: 0.8,
   },
   satsSuffixCompact: {
-    fontSize: "18@s",
+    fontSize: 18,
     fontWeight: "500",
-    marginLeft: "6@s",
+    marginLeft: 6,
     opacity: 0.8,
   },
   toggleButton: {
-    marginLeft: "12@s",
-    padding: "8@s",
-    borderRadius: "20@s",
+    marginLeft: 12,
+    padding: 8,
+    borderRadius: 20,
   },
   secondaryLabel: {
-    fontSize: "14@vs",
+    fontSize: 14,
     textAlign: "center",
-    marginTop: "8@vs",
+    marginTop: 8,
   },
   secondaryLabelCompact: {
-    fontSize: "12@vs",
+    fontSize: 12,
     textAlign: "center",
-    marginTop: "4@vs",
+    marginTop: 4,
   },
 });

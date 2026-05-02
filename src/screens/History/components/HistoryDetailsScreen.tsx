@@ -1,8 +1,7 @@
 import Screen from "@comps/Screen";
 import { NS } from "@src/i18n";
 import { useTranslation } from "react-i18next";
-import { ScrollView } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { ScrollView, StyleSheet } from "react-native";
 import { ReactNode } from "react";
 
 type HistoryDetailsScreenProps = {
@@ -20,7 +19,7 @@ export function HistoryDetailsScreen({ onGoBack, children }: HistoryDetailsScree
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
   },

@@ -18,8 +18,7 @@ import { mainColors } from "@styles";
 import { isErr, vib } from "@util";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard, TextInput, View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { Keyboard, TextInput, View, StyleSheet } from "react-native";
 
 type TPreparedOrLaterSendOperation = Exclude<SendOperation, { state: "init" }>;
 
@@ -356,7 +355,7 @@ export function MeltOverview({
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   overview: {
     flexDirection: "row",
     alignItems: "center",
@@ -366,7 +365,7 @@ const styles = ScaledSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "flex-end",
-    paddingHorizontal: "20@s",
-    paddingBottom: "10@vs",
+    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
 });

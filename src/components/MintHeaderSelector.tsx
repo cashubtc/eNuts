@@ -9,8 +9,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { highlight as hi } from "@styles";
 import { Image } from "expo-image";
 import { useMemo, useRef } from "react";
-import { TouchableOpacity, View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 
 interface IMintHeaderSelectorProps {
   selectedMint: KnownMintWithBalance;
@@ -98,24 +97,24 @@ export default function MintHeaderSelector({
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   button: {
-    minWidth: "40@s",
-    height: "40@s",
-    borderRadius: "20@s",
+    minWidth: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: "8@s",
-    paddingLeft: "3@s",
-    paddingRight: "12@s",
-    marginRight: "12@s",
+    gap: 8,
+    paddingLeft: 3,
+    paddingRight: 12,
+    marginRight: 12,
   },
   iconWrap: {
-    width: "32@s",
-    height: "32@s",
-    borderRadius: "16@s",
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -126,7 +125,7 @@ const styles = ScaledSheet.create({
     height: "100%",
   },
   balance: {
-    fontSize: "12@ms",
-    maxWidth: "92@s",
+    fontSize: 12,
+    maxWidth: 92,
   },
 });

@@ -1,7 +1,7 @@
 import { useThemeContext } from "@src/context/Theme";
 import { highlight as hi, mainColors } from "@styles";
 import { useEffect, useImperativeHandle, forwardRef } from "react";
-import { View, useWindowDimensions } from "react-native";
+import { View, useWindowDimensions, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   Extrapolation,
@@ -12,7 +12,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { ScaledSheet } from "react-native-size-matters";
 
 import { ChevronRightIcon } from "./Icons";
 
@@ -164,10 +163,10 @@ function SwipeButton({ txt, onToggle }: ISwipeButtonProps, ref: React.Ref<SwipeB
 
 export default forwardRef(SwipeButton);
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: "20@s",
-    paddingTop: "5@s",
+    paddingHorizontal: 20,
+    paddingTop: 5,
   },
   swipeCont: {
     height: BUTTON_HEIGHT,
@@ -197,7 +196,7 @@ const styles = ScaledSheet.create({
   },
   swipeText: {
     alignSelf: "center",
-    fontSize: "14@vs",
+    fontSize: 14,
     fontWeight: "500",
     zIndex: 2,
   },

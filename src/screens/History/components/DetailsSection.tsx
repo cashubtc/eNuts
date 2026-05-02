@@ -1,7 +1,6 @@
 import Txt from "@comps/Txt";
 import { useThemeContext } from "@src/context/Theme";
-import { View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { View, StyleSheet } from "react-native";
 import { ReactNode } from "react";
 
 type DetailsSectionProps = {
@@ -28,20 +27,20 @@ export function DetailRow({ label, value }: DetailRowProps) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   details: {
-    paddingHorizontal: "15@s",
-    paddingBottom: "15@vs",
+    paddingHorizontal: 15,
+    paddingBottom: 15,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: "10@vs",
+    paddingVertical: 10,
   },
   detailLabel: {
-    fontSize: "14@vs",
+    fontSize: 14,
   },
   detailValue: {
-    fontSize: "14@vs",
+    fontSize: 14,
   },
 });

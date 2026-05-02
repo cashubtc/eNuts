@@ -1,9 +1,7 @@
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
-import { highlight as hi } from "@styles";
-import { View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { Stack, highlight as hi } from "@styles";
 
 import { MintBoardIcon } from "./Icons";
 import Txt from "./Txt";
@@ -22,27 +20,24 @@ export default function MintBalance({ balance, txtColor, disabled }: IMintBalanc
   const { formatted, symbol } = formatAmount(balance);
 
   return (
-    <View style={[styles.wrap, { borderColor: disabled ? color.TEXT_SECONDARY : hi[highlight] }]}>
+    <Stack
+      flexDirection="row"
+      alignItems="center"
+      borderWidth={1}
+      paddingVertical={4}
+      paddingHorizontal={6}
+      borderRadius={20}
+      style={{ borderColor: disabled ? color.TEXT_SECONDARY : hi[highlight] }}
+    >
       <MintBoardIcon
-        width={s(16)}
-        height={s(16)}
+        width={16}
+        height={16}
         color={disabled ? color.TEXT_SECONDARY : hi[highlight]}
       />
       <Txt
         txt={hidden.balance ? "****" : `${formatted} ${symbol}`}
-        styles={[{ fontSize: vs(10), color: txtColor, marginLeft: s(5) }]}
+        styles={[{ fontSize: 10, color: txtColor, marginLeft: 5 }]}
       />
-    </View>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
-  wrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    paddingVertical: "4@vs",
-    paddingHorizontal: "6@s",
-    borderRadius: 20,
-  },
-});

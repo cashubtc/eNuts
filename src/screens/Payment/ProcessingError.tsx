@@ -10,8 +10,7 @@ import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/Trust
 import { globals, mainColors } from "@styles";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { View, StyleSheet } from "react-native";
 
 const alreadySpentErr = "Token already spent.";
 
@@ -33,7 +32,7 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
     <View style={[globals(color).container, styles.container]}>
       <View />
       <View style={styles.section}>
-        <ExclamationIcon width={s(60)} height={s(60)} color={mainColors.ERROR} />
+        <ExclamationIcon width={60} height={60} color={mainColors.ERROR} />
         <Txt
           txt={errorMsg}
           bold
@@ -41,8 +40,8 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
           styles={[
             {
               color: mainColors.ERROR,
-              marginVertical: vs(15),
-              fontSize: vs(18),
+              marginVertical: 15,
+              fontSize: 18,
             },
           ]}
         />
@@ -71,24 +70,24 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingTop: 0,
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: "20@s",
-    paddingBottom: isIOS ? "40@s" : "20@s",
+    paddingHorizontal: 20,
+    paddingBottom: isIOS ? 40 : 20,
   },
   section: {
     alignItems: "center",
   },
   errMsg: {
     color: mainColors.ERROR,
-    marginVertical: "15@vs",
-    fontSize: "18@vs",
+    marginVertical: 15,
+    fontSize: 18,
   },
   hint: {
-    fontSize: "14@vs",
-    marginTop: "10@vs",
+    fontSize: 14,
+    marginTop: 10,
   },
 });

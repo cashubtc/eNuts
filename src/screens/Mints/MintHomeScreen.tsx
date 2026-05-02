@@ -14,9 +14,8 @@ import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export default function MintHomeScreen({ navigation }: any) {
   const { t } = useTranslation([NS.common]);
@@ -38,7 +37,7 @@ export default function MintHomeScreen({ navigation }: any) {
           }}
           style={{ flexDirection: "row", alignItems: "center" }}
         >
-          <PlusIcon width={s(30)} height={s(30)} color={hi[highlight]} />
+          <PlusIcon width={30} height={30} color={hi[highlight]} />
         </TouchableOpacity>
       }
     >
@@ -62,7 +61,7 @@ export default function MintHomeScreen({ navigation }: any) {
                     }}
                     activeOpacity={0.7}
                     style={{
-                      marginBottom: i < knownMints.length - 1 ? s(12) : 0,
+                      marginBottom: i < knownMints.length - 1 ? 12 : 0,
                     }}
                   >
                     <Card variant="base" style={styles.cardContent}>
@@ -87,8 +86,8 @@ export default function MintHomeScreen({ navigation }: any) {
                             styles={[
                               {
                                 color: color.TEXT_SECONDARY,
-                                fontSize: s(12),
-                                marginTop: vs(2),
+                                fontSize: 12,
+                                marginTop: 2,
                               },
                             ]}
                           />
@@ -115,7 +114,7 @@ export default function MintHomeScreen({ navigation }: any) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "flex-start",
@@ -123,14 +122,14 @@ const styles = ScaledSheet.create({
   noMintContainer: {
     flex: 1,
     width: "100%",
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   noMintBottomSection: {
     position: "absolute",
-    bottom: "20@s",
-    right: "20@s",
-    left: "20@s",
-    rowGap: "20@s",
+    bottom: 20,
+    right: 20,
+    left: 20,
+    rowGap: 20,
   },
   topSection: {
     width: "100%",
@@ -141,25 +140,25 @@ const styles = ScaledSheet.create({
     bottom: 20,
   },
   cardContent: {
-    padding: "12@s",
+    padding: 12,
   },
   mintContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   iconContainer: {
-    marginRight: "12@s",
+    marginRight: 12,
   },
   icon: {
-    width: "40@s",
-    height: "40@s",
-    borderRadius: "20@s",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   infoContainer: {
     flex: 1,
     justifyContent: "center",
   },
   chevronContainer: {
-    marginLeft: "8@s",
+    marginLeft: 8,
   },
 });

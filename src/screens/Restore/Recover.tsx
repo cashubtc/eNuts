@@ -11,8 +11,7 @@ import { seedService } from "@src/services/SeedService";
 import { getStrFromClipboard } from "@util";
 import { createRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { type TextInput, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { type TextInput, View, StyleSheet } from "react-native";
 
 export default function RecoverScreen({ navigation }: RecoverScreenProps) {
   const { t } = useTranslation([NS.common]);
@@ -58,7 +57,7 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
       withKeyboard={true}
     >
       <View style={styles.container}>
-        <View style={{ paddingHorizontal: s(8) }}>
+        <View style={{ paddingHorizontal: 8 }}>
           <Txt txt={t("recoveryHint")} styles={[styles.hint]} bold />
           <View style={styles.labelRow}>
             <Txt txt={t("12WordMnemonic")} styles={[styles.label]} />
@@ -94,7 +93,7 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
@@ -105,13 +104,13 @@ const styles = ScaledSheet.create({
     width: "100%",
   },
   hint: {
-    marginBottom: "20@vs",
+    marginBottom: 20,
   },
   labelRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "8@vs",
+    marginBottom: 8,
   },
   label: {
     flex: 1,
@@ -121,11 +120,11 @@ const styles = ScaledSheet.create({
     paddingBottom: 0,
   },
   actionWrap: {
-    marginBottom: "20@s",
+    marginBottom: 20,
   },
   multilineInput: {
-    minHeight: "80@s",
+    minHeight: 80,
     borderRadius: 25,
-    padding: "10@s",
+    padding: 10,
   },
 });

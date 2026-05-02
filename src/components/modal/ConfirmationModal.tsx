@@ -4,9 +4,8 @@ import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useThemeContext } from "@src/context/Theme";
 import { globals } from "@styles";
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, type ReactNode } from "react";
-import { ScrollView, Text, useWindowDimensions, View } from "react-native";
+import { ScrollView, Text, useWindowDimensions, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export type ConfirmationModalRef = {
   present: () => void;
@@ -80,17 +79,14 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
         dismissible={false}
         draggable={false}
         backgroundColor={color.BACKGROUND}
-        cornerRadius={s(26)}
+        cornerRadius={26}
         grabberOptions={{ color: color.TEXT_SECONDARY }}
         scrollable
         onDidDismiss={handleDismiss}
       >
         <ScrollView
           style={[styles.scrollContainer, { backgroundColor: color.BACKGROUND }]}
-          contentContainerStyle={[
-            styles.container,
-            { paddingBottom: Math.max(insets.bottom, vs(20)) },
-          ]}
+          contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 20) }]}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.headerWrap}>
@@ -123,28 +119,28 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
 
 ConfirmationModal.displayName = "ConfirmationModal";
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
   },
   container: {
-    paddingHorizontal: "20@s",
-    paddingTop: "30@vs",
+    paddingHorizontal: 20,
+    paddingTop: 30,
   },
   headerWrap: {
-    marginBottom: "18@vs",
+    marginBottom: 18,
   },
   headerTitle: {
-    marginBottom: "6@vs",
+    marginBottom: 6,
   },
   subtitle: {
-    fontSize: "14@vs",
-    lineHeight: "20@vs",
+    fontSize: 14,
+    lineHeight: 20,
   },
   buttonContainer: {
     width: "100%",
-    gap: "10@vs",
-    marginBottom: "4@vs",
+    gap: 10,
+    marginBottom: 4,
   },
 });
 

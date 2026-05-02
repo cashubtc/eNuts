@@ -28,7 +28,6 @@ import { globals } from "@styles";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
-import { s, vs } from "react-native-size-matters";
 import ConfirmBottomSheet, { ConfirmBottomSheetRef } from "@comps/modal/ConfirmBottomSheet";
 
 import MenuItem from "./MenuItem";
@@ -56,7 +55,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
     >
       <ScrollView alwaysBounceVertical={false}>
         {/* MINT */}
-        <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
+        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
           <MenuItem
             header={t("mint")}
             txt={t("mintSettings", { ns: NS.topNav })}
@@ -65,7 +64,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
           />
         </View>
         {/* WALLET */}
-        <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
+        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
           <MenuItem
             header={t("wallet")}
             txt={t("history", { ns: NS.topNav })}
@@ -74,7 +73,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
           />
         </View>
         {/* PREFERENCES */}
-        <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
+        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
           <MenuItem
             header={t("preferences")}
             txt={t("display")}
@@ -93,17 +92,17 @@ export default function Settings({ navigation }: TSettingsPageProps) {
           />
           <MenuItem
             txt={t("nfcSettings", { defaultValue: "NFC Payments" })}
-            icon={<NfcIcon width={s(18)} color={color.TEXT} />}
+            icon={<NfcIcon width={18} color={color.TEXT} />}
             onPress={() => navigation.navigate("NFC settings")}
           />
           <MenuItem
             txt={t("npcSettings", { defaultValue: "Lightning address" })}
-            icon={<ZapIcon width={s(18)} color={color.TEXT} />}
+            icon={<ZapIcon width={18} color={color.TEXT} />}
             onPress={() => navigation.navigate("NPC settings")}
           />
         </View>
         {/* SECURITY */}
-        <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
+        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
           <MenuItem
             header={t("restore")}
             txt={t("viewMnemonic")}
@@ -117,7 +116,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
           />
         </View>
         {/* ABOUT */}
-        <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
+        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
           <MenuItem
             header={t("about")}
             txt={t("github")}
@@ -136,7 +135,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             }
           />
         </View>
-        <View style={[globals(color).wrapContainer, { marginBottom: vs(20) }]}>
+        <View style={[globals(color).wrapContainer, { marginBottom: 20 }]}>
           <MenuItem
             header="DEV"
             txt={t("factoryReset")}

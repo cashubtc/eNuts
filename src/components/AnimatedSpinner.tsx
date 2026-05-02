@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -7,7 +7,6 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { s, ScaledSheet } from "react-native-size-matters";
 
 interface IAnimatedSpinnerProps {
   color: string;
@@ -70,7 +69,7 @@ export default function AnimatedSpinner({ color, size = 24 }: IAnimatedSpinnerPr
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",

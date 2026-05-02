@@ -4,7 +4,6 @@ import Txt from "@comps/Txt";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { Text, TouchableOpacity, View } from "react-native";
-import { s } from "react-native-size-matters";
 import { globals, highlight as hi } from "@styles";
 import type { NavigationProp } from "@react-navigation/native";
 import type { RootStackParamList } from "@model/nav";
@@ -51,7 +50,7 @@ export default function MintItem({
   return (
     <View key={mint.mintUrl}>
       <TouchableOpacity
-        style={[globals().wrapRow, { paddingBottom: s(15) }]}
+        style={[globals().wrapRow, { paddingBottom: 15 }]}
         onPress={() => {
           navigation.navigate("mintmanagement", {
             mint: {
@@ -91,7 +90,7 @@ export default function MintItem({
         </View>
         <ChevronRightIcon color={color.TEXT} />
       </TouchableOpacity>
-      {!isLast && <Separator style={[{ marginBottom: s(15) }]} />}
+      {!isLast && <Separator style={[{ marginBottom: 15 }]} />}
     </View>
   );
 }

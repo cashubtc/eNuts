@@ -1,7 +1,6 @@
 import { useThemeContext } from "@src/context/Theme";
-import { globals } from "@styles";
-import { TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { Stack, globals } from "@styles";
+import { TouchableOpacity } from "react-native";
 
 import { ChevronRightIcon } from "./Icons";
 import Loading from "./Loading";
@@ -31,17 +30,17 @@ export default function Option({
   return (
     <>
       <TouchableOpacity style={globals().wrapRow} onPress={onPress} testID={`send-option-${txt}`}>
-        <View style={styles.txtWrap}>
-          {icon ? <View style={{ minWidth: s(40) }}>{icon}</View> : null}
-          <View>
+        <Stack flexDirection="row" alignItems="center" maxWidth="80%">
+          {icon ? <Stack style={{ minWidth: 40 }}>{icon}</Stack> : null}
+          <Stack>
             <Txt txt={txt} bold />
-            <Txt styles={[styles.targetHint, { color: color.TEXT_SECONDARY }]} txt={hint} />
-          </View>
-        </View>
+            <Txt styles={[{ fontSize: 10, color: color.TEXT_SECONDARY }]} txt={hint} />
+          </Stack>
+        </Stack>
         {loading ? (
           <Loading />
         ) : secondIcon ? (
-          <View style={styles.iconWrap}>{secondIcon}</View>
+          <Stack marginRight={-5}>{secondIcon}</Stack>
         ) : (
           <ChevronRightIcon color={color.TEXT} />
         )}
@@ -50,17 +49,3 @@ export default function Option({
     </>
   );
 }
-
-const styles = ScaledSheet.create({
-  targetHint: {
-    fontSize: "10@vs",
-  },
-  txtWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    maxWidth: "80%",
-  },
-  iconWrap: {
-    marginRight: "-5@s",
-  },
-});

@@ -2,8 +2,7 @@ import Separator from "@comps/Separator";
 import Txt from "@comps/Txt";
 import { useThemeContext } from "@src/context/Theme";
 import { globals, highlight as hi } from "@styles";
-import { TouchableOpacity, View } from "react-native";
-import { ScaledSheet, vs } from "react-native-size-matters";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 
 interface IMenuItemProps {
   header?: string;
@@ -28,13 +27,13 @@ export default function SettingsMenuItem({
       <View
         style={[
           globals().wrapRow,
-          { paddingBottom: vs(15), flexDirection: "column", alignItems: "flex-start" },
+          { paddingBottom: 15, flexDirection: "column", alignItems: "flex-start" },
         ]}
       >
         {header && (
           <Txt
             txt={header}
-            styles={[{ color: hi[highlight], fontWeight: "bold", marginBottom: vs(25) }]}
+            styles={[{ color: hi[highlight], fontWeight: "bold", marginBottom: 25 }]}
           />
         )}
         <TouchableOpacity onPress={onPress} disabled={disabled} style={styles.setting}>
@@ -50,17 +49,17 @@ export default function SettingsMenuItem({
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   setting: {
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
   },
   settingTxt: {
-    marginLeft: "15@s",
+    marginLeft: 15,
   },
   separator: {
-    marginBottom: "15@vs",
-    marginTop: "3@vs",
+    marginBottom: 15,
+    marginTop: 3,
   },
 });

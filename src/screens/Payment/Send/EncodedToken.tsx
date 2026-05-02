@@ -15,8 +15,7 @@ import { formatInt, formatSatStr, share } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { Text, View, StyleSheet } from "react-native";
 import { useManager } from "@src/context/Manager";
 
 /**
@@ -103,7 +102,7 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
                 <Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
               ) : (
                 <QR
-                  size={s(280)}
+                  size={280}
                   value={encodedToken}
                   onError={() =>
                     setTimeout(
@@ -124,16 +123,16 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
                   <Button
                     txt={t(copied ? "copied" : "copyToken")}
                     onPress={() => void copy(encodedToken)}
-                    icon={<CopyIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />}
+                    icon={<CopyIcon width={18} height={18} color={mainColors.WHITE} />}
                   />
-                  <View style={{ marginVertical: s(10) }} />
+                  <View style={{ marginVertical: 10 }} />
                 </>
               )}
               <Button
                 outlined
                 txt={t("share")}
                 onPress={() => void share(encodedToken, `cashu://${encodedToken}`)}
-                icon={<ShareIcon width={s(18)} height={s(18)} color={hi[highlight]} />}
+                icon={<ShareIcon width={18} height={18} color={hi[highlight]} />}
               />
             </View>
           </>
@@ -143,49 +142,49 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    padding: "20@s",
+    padding: 20,
   },
   qrWrap: {
     alignItems: "center",
   },
   tokenAmount: {
-    fontSize: "40@vs",
+    fontSize: 40,
     fontWeight: "500",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   tokenFormat: {
-    marginBottom: "5@vs",
+    marginBottom: 5,
   },
   fiatEquivalent: {
-    fontSize: "14@vs",
-    marginBottom: "15@vs",
+    fontSize: 14,
+    marginBottom: 15,
   },
   errorMsg: {
-    marginVertical: "25@vs",
+    marginVertical: 25,
     textAlign: "center",
   },
   successTxt: {
-    fontSize: "28@vs",
+    fontSize: 28,
     fontWeight: "800",
     textAlign: "center",
-    marginTop: "30@vs",
+    marginTop: 30,
   },
   successAnim: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   fullWidth: {
     width: "100%",
   },
   lottie: {
-    width: "100@s",
-    height: "100@s",
+    width: 100,
+    height: 100,
   },
 });

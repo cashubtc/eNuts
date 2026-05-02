@@ -20,9 +20,8 @@ import { formatMintUrl, getSelectedAmount, isNum } from "@util";
 import { isLightningAddress } from "@util/lnurl";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet } from "react-native-size-matters";
 import { OverviewRow } from "@comps/OverviewRow";
 
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
@@ -117,7 +116,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
       }}
       withBackBtn
     >
-      <ScrollView alwaysBounceVertical={false} style={{ marginBottom: s(90) }}>
+      <ScrollView alwaysBounceVertical={false} style={{ marginBottom: 90 }}>
         <View style={globals(color).wrapContainer}>
           <OverviewRow txt1={t("paymentType")} txt2={t(getPaymentType())} />
           <OverviewRow txt1={t("mint")} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
@@ -139,7 +138,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
             />
           )}
           <View>
-            <Txt txt={t("balanceAfterTX")} styles={[{ fontWeight: "500", marginBottom: s(5) }]} />
+            <Txt txt={t("balanceAfterTX")} styles={[{ fontWeight: "500", marginBottom: 5 }]} />
             <Txt
               txt={
                 estFee > 0
@@ -151,7 +150,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
               styles={[{ color: color.TEXT_SECONDARY }]}
             />
           </View>
-          <Separator style={[{ marginTop: s(20) }]} />
+          <Separator style={[{ marginTop: 20 }]} />
           {memo && memo.length > 0 && (
             <OverviewRow txt1={t("memo", { ns: NS.history })} txt2={memo} />
           )}
@@ -173,13 +172,13 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     justifyContent: "space-between",
   },
   coinSelectionHint: {
-    fontSize: "10@vs",
+    fontSize: 10,
     maxWidth: "88%",
   },
   swipeContainer: {

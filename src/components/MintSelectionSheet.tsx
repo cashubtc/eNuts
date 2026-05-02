@@ -17,8 +17,7 @@ import React, {
   type MutableRefObject,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View, ScrollView } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { TouchableOpacity, View, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface MintSelectionSheetProps {
@@ -200,7 +199,7 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
         ref={setSheetRef}
         detents={[0.5, 1]}
         backgroundColor={color.BACKGROUND}
-        cornerRadius={s(26)}
+        cornerRadius={26}
         grabberOptions={{ color: color.TEXT_SECONDARY }}
         scrollable
         scrollableOptions={{
@@ -263,7 +262,7 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
               })}
 
               {multiSelect && (
-                <View style={[styles.buttonContainer, { paddingBottom: insets.bottom + vs(16) }]}>
+                <View style={[styles.buttonContainer, { paddingBottom: insets.bottom + 16 }]}>
                   <Button
                     txt={t("confirm", { ns: NS.common })}
                     onPress={handleConfirmMultiSelect}
@@ -279,70 +278,70 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
   },
 );
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   header: {
-    paddingVertical: "10@vs",
+    paddingVertical: 10,
     alignItems: "center",
     borderBottomWidth: 1,
-    marginBottom: "16@vs",
+    marginBottom: 16,
   },
   headerText: {
-    fontSize: "18@s",
+    fontSize: 18,
     fontWeight: "600",
   },
   selectedCount: {
-    fontSize: "12@s",
-    marginTop: "4@vs",
+    fontSize: 12,
+    marginTop: 4,
   },
   scrollContent: {
-    paddingHorizontal: "16@s",
-    paddingTop: "30@vs",
+    paddingHorizontal: 16,
+    paddingTop: 30,
   },
   emptyState: {
-    padding: "20@s",
+    padding: 20,
     alignItems: "center",
   },
   mintItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: "16@s",
-    marginBottom: "12@vs",
-    borderRadius: "12@s",
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 12,
     borderWidth: 2,
-    minHeight: "70@vs",
+    minHeight: 70,
   },
   mintInfo: {
     flex: 1,
-    marginRight: "12@s",
+    marginRight: 12,
   },
   rightSection: {
     alignItems: "flex-end",
     justifyContent: "center",
   },
   mintAlias: {
-    fontSize: "16@s",
+    fontSize: 16,
     fontWeight: "500",
-    marginBottom: "4@vs",
+    marginBottom: 4,
   },
   mintUrl: {
-    fontSize: "12@s",
+    fontSize: 12,
   },
   balance: {
-    fontSize: "14@s",
+    fontSize: 14,
     fontWeight: "600",
-    marginBottom: "8@vs",
+    marginBottom: 8,
   },
   checkbox: {
-    width: "22@s",
-    height: "22@s",
-    borderRadius: "4@s",
+    width: 22,
+    height: 22,
+    borderRadius: 4,
     borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
   },
   buttonContainer: {
-    paddingHorizontal: "16@s",
-    paddingTop: "20@vs",
+    paddingHorizontal: 16,
+    paddingTop: 20,
   },
 });
 

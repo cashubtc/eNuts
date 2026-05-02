@@ -12,8 +12,7 @@ import { vib } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard, TextInput, View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { Keyboard, TextInput, View, StyleSheet } from "react-native";
 import { useManager } from "@src/context/Manager";
 import type { MintSelectAmountProps } from "@src/nav/navTypes";
 import { useThemeContext } from "@src/context/Theme";
@@ -227,7 +226,7 @@ export function MeltOverview({
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   overview: {
     flexDirection: "row",
     alignItems: "center",
@@ -237,7 +236,7 @@ const styles = ScaledSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "flex-end",
-    paddingHorizontal: "20@s",
-    paddingBottom: "10@vs",
+    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
 });

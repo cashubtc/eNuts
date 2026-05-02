@@ -10,8 +10,7 @@ import { NS } from "@src/i18n";
 import { globals, highlight as hi } from "@styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View, Text, TextInput } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { ScrollView, TouchableOpacity, View, Text, TextInput, StyleSheet } from "react-native";
 
 export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
@@ -118,14 +117,14 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
         <View style={globals(color).wrapContainer}>
           {/* No Limit option */}
           <TouchableOpacity
-            style={[globals().wrapRow, { paddingBottom: s(15) }]}
+            style={[globals().wrapRow, { paddingBottom: 15 }]}
             onPress={handleSelectNoLimit}
           >
             <Txt txt={t("noLimit", { defaultValue: "No Limit" })} />
             <RadioBtn selected={hasNoLimit} />
           </TouchableOpacity>
 
-          <Separator style={[{ marginBottom: s(15) }]} />
+          <Separator style={[{ marginBottom: 15 }]} />
 
           {/* Custom Limit option */}
           <TouchableOpacity style={[globals().wrapRow]} onPress={handleSelectCustomLimit}>
@@ -162,39 +161,39 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   subHeader: {
-    paddingHorizontal: "20@s",
-    marginBottom: "10@vs",
+    paddingHorizontal: 20,
+    marginBottom: 10,
   },
   customLimitRow: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: "10@s",
+    gap: 10,
   },
   valueContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   inlineInput: {
-    fontSize: "15@vs",
+    fontSize: 15,
     fontWeight: "500",
     padding: 0,
-    minWidth: "60@s",
+    minWidth: 60,
   },
   satsLabel: {
-    fontSize: "13@vs",
-    marginLeft: "4@s",
+    fontSize: 13,
+    marginLeft: 4,
   },
   fiatHint: {
-    fontSize: "12@vs",
-    marginTop: "8@vs",
-    marginLeft: "70@s",
+    fontSize: 12,
+    marginTop: 8,
+    marginLeft: 70,
   },
 });

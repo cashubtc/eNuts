@@ -10,7 +10,6 @@ import { formatMintUrl, isErr } from "@util";
 import { useState } from "react";
 import useDiscoverMints from "@comps/hooks/useDiscoverMints";
 import { View, TouchableOpacity, Text, ActivityIndicator, ScrollView } from "react-native";
-import { s, vs } from "react-native-size-matters";
 import Screen from "@comps/Screen";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
@@ -47,11 +46,11 @@ function RecommendedMintItem({ mint, color, highlight, onPress }: RecommendedMin
         {
           flexDirection: "row",
           alignItems: "center",
-          paddingVertical: vs(12),
-          paddingHorizontal: s(16),
+          paddingVertical: 12,
+          paddingHorizontal: 16,
           backgroundColor: color.INPUT_BG,
-          marginVertical: vs(4),
-          borderRadius: s(8),
+          marginVertical: 4,
+          borderRadius: 8,
         },
       ]}
       onPress={() => onPress(mint.url)}
@@ -61,23 +60,23 @@ function RecommendedMintItem({ mint, color, highlight, onPress }: RecommendedMin
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: vs(4),
+            marginBottom: 4,
           }}
         >
           <Txt txt={displayName} bold styles={[{ color: color.TEXT }]} />
           <View
             style={{
               backgroundColor: hi[highlight as keyof typeof hi],
-              paddingHorizontal: s(6),
-              paddingVertical: vs(2),
-              borderRadius: s(4),
-              marginLeft: s(8),
+              paddingHorizontal: 6,
+              paddingVertical: 2,
+              borderRadius: 4,
+              marginLeft: 8,
             }}
           >
             <Text
               style={{
                 color: "white",
-                fontSize: s(10),
+                fontSize: 10,
                 fontWeight: "bold",
               }}
             >
@@ -88,8 +87,8 @@ function RecommendedMintItem({ mint, color, highlight, onPress }: RecommendedMin
         <Text
           style={{
             color: color.TEXT_SECONDARY,
-            fontSize: s(12),
-            marginBottom: vs(2),
+            fontSize: 12,
+            marginBottom: 2,
           }}
         >
           {mint.url}
@@ -141,8 +140,8 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
     >
       <View
         style={{
-          paddingHorizontal: s(16),
-          paddingBottom: vs(12),
+          paddingHorizontal: 16,
+          paddingBottom: 12,
           backgroundColor: color.BACKGROUND,
           borderBottomWidth: 1,
           borderBottomColor: color.BORDER || color.INPUT_BG,
@@ -152,7 +151,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            gap: s(12),
+            gap: 12,
           }}
         >
           <View style={{ flex: 1 }}>
@@ -166,10 +165,10 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
           </View>
           <View>
             <IconBtn
-              icon={<PlusIcon color="white" width={s(20)} height={s(20)} />}
+              icon={<PlusIcon color="white" width={20} height={20} />}
               onPress={handleConfirmSelection}
               disabled={!inputUrl.trim()}
-              size={s(48)}
+              size={48}
               testId="confirm-mint-button"
             />
           </View>
@@ -179,9 +178,9 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
-          paddingHorizontal: s(16),
-          paddingTop: vs(16),
-          paddingBottom: vs(20),
+          paddingHorizontal: 16,
+          paddingTop: 16,
+          paddingBottom: 20,
         }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
@@ -192,26 +191,26 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              paddingVertical: vs(20),
+              paddingVertical: 20,
             }}
           >
             <ActivityIndicator size="small" color={hi[highlight as keyof typeof hi]} />
             <Txt
               txt="Loading recommendations..."
-              styles={[{ marginLeft: s(8), color: color.TEXT_SECONDARY }]}
+              styles={[{ marginLeft: 8, color: color.TEXT_SECONDARY }]}
             />
           </View>
         )}
 
         {isError && (
-          <View style={{ paddingVertical: vs(20), alignItems: "center" }}>
+          <View style={{ paddingVertical: 20, alignItems: "center" }}>
             <Txt txt="Failed to load recommendations" styles={[{ color: color.TEXT_SECONDARY }]} />
             <Text
               style={{
                 color: color.TEXT_SECONDARY,
-                fontSize: s(12),
+                fontSize: 12,
                 textAlign: "center",
-                marginTop: vs(4),
+                marginTop: 4,
               }}
             >
               Something went wrong fetching recommendations
@@ -227,8 +226,8 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
               styles={[
                 {
                   color: color.TEXT,
-                  marginBottom: vs(12),
-                  fontSize: s(16),
+                  marginBottom: 12,
+                  fontSize: 16,
                 },
               ]}
             />

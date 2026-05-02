@@ -12,7 +12,6 @@ import { STORE_KEYS } from "@store/consts";
 import { globals } from "@styles";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
-import { s, vs } from "react-native-size-matters";
 
 const langs: ILangsOpt[] = [
   { name: "english", code: "en", flag: "us" },
@@ -67,18 +66,18 @@ function LangSelection({ code, name, flag, selected, hasSeparator }: ILangSelect
   return (
     <>
       <TouchableOpacity
-        style={[globals().wrapRow, { paddingBottom: vs(15) }]}
+        style={[globals().wrapRow, { paddingBottom: 15 }]}
         onPress={() => void handleLangChange()}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <View style={{ minWidth: s(40) }}>
-            <Txt txt={getFlagEmoji(flag)} styles={[{ fontSize: s(22) }]} />
+          <View style={{ minWidth: 40 }}>
+            <Txt txt={getFlagEmoji(flag)} styles={[{ fontSize: 22 }]} />
           </View>
           <Txt txt={t(name)} />
         </View>
         <RadioBtn selected={selected} />
       </TouchableOpacity>
-      {hasSeparator && <Separator style={[{ marginBottom: vs(15) }]} />}
+      {hasSeparator && <Separator style={[{ marginBottom: 15 }]} />}
     </>
   );
 }

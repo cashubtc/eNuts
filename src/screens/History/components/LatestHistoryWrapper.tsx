@@ -5,8 +5,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { getColor } from "@src/styles/colors";
 import { useTranslation } from "react-i18next";
-import { Text, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import EntryTime from "@screens/History/entryTime";
 import { NS } from "@src/i18n";
 import { useNavigation } from "@react-navigation/native";
@@ -61,14 +60,14 @@ export function LatestHistoryWrapper({
             styles={[
               {
                 color: textColor,
-                marginBottom: s(4),
+                marginBottom: 4,
               },
             ]}
           />
           <Text
             style={{
               color: secondaryTextColor,
-              fontSize: s(12),
+              fontSize: 12,
             }}
           >
             <EntryTime from={createdAt} fallback={t("justNow")} />
@@ -83,44 +82,44 @@ export function LatestHistoryWrapper({
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   board: {
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
-    paddingHorizontal: "20@s",
-    paddingTop: "40@s",
-    paddingBottom: "50@s",
+    paddingHorizontal: 20,
+    paddingTop: 40,
+    paddingBottom: 50,
     minHeight: "55%",
   },
   balanceWrap: {
     alignItems: "center",
-    marginHorizontal: "-20@s",
-    marginBottom: "10@s",
+    marginHorizontal: -20,
+    marginBottom: 10,
   },
   balAmount: {
     alignItems: "center",
-    fontSize: "42@s",
+    fontSize: 42,
     fontWeight: "600",
   },
   balAssetNameWrap: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: "10@s",
-    minHeight: "20@s",
+    marginBottom: 10,
+    minHeight: 20,
   },
   balAssetName: {
-    fontSize: "14@vs",
-    marginRight: "5@s",
+    fontSize: 14,
+    marginRight: 5,
   },
   iconWrap: {
-    minWidth: "40@s",
-    paddingTop: "3@s",
+    minWidth: 40,
+    paddingTop: 3,
   },
   entry: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: "10@s",
+    paddingBottom: 10,
   },
   wrap: {
     flexDirection: "row",

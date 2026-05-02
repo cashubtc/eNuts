@@ -6,8 +6,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { highlight as hi, mainColors } from "@styles";
 import { formatMintUrl } from "@util";
 import { useMemo } from "react";
-import { View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { View, StyleSheet } from "react-native";
 
 type TOperationMintPanelRowTone = "default" | "success" | "danger";
 
@@ -67,7 +66,7 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
               },
             ]}
           >
-            <MintBoardIcon width={s(18)} height={s(18)} color={hi[highlight]} />
+            <MintBoardIcon width={18} height={18} color={hi[highlight]} />
           </View>
         )}
 
@@ -118,22 +117,22 @@ function MetaRow({ row }: { row: IOperationMintPanelRow }) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   panel: {
     borderRadius: 18,
     borderWidth: 1,
-    paddingHorizontal: "14@s",
-    paddingVertical: "12@vs",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
+    gap: 12,
   },
   iconWrap: {
-    width: "40@s",
-    height: "40@s",
-    borderRadius: "20@s",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -147,31 +146,31 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   mintName: {
-    fontSize: "14@vs",
-    marginBottom: "2@vs",
+    fontSize: 14,
+    marginBottom: 2,
   },
   mintUrl: {
-    fontSize: "12@vs",
+    fontSize: 12,
   },
   metaWrap: {
-    marginTop: "12@vs",
-    paddingTop: "12@vs",
+    marginTop: 12,
+    paddingTop: 12,
     borderTopWidth: 1,
   },
   metaRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "12@s",
+    gap: 12,
   },
   metaRowSpacing: {
-    marginBottom: "8@vs",
+    marginBottom: 8,
   },
   balanceLabel: {
     flex: 1,
-    fontSize: "12@vs",
+    fontSize: 12,
   },
   balanceValue: {
-    fontSize: "13@vs",
+    fontSize: 13,
   },
 });

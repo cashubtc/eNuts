@@ -1,6 +1,6 @@
 import { useThemeContext } from "@src/context/Theme";
-import { type StyleProp, View, type ViewStyle } from "react-native";
-import { ScaledSheet, vs } from "react-native-size-matters";
+import { SeparatorLine } from "@styles";
+import { type StyleProp, type ViewStyle } from "react-native";
 
 interface ISeparatorProps {
   style?: StyleProp<ViewStyle>;
@@ -10,21 +10,15 @@ interface ISeparatorProps {
 export default function Separator({ style, noMargin }: ISeparatorProps) {
   const { color } = useThemeContext();
   return (
-    <View
+    <SeparatorLine
       style={[
-        styles.separator,
         {
+          borderBottomWidth: 1,
           borderColor: color.DARK_BORDER,
-          marginBottom: noMargin ? 0 : vs(20),
+          marginBottom: noMargin ? 0 : 20,
         },
         style,
       ]}
     />
   );
 }
-
-const styles = ScaledSheet.create({
-  separator: {
-    borderBottomWidth: 1,
-  },
-});

@@ -2,8 +2,7 @@ import { CloseIcon } from "@comps/Icons";
 import Txt from "@comps/Txt";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import type { ReactNode, RefObject } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 
 interface IDashboardActionSheetProps {
   sheetRef: RefObject<TrueSheet | null>;
@@ -27,7 +26,7 @@ export default function DashboardActionSheet({
       ref={sheetRef}
       detents={["auto"]}
       backgroundColor={backgroundColor}
-      cornerRadius={s(26)}
+      cornerRadius={26}
       grabberOptions={{ color: closeIconColor }}
     >
       <View style={[styles.container, { backgroundColor }]}>
@@ -42,7 +41,7 @@ export default function DashboardActionSheet({
               void sheetRef.current?.dismiss();
             }}
           >
-            <CloseIcon width={s(18)} height={s(18)} color={closeIconColor} />
+            <CloseIcon width={18} height={18} color={closeIconColor} />
           </TouchableOpacity>
         </View>
 
@@ -88,28 +87,28 @@ export function DashboardActionSheetOption({
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: "20@s",
-    paddingTop: "34@vs",
-    paddingBottom: "24@vs",
+    paddingHorizontal: 20,
+    paddingTop: 34,
+    paddingBottom: 24,
   },
   header: {
-    minHeight: "40@s",
+    minHeight: 40,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: "18@vs",
+    marginBottom: 18,
   },
   title: {
-    fontSize: "20@vs",
-    lineHeight: "25@vs",
+    fontSize: 20,
+    lineHeight: 25,
   },
   closeBtn: {
     position: "absolute",
     right: 0,
     top: 0,
-    width: "40@s",
-    height: "40@s",
+    width: 40,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -125,11 +124,11 @@ const styles = ScaledSheet.create({
     width: "90%",
   },
   actionText: {
-    fontSize: "14@vs",
+    fontSize: 14,
     fontWeight: "500",
-    marginBottom: "4@vs",
+    marginBottom: 4,
   },
   descriptionText: {
-    fontSize: "12@vs",
+    fontSize: 12,
   },
 });

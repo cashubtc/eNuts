@@ -20,7 +20,6 @@ import type { ComponentProps } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ScaledSheet, s } from "react-native-size-matters";
 
 const QR_CANDIDATE_PRIORITY: PaymentCandidateKind[] = [
   "cashuToken",
@@ -165,7 +164,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
       style={[styles.headerAction, { borderColor: `${hi[highlight]}55` }]}
       testID="nfc-btn-top-nav"
     >
-      <NfcIcon width={s(20)} color={hi[highlight]} />
+      <NfcIcon width={20} color={hi[highlight]} />
     </TouchableOpacity>
   );
 
@@ -270,7 +269,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
             {isClaimingToken && (
               <View style={styles.progressWrap}>
                 <View style={styles.loadingState}>
-                  <Loading size={s(24)} color={hi[highlight]} />
+                  <Loading size={24} color={hi[highlight]} />
                   <Text style={styles.progressTitle}>{t("claiming", { ns: NS.wallet })}</Text>
                 </View>
               </View>
@@ -301,7 +300,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                 onPress={handleRescan}
                 activeOpacity={0.75}
               >
-                <MaterialIcons name="refresh" size={s(18)} color={getColor(highlight, color)} />
+                <MaterialIcons name="refresh" size={18} color={getColor(highlight, color)} />
                 <Text style={[styles.rescanButtonText, { color: getColor(highlight, color) }]}>
                   {t("scanAgain")}
                 </Text>
@@ -326,7 +325,7 @@ interface IStatusPillProps {
 function StatusPill({ label, color, iconName }: IStatusPillProps) {
   return (
     <View style={[styles.statusPill, { borderColor: `${color}55` }]}>
-      <MaterialIcons name={iconName} size={s(16)} color={color} />
+      <MaterialIcons name={iconName} size={16} color={color} />
       <Text style={styles.statusText}>{label}</Text>
     </View>
   );
@@ -355,7 +354,7 @@ function FrameCorner({ position, color }: IFrameCornerProps) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   camera: {
     ...StyleSheet.absoluteFillObject,
   },
@@ -370,18 +369,18 @@ const styles = ScaledSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: "24@s",
-    paddingTop: "26@vs",
-    paddingBottom: "26@vs",
+    paddingHorizontal: 24,
+    paddingTop: 26,
+    paddingBottom: 26,
   },
   headerCopy: {
     width: "100%",
     alignItems: "center",
   },
   headerAction: {
-    width: "40@s",
-    height: "40@s",
-    borderRadius: "20@s",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -389,141 +388,141 @@ const styles = ScaledSheet.create({
   statusPill: {
     flexDirection: "row",
     alignItems: "center",
-    columnGap: "8@s",
+    columnGap: 8,
     borderWidth: 1,
-    borderRadius: "999@s",
-    paddingHorizontal: "12@s",
-    paddingVertical: "8@vs",
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     backgroundColor: "rgba(0, 0, 0, 0.36)",
-    marginBottom: "18@vs",
+    marginBottom: 18,
   },
   statusText: {
     color: mainColors.WHITE,
-    fontSize: "12@vs",
+    fontSize: 12,
     fontWeight: "600",
   },
   title: {
     color: mainColors.WHITE,
-    fontSize: "24@vs",
-    lineHeight: "30@vs",
+    fontSize: 24,
+    lineHeight: 30,
     fontWeight: "600",
     textAlign: "center",
   },
   subtitle: {
     color: "rgba(250, 250, 250, 0.72)",
-    fontSize: "13@vs",
-    lineHeight: "19@vs",
+    fontSize: 13,
+    lineHeight: 19,
     textAlign: "center",
-    marginTop: "8@vs",
+    marginTop: 8,
   },
   focusFrame: {
-    width: "268@s",
-    height: "268@s",
-    borderRadius: "34@s",
+    width: 268,
+    height: 268,
+    borderRadius: 34,
     borderWidth: 1,
     backgroundColor: "rgba(255, 255, 255, 0.04)",
     overflow: "hidden",
   },
   corner: {
     position: "absolute",
-    width: "56@s",
-    height: "56@s",
+    width: 56,
+    height: 56,
   },
   cornerTopLeft: {
-    top: "12@s",
-    left: "12@s",
+    top: 12,
+    left: 12,
   },
   cornerTopRight: {
-    top: "12@s",
-    right: "12@s",
+    top: 12,
+    right: 12,
     transform: [{ rotate: "90deg" }],
   },
   cornerBottomLeft: {
-    bottom: "12@s",
-    left: "12@s",
+    bottom: 12,
+    left: 12,
     transform: [{ rotate: "-90deg" }],
   },
   cornerBottomRight: {
-    right: "12@s",
-    bottom: "12@s",
+    right: 12,
+    bottom: 12,
     transform: [{ rotate: "180deg" }],
   },
   cornerHorizontal: {
-    width: "44@s",
-    height: "4@s",
-    borderRadius: "999@s",
+    width: 44,
+    height: 4,
+    borderRadius: 999,
   },
   cornerVertical: {
-    width: "4@s",
-    height: "44@s",
-    borderRadius: "999@s",
-    marginTop: "-4@s",
+    width: 4,
+    height: 44,
+    borderRadius: 999,
+    marginTop: -4,
   },
   bottomDock: {
     width: "100%",
-    minHeight: "92@vs",
+    minHeight: 92,
     justifyContent: "flex-end",
   },
   progressWrap: {
     width: "100%",
-    padding: "18@s",
-    borderRadius: "24@s",
+    padding: 18,
+    borderRadius: 24,
     backgroundColor: "rgba(0, 0, 0, 0.58)",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.12)",
-    marginBottom: "12@vs",
+    marginBottom: 12,
   },
   progressHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "12@vs",
+    marginBottom: 12,
   },
   loadingState: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    columnGap: "12@s",
-    minHeight: "40@vs",
+    columnGap: 12,
+    minHeight: 40,
   },
   progressTitle: {
     color: mainColors.WHITE,
-    fontSize: "14@vs",
+    fontSize: 14,
     fontWeight: "600",
   },
   progressCount: {
-    fontSize: "13@vs",
+    fontSize: 13,
     fontWeight: "700",
   },
   progressTrack: {
     width: "100%",
-    height: "5@vs",
-    borderRadius: "999@s",
+    height: 5,
+    borderRadius: 999,
     backgroundColor: "rgba(255, 255, 255, 0.16)",
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    borderRadius: "999@s",
+    borderRadius: 999,
   },
   rescanButton: {
     width: "100%",
-    minHeight: "54@vs",
-    borderRadius: "999@s",
+    minHeight: 54,
+    borderRadius: 999,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    columnGap: "8@s",
+    columnGap: 8,
   },
   rescanButtonText: {
     color: mainColors.WHITE,
-    fontSize: "15@vs",
+    fontSize: 15,
     fontWeight: "600",
   },
   errorText: {
     color: mainColors.ERROR,
-    marginTop: "10@vs",
+    marginTop: 10,
     textAlign: "center",
-    fontSize: "12@vs",
+    fontSize: 12,
   },
 });

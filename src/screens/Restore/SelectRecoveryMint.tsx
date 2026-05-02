@@ -11,9 +11,7 @@ import { NS } from "@src/i18n";
 import { globals } from "@styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
-import { vs } from "react-native-size-matters";
+import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 
 export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScreenProps) {
   const { t } = useTranslation([NS.common]);
@@ -36,11 +34,11 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
       withBackBtn
       handlePress={() => navigation.goBack()}
     >
-      <View style={{ flex: 1, gap: s(10) }}>
+      <View style={{ flex: 1, gap: 10 }}>
         <Txt txt={t("selectRestoreMint")} styles={[styles.hint]} bold />
         <ScrollView alwaysBounceVertical={false} style={{ flex: 1 }}>
           {knownMints.length > 0 ? (
-            <View style={{ flex: 1, gap: s(4) }}>
+            <View style={{ flex: 1, gap: 4 }}>
               {knownMints.map((mint) => {
                 const isSelected = selectedMints.includes(mint.mintUrl);
                 return (
@@ -58,9 +56,7 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
                   >
                     <View style={styles.mintContent}>
                       <Txt txt={mint.mintUrl} styles={[{ flex: 1 }]} />
-                      {isSelected && (
-                        <CheckmarkIcon width={vs(14)} height={vs(14)} color={hi[highlight]} />
-                      )}
+                      {isSelected && <CheckmarkIcon width={14} height={14} color={hi[highlight]} />}
                     </View>
                   </TouchableOpacity>
                 );
@@ -86,30 +82,30 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   hint: {
-    paddingHorizontal: "20@s",
-    marginBottom: "20@vs",
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   mintItem: {
-    padding: "16@s",
-    borderRadius: "12@s",
+    padding: 16,
+    borderRadius: 12,
     borderWidth: 2,
     borderColor: "transparent",
-    marginBottom: "8@s",
+    marginBottom: 8,
   },
   mintContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
+    gap: 12,
   },
   emptyContainer: {
-    padding: "20@s",
+    padding: 20,
     alignItems: "center",
   },
   btnWrap: {
-    marginHorizontal: "20@s",
-    marginTop: "20@s",
-    marginBottom: isIOS ? "0@s" : "20@s",
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: isIOS ? 0 : 20,
   },
 });

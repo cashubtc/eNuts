@@ -1,11 +1,10 @@
 import { LeftArrow } from "@comps/Icons";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi } from "@styles";
+import { AppText, Stack, globals, highlight as hi } from "@styles";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, TouchableOpacity, View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { TouchableOpacity } from "react-native";
 
 interface ITopNavProps {
   screenName?: string;
@@ -28,82 +27,59 @@ export default function TopNav({
   const { color, highlight } = useThemeContext();
 
   return (
-    <View style={[styles.topNav, { backgroundColor: color.BACKGROUND }]}>
-      <View style={styles.leftSlot}>
+    <Stack
+      flexDirection="row"
+      alignItems="center"
+      minHeight={48}
+      paddingHorizontal={6}
+      style={{ backgroundColor: color.BACKGROUND }}
+    >
+      <Stack width={44} alignItems="flex-start" justifyContent="center">
         {withBackBtn ? (
           <TouchableOpacity
             accessibilityRole="button"
             activeOpacity={0.7}
             onPress={handlePress}
-            style={styles.backiconWrap}
+            style={{
+              width: 44,
+              height: 44,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
             testID="back-btn-top-nav"
           >
             <LeftArrow color={hi[highlight]} />
           </TouchableOpacity>
         ) : null}
-      </View>
+      </Stack>
 
-      <View style={styles.titleSlot}>
+      <Stack flex={1} justifyContent="center" paddingHorizontal={6}>
         {screenName ? (
-          <Text numberOfLines={1} style={[globals(color).navTxt, styles.title]}>
+          <AppText
+            numberOfLines={1}
+            weight="medium"
+            style={[globals(color).navTxt, { fontSize: 17, lineHeight: 22 }]}
+          >
             {screenName}
-          </Text>
+          </AppText>
         ) : null}
-      </View>
+      </Stack>
 
-      <View style={styles.rightSlot}>
+      <Stack flexDirection="row" alignItems="center" justifyContent="flex-end" minWidth={44}>
         {rightAction}
         {cancel ? (
           <TouchableOpacity
             accessibilityRole="button"
             activeOpacity={0.7}
-            style={styles.cancel}
+            style={{ minHeight: 44, justifyContent: "center", paddingHorizontal: 10 }}
             onPress={handleCancel}
           >
-            <Text style={globals(color, highlight).pressTxt}>{t("cancel")}</Text>
+            <AppText weight="medium" style={globals(color, highlight).pressTxt}>
+              {t("cancel")}
+            </AppText>
           </TouchableOpacity>
         ) : null}
-      </View>
-    </View>
+      </Stack>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
-  topNav: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: "48@vs",
-    paddingHorizontal: "6@s",
-  },
-  leftSlot: {
-    width: "44@s",
-    alignItems: "flex-start",
-    justifyContent: "center",
-  },
-  titleSlot: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: "6@s",
-  },
-  title: {
-    fontSize: "17@ms",
-    lineHeight: "22@vs",
-  },
-  rightSlot: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    minWidth: "44@s",
-  },
-  backiconWrap: {
-    width: "44@s",
-    height: "44@s",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cancel: {
-    minHeight: "44@vs",
-    justifyContent: "center",
-    paddingHorizontal: "10@s",
-  },
-});

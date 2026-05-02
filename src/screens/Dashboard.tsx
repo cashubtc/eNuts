@@ -32,9 +32,8 @@ import { globals, highlight as hi, mainColors } from "@styles";
 import { getStrFromClipboard } from "@util";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { s, ScaledSheet } from "react-native-size-matters";
 
 import { LatestHistoryMeltEntry } from "./History/components/LatestHistoryMeltEntry";
 import { LatestHistoryMintEntry } from "./History/components/LatestHistoryMintEntry";
@@ -131,7 +130,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                     <Text style={[styles.balanceSymbol, { color: balanceMetaColor }]}>
                       {balanceAmount.symbol}
                     </Text>
-                    <SwapCurrencyIcon width={s(18)} height={s(18)} color={balanceMetaColor} />
+                    <SwapCurrencyIcon width={18} height={18} color={balanceMetaColor} />
                   </>
                 )}
               </View>
@@ -205,7 +204,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           >
             {knownMints.length > 0 ? (
               <ActionBtn
-                icon={<SendIcon width={s(26)} height={s(26)} color={actionIconColor} />}
+                icon={<SendIcon width={26} height={26} color={actionIconColor} />}
                 txt={t("send", { ns: NS.wallet })}
                 textColor={actionTextColor}
                 iconBackgroundColor={actionIconBackground}
@@ -216,7 +215,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               />
             ) : (
               <ActionBtn
-                icon={<PlusIcon width={s(28)} height={s(28)} color={actionIconColor} />}
+                icon={<PlusIcon width={28} height={28} color={actionIconColor} />}
                 txt={t("mint")}
                 textColor={actionTextColor}
                 iconBackgroundColor={actionIconBackground}
@@ -227,7 +226,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               />
             )}
             <ActionBtn
-              icon={<ScanQRIcon width={s(26)} height={s(26)} color={actionIconColor} />}
+              icon={<ScanQRIcon width={26} height={26} color={actionIconColor} />}
               txt={t("scan")}
               textColor={actionTextColor}
               iconBackgroundColor={actionIconBackground}
@@ -235,7 +234,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               onPress={() => navigation.navigate("QRScanner")}
             />
             <ActionBtn
-              icon={<ReceiveIcon width={s(26)} height={s(26)} color={actionIconColor} />}
+              icon={<ReceiveIcon width={26} height={26} color={actionIconColor} />}
               txt={t("receive", { ns: NS.wallet })}
               textColor={actionTextColor}
               iconBackgroundColor={actionIconBackground}
@@ -256,7 +255,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           closeIconColor={color.TEXT_SECONDARY}
         >
           <DashboardActionSheetOption
-            icon={<SendMsgIcon width={s(16)} height={s(16)} color={mainColors.VALID} />}
+            icon={<SendMsgIcon width={16} height={16} color={mainColors.VALID} />}
             title={t("sendEcash")}
             description={t("sendEcashDashboard")}
             textColor={color.TEXT}
@@ -271,7 +270,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           <Separator style={styles.sheetSeparator} />
 
           <DashboardActionSheetOption
-            icon={<ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />}
+            icon={<ZapIcon width={26} height={26} color={mainColors.ZAP} />}
             title={t("payLNInvoice", { ns: NS.wallet })}
             description={t("payInvoiceDashboard")}
             textColor={color.TEXT}
@@ -286,7 +285,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           <Separator style={styles.sheetSeparator} />
 
           <DashboardActionSheetOption
-            icon={<NfcIcon width={s(20)} color={mainColors.VALID} />}
+            icon={<NfcIcon width={20} color={mainColors.VALID} />}
             title={t("nfcPayment", {
               ns: NS.wallet,
               defaultValue: "NFC Payment",
@@ -352,7 +351,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           <Separator style={styles.sheetSeparator} />
 
           <DashboardActionSheetOption
-            icon={<ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />}
+            icon={<ZapIcon width={26} height={26} color={mainColors.ZAP} />}
             title={t("createLnInvoice")}
             description={t("createInvoiceDashboard")}
             textColor={color.TEXT}
@@ -437,7 +436,7 @@ function withAlpha(hex: string, alpha: number) {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
@@ -446,132 +445,132 @@ const styles = ScaledSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: "20@s",
-    paddingTop: "2@vs",
+    paddingHorizontal: 20,
+    paddingTop: 2,
   },
   balanceSection: {
-    paddingTop: "10@vs",
-    paddingBottom: "24@vs",
+    paddingTop: 10,
+    paddingBottom: 24,
   },
   balanceWrap: {
     alignItems: "center",
-    paddingVertical: "8@vs",
+    paddingVertical: 8,
   },
   balanceAmount: {
-    fontSize: "64@s",
+    fontSize: 64,
     fontWeight: "700",
-    lineHeight: "74@s",
+    lineHeight: 74,
     textAlign: "center",
   },
   balanceMetaWrap: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: "22@s",
-    marginTop: "-2@vs",
+    minHeight: 22,
+    marginTop: -2,
   },
   balanceSymbol: {
-    fontSize: "14@vs",
+    fontSize: 14,
     fontWeight: "500",
-    marginRight: "6@s",
+    marginRight: 6,
   },
   balanceRule: {
-    width: "72@s",
-    height: "3@vs",
-    borderRadius: "2@vs",
-    marginTop: "12@vs",
+    width: 72,
+    height: 3,
+    borderRadius: 2,
+    marginTop: 12,
   },
   actionDockWrap: {
-    paddingHorizontal: "20@s",
-    paddingTop: "8@vs",
-    paddingBottom: "10@vs",
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 10,
     backgroundColor: "transparent",
   },
   actionDock: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderRadius: "26@s",
+    borderRadius: 26,
     borderWidth: 1,
-    paddingHorizontal: "14@s",
-    paddingVertical: "10@vs",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   actionBtn: {
     alignItems: "center",
     justifyContent: "center",
-    width: "82@s",
-    minHeight: "70@s",
+    width: 82,
+    minHeight: 70,
   },
   actionIcon: {
-    width: "44@s",
-    height: "44@s",
-    borderRadius: "22@s",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: "7@vs",
+    marginBottom: 7,
   },
   actionTxt: {
-    fontSize: "12@vs",
+    fontSize: 12,
     textAlign: "center",
   },
   sheetSeparator: {
     width: "100%",
-    marginTop: "10@vs",
-    marginBottom: "10@vs",
+    marginTop: 10,
+    marginBottom: 10,
   },
   historySection: {
     flex: 1,
   },
   sectionHeader: {
-    minHeight: "34@vs",
+    minHeight: 34,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "10@vs",
+    marginBottom: 10,
   },
   sectionTitle: {
     flex: 1,
-    fontSize: "22@vs",
+    fontSize: 22,
     fontWeight: "600",
-    marginRight: "14@s",
+    marginRight: 14,
   },
   historyLink: {
-    minWidth: "52@s",
-    minHeight: "30@vs",
-    borderRadius: "15@vs",
+    minWidth: 52,
+    minHeight: 30,
+    borderRadius: 15,
     borderWidth: 1,
-    paddingHorizontal: "14@s",
+    paddingHorizontal: 14,
     alignItems: "center",
     justifyContent: "center",
   },
   historyLinkTxt: {
-    fontSize: "13@vs",
+    fontSize: 13,
     fontWeight: "500",
     textAlign: "right",
   },
   historyList: {
     flex: 1,
-    borderRadius: "26@s",
-    paddingHorizontal: "16@s",
+    borderRadius: 26,
+    paddingHorizontal: 16,
   },
   historyListContent: {
-    paddingTop: "12@vs",
-    paddingBottom: "2@vs",
+    paddingTop: 12,
+    paddingBottom: 2,
   },
   historyEntry: {
-    paddingTop: "1@vs",
+    paddingTop: 1,
   },
   historyDivider: {
     height: 1,
-    marginTop: "9@vs",
-    marginBottom: "9@vs",
+    marginTop: 9,
+    marginBottom: 9,
   },
   emptyHistory: {
-    minHeight: "100@vs",
-    borderRadius: "26@s",
+    minHeight: 100,
+    borderRadius: 26,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   emptyHistoryTxt: {
     textAlign: "center",

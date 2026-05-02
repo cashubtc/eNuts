@@ -9,9 +9,8 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { globals } from "@styles";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ScaledSheet } from "react-native-size-matters";
 
 import { LatestHistoryMintEntry } from "./components/LatestHistoryMintEntry";
 import { LatestHistorySendEntry } from "./components/LatestHistorySendEntry";
@@ -80,7 +79,7 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
@@ -91,12 +90,12 @@ const styles = ScaledSheet.create({
   },
   entryCard: {
     borderRadius: 20,
-    paddingHorizontal: "20@s",
-    paddingVertical: "15@vs",
-    marginBottom: "6@vs",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    marginBottom: 6,
   },
   loaderWrap: {
-    paddingVertical: "20@vs",
+    paddingVertical: 20,
     alignItems: "center",
     justifyContent: "center",
   },

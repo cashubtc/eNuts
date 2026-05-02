@@ -12,9 +12,8 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { mainColors } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
-import { Text, View } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { ScaledSheet } from "react-native-size-matters";
 
 export type MeltConfirmationModalRef = ConfirmationModalRef;
 
@@ -273,73 +272,73 @@ function truncateMiddle(value: string, start = 14, end = 10) {
 
 MeltConfirmationModal.displayName = "MeltConfirmationModal";
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   summaryCard: {
-    marginBottom: "12@vs",
-    paddingHorizontal: "20@s",
-    paddingTop: "18@vs",
-    paddingBottom: "16@vs",
+    marginBottom: 12,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 16,
   },
   amountLabel: {
-    fontSize: "12@vs",
-    marginBottom: "8@vs",
+    fontSize: 12,
+    marginBottom: 8,
     letterSpacing: 0.3,
   },
   amount: {
-    fontSize: "34@vs",
-    lineHeight: "40@vs",
-    marginBottom: "16@vs",
+    fontSize: 34,
+    lineHeight: 40,
+    marginBottom: 16,
   },
   pendingBadge: {
-    fontSize: "13@vs",
-    marginBottom: "14@vs",
+    fontSize: 13,
+    marginBottom: 14,
   },
   rowsWrap: {
-    gap: "2@vs",
+    gap: 2,
   },
   detailRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "12@s",
-    paddingVertical: "12@vs",
+    gap: 12,
+    paddingVertical: 12,
   },
   detailLabel: {
     flex: 1,
-    fontSize: "14@vs",
+    fontSize: 14,
   },
   detailValueWrap: {
     flex: 1.25,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    gap: "8@s",
+    gap: 8,
   },
   detailValue: {
     flexShrink: 1,
     textAlign: "right",
-    fontSize: "14@vs",
+    fontSize: 14,
     fontWeight: "500",
   },
   mono: {
     fontFamily: "monospace",
-    fontSize: "12@vs",
+    fontSize: 12,
   },
   separator: {
     marginVertical: 0,
   },
   mintSection: {
-    marginBottom: "12@vs",
+    marginBottom: 12,
   },
   sectionLabel: {
-    fontSize: "13@vs",
-    marginBottom: "8@vs",
-    marginLeft: "2@s",
+    fontSize: 13,
+    marginBottom: 8,
+    marginLeft: 2,
   },
   detailsCard: {
-    marginBottom: "16@vs",
-    paddingHorizontal: "20@s",
-    paddingVertical: "4@vs",
+    marginBottom: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 4,
   },
 });
 

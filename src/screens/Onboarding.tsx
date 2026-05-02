@@ -8,9 +8,8 @@ import { STORE_KEYS } from "@src/storage/store/consts";
 import { H_Colors, mainColors } from "@styles/colors";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
-import { s, ScaledSheet } from "react-native-size-matters";
 
 export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
   const { t } = useTranslation([NS.common]);
@@ -28,25 +27,25 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
       pages={[
         {
           backgroundColor: "black",
-          image: <Logo size={s(130)} />,
+          image: <Logo size={130} />,
           title: "Alpha Testing",
           subtitle: (
             <View
               style={{
-                padding: s(10),
+                padding: 10,
                 flexDirection: "column",
                 alignItems: "center",
               }}
             >
               <Txt
                 txt="eNuts is currently in alpha testing. Please use at your own risk."
-                styles={[{ paddingHorizontal: s(10), textAlign: "center" }]}
+                styles={[{ paddingHorizontal: 10, textAlign: "center" }]}
               />
               <TouchableOpacity
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: s(24),
+                  marginTop: 24,
                 }}
                 onPress={() => setAccepted((acpt) => !acpt)}
                 activeOpacity={0.7}
@@ -54,21 +53,21 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
               >
                 <View
                   style={{
-                    width: s(10),
+                    width: 10,
                     borderWidth: 1,
                     borderColor: "white",
-                    height: s(10),
+                    height: 10,
                     backgroundColor: accepted ? "white" : "transparent",
                   }}
                 />
-                <Txt txt="I understand" styles={[{ marginLeft: s(10) }]} />
+                <Txt txt="I understand" styles={[{ marginLeft: 10 }]} />
               </TouchableOpacity>
             </View>
           ),
         },
         {
           backgroundColor: H_Colors.Default,
-          image: <Logo size={s(130)} />,
+          image: <Logo size={130} />,
           title: "eNuts & Ecash",
           subtitle: t("explainer1"),
         },
@@ -98,7 +97,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
       DoneButtonComponent={() => (
         <TouchableOpacity
           onPress={() => void handleDone()}
-          style={{ marginRight: s(20) }}
+          style={{ marginRight: 20 }}
           testID="onboarding-done"
         >
           <Txt txt={t("next")} styles={[{ color: mainColors.WHITE }]} />
@@ -108,17 +107,17 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
   );
 }
 
-const styles = ScaledSheet.create({
-  title: { fontSize: "28@vs", fontWeight: "500" },
-  subTitle: { fontSize: "16@vs" },
+const styles = StyleSheet.create({
+  title: { fontSize: 28, fontWeight: "500" },
+  subTitle: { fontSize: 16 },
   cashuImg: {
-    width: "130@s",
-    height: "130@vs",
+    width: 130,
+    height: 130,
     resizeMode: "contain",
   },
   sendReceiveImg: {
-    width: "300@s",
-    height: "170@vs",
+    width: 300,
+    height: 170,
     resizeMode: "contain",
   },
 });

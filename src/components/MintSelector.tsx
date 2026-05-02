@@ -2,8 +2,7 @@ import { useThemeContext } from "@src/context/Theme";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
 import { formatMintUrl } from "@util";
-import { TouchableOpacity, View, type ViewStyle, type StyleProp } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { TouchableOpacity, View, type ViewStyle, type StyleProp, StyleSheet } from "react-native";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { ChevronRightIcon } from "./Icons";
 import Txt from "./Txt";
@@ -42,8 +41,8 @@ export default function MintSelector({
             styles={[
               {
                 color: color.TEXT_SECONDARY,
-                fontSize: s(12),
-                marginBottom: vs(8),
+                fontSize: 12,
+                marginBottom: 8,
               },
             ]}
           />
@@ -57,7 +56,7 @@ export default function MintSelector({
               styles={[
                 {
                   color: color.TEXT_SECONDARY,
-                  fontSize: s(12),
+                  fontSize: 12,
                 },
               ]}
             />
@@ -73,14 +72,14 @@ export default function MintSelector({
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   cardContent: {
-    padding: "12@s",
+    padding: 12,
   },
   container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "8@s",
+    gap: 8,
   },
   infoContainer: {
     flex: 1,
@@ -89,6 +88,6 @@ const styles = ScaledSheet.create({
     justifyContent: "space-between",
   },
   chevronContainer: {
-    marginLeft: "8@s",
+    marginLeft: 8,
   },
 });

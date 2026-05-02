@@ -9,8 +9,7 @@ import { seedService } from "@src/services/SeedService";
 import { useEffect, useState } from "react";
 import type { TViewMnemonicPageProps } from "@model/nav";
 import { useTranslation } from "react-i18next";
-import { FlatList, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { FlatList, View, StyleSheet } from "react-native";
 import useCopy from "@comps/hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "@comps/Icons";
 import { mainColors } from "@styles";
@@ -57,7 +56,7 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
                     styles.mnemonicWord,
                     {
                       backgroundColor: color.DRAWER,
-                      marginRight: index % 2 === 0 ? s(10) : 0,
+                      marginRight: index % 2 === 0 ? 10 : 0,
                     },
                   ]}
                 >
@@ -73,9 +72,9 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
                 disabled={copied}
                 icon={
                   copied ? (
-                    <CheckmarkIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />
+                    <CheckmarkIcon width={18} height={18} color={mainColors.WHITE} />
                   ) : (
-                    <CopyIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />
+                    <CopyIcon width={18} height={18} color={mainColors.WHITE} />
                   )
                 }
               />
@@ -87,27 +86,27 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   content: {
-    marginTop: `${isIOS ? 20 : 60}@s`,
-    paddingHorizontal: "20@s",
+    marginTop: isIOS ? 20 : 60,
+    paddingHorizontal: 20,
   },
   copyButtonContainer: {
-    marginTop: "20@s",
+    marginTop: 20,
   },
   mnemonicWord: {
-    padding: "10@s",
-    marginBottom: "10@s",
-    borderRadius: "10@s",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 10,
     width: "48.5%",
     flexDirection: "row",
     alignItems: "center",
   },
   warnContainer: {
     alignItems: "center",
-    padding: "20@s",
-    rowGap: "10@s",
-    borderRadius: "10@s",
-    marginBottom: "20@s",
+    padding: 20,
+    rowGap: 10,
+    borderRadius: 10,
+    marginBottom: 20,
   },
 });

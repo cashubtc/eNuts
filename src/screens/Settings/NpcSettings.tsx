@@ -17,9 +17,8 @@ import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import * as Clipboard from "expo-clipboard";
 import { useRef, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet } from "react-native-size-matters";
 
 interface INpcAccountCardProps {
   account: INpcAccount;
@@ -79,7 +78,7 @@ function NpcAccountCard({
           disabled={busy}
           style={[styles.iconButton, { borderColor: color.BORDER, opacity: busy ? 0.7 : 1 }]}
         >
-          {busy ? <Loading size={s(16)} /> : <RefreshIcon width={s(18)} color={hi[highlight]} />}
+          {busy ? <Loading size={16} /> : <RefreshIcon width={18} color={hi[highlight]} />}
         </TouchableOpacity>
       </View>
 
@@ -111,7 +110,7 @@ function NpcAccountCard({
               txt={t("copy", { defaultValue: "Copy" })}
               styles={[styles.copyText, { color: hi[highlight] }]}
             />
-            <CopyIcon width={s(16)} color={hi[highlight]} />
+            <CopyIcon width={16} color={hi[highlight]} />
           </View>
         </View>
         <Txt txt={account.address} bold styles={[styles.addressText, { color: hi[highlight] }]} />
@@ -145,7 +144,7 @@ function NpcAccountCard({
               { borderColor: mainColors.ERROR, opacity: busy ? 0.5 : 1 },
             ]}
           >
-            <TrashbinIcon width={s(16)} color={mainColors.ERROR} />
+            <TrashbinIcon width={16} color={mainColors.ERROR} />
             <Txt
               txt={t("remove", { defaultValue: "Remove" })}
               styles={[styles.removeText, { color: mainColors.ERROR }]}
@@ -329,7 +328,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           disabled={busyAccountId !== null}
           style={[styles.headerAddAction, { opacity: busyAccountId !== null ? 0.5 : 1 }]}
         >
-          <PlusIcon width={s(30)} height={s(30)} color={hi[highlight]} />
+          <PlusIcon width={30} height={30} color={hi[highlight]} />
         </TouchableOpacity>
       }
     >
@@ -343,7 +342,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           contentContainerStyle={{
             paddingHorizontal: 8,
             paddingTop: 8,
-            paddingBottom: Math.max(insets.bottom, s(18)),
+            paddingBottom: Math.max(insets.bottom, 18),
           }}
         >
           <View style={[globals(color).wrapContainer, styles.summaryCard]}>
@@ -431,7 +430,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         ref={addAccountSheetRef}
         detents={["auto"]}
         backgroundColor={color.BACKGROUND}
-        cornerRadius={s(26)}
+        cornerRadius={26}
         grabberOptions={{ color: color.TEXT_SECONDARY }}
         onDidDismiss={() => setPrivateKeyInput("")}
       >
@@ -439,14 +438,14 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           style={{ backgroundColor: color.BACKGROUND }}
           contentContainerStyle={[
             styles.sheetContainer,
-            { paddingBottom: Math.max(insets.bottom, s(22)) },
+            { paddingBottom: Math.max(insets.bottom, 22) },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.sheetHeader}>
             <View style={[styles.sheetIcon, { backgroundColor: hi[highlight] }]}>
-              <KeyIcon width={s(22)} color={color.BACKGROUND} />
+              <KeyIcon width={22} color={color.BACKGROUND} />
             </View>
             <View style={styles.sheetTitleBlock}>
               <Txt
@@ -504,7 +503,7 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         ref={usernameSheetRef}
         detents={["auto"]}
         backgroundColor={color.BACKGROUND}
-        cornerRadius={s(26)}
+        cornerRadius={26}
         dismissible={!usernameBusy}
         draggable={!usernameBusy}
         grabberOptions={{ color: color.TEXT_SECONDARY }}
@@ -519,14 +518,14 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           style={{ backgroundColor: color.BACKGROUND }}
           contentContainerStyle={[
             styles.sheetContainer,
-            { paddingBottom: Math.max(insets.bottom, s(22)) },
+            { paddingBottom: Math.max(insets.bottom, 22) },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.sheetHeader}>
             <View style={[styles.sheetIcon, { backgroundColor: hi[highlight] }]}>
-              <KeyIcon width={s(22)} color={color.BACKGROUND} />
+              <KeyIcon width={22} color={color.BACKGROUND} />
             </View>
             <View style={styles.sheetTitleBlock}>
               <Txt
@@ -620,14 +619,14 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   summaryCard: {
-    paddingBottom: "20@vs",
+    paddingBottom: 20,
   },
   summaryHeader: {
     flexDirection: "row",
@@ -637,36 +636,36 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   summaryTitle: {
-    marginBottom: "6@vs",
+    marginBottom: 6,
   },
   summaryStats: {
     borderTopWidth: 1,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center",
-    marginTop: "18@vs",
-    paddingVertical: "14@vs",
+    marginTop: 18,
+    paddingVertical: 14,
   },
   summaryStat: {
     flex: 1,
-    paddingHorizontal: "14@s",
+    paddingHorizontal: 14,
   },
   statDivider: {
     width: 1,
-    height: "34@vs",
+    height: 34,
   },
   statLabel: {
-    fontSize: "11@vs",
-    marginBottom: "5@vs",
+    fontSize: 11,
+    marginBottom: 5,
   },
   statValue: {
-    fontSize: "16@vs",
+    fontSize: 16,
   },
   summaryActions: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: "18@vs",
-    gap: "12@s",
+    marginTop: 18,
+    gap: 12,
   },
   summaryAction: {
     flex: 1,
@@ -677,50 +676,50 @@ const styles = ScaledSheet.create({
     justifyContent: "center",
   },
   accountCard: {
-    paddingBottom: "20@vs",
+    paddingBottom: 20,
   },
   accountHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "14@vs",
+    marginBottom: 14,
   },
   accountTitleWrap: {
     flex: 1,
-    paddingRight: "12@s",
+    paddingRight: 12,
   },
   accountTitle: {
-    fontSize: "16@vs",
-    marginBottom: "8@vs",
+    fontSize: 16,
+    marginBottom: 8,
   },
   badgeRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "8@s",
+    gap: 8,
   },
   badge: {
-    borderRadius: "12@s",
-    paddingHorizontal: "8@s",
-    paddingVertical: "3@vs",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
   },
   badgeText: {
-    fontSize: "10@vs",
+    fontSize: 10,
     fontWeight: "600",
   },
   sourceBadge: {
     borderWidth: 1,
-    borderRadius: "12@s",
-    paddingHorizontal: "8@s",
-    paddingVertical: "3@vs",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
   },
   sourceBadgeText: {
-    fontSize: "10@vs",
+    fontSize: 10,
     fontWeight: "600",
   },
   iconButton: {
-    width: "36@s",
-    height: "36@s",
-    borderRadius: "18@s",
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -728,110 +727,110 @@ const styles = ScaledSheet.create({
   statusRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: "12@vs",
-    gap: "7@s",
+    marginBottom: 12,
+    gap: 7,
   },
   statusDot: {
-    width: "7@s",
-    height: "7@s",
-    borderRadius: "4@s",
+    width: 7,
+    height: 7,
+    borderRadius: 4,
   },
   statusText: {
-    fontSize: "12@vs",
+    fontSize: 12,
   },
   addressBox: {
     borderWidth: 1,
-    borderRadius: "16@s",
-    paddingHorizontal: "14@s",
-    paddingVertical: "12@vs",
-    marginBottom: "16@vs",
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 16,
   },
   addressHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "8@vs",
-    gap: "12@s",
+    marginBottom: 8,
+    gap: 12,
   },
   copyHint: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "5@s",
+    gap: 5,
   },
   copyText: {
-    fontSize: "12@vs",
+    fontSize: 12,
     fontWeight: "600",
   },
   addressText: {
-    fontSize: "14@vs",
+    fontSize: 14,
     fontWeight: "600",
   },
   mutedText: {
-    fontSize: "12@vs",
-    marginTop: "4@vs",
+    fontSize: 12,
+    marginTop: 4,
   },
   fieldBlock: {
-    marginBottom: "14@vs",
+    marginBottom: 14,
   },
   label: {
-    fontSize: "12@vs",
-    marginBottom: "7@vs",
+    fontSize: 12,
+    marginBottom: 7,
   },
   addressLabel: {
-    fontSize: "12@vs",
+    fontSize: 12,
   },
   actions: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "12@s",
+    gap: 12,
   },
   primaryAction: {
     flex: 1,
   },
   removeButton: {
-    minHeight: "42@vs",
+    minHeight: 42,
     borderWidth: 1,
-    borderRadius: "22@s",
-    paddingHorizontal: "13@s",
+    borderRadius: 22,
+    paddingHorizontal: 13,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: "6@s",
+    gap: 6,
   },
   removeText: {
-    fontSize: "13@vs",
+    fontSize: 13,
     fontWeight: "600",
   },
   usernamePreview: {
     borderWidth: 1,
-    borderRadius: "18@s",
-    paddingHorizontal: "16@s",
-    paddingVertical: "18@vs",
-    marginBottom: "14@vs",
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    marginBottom: 14,
   },
   usernamePreviewText: {
-    fontSize: "20@vs",
+    fontSize: 20,
   },
   usernamePrompt: {
-    fontSize: "14@vs",
-    lineHeight: "20@vs",
-    marginBottom: "18@vs",
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 18,
   },
   sheetContainer: {
-    paddingHorizontal: "20@s",
-    paddingTop: "26@vs",
+    paddingHorizontal: 20,
+    paddingTop: 26,
   },
   sheetHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
-    marginBottom: "22@vs",
+    gap: 12,
+    marginBottom: 22,
   },
   sheetIcon: {
-    width: "44@s",
-    height: "44@s",
-    borderRadius: "22@s",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -839,10 +838,10 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   sheetTitle: {
-    fontSize: "17@vs",
-    marginBottom: "4@vs",
+    fontSize: 17,
+    marginBottom: 4,
   },
   sheetActions: {
-    gap: "10@vs",
+    gap: 10,
   },
 });

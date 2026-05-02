@@ -6,11 +6,10 @@ import { useBalanceContext } from "@src/context/Balance";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi } from "@styles";
+import { AppText, Stack, globals, highlight as hi } from "@styles";
 import { getColor } from "@styles/colors";
 import { useTranslation } from "react-i18next";
-import { Text, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { TouchableOpacity } from "react-native";
 
 import { TxtButton } from "./Button";
 import Txt from "./Txt";
@@ -34,37 +33,52 @@ export default function Balance({ nav }: IBalanceProps) {
   };
 
   return (
-    <View style={[styles.board, { borderColor: color.BORDER, backgroundColor: hi[highlight] }]}>
+    <Stack
+      borderBottomLeftRadius={50}
+      borderBottomRightRadius={50}
+      paddingHorizontal={20}
+      paddingBottom={50}
+      minHeight="55%"
+      style={{ borderColor: color.BORDER, backgroundColor: hi[highlight] }}
+    >
       <TouchableOpacity
-        style={styles.balanceWrap}
+        style={{ alignItems: "center", marginHorizontal: -20, marginBottom: 10 }}
         onPress={toggleBalanceFormat}
         disabled={hidden.balance}
       >
-        <Text
+        <AppText
           testID={`balance: ${balances.total.total}`}
-          style={[styles.balAmount, { color: getColor(highlight, color) }]}
+          weight="semibold"
+          style={[
+            {
+              alignItems: "center",
+              fontSize: 42,
+              fontWeight: "600",
+              color: getColor(highlight, color),
+            },
+          ]}
         >
           {hidden.balance ? "****" : formatAmount(balances.total.total).formatted}
-        </Text>
-        <View style={styles.balAssetNameWrap}>
+        </AppText>
+        <Stack flexDirection="row" alignItems="center" marginBottom={10} minHeight={20}>
           {!hidden.balance && (
             <>
-              <Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
+              <AppText style={{ fontSize: 14, marginRight: 5, color: getColor(highlight, color) }}>
                 {formatAmount(balances.total.total).symbol}
-              </Text>
-              <SwapCurrencyIcon width={s(20)} height={s(20)} color={getColor(highlight, color)} />
+              </AppText>
+              <SwapCurrencyIcon width={20} height={20} color={getColor(highlight, color)} />
             </>
           )}
-        </View>
+        </Stack>
       </TouchableOpacity>
       {/* No transactions yet */}
       {!latestHistory.length && (
-        <View style={styles.txOverview}>
+        <Stack flex={1} alignItems="center" justifyContent="center">
           <Txt
             txt={t("noTX")}
             styles={[globals(color).pressTxt, { color: getColor(highlight, color) }]}
           />
-        </View>
+        </Stack>
       )}
       {/* latest 3 history entries */}
       <LatestHistory history={latestHistory} />
@@ -73,58 +87,9 @@ export default function Balance({ nav }: IBalanceProps) {
           txt={t("seeFullHistory")}
           onPress={() => nav?.navigate("History", { screen: "HistoryMain" })}
           txtColor={getColor(highlight, color)}
-          style={[{ paddingTop: s(15) }]}
+          style={[{ paddingTop: 15 }]}
         />
       )}
-    </View>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
-  board: {
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    paddingHorizontal: "20@s",
-    paddingBottom: "50@s",
-    minHeight: "55%",
-  },
-  balanceWrap: {
-    alignItems: "center",
-    marginHorizontal: "-20@s",
-    marginBottom: "10@s",
-  },
-  balAmount: {
-    alignItems: "center",
-    fontSize: "42@s",
-    fontWeight: "600",
-  },
-  balAssetNameWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: "10@s",
-    minHeight: "20@s",
-  },
-  balAssetName: {
-    fontSize: "14@vs",
-    marginRight: "5@s",
-  },
-  iconWrap: {
-    minWidth: "40@s",
-    paddingTop: "3@s",
-  },
-  entry: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingBottom: "10@s",
-  },
-  wrap: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  txOverview: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

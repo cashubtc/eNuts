@@ -1,8 +1,15 @@
 import { useThemeContext } from "@src/context/Theme";
-import { globals, highlight as hi, mainColors } from "@styles";
+import {
+  AppText,
+  ButtonSurface,
+  Stack,
+  XStack,
+  globals,
+  highlight as hi,
+  mainColors,
+} from "@styles";
 import { getColor } from "@styles/colors";
-import { View, type StyleProp, TouchableOpacity, type ViewStyle } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { type StyleProp, TouchableOpacity, type ViewStyle } from "react-native";
 
 import Loading from "./Loading";
 import Txt from "./Txt";
@@ -39,21 +46,21 @@ export default function Button({
   // Define size variants
   const sizeStyles = {
     small: {
-      paddingHorizontal: s(14),
-      paddingVertical: s(12),
-      fontSize: s(13),
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      fontSize: 13,
       spinnerSize: 16,
     },
     medium: {
-      paddingHorizontal: s(18),
-      paddingVertical: s(18),
-      fontSize: s(14),
+      paddingHorizontal: 18,
+      paddingVertical: 18,
+      fontSize: 14,
       spinnerSize: 18,
     },
     large: {
-      paddingHorizontal: s(22),
-      paddingVertical: s(20),
-      fontSize: s(16),
+      paddingHorizontal: 22,
+      paddingVertical: 20,
+      fontSize: 16,
       spinnerSize: 20,
     },
   };
@@ -64,83 +71,89 @@ export default function Button({
   const isDisabled = disabled || loading;
 
   return (
-    <View style={styles.safeArea}>
+    <Stack width="100%">
       <TouchableOpacity
         accessibilityRole="button"
         testID={`${txt}-modal-button`}
         activeOpacity={0.5}
         disabled={isDisabled}
-        style={[
-          styles.touchableOpacity,
-          {
-            backgroundColor: hi[highlight],
-            paddingHorizontal: currentSize.paddingHorizontal,
-            paddingVertical: currentSize.paddingVertical,
-          },
-          border ? { borderWidth: 1, borderColor: mainColors.WHITE } : {},
-          filled ? { backgroundColor: mainColors.WHITE } : {},
-          destructive && !outlined && !ghost
-            ? {
-                backgroundColor: mainColors.ERROR,
-              }
-            : {},
-          outlined
-            ? {
-                backgroundColor: "transparent",
-                paddingHorizontal: currentSize.paddingHorizontal,
-                paddingVertical: currentSize.paddingVertical,
-                borderWidth: 1,
-                borderColor: destructive ? mainColors.ERROR : hi[highlight],
-              }
-            : {},
-          ghost
-            ? {
-                backgroundColor: "transparent",
-                paddingHorizontal: currentSize.paddingHorizontal,
-                paddingVertical: currentSize.paddingVertical,
-              }
-            : {},
-          isDisabled && !loading ? { opacity: 0.3 } : {},
-          loading ? { opacity: 0.7 } : {},
-        ]}
+        style={[isDisabled && !loading ? { opacity: 0.3 } : {}, loading ? { opacity: 0.7 } : {}]}
         onPress={onPress}
       >
-        {!loading && (
-          <Txt
-            txt={txt}
-            bold
-            center
-            styles={[
-              {
-                color: getColor(highlight, color),
-                fontSize: currentSize.fontSize,
-              },
-              filled || outlined || ghost ? { color: hi[highlight] } : {},
-              destructive && (outlined || ghost)
-                ? { color: mainColors.ERROR }
-                : destructive
-                  ? { color: mainColors.WHITE }
-                  : {},
-            ]}
-          />
-        )}
-        {loading && (
-          <View style={styles.loadingContainer}>
-            <Loading
-              size={currentSize.spinnerSize}
-              color={
-                filled || outlined || ghost
-                  ? hi[highlight]
+        <ButtonSurface
+          size={size}
+          style={[
+            {
+              backgroundColor: hi[highlight],
+              paddingHorizontal: currentSize.paddingHorizontal,
+              paddingVertical: currentSize.paddingVertical,
+            },
+            border ? { borderWidth: 1, borderColor: mainColors.WHITE } : {},
+            filled ? { backgroundColor: mainColors.WHITE } : {},
+            destructive && !outlined && !ghost
+              ? {
+                  backgroundColor: mainColors.ERROR,
+                }
+              : {},
+            outlined
+              ? {
+                  backgroundColor: "transparent",
+                  paddingHorizontal: currentSize.paddingHorizontal,
+                  paddingVertical: currentSize.paddingVertical,
+                  borderWidth: 1,
+                  borderColor: destructive ? mainColors.ERROR : hi[highlight],
+                }
+              : {},
+            ghost
+              ? {
+                  backgroundColor: "transparent",
+                  paddingHorizontal: currentSize.paddingHorizontal,
+                  paddingVertical: currentSize.paddingVertical,
+                }
+              : {},
+          ]}
+        >
+          {!loading && (
+            <Txt
+              txt={txt}
+              bold
+              center
+              styles={[
+                {
+                  color: getColor(highlight, color),
+                  fontSize: currentSize.fontSize,
+                },
+                filled || outlined || ghost ? { color: hi[highlight] } : {},
+                destructive && (outlined || ghost)
+                  ? { color: mainColors.ERROR }
                   : destructive
-                    ? mainColors.WHITE
-                    : getColor(highlight, color)
-              }
+                    ? { color: mainColors.WHITE }
+                    : {},
+              ]}
             />
-          </View>
-        )}
-        {!loading && icon && <View style={styles.iconContainer}>{icon}</View>}
+          )}
+          {loading && (
+            <Stack alignItems="center" justifyContent="center">
+              <Loading
+                size={currentSize.spinnerSize}
+                color={
+                  filled || outlined || ghost
+                    ? hi[highlight]
+                    : destructive
+                      ? mainColors.WHITE
+                      : getColor(highlight, color)
+                }
+              />
+            </Stack>
+          )}
+          {!loading && icon && (
+            <Stack position="absolute" right={18} alignItems="center" justifyContent="center">
+              {icon}
+            </Stack>
+          )}
+        </ButtonSurface>
       </TouchableOpacity>
-    </View>
+    </Stack>
   );
 }
 
@@ -156,16 +169,20 @@ interface IIconBtnProps {
 export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIconBtnProps) {
   const { color, highlight } = useThemeContext();
   return (
-    <View>
+    <Stack>
       <TouchableOpacity
         accessibilityRole="button"
         activeOpacity={0.5}
         style={[
-          styles.iconBtn,
           {
-            width: size || s(60),
-            height: size || s(60),
-            borderRadius: (size || s(60)) / 2,
+            borderWidth: 2,
+            alignItems: "center",
+            justifyContent: "center",
+          },
+          {
+            width: size || 60,
+            height: size || 60,
+            borderRadius: (size || 60) / 2,
             backgroundColor: outlined ? color.BACKGROUND : hi[highlight],
             borderColor: hi[highlight],
             // opacity: disabled ? .6 : 1
@@ -177,7 +194,7 @@ export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIc
       >
         {icon}
       </TouchableOpacity>
-    </View>
+    </Stack>
   );
 }
 
@@ -194,56 +211,33 @@ export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITx
   const { color, highlight } = useThemeContext();
   return (
     <TouchableOpacity
-      style={[styles.copyTxt, ...(style || [])]}
+      style={[
+        {
+          paddingTop: 30,
+          paddingBottom: 10,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        ...(style || []),
+      ]}
       onPress={onPress}
       disabled={disabled}
       testID={`${txt}-button`}
     >
-      <Txt
-        txt={txt}
-        styles={[
-          globals(color).pressTxt,
-          { color: txtColor || hi[highlight], marginRight: icon ? s(10) : 0 },
-        ]}
-      />
-      {icon ? icon : null}
+      <XStack alignItems="center" justifyContent="center">
+        <AppText
+          weight="medium"
+          testID={`${txt}-txt`}
+          style={[
+            globals(color).pressTxt,
+            { color: txtColor || hi[highlight], marginRight: icon ? 10 : 0 },
+          ]}
+        >
+          {txt}
+        </AppText>
+        {icon ? icon : null}
+      </XStack>
     </TouchableOpacity>
   );
 }
-
-const styles = ScaledSheet.create({
-  safeArea: {
-    width: "100%",
-  },
-  touchableOpacity: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 50,
-  },
-  loadingContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconContainer: {
-    position: "absolute",
-    right: "18@s",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  // icon button
-  iconBtn: {
-    borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  // txt button
-  copyTxt: {
-    paddingTop: "30@s",
-    paddingBottom: "10@s",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

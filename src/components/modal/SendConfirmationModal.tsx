@@ -11,9 +11,8 @@ import { NS } from "@src/i18n";
 import { useThemeContext } from "@src/context/Theme";
 import { mainColors } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { ScaledSheet } from "react-native-size-matters";
 
 export type SendConfirmationModalRef = ConfirmationModalRef;
 type TPreparedOrLaterSendOperation = Exclude<SendOperation, { state: "init" }>;
@@ -184,52 +183,52 @@ function DetailRow({ row }: { row: IDetailRow }) {
 
 SendConfirmationModal.displayName = "SendConfirmationModal";
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   summaryCard: {
-    marginBottom: "12@vs",
-    paddingHorizontal: "20@s",
-    paddingTop: "18@vs",
-    paddingBottom: "16@vs",
+    marginBottom: 12,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 16,
   },
   amountLabel: {
-    fontSize: "12@vs",
-    marginBottom: "8@vs",
+    fontSize: 12,
+    marginBottom: 8,
     letterSpacing: 0.3,
   },
   amount: {
-    fontSize: "34@vs",
-    lineHeight: "40@vs",
-    marginBottom: "20@vs",
+    fontSize: 34,
+    lineHeight: 40,
+    marginBottom: 20,
   },
   rowsWrap: {
-    gap: "2@vs",
+    gap: 2,
   },
   detailRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "12@s",
-    paddingVertical: "12@vs",
+    gap: 12,
+    paddingVertical: 12,
   },
   detailLabel: {
     flex: 1,
-    fontSize: "14@vs",
+    fontSize: 14,
   },
   detailValue: {
     flexShrink: 1,
     textAlign: "right",
-    fontSize: "14@vs",
+    fontSize: 14,
   },
   separator: {
     marginVertical: 0,
   },
   mintSection: {
-    marginBottom: "16@vs",
+    marginBottom: 16,
   },
   sectionLabel: {
-    fontSize: "13@vs",
-    marginBottom: "8@vs",
-    marginLeft: "2@s",
+    fontSize: 13,
+    marginBottom: 8,
+    marginLeft: 2,
   },
 });
 

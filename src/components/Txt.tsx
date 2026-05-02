@@ -1,6 +1,6 @@
 import { useThemeContext } from "@src/context/Theme";
-import { globals, mainColors } from "@styles";
-import { type StyleProp, Text, type TextStyle } from "react-native";
+import { AppText, mainColors } from "@styles";
+import { type StyleProp, type TextStyle } from "react-native";
 
 interface ITxtProps {
   txt: string;
@@ -14,18 +14,18 @@ interface ITxtProps {
 export default function Txt({ txt, bold, center, error, success, styles }: ITxtProps) {
   const { color } = useThemeContext();
   return (
-    <Text
+    <AppText
+      weight={bold ? "medium" : "regular"}
+      align={center ? "center" : "left"}
       style={[
-        bold ? globals(color).txtBold : globals(color).txt,
         {
           color: error ? mainColors.ERROR : success ? mainColors.VALID : color.TEXT,
-          textAlign: center ? "center" : "left",
         },
         ...(styles || []),
       ]}
       testID={`${txt}-txt`}
     >
       {txt}
-    </Text>
+    </AppText>
   );
 }

@@ -1,7 +1,6 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { View, TouchableOpacity, Text } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 
 import { NfcIcon, ExclamationIcon } from "@comps/Icons";
@@ -154,15 +153,15 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
         dismissible={!isActive}
         draggable={!isActive}
         backgroundColor={color.BACKGROUND}
-        cornerRadius={s(26)}
+        cornerRadius={26}
         grabberOptions={{ color: color.TEXT_SECONDARY }}
       >
         <View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
           <View style={styles.header}>
             {showConfirmation ? (
-              <ExclamationIcon width={s(28)} color={hi[highlight]} />
+              <ExclamationIcon width={28} color={hi[highlight]} />
             ) : (
-              <NfcIcon width={s(28)} color={hi[highlight]} />
+              <NfcIcon width={28} color={hi[highlight]} />
             )}
             <Txt txt={headerTitle} bold styles={[styles.title]} />
           </View>
@@ -274,7 +273,7 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
           {showNfcWaiting && (
             <View style={styles.loading}>
               <View style={[styles.pulse, { borderColor: hi[highlight] }]}>
-                <NfcIcon width={s(40)} color={hi[highlight]} />
+                <NfcIcon width={40} color={hi[highlight]} />
               </View>
               <Txt txt={statusMessage} styles={[{ color: color.TEXT_SECONDARY }]} />
             </View>
@@ -287,84 +286,84 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
 
 NfcPaymentModal.displayName = "NfcPaymentModal";
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: "20@s",
-    paddingTop: "30@vs",
-    paddingBottom: "16@vs",
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 16,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: "10@s",
-    marginBottom: "16@vs",
-    marginTop: "4@vs",
+    gap: 10,
+    marginBottom: 16,
+    marginTop: 4,
   },
   title: {
-    fontSize: "18@vs",
+    fontSize: 18,
   },
   loading: {
     alignItems: "center",
-    paddingVertical: "32@vs",
+    paddingVertical: 32,
   },
   pulse: {
-    width: "80@s",
-    height: "80@s",
-    borderRadius: "40@s",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     borderWidth: 2,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: "16@vs",
+    marginBottom: 16,
   },
   // Confirmation UI styles
   confirmationContainer: {
-    paddingVertical: "8@vs",
+    paddingVertical: 8,
   },
   confirmationText: {
-    fontSize: "14@vs",
+    fontSize: 14,
     textAlign: "center",
-    marginBottom: "16@vs",
+    marginBottom: 16,
   },
   confirmationBox: {
-    borderRadius: "12@s",
+    borderRadius: 12,
     borderWidth: 1,
-    marginBottom: "12@vs",
+    marginBottom: 12,
   },
   confirmationRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: "14@vs",
-    paddingHorizontal: "16@s",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
   },
   confirmationLabel: {
-    fontSize: "14@vs",
+    fontSize: 14,
   },
   confirmationValue: {
     alignItems: "flex-end",
   },
   confirmationFiat: {
-    fontSize: "12@vs",
-    marginTop: "2@vs",
+    fontSize: 12,
+    marginTop: 2,
   },
   confirmationSeparator: {
-    marginHorizontal: "16@s",
+    marginHorizontal: 16,
   },
   confirmationHint: {
-    fontSize: "12@vs",
+    fontSize: 12,
     textAlign: "center",
-    marginBottom: "20@vs",
+    marginBottom: 20,
     fontStyle: "italic",
   },
   confirmationButtons: {
     flexDirection: "row",
-    gap: "12@s",
+    gap: 12,
   },
   confirmationButton: {
     flex: 1,
-    paddingVertical: "14@vs",
-    borderRadius: "12@s",
+    paddingVertical: 14,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -373,11 +372,11 @@ const styles = ScaledSheet.create({
   },
   confirmButton: {},
   declineButtonText: {
-    fontSize: "15@vs",
+    fontSize: 15,
     fontWeight: "600",
   },
   confirmButtonText: {
-    fontSize: "15@vs",
+    fontSize: 15,
     fontWeight: "600",
     color: "#fff",
   },

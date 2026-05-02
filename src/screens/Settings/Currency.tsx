@@ -11,8 +11,7 @@ import { NS } from "@src/i18n";
 import type { TCurrencyCode } from "@model";
 import { globals, mainColors } from "@styles";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { ActivityIndicator, ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 
 // Common currencies to display at the top
 const COMMON_CURRENCIES: TCurrencyCode[] = ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "CNY"];
@@ -150,7 +149,7 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
             />
           </View>
         ) : (
-          <View style={[globals(color).wrapContainer, { marginBottom: s(80) }]}>
+          <View style={[globals(color).wrapContainer, { marginBottom: 80 }]}>
             {sortedCurrencies.map((currency, i) => (
               <CurrencySelection
                 key={currency}
@@ -191,7 +190,7 @@ function CurrencySelection({
   return (
     <>
       <TouchableOpacity
-        style={[globals().wrapRow, { paddingBottom: vs(15) }]}
+        style={[globals().wrapRow, { paddingBottom: 15 }]}
         onPress={() => onSelect(code)}
         disabled={disabled}
       >
@@ -207,80 +206,80 @@ function CurrencySelection({
         </View>
         <RadioBtn selected={selected} />
       </TouchableOpacity>
-      {hasSeparator && <Separator style={[{ marginBottom: vs(15) }]} />}
+      {hasSeparator && <Separator style={[{ marginBottom: 15 }]} />}
     </>
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   subHeader: {
-    paddingHorizontal: "20@s",
-    marginBottom: "10@vs",
+    paddingHorizontal: 20,
+    marginBottom: 10,
   },
   toggleRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: "15@vs",
+    paddingBottom: 15,
   },
   toggleTextContainer: {
     flex: 1,
-    marginRight: "16@s",
+    marginRight: 16,
   },
   toggleContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
   description: {
-    fontSize: "12@s",
-    marginTop: "4@vs",
+    fontSize: 12,
+    marginTop: 4,
   },
   currencyHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingRight: "20@s",
+    paddingRight: 20,
   },
   lastUpdate: {
-    fontSize: "11@s",
+    fontSize: 11,
   },
   loadingContainer: {
-    padding: "40@s",
+    padding: 40,
     alignItems: "center",
   },
   loadingText: {
-    marginTop: "12@vs",
+    marginTop: 12,
   },
   currencyInfo: {
     flexDirection: "row",
     alignItems: "center",
   },
   currencySymbol: {
-    marginLeft: "12@s",
-    fontSize: "14@s",
+    marginLeft: 12,
+    fontSize: 14,
   },
   errorContainer: {
-    marginHorizontal: "20@s",
-    marginBottom: "16@vs",
-    padding: "16@s",
-    borderRadius: "12@s",
+    marginHorizontal: 20,
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 12,
     alignItems: "center",
   },
   errorText: {
     color: "#FFFFFF",
     fontWeight: "600",
-    fontSize: "14@s",
-    marginBottom: "4@vs",
+    fontSize: 14,
+    marginBottom: 4,
   },
   errorDescription: {
     color: "#FFFFFF",
-    fontSize: "12@s",
+    fontSize: 12,
     textAlign: "center",
-    marginBottom: "12@vs",
+    marginBottom: 12,
     opacity: 0.9,
   },
   emptyContainer: {
-    padding: "40@s",
+    padding: 40,
     alignItems: "center",
   },
   emptyText: {

@@ -12,9 +12,8 @@ import { NS } from "@src/i18n";
 import { globals, mainColors } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export type TrustMintAction = "trust" | "cancel" | "swap";
 
@@ -87,19 +86,16 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
         ref={sheetRef}
         detents={["auto"]}
         backgroundColor={color.BACKGROUND}
-        cornerRadius={s(26)}
+        cornerRadius={26}
         grabberOptions={{ color: color.TEXT_SECONDARY }}
         onDidDismiss={handleDismiss}
       >
         <ScrollView
           style={{ backgroundColor: color.BACKGROUND }}
-          contentContainerStyle={[
-            styles.container,
-            { paddingBottom: Math.max(insets.bottom, vs(20)) },
-          ]}
+          contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 20) }]}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={[globals(color, highlight).modalHeader, { marginBottom: vs(15) }]}>
+          <Text style={[globals(color, highlight).modalHeader, { marginBottom: 15 }]}>
             {t("trustMint")}
           </Text>
           {tokenInfo && (
@@ -123,7 +119,7 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
                   <Loading size="small" color={mainColors.VALID} />
                 </View>
               ) : (
-                <ReceiveIcon width={s(26)} height={s(26)} color={mainColors.VALID} />
+                <ReceiveIcon width={26} height={26} color={mainColors.VALID} />
               )}
             </View>
             <View style={styles.txtWrap}>
@@ -144,10 +140,10 @@ const TrustMintBottomSheet = forwardRef<TrustMintBottomSheetRef, { loading?: boo
 
 TrustMintBottomSheet.displayName = "TrustMintBottomSheet";
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: "20@s",
-    paddingTop: "30@vs",
+    paddingHorizontal: 20,
+    paddingTop: 30,
   },
   row: {
     flexDirection: "row",
@@ -161,28 +157,28 @@ const styles = ScaledSheet.create({
     width: "90%",
   },
   actionText: {
-    fontSize: "14@vs",
+    fontSize: 14,
     fontWeight: "500",
-    marginBottom: "4@vs",
+    marginBottom: 4,
   },
   descriptionText: {
-    fontSize: "12@vs",
+    fontSize: 12,
   },
   mintPrompt: {
-    fontSize: "12@vs",
-    marginBottom: "5@vs",
+    fontSize: 12,
+    marginBottom: 5,
   },
   tokenMintsView: {
-    marginBottom: "30@vs",
+    marginBottom: 30,
   },
   TxtButton: {
-    paddingBottom: vs(15),
-    paddingTop: vs(25),
+    paddingBottom: 15,
+    paddingTop: 25,
   },
   separator: {
     width: "100%",
-    marginTop: "10@vs",
-    marginBottom: "10@vs",
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 

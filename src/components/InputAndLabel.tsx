@@ -1,7 +1,7 @@
 import { useThemeContext } from "@src/context/Theme";
+import { Stack } from "@styles";
 import { useTranslation } from "react-i18next";
-import { type KeyboardTypeOptions, View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import type { KeyboardTypeOptions } from "react-native";
 
 import { TxtButton } from "./Button";
 import TxtInput from "./TxtInput";
@@ -28,7 +28,7 @@ export default function InputAndLabel({
   const { t } = useTranslation();
   const { color } = useThemeContext();
   return (
-    <View style={styles.wrap}>
+    <Stack position="relative" width="100%">
       <TxtInput
         keyboardType={keyboardType}
         placeholder={placeholder}
@@ -40,22 +40,17 @@ export default function InputAndLabel({
       <TxtButton
         txt={t(isEmptyInput ? "paste" : "clear")}
         onPress={handleLabel}
-        style={[styles.pasteInputTxtWrap, { backgroundColor: color.INPUT_BG }]}
+        style={[
+          {
+            position: "absolute",
+            right: 10,
+            top: 10,
+            paddingTop: 10,
+            marginHorizontal: 10,
+            backgroundColor: color.INPUT_BG,
+          },
+        ]}
       />
-    </View>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
-  wrap: {
-    position: "relative",
-    width: "100%",
-  },
-  pasteInputTxtWrap: {
-    position: "absolute",
-    right: "10@s",
-    top: "10@s",
-    paddingTop: "10@s",
-    marginHorizontal: "10@s",
-  },
-});

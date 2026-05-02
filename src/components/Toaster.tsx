@@ -1,9 +1,8 @@
 import { usePromptContext } from "@src/context/Prompt";
 import { mainColors } from "@src/styles";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ScaledSheet, vs } from "react-native-size-matters";
 
 import Txt from "./Txt";
 
@@ -19,7 +18,7 @@ export default function Toaster() {
           styles.container,
           {
             backgroundColor: prompt.success ? mainColors.VALID : mainColors.ERROR,
-            top: insets.top + vs(20),
+            top: insets.top + 20,
           },
         ]}
       >
@@ -35,12 +34,12 @@ export default function Toaster() {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     position: "absolute",
     alignItems: "center",
-    left: "20@s",
-    right: "20@s",
+    left: 20,
+    right: 20,
     borderRadius: 8,
     shadowColor: "#171717",
     shadowOffset: { width: 3, height: 3 },
@@ -50,12 +49,12 @@ const styles = ScaledSheet.create({
   },
   txtWrap: {
     width: "100%",
-    padding: "15@s",
+    padding: 15,
     alignItems: "center",
     justifyContent: "center",
   },
   txt: {
-    fontSize: "16@vs",
+    fontSize: 16,
     color: mainColors.WHITE,
   },
 });

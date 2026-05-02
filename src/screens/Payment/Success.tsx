@@ -12,9 +12,8 @@ import { isNum, vib } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
   const { amount, memo, fee, change, mint, isClaim, isMelt, isAutoSwap, isScanned } = route.params;
@@ -119,43 +118,43 @@ function Details({ txt, value }: { txt: string; value: string }) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: "20@s",
+    padding: 20,
   },
   img: {
-    marginTop: "90@s",
-    height: "90@s",
+    marginTop: 90,
+    height: 90,
     opacity: 0.8,
   },
   nostrImg: {
-    marginTop: "90@vs",
+    marginTop: 90,
     justifyContent: "center",
     alignItems: "center",
   },
   successTxt: {
-    fontSize: "28@vs",
+    fontSize: 28,
     fontWeight: "800",
     textAlign: "center",
-    marginTop: "30@vs",
+    marginTop: 30,
   },
   meltWrap: {
     width: "100%",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   meltOverview: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "10@vs",
+    marginBottom: 10,
   },
   meltTxt: {
     fontWeight: "500",
   },
   mints: {
-    marginTop: "20@vs",
-    fontSize: "14@vs",
+    marginTop: 20,
+    fontSize: 14,
     textAlign: "center",
     fontWeight: "500",
   },
@@ -164,7 +163,7 @@ const styles = ScaledSheet.create({
     bottom: 0,
     right: 0,
     left: 0,
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   confetti: {
     position: "absolute",
@@ -176,10 +175,10 @@ const styles = ScaledSheet.create({
   successAnim: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   lottie: {
-    width: "100@s",
-    height: "100@s",
+    width: 100,
+    height: 100,
   },
 });

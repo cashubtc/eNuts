@@ -23,8 +23,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  StyleSheet,
 } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
 import MeltConfirmationModal, { type MeltConfirmationModalRef } from "@modal/MeltConfirmationModal";
 
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
@@ -642,26 +642,26 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
-    gap: "12@vs",
-    paddingTop: "6@vs",
-    paddingBottom: "14@vs",
+    gap: 12,
+    paddingTop: 6,
+    paddingBottom: 14,
   },
   formScroll: {
     flex: 1,
   },
   inputSurface: {
-    borderRadius: "28@s",
+    borderRadius: 28,
     borderWidth: 1,
-    paddingHorizontal: "18@s",
-    paddingVertical: "18@vs",
+    paddingHorizontal: 18,
+    paddingVertical: 18,
   },
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
+    gap: 12,
   },
   inputField: {
     flex: 1,
@@ -669,94 +669,94 @@ const styles = ScaledSheet.create({
     backgroundColor: "transparent",
     borderRadius: 0,
     paddingHorizontal: 0,
-    paddingVertical: "4@vs",
-    fontSize: "16@ms",
+    paddingVertical: 4,
+    fontSize: 16,
   },
   pasteButton: {
-    width: "42@s",
-    height: "42@s",
-    borderRadius: "21@s",
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   lnAddressPanel: {
-    borderRadius: "24@s",
+    borderRadius: 24,
     borderWidth: 1,
-    paddingHorizontal: "16@s",
-    paddingVertical: "14@vs",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   panelHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
+    gap: 12,
   },
   panelIcon: {
-    width: "34@s",
-    height: "34@s",
-    borderRadius: "17@s",
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: "center",
     justifyContent: "center",
   },
   panelCopy: {
     flex: 1,
-    gap: "3@vs",
+    gap: 3,
   },
   panelTitle: {
-    fontSize: "14@ms",
+    fontSize: 14,
   },
   cancelButton: {
-    borderRadius: "16@s",
+    borderRadius: 16,
     borderWidth: 1,
-    paddingHorizontal: "10@s",
-    paddingVertical: "7@vs",
+    paddingHorizontal: 10,
+    paddingVertical: 7,
   },
   cancelText: {
-    fontSize: "11@ms",
+    fontSize: 11,
   },
   amountStage: {
     width: "100%",
-    paddingTop: "6@vs",
+    paddingTop: 6,
   },
   amountDivider: {
     height: 1,
     width: "100%",
-    marginBottom: "1@vs",
+    marginBottom: 1,
   },
   addressText: {
-    fontSize: "12@ms",
-    lineHeight: "17@vs",
+    fontSize: 12,
+    lineHeight: 17,
     flexShrink: 1,
   },
   amountRangeSection: {
-    gap: "8@vs",
-    paddingTop: "10@vs",
+    gap: 8,
+    paddingTop: 10,
     borderTopWidth: 1,
   },
   rangeTitle: {
-    fontSize: "12@ms",
+    fontSize: 12,
   },
   rangeGrid: {
     flexDirection: "row",
-    gap: "10@s",
+    gap: 10,
   },
   rangeItem: {
     flex: 1,
-    gap: "2@vs",
-    borderRadius: "14@s",
-    paddingHorizontal: "10@s",
-    paddingVertical: "8@vs",
+    gap: 2,
+    borderRadius: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
   },
   rangeLabel: {
-    fontSize: "10@ms",
+    fontSize: 10,
     textTransform: "uppercase",
   },
   rangeValue: {
-    fontSize: "13@ms",
+    fontSize: 13,
   },
   actionWrap: {
     width: "100%",
     marginTop: "auto",
-    paddingTop: "14@vs",
+    paddingTop: 14,
   },
 });

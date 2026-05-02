@@ -1,6 +1,5 @@
 import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi } from "@styles";
-import { StyleSheet, View } from "react-native";
+import { ProgressFill, ProgressTrack, highlight as hi } from "@styles";
 
 import Txt from "./Txt";
 
@@ -20,32 +19,15 @@ export default function Progress({
   const { color, highlight } = useThemeContext();
   return (
     <>
-      <View style={[styles.progress, { backgroundColor: color.INPUT_BG }]}>
-        <View
-          style={[styles.bar, { width: `${progress * 100}%`, backgroundColor: hi[highlight] }]}
-        />
-      </View>
+      <ProgressTrack style={{ backgroundColor: color.INPUT_BG }}>
+        <ProgressFill style={{ width: `${progress * 100}%`, backgroundColor: hi[highlight] }} />
+      </ProgressTrack>
       {withIndicator && (
         <Txt
           txt={`${progress * 100}% - ${doneCount}/${contactsCount}`}
-          styles={[styles.indicator]}
+          styles={[{ textAlign: "center", marginBottom: 20 }]}
         />
       )}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  progress: {
-    width: "100%",
-    height: 5,
-    marginBottom: 20,
-  },
-  bar: {
-    height: 5,
-  },
-  indicator: {
-    textAlign: "center",
-    marginBottom: 20,
-  },
-});
