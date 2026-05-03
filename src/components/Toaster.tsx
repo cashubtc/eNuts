@@ -19,6 +19,7 @@ export default function Toaster() {
           styles.container,
           {
             backgroundColor: prompt.success ? theme.valid : theme.error,
+            shadowColor: theme.shadow,
             top: insets.top + 20,
           },
         ]}
@@ -42,7 +43,6 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     borderRadius: 8,
-    shadowColor: "#171717",
     shadowOffset: { width: 3, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 3,

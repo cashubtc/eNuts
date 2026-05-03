@@ -83,8 +83,11 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
         {/* Error Banner */}
         {hasRatesError && (
           <View style={[styles.errorContainer, { backgroundColor: theme.error }]}>
-            <Txt txt={t("ratesUnavailable")} styles={[styles.errorText]} />
-            <Txt txt={t("ratesUnavailableDesc")} styles={[styles.errorDescription]} />
+            <Txt txt={t("ratesUnavailable")} styles={[styles.errorText, { color: theme.white }]} />
+            <Txt
+              txt={t("ratesUnavailableDesc")}
+              styles={[styles.errorDescription, { color: theme.white }]}
+            />
             <Button txt={t("retry")} onPress={handleRetry} outlined loading={isLoading} />
           </View>
         )}
@@ -277,13 +280,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   errorText: {
-    color: "#FFFFFF",
     fontWeight: "600",
     fontSize: 14,
     marginBottom: 4,
   },
   errorDescription: {
-    color: "#FFFFFF",
     fontSize: 12,
     textAlign: "center",
     marginBottom: 12,

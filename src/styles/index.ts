@@ -1,5 +1,3 @@
-export type { HighlightKey, Theme } from "./colors";
-export { themeColors } from "./colors";
 export { globalStyles as globals } from "./globals";
 export {
   AppText,
@@ -16,4 +14,9 @@ export {
   YStack,
   useAppThemeTokens,
 } from "./tamagui";
-export { getTamaguiThemeName, tamaguiConfig } from "./tamagui.config";
+export {
+  getTamaguiThemeName,
+  tamaguiConfig,
+  themeColors,
+  type HighlightKey,
+} from "./tamagui.config";

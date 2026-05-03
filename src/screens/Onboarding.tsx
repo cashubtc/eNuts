@@ -27,7 +27,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
       showNext={accepted}
       pages={[
         {
-          backgroundColor: "black",
+          backgroundColor: theme.onboardingAlpha,
           image: <Logo size={130} />,
           title: "Alpha Testing",
           subtitle: (
@@ -56,9 +56,9 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
                   style={{
                     width: 10,
                     borderWidth: 1,
-                    borderColor: "white",
+                    borderColor: theme.white,
                     height: 10,
-                    backgroundColor: accepted ? "white" : "transparent",
+                    backgroundColor: accepted ? theme.white : "transparent",
                   }}
                 />
                 <Txt txt="I understand" styles={[{ marginLeft: 10 }]} />

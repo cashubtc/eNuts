@@ -36,48 +36,51 @@ export default function MyModal({
 
   const getCorrectStyle = () => {
     if (type === "bottom") {
-      return styles(theme.background, theme.accent, theme.black).bottomView;
+      return styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).bottomView;
     }
     if (type === "question" || type === "success" || type === "error" || type === "invoiceAmount") {
-      return styles(theme.background, theme.accent, theme.black).centeredView;
+      return styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).centeredView;
     }
   };
 
   const getViewStyle = () => {
     if (type === "bottom") {
       return {
-        ...styles(theme.background, theme.accent, theme.black).common,
-        ...styles(theme.background, theme.accent, theme.black).modalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).modalView,
         paddingBottom: 20 + insets.bottom,
       };
     }
     if (type === "question") {
       return {
-        ...styles(theme.background, theme.accent, theme.black).common,
-        ...styles(theme.background, theme.accent, theme.black).centeredModalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop)
+          .centeredModalView,
       };
     }
     if (type === "success") {
       return {
-        ...styles(theme.background, theme.accent, theme.black).common,
-        ...styles(theme.background, theme.accent, theme.black).successModalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop)
+          .successModalView,
       };
     }
     if (type === "error") {
       return {
-        ...styles(theme.background, theme.accent, theme.black).common,
-        ...styles(theme.background, theme.accent, theme.black).promptModalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).promptModalView,
       };
     }
     if (type === "invoiceAmount") {
       let styling = {
-        ...styles(theme.background, theme.accent, theme.black).common,
-        ...styles(theme.background, theme.accent, theme.black).invoiceAmountModalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop)
+          .invoiceAmountModalView,
       };
       if (hasNoPadding) {
         styling = {
           ...styling,
-          ...styles(theme.background, theme.accent, theme.black).contactList,
+          ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).contactList,
         };
       }
       return styling;
@@ -85,7 +88,9 @@ export default function MyModal({
   };
 
   return visible ? (
-    <View style={styles(theme.background, theme.accent, theme.black).modalParent}>
+    <View
+      style={styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).modalParent}
+    >
       <Modal
         visible
         transparent
@@ -94,7 +99,9 @@ export default function MyModal({
         testID="testCoinSelectionModal"
       >
         <TouchableOpacity
-          style={styles(theme.background, theme.accent, theme.black).modalContainer}
+          style={
+            styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).modalContainer
+          }
           activeOpacity={1}
           onPressOut={close}
         >
@@ -111,7 +118,7 @@ export default function MyModal({
   ) : null;
 }
 
-const styles = (background: string, accent: string, shadowColor: string) =>
+const styles = (background: string, accent: string, shadowColor: string, modalBackdrop: string) =>
   StyleSheet.create({
     modalParent: {
       position: "absolute",
@@ -119,7 +126,7 @@ const styles = (background: string, accent: string, shadowColor: string) =>
       right: 0,
       bottom: 0,
       left: 0,
-      backgroundColor: "rgba(0, 0, 0, .5)",
+      backgroundColor: modalBackdrop,
     },
     modalContainer: {
       flex: 1,

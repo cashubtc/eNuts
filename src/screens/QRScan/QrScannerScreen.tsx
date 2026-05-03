@@ -230,7 +230,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
           style={styles.camera}
           onBarcodeScanned={isScanningEnabled ? handleCodeScanned : undefined}
         />
-        <View style={styles.scrim} />
+        <View style={[styles.scrim, { backgroundColor: theme.cameraScrim }]} />
         <View style={styles.scanSurface}>
           <View style={styles.headerCopy}>
             <StatusPill
@@ -254,10 +254,17 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
               }
             />
             <Text style={[styles.title, { color: theme.white }]}>{t("qrScanHint")}</Text>
-            <Text style={styles.subtitle}>{t("qrScanFormats")}</Text>
+            <Text style={[styles.subtitle, { color: theme.cameraMutedText }]}>
+              {t("qrScanFormats")}
+            </Text>
           </View>
 
-          <View style={[styles.focusFrame, { borderColor: `${theme.accent}66` }]}>
+          <View
+            style={[
+              styles.focusFrame,
+              { backgroundColor: theme.cameraFrame, borderColor: `${theme.accent}66` },
+            ]}
+          >
             <FrameCorner position="topLeft" color={theme.accent} />
             <FrameCorner position="topRight" color={theme.accent} />
             <FrameCorner position="bottomLeft" color={theme.accent} />
@@ -266,7 +273,15 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
 
           <View style={styles.bottomDock}>
             {isClaimingToken && (
-              <View style={styles.progressWrap}>
+              <View
+                style={[
+                  styles.progressWrap,
+                  {
+                    backgroundColor: theme.cameraPanel,
+                    borderColor: theme.cameraPanelBorder,
+                  },
+                ]}
+              >
                 <View style={styles.loadingState}>
                   <Loading size={24} color={theme.accent} />
                   <Text style={[styles.progressTitle, { color: theme.white }]}>
@@ -276,7 +291,15 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
               </View>
             )}
             {!isClaimingToken && urActive && (
-              <View style={styles.progressWrap}>
+              <View
+                style={[
+                  styles.progressWrap,
+                  {
+                    backgroundColor: theme.cameraPanel,
+                    borderColor: theme.cameraPanelBorder,
+                  },
+                ]}
+              >
                 <View style={styles.progressHeader}>
                   <Text style={[styles.progressTitle, { color: theme.white }]}>
                     {t("receivingAnimatedQr")}
@@ -285,7 +308,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                     {receivedCount}/{expectedCount || "-"}
                   </Text>
                 </View>
-                <View style={styles.progressTrack}>
+                <View style={[styles.progressTrack, { backgroundColor: theme.cameraTrack }]}>
                   <View
                     style={[
                       styles.progressFill,
@@ -329,8 +352,12 @@ interface IStatusPillProps {
 }
 
 function StatusPill({ label, color, textColor = color, iconName }: IStatusPillProps) {
+  const theme = useAppThemeTokens();
+
   return (
-    <View style={[styles.statusPill, { borderColor: `${color}55` }]}>
+    <View
+      style={[styles.statusPill, { backgroundColor: theme.cameraPill, borderColor: `${color}55` }]}
+    >
       <MaterialIcons name={iconName} size={16} color={color} />
       <Text style={[styles.statusText, { color: textColor }]}>{label}</Text>
     </View>
@@ -369,7 +396,6 @@ const styles = StyleSheet.create({
   },
   scrim: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.42)",
   },
   scanSurface: {
     flex: 1,
@@ -399,7 +425,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: "rgba(0, 0, 0, 0.36)",
     marginBottom: 18,
   },
   statusText: {
@@ -413,7 +438,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   subtitle: {
-    color: "rgba(250, 250, 250, 0.72)",
     fontSize: 13,
     lineHeight: 19,
     textAlign: "center",
@@ -424,7 +448,6 @@ const styles = StyleSheet.create({
     height: 268,
     borderRadius: 34,
     borderWidth: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.04)",
     overflow: "hidden",
   },
   corner: {
@@ -471,9 +494,7 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 18,
     borderRadius: 24,
-    backgroundColor: "rgba(0, 0, 0, 0.58)",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
     marginBottom: 12,
   },
   progressHeader: {
@@ -501,7 +522,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 5,
     borderRadius: 999,
-    backgroundColor: "rgba(255, 255, 255, 0.16)",
     overflow: "hidden",
   },
   progressFill: {

@@ -109,7 +109,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
           txt={t("dontClose")}
         />
       </View>
-      {error && <Txt center styles={[styles.errorTxt]} txt={error} />}
+      {error && <Txt center styles={[styles.errorTxt, { color: theme.error }]} txt={error} />}
     </View>
   );
 }
@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
   errorTxt: {
     fontSize: 12,
     marginTop: 14,
-    color: "#ff5a5f",
   },
   // Success styles
   containerSuccess: {

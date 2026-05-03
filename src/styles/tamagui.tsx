@@ -189,6 +189,16 @@ export function useAppThemeTokens() {
     drawer: getThemeColor(theme.drawer),
     error: getThemeColor(theme.error),
     inputBackground: getThemeColor(theme.inputBackground),
+    cameraFrame: getThemeColor(theme.cameraFrame),
+    cameraMutedText: getThemeColor(theme.cameraMutedText),
+    cameraPanel: getThemeColor(theme.cameraPanel),
+    cameraPanelBorder: getThemeColor(theme.cameraPanelBorder),
+    cameraPill: getThemeColor(theme.cameraPill),
+    cameraScrim: getThemeColor(theme.cameraScrim),
+    cameraTrack: getThemeColor(theme.cameraTrack),
+    mintIconBackground: getThemeColor(theme.mintIconBackground),
+    modalBackdrop: getThemeColor(theme.modalBackdrop),
+    onboardingAlpha: getThemeColor(theme.onboardingAlpha),
     onboardingCashu: getThemeColor(theme.onboardingCashu),
     onboardingDefault: getThemeColor(theme.onboardingDefault),
     onboardingNuts: getThemeColor(theme.onboardingNuts),
@@ -203,6 +213,7 @@ export function useAppThemeTokens() {
     grey: getThemeColor(theme.grey),
     star: getThemeColor(theme.star),
     zap: getThemeColor(theme.zap),
+    shadow: getThemeColor(theme.shadow),
   };
 }
 

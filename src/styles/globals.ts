@@ -73,7 +73,6 @@ export const globalStyles = () =>
       alignItems: "center",
       justifyContent: "space-between",
       paddingBottom: 20,
-      // backgroundColor: '#fff'
     },
     radioBtn: {
       borderWidth: 1,

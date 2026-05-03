@@ -50,7 +50,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
             {mint?.mintInfo?.icon_url && (
               <Image
                 source={{ uri: mint.mintInfo.icon_url }}
-                style={styles.mintIcon}
+                style={[styles.mintIcon, { backgroundColor: theme.mintIconBackground }]}
                 contentFit="cover"
                 transition={200}
               />
@@ -198,7 +198,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: "rgba(0,0,0,0.05)",
   },
   headerTextContainer: {
     flex: 1,

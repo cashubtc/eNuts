@@ -220,7 +220,7 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
               styles.header,
               {
                 backgroundColor: theme.background,
-                borderBottomColor: theme.border || "rgba(0,0,0,0.1)",
+                borderBottomColor: theme.border,
               },
             ]}
           >

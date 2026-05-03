@@ -74,7 +74,7 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
           >
             <Text
               style={{
-                color: "white",
+                color: theme.white,
                 fontSize: 10,
                 fontWeight: "bold",
               }}
@@ -164,7 +164,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
           </View>
           <View>
             <IconBtn
-              icon={<PlusIcon color="white" width={20} height={20} />}
+              icon={<PlusIcon color={theme.white} width={20} height={20} />}
               onPress={handleConfirmSelection}
               disabled={!inputUrl.trim()}
               size={48}

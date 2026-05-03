@@ -261,7 +261,7 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                   onPress={handleConfirmOverLimit}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.confirmButtonText}>
+                  <Text style={[styles.confirmButtonText, { color: theme.white }]}>
                     {t("confirm", { ns: NS.common, defaultValue: "Confirm" })}
                   </Text>
                 </TouchableOpacity>
@@ -377,7 +377,6 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#fff",
   },
 });
 
