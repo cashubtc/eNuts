@@ -8,7 +8,7 @@ import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { useAppThemeTokens } from "@styles";
+import { verticalScale, fontScale, useAppThemeTokens } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -190,13 +190,13 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   amountLabel: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     marginBottom: 8,
     letterSpacing: 0.3,
   },
   amount: {
-    fontSize: 34,
-    lineHeight: 40,
+    fontSize: fontScale(34),
+    lineHeight: verticalScale(40),
     marginBottom: 20,
   },
   rowsWrap: {
@@ -211,12 +211,12 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     flex: 1,
-    fontSize: 14,
+    fontSize: fontScale(14),
   },
   detailValue: {
     flexShrink: 1,
     textAlign: "right",
-    fontSize: 14,
+    fontSize: fontScale(14),
   },
   separator: {
     marginVertical: 0,
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionLabel: {
-    fontSize: 13,
+    fontSize: fontScale(13),
     marginBottom: 8,
     marginLeft: 2,
   },

@@ -9,7 +9,7 @@ import { BoltIcon, ChevronRightIcon, CopyIcon } from "@comps/Icons";
 import type { MeltOperation } from "@cashu/coco-core";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
-import { useAppThemeTokens } from "@styles";
+import { verticalScale, fontScale, useAppThemeTokens } from "@styles";
 import { formatMintUrl, getStrFromClipboard, isErr, vib } from "@util";
 import { isLightningAddress, isLnurl } from "@util/lnurl";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     paddingHorizontal: 0,
     paddingVertical: 4,
-    fontSize: 16,
+    fontSize: fontScale(16),
   },
   pasteButton: {
     width: 42,
@@ -692,7 +692,7 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   panelTitle: {
-    fontSize: 14,
+    fontSize: fontScale(14),
   },
   cancelButton: {
     borderRadius: 16,
@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   cancelText: {
-    fontSize: 11,
+    fontSize: fontScale(11),
   },
   amountStage: {
     width: "100%",
@@ -713,8 +713,8 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   addressText: {
-    fontSize: 12,
-    lineHeight: 17,
+    fontSize: fontScale(12),
+    lineHeight: verticalScale(17),
     flexShrink: 1,
   },
   amountRangeSection: {
@@ -723,7 +723,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   rangeTitle: {
-    fontSize: 12,
+    fontSize: fontScale(12),
   },
   rangeGrid: {
     flexDirection: "row",
@@ -737,11 +737,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   rangeLabel: {
-    fontSize: 10,
+    fontSize: fontScale(10),
     textTransform: "uppercase",
   },
   rangeValue: {
-    fontSize: 13,
+    fontSize: fontScale(13),
   },
   actionWrap: {
     width: "100%",

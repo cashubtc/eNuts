@@ -1,6 +1,6 @@
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useAppThemeTokens } from "@styles";
+import { fontScale, useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { TouchableOpacity, View, type ViewStyle, type StyleProp, StyleSheet } from "react-native";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
@@ -41,7 +41,7 @@ export default function MintSelector({
             styles={[
               {
                 color: theme.textSecondary,
-                fontSize: 12,
+                fontSize: fontScale(12),
                 marginBottom: 8,
               },
             ]}
@@ -56,7 +56,7 @@ export default function MintSelector({
               styles={[
                 {
                   color: theme.textSecondary,
-                  fontSize: 12,
+                  fontSize: fontScale(12),
                 },
               ]}
             />

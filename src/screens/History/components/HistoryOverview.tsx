@@ -1,4 +1,4 @@
-import { useAppThemeTokens } from "@styles";
+import { fontScale, useAppThemeTokens } from "@styles";
 import Txt from "@comps/Txt";
 import { useCurrencyContext } from "@src/context/Currency";
 import { View, StyleSheet } from "react-native";
@@ -40,15 +40,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   amount: {
-    fontSize: 40,
+    fontSize: fontScale(40),
     fontWeight: "600",
   },
   type: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     marginTop: 5,
   },
   description: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     marginTop: 5,
     textAlign: "center",
   },

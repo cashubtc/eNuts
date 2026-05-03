@@ -6,7 +6,7 @@ import { preventBack } from "@nav/utils";
 import { isIOS } from "@src/consts";
 import { NS } from "@src/i18n";
 import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
-import { globals, useAppThemeTokens } from "@styles";
+import { fontScale, globals, useAppThemeTokens } from "@styles";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -40,7 +40,7 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
             {
               color: theme.error,
               marginVertical: 15,
-              fontSize: 18,
+              fontSize: fontScale(18),
             },
           ]}
         />
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   hint: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     marginTop: 10,
   },
 });

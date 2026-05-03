@@ -1,4 +1,4 @@
-import { useAppThemeTokens } from "@styles";
+import { fontScale, useAppThemeTokens } from "@styles";
 import Txt from "@comps/Txt";
 import { HistoryEntry } from "@cashu/coco-core";
 import { usePrivacyContext } from "@src/context/Privacy";
@@ -65,7 +65,7 @@ export function LatestHistoryWrapper({
           <Text
             style={{
               color: secondaryTextColor,
-              fontSize: 12,
+              fontSize: fontScale(12),
             }}
           >
             <EntryTime from={createdAt} fallback={t("justNow")} />
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   balAmount: {
     alignItems: "center",
-    fontSize: 42,
+    fontSize: fontScale(42),
     fontWeight: "600",
   },
   balAssetNameWrap: {
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     minHeight: 20,
   },
   balAssetName: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     marginRight: 5,
   },
   iconWrap: {

@@ -1,5 +1,5 @@
 import { usePromptContext } from "@src/context/Prompt";
-import { useAppThemeTokens } from "@src/styles";
+import { fontScale, useAppThemeTokens } from "@src/styles";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -55,6 +55,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   txt: {
-    fontSize: 16,
+    fontSize: fontScale(16),
   },
 });

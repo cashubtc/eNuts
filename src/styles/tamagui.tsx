@@ -1,6 +1,39 @@
 import { Text, View, styled, useTheme } from "@tamagui/core";
 import { TextInput } from "react-native";
 
+import { fontScale, verticalScale } from "./scale";
+
+export type TAppTextSize =
+  | "micro"
+  | "caption"
+  | "body"
+  | "bodyLarge"
+  | "nav"
+  | "title"
+  | "heading"
+  | "display"
+  | "amount"
+  | "balance"
+  | "heroAmount";
+
+export type TAppTextTone =
+  | "default"
+  | "secondary"
+  | "accent"
+  | "contrast"
+  | "error"
+  | "success"
+  | "warning"
+  | "white"
+  | "black";
+
+export type TAppTextWeight = "regular" | "medium" | "semibold" | "bold";
+
+const textSize = (fontSize: number, lineHeight?: number) => ({
+  fontSize: fontScale(fontSize),
+  ...(lineHeight ? { lineHeight: verticalScale(lineHeight) } : {}),
+});
+
 export const Stack = styled(View, {
   name: "Stack",
 });
@@ -31,7 +64,7 @@ export const Surface = styled(YStack, {
 export const AppText = styled(Text, {
   name: "AppText",
   color: "$text",
-  fontSize: 14,
+  fontSize: fontScale(14),
 
   variants: {
     align: {
@@ -64,6 +97,15 @@ export const AppText = styled(Text, {
       success: {
         color: "$valid",
       },
+      warning: {
+        color: "$warn",
+      },
+      white: {
+        color: "$white",
+      },
+      black: {
+        color: "$black",
+      },
     },
     weight: {
       regular: {
@@ -75,20 +117,22 @@ export const AppText = styled(Text, {
       semibold: {
         fontWeight: "600",
       },
+      bold: {
+        fontWeight: "700",
+      },
     },
     size: {
-      body: {
-        fontSize: 14,
-      },
-      nav: {
-        fontSize: 18,
-      },
-      modalHeader: {
-        fontSize: 22,
-      },
-      display: {
-        fontSize: 48,
-      },
+      micro: textSize(10, 14),
+      caption: textSize(12, 16),
+      body: textSize(14, 20),
+      bodyLarge: textSize(16, 22),
+      nav: textSize(17, 22),
+      title: textSize(20, 25),
+      heading: textSize(24, 30),
+      display: textSize(28, 34),
+      amount: textSize(34, 40),
+      balance: textSize(42, 48),
+      heroAmount: textSize(64, 74),
     },
   } as const,
 
@@ -135,7 +179,7 @@ export const InputFrame = styled(
     backgroundColor: "$inputBackground",
     borderRadius: 50,
     color: "$text",
-    fontSize: 14,
+    fontSize: fontScale(14),
     paddingHorizontal: 18,
     paddingVertical: 18,
     width: "100%",

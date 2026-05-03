@@ -8,7 +8,7 @@ import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import type { QRScannerScreenProps } from "@src/nav/navTypes";
-import { useAppThemeTokens } from "@styles";
+import { verticalScale, fontScale, useAppThemeTokens } from "@styles";
 import type { PaymentCandidateKind, PaymentStringCandidate } from "@util/paymentStringParser";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -428,18 +428,18 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   statusText: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     fontWeight: "600",
   },
   title: {
-    fontSize: 24,
-    lineHeight: 30,
+    fontSize: fontScale(24),
+    lineHeight: verticalScale(30),
     fontWeight: "600",
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 13,
-    lineHeight: 19,
+    fontSize: fontScale(13),
+    lineHeight: verticalScale(19),
     textAlign: "center",
     marginTop: 8,
   },
@@ -511,11 +511,11 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   progressTitle: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: "600",
   },
   progressCount: {
-    fontSize: 13,
+    fontSize: fontScale(13),
     fontWeight: "700",
   },
   progressTrack: {
@@ -538,12 +538,12 @@ const styles = StyleSheet.create({
     columnGap: 8,
   },
   rescanButtonText: {
-    fontSize: 15,
+    fontSize: fontScale(15),
     fontWeight: "600",
   },
   errorText: {
     marginTop: 10,
     textAlign: "center",
-    fontSize: 12,
+    fontSize: fontScale(12),
   },
 });

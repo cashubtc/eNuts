@@ -9,7 +9,7 @@ import Screen from "@comps/Screen";
 import { preventBack } from "@nav/utils";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { globals, useAppThemeTokens } from "@styles";
+import { fontScale, globals, useAppThemeTokens } from "@styles";
 import { formatInt, formatSatStr, share } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tokenAmount: {
-    fontSize: 40,
+    fontSize: fontScale(40),
     fontWeight: "500",
     marginTop: 20,
   },
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   fiatEquivalent: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     marginBottom: 15,
   },
   errorMsg: {
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   successTxt: {
-    fontSize: 28,
+    fontSize: fontScale(28),
     fontWeight: "800",
     textAlign: "center",
     marginTop: 30,

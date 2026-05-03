@@ -1,7 +1,7 @@
 import Button from "@comps/Button";
 import Txt from "@comps/Txt";
 import { NS } from "@src/i18n";
-import { useAppThemeTokens } from "@styles";
+import { verticalScale, fontScale, useAppThemeTokens } from "@styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -149,12 +149,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 14,
   },
   title: {
-    fontSize: 24,
+    fontSize: fontScale(24),
     marginBottom: 10,
   },
   description: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: fontScale(14),
+    lineHeight: verticalScale(20),
     marginBottom: 30,
     paddingHorizontal: 16,
   },

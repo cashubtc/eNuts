@@ -2,7 +2,7 @@ import Txt from "@comps/Txt";
 import { repoIssueUrl } from "@consts/urls";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
-import { useAppThemeTokens } from "@src/styles";
+import { fontScale, useAppThemeTokens } from "@src/styles";
 import { isErr, openUrl } from "@util";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     paddingTop: 80,
   },
   header: {
-    fontSize: 22,
+    fontSize: fontScale(22),
     marginBottom: 30,
     textAlign: "center",
   },

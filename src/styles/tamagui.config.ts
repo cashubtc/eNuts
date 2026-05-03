@@ -1,5 +1,7 @@
 import { createFont, createTamagui, createTokens } from "@tamagui/core";
 
+import { fontScale, verticalScale } from "./scale";
+
 type TThemeMode = "dark" | "light";
 
 type TThemePalette = {
@@ -141,24 +143,24 @@ const tokens = createTokens({
 const bodyFont = createFont({
   family: "",
   size: {
-    1: 10,
-    2: 12,
-    3: 14,
-    4: 16,
-    5: 18,
-    6: 22,
-    7: 32,
-    8: 48,
+    1: fontScale(10),
+    2: fontScale(12),
+    3: fontScale(14),
+    4: fontScale(16),
+    5: fontScale(18),
+    6: fontScale(22),
+    7: fontScale(32),
+    8: fontScale(48),
   },
   lineHeight: {
-    1: 14,
-    2: 16,
-    3: 20,
-    4: 22,
-    5: 24,
-    6: 28,
-    7: 38,
-    8: 54,
+    1: verticalScale(14),
+    2: verticalScale(16),
+    3: verticalScale(20),
+    4: verticalScale(22),
+    5: verticalScale(24),
+    6: verticalScale(28),
+    7: verticalScale(38),
+    8: verticalScale(54),
   },
   weight: {
     1: "400",

@@ -8,7 +8,7 @@ import type { TCurrencySettingsPageProps } from "@model/nav";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import type { TCurrencyCode } from "@model";
-import { globals, useAppThemeTokens } from "@styles";
+import { fontScale, globals, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   description: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     marginTop: 4,
   },
   currencyHeader: {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   lastUpdate: {
-    fontSize: 11,
+    fontSize: fontScale(11),
   },
   loadingContainer: {
     padding: 40,
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   },
   currencySymbol: {
     marginLeft: 12,
-    fontSize: 14,
+    fontSize: fontScale(14),
   },
   errorContainer: {
     marginHorizontal: 20,
@@ -281,11 +281,11 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontWeight: "600",
-    fontSize: 14,
+    fontSize: fontScale(14),
     marginBottom: 4,
   },
   errorDescription: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     textAlign: "center",
     marginBottom: 12,
     opacity: 0.9,

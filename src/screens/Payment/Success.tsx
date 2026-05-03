@@ -1,4 +1,4 @@
-import { useAppThemeTokens } from "@styles";
+import { fontScale, useAppThemeTokens } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
 import Txt from "@comps/Txt";
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   successTxt: {
-    fontSize: 28,
+    fontSize: fontScale(28),
     fontWeight: "800",
     textAlign: "center",
     marginTop: 30,
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   mints: {
     marginTop: 20,
-    fontSize: 14,
+    fontSize: fontScale(14),
     textAlign: "center",
     fontWeight: "500",
   },

@@ -37,22 +37,22 @@ export default function Button({
     small: {
       paddingHorizontal: 14,
       paddingVertical: 12,
-      fontSize: 13,
       spinnerSize: 16,
+      textSize: "caption",
     },
     medium: {
       paddingHorizontal: 18,
       paddingVertical: 18,
-      fontSize: 14,
       spinnerSize: 18,
+      textSize: "body",
     },
     large: {
       paddingHorizontal: 22,
       paddingVertical: 20,
-      fontSize: 16,
       spinnerSize: 20,
+      textSize: "bodyLarge",
     },
-  };
+  } as const;
 
   const currentSize = sizeStyles[size];
 
@@ -104,14 +104,10 @@ export default function Button({
         >
           {!loading && (
             <AppText
+              size={currentSize.textSize}
               weight="medium"
               align="center"
-              style={[
-                {
-                  color: textColor,
-                  fontSize: currentSize.fontSize,
-                },
-              ]}
+              style={{ color: textColor }}
             >
               {txt}
             </AppText>
@@ -202,6 +198,7 @@ export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITx
     >
       <XStack alignItems="center" justifyContent="center">
         <AppText
+          size="body"
           weight="medium"
           testID={`${txt}-txt`}
           align="center"

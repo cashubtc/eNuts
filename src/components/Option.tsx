@@ -1,4 +1,4 @@
-import { Stack, globals, useAppThemeTokens } from "@styles";
+import { fontScale, Stack, globals, useAppThemeTokens } from "@styles";
 import { TouchableOpacity } from "react-native";
 
 import { ChevronRightIcon } from "./Icons";
@@ -33,7 +33,7 @@ export default function Option({
           {icon ? <Stack style={{ minWidth: 40 }}>{icon}</Stack> : null}
           <Stack>
             <Txt txt={txt} bold />
-            <Txt styles={[{ fontSize: 10, color: theme.textSecondary }]} txt={hint} />
+            <Txt styles={[{ fontSize: fontScale(10), color: theme.textSecondary }]} txt={hint} />
           </Stack>
         </Stack>
         {loading ? (

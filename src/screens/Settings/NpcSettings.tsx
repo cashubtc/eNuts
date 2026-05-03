@@ -11,7 +11,7 @@ import { useNpcContext, type INpcAccount, type TNpcUsernameAccountRequest } from
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import { isErr } from "@util";
-import { globals, useAppThemeTokens } from "@styles";
+import { verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import * as Clipboard from "expo-clipboard";
 import { useRef, useMemo, useState } from "react";
@@ -653,11 +653,11 @@ const styles = StyleSheet.create({
     height: 34,
   },
   statLabel: {
-    fontSize: 11,
+    fontSize: fontScale(11),
     marginBottom: 5,
   },
   statValue: {
-    fontSize: 16,
+    fontSize: fontScale(16),
   },
   summaryActions: {
     flexDirection: "row",
@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
     paddingRight: 12,
   },
   accountTitle: {
-    fontSize: 16,
+    fontSize: fontScale(16),
     marginBottom: 8,
   },
   badgeRow: {
@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   badgeText: {
-    fontSize: 10,
+    fontSize: fontScale(10),
     fontWeight: "600",
   },
   sourceBadge: {
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   sourceBadgeText: {
-    fontSize: 10,
+    fontSize: fontScale(10),
     fontWeight: "600",
   },
   iconButton: {
@@ -734,7 +734,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   statusText: {
-    fontSize: 12,
+    fontSize: fontScale(12),
   },
   addressBox: {
     borderWidth: 1,
@@ -756,26 +756,26 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   copyText: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     fontWeight: "600",
   },
   addressText: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: "600",
   },
   mutedText: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     marginTop: 4,
   },
   fieldBlock: {
     marginBottom: 14,
   },
   label: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     marginBottom: 7,
   },
   addressLabel: {
-    fontSize: 12,
+    fontSize: fontScale(12),
   },
   actions: {
     flexDirection: "row",
@@ -797,7 +797,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   removeText: {
-    fontSize: 13,
+    fontSize: fontScale(13),
     fontWeight: "600",
   },
   usernamePreview: {
@@ -808,11 +808,11 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   usernamePreviewText: {
-    fontSize: 20,
+    fontSize: fontScale(20),
   },
   usernamePrompt: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: fontScale(14),
+    lineHeight: verticalScale(20),
     marginBottom: 18,
   },
   sheetContainer: {
@@ -836,7 +836,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sheetTitle: {
-    fontSize: 17,
+    fontSize: fontScale(17),
     marginBottom: 4,
   },
   sheetActions: {

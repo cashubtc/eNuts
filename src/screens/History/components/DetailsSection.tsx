@@ -1,4 +1,4 @@
-import { useAppThemeTokens } from "@styles";
+import { fontScale, useAppThemeTokens } from "@styles";
 import Txt from "@comps/Txt";
 import { View, StyleSheet } from "react-native";
 import { ReactNode } from "react";
@@ -38,9 +38,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   detailLabel: {
-    fontSize: 14,
+    fontSize: fontScale(14),
   },
   detailValue: {
-    fontSize: 14,
+    fontSize: fontScale(14),
   },
 });

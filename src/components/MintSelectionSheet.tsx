@@ -5,7 +5,7 @@ import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints, type KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { useAppThemeTokens } from "@styles";
+import { fontScale, useAppThemeTokens } from "@styles";
 import React, {
   forwardRef,
   useMemo,
@@ -291,11 +291,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerText: {
-    fontSize: 18,
+    fontSize: fontScale(18),
     fontWeight: "600",
   },
   selectedCount: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     marginTop: 4,
   },
   scrollContent: {
@@ -324,15 +324,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   mintAlias: {
-    fontSize: 16,
+    fontSize: fontScale(16),
     fontWeight: "500",
     marginBottom: 4,
   },
   mintUrl: {
-    fontSize: 12,
+    fontSize: fontScale(12),
   },
   balance: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: "600",
     marginBottom: 8,
   },

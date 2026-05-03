@@ -8,7 +8,7 @@ import type { Token } from "@cashu/cashu-ts";
 import type { ITokenInfo } from "@model";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { globals, useAppThemeTokens } from "@styles";
+import { fontScale, globals, useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View, StyleSheet } from "react-native";
@@ -156,15 +156,15 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   actionText: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: "500",
     marginBottom: 4,
   },
   descriptionText: {
-    fontSize: 12,
+    fontSize: fontScale(12),
   },
   mintPrompt: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     marginBottom: 5,
   },
   tokenMintsView: {

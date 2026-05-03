@@ -8,7 +8,7 @@ import { NS } from "@src/i18n";
 import { getFlagEmoji } from "@src/util";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
-import { globals, useAppThemeTokens } from "@styles";
+import { fontScale, globals, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 
@@ -71,7 +71,7 @@ function LangSelection({ code, name, flag, selected, hasSeparator }: ILangSelect
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View style={{ minWidth: 40 }}>
-            <Txt txt={getFlagEmoji(flag)} styles={[{ fontSize: 22 }]} />
+            <Txt txt={getFlagEmoji(flag)} styles={[{ fontSize: fontScale(22) }]} />
           </View>
           <Txt txt={t(name)} />
         </View>

@@ -8,7 +8,7 @@ import { useKnownMints } from "@src/context/KnownMints";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 
-import { useAppThemeTokens } from "@styles";
+import { verticalScale, fontScale, useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -204,13 +204,13 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   mintName: {
-    fontSize: 20,
+    fontSize: fontScale(20),
     fontWeight: "700",
     marginBottom: 4,
     letterSpacing: 0.3,
   },
   mintVersion: {
-    fontSize: 13,
+    fontSize: fontScale(13),
     fontWeight: "500",
     opacity: 0.7,
   },
@@ -224,14 +224,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   balanceText: {
-    fontSize: 18,
+    fontSize: fontScale(18),
     fontWeight: "600",
   },
   section: {
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -243,23 +243,23 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   urlText: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: "500",
-    lineHeight: 20,
+    lineHeight: verticalScale(20),
   },
   infoRow: {
     paddingVertical: 8,
   },
   infoLabel: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     fontWeight: "600",
     textTransform: "capitalize",
     marginBottom: 6,
   },
   infoValue: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: "400",
-    lineHeight: 20,
+    lineHeight: verticalScale(20),
   },
   infoSeparator: {
     height: 1,
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   deleteButtonText: {
-    fontSize: 15,
+    fontSize: fontScale(15),
     fontWeight: "600",
   },
 });

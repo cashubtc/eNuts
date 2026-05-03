@@ -1,4 +1,5 @@
 export { globalStyles as globals } from "./globals";
+export { fontScale, moderateScale, moderateVerticalScale, scale, verticalScale } from "./scale";
 export {
   AppText,
   ButtonSurface,
@@ -13,6 +14,9 @@ export {
   XStack,
   YStack,
   useAppThemeTokens,
+  type TAppTextSize,
+  type TAppTextTone,
+  type TAppTextWeight,
 } from "./tamagui";
 export {
   getTamaguiThemeName,

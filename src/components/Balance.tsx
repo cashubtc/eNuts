@@ -47,12 +47,11 @@ export default function Balance({ nav }: IBalanceProps) {
       >
         <AppText
           testID={`balance: ${balances.total.total}`}
+          size="balance"
           weight="semibold"
           style={[
             {
               alignItems: "center",
-              fontSize: 42,
-              fontWeight: "600",
               color: theme.accentContrast,
             },
           ]}
@@ -62,7 +61,7 @@ export default function Balance({ nav }: IBalanceProps) {
         <Stack flexDirection="row" alignItems="center" marginBottom={10} minHeight={20}>
           {!hidden.balance && (
             <>
-              <AppText style={{ fontSize: 14, marginRight: 5, color: theme.accentContrast }}>
+              <AppText size="body" style={{ marginRight: 5, color: theme.accentContrast }}>
                 {formatAmount(balances.total.total).symbol}
               </AppText>
               <SwapCurrencyIcon width={20} height={20} color={theme.accentContrast} />

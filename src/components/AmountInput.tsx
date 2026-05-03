@@ -1,7 +1,7 @@
 import { useShakeAnimation } from "@comps/animation/Shake";
 import Txt from "@comps/Txt";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useAppThemeTokens } from "@styles";
+import { fontScale, useAppThemeTokens } from "@styles";
 import { formatSatStr } from "@util";
 import { getLanguageCode } from "@util/localization";
 import { useEffect, useMemo, useRef, forwardRef, useState, useCallback } from "react";
@@ -428,34 +428,34 @@ const styles = StyleSheet.create({
   },
   selectAmount: {
     width: "100%",
-    fontSize: 48,
+    fontSize: fontScale(48),
     marginBottom: 5,
     fontWeight: "600",
     padding: 0,
     textAlign: "center",
   },
   currencySymbol: {
-    fontSize: 32,
+    fontSize: fontScale(32),
     fontWeight: "600",
     marginRight: 4,
   },
   currencySymbolCompact: {
-    fontSize: 24,
+    fontSize: fontScale(24),
     fontWeight: "600",
     marginRight: 4,
   },
   amountInputCompact: {
-    fontSize: 36,
+    fontSize: fontScale(36),
     marginBottom: 0,
   },
   satsSuffix: {
-    fontSize: 24,
+    fontSize: fontScale(24),
     fontWeight: "500",
     marginLeft: 8,
     opacity: 0.8,
   },
   satsSuffixCompact: {
-    fontSize: 18,
+    fontSize: fontScale(18),
     fontWeight: "500",
     marginLeft: 6,
     opacity: 0.8,
@@ -466,12 +466,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   secondaryLabel: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     textAlign: "center",
     marginTop: 8,
   },
   secondaryLabelCompact: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     textAlign: "center",
     marginTop: 4,
   },

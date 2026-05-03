@@ -28,7 +28,7 @@ import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, useAppThemeTokens } from "@styles";
+import { verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
 import { getStrFromClipboard } from "@util";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -461,9 +461,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   balanceAmount: {
-    fontSize: 64,
+    fontSize: fontScale(64),
     fontWeight: "700",
-    lineHeight: 74,
+    lineHeight: verticalScale(74),
     textAlign: "center",
   },
   balanceMetaWrap: {
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     marginTop: -2,
   },
   balanceSymbol: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: "500",
     marginRight: 6,
   },
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
   actionTxt: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     textAlign: "center",
   },
   sheetSeparator: {
@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     flex: 1,
-    fontSize: 22,
+    fontSize: fontScale(22),
     fontWeight: "600",
     marginRight: 14,
   },
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   historyLinkTxt: {
-    fontSize: 13,
+    fontSize: fontScale(13),
     fontWeight: "500",
     textAlign: "right",
   },

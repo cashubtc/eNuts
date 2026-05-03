@@ -54,12 +54,7 @@ export default function TopNav({
 
       <Stack flex={1} justifyContent="center" paddingHorizontal={6}>
         {screenName ? (
-          <AppText
-            numberOfLines={1}
-            weight="medium"
-            size="nav"
-            style={{ fontSize: 17, lineHeight: 22 }}
-          >
+          <AppText numberOfLines={1} weight="medium" size="nav">
             {screenName}
           </AppText>
         ) : null}

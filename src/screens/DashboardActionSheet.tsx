@@ -1,3 +1,4 @@
+import { verticalScale, fontScale } from "@styles";
 import { CloseIcon } from "@comps/Icons";
 import Txt from "@comps/Txt";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
@@ -100,8 +101,8 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   title: {
-    fontSize: 20,
-    lineHeight: 25,
+    fontSize: fontScale(20),
+    lineHeight: verticalScale(25),
   },
   closeBtn: {
     position: "absolute",
@@ -124,11 +125,11 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   actionText: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: "500",
     marginBottom: 4,
   },
   descriptionText: {
-    fontSize: 12,
+    fontSize: fontScale(12),
   },
 });

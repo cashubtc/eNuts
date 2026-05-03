@@ -1,6 +1,6 @@
 import type { RootStackParamList } from "@model/nav";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Stack, useAppThemeTokens } from "@styles";
+import { fontScale, Stack, useAppThemeTokens } from "@styles";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
 
@@ -49,11 +49,20 @@ export default function Empty({
             bold
             center
             styles={[
-              { fontSize: 18, opacity: 0.8, color: theme.text, marginBottom: hasOk ? 10 : 0 },
+              {
+                fontSize: fontScale(18),
+                opacity: 0.8,
+                color: theme.text,
+                marginBottom: hasOk ? 10 : 0,
+              },
             ]}
           />
           {hint && hint.length > 0 && (
-            <Txt txt={hint} center styles={[{ color: theme.textSecondary, fontSize: 12 }]} />
+            <Txt
+              txt={hint}
+              center
+              styles={[{ color: theme.textSecondary, fontSize: fontScale(12) }]}
+            />
           )}
         </>
       )}

@@ -10,7 +10,7 @@ import Screen from "@comps/Screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useManager } from "@src/context/Manager";
 import { NS } from "@src/i18n";
-import { globals, useAppThemeTokens } from "@styles";
+import { fontScale, globals, useAppThemeTokens } from "@styles";
 import { formatMintUrl, share } from "@util";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   lnExpiry: {
-    fontSize: 34,
+    fontSize: fontScale(34),
     fontWeight: "600",
     textAlign: "center",
   },

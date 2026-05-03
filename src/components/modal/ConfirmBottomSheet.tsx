@@ -2,7 +2,7 @@ import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState }
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { ScrollView, Text, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { globals, useAppThemeTokens } from "@styles";
+import { verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
 import Button from "@comps/Button";
 
 export type ConfirmBottomSheetRef = {
@@ -120,9 +120,9 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   message: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     marginBottom: 20,
-    lineHeight: 20,
+    lineHeight: verticalScale(20),
   },
   buttonContainer: {
     width: "100%",

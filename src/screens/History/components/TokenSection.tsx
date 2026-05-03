@@ -1,4 +1,4 @@
-import { useAppThemeTokens } from "@styles";
+import { fontScale, useAppThemeTokens } from "@styles";
 import Copy from "@comps/Copy";
 import Txt from "@comps/Txt";
 import Separator from "@comps/Separator";
@@ -51,11 +51,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: fontScale(16),
     fontWeight: "600",
   },
   tokenValue: {
-    fontSize: 14,
+    fontSize: fontScale(14),
   },
   tokenContainer: {
     padding: 10,

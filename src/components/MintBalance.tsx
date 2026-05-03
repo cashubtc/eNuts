@@ -1,6 +1,6 @@
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
-import { Stack, useAppThemeTokens } from "@styles";
+import { fontScale, Stack, useAppThemeTokens } from "@styles";
 
 import { MintBoardIcon } from "./Icons";
 import Txt from "./Txt";
@@ -31,7 +31,7 @@ export default function MintBalance({ balance, txtColor, disabled }: IMintBalanc
       <MintBoardIcon width={16} height={16} color={disabled ? theme.textSecondary : theme.accent} />
       <Txt
         txt={hidden.balance ? "****" : `${formatted} ${symbol}`}
-        styles={[{ fontSize: 10, color: txtColor, marginLeft: 5 }]}
+        styles={[{ fontSize: fontScale(10), color: txtColor, marginLeft: 5 }]}
       />
     </Stack>
   );

@@ -6,7 +6,7 @@ import { useNfcAmountLimitsContext, NO_LIMIT } from "@src/context/NfcAmountLimit
 import type { TNfcSettingsPageProps } from "@src/nav/navTypes";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { globals, useAppThemeTokens } from "@styles";
+import { fontScale, globals, useAppThemeTokens } from "@styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View, Text, TextInput, StyleSheet } from "react-native";
@@ -181,17 +181,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inlineInput: {
-    fontSize: 15,
+    fontSize: fontScale(15),
     fontWeight: "500",
     padding: 0,
     minWidth: 60,
   },
   satsLabel: {
-    fontSize: 13,
+    fontSize: fontScale(13),
     marginLeft: 4,
   },
   fiatHint: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     marginTop: 8,
     marginLeft: 70,
   },

@@ -1,4 +1,4 @@
-import { useAppThemeTokens } from "@styles";
+import { fontScale, useAppThemeTokens } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
 import Txt from "@comps/Txt";
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    fontSize: 28,
+    fontSize: fontScale(28),
     marginTop: 30,
   },
   amountWrap: {
@@ -222,15 +222,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   amount: {
-    fontSize: 42,
+    fontSize: fontScale(42),
   },
   amountSymbol: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     marginTop: 4,
   },
   subtitle: {
     marginTop: 20,
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: "500",
   },
   detailsWrap: {

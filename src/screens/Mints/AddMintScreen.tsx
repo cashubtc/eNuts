@@ -4,7 +4,7 @@ import { ChevronRightIcon, ZapIcon, PlusIcon } from "@comps/Icons";
 import { IconBtn } from "@comps/Button";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MintStackParamList } from "@src/nav/navTypes";
-import { globals, useAppThemeTokens } from "@src/styles";
+import { fontScale, globals, useAppThemeTokens } from "@src/styles";
 import { formatMintUrl, isErr } from "@util";
 import { useState } from "react";
 import useDiscoverMints from "@comps/hooks/useDiscoverMints";
@@ -75,7 +75,7 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
             <Text
               style={{
                 color: theme.white,
-                fontSize: 10,
+                fontSize: fontScale(10),
                 fontWeight: "bold",
               }}
             >
@@ -86,7 +86,7 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
         <Text
           style={{
             color: theme.textSecondary,
-            fontSize: 12,
+            fontSize: fontScale(12),
             marginBottom: 2,
           }}
         >
@@ -207,7 +207,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
             <Text
               style={{
                 color: theme.textSecondary,
-                fontSize: 12,
+                fontSize: fontScale(12),
                 textAlign: "center",
                 marginTop: 4,
               }}
@@ -226,7 +226,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
                 {
                   color: theme.text,
                   marginBottom: 12,
-                  fontSize: 16,
+                  fontSize: fontScale(16),
                 },
               ]}
             />
