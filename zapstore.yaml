@@ -1,0 +1,16 @@
+repository: https://github.com/cashubtc/eNuts
+release_source: https://github.com/cashubtc/eNuts
+description: >-
+  Warning: This is an alpha-state release! Use at your own risk!
+  eNuts is a mobile Cashu wallet for Bitcoin ecash. Add a mint you trust,
+  receive or redeem Cashu tokens, pay Lightning invoices, and keep ecash
+  stored locally on your device. QR and NFC make
+  everyday payments quick.
+summary: Private ecash payments with Cashu and Lightning
+tags:
+  - cashu,ecash,wallet,lightning,bitcoin,nfc
+license: MIT
+website: https://enuts.cash
+metadata_sources:
+  - github
+pubkey: npub1mhcr4j594hsrnen594d7700n2t03n8gdx83zhxzculk6sh9nhwlq7uc226
