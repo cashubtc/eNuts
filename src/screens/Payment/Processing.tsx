@@ -1,21 +1,18 @@
 import { getDecodedToken } from "@cashu/cashu-ts";
 import Loading from "@comps/Loading";
-import Txt from "@comps/Txt";
 import type { TBeforeRemoveEvent, TProcessingPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useInitialURL } from "@src/context/Linking";
 import { NS } from "@src/i18n";
-import { fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
 import { decodeLnInvoice, isErr } from "@util";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-
 interface IErrorProps {
   e?: unknown;
   customMsg?: "requestMintErr" | "generalMeltingErr" | "invoiceFromLnurlError";
 }
-
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
   const { t } = useTranslation([NS.mints]);
   const theme = useAppThemeTokens();
@@ -36,7 +33,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
     proofs,
     recipient,
   } = route.params;
-
   const processingTxt = useMemo(() => {
     if (isMelt) {
       return payZap ? "payingInvoice" : "meltingToken";
@@ -52,7 +48,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
     }
     return "claimingToken";
   }, [isMelt, isSwap, isZap, payZap, isSendEcash, isAutoSwap]);
-
   const handleError = ({ e, customMsg }: IErrorProps) => {
     clearUrl();
     navigation.navigate("processingError", {
@@ -63,22 +58,24 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
           : t("generalMeltingErr", { ns: NS.error }),
     });
   };
-
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   return (
     <View style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
-      <Txt txt={t(processingTxt, { ns: NS.wallet })} styles={[{ color: theme.text }]} />
+      <AppText
+        style={[{ color: theme.text }]}
+        testID={`${t(processingTxt, { ns: NS.wallet })}-txt`}
+      >
+        {t(processingTxt, { ns: NS.wallet })}
+      </AppText>
       <Loading size={35} />
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     paddingTop: 0,

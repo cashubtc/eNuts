@@ -2,7 +2,6 @@ import Button from "@comps/Button";
 import { ShareIcon } from "@comps/Icons";
 import Loading from "@comps/Loading";
 import QR from "@comps/QR";
-import Txt from "@comps/Txt";
 import { isIOS } from "@consts";
 import { l } from "@log";
 import type { TMintInvoicePageProps } from "@model/nav";
@@ -10,40 +9,37 @@ import Screen from "@comps/Screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useManager } from "@src/context/Manager";
 import { NS } from "@src/i18n";
-import { fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
 import { formatMintUrl, share } from "@util";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
   const { operation } = route.params;
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
   const manager = useManager();
-
   useFocusEffect(
     useCallback(() => {
       const handlePaidInvoice = ({
         operation: finalizedOperation,
       }: {
-        operation: { id: string };
+        operation: {
+          id: string;
+        };
       }) => {
         if (finalizedOperation.id !== operation.id) {
           return;
         }
-
         navigation.navigate("successScreen", {
           type: "receive",
           amount: operation.amount,
         });
       };
-
       manager.on("mint-op:finalized", handlePaidInvoice);
       return () => manager.off("mint-op:finalized", handlePaidInvoice);
     }, [manager, navigation, operation.amount, operation.id]),
   );
-
   return (
     <Screen
       screenName={t("payInvoice", { ns: NS.wallet })}
@@ -64,10 +60,12 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
           />
           <View>
             <View style={styles.awaitingWrap}>
-              <Txt
-                txt={t("paymentPending") + "..."}
-                styles={[{ fontWeight: "500", marginRight: 10 }]}
-              />
+              <AppText
+                style={[{ fontWeight: "500", marginRight: 10 }]}
+                testID={`${t("paymentPending") + "..."}-txt`}
+              >
+                {t("paymentPending") + "..."}
+              </AppText>
               <Loading />
             </View>
           </View>
@@ -83,7 +81,6 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
     </Screen>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

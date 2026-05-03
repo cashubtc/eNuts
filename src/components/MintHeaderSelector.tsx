@@ -1,15 +1,13 @@
 import { MintBoardIcon } from "@comps/Icons";
 import MintSelectionSheet from "@comps/MintSelectionSheet";
-import Txt from "@comps/Txt";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import { Image } from "expo-image";
 import { useMemo, useRef } from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
-
 interface IMintHeaderSelectorProps {
   selectedMint: KnownMintWithBalance;
   onMintSelect: (mint: KnownMintWithBalance) => void;
@@ -17,7 +15,6 @@ interface IMintHeaderSelectorProps {
   multiSelect?: boolean;
   showZeroBalanceMints?: boolean;
 }
-
 export default function MintHeaderSelector({
   selectedMint,
   onMintSelect,
@@ -29,16 +26,13 @@ export default function MintHeaderSelector({
   const { hidden } = usePrivacyContext();
   const theme = useAppThemeTokens();
   const mintSelectionSheetRef = useRef<TrueSheet>(null);
-
   const headerBalance = useMemo(() => {
     if (hidden.balance) {
       return "****";
     }
-
     const { formatted, symbol } = formatAmount(selectedMint.balance);
     return `${formatted} ${symbol}`;
   }, [formatAmount, hidden.balance, selectedMint.balance]);
-
   const handleOpen = () => {
     onOpen?.();
     try {
@@ -47,7 +41,6 @@ export default function MintHeaderSelector({
       /* ignore */
     }
   };
-
   return (
     <>
       <TouchableOpacity
@@ -82,7 +75,13 @@ export default function MintHeaderSelector({
             <MintBoardIcon width={18} height={18} color={theme.accent} />
           )}
         </View>
-        <Txt txt={headerBalance} bold styles={[styles.balance, { color: theme.text }]} />
+        <AppText
+          style={[styles.balance, { color: theme.text }]}
+          weight="medium"
+          testID={`${headerBalance}-txt`}
+        >
+          {headerBalance}
+        </AppText>
       </TouchableOpacity>
 
       <MintSelectionSheet
@@ -95,7 +94,6 @@ export default function MintHeaderSelector({
     </>
   );
 }
-
 const styles = StyleSheet.create({
   button: {
     minWidth: 40,

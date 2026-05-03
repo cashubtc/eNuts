@@ -1,14 +1,10 @@
-import { ProgressFill, ProgressTrack } from "@styles";
-
-import Txt from "./Txt";
-
+import { AppText, ProgressFill, ProgressTrack } from "@styles";
 interface IProgressProps {
   progress: number;
   withIndicator?: boolean;
   contactsCount?: number;
   doneCount?: number;
 }
-
 export default function Progress({
   progress,
   withIndicator,
@@ -21,10 +17,10 @@ export default function Progress({
         <ProgressFill style={{ width: `${progress * 100}%` }} />
       </ProgressTrack>
       {withIndicator && (
-        <Txt
-          txt={`${progress * 100}% - ${doneCount}/${contactsCount}`}
-          styles={[{ textAlign: "center", marginBottom: 20 }]}
-        />
+        <AppText
+          style={[{ textAlign: "center", marginBottom: 20 }]}
+          testID={`${`${progress * 100}% - ${doneCount}/${contactsCount}`}-txt`}
+        >{`${progress * 100}% - ${doneCount}/${contactsCount}`}</AppText>
       )}
     </>
   );

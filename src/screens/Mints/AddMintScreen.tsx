@@ -1,25 +1,21 @@
-import Txt from "@comps/Txt";
-import TxtInput from "@comps/TxtInput";
 import { ChevronRightIcon, ZapIcon, PlusIcon } from "@comps/Icons";
 import { IconBtn } from "@comps/Button";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MintStackParamList } from "@src/nav/navTypes";
-import { fontScale, globals, useAppThemeTokens } from "@src/styles";
+import { AppText, fontScale, globals, InputFrame, useAppThemeTokens } from "@styles";
 import { formatMintUrl, isErr } from "@util";
 import { useState } from "react";
 import useDiscoverMints from "@comps/hooks/useDiscoverMints";
-import { View, TouchableOpacity, Text, ActivityIndicator, ScrollView } from "react-native";
+import { View, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
 import Screen from "@comps/Screen";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import { useTranslation } from "react-i18next";
 import { useManager } from "@src/context/Manager";
-
 interface RecommendedMintItemProps {
   mint: MintRecommendation;
   onPress: (url: string) => void;
 }
-
 type MintRecommendation = {
   id: number;
   url: string;
@@ -34,11 +30,9 @@ type MintRecommendation = {
   n_mints: number;
   n_melts: number;
 };
-
 function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
   const displayName = mint.name || formatMintUrl(mint.url);
   const theme = useAppThemeTokens();
-
   return (
     <TouchableOpacity
       style={[
@@ -62,7 +56,9 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
             marginBottom: 4,
           }}
         >
-          <Txt txt={displayName} bold styles={[{ color: theme.text }]} />
+          <AppText style={[{ color: theme.text }]} weight="medium" testID={`${displayName}-txt`}>
+            {displayName}
+          </AppText>
           <View
             style={{
               backgroundColor: theme.accent,
@@ -72,7 +68,7 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
               marginLeft: 8,
             }}
           >
-            <Text
+            <AppText
               style={{
                 color: theme.white,
                 fontSize: fontScale(10),
@@ -80,10 +76,10 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
               }}
             >
               {mint.state}
-            </Text>
+            </AppText>
           </View>
         </View>
-        <Text
+        <AppText
           style={{
             color: theme.textSecondary,
             fontSize: fontScale(12),
@@ -91,15 +87,13 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
           }}
         >
           {mint.url}
-        </Text>
+        </AppText>
       </View>
       <ChevronRightIcon color={theme.textSecondary} />
     </TouchableOpacity>
   );
 }
-
 type MintAddScreenProps = NativeStackScreenProps<MintStackParamList, "MintAdd">;
-
 function AddMintScreen({ navigation, route }: MintAddScreenProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
@@ -107,13 +101,11 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
   const { recommendations, isLoading, isError } = useDiscoverMints();
   const { openPromptAutoClose } = usePromptContext();
   const manager = useManager();
-
   const handleMintSelect = (url: string) => {
     setInputUrl(url);
     // You might want to add navigation or other logic here
     // For now, just populate the input field
   };
-
   const handleConfirmSelection = async () => {
     const submitted = inputUrl.trim();
     if (!submitted) {
@@ -129,7 +121,6 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
       });
     }
   };
-
   return (
     <Screen
       screenName="Add Mint"
@@ -154,11 +145,15 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
           }}
         >
           <View style={{ flex: 1 }}>
-            <TxtInput
+            <InputFrame
               onChangeText={setInputUrl}
               autoCorrect={false}
               value={inputUrl}
               placeholder="Enter mint URL or select from recommendations below"
+              placeholderTextColor={theme.placeholder as never}
+              selectionColor={theme.accent}
+              cursorColor={theme.accent}
+              testID="Enter mint URL or select from recommendations below-input"
               autoCapitalize="none"
             />
           </View>
@@ -194,17 +189,24 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
             }}
           >
             <ActivityIndicator size="small" color={theme.accent} />
-            <Txt
-              txt="Loading recommendations..."
-              styles={[{ marginLeft: 8, color: theme.textSecondary }]}
-            />
+            <AppText
+              style={[{ marginLeft: 8, color: theme.textSecondary }]}
+              testID={"Loading recommendations...-txt"}
+            >
+              Loading recommendations...
+            </AppText>
           </View>
         )}
 
         {isError && (
           <View style={{ paddingVertical: 20, alignItems: "center" }}>
-            <Txt txt="Failed to load recommendations" styles={[{ color: theme.textSecondary }]} />
-            <Text
+            <AppText
+              style={[{ color: theme.textSecondary }]}
+              testID={"Failed to load recommendations-txt"}
+            >
+              Failed to load recommendations
+            </AppText>
+            <AppText
               style={{
                 color: theme.textSecondary,
                 fontSize: fontScale(12),
@@ -213,23 +215,25 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
               }}
             >
               Something went wrong fetching recommendations
-            </Text>
+            </AppText>
           </View>
         )}
 
         {!isLoading && recommendations.length > 0 && (
           <View>
-            <Txt
-              txt="Recommended Mints"
-              bold
-              styles={[
+            <AppText
+              style={[
                 {
                   color: theme.text,
                   marginBottom: 12,
                   fontSize: fontScale(16),
                 },
               ]}
-            />
+              weight="medium"
+              testID={"Recommended Mints-txt"}
+            >
+              Recommended Mints
+            </AppText>
             {recommendations.map((mint) => (
               <RecommendedMintItem key={mint.id} mint={mint} onPress={handleMintSelect} />
             ))}
@@ -239,5 +243,4 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
     </Screen>
   );
 }
-
 export default AddMintScreen;

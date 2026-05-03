@@ -8,7 +8,7 @@ import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import type { QRScannerScreenProps } from "@src/nav/navTypes";
-import { verticalScale, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, useAppThemeTokens } from "@styles";
 import type { PaymentCandidateKind, PaymentStringCandidate } from "@util/paymentStringParser";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -17,7 +17,7 @@ import type { ScanningResult } from "expo-camera";
 import type { ComponentProps } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const QR_CANDIDATE_PRIORITY: PaymentCandidateKind[] = [
   "cashuToken",
@@ -253,10 +253,10 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                     : "center-focus-strong"
               }
             />
-            <Text style={[styles.title, { color: theme.white }]}>{t("qrScanHint")}</Text>
-            <Text style={[styles.subtitle, { color: theme.cameraMutedText }]}>
+            <AppText style={[styles.title, { color: theme.white }]}>{t("qrScanHint")}</AppText>
+            <AppText style={[styles.subtitle, { color: theme.cameraMutedText }]}>
               {t("qrScanFormats")}
-            </Text>
+            </AppText>
           </View>
 
           <View
@@ -284,9 +284,9 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
               >
                 <View style={styles.loadingState}>
                   <Loading size={24} color={theme.accent} />
-                  <Text style={[styles.progressTitle, { color: theme.white }]}>
+                  <AppText style={[styles.progressTitle, { color: theme.white }]}>
                     {t("claiming", { ns: NS.wallet })}
-                  </Text>
+                  </AppText>
                 </View>
               </View>
             )}
@@ -301,12 +301,12 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                 ]}
               >
                 <View style={styles.progressHeader}>
-                  <Text style={[styles.progressTitle, { color: theme.white }]}>
+                  <AppText style={[styles.progressTitle, { color: theme.white }]}>
                     {t("receivingAnimatedQr")}
-                  </Text>
-                  <Text style={[styles.progressCount, { color: theme.accent }]}>
+                  </AppText>
+                  <AppText style={[styles.progressCount, { color: theme.accent }]}>
                     {receivedCount}/{expectedCount || "-"}
-                  </Text>
+                  </AppText>
                 </View>
                 <View style={[styles.progressTrack, { backgroundColor: theme.cameraTrack }]}>
                   <View
@@ -317,7 +317,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                   />
                 </View>
                 {urError && (
-                  <Text style={[styles.errorText, { color: theme.error }]}>{urError}</Text>
+                  <AppText style={[styles.errorText, { color: theme.error }]}>{urError}</AppText>
                 )}
               </View>
             )}
@@ -329,9 +329,9 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                 activeOpacity={0.75}
               >
                 <MaterialIcons name="refresh" size={18} color={theme.accentContrast} />
-                <Text style={[styles.rescanButtonText, { color: theme.accentContrast }]}>
+                <AppText style={[styles.rescanButtonText, { color: theme.accentContrast }]}>
                   {t("scanAgain")}
-                </Text>
+                </AppText>
               </TouchableOpacity>
             )}
           </View>
@@ -359,7 +359,7 @@ function StatusPill({ label, color, textColor = color, iconName }: IStatusPillPr
       style={[styles.statusPill, { backgroundColor: theme.cameraPill, borderColor: `${color}55` }]}
     >
       <MaterialIcons name={iconName} size={16} color={color} />
-      <Text style={[styles.statusText, { color: textColor }]}>{label}</Text>
+      <AppText style={[styles.statusText, { color: textColor }]}>{label}</AppText>
     </View>
   );
 }

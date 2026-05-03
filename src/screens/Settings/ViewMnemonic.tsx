@@ -1,5 +1,4 @@
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
 import Loading from "@comps/Loading";
 import Button from "@comps/Button";
 import { isIOS } from "@consts";
@@ -11,15 +10,13 @@ import { useTranslation } from "react-i18next";
 import { FlatList, View, StyleSheet } from "react-native";
 import useCopy from "@comps/hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "@comps/Icons";
-import { useAppThemeTokens } from "@styles";
-
+import { AppText, useAppThemeTokens } from "@styles";
 export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
   const { copied, copy } = useCopy();
   const [mnemonic, setMnemonic] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const id = setTimeout(() => {
       try {
@@ -31,7 +28,6 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
     }, 0);
     return () => clearTimeout(id);
   }, []);
-
   return (
     <Screen screenName={"Mnemonic"} withBackBtn handlePress={() => navigation.goBack()}>
       <View style={styles.content}>
@@ -41,7 +37,9 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
           </View>
         ) : !mnemonic ? (
           <View style={[styles.warnContainer, { backgroundColor: theme.drawer }]}>
-            <Txt txt={"No mnemonic found"} styles={[{ color: theme.textSecondary }]} />
+            <AppText style={[{ color: theme.textSecondary }]} testID={"No mnemonic found-txt"}>
+              No mnemonic found
+            </AppText>
           </View>
         ) : (
           <>
@@ -59,8 +57,13 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
                     },
                   ]}
                 >
-                  <Txt bold txt={`${index + 1}. `} />
-                  <Txt bold txt={item} />
+                  <AppText
+                    weight="medium"
+                    testID={`${`${index + 1}. `}-txt`}
+                  >{`${index + 1}. `}</AppText>
+                  <AppText weight="medium" testID={`${item}-txt`}>
+                    {item}
+                  </AppText>
                 </View>
               )}
             />
@@ -84,7 +87,6 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
     </Screen>
   );
 }
-
 const styles = StyleSheet.create({
   content: {
     marginTop: isIOS ? 20 : 60,

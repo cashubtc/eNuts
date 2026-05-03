@@ -1,8 +1,8 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { ScrollView, Text, View, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
 import Button from "@comps/Button";
 
 export type ConfirmBottomSheetRef = {
@@ -92,10 +92,10 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
       >
         {options && (
           <>
-            <Text style={[globals().modalHeader, { color: theme.text }, { marginBottom: 15 }]}>
+            <AppText style={[globals().modalHeader, { color: theme.text }, { marginBottom: 15 }]}>
               {options.header}
-            </Text>
-            <Text style={[styles.message, { color: theme.text }]}>{options.txt}</Text>
+            </AppText>
+            <AppText style={[styles.message, { color: theme.text }]}>{options.txt}</AppText>
             <View style={styles.buttonContainer}>
               <Button
                 txt={options.confirmTxt}

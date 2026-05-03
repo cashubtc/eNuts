@@ -1,11 +1,10 @@
-import Txt from "@comps/Txt";
 import Button from "@comps/Button";
 import { CheckmarkIcon } from "@comps/Icons";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints, type KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import React, {
   forwardRef,
   useMemo,
@@ -18,16 +17,18 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity, View, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 interface MintSelectionSheetProps {
-  selectedMint?: { mintUrl: string };
-  selectedMints?: { mintUrl: string }[];
+  selectedMint?: {
+    mintUrl: string;
+  };
+  selectedMints?: {
+    mintUrl: string;
+  }[];
   onMintSelect: (mint: KnownMintWithBalance) => void;
   onMultipleMintSelect?: (mints: KnownMintWithBalance[]) => void;
   multiSelect?: boolean;
   showZeroBalanceMints?: boolean;
 }
-
 // Memoize individual mint items to prevent re-renders
 const MintItem = memo(
   ({
@@ -54,7 +55,6 @@ const MintItem = memo(
     formattedBalance: string;
   }) => {
     const handlePress = useCallback(() => onPress(mint), [onPress, mint]);
-
     return (
       <TouchableOpacity
         style={[
@@ -67,14 +67,26 @@ const MintItem = memo(
         onPress={handlePress}
       >
         <View style={styles.mintInfo}>
-          <Txt
-            txt={mint.name || new URL(mint.mintUrl).hostname}
-            styles={[styles.mintAlias, { color: textColor }]}
-          />
-          <Txt txt={mint.mintUrl} styles={[styles.mintUrl, { color: secondaryTextColor }]} />
+          <AppText
+            style={[styles.mintAlias, { color: textColor }]}
+            testID={`${mint.name || new URL(mint.mintUrl).hostname}-txt`}
+          >
+            {mint.name || new URL(mint.mintUrl).hostname}
+          </AppText>
+          <AppText
+            style={[styles.mintUrl, { color: secondaryTextColor }]}
+            testID={`${mint.mintUrl}-txt`}
+          >
+            {mint.mintUrl}
+          </AppText>
         </View>
         <View style={styles.rightSection}>
-          <Txt txt={formattedBalance} styles={[styles.balance, { color: validColor }]} />
+          <AppText
+            style={[styles.balance, { color: validColor }]}
+            testID={`${formattedBalance}-txt`}
+          >
+            {formattedBalance}
+          </AppText>
           {multiSelect && (
             <View
               style={[
@@ -93,9 +105,7 @@ const MintItem = memo(
     );
   },
 );
-
 MintItem.displayName = "MintItem";
-
 const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
   (
     {
@@ -114,32 +124,26 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
     const { knownMints } = useKnownMints();
     const insets = useSafeAreaInsets();
     const sheetRef = useRef<TrueSheet>(null);
-
     // Internal state for multi-select mode
     const [internalSelectedMints, setInternalSelectedMints] = useState<KnownMintWithBalance[]>([]);
-
     const setSheetRef = useCallback(
       (sheet: TrueSheet | null) => {
         sheetRef.current = sheet;
-
         if (typeof ref === "function") {
           ref(sheet);
           return;
         }
-
         if (ref) {
           (ref as MutableRefObject<TrueSheet | null>).current = sheet;
         }
       },
       [ref],
     );
-
     // Determine which mints to display based on balance visibility setting
     const displayMints = useMemo(
       () => (showZeroBalanceMints ? knownMints : knownMints.filter((mint) => mint.balance > 0)),
       [knownMints, showZeroBalanceMints],
     );
-
     // Initialize internal state when controlled selectedMints change
     React.useEffect(() => {
       if (multiSelect && selectedMints) {
@@ -149,7 +153,6 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
         setInternalSelectedMints(controlledSelectedMints);
       }
     }, [selectedMints, displayMints, multiSelect]);
-
     // Determine selected mints based on mode
     const currentSelectedMints = useMemo(() => {
       if (multiSelect) {
@@ -159,7 +162,6 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
         ? [displayMints.find((m) => m.mintUrl === selectedMint.mintUrl)].filter(Boolean)
         : [];
     }, [multiSelect, internalSelectedMints, selectedMint, displayMints]);
-
     const handleMintPress = useCallback(
       (mint: KnownMintWithBalance) => {
         if (multiSelect) {
@@ -179,14 +181,12 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
       },
       [multiSelect, onMintSelect],
     );
-
     const handleConfirmMultiSelect = useCallback(() => {
       if (onMultipleMintSelect) {
         onMultipleMintSelect(internalSelectedMints);
       }
       void sheetRef.current?.dismiss();
     }, [onMultipleMintSelect, internalSelectedMints]);
-
     const isMintSelected = useCallback(
       (mint: KnownMintWithBalance) => {
         if (multiSelect) {
@@ -196,7 +196,6 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
       },
       [multiSelect, internalSelectedMints, selectedMint],
     );
-
     return (
       <TrueSheet
         ref={setSheetRef}
@@ -224,31 +223,38 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
               },
             ]}
           >
-            <Txt
-              txt={
+            <AppText
+              style={[styles.headerText, { color: theme.text }]}
+              testID={`${
                 multiSelect
                   ? t("selectMints", { ns: NS.common })
                   : t("selectMint", { ns: NS.common })
-              }
-              styles={[styles.headerText, { color: theme.text }]}
-            />
+              }-txt`}
+            >
+              {multiSelect
+                ? t("selectMints", { ns: NS.common })
+                : t("selectMint", { ns: NS.common })}
+            </AppText>
           </View>
 
           {displayMints.length === 0 ? (
             <View style={styles.emptyState}>
-              <Txt
-                txt={t("noMintsWithBalance", {
+              <AppText
+                style={[{ color: theme.textSecondary }]}
+                testID={`${t("noMintsWithBalance", {
+                  ns: NS.common,
+                })}-txt`}
+              >
+                {t("noMintsWithBalance", {
                   ns: NS.common,
                 })}
-                styles={[{ color: theme.textSecondary }]}
-              />
+              </AppText>
             </View>
           ) : (
             <>
               {displayMints.map((mint) => {
                 const { formatted, symbol } = formatAmount(mint.balance);
                 const formattedBalance = `${formatted} ${symbol}`;
-
                 return (
                   <MintItem
                     key={mint.mintUrl}
@@ -282,7 +288,6 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
     );
   },
 );
-
 const styles = StyleSheet.create({
   header: {
     paddingVertical: 10,
@@ -349,5 +354,4 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
 });
-
 export default MintSelectionSheet;

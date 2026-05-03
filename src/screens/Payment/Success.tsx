@@ -1,7 +1,6 @@
-import { fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
-import Txt from "@comps/Txt";
 import { isIOS } from "@consts";
 import type { TBeforeRemoveEvent, TSuccessPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
@@ -12,28 +11,24 @@ import { isNum, vib } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
   const { amount, memo, fee, change, mint, isClaim, isMelt, isAutoSwap, isScanned } = route.params;
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
-
   useEffect(() => {
     vib(400);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View pointerEvents="none" style={styles.confetti}>
@@ -45,7 +40,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
         />
       </View>
       <View style={{ width: "100%" }}>
-        <Text testID={`amount: ${amount}`} style={[styles.successTxt, { color: theme.text }]}>
+        <AppText testID={`amount: ${amount}`} style={[styles.successTxt, { color: theme.text }]}>
           {(() => {
             if (isMelt && !isAutoSwap) {
               return t("paymentSuccess");
@@ -55,12 +50,12 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             }
             return null;
           })()}
-        </Text>
-        {memo && <Text style={[styles.mints, { color: theme.textSecondary }]}>{memo}</Text>}
+        </AppText>
+        {memo && <AppText style={[styles.mints, { color: theme.textSecondary }]}>{memo}</AppText>}
         {mint && mint.length > 0 && (
-          <Text testID={`mint: ${mint}`} style={[styles.mints, { color: theme.textSecondary }]}>
+          <AppText testID={`mint: ${mint}`} style={[styles.mints, { color: theme.textSecondary }]}>
             {mint}
-          </Text>
+          </AppText>
         )}
         <View style={styles.successAnim}>
           <LottieView
@@ -84,9 +79,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             />
             <Details
               txt={t("totalInclFee")}
-              value={`${formatAmount(amount + (fee || 0)).formatted} ${
-                formatAmount(amount + (fee || 0)).symbol
-              }`}
+              value={`${formatAmount(amount + (fee || 0)).formatted} ${formatAmount(amount + (fee || 0)).symbol}`}
             />
             {isNum(change) && (
               <Details
@@ -108,16 +101,18 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
     </View>
   );
 }
-
 function Details({ txt, value }: { txt: string; value: string }) {
   return (
     <View style={styles.meltOverview}>
-      <Txt txt={txt} styles={[styles.meltTxt]} />
-      <Txt txt={value} styles={[styles.meltTxt]} />
+      <AppText style={[styles.meltTxt]} testID={`${txt}-txt`}>
+        {txt}
+      </AppText>
+      <AppText style={[styles.meltTxt]} testID={`${value}-txt`}>
+        {value}
+      </AppText>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

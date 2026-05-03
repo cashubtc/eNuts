@@ -1,32 +1,26 @@
 import Button from "@comps/Button";
-import { useAppThemeTokens } from "@styles";
+import { AppText, globals, useAppThemeTokens } from "@styles";
 import { CheckmarkIcon } from "@comps/Icons";
 import { ScreenWithKeyboard } from "@comps/Screen";
-import Txt from "@comps/Txt";
 import { isIOS } from "@consts";
 import type { RecoverMintsScreenProps } from "@src/nav/navTypes";
 import { useKnownMints } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
-
 export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScreenProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
-
   const { knownMints } = useKnownMints();
   const [selectedMints, setSelectedMints] = useState<string[]>(
     knownMints.map((mint) => mint.mintUrl),
   );
-
   const toggleMintSelection = (mintUrl: string) => {
     setSelectedMints((prev) =>
       prev.includes(mintUrl) ? prev.filter((m) => m !== mintUrl) : [...prev, mintUrl],
     );
   };
-
   return (
     <ScreenWithKeyboard
       screenName={t("walletRecovery")}
@@ -34,7 +28,9 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
       handlePress={() => navigation.goBack()}
     >
       <View style={{ flex: 1, gap: 10 }}>
-        <Txt txt={t("selectRestoreMint")} styles={[styles.hint]} bold />
+        <AppText style={[styles.hint]} weight="medium" testID={`${t("selectRestoreMint")}-txt`}>
+          {t("selectRestoreMint")}
+        </AppText>
         <ScrollView alwaysBounceVertical={false} style={{ flex: 1 }}>
           {knownMints.length > 0 ? (
             <View style={{ flex: 1, gap: 4 }}>
@@ -54,7 +50,9 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
                     activeOpacity={0.7}
                   >
                     <View style={styles.mintContent}>
-                      <Txt txt={mint.mintUrl} styles={[{ flex: 1 }]} />
+                      <AppText style={[{ flex: 1 }]} testID={`${mint.mintUrl}-txt`}>
+                        {mint.mintUrl}
+                      </AppText>
                       {isSelected && <CheckmarkIcon width={14} height={14} color={theme.accent} />}
                     </View>
                   </TouchableOpacity>
@@ -63,7 +61,7 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
             </View>
           ) : (
             <View style={styles.emptyContainer}>
-              <Txt txt={t("noMint")} />
+              <AppText testID={`${t("noMint")}-txt`}>{t("noMint")}</AppText>
             </View>
           )}
         </ScrollView>
@@ -80,7 +78,6 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
     </ScreenWithKeyboard>
   );
 }
-
 const styles = StyleSheet.create({
   hint: {
     paddingHorizontal: 20,

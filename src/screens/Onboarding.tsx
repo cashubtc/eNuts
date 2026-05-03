@@ -1,16 +1,14 @@
 import Logo from "@comps/Logo";
 import RadioBtn from "@comps/RadioBtn";
-import Txt from "@comps/Txt";
 import type { TOnboardingPageProps } from "@model/nav";
 import { NS } from "@src/i18n";
 import { store } from "@src/storage/store";
 import { STORE_KEYS } from "@src/storage/store/consts";
-import { fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
-
 export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
@@ -38,10 +36,12 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
                 alignItems: "center",
               }}
             >
-              <Txt
-                txt="eNuts is currently in alpha testing. Please use at your own risk."
-                styles={[{ paddingHorizontal: 10, textAlign: "center" }]}
-              />
+              <AppText
+                style={[{ paddingHorizontal: 10, textAlign: "center" }]}
+                testID={"eNuts is currently in alpha testing. Please use at your own risk.-txt"}
+              >
+                eNuts is currently in alpha testing. Please use at your own risk.
+              </AppText>
               <TouchableOpacity
                 style={{
                   flexDirection: "row",
@@ -61,7 +61,9 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
                     backgroundColor: accepted ? theme.white : "transparent",
                   }}
                 />
-                <Txt txt="I understand" styles={[{ marginLeft: 10 }]} />
+                <AppText style={[{ marginLeft: 10 }]} testID={"I understand-txt"}>
+                  I understand
+                </AppText>
               </TouchableOpacity>
             </View>
           ),
@@ -74,14 +76,12 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
         },
         {
           backgroundColor: theme.onboardingCashu,
-
           image: <Image style={styles.cashuImg} source={require("@assets/cashu.png")} />,
           title: "Cashu & Mints",
           subtitle: t("explainer2"),
         },
         {
           backgroundColor: theme.onboardingNuts,
-
           image: (
             <Image style={styles.sendReceiveImg} source={require("@assets/send_receive.png")} />
           ),
@@ -101,13 +101,14 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
           style={{ marginRight: 20 }}
           testID="onboarding-done"
         >
-          <Txt txt={t("next")} styles={[{ color: theme.white }]} />
+          <AppText style={[{ color: theme.white }]} testID={`${t("next")}-txt`}>
+            {t("next")}
+          </AppText>
         </TouchableOpacity>
       )}
     />
   );
 }
-
 const styles = StyleSheet.create({
   title: { fontSize: fontScale(28), fontWeight: "500" },
   subTitle: { fontSize: fontScale(16) },

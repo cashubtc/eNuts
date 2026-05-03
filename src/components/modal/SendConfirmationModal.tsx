@@ -2,20 +2,22 @@ import Card from "@comps/Card";
 import ConfirmationModal, { type ConfirmationModalRef } from "@modal/ConfirmationModal";
 import OperationMintPanel, { type IOperationMintPanelRow } from "@modal/OperationMintPanel";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import type { SendOperation } from "@cashu/coco-core";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { verticalScale, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, useAppThemeTokens } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-
 export type SendConfirmationModalRef = ConfirmationModalRef;
-type TPreparedOrLaterSendOperation = Exclude<SendOperation, { state: "init" }>;
-
+type TPreparedOrLaterSendOperation = Exclude<
+  SendOperation,
+  {
+    state: "init";
+  }
+>;
 interface ISendConfirmationModalProps {
   operation: TPreparedOrLaterSendOperation | null;
   mint: KnownMintWithBalance | null;
@@ -23,22 +25,18 @@ interface ISendConfirmationModalProps {
   onConfirm: () => void;
   onCancel: () => void;
 }
-
 type TRowTone = "default" | "success" | "danger";
-
 interface IDetailRow {
   label: string;
   value: string;
   tone?: TRowTone;
 }
-
 const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirmationModalProps>(
   ({ operation, mint, loading = false, onConfirm, onCancel }, ref) => {
     const { t } = useTranslation([NS.common, NS.auth]);
     const theme = useAppThemeTokens();
     const { hidden } = usePrivacyContext();
     const { formatAmount } = useCurrencyContext();
-
     const formatDisplayAmount = useCallback(
       (amount: number) => {
         const { formatted, symbol } = formatAmount(amount);
@@ -46,14 +44,11 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
       },
       [formatAmount],
     );
-
     const summaryRows = useMemo<IDetailRow[]>(() => {
       if (!operation) {
         return [];
       }
-
       const totalAmount = operation.amount + operation.fee;
-
       return [
         {
           label: t("estimatedFees", { ns: NS.common }),
@@ -73,27 +68,21 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
           : []),
       ];
     }, [formatDisplayAmount, operation, t]);
-
     const balanceAfterTx = useMemo(() => {
       if (!operation || !mint) {
         return "";
       }
-
       const totalAmount = operation.amount + operation.fee;
       const nextBalance = mint.balance - totalAmount;
-
       if (hidden.balance) {
         return "****";
       }
-
       return formatDisplayAmount(nextBalance);
     }, [formatDisplayAmount, hidden.balance, mint, operation]);
-
     const mintRows = useMemo<IOperationMintPanelRow[]>(() => {
       if (!mint) {
         return [];
       }
-
       return [
         {
           label: t("balanceAfterTX", { ns: NS.common }),
@@ -102,7 +91,6 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
         },
       ];
     }, [balanceAfterTx, mint, t]);
-
     return (
       <ConfirmationModal
         ref={ref}
@@ -117,17 +105,21 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
         {operation ? (
           <>
             <Card style={styles.summaryCard}>
-              <Txt
-                txt={t("amount", { ns: NS.common })}
-                center
-                styles={[styles.amountLabel, { color: theme.textSecondary }]}
-              />
-              <Txt
-                txt={formatDisplayAmount(operation.amount)}
-                center
-                bold
-                styles={[styles.amount]}
-              />
+              <AppText
+                style={[styles.amountLabel, { color: theme.textSecondary }]}
+                align="center"
+                testID={`${t("amount", { ns: NS.common })}-txt`}
+              >
+                {t("amount", { ns: NS.common })}
+              </AppText>
+              <AppText
+                style={[styles.amount]}
+                weight="medium"
+                align="center"
+                testID={`${formatDisplayAmount(operation.amount)}-txt`}
+              >
+                {formatDisplayAmount(operation.amount)}
+              </AppText>
               <View style={styles.rowsWrap}>
                 {summaryRows.map((row, index) => (
                   <View key={`${row.label}-${index}`}>
@@ -142,10 +134,12 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
 
             {mint ? (
               <View style={styles.mintSection}>
-                <Txt
-                  txt={t("sendingFrom", { ns: NS.common, defaultValue: "Sending from" })}
-                  styles={[styles.sectionLabel, { color: theme.textSecondary }]}
-                />
+                <AppText
+                  style={[styles.sectionLabel, { color: theme.textSecondary }]}
+                  testID={`${t("sendingFrom", { ns: NS.common, defaultValue: "Sending from" })}-txt`}
+                >
+                  {t("sendingFrom", { ns: NS.common, defaultValue: "Sending from" })}
+                </AppText>
                 <OperationMintPanel mint={mint} rows={mintRows} />
               </View>
             ) : null}
@@ -157,10 +151,8 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
     );
   },
 );
-
 function DetailRow({ row }: { row: IDetailRow }) {
   const theme = useAppThemeTokens();
-
   const valueColor = useMemo(() => {
     switch (row.tone) {
       case "success":
@@ -171,17 +163,25 @@ function DetailRow({ row }: { row: IDetailRow }) {
         return theme.text;
     }
   }, [theme.text, row.tone]);
-
   return (
     <View style={styles.detailRow}>
-      <Txt txt={row.label} styles={[styles.detailLabel, { color: theme.textSecondary }]} />
-      <Txt txt={row.value} bold styles={[styles.detailValue, { color: valueColor }]} />
+      <AppText
+        style={[styles.detailLabel, { color: theme.textSecondary }]}
+        testID={`${row.label}-txt`}
+      >
+        {row.label}
+      </AppText>
+      <AppText
+        style={[styles.detailValue, { color: valueColor }]}
+        weight="medium"
+        testID={`${row.value}-txt`}
+      >
+        {row.value}
+      </AppText>
     </View>
   );
 }
-
 SendConfirmationModal.displayName = "SendConfirmationModal";
-
 const styles = StyleSheet.create({
   summaryCard: {
     marginBottom: 12,
@@ -230,5 +230,4 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
 });
-
 export default SendConfirmationModal;

@@ -1,20 +1,16 @@
 import { NS } from "@src/i18n";
-import { useAppThemeTokens } from "@src/styles";
+import { AppText, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-
 import useCopy from "./hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "./Icons";
-import Txt from "./Txt";
 import { useAnimatedQr } from "./hooks/AnimatedQr";
-
 function truncateStr(str: string, len: number): string {
   if (!str) return "";
   if (str.length <= len) return str;
   return str.slice(0, len) + "...";
 }
-
 interface QRProps {
   size: number;
   value: string;
@@ -23,7 +19,6 @@ interface QRProps {
   truncateNum?: number;
   onError: () => void;
 }
-
 export default function QR({ size, value, animate, truncateNum, onError }: QRProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
@@ -54,15 +49,16 @@ export default function QR({ size, value, animate, truncateNum, onError }: QRPro
         <View style={styles.iconCon}>
           {copied ? <CheckmarkIcon color={theme.valid} /> : <CopyIcon color={theme.text} />}
         </View>
-        <Txt
-          txt={copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}
-          styles={[{ color: copied ? theme.valid : theme.text }]}
-        />
+        <AppText
+          style={[{ color: copied ? theme.valid : theme.text }]}
+          testID={`${copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}-txt`}
+        >
+          {copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}
+        </AppText>
       </View>
     </TouchableOpacity>
   );
 }
-
 const styles = StyleSheet.create({
   qrWrap: {
     borderWidth: 10,

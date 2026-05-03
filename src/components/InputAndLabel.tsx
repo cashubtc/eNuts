@@ -1,10 +1,7 @@
-import { Stack, useAppThemeTokens } from "@styles";
+import { InputFrame, Stack, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
 import type { KeyboardTypeOptions } from "react-native";
-
 import { TxtButton } from "./Button";
-import TxtInput from "./TxtInput";
-
 interface IInputAndLabelProps {
   keyboardType?: KeyboardTypeOptions;
   placeholder: string;
@@ -14,7 +11,6 @@ interface IInputAndLabelProps {
   handleLabel: () => void;
   isEmptyInput?: boolean;
 }
-
 export default function InputAndLabel({
   keyboardType,
   placeholder,
@@ -28,12 +24,16 @@ export default function InputAndLabel({
   const theme = useAppThemeTokens();
   return (
     <Stack position="relative" width="100%">
-      <TxtInput
-        keyboardType={keyboardType}
+      <InputFrame
+        keyboardType={keyboardType || "default"}
         placeholder={placeholder}
         value={value}
         onChangeText={setInput}
         onSubmitEditing={handleInput}
+        placeholderTextColor={theme.placeholder as never}
+        selectionColor={theme.accent}
+        cursorColor={theme.accent}
+        testID={`${placeholder}-input`}
       />
       {/* Paste / Clear Input */}
       <TxtButton

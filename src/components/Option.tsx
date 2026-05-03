@@ -1,11 +1,8 @@
-import { fontScale, Stack, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, Stack, globals, useAppThemeTokens } from "@styles";
 import { TouchableOpacity } from "react-native";
-
 import { ChevronRightIcon } from "./Icons";
 import Loading from "./Loading";
 import Separator from "./Separator";
-import Txt from "./Txt";
-
 interface IOptionProps {
   txt: string;
   hint: string;
@@ -15,7 +12,6 @@ interface IOptionProps {
   loading?: boolean;
   secondIcon?: React.ReactNode;
 }
-
 export default function Option({
   icon,
   txt,
@@ -32,8 +28,15 @@ export default function Option({
         <Stack flexDirection="row" alignItems="center" maxWidth="80%">
           {icon ? <Stack style={{ minWidth: 40 }}>{icon}</Stack> : null}
           <Stack>
-            <Txt txt={txt} bold />
-            <Txt styles={[{ fontSize: fontScale(10), color: theme.textSecondary }]} txt={hint} />
+            <AppText weight="medium" testID={`${txt}-txt`}>
+              {txt}
+            </AppText>
+            <AppText
+              style={[{ fontSize: fontScale(10), color: theme.textSecondary }]}
+              testID={`${hint}-txt`}
+            >
+              {hint}
+            </AppText>
           </Stack>
         </Stack>
         {loading ? (

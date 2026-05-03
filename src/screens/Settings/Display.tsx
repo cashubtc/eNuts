@@ -1,16 +1,13 @@
 import RadioBtn from "@comps/RadioBtn";
 import Screen from "@comps/Screen";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import type { TDisplaySettingsPageProps } from "@model/nav";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, themeColors, useAppThemeTokens, type HighlightKey } from "@styles";
+import { AppText, globals, themeColors, useAppThemeTokens, type HighlightKey } from "@styles";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
-
 const themeModes = ["dark", "light", "auto"] as const;
-
 export default function DisplaySettings({ navigation }: TDisplaySettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const { updateMode, mode, highlight } = useThemeContext();
@@ -22,7 +19,9 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
       handlePress={() => navigation.goBack()}
     >
       <ScrollView alwaysBounceVertical={false}>
-        <Txt txt="Theme" bold styles={[styles.subHeader]} />
+        <AppText style={[styles.subHeader]} weight="medium" testID={"Theme-txt"}>
+          Theme
+        </AppText>
         <View style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
           {themeModes.map((themeMode, i) => (
             <RadioSelection
@@ -34,7 +33,9 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
             />
           ))}
         </View>
-        <Txt txt="Highlight" bold styles={[styles.subHeader]} />
+        <AppText style={[styles.subHeader]} weight="medium" testID={"Highlight-txt"}>
+          Highlight
+        </AppText>
         <View
           style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 80 }]}
         >
@@ -51,13 +52,11 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
     </Screen>
   );
 }
-
 interface IThemeSelectionProps {
   name: HighlightKey;
   selected: boolean;
   hasSeparator?: boolean;
 }
-
 function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) {
   const { t } = useTranslation([NS.common]);
   const { updateHighlight } = useThemeContext();
@@ -70,14 +69,12 @@ function ThemeSelection({ name, selected, hasSeparator }: IThemeSelectionProps) 
     />
   );
 }
-
 interface IRadioSelectionProps {
   label: string;
   selected: boolean;
   onPress: () => void;
   hasSeparator?: boolean;
 }
-
 function RadioSelection({ label, selected, onPress, hasSeparator }: IRadioSelectionProps) {
   return (
     <>
@@ -86,14 +83,13 @@ function RadioSelection({ label, selected, onPress, hasSeparator }: IRadioSelect
         style={[globals().wrapRow, styles.radioRow]}
         onPress={onPress}
       >
-        <Txt txt={label} />
+        <AppText testID={`${label}-txt`}>{label}</AppText>
         <RadioBtn selected={selected} />
       </TouchableOpacity>
       {hasSeparator && <Separator style={styles.radioSeparator} />}
     </>
   );
 }
-
 const styles = StyleSheet.create({
   radioRow: {
     paddingBottom: 15,

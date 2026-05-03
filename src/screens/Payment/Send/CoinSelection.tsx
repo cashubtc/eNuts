@@ -1,6 +1,5 @@
 import Separator from "@comps/Separator";
 import SwipeButton from "@comps/SwipeButton";
-import Txt from "@comps/Txt";
 import { _testmintUrl } from "@consts";
 import type { IProofSelection } from "@model";
 import type { TCoinSelectionPageProps } from "@model/nav";
@@ -14,7 +13,7 @@ import { useInitialURL } from "@src/context/Linking";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
-import { fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
 import { formatMintUrl, getSelectedAmount, isNum } from "@util";
 import { isLightningAddress } from "@util/lnurl";
 import { useEffect, useRef, useState } from "react";
@@ -22,7 +21,6 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { OverviewRow } from "@comps/OverviewRow";
-
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
   const {
     mint,
@@ -44,7 +42,6 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
   const { formatAmount } = useCurrencyContext();
   const { url, clearUrl } = useInitialURL();
   const trustMintRef = useRef<TrustMintBottomSheetRef>(null);
-
   const getPaymentType = () => {
     if (isZap) {
       return "zap";
@@ -57,7 +54,6 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
     }
     return "sendEcash";
   };
-
   const getBtnTxt = () => {
     if (isZap) {
       return "zapNow";
@@ -70,14 +66,12 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
     }
     return "createToken";
   };
-
   const getRecipient = () => {
     if (recipient) {
       return !isLightningAddress(recipient) ? truncateStr(recipient, 16) : recipient;
     }
     return t("n/a");
   };
-
   const submitPaymentReq = async () => {
     //TODO: Add proofs
     const proofs: IProofSelection[] = [];
@@ -96,7 +90,6 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
       recipient,
     });
   };
-
   return (
     <Screen
       screenName={t("paymentOverview", { ns: NS.mints })}
@@ -137,17 +130,24 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
             />
           )}
           <View>
-            <Txt txt={t("balanceAfterTX")} styles={[{ fontWeight: "500", marginBottom: 5 }]} />
-            <Txt
-              txt={
+            <AppText
+              style={[{ fontWeight: "500", marginBottom: 5 }]}
+              testID={`${t("balanceAfterTX")}-txt`}
+            >
+              {t("balanceAfterTX")}
+            </AppText>
+            <AppText
+              style={[{ color: theme.textSecondary }]}
+              testID={`${
                 estFee > 0
-                  ? `${formatAmount(balance - amount - estFee).formatted} ${t(
-                      "to",
-                    )} ${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
+                  ? `${formatAmount(balance - amount - estFee).formatted} ${t("to")} ${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
                   : `${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
-              }
-              styles={[{ color: theme.textSecondary }]}
-            />
+              }-txt`}
+            >
+              {estFee > 0
+                ? `${formatAmount(balance - amount - estFee).formatted} ${t("to")} ${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
+                : `${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`}
+            </AppText>
           </View>
           <Separator style={[{ marginTop: 20 }]} />
           {memo && memo.length > 0 && (
@@ -170,7 +170,6 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
     </Screen>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",

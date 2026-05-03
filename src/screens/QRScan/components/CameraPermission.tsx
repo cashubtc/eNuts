@@ -1,17 +1,14 @@
 import Button from "@comps/Button";
-import Txt from "@comps/Txt";
 import { NS } from "@src/i18n";
-import { verticalScale, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, useAppThemeTokens } from "@styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-
 interface ICameraPermissionProps {
   canAskAgain: boolean;
   onRequestPermission: () => void;
   onOpenSettings: () => void;
 }
-
 export default function CameraPermission({
   canAskAgain,
   onRequestPermission,
@@ -19,7 +16,6 @@ export default function CameraPermission({
 }: ICameraPermissionProps) {
   const theme = useAppThemeTokens();
   const { t } = useTranslation([NS.common]);
-
   return (
     <View style={styles.container}>
       <View
@@ -65,17 +61,21 @@ export default function CameraPermission({
           />
         </View>
       </View>
-      <Txt
-        txt={canAskAgain ? t("cameraAccessRequired") : t("cameraAccessDenied")}
-        bold
-        center
-        styles={[styles.title]}
-      />
-      <Txt
-        txt={canAskAgain ? t("cameraAccessRequiredHint") : t("cameraAccessDeniedHint")}
-        center
-        styles={[styles.description, { color: theme.textSecondary }]}
-      />
+      <AppText
+        style={[styles.title]}
+        weight="medium"
+        align="center"
+        testID={`${canAskAgain ? t("cameraAccessRequired") : t("cameraAccessDenied")}-txt`}
+      >
+        {canAskAgain ? t("cameraAccessRequired") : t("cameraAccessDenied")}
+      </AppText>
+      <AppText
+        style={[styles.description, { color: theme.textSecondary }]}
+        align="center"
+        testID={`${canAskAgain ? t("cameraAccessRequiredHint") : t("cameraAccessDeniedHint")}-txt`}
+      >
+        {canAskAgain ? t("cameraAccessRequiredHint") : t("cameraAccessDeniedHint")}
+      </AppText>
       <View style={styles.buttonContainer}>
         <Button
           txt={canAskAgain ? t("allowCameraAccess") : t("openSettings")}
@@ -85,7 +85,6 @@ export default function CameraPermission({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

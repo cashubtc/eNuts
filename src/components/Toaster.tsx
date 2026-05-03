@@ -1,11 +1,8 @@
 import { usePromptContext } from "@src/context/Prompt";
-import { fontScale, useAppThemeTokens } from "@src/styles";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import Txt from "./Txt";
-
 export default function Toaster() {
   const insets = useSafeAreaInsets();
   const { prompt, closePrompt } = usePromptContext();
@@ -29,13 +26,18 @@ export default function Toaster() {
           style={styles.txtWrap}
           testID={`${prompt.success ? "success" : "error"}-toaster`}
         >
-          <Txt center txt={prompt.msg} styles={[styles.txt, { color: theme.white }]} />
+          <AppText
+            style={[styles.txt, { color: theme.white }]}
+            align="center"
+            testID={`${prompt.msg}-txt`}
+          >
+            {prompt.msg}
+          </AppText>
         </TouchableOpacity>
       </Animated.View>
     )
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     position: "absolute",

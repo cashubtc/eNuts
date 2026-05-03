@@ -1,12 +1,9 @@
 import type { RootStackParamList } from "@model/nav";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { fontScale, Stack, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, Stack, useAppThemeTokens } from "@styles";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
-
 import { TxtButton } from "./Button";
-import Txt from "./Txt";
-
 interface IEmptyProps {
   txt: string;
   hint?: string;
@@ -18,7 +15,6 @@ interface IEmptyProps {
     | NativeStackNavigationProp<RootStackParamList, "nostrReceive", "MyStack">
     | NativeStackNavigationProp<RootStackParamList, "qr scan", "MyStack">;
 }
-
 export default function Empty({
   txt,
   hint,
@@ -44,11 +40,8 @@ export default function Empty({
         </>
       ) : (
         <>
-          <Txt
-            txt={txt}
-            bold
-            center
-            styles={[
+          <AppText
+            style={[
               {
                 fontSize: fontScale(18),
                 opacity: 0.8,
@@ -56,13 +49,20 @@ export default function Empty({
                 marginBottom: hasOk ? 10 : 0,
               },
             ]}
-          />
+            weight="medium"
+            align="center"
+            testID={`${txt}-txt`}
+          >
+            {txt}
+          </AppText>
           {hint && hint.length > 0 && (
-            <Txt
-              txt={hint}
-              center
-              styles={[{ color: theme.textSecondary, fontSize: fontScale(12) }]}
-            />
+            <AppText
+              style={[{ color: theme.textSecondary, fontSize: fontScale(12) }]}
+              align="center"
+              testID={`${hint}-txt`}
+            >
+              {hint}
+            </AppText>
           )}
         </>
       )}

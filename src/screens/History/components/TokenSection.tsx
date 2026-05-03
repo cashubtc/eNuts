@@ -1,41 +1,39 @@
-import { fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import Copy from "@comps/Copy";
-import Txt from "@comps/Txt";
 import Separator from "@comps/Separator";
 import { View, StyleSheet } from "react-native";
-
 const truncateStr = (str: string, maxLength: number) => {
   if (str.length <= maxLength) return str;
   return str.substring(0, maxLength) + "...";
 };
-
 type TokenSectionProps = {
   label: string;
   value: string;
 };
-
 export function TokenSection({ label, value }: TokenSectionProps) {
   const theme = useAppThemeTokens();
-
   return (
     <>
       <Separator style={styles.separator} />
       <View style={styles.tokenSection}>
         <View style={styles.tokenHeader}>
-          <Txt txt={label} styles={[styles.sectionTitle, { color: theme.text }]} />
+          <AppText style={[styles.sectionTitle, { color: theme.text }]} testID={`${label}-txt`}>
+            {label}
+          </AppText>
           <Copy txt={value} />
         </View>
         <View style={[styles.tokenContainer, { backgroundColor: theme.inputBackground }]}>
-          <Txt
-            txt={truncateStr(value, 100)}
-            styles={[styles.tokenValue, { color: theme.textSecondary }]}
-          />
+          <AppText
+            style={[styles.tokenValue, { color: theme.textSecondary }]}
+            testID={`${truncateStr(value, 100)}-txt`}
+          >
+            {truncateStr(value, 100)}
+          </AppText>
         </View>
       </View>
     </>
   );
 }
-
 const styles = StyleSheet.create({
   separator: {
     marginVertical: 10,

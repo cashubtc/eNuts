@@ -1,13 +1,11 @@
 import { ChevronRightIcon, ZapIcon } from "@comps/Icons";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
-import { Text, TouchableOpacity, View } from "react-native";
-import { globals, useAppThemeTokens } from "@styles";
+import { TouchableOpacity, View } from "react-native";
+import { AppText, globals, useAppThemeTokens } from "@styles";
 import type { NavigationProp } from "@react-navigation/native";
 import type { RootStackParamList } from "@model/nav";
-
 interface MintItemProps {
   mint: {
     mintUrl: string;
@@ -18,11 +16,15 @@ interface MintItemProps {
   isLast: boolean;
   color: any;
   highlight: string;
-  hidden: { balance: boolean };
+  hidden: {
+    balance: boolean;
+  };
   t: (key: string) => string;
-  formatAmount: (sats: number) => { formatted: string; symbol: string };
+  formatAmount: (sats: number) => {
+    formatted: string;
+    symbol: string;
+  };
 }
-
 const styles = {
   mintNameWrap: {
     flexDirection: "column" as const,
@@ -34,7 +36,6 @@ const styles = {
     marginTop: 10,
   },
 };
-
 export default function MintItem({
   mint,
   navigation,
@@ -47,7 +48,6 @@ export default function MintItem({
 }: MintItemProps) {
   const { formatted, symbol } = formatAmount(mint.balance);
   const theme = useAppThemeTokens();
-
   return (
     <View key={mint.mintUrl}>
       <TouchableOpacity
@@ -70,11 +70,13 @@ export default function MintItem({
               alignItems: "center",
             }}
           >
-            <Txt txt={mint.name || formatMintUrl(mint.mintUrl)} bold />
+            <AppText weight="medium" testID={`${mint.name || formatMintUrl(mint.mintUrl)}-txt`}>
+              {mint.name || formatMintUrl(mint.mintUrl)}
+            </AppText>
           </View>
           <View style={styles.mintBal}>
             {mint.balance > 0 && <ZapIcon color={theme.accent} />}
-            <Text
+            <AppText
               style={{
                 color: mint.balance > 0 ? theme.text : theme.textSecondary,
                 marginLeft: mint.balance > 0 ? 5 : 0,
@@ -86,7 +88,7 @@ export default function MintItem({
                 : mint.balance > 0
                   ? `${formatted} ${symbol}`
                   : t("emptyMint")}
-            </Text>
+            </AppText>
           </View>
         </View>
         <ChevronRightIcon color={theme.text} />

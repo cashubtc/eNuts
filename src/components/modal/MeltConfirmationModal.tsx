@@ -3,19 +3,16 @@ import Copy from "@comps/Copy";
 import ConfirmationModal, { type ConfirmationModalRef } from "@modal/ConfirmationModal";
 import OperationMintPanel, { type IOperationMintPanelRow } from "@modal/OperationMintPanel";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import type { MeltOperation } from "@cashu/coco-core";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { verticalScale, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, useAppThemeTokens } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-
 export type MeltConfirmationModalRef = ConfirmationModalRef;
-
 interface IMeltConfirmationModalProps {
   operation: MeltOperation;
   mint: KnownMintWithBalance | null;
@@ -24,9 +21,7 @@ interface IMeltConfirmationModalProps {
   onCancel: () => void;
   onBackToDashboard: () => void;
 }
-
 type TRowTone = "default" | "success" | "danger";
-
 interface IDetailRow {
   label: string;
   value: string;
@@ -34,7 +29,6 @@ interface IDetailRow {
   monospace?: boolean;
   tone?: TRowTone;
 }
-
 const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirmationModalProps>(
   ({ operation, mint, loading = false, onConfirm, onCancel, onBackToDashboard }, ref) => {
     const { t } = useTranslation([NS.common, NS.auth]);
@@ -42,7 +36,6 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
     const { hidden } = usePrivacyContext();
     const { formatAmount } = useCurrencyContext();
     const isPending = operation.state === "pending";
-
     const formatDisplayAmount = useCallback(
       (amount: number) => {
         const { formatted, symbol } = formatAmount(amount);
@@ -50,15 +43,12 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
       },
       [formatAmount],
     );
-
     const summaryRows = useMemo<IDetailRow[]>(() => {
       if (operation.state === "init") {
         return [];
       }
-
       const swapFee = operation.needsSwap ? operation.swap_fee : 0;
       const totalAmount = operation.amount + operation.fee_reserve + swapFee;
-
       return [
         {
           label: t("estimatedFees", { ns: NS.common }),
@@ -86,14 +76,11 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
           : []),
       ];
     }, [formatDisplayAmount, operation, t]);
-
     const detailRows = useMemo<IDetailRow[]>(() => {
       if (operation.state === "init") {
         return [];
       }
-
       const invoice = "invoice" in operation.methodData ? operation.methodData.invoice : "";
-
       return [
         {
           label: t("paymentType", { ns: NS.common }),
@@ -122,26 +109,21 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
           : []),
       ];
     }, [operation, t]);
-
     const balanceAfterTx = useMemo(() => {
       if (!mint || operation.state === "init") {
         return "";
       }
-
       if (hidden.balance) {
         return "****";
       }
-
       const swapFee = operation.needsSwap ? operation.swap_fee : 0;
       const totalAmount = operation.amount + operation.fee_reserve + swapFee;
       return formatDisplayAmount(mint.balance - totalAmount);
     }, [formatDisplayAmount, hidden.balance, mint, operation]);
-
     const mintRows = useMemo<IOperationMintPanelRow[]>(() => {
       if (!mint || !balanceAfterTx) {
         return [];
       }
-
       return [
         {
           label: t("balanceAfterTX", { ns: NS.common }),
@@ -150,15 +132,12 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
         },
       ];
     }, [balanceAfterTx, mint, t]);
-
     if (operation.state === "init") {
       return null;
     }
-
     const cancelText = isPending
       ? t("backToDashboard", { ns: NS.common })
       : t("cancel", { ns: NS.common });
-
     return (
       <ConfirmationModal
         ref={ref}
@@ -172,18 +151,29 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
         onCancel={isPending ? onBackToDashboard : onCancel}
       >
         <Card style={styles.summaryCard}>
-          <Txt
-            txt={t("amount", { ns: NS.common })}
-            center
-            styles={[styles.amountLabel, { color: theme.textSecondary }]}
-          />
-          <Txt txt={formatDisplayAmount(operation.amount)} center bold styles={[styles.amount]} />
+          <AppText
+            style={[styles.amountLabel, { color: theme.textSecondary }]}
+            align="center"
+            testID={`${t("amount", { ns: NS.common })}-txt`}
+          >
+            {t("amount", { ns: NS.common })}
+          </AppText>
+          <AppText
+            style={[styles.amount]}
+            weight="medium"
+            align="center"
+            testID={`${formatDisplayAmount(operation.amount)}-txt`}
+          >
+            {formatDisplayAmount(operation.amount)}
+          </AppText>
           {isPending ? (
-            <Txt
-              txt={t("paymentPending", { ns: NS.common }) + "."}
-              center
-              styles={[styles.pendingBadge, { color: theme.textSecondary }]}
-            />
+            <AppText
+              style={[styles.pendingBadge, { color: theme.textSecondary }]}
+              align="center"
+              testID={`${t("paymentPending", { ns: NS.common }) + "."}-txt`}
+            >
+              {t("paymentPending", { ns: NS.common }) + "."}
+            </AppText>
           ) : null}
           <View style={styles.rowsWrap}>
             {summaryRows.map((row, index) => (
@@ -199,10 +189,12 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
 
         {mint ? (
           <View style={styles.mintSection}>
-            <Txt
-              txt={t("mint", { ns: NS.common })}
-              styles={[styles.sectionLabel, { color: theme.textSecondary }]}
-            />
+            <AppText
+              style={[styles.sectionLabel, { color: theme.textSecondary }]}
+              testID={`${t("mint", { ns: NS.common })}-txt`}
+            >
+              {t("mint", { ns: NS.common })}
+            </AppText>
             <OperationMintPanel mint={mint} rows={mintRows} />
           </View>
         ) : null}
@@ -223,10 +215,8 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
     );
   },
 );
-
 function DetailRow({ row }: { row: IDetailRow }) {
   const theme = useAppThemeTokens();
-
   const valueColor = useMemo(() => {
     switch (row.tone) {
       case "success":
@@ -237,12 +227,16 @@ function DetailRow({ row }: { row: IDetailRow }) {
         return theme.text;
     }
   }, [theme.text, row.tone]);
-
   return (
     <View style={styles.detailRow}>
-      <Txt txt={row.label} styles={[styles.detailLabel, { color: theme.textSecondary }]} />
+      <AppText
+        style={[styles.detailLabel, { color: theme.textSecondary }]}
+        testID={`${row.label}-txt`}
+      >
+        {row.label}
+      </AppText>
       <View style={styles.detailValueWrap}>
-        <Text
+        <AppText
           numberOfLines={1}
           ellipsizeMode="middle"
           style={[
@@ -254,23 +248,19 @@ function DetailRow({ row }: { row: IDetailRow }) {
           ]}
         >
           {row.value}
-        </Text>
+        </AppText>
         {row.copyValue ? <Copy txt={row.copyValue} /> : null}
       </View>
     </View>
   );
 }
-
 function truncateMiddle(value: string, start = 14, end = 10) {
   if (value.length <= start + end + 3) {
     return value;
   }
-
   return `${value.slice(0, start)}...${value.slice(-end)}`;
 }
-
 MeltConfirmationModal.displayName = "MeltConfirmationModal";
-
 const styles = StyleSheet.create({
   summaryCard: {
     marginBottom: 12,
@@ -340,5 +330,4 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
 });
-
 export default MeltConfirmationModal;

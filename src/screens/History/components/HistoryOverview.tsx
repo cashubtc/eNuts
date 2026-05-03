@@ -1,8 +1,6 @@
-import { fontScale, useAppThemeTokens } from "@styles";
-import Txt from "@comps/Txt";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import { useCurrencyContext } from "@src/context/Currency";
 import { View, StyleSheet } from "react-native";
-
 type HistoryOverviewProps = {
   amount: number;
   amountPrefix: "+" | "-";
@@ -10,7 +8,6 @@ type HistoryOverviewProps = {
   typeLabel: string;
   description: string;
 };
-
 export function HistoryOverview({
   amount,
   amountPrefix,
@@ -20,19 +17,25 @@ export function HistoryOverview({
 }: HistoryOverviewProps) {
   const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
-
   const { formatted, symbol } = formatAmount(amount);
   const amountDisplay = `${amountPrefix}${formatted} ${symbol}`;
-
   return (
     <View style={styles.overview}>
-      <Txt txt={amountDisplay} styles={[styles.amount, { color: amountColor }]} />
-      <Txt txt={typeLabel} styles={[styles.type, { color: theme.textSecondary }]} />
-      <Txt txt={description} styles={[styles.description, { color: theme.textSecondary }]} />
+      <AppText style={[styles.amount, { color: amountColor }]} testID={`${amountDisplay}-txt`}>
+        {amountDisplay}
+      </AppText>
+      <AppText style={[styles.type, { color: theme.textSecondary }]} testID={`${typeLabel}-txt`}>
+        {typeLabel}
+      </AppText>
+      <AppText
+        style={[styles.description, { color: theme.textSecondary }]}
+        testID={`${description}-txt`}
+      >
+        {description}
+      </AppText>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   overview: {
     alignItems: "center",

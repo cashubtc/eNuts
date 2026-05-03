@@ -1,10 +1,8 @@
-import { verticalScale, fontScale } from "@styles";
+import { AppText, verticalScale, fontScale, Stack } from "@styles";
 import { CloseIcon } from "@comps/Icons";
-import Txt from "@comps/Txt";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import type { ReactNode, RefObject } from "react";
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
-
+import { TouchableOpacity, StyleSheet } from "react-native";
 interface IDashboardActionSheetProps {
   sheetRef: RefObject<TrueSheet | null>;
   title: string;
@@ -13,7 +11,6 @@ interface IDashboardActionSheetProps {
   closeIconColor: string;
   children: ReactNode;
 }
-
 export default function DashboardActionSheet({
   sheetRef,
   title,
@@ -30,9 +27,11 @@ export default function DashboardActionSheet({
       cornerRadius={26}
       grabberOptions={{ color: closeIconColor }}
     >
-      <View style={[styles.container, { backgroundColor }]}>
-        <View style={styles.header}>
-          <Txt txt={title} bold center styles={[styles.title]} />
+      <Stack style={[styles.container, { backgroundColor }]}>
+        <Stack style={styles.header}>
+          <AppText style={[styles.title]} weight="medium" align="center" testID={`${title}-txt`}>
+            {title}
+          </AppText>
           <TouchableOpacity
             activeOpacity={0.65}
             accessibilityRole="button"
@@ -44,14 +43,13 @@ export default function DashboardActionSheet({
           >
             <CloseIcon width={18} height={18} color={closeIconColor} />
           </TouchableOpacity>
-        </View>
+        </Stack>
 
         {children}
-      </View>
+      </Stack>
     </TrueSheet>
   );
 }
-
 interface IDashboardActionSheetOptionProps {
   icon: ReactNode;
   title: string;
@@ -61,7 +59,6 @@ interface IDashboardActionSheetOptionProps {
   onPress: () => void;
   testID: string;
 }
-
 export function DashboardActionSheetOption({
   icon,
   title,
@@ -79,15 +76,16 @@ export function DashboardActionSheetOption({
       testID={testID}
       accessibilityRole="button"
     >
-      <View style={styles.iconContainer}>{icon}</View>
-      <View style={styles.txtWrap}>
-        <Text style={[styles.actionText, { color: textColor }]}>{title}</Text>
-        <Text style={[styles.descriptionText, { color: descriptionColor }]}>{description}</Text>
-      </View>
+      <Stack style={styles.iconContainer}>{icon}</Stack>
+      <Stack style={styles.txtWrap}>
+        <AppText style={[styles.actionText, { color: textColor }]}>{title}</AppText>
+        <AppText style={[styles.descriptionText, { color: descriptionColor }]}>
+          {description}
+        </AppText>
+      </Stack>
     </TouchableOpacity>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,

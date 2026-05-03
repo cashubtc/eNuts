@@ -2,24 +2,21 @@ import Button from "@comps/Button";
 import Loading from "@comps/Loading";
 import Logo from "@comps/Logo";
 import Progress from "@comps/Progress";
-import Txt from "@comps/Txt";
 import type { IRecoveringPageProps, TBeforeRemoveEvent } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useManager } from "@src/context/Manager";
 import { NS } from "@src/i18n";
 import { appLogger } from "@src/logger";
 import { vib } from "@src/util";
-import { fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 // TODO
 // show internet connection status
 // show different quotes messages during the process
-
 export default function RecoveringScreen({ navigation, route }: IRecoveringPageProps) {
   const manager = useManager();
   const { t } = useTranslation([NS.common]);
@@ -28,7 +25,6 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
   const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { bip39seed, mintUrls } = route.params;
-
   useEffect(() => {
     const restore = async () => {
       try {
@@ -50,18 +46,15 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
     restore();
   }, []);
   const theme = useAppThemeTokens();
-
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   const progress = useMemo(() => {
     if (!mintUrls?.length) return 0;
     return Math.min(1, current / mintUrls.length);
   }, [current, mintUrls]);
-
   if (isDone) {
     return (
       <View style={[styles.containerSuccess, { backgroundColor: theme.background }]}>
@@ -75,7 +68,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
         </View>
         <Logo size={230} style={styles.img} success />
         <View style={{ width: "100%" }}>
-          <Text style={[styles.successTxt, { color: theme.text }]}>Wallet restored!</Text>
+          <AppText style={[styles.successTxt, { color: theme.text }]}>Wallet restored!</AppText>
           <View style={styles.successAnim}>
             <LottieView
               source={require("../../../assets/lottie/success.json")}
@@ -91,29 +84,39 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
       </View>
     );
   }
-
   return (
     <View style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
       <Loading size={35} />
-      <Txt styles={[styles.descText]} txt={t("recoveringWallet")} />
+      <AppText style={[styles.descText]} testID={`${t("recoveringWallet")}-txt`}>
+        {t("recoveringWallet")}
+      </AppText>
       <View style={{ width: "100%", paddingHorizontal: 20 }}>
         <Progress progress={progress} />
-        <Txt
-          center
-          styles={[styles.hint, { color: theme.textSecondary }]}
-          txt={`${t("restored")} ${current}/${mintUrls.length}`}
-        />
-        <Txt
-          center
-          styles={[styles.hint, { color: theme.textSecondary, marginTop: 6 }]}
-          txt={t("dontClose")}
-        />
+        <AppText
+          style={[styles.hint, { color: theme.textSecondary }]}
+          align="center"
+          testID={`${`${t("restored")} ${current}/${mintUrls.length}`}-txt`}
+        >{`${t("restored")} ${current}/${mintUrls.length}`}</AppText>
+        <AppText
+          style={[styles.hint, { color: theme.textSecondary, marginTop: 6 }]}
+          align="center"
+          testID={`${t("dontClose")}-txt`}
+        >
+          {t("dontClose")}
+        </AppText>
       </View>
-      {error && <Txt center styles={[styles.errorTxt, { color: theme.error }]} txt={error} />}
+      {error && (
+        <AppText
+          style={[styles.errorTxt, { color: theme.error }]}
+          align="center"
+          testID={`${error}-txt`}
+        >
+          {error}
+        </AppText>
+      )}
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     paddingTop: 0,

@@ -1,8 +1,6 @@
 import Button from "@comps/Button";
 import Loading from "@comps/Loading";
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
-import TxtInput from "@comps/TxtInput";
 import { CopyIcon, KeyIcon, PlusIcon, RefreshIcon, TrashbinIcon } from "@comps/Icons";
 import type { TNpcSettingsPageProps } from "@src/nav/navTypes";
 import { useBalanceContext } from "@src/context/Balance";
@@ -11,14 +9,13 @@ import { useNpcContext, type INpcAccount, type TNpcUsernameAccountRequest } from
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import { isErr } from "@util";
-import { verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, globals, InputFrame, useAppThemeTokens } from "@styles";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import * as Clipboard from "expo-clipboard";
 import { useRef, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 interface INpcAccountCardProps {
   account: INpcAccount;
   busy: boolean;
@@ -27,7 +24,6 @@ interface INpcAccountCardProps {
   onSetUsername: (account: INpcAccount) => void;
   onSync: (accountId: string) => void;
 }
-
 function NpcAccountCard({
   account,
   busy,
@@ -38,7 +34,6 @@ function NpcAccountCard({
 }: INpcAccountCardProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
-
   const accountSourceLabel =
     account.source === "privateKey"
       ? t("npcImportedKey", { defaultValue: "Imported key" })
@@ -48,25 +43,30 @@ function NpcAccountCard({
     : account.isRunning
       ? t("npcActive", { defaultValue: "Active" })
       : t("npcPaused", { defaultValue: "Paused" });
-
   return (
     <View style={[globals().wrapContainer, { backgroundColor: theme.drawer }, styles.accountCard]}>
       <View style={styles.accountHeader}>
         <View style={styles.accountTitleWrap}>
-          <Txt txt={account.label} bold styles={[styles.accountTitle]} />
+          <AppText style={[styles.accountTitle]} weight="medium" testID={`${account.label}-txt`}>
+            {account.label}
+          </AppText>
           <View style={styles.badgeRow}>
             <View style={[styles.sourceBadge, { borderColor: theme.border }]}>
-              <Txt
-                txt={accountSourceLabel}
-                styles={[styles.sourceBadgeText, { color: theme.textSecondary }]}
-              />
+              <AppText
+                style={[styles.sourceBadgeText, { color: theme.textSecondary }]}
+                testID={`${accountSourceLabel}-txt`}
+              >
+                {accountSourceLabel}
+              </AppText>
             </View>
             {account.isDefault && (
               <View style={[styles.badge, { backgroundColor: theme.accent }]}>
-                <Txt
-                  txt={t("npcDefaultAccount", { defaultValue: "Default" })}
-                  styles={[styles.badgeText, { color: theme.background }]}
-                />
+                <AppText
+                  style={[styles.badgeText, { color: theme.background }]}
+                  testID={`${t("npcDefaultAccount", { defaultValue: "Default" })}-txt`}
+                >
+                  {t("npcDefaultAccount", { defaultValue: "Default" })}
+                </AppText>
               </View>
             )}
           </View>
@@ -88,7 +88,12 @@ function NpcAccountCard({
             { backgroundColor: account.isRunning ? theme.accent : theme.textSecondary },
           ]}
         />
-        <Txt txt={statusLabel} styles={[styles.statusText, { color: theme.textSecondary }]} />
+        <AppText
+          style={[styles.statusText, { color: theme.textSecondary }]}
+          testID={`${statusLabel}-txt`}
+        >
+          {statusLabel}
+        </AppText>
       </View>
 
       <TouchableOpacity
@@ -100,27 +105,41 @@ function NpcAccountCard({
         ]}
       >
         <View style={styles.addressHeader}>
-          <Txt
-            txt={t("npcReceiveAddress", { defaultValue: "Receive address" })}
-            styles={[styles.addressLabel, { color: theme.textSecondary }]}
-          />
+          <AppText
+            style={[styles.addressLabel, { color: theme.textSecondary }]}
+            testID={`${t("npcReceiveAddress", { defaultValue: "Receive address" })}-txt`}
+          >
+            {t("npcReceiveAddress", { defaultValue: "Receive address" })}
+          </AppText>
           <View style={styles.copyHint}>
-            <Txt
-              txt={t("copy", { defaultValue: "Copy" })}
-              styles={[styles.copyText, { color: theme.accent }]}
-            />
+            <AppText
+              style={[styles.copyText, { color: theme.accent }]}
+              testID={`${t("copy", { defaultValue: "Copy" })}-txt`}
+            >
+              {t("copy", { defaultValue: "Copy" })}
+            </AppText>
             <CopyIcon width={16} color={theme.accent} />
           </View>
         </View>
-        <Txt txt={account.address} bold styles={[styles.addressText, { color: theme.accent }]} />
-        <Txt
-          txt={
+        <AppText
+          style={[styles.addressText, { color: theme.accent }]}
+          weight="medium"
+          testID={`${account.address}-txt`}
+        >
+          {account.address}
+        </AppText>
+        <AppText
+          style={[styles.mutedText, { color: theme.textSecondary }]}
+          testID={`${
             account.username
               ? account.npub
               : t("npcNpubFallback", { defaultValue: "Using your npub until a username is saved" })
-          }
-          styles={[styles.mutedText, { color: theme.textSecondary }]}
-        />
+          }-txt`}
+        >
+          {account.username
+            ? account.npub
+            : t("npcNpubFallback", { defaultValue: "Using your npub until a username is saved" })}
+        </AppText>
       </TouchableOpacity>
 
       <View style={styles.actions}>
@@ -141,17 +160,18 @@ function NpcAccountCard({
             style={[styles.removeButton, { borderColor: theme.error, opacity: busy ? 0.5 : 1 }]}
           >
             <TrashbinIcon width={16} color={theme.error} />
-            <Txt
-              txt={t("remove", { defaultValue: "Remove" })}
-              styles={[styles.removeText, { color: theme.error }]}
-            />
+            <AppText
+              style={[styles.removeText, { color: theme.error }]}
+              testID={`${t("remove", { defaultValue: "Remove" })}-txt`}
+            >
+              {t("remove", { defaultValue: "Remove" })}
+            </AppText>
           </TouchableOpacity>
         )}
       </View>
     </View>
   );
 }
-
 export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
@@ -178,13 +198,11 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
     syncAccount,
     syncAll,
   } = useNpcContext();
-
   const balance = useMemo(
     () => formatAmount(balances.total.total),
     [balances.total.total, formatAmount],
   );
   const accountCount = accounts.length.toString();
-
   const runAction = (action: () => Promise<void>, success?: string) => {
     void action()
       .then(() => {
@@ -198,7 +216,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         });
       });
   };
-
   const handleCopy = (value: string) => {
     void Clipboard.setStringAsync(value).then(() =>
       openPromptAutoClose({
@@ -206,12 +223,10 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       }),
     );
   };
-
   const handleOpenAddAccountSheet = () => {
     setPrivateKeyInput("");
     void addAccountSheetRef.current?.present();
   };
-
   const handleDeriveAccount = () => {
     void addAccountSheetRef.current?.dismiss();
     runAction(
@@ -221,7 +236,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       }),
     );
   };
-
   const handleImportPrivateKey = () => {
     const input = privateKeyInput.trim();
     if (!input) {
@@ -232,7 +246,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       });
       return;
     }
-
     setPrivateKeyInput("");
     void addAccountSheetRef.current?.dismiss();
     runAction(
@@ -242,25 +255,21 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       }),
     );
   };
-
   const handleOpenUsernameSheet = (account: INpcAccount) => {
     setSelectedUsernameAccount(account);
     setUsernameInput(account.username || "");
     setUsernameRequest(null);
     void usernameSheetRef.current?.present();
   };
-
   const handleCloseUsernameSheet = () => {
     void usernameSheetRef.current?.dismiss();
   };
-
   const handleRequestUsername = () => {
     const account = selectedUsernameAccount;
     const username = usernameInput.trim();
     if (!account) {
       return;
     }
-
     setUsernameBusy(true);
     void requestUsername(account.id, username)
       .then((request) => {
@@ -271,7 +280,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           });
           return;
         }
-
         setUsernameRequest(request);
       })
       .catch((err: unknown) => {
@@ -283,12 +291,10 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         setUsernameBusy(false);
       });
   };
-
   const handleConfirmUsername = () => {
     if (!usernameRequest) {
       return;
     }
-
     setUsernameBusy(true);
     void confirmUsername(usernameRequest)
       .then(() => {
@@ -306,7 +312,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         setUsernameBusy(false);
       });
   };
-
   return (
     <Screen
       screenName={t("npcSettingsTitle", {
@@ -346,17 +351,23 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           >
             <View style={styles.summaryHeader}>
               <View style={styles.summaryText}>
-                <Txt
-                  txt={t("npcReceiveTitle", { defaultValue: "NPC Lightning addresses" })}
-                  bold
-                  styles={[styles.summaryTitle]}
-                />
-                <Txt
-                  txt={t("npcReceiveHint", {
+                <AppText
+                  style={[styles.summaryTitle]}
+                  weight="medium"
+                  testID={`${t("npcReceiveTitle", { defaultValue: "NPC Lightning addresses" })}-txt`}
+                >
+                  {t("npcReceiveTitle", { defaultValue: "NPC Lightning addresses" })}
+                </AppText>
+                <AppText
+                  style={[styles.mutedText, { color: theme.textSecondary }]}
+                  testID={`${t("npcReceiveHint", {
+                    defaultValue: "Receive Lightning payments into your local Cashu wallet.",
+                  })}-txt`}
+                >
+                  {t("npcReceiveHint", {
                     defaultValue: "Receive Lightning payments into your local Cashu wallet.",
                   })}
-                  styles={[styles.mutedText, { color: theme.textSecondary }]}
-                />
+                </AppText>
               </View>
             </View>
             <View
@@ -366,23 +377,29 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
               ]}
             >
               <View style={styles.summaryStat}>
-                <Txt
-                  txt={t("npcAccountsLabel", { defaultValue: "Accounts" })}
-                  styles={[styles.statLabel, { color: theme.textSecondary }]}
-                />
-                <Txt txt={accountCount} bold styles={[styles.statValue]} />
+                <AppText
+                  style={[styles.statLabel, { color: theme.textSecondary }]}
+                  testID={`${t("npcAccountsLabel", { defaultValue: "Accounts" })}-txt`}
+                >
+                  {t("npcAccountsLabel", { defaultValue: "Accounts" })}
+                </AppText>
+                <AppText style={[styles.statValue]} weight="medium" testID={`${accountCount}-txt`}>
+                  {accountCount}
+                </AppText>
               </View>
               <View style={[styles.statDivider, { backgroundColor: theme.darkBorder }]} />
               <View style={styles.summaryStat}>
-                <Txt
-                  txt={t("npcLocalBalance", { defaultValue: "Local balance" })}
-                  styles={[styles.statLabel, { color: theme.textSecondary }]}
-                />
-                <Txt
-                  txt={`${balance.formatted} ${balance.symbol}`}
-                  bold
-                  styles={[styles.statValue, { color: theme.accent }]}
-                />
+                <AppText
+                  style={[styles.statLabel, { color: theme.textSecondary }]}
+                  testID={`${t("npcLocalBalance", { defaultValue: "Local balance" })}-txt`}
+                >
+                  {t("npcLocalBalance", { defaultValue: "Local balance" })}
+                </AppText>
+                <AppText
+                  style={[styles.statValue, { color: theme.accent }]}
+                  weight="medium"
+                  testID={`${`${balance.formatted} ${balance.symbol}`}-txt`}
+                >{`${balance.formatted} ${balance.symbol}`}</AppText>
               </View>
             </View>
             <View style={styles.summaryActions}>
@@ -446,38 +463,54 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
               <KeyIcon width={22} color={theme.background} />
             </View>
             <View style={styles.sheetTitleBlock}>
-              <Txt
-                txt={t("npcAddAccountTitle", { defaultValue: "Add NPC account" })}
-                bold
-                styles={[styles.sheetTitle]}
-              />
-              <Txt
-                txt={t("npcAddAccountHint", {
+              <AppText
+                style={[styles.sheetTitle]}
+                weight="medium"
+                testID={`${t("npcAddAccountTitle", { defaultValue: "Add NPC account" })}-txt`}
+              >
+                {t("npcAddAccountTitle", { defaultValue: "Add NPC account" })}
+              </AppText>
+              <AppText
+                style={[styles.mutedText, { color: theme.textSecondary }]}
+                testID={`${t("npcAddAccountHint", {
+                  defaultValue: "Import an existing Nostr key or derive a new key from your seed.",
+                })}-txt`}
+              >
+                {t("npcAddAccountHint", {
                   defaultValue: "Import an existing Nostr key or derive a new key from your seed.",
                 })}
-                styles={[styles.mutedText, { color: theme.textSecondary }]}
-              />
+              </AppText>
             </View>
           </View>
 
           <View style={styles.fieldBlock}>
-            <Txt
-              txt={t("npcPrivateKeyLabel", { defaultValue: "Private key" })}
-              styles={[styles.label, { color: theme.textSecondary }]}
-            />
-            <TxtInput
+            <AppText
+              style={[styles.label, { color: theme.textSecondary }]}
+              testID={`${t("npcPrivateKeyLabel", { defaultValue: "Private key" })}-txt`}
+            >
+              {t("npcPrivateKeyLabel", { defaultValue: "Private key" })}
+            </AppText>
+            <InputFrame
               placeholder={t("npcPrivateKeyPlaceholder", { defaultValue: "nsec or hex" })}
+              placeholderTextColor={theme.placeholder as never}
+              selectionColor={theme.accent}
+              cursorColor={theme.accent}
               value={privateKeyInput}
               autoCapitalize="none"
               autoCorrect={false}
               onChangeText={setPrivateKeyInput}
+              testID={`${t("npcPrivateKeyPlaceholder", { defaultValue: "nsec or hex" })}-input`}
             />
-            <Txt
-              txt={t("npcPrivateKeyHint", {
+            <AppText
+              style={[styles.mutedText, { color: theme.textSecondary }]}
+              testID={`${t("npcPrivateKeyHint", {
+                defaultValue: "Imported keys are stored in secure storage on this device.",
+              })}-txt`}
+            >
+              {t("npcPrivateKeyHint", {
                 defaultValue: "Imported keys are stored in secure storage on this device.",
               })}
-              styles={[styles.mutedText, { color: theme.textSecondary }]}
-            />
+            </AppText>
           </View>
 
           <View style={styles.sheetActions}>
@@ -526,15 +559,19 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
               <KeyIcon width={22} color={theme.background} />
             </View>
             <View style={styles.sheetTitleBlock}>
-              <Txt
-                txt={t("npcSetUsername", { defaultValue: "Set Username" })}
-                bold
-                styles={[styles.sheetTitle]}
-              />
-              <Txt
-                txt={selectedUsernameAccount?.address || ""}
-                styles={[styles.mutedText, { color: theme.textSecondary }]}
-              />
+              <AppText
+                style={[styles.sheetTitle]}
+                weight="medium"
+                testID={`${t("npcSetUsername", { defaultValue: "Set Username" })}-txt`}
+              >
+                {t("npcSetUsername", { defaultValue: "Set Username" })}
+              </AppText>
+              <AppText
+                style={[styles.mutedText, { color: theme.textSecondary }]}
+                testID={`${selectedUsernameAccount?.address || ""}-txt`}
+              >
+                {selectedUsernameAccount?.address || ""}
+              </AppText>
             </View>
           </View>
 
@@ -546,21 +583,28 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                   { backgroundColor: theme.inputBackground, borderColor: theme.darkBorder },
                 ]}
               >
-                <Txt
-                  txt={usernameRequest.username}
-                  bold
-                  center
-                  styles={[styles.usernamePreviewText, { color: theme.accent }]}
-                />
+                <AppText
+                  style={[styles.usernamePreviewText, { color: theme.accent }]}
+                  weight="medium"
+                  align="center"
+                  testID={`${usernameRequest.username}-txt`}
+                >
+                  {usernameRequest.username}
+                </AppText>
               </View>
-              <Txt
-                txt={t("npcUsernameFeePrompt", {
+              <AppText
+                style={[styles.usernamePrompt, { color: theme.textSecondary }]}
+                align="center"
+                testID={`${t("npcUsernameFeePrompt", {
+                  defaultValue: "Do you want to set this username for a fee of {{amount}} sats?",
+                  amount: usernameRequest.amount.toLocaleString(),
+                })}-txt`}
+              >
+                {t("npcUsernameFeePrompt", {
                   defaultValue: "Do you want to set this username for a fee of {{amount}} sats?",
                   amount: usernameRequest.amount.toLocaleString(),
                 })}
-                center
-                styles={[styles.usernamePrompt, { color: theme.textSecondary }]}
-              />
+              </AppText>
               <View style={styles.sheetActions}>
                 <Button
                   txt={t("confirm", { defaultValue: "Confirm" })}
@@ -581,16 +625,22 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           ) : (
             <View>
               <View style={styles.fieldBlock}>
-                <Txt
-                  txt={t("npcUsernameLabel", { defaultValue: "Custom username" })}
-                  styles={[styles.label, { color: theme.textSecondary }]}
-                />
-                <TxtInput
+                <AppText
+                  style={[styles.label, { color: theme.textSecondary }]}
+                  testID={`${t("npcUsernameLabel", { defaultValue: "Custom username" })}-txt`}
+                >
+                  {t("npcUsernameLabel", { defaultValue: "Custom username" })}
+                </AppText>
+                <InputFrame
                   placeholder={t("npcUsernamePlaceholder", { defaultValue: "optional username" })}
+                  placeholderTextColor={theme.placeholder as never}
+                  selectionColor={theme.accent}
+                  cursorColor={theme.accent}
                   value={usernameInput}
                   autoCapitalize="none"
                   autoCorrect={false}
                   onChangeText={setUsernameInput}
+                  testID={`${t("npcUsernamePlaceholder", { defaultValue: "optional username" })}-input`}
                 />
               </View>
               <View style={styles.sheetActions}>
@@ -616,7 +666,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
     </Screen>
   );
 }
-
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,

@@ -1,16 +1,13 @@
 import Button from "@comps/Button";
-import Txt from "@comps/Txt";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, type ReactNode } from "react";
-import { ScrollView, Text, useWindowDimensions, View, StyleSheet } from "react-native";
+import { ScrollView, useWindowDimensions, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 export type ConfirmationModalRef = {
   present: () => void;
   close: (options?: { notifyCancel?: boolean }) => void;
 };
-
 interface IConfirmationModalProps {
   title: string;
   subtitle?: string;
@@ -22,7 +19,6 @@ interface IConfirmationModalProps {
   onCancel: () => void;
   children: ReactNode;
 }
-
 const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalProps>(
   (
     {
@@ -44,32 +40,25 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
     const sheetRef = useRef<TrueSheet>(null);
     const notifyCancelOnDismissRef = useRef(true);
     const maxDynamicContentSize = Math.floor(height * 0.9);
-
     const present = useCallback(() => {
       notifyCancelOnDismissRef.current = true;
       void sheetRef.current?.present();
     }, []);
-
     const close = useCallback((options?: { notifyCancel?: boolean }) => {
       notifyCancelOnDismissRef.current = options?.notifyCancel ?? false;
       void sheetRef.current?.dismiss();
     }, []);
-
     useImperativeHandle(ref, () => ({ present, close }), [present, close]);
-
     const handleCancel = useCallback(() => {
       close({ notifyCancel: true });
     }, [close]);
-
     const handleDismiss = useCallback(() => {
       const shouldNotifyCancel = notifyCancelOnDismissRef.current;
       notifyCancelOnDismissRef.current = true;
-
       if (shouldNotifyCancel) {
         onCancel();
       }
     }, [onCancel]);
-
     return (
       <TrueSheet
         ref={sheetRef}
@@ -89,15 +78,17 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.headerWrap}>
-            <Text style={[globals().modalHeader, { color: theme.text }, styles.headerTitle]}>
+            <AppText style={[globals().modalHeader, { color: theme.text }, styles.headerTitle]}>
               {title}
-            </Text>
+            </AppText>
             {subtitle ? (
-              <Txt
-                txt={subtitle}
-                center
-                styles={[styles.subtitle, { color: theme.textSecondary }]}
-              />
+              <AppText
+                style={[styles.subtitle, { color: theme.textSecondary }]}
+                align="center"
+                testID={`${subtitle}-txt`}
+              >
+                {subtitle}
+              </AppText>
             ) : null}
           </View>
 
@@ -117,9 +108,7 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
     );
   },
 );
-
 ConfirmationModal.displayName = "ConfirmationModal";
-
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
@@ -144,5 +133,4 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
 });
-
 export default ConfirmationModal;

@@ -1,32 +1,25 @@
 import { MintBoardIcon } from "@comps/Icons";
-import Txt from "@comps/Txt";
 import { Image } from "expo-image";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
-import { fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-
 type TOperationMintPanelRowTone = "default" | "success" | "danger";
-
 export interface IOperationMintPanelRow {
   label: string;
   value: string;
   tone?: TOperationMintPanelRowTone;
 }
-
 interface IOperationMintPanelProps {
   mint: KnownMintWithBalance;
   rows: IOperationMintPanelRow[];
 }
-
 export default function OperationMintPanel({ mint, rows }: IOperationMintPanelProps) {
   const theme = useAppThemeTokens();
-
   const mintLabel = useMemo(() => {
     return mint.mintInfo.name || mint.name || formatMintUrl(mint.mintUrl);
   }, [mint]);
-
   return (
     <View
       style={[
@@ -70,11 +63,15 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
         )}
 
         <View style={styles.mintInfo}>
-          <Txt txt={mintLabel} bold styles={[styles.mintName]} />
-          <Txt
-            txt={formatMintUrl(mint.mintUrl)}
-            styles={[styles.mintUrl, { color: theme.textSecondary }]}
-          />
+          <AppText style={[styles.mintName]} weight="medium" testID={`${mintLabel}-txt`}>
+            {mintLabel}
+          </AppText>
+          <AppText
+            style={[styles.mintUrl, { color: theme.textSecondary }]}
+            testID={`${formatMintUrl(mint.mintUrl)}-txt`}
+          >
+            {formatMintUrl(mint.mintUrl)}
+          </AppText>
         </View>
       </View>
 
@@ -93,10 +90,8 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
     </View>
   );
 }
-
 function MetaRow({ row }: { row: IOperationMintPanelRow }) {
   const theme = useAppThemeTokens();
-
   const valueColor = useMemo(() => {
     switch (row.tone) {
       case "success":
@@ -107,15 +102,24 @@ function MetaRow({ row }: { row: IOperationMintPanelRow }) {
         return theme.text;
     }
   }, [theme.text, row.tone]);
-
   return (
     <View style={styles.metaRow}>
-      <Txt txt={row.label} styles={[styles.balanceLabel, { color: theme.textSecondary }]} />
-      <Txt txt={row.value} bold styles={[styles.balanceValue, { color: valueColor }]} />
+      <AppText
+        style={[styles.balanceLabel, { color: theme.textSecondary }]}
+        testID={`${row.label}-txt`}
+      >
+        {row.label}
+      </AppText>
+      <AppText
+        style={[styles.balanceValue, { color: valueColor }]}
+        weight="medium"
+        testID={`${row.value}-txt`}
+      >
+        {row.value}
+      </AppText>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   panel: {
     borderRadius: 18,

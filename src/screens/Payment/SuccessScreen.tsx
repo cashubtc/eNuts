@@ -1,7 +1,6 @@
-import { fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
-import Txt from "@comps/Txt";
 import Screen from "@comps/Screen";
 import { isIOS } from "@consts";
 import type {
@@ -20,17 +19,14 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper Functions
 // ─────────────────────────────────────────────────────────────────────────────
-
 function hasPaymentDetails(
   config: SuccessConfig,
 ): config is MeltSuccessConfig | AutoSwapSuccessConfig {
   return config.type === "melt" || config.type === "autoSwap";
 }
-
 function hasSimpleAmount(config: SuccessConfig): boolean {
   return (
     config.type === "receive" ||
@@ -40,30 +36,29 @@ function hasSimpleAmount(config: SuccessConfig): boolean {
     config.type === "zap"
   );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Components
 // ─────────────────────────────────────────────────────────────────────────────
-
 function DetailsRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.detailsRow}>
-      <Txt txt={label} styles={[styles.detailsTxt]} />
-      <Txt txt={value} styles={[styles.detailsTxt]} />
+      <AppText style={[styles.detailsTxt]} testID={`${label}-txt`}>
+        {label}
+      </AppText>
+      <AppText style={[styles.detailsTxt]} testID={`${value}-txt`}>
+        {value}
+      </AppText>
     </View>
   );
 }
-
 interface PaymentDetailsProps {
   config: MeltSuccessConfig | AutoSwapSuccessConfig;
   formatAmount: ReturnType<typeof useCurrencyContext>["formatAmount"];
 }
-
 function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
   const { t } = useTranslation([NS.common]);
   const { amount, fee, change } = config;
   const isSwap = config.type === "autoSwap";
-
   return (
     <View style={styles.detailsWrap}>
       <DetailsRow
@@ -87,18 +82,15 @@ function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
     </View>
   );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Main Screen Component
 // ─────────────────────────────────────────────────────────────────────────────
-
 export default function SuccessScreen({ navigation, route }: TSuccessScreenProps) {
   const config = route.params;
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
-
   const getSuccessTitle = (cfg: SuccessConfig): string => {
     switch (cfg.type) {
       case "melt":
@@ -120,21 +112,17 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
         });
     }
   };
-
   const title = getSuccessTitle(config);
-
   // Vibrate on mount
   useEffect(() => {
     vib(400);
   }, []);
-
   // Prevent back navigation
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   return (
     <Screen>
       {/* Confetti Animation */}
@@ -150,35 +138,50 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
       {/* Content */}
       <View style={styles.content}>
         {/* Title */}
-        <Txt txt={title} bold center styles={[styles.title]} />
+        <AppText style={[styles.title]} weight="medium" align="center" testID={`${title}-txt`}>
+          {title}
+        </AppText>
 
         {/* Memo */}
         {config.memo && (
-          <Txt
-            txt={config.memo}
-            center
-            styles={[styles.subtitle, { color: theme.textSecondary }]}
-          />
+          <AppText
+            style={[styles.subtitle, { color: theme.textSecondary }]}
+            align="center"
+            testID={`${config.memo}-txt`}
+          >
+            {config.memo}
+          </AppText>
         )}
 
         {/* Mint */}
         {config.mint && config.mint.length > 0 && (
-          <Txt
-            txt={config.mint}
-            center
-            styles={[styles.subtitle, { color: theme.textSecondary }]}
-          />
+          <AppText
+            style={[styles.subtitle, { color: theme.textSecondary }]}
+            align="center"
+            testID={`${config.mint}-txt`}
+          >
+            {config.mint}
+          </AppText>
         )}
 
         {/* Amount Display (for simple success types) */}
         {hasSimpleAmount(config) && (
           <View style={styles.amountWrap}>
-            <Txt txt={formatAmount(config.amount).formatted} bold center styles={[styles.amount]} />
-            <Txt
-              txt={formatAmount(config.amount).symbol}
-              center
-              styles={[styles.amountSymbol, { color: theme.textSecondary }]}
-            />
+            <AppText
+              style={[styles.amount]}
+              weight="medium"
+              align="center"
+              testID={`${formatAmount(config.amount).formatted}-txt`}
+            >
+              {formatAmount(config.amount).formatted}
+            </AppText>
+            <AppText
+              style={[styles.amountSymbol, { color: theme.textSecondary }]}
+              align="center"
+              testID={`${formatAmount(config.amount).symbol}-txt`}
+            >
+              {formatAmount(config.amount).symbol}
+            </AppText>
           </View>
         )}
 
@@ -195,11 +198,9 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
     </Screen>
   );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Styles
 // ─────────────────────────────────────────────────────────────────────────────
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

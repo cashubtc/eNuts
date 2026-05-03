@@ -14,7 +14,6 @@ import {
 } from "@comps/Icons";
 import type { TSettingsPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import { dropAllData } from "@src/storage/dev";
@@ -23,21 +22,18 @@ import { reportIssueUrl } from "@src/consts/urls";
 import { isErr, openUrl } from "@util";
 import { secureStore, store } from "@store";
 import { SECURESTORE_KEY, STORE_KEYS } from "@store/consts";
-import { globals, useAppThemeTokens } from "@styles";
+import { AppText, globals, useAppThemeTokens } from "@styles";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import ConfirmBottomSheet, { ConfirmBottomSheetRef } from "@comps/modal/ConfirmBottomSheet";
-
 import MenuItem from "./MenuItem";
 import Loading from "@comps/Loading";
-
 export default function Settings({ navigation }: TSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
   const theme = useAppThemeTokens();
   const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
-
   const handleReset = async () => {
     try {
       await dropAllData();
@@ -45,7 +41,6 @@ export default function Settings({ navigation }: TSettingsPageProps) {
       /* ignore */
     }
   };
-
   return (
     <Screen
       screenName={t("settings", { ns: NS.topNav })}
@@ -150,7 +145,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
           <MenuItem
             header="DEV"
             txt={t("factoryReset")}
-            icon={<Text>💥💥💥</Text>}
+            icon={<AppText>💥💥💥</AppText>}
             onPress={() =>
               confirmSheetRef.current?.open({
                 header: t("resetQ"),
@@ -164,7 +159,9 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             }
           />
         </View>
-        <Txt txt={appVersion} bold center />
+        <AppText weight="medium" align="center" testID={`${appVersion}-txt`}>
+          {appVersion}
+        </AppText>
       </ScrollView>
       <ConfirmBottomSheet ref={confirmSheetRef} />
     </Screen>

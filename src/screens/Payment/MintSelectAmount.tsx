@@ -3,11 +3,10 @@ import Button from "@comps/Button";
 import { ChevronRightIcon } from "@comps/Icons";
 import MintHeaderSelector from "@comps/MintHeaderSelector";
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
 import { useKnownMints } from "@src/context/KnownMints";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { useAppThemeTokens } from "@styles";
+import { AppText, useAppThemeTokens } from "@styles";
 import { vib } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
@@ -16,7 +15,6 @@ import { Keyboard, TextInput, View, StyleSheet } from "react-native";
 import { useManager } from "@src/context/Manager";
 import type { MintSelectAmountProps } from "@src/nav/navTypes";
 import useLoading from "@comps/hooks/Loading";
-
 export default function MintSelectAmountScreen({ navigation }: MintSelectAmountProps) {
   const { t } = useTranslation([NS.wallet, NS.common]);
   const theme = useAppThemeTokens();
@@ -25,49 +23,37 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
   const { loading, startLoading, stopLoading } = useLoading();
   const manager = useManager();
   const amountInputRef = useRef<TextInput>(null);
-
   const [amountInput, setAmountInput] = useState("");
-
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
     knownMints[0] ?? null,
   );
-
   useEffect(() => {
     setSelectedMint((currentMint) => {
       const updatedMint = currentMint
         ? knownMints.find((mint) => mint.mintUrl === currentMint.mintUrl)
         : null;
-
       return updatedMint ?? knownMints[0] ?? null;
     });
   }, [knownMints]);
-
   const noMintsAvailable = useMemo(() => {
     return !selectedMint || knownMints.length === 0;
   }, [selectedMint, knownMints.length]);
-
   const [err, setErr] = useState(false);
-
   const amountValue = useMemo(() => {
     const parsed = parseInt(amountInput || "0", 10);
     return Number.isNaN(parsed) ? 0 : parsed;
   }, [amountInput]);
-
   const screenName = "createInvoice";
-
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
-
   const handleMintSelect = useCallback(
     (mint: KnownMintWithBalance) => {
       setSelectedMint(mint);
     },
     [setSelectedMint],
   );
-
   const handleMintSelectorOpen = useCallback(() => {
     amountInputRef.current?.blur();
   }, []);
-
   const triggerAmountError = useCallback(() => {
     vib(400);
     setErr(true);
@@ -77,17 +63,14 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
       clearTimeout(timeout);
     }, 500);
   }, [shake]);
-
   const handleSubmit = useCallback(async () => {
     if (loading || !selectedMint) {
       return;
     }
-
     if (!amountValue || amountValue < 1) {
       triggerAmountError();
       return;
     }
-
     startLoading();
     try {
       const operation = await manager.ops.mint.prepare({
@@ -116,7 +99,6 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
     stopLoading,
     triggerAmountError,
   ]);
-
   // Early return after all hooks
   if (noMintsAvailable) {
     return (
@@ -133,12 +115,13 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
             alignItems: "center",
           }}
         >
-          <Txt txt={t("noMintsWithBalance", { ns: NS.common })} />
+          <AppText testID={`${t("noMintsWithBalance", { ns: NS.common })}-txt`}>
+            {t("noMintsWithBalance", { ns: NS.common })}
+          </AppText>
         </View>
       </Screen>
     );
   }
-
   return (
     <Screen
       screenName={t(screenName, { ns: NS.common })}
@@ -177,7 +160,6 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
     </Screen>
   );
 }
-
 interface IMeltOverviewProps {
   amount: number;
   shouldEstimate?: boolean;
@@ -185,7 +167,6 @@ interface IMeltOverviewProps {
   isInvoice?: boolean;
   fee: number;
 }
-
 export function MeltOverview({
   amount,
   shouldEstimate,
@@ -198,20 +179,22 @@ export function MeltOverview({
   const { formatAmount } = useCurrencyContext();
   const total = shouldEstimate ? 0 : amount + fee;
   const { formatted, symbol } = formatAmount(total);
-
   return (
     <View style={styles.overview}>
-      <Txt
-        txt={
+      <AppText
+        weight="medium"
+        testID={`${
           t(isInvoice ? "invoiceInclFee" : "totalInclFee", {
             ns: NS.common,
           }) + "*"
-        }
-        bold
-      />
-      <Txt
-        txt={`${formatted} ${symbol}`}
-        styles={[
+        }-txt`}
+      >
+        {t(isInvoice ? "invoiceInclFee" : "totalInclFee", {
+          ns: NS.common,
+        }) + "*"}
+      </AppText>
+      <AppText
+        style={[
           {
             color:
               !shouldEstimate && balTooLow
@@ -221,11 +204,11 @@ export function MeltOverview({
                   : theme.valid,
           },
         ]}
-      />
+        testID={`${`${formatted} ${symbol}`}-txt`}
+      >{`${formatted} ${symbol}`}</AppText>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   overview: {
     flexDirection: "row",

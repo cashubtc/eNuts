@@ -2,19 +2,17 @@ import Button, { IconBtn, TxtButton } from "@comps/Button";
 import Card from "@comps/Card";
 import Empty from "@comps/Empty";
 import { ChevronRightIcon, PlusIcon } from "@comps/Icons";
-import Txt from "@comps/Txt";
 import Screen from "@comps/Screen";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 export default function MintHomeScreen({ navigation }: any) {
   const { t } = useTranslation([NS.common]);
   const { knownMints } = useKnownMints();
@@ -22,7 +20,6 @@ export default function MintHomeScreen({ navigation }: any) {
   const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
   const { hidden } = usePrivacyContext();
-
   return (
     <Screen
       screenName="Mints"
@@ -48,7 +45,6 @@ export default function MintHomeScreen({ navigation }: any) {
                 const displayName = m.mintInfo.name || formatMintUrl(m.mintUrl);
                 const { formatted, symbol } = formatAmount(m.balance);
                 const displayBalance = hidden.balance ? "****" : `${formatted} ${symbol}`;
-
                 return (
                   <TouchableOpacity
                     key={m.mintUrl}
@@ -78,17 +74,25 @@ export default function MintHomeScreen({ navigation }: any) {
 
                         {/* Center: Mint name and balance */}
                         <View style={styles.infoContainer}>
-                          <Txt txt={displayName} bold styles={[{ color: theme.text }]} />
-                          <Txt
-                            txt={displayBalance}
-                            styles={[
+                          <AppText
+                            style={[{ color: theme.text }]}
+                            weight="medium"
+                            testID={`${displayName}-txt`}
+                          >
+                            {displayName}
+                          </AppText>
+                          <AppText
+                            style={[
                               {
                                 color: theme.textSecondary,
                                 fontSize: fontScale(12),
                                 marginTop: 2,
                               },
                             ]}
-                          />
+                            testID={`${displayBalance}-txt`}
+                          >
+                            {displayBalance}
+                          </AppText>
                         </View>
 
                         {/* Right side: Chevron icon */}
@@ -111,7 +115,6 @@ export default function MintHomeScreen({ navigation }: any) {
     </Screen>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",

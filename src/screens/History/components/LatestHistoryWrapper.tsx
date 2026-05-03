@@ -1,16 +1,14 @@
-import { fontScale, useAppThemeTokens } from "@styles";
-import Txt from "@comps/Txt";
+import { AppText, fontScale, useAppThemeTokens } from "@styles";
 import { HistoryEntry } from "@cashu/coco-core";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useTranslation } from "react-i18next";
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import EntryTime from "@screens/History/entryTime";
 import { NS } from "@src/i18n";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@src/model/nav";
-
 type LatestHistoryWrapperProps = {
   icon: React.ReactNode;
   name: string;
@@ -19,7 +17,6 @@ type LatestHistoryWrapperProps = {
   variant?: "highlight" | "standard";
   entry: HistoryEntry;
 };
-
 export function LatestHistoryWrapper({
   icon,
   name,
@@ -33,53 +30,52 @@ export function LatestHistoryWrapper({
   const { formatAmount } = useCurrencyContext();
   const { t } = useTranslation([NS.history, NS.common]);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, "History">>();
-
   // Use white/background color for highlight mode (colored background)
   // Use theme text colors for standard mode (white/drawer background)
   const textColor = variant === "highlight" ? theme.accentContrast : theme.text;
   const secondaryTextColor = variant === "highlight" ? theme.accentContrast : theme.textSecondary;
-
   const handlePress = () => {
     navigation.navigate("History", {
       screen: "HistoryEntryDetails",
       params: { entry },
     });
   };
-
   const { formatted, symbol } = formatAmount(amount);
-
   return (
     <TouchableOpacity style={styles.entry} onPress={handlePress}>
       <View style={styles.wrap}>
         <View style={styles.iconWrap}>{icon}</View>
         <View>
-          <Txt
-            txt={name}
-            styles={[
+          <AppText
+            style={[
               {
                 color: textColor,
                 marginBottom: 4,
               },
             ]}
-          />
-          <Text
+            testID={`${name}-txt`}
+          >
+            {name}
+          </AppText>
+          <AppText
             style={{
               color: secondaryTextColor,
               fontSize: fontScale(12),
             }}
           >
             <EntryTime from={createdAt} fallback={t("justNow")} />
-          </Text>
+          </AppText>
         </View>
       </View>
-      <Txt
-        txt={hidden.balance ? "****" : `${formatted} ${symbol}`}
-        styles={[{ color: textColor }]}
-      />
+      <AppText
+        style={[{ color: textColor }]}
+        testID={`${hidden.balance ? "****" : `${formatted} ${symbol}`}-txt`}
+      >
+        {hidden.balance ? "****" : `${formatted} ${symbol}`}
+      </AppText>
     </TouchableOpacity>
   );
 }
-
 const styles = StyleSheet.create({
   board: {
     borderBottomLeftRadius: 50,

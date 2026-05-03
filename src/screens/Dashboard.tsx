@@ -15,7 +15,6 @@ import {
 import Loading from "@comps/Loading";
 import NfcPaymentModal, { type NfcPaymentModalRef } from "@comps/modal/NfcPaymentModal";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import type { HistoryEntry } from "@cashu/coco-core";
 import { usePaginatedHistory } from "@cashu/coco-react";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
@@ -28,19 +27,17 @@ import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
 import { getStrFromClipboard } from "@util";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { LatestHistoryMeltEntry } from "./History/components/LatestHistoryMeltEntry";
 import { LatestHistoryMintEntry } from "./History/components/LatestHistoryMintEntry";
 import { LatestHistoryReceiveEntry } from "./History/components/LatestHistoryReceiveEntry";
 import { LatestHistorySendEntry } from "./History/components/LatestHistorySendEntry";
 import DashboardActionSheet, { DashboardActionSheetOption } from "./DashboardActionSheet";
-
 export default function Dashboard({ navigation }: TDashboardPageProps) {
   const { t } = useTranslation([NS.common, NS.wallet]);
   const { activeTheme } = useThemeContext();
@@ -65,11 +62,9 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
   const nfcModalRef = useRef<NfcPaymentModalRef>(null);
   const { claimFromTokenString, isReceiving } = useCashuClaimFlow();
   const balanceAmount = formatAmount(balances.total.total);
-
   const toggleBalanceFormat = () => {
     void setFormatBalance(!formatBalance);
   };
-
   const handleClaimBtnPress = async () => {
     if (loading) {
       return;
@@ -88,20 +83,17 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
     }
     stopLoading();
   };
-
   const handleNfcOptionPress = () => {
     void sendOptionsRef.current?.dismiss();
     setTimeout(() => {
       nfcModalRef.current?.open();
     }, 200);
   };
-
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: theme.background }]}
@@ -119,18 +111,18 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               disabled={hidden.balance}
               accessibilityRole="button"
             >
-              <Text
+              <AppText
                 testID={`balance: ${balances.total.total}`}
                 style={[styles.balanceAmount, { color: balanceTextColor }]}
               >
                 {hidden.balance ? "****" : balanceAmount.formatted}
-              </Text>
+              </AppText>
               <View style={styles.balanceMetaWrap}>
                 {!hidden.balance && (
                   <>
-                    <Text style={[styles.balanceSymbol, { color: balanceMetaColor }]}>
+                    <AppText style={[styles.balanceSymbol, { color: balanceMetaColor }]}>
                       {balanceAmount.symbol}
-                    </Text>
+                    </AppText>
                     <SwapCurrencyIcon width={18} height={18} color={balanceMetaColor} />
                   </>
                 )}
@@ -146,9 +138,9 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
 
           <View style={styles.historySection}>
             <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: theme.text }]} numberOfLines={1}>
+              <AppText style={[styles.sectionTitle, { color: theme.text }]} numberOfLines={1}>
                 {t("activity")}
-              </Text>
+              </AppText>
               {hasMore && (
                 <TouchableOpacity
                   accessibilityRole="button"
@@ -162,18 +154,23 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                   ]}
                   testID={`${t("allHistory")}-button`}
                 >
-                  <Text numberOfLines={1} style={[styles.historyLinkTxt, { color: accentColor }]}>
+                  <AppText
+                    numberOfLines={1}
+                    style={[styles.historyLinkTxt, { color: accentColor }]}
+                  >
                     {t("allHistory")}
-                  </Text>
+                  </AppText>
                 </TouchableOpacity>
               )}
             </View>
             {!latestHistory.length ? (
               <View style={[styles.emptyHistory, { backgroundColor: theme.drawer }]}>
-                <Txt
-                  txt={t("noTX")}
-                  styles={[globals().txt, { color: theme.text }, styles.emptyHistoryTxt]}
-                />
+                <AppText
+                  style={[globals().txt, { color: theme.text }, styles.emptyHistoryTxt]}
+                  testID={`${t("noTX")}-txt`}
+                >
+                  {t("noTX")}
+                </AppText>
               </View>
             ) : (
               <ScrollView
@@ -371,7 +368,6 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
     </SafeAreaView>
   );
 }
-
 interface IActionBtnsProps {
   icon: ReactNode;
   txt: string;
@@ -381,7 +377,6 @@ interface IActionBtnsProps {
   iconBorderColor: string;
   disabled?: boolean;
 }
-
 function ActionBtn({
   icon,
   onPress,
@@ -408,11 +403,16 @@ function ActionBtn({
       >
         {icon}
       </View>
-      <Txt txt={txt} bold styles={[styles.actionTxt, { color: textColor }]} />
+      <AppText
+        style={[styles.actionTxt, { color: textColor }]}
+        weight="medium"
+        testID={`${txt}-txt`}
+      >
+        {txt}
+      </AppText>
     </TouchableOpacity>
   );
 }
-
 function renderHistoryEntry(entry: HistoryEntry) {
   switch (entry.type) {
     case "mint":
@@ -427,19 +427,16 @@ function renderHistoryEntry(entry: HistoryEntry) {
       return null;
   }
 }
-
 function withAlpha(hex: string, alpha: number) {
   const color = hex.replace("#", "");
   if (color.length !== 6) {
     return hex;
   }
-
   const red = parseInt(color.slice(0, 2), 16);
   const green = parseInt(color.slice(2, 4), 16);
   const blue = parseInt(color.slice(4, 6), 16);
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
-
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,

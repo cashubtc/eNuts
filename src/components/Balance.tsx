@@ -8,16 +8,12 @@ import { NS } from "@src/i18n";
 import { AppText, Stack, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
-
 import { TxtButton } from "./Button";
-import Txt from "./Txt";
 import { LatestHistory } from "@screens/History/components/LatestHistory";
 import { useCurrencyContext } from "@src/context/Currency";
-
 interface IBalanceProps {
   nav?: NativeStackNavigationProp<RootStackParamList, "dashboard", "MyStack">;
 }
-
 export default function Balance({ nav }: IBalanceProps) {
   const { t } = useTranslation([NS.common]);
   const { hidden } = usePrivacyContext();
@@ -25,11 +21,9 @@ export default function Balance({ nav }: IBalanceProps) {
   const { history: latestHistory, hasMore } = usePaginatedHistory(3);
   const { formatAmount, formatBalance, setFormatBalance } = useCurrencyContext();
   const theme = useAppThemeTokens();
-
   const toggleBalanceFormat = () => {
     void setFormatBalance(!formatBalance);
   };
-
   return (
     <Stack
       borderBottomLeftRadius={50}
@@ -72,7 +66,12 @@ export default function Balance({ nav }: IBalanceProps) {
       {/* No transactions yet */}
       {!latestHistory.length && (
         <Stack flex={1} alignItems="center" justifyContent="center">
-          <Txt txt={t("noTX")} styles={[{ color: theme.accentContrast, textAlign: "center" }]} />
+          <AppText
+            style={[{ color: theme.accentContrast, textAlign: "center" }]}
+            testID={`${t("noTX")}-txt`}
+          >
+            {t("noTX")}
+          </AppText>
         </Stack>
       )}
       {/* latest 3 history entries */}

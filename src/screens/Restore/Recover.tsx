@@ -1,9 +1,8 @@
+import { AppText, InputFrame, useAppThemeTokens } from "@styles";
 import Button, { TxtButton } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
 import Loading from "@comps/Loading";
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
-import TxtInput from "@comps/TxtInput";
 import type { RecoverScreenProps } from "@src/nav/navTypes";
 import { NS } from "@src/i18n";
 import { useKnownMints } from "@src/context/KnownMints";
@@ -12,14 +11,13 @@ import { getStrFromClipboard } from "@util";
 import { createRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { type TextInput, View, StyleSheet } from "react-native";
-
 export default function RecoverScreen({ navigation }: RecoverScreenProps) {
   const { t } = useTranslation([NS.common]);
+  const theme = useAppThemeTokens();
   const [input, setInput] = useState("");
   const { loading } = useLoading();
   const inputRef = createRef<TextInput>();
   const { knownMints } = useKnownMints();
-
   const handlePaste = async () => {
     const clipboard = await getStrFromClipboard();
     if (!clipboard) {
@@ -27,19 +25,16 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
     }
     setInput(clipboard);
   };
-
   const handleBtnPress = async () => {
     if (loading || !input.length) {
       return;
     }
     const seed = seedService.convertMnemonicToSeed(input);
-
     navigation.navigate("Recovering", {
       bip39seed: seed,
       mintUrls: knownMints.map((mint) => mint.mintUrl),
     });
   };
-
   // auto-focus keyboard
   useEffect(() => {
     const t = setTimeout(() => {
@@ -48,7 +43,6 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
     }, 200);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <Screen
       screenName={t("walletRecovery")}
@@ -58,25 +52,31 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
     >
       <View style={styles.container}>
         <View style={{ paddingHorizontal: 8 }}>
-          <Txt txt={t("recoveryHint")} styles={[styles.hint]} bold />
+          <AppText style={[styles.hint]} weight="medium" testID={`${t("recoveryHint")}-txt`}>
+            {t("recoveryHint")}
+          </AppText>
           <View style={styles.labelRow}>
-            <Txt txt={t("12WordMnemonic")} styles={[styles.label]} />
+            <AppText style={[styles.label]} testID={`${t("12WordMnemonic")}-txt`}>
+              {t("12WordMnemonic")}
+            </AppText>
             <TxtButton
               txt={t("paste")}
               onPress={() => void handlePaste()}
               style={[styles.pasteBtn]}
             />
           </View>
-          <TxtInput
+          <InputFrame
             autoCapitalize="none"
             multiline
-            innerRef={inputRef}
+            ref={inputRef}
             placeholder=""
+            placeholderTextColor={theme.placeholder as never}
+            selectionColor={theme.accent}
+            cursorColor={theme.accent}
             onChangeText={(text) => setInput(text)}
             onSubmitEditing={() => void handleBtnPress()}
-            autoFocus
-            ms={200}
             style={[styles.multilineInput]}
+            testID="-input"
             value={input}
           />
         </View>
@@ -92,7 +92,6 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
     </Screen>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

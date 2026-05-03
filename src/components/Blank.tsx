@@ -1,8 +1,7 @@
-import { useAppThemeTokens } from "@styles";
-import { View } from "react-native";
+import { Stack, useAppThemeTokens } from "@styles";
 
 export default function Blank() {
   const theme = useAppThemeTokens();
 
-  return <View style={{ flex: 1, backgroundColor: theme.accent }} />;
+  return <Stack flex={1} backgroundColor="$accent" style={{ backgroundColor: theme.accent }} />;
 }
