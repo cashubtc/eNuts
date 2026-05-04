@@ -1,10 +1,10 @@
 import { useShakeAnimation } from "@comps/animation/Shake";
 import { useCurrencyContext } from "@src/context/Currency";
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, PressableSurface, Stack, XStack, useAppThemeTokens } from "@styles";
 import { formatSatStr } from "@util";
 import { getLanguageCode } from "@util/localization";
 import { useEffect, useMemo, useRef, forwardRef, useState, useCallback } from "react";
-import { Animated, TextInput, View, Pressable, StyleSheet } from "react-native";
+import { Animated, TextInput, StyleSheet } from "react-native";
 import { SwapCurrencyIcon } from "@comps/Icons";
 interface AmountInputProps {
   value: string;
@@ -113,6 +113,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
     const [displayText, setDisplayText] = useState("");
     // Track if we need to sync display from external value change
     const lastExternalValue = useRef<string>("");
+    const [togglePressed, setTogglePressed] = useState(false);
     // Get the locale decimal separator for this user
     const localDecimalSep = useMemo(() => getLocalDecimalSeparator(), []);
     // Derived numeric amount in sats (value prop is always in sats)
@@ -277,8 +278,8 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       return placeholder;
     }, [isFiatMode, placeholder, localDecimalSep]);
     return (
-      <View style={[styles.container, compact ? styles.containerCompact : null]}>
-        <View style={styles.inputRow}>
+      <Stack style={[styles.container, compact ? styles.containerCompact : null]}>
+        <XStack style={styles.inputRow}>
           {/* Currency symbol prefix for fiat */}
           {currencySymbol && (
             <AppText
@@ -333,12 +334,15 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
           )}
           {/* Currency toggle button */}
           {canToggleCurrency && (
-            <Pressable
+            <PressableSurface
               onPress={handleToggleCurrency}
-              style={({ pressed }) => [
+              onPressIn={() => setTogglePressed(true)}
+              onPressOut={() => setTogglePressed(false)}
+              activeOpacity={0.7}
+              style={[
                 styles.toggleButton,
                 {
-                  backgroundColor: pressed ? theme.inputBackground : "transparent",
+                  backgroundColor: togglePressed ? theme.inputBackground : "transparent",
                 },
               ]}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -346,11 +350,11 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               accessibilityHint="Switch between sats and fiat currency"
             >
               <SwapCurrencyIcon width={20} height={20} color={theme.accent} />
-            </Pressable>
+            </PressableSurface>
           )}
-        </View>
+        </XStack>
         {secondaryLabel && (
-          <Pressable onPress={handleToggleCurrency} disabled={!canToggleCurrency}>
+          <PressableSurface onPress={handleToggleCurrency} disabled={!canToggleCurrency}>
             <AppText
               style={[
                 compact ? styles.secondaryLabelCompact : styles.secondaryLabel,
@@ -360,9 +364,9 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
             >
               {secondaryLabel}
             </AppText>
-          </Pressable>
+          </PressableSurface>
         )}
-      </View>
+      </Stack>
     );
   },
 );
