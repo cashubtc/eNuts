@@ -140,7 +140,6 @@ export const AppText = styled(Text, {
     align: "left",
     tone: "default",
     weight: "regular",
-    size: "body",
   },
 });
 
