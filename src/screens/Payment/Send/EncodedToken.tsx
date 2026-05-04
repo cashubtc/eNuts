@@ -8,12 +8,12 @@ import Screen from "@comps/Screen";
 import { preventBack } from "@nav/utils";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
 import { formatInt, formatSatStr, share } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, useWindowDimensions } from "react-native";
 import { useManager } from "@src/context/Manager";
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
@@ -22,10 +22,15 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
   const { token } = route.params || {};
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
+  const { width, height } = useWindowDimensions();
   const { formatBalance, formatAmount } = useCurrencyContext();
   const [error, setError] = useState({ msg: "", open: false });
   const encodedToken = useMemo(() => getEncodedToken(token), [token]);
   const tokenAmount = useMemo(() => token.proofs.reduce((r, c) => r + c.amount, 0), [token]);
+  const qrSize = useMemo(
+    () => Math.round(Math.max(196, Math.min(288, width - 96, height * 0.32))),
+    [height, width],
+  );
   const manager = useManager();
   // For tokens, always show sats as primary (tokens ARE in sats)
   // Show fiat equivalent as secondary info if user prefers fiat
@@ -48,19 +53,23 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
   return (
     <Screen
       withBackBtn={!spent}
-      screenName={!spent ? `${t("newToken")}  🥜🐿️` : undefined}
+      screenName={!spent ? t("newToken") : undefined}
       handlePress={() => navigation.navigate("dashboard")}
       withPadding={false}
     >
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {spent ? (
-          <>
-            <View />
-            <View>
+          <Stack style={styles.spentContent}>
+            <Stack />
+            <Stack>
               <AppText style={[styles.successTxt, { color: theme.text }]}>
                 {t("isSpent", { ns: NS.history })}
               </AppText>
-              <View style={styles.successAnim}>
+              <Stack style={styles.successAnim}>
                 <LottieView
                   source={require("../../../../assets/lottie/success.json")}
                   autoPlay
@@ -68,22 +77,24 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
                   style={styles.lottie}
                   renderMode="HARDWARE"
                 />
-              </View>
-            </View>
+              </Stack>
+            </Stack>
             <Button txt={t("backToDashboard")} onPress={() => navigation.navigate("dashboard")} />
-          </>
+          </Stack>
         ) : (
-          <>
-            {/* The amount of the created token */}
-            <View style={styles.qrWrap}>
+          <Stack style={styles.tokenContent}>
+            <Stack style={styles.amountStage}>
               <AppText
                 style={[styles.tokenAmount, { color: theme.accent }]}
+                adjustsFontSizeToFit
+                minimumFontScale={0.55}
+                numberOfLines={1}
                 testID={`${formatInt(tokenAmount)}-txt`}
               >
                 {formatInt(tokenAmount)}
               </AppText>
               <AppText
-                style={[styles.tokenFormat]}
+                style={[styles.tokenFormat, { color: theme.textSecondary }]}
                 testID={`${formatSatStr(tokenAmount, "standard", false)}-txt`}
               >
                 {formatSatStr(tokenAmount, "standard", false)}
@@ -94,18 +105,25 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
                   testID={`${`≈ ${fiatEquivalent.symbol}${fiatEquivalent.formatted}`}-txt`}
                 >{`≈ ${fiatEquivalent.symbol}${fiatEquivalent.formatted}`}</AppText>
               )}
-              {/* The QR code */}
+            </Stack>
+
+            <Stack style={styles.qrStage}>
               {error.open ? (
-                <AppText
-                  style={[globals().navTxt, { color: theme.text }, styles.errorMsg]}
-                  testID={`${error.msg}-txt`}
-                >
-                  {error.msg}
-                </AppText>
+                <Stack style={[styles.errorPanel, { backgroundColor: theme.inputBackground }]}>
+                  <AppText
+                    style={[styles.errorMsg, { color: theme.text }]}
+                    align="center"
+                    testID={`${error.msg}-txt`}
+                  >
+                    {error.msg}
+                  </AppText>
+                </Stack>
               ) : (
                 <QR
-                  size={280}
+                  size={qrSize}
                   value={encodedToken}
+                  animate
+                  truncateNum={14}
                   onError={() =>
                     setTimeout(
                       () =>
@@ -118,56 +136,96 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
                   }
                 />
               )}
-            </View>
-            <View style={styles.fullWidth}>
-              {error.open && (
-                <>
-                  <Button
-                    txt={t(copied ? "copied" : "copyToken")}
-                    onPress={() => void copy(encodedToken)}
-                    icon={<CopyIcon width={18} height={18} color={theme.white} />}
-                  />
-                  <View style={{ marginVertical: 10 }} />
-                </>
-              )}
+            </Stack>
+
+            <Stack style={styles.actions}>
+              <Button
+                txt={t(copied ? "copied" : "copyToken")}
+                onPress={() => void copy(encodedToken)}
+                icon={<CopyIcon width={18} height={18} color={theme.white} />}
+              />
               <Button
                 outlined
                 txt={t("share")}
                 onPress={() => void share(encodedToken, `cashu://${encodedToken}`)}
                 icon={<ShareIcon width={18} height={18} color={theme.accent} />}
               />
-            </View>
-          </>
+            </Stack>
+          </Stack>
         )}
-      </View>
+      </ScrollView>
     </Screen>
   );
 }
 const styles = StyleSheet.create({
-  container: {
+  scroll: {
+    flex: 1,
+    width: "100%",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  spentContent: {
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    padding: 20,
+    paddingTop: 20,
   },
-  qrWrap: {
+  tokenContent: {
+    flexGrow: 1,
     alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    gap: 22,
+    paddingTop: 12,
+  },
+  amountStage: {
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 132,
+    width: "100%",
+    paddingHorizontal: 18,
   },
   tokenAmount: {
-    fontSize: fontScale(40),
-    fontWeight: "500",
-    marginTop: 20,
+    fontSize: fontScale(64),
+    fontWeight: "600",
+    lineHeight: fontScale(82),
+    maxWidth: "100%",
+    textAlign: "center",
   },
   tokenFormat: {
-    marginBottom: 5,
+    fontSize: fontScale(16),
+    fontWeight: "500",
+    lineHeight: fontScale(22),
+    marginTop: -4,
+    textAlign: "center",
   },
   fiatEquivalent: {
     fontSize: fontScale(14),
-    marginBottom: 15,
+    lineHeight: fontScale(20),
+    marginTop: 6,
+    textAlign: "center",
+  },
+  qrStage: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+  errorPanel: {
+    alignItems: "center",
+    borderRadius: 20,
+    justifyContent: "center",
+    minHeight: 220,
+    padding: 22,
+    width: "100%",
   },
   errorMsg: {
-    marginVertical: 25,
+    fontSize: fontScale(16),
+    lineHeight: fontScale(23),
     textAlign: "center",
   },
   successTxt: {
@@ -181,7 +239,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
-  fullWidth: {
+  actions: {
+    gap: 12,
     width: "100%",
   },
   lottie: {
