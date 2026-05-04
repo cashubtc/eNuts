@@ -1,8 +1,8 @@
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
-import { TouchableOpacity, View, type ViewStyle, type StyleProp, StyleSheet } from "react-native";
+import { type ViewStyle, type StyleProp, StyleSheet } from "react-native";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { ChevronRightIcon } from "./Icons";
 import Card from "./Card";
@@ -27,7 +27,7 @@ export default function MintSelector({
   const { formatted, symbol } = formatAmount(mint.balance);
   const displayBalance = hidden.balance ? "****" : `${formatted} ${symbol}`;
   return (
-    <TouchableOpacity onPress={() => onPress(mint)} activeOpacity={0.7} style={style}>
+    <PressableSurface onPress={() => onPress(mint)} activeOpacity={0.7} style={style}>
       <Card variant={variant} style={styles.cardContent}>
         {label && (
           <AppText
@@ -43,9 +43,9 @@ export default function MintSelector({
             {label}
           </AppText>
         )}
-        <View style={styles.container}>
+        <Stack style={styles.container}>
           {/* Mint name and balance container */}
-          <View style={styles.infoContainer}>
+          <Stack style={styles.infoContainer}>
             <AppText style={[{ color: theme.text }]} weight="medium" testID={`${displayName}-txt`}>
               {displayName}
             </AppText>
@@ -60,15 +60,15 @@ export default function MintSelector({
             >
               {displayBalance}
             </AppText>
-          </View>
+          </Stack>
 
           {/* Chevron icon */}
-          <View style={styles.chevronContainer}>
+          <Stack style={styles.chevronContainer}>
             <ChevronRightIcon color={theme.text} />
-          </View>
-        </View>
+          </Stack>
+        </Stack>
       </Card>
-    </TouchableOpacity>
+    </PressableSurface>
   );
 }
 const styles = StyleSheet.create({

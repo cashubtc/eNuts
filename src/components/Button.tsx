@@ -1,5 +1,12 @@
-import { AppText, ButtonSurface, Stack, XStack, useAppThemeTokens } from "@styles";
-import { type StyleProp, TouchableOpacity, type ViewStyle } from "react-native";
+import {
+  AppText,
+  ButtonSurface,
+  PressableSurface,
+  Stack,
+  XStack,
+  useAppThemeTokens,
+} from "@styles";
+import { type StyleProp, type ViewStyle } from "react-native";
 
 import Loading from "./Loading";
 
@@ -78,7 +85,7 @@ export default function Button({
 
   return (
     <Stack width="100%">
-      <TouchableOpacity
+      <PressableSurface
         accessibilityRole="button"
         testID={`${txt}-modal-button`}
         activeOpacity={0.5}
@@ -123,7 +130,7 @@ export default function Button({
             </Stack>
           )}
         </ButtonSurface>
-      </TouchableOpacity>
+      </PressableSurface>
     </Stack>
   );
 }
@@ -141,7 +148,7 @@ export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIc
   const theme = useAppThemeTokens();
   return (
     <Stack>
-      <TouchableOpacity
+      <PressableSurface
         accessibilityRole="button"
         activeOpacity={0.5}
         style={[
@@ -164,7 +171,7 @@ export function IconBtn({ icon, size, outlined, disabled, onPress, testId }: IIc
         testID={testId}
       >
         {icon}
-      </TouchableOpacity>
+      </PressableSurface>
     </Stack>
   );
 }
@@ -181,7 +188,7 @@ interface ITxtBtnProps {
 export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITxtBtnProps) {
   const theme = useAppThemeTokens();
   return (
-    <TouchableOpacity
+    <PressableSurface
       style={[
         {
           paddingTop: 30,
@@ -208,6 +215,6 @@ export function TxtButton({ txt, onPress, icon, disabled, style, txtColor }: ITx
         </AppText>
         {icon ? icon : null}
       </XStack>
-    </TouchableOpacity>
+    </PressableSurface>
   );
 }

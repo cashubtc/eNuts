@@ -5,9 +5,8 @@ import { usePaginatedHistory } from "@cashu/coco-react";
 import { useBalanceContext } from "@src/context/Balance";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { AppText, Stack, useAppThemeTokens } from "@styles";
+import { AppText, PressableSurface, Stack, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native";
 import { TxtButton } from "./Button";
 import { LatestHistory } from "@screens/History/components/LatestHistory";
 import { useCurrencyContext } from "@src/context/Currency";
@@ -34,7 +33,7 @@ export default function Balance({ nav }: IBalanceProps) {
       backgroundColor="$accent"
       borderColor="$borderColor"
     >
-      <TouchableOpacity
+      <PressableSurface
         style={{ alignItems: "center", marginHorizontal: -20, marginBottom: 10 }}
         onPress={toggleBalanceFormat}
         disabled={hidden.balance}
@@ -62,7 +61,7 @@ export default function Balance({ nav }: IBalanceProps) {
             </>
           )}
         </Stack>
-      </TouchableOpacity>
+      </PressableSurface>
       {/* No transactions yet */}
       {!latestHistory.length && (
         <Stack flex={1} alignItems="center" justifyContent="center">

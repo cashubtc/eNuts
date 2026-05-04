@@ -27,11 +27,19 @@ import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { AppText, verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
+import {
+  AppText,
+  verticalScale,
+  fontScale,
+  globals,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import { getStrFromClipboard } from "@util";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LatestHistoryMeltEntry } from "./History/components/LatestHistoryMeltEntry";
 import { LatestHistoryMintEntry } from "./History/components/LatestHistoryMintEntry";
@@ -99,13 +107,13 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
       style={[styles.safeArea, { backgroundColor: theme.background }]}
       edges={["bottom"]}
     >
-      <View style={styles.container}>
+      <Stack style={styles.container}>
         <DashboardTopBar
           onSettingsPress={() => navigation.navigate("Settings", { screen: "SettingsMain" })}
         />
-        <View style={styles.content}>
-          <View style={styles.balanceSection}>
-            <TouchableOpacity
+        <Stack style={styles.content}>
+          <Stack style={styles.balanceSection}>
+            <PressableSurface
               style={styles.balanceWrap}
               onPress={toggleBalanceFormat}
               disabled={hidden.balance}
@@ -117,7 +125,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               >
                 {hidden.balance ? "****" : balanceAmount.formatted}
               </AppText>
-              <View style={styles.balanceMetaWrap}>
+              <Stack style={styles.balanceMetaWrap}>
                 {!hidden.balance && (
                   <>
                     <AppText style={[styles.balanceSymbol, { color: balanceMetaColor }]}>
@@ -126,23 +134,23 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                     <SwapCurrencyIcon width={18} height={18} color={balanceMetaColor} />
                   </>
                 )}
-              </View>
-              <View
+              </Stack>
+              <Stack
                 style={[
                   styles.balanceRule,
                   { backgroundColor: withAlpha(accentColor, isDarkTheme ? 0.4 : 0.28) },
                 ]}
               />
-            </TouchableOpacity>
-          </View>
+            </PressableSurface>
+          </Stack>
 
-          <View style={styles.historySection}>
-            <View style={styles.sectionHeader}>
+          <Stack style={styles.historySection}>
+            <Stack style={styles.sectionHeader}>
               <AppText style={[styles.sectionTitle, { color: theme.text }]} numberOfLines={1}>
                 {t("activity")}
               </AppText>
               {hasMore && (
-                <TouchableOpacity
+                <PressableSurface
                   accessibilityRole="button"
                   onPress={() => navigation.navigate("History", { screen: "HistoryMain" })}
                   style={[
@@ -160,18 +168,18 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                   >
                     {t("allHistory")}
                   </AppText>
-                </TouchableOpacity>
+                </PressableSurface>
               )}
-            </View>
+            </Stack>
             {!latestHistory.length ? (
-              <View style={[styles.emptyHistory, { backgroundColor: theme.drawer }]}>
+              <Stack style={[styles.emptyHistory, { backgroundColor: theme.drawer }]}>
                 <AppText
                   style={[globals().txt, { color: theme.text }, styles.emptyHistoryTxt]}
                   testID={`${t("noTX")}-txt`}
                 >
                   {t("noTX")}
                 </AppText>
-              </View>
+              </Stack>
             ) : (
               <ScrollView
                 style={[styles.historyList, { backgroundColor: theme.drawer }]}
@@ -179,22 +187,22 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                 showsVerticalScrollIndicator={false}
               >
                 {latestHistory.slice(0, 10).map((entry, index) => (
-                  <View key={entry.id} style={styles.historyEntry}>
+                  <Stack key={entry.id} style={styles.historyEntry}>
                     {renderHistoryEntry(entry)}
                     {index < latestHistory.length - 1 && index < 9 ? (
-                      <View
+                      <Stack
                         style={[styles.historyDivider, { backgroundColor: theme.darkBorder }]}
                       />
                     ) : null}
-                  </View>
+                  </Stack>
                 ))}
               </ScrollView>
             )}
-          </View>
-        </View>
+          </Stack>
+        </Stack>
 
-        <View style={styles.actionDockWrap}>
-          <View
+        <Stack style={styles.actionDockWrap}>
+          <Stack
             style={[
               styles.actionDock,
               {
@@ -245,8 +253,8 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                 void receiveOptionsRef.current?.present();
               }}
             />
-          </View>
-        </View>
+          </Stack>
+        </Stack>
 
         <DashboardActionSheet
           sheetRef={sendOptionsRef}
@@ -364,7 +372,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
             testID="pay-invoice-option"
           />
         </DashboardActionSheet>
-      </View>
+      </Stack>
     </SafeAreaView>
   );
 }
@@ -387,7 +395,7 @@ function ActionBtn({
   disabled,
 }: IActionBtnsProps) {
   return (
-    <TouchableOpacity
+    <PressableSurface
       accessibilityRole="button"
       activeOpacity={0.65}
       style={[styles.actionBtn, { opacity: disabled ? 0.45 : 1 }]}
@@ -395,14 +403,14 @@ function ActionBtn({
       disabled={disabled}
       testID={`${txt}-btn`}
     >
-      <View
+      <Stack
         style={[
           styles.actionIcon,
           { backgroundColor: iconBackgroundColor, borderColor: iconBorderColor },
         ]}
       >
         {icon}
-      </View>
+      </Stack>
       <AppText
         style={[styles.actionTxt, { color: textColor }]}
         weight="medium"
@@ -410,7 +418,7 @@ function ActionBtn({
       >
         {txt}
       </AppText>
-    </TouchableOpacity>
+    </PressableSurface>
   );
 }
 function renderHistoryEntry(entry: HistoryEntry) {

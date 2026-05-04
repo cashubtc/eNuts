@@ -1,4 +1,4 @@
-import { AppText, InputFrame, useAppThemeTokens } from "@styles";
+import { AppText, InputFrame, useAppThemeTokens, Stack } from "@styles";
 import Button, { TxtButton } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
 import Loading from "@comps/Loading";
@@ -10,7 +10,7 @@ import { seedService } from "@src/services/SeedService";
 import { getStrFromClipboard } from "@util";
 import { createRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { type TextInput, View, StyleSheet } from "react-native";
+import { type TextInput, StyleSheet } from "react-native";
 export default function RecoverScreen({ navigation }: RecoverScreenProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
@@ -50,12 +50,12 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
       handlePress={() => navigation.goBack()}
       withKeyboard={true}
     >
-      <View style={styles.container}>
-        <View style={{ paddingHorizontal: 8 }}>
+      <Stack style={styles.container}>
+        <Stack style={{ paddingHorizontal: 8 }}>
           <AppText style={[styles.hint]} weight="medium" testID={`${t("recoveryHint")}-txt`}>
             {t("recoveryHint")}
           </AppText>
-          <View style={styles.labelRow}>
+          <Stack style={styles.labelRow}>
             <AppText style={[styles.label]} testID={`${t("12WordMnemonic")}-txt`}>
               {t("12WordMnemonic")}
             </AppText>
@@ -64,7 +64,7 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
               onPress={() => void handlePaste()}
               style={[styles.pasteBtn]}
             />
-          </View>
+          </Stack>
           <InputFrame
             autoCapitalize="none"
             multiline
@@ -79,16 +79,16 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
             testID="-input"
             value={input}
           />
-        </View>
-        <View style={styles.actionWrap}>
+        </Stack>
+        <Stack style={styles.actionWrap}>
           <Button
             disabled={!input.length}
             txt={t("confirm")}
             onPress={() => void handleBtnPress()}
             icon={loading ? <Loading size={20} /> : undefined}
           />
-        </View>
-      </View>
+        </Stack>
+      </Stack>
     </Screen>
   );
 }

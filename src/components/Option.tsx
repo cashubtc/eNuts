@@ -1,5 +1,4 @@
-import { AppText, fontScale, Stack, globals, useAppThemeTokens } from "@styles";
-import { TouchableOpacity } from "react-native";
+import { AppText, fontScale, Stack, globals, PressableSurface, useAppThemeTokens } from "@styles";
 import { ChevronRightIcon } from "./Icons";
 import Loading from "./Loading";
 import Separator from "./Separator";
@@ -24,7 +23,7 @@ export default function Option({
   const theme = useAppThemeTokens();
   return (
     <>
-      <TouchableOpacity style={globals().wrapRow} onPress={onPress} testID={`send-option-${txt}`}>
+      <PressableSurface style={globals().wrapRow} onPress={onPress} testID={`send-option-${txt}`}>
         <Stack flexDirection="row" alignItems="center" maxWidth="80%">
           {icon ? <Stack style={{ minWidth: 40 }}>{icon}</Stack> : null}
           <Stack>
@@ -46,7 +45,7 @@ export default function Option({
         ) : (
           <ChevronRightIcon color={theme.text} />
         )}
-      </TouchableOpacity>
+      </PressableSurface>
       {hasSeparator && <Separator />}
     </>
   );

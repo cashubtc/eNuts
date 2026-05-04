@@ -1,9 +1,9 @@
 import Button from "@comps/Button";
 import { NS } from "@src/i18n";
-import { AppText, verticalScale, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, useAppThemeTokens, Stack } from "@styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 interface ICameraPermissionProps {
   canAskAgain: boolean;
   onRequestPermission: () => void;
@@ -17,8 +17,8 @@ export default function CameraPermission({
   const theme = useAppThemeTokens();
   const { t } = useTranslation([NS.common]);
   return (
-    <View style={styles.container}>
-      <View
+    <Stack style={styles.container}>
+      <Stack
         style={[
           styles.stage,
           {
@@ -27,40 +27,40 @@ export default function CameraPermission({
           },
         ]}
       >
-        <View style={[styles.iconContainer, { backgroundColor: `${theme.accent}18` }]}>
+        <Stack style={[styles.iconContainer, { backgroundColor: `${theme.accent}18` }]}>
           <MaterialIcons name="photo-camera" size={36} color={theme.accent} />
-        </View>
-        <View style={styles.framePreview}>
-          <View
+        </Stack>
+        <Stack style={styles.framePreview}>
+          <Stack
             style={[
               styles.previewCorner,
               styles.previewCornerTopLeft,
               { borderColor: theme.accent },
             ]}
           />
-          <View
+          <Stack
             style={[
               styles.previewCorner,
               styles.previewCornerTopRight,
               { borderColor: theme.accent },
             ]}
           />
-          <View
+          <Stack
             style={[
               styles.previewCorner,
               styles.previewCornerBottomLeft,
               { borderColor: theme.accent },
             ]}
           />
-          <View
+          <Stack
             style={[
               styles.previewCorner,
               styles.previewCornerBottomRight,
               { borderColor: theme.accent },
             ]}
           />
-        </View>
-      </View>
+        </Stack>
+      </Stack>
       <AppText
         style={[styles.title]}
         weight="medium"
@@ -76,13 +76,13 @@ export default function CameraPermission({
       >
         {canAskAgain ? t("cameraAccessRequiredHint") : t("cameraAccessDeniedHint")}
       </AppText>
-      <View style={styles.buttonContainer}>
+      <Stack style={styles.buttonContainer}>
         <Button
           txt={canAskAgain ? t("allowCameraAccess") : t("openSettings")}
           onPress={canAskAgain ? onRequestPermission : onOpenSettings}
         />
-      </View>
-    </View>
+      </Stack>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

@@ -8,11 +8,11 @@ import { useManager } from "@src/context/Manager";
 import { NS } from "@src/i18n";
 import { appLogger } from "@src/logger";
 import { vib } from "@src/util";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 // TODO
 // show internet connection status
@@ -57,40 +57,40 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
   }, [current, mintUrls]);
   if (isDone) {
     return (
-      <View style={[styles.containerSuccess, { backgroundColor: theme.background }]}>
-        <View pointerEvents="none" style={styles.confetti}>
+      <Stack style={[styles.containerSuccess, { backgroundColor: theme.background }]}>
+        <Stack pointerEvents="none" style={styles.confetti}>
           <LottieView
             source={require("../../../assets/lottie/confetti.json")}
             autoPlay
             loop={false}
             style={{ width: "100%", height: "100%" }}
           />
-        </View>
+        </Stack>
         <Logo size={230} style={styles.img} success />
-        <View style={{ width: "100%" }}>
+        <Stack style={{ width: "100%" }}>
           <AppText style={[styles.successTxt, { color: theme.text }]}>Wallet restored!</AppText>
-          <View style={styles.successAnim}>
+          <Stack style={styles.successAnim}>
             <LottieView
               source={require("../../../assets/lottie/success.json")}
               autoPlay
               loop={false}
               style={styles.lottie}
             />
-          </View>
-        </View>
-        <View style={[styles.btnWrap, { marginBottom: insets.bottom || 20 }]}>
+          </Stack>
+        </Stack>
+        <Stack style={[styles.btnWrap, { marginBottom: insets.bottom || 20 }]}>
           <Button txt={t("backToDashboard")} onPress={() => navigation.navigate("dashboard")} />
-        </View>
-      </View>
+        </Stack>
+      </Stack>
     );
   }
   return (
-    <View style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
+    <Stack style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
       <Loading size={35} />
       <AppText style={[styles.descText]} testID={`${t("recoveringWallet")}-txt`}>
         {t("recoveringWallet")}
       </AppText>
-      <View style={{ width: "100%", paddingHorizontal: 20 }}>
+      <Stack style={{ width: "100%", paddingHorizontal: 20 }}>
         <Progress progress={progress} />
         <AppText
           style={[styles.hint, { color: theme.textSecondary }]}
@@ -104,7 +104,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
         >
           {t("dontClose")}
         </AppText>
-      </View>
+      </Stack>
       {error && (
         <AppText
           style={[styles.errorTxt, { color: theme.error }]}
@@ -114,7 +114,7 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
           {error}
         </AppText>
       )}
-    </View>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

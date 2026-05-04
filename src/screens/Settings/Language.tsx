@@ -7,9 +7,9 @@ import { NS } from "@src/i18n";
 import { getFlagEmoji } from "@src/util";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView } from "react-native";
 const langs: ILangsOpt[] = [
   { name: "english", code: "en", flag: "us" },
   { name: "german", code: "de", flag: "de" },
@@ -28,7 +28,7 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
       handlePress={() => navigation.goBack()}
     >
       <ScrollView alwaysBounceVertical={false}>
-        <View style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
+        <Stack style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
           {langs.map((l, i) => (
             <LangSelection
               key={l.code}
@@ -39,7 +39,7 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
               hasSeparator={i !== langs.length - 1}
             />
           ))}
-        </View>
+        </Stack>
       </ScrollView>
     </Screen>
   );
@@ -59,20 +59,20 @@ function LangSelection({ code, name, flag, selected, hasSeparator }: ILangSelect
   };
   return (
     <>
-      <TouchableOpacity
+      <PressableSurface
         style={[globals().wrapRow, { paddingBottom: 15 }]}
         onPress={() => void handleLangChange()}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <View style={{ minWidth: 40 }}>
+        <Stack style={{ flexDirection: "row", alignItems: "center" }}>
+          <Stack style={{ minWidth: 40 }}>
             <AppText style={[{ fontSize: fontScale(22) }]} testID={`${getFlagEmoji(flag)}-txt`}>
               {getFlagEmoji(flag)}
             </AppText>
-          </View>
+          </Stack>
           <AppText testID={`${t(name)}-txt`}>{t(name)}</AppText>
-        </View>
+        </Stack>
         <RadioBtn selected={selected} />
-      </TouchableOpacity>
+      </PressableSurface>
       {hasSeparator && <Separator style={[{ marginBottom: 15 }]} />}
     </>
   );

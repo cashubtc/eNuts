@@ -4,11 +4,11 @@ import type { TBeforeRemoveEvent, TProcessingPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useInitialURL } from "@src/context/Linking";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
 import { decodeLnInvoice, isErr } from "@util";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 interface IErrorProps {
   e?: unknown;
   customMsg?: "requestMintErr" | "generalMeltingErr" | "invoiceFromLnurlError";
@@ -65,7 +65,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
   return (
-    <View style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
+    <Stack style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
       <AppText
         style={[{ color: theme.text }]}
         testID={`${t(processingTxt, { ns: NS.wallet })}-txt`}
@@ -73,7 +73,7 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
         {t(processingTxt, { ns: NS.wallet })}
       </AppText>
       <Loading size={35} />
-    </View>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

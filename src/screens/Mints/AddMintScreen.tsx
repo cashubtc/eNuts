@@ -2,11 +2,19 @@ import { ChevronRightIcon, ZapIcon, PlusIcon } from "@comps/Icons";
 import { IconBtn } from "@comps/Button";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MintStackParamList } from "@src/nav/navTypes";
-import { AppText, fontScale, globals, InputFrame, useAppThemeTokens } from "@styles";
+import {
+  AppText,
+  fontScale,
+  globals,
+  InputFrame,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import { formatMintUrl, isErr } from "@util";
 import { useState } from "react";
 import useDiscoverMints from "@comps/hooks/useDiscoverMints";
-import { View, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
+import { ActivityIndicator, ScrollView } from "react-native";
 import Screen from "@comps/Screen";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
@@ -34,7 +42,7 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
   const displayName = mint.name || formatMintUrl(mint.url);
   const theme = useAppThemeTokens();
   return (
-    <TouchableOpacity
+    <PressableSurface
       style={[
         {
           flexDirection: "row",
@@ -48,8 +56,8 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
       ]}
       onPress={() => onPress(mint.url)}
     >
-      <View style={{ flex: 1 }}>
-        <View
+      <Stack style={{ flex: 1 }}>
+        <Stack
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -59,7 +67,7 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
           <AppText style={[{ color: theme.text }]} weight="medium" testID={`${displayName}-txt`}>
             {displayName}
           </AppText>
-          <View
+          <Stack
             style={{
               backgroundColor: theme.accent,
               paddingHorizontal: 6,
@@ -77,8 +85,8 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
             >
               {mint.state}
             </AppText>
-          </View>
-        </View>
+          </Stack>
+        </Stack>
         <AppText
           style={{
             color: theme.textSecondary,
@@ -88,9 +96,9 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
         >
           {mint.url}
         </AppText>
-      </View>
+      </Stack>
       <ChevronRightIcon color={theme.textSecondary} />
-    </TouchableOpacity>
+    </PressableSurface>
   );
 }
 type MintAddScreenProps = NativeStackScreenProps<MintStackParamList, "MintAdd">;
@@ -128,7 +136,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
       handlePress={() => navigation.goBack()}
       withKeyboard={true}
     >
-      <View
+      <Stack
         style={{
           paddingHorizontal: 16,
           paddingBottom: 12,
@@ -137,14 +145,14 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
           borderBottomColor: theme.border || theme.inputBackground,
         }}
       >
-        <View
+        <Stack
           style={{
             flexDirection: "row",
             alignItems: "center",
             gap: 12,
           }}
         >
-          <View style={{ flex: 1 }}>
+          <Stack style={{ flex: 1 }}>
             <InputFrame
               onChangeText={setInputUrl}
               autoCorrect={false}
@@ -156,8 +164,8 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
               testID="Enter mint URL or select from recommendations below-input"
               autoCapitalize="none"
             />
-          </View>
-          <View>
+          </Stack>
+          <Stack>
             <IconBtn
               icon={<PlusIcon color={theme.white} width={20} height={20} />}
               onPress={handleConfirmSelection}
@@ -165,9 +173,9 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
               size={48}
               testId="confirm-mint-button"
             />
-          </View>
-        </View>
-      </View>
+          </Stack>
+        </Stack>
+      </Stack>
 
       <ScrollView
         style={{ flex: 1 }}
@@ -180,7 +188,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
         showsVerticalScrollIndicator={false}
       >
         {isLoading && (
-          <View
+          <Stack
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -195,11 +203,11 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
             >
               Loading recommendations...
             </AppText>
-          </View>
+          </Stack>
         )}
 
         {isError && (
-          <View style={{ paddingVertical: 20, alignItems: "center" }}>
+          <Stack style={{ paddingVertical: 20, alignItems: "center" }}>
             <AppText
               style={[{ color: theme.textSecondary }]}
               testID={"Failed to load recommendations-txt"}
@@ -216,11 +224,11 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
             >
               Something went wrong fetching recommendations
             </AppText>
-          </View>
+          </Stack>
         )}
 
         {!isLoading && recommendations.length > 0 && (
-          <View>
+          <Stack>
             <AppText
               style={[
                 {
@@ -237,7 +245,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
             {recommendations.map((mint) => (
               <RecommendedMintItem key={mint.id} mint={mint} onPress={handleMintSelect} />
             ))}
-          </View>
+          </Stack>
         )}
       </ScrollView>
     </Screen>

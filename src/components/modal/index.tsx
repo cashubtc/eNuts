@@ -1,13 +1,6 @@
 import { isIOS } from "@consts";
-import { useAppThemeTokens } from "@styles";
-import {
-  KeyboardAvoidingView,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { PressableSurface, Stack, useAppThemeTokens } from "@styles";
+import { KeyboardAvoidingView, Modal, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface IMyModalProps {
@@ -88,7 +81,7 @@ export default function MyModal({
   };
 
   return visible ? (
-    <View
+    <Stack
       style={styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).modalParent}
     >
       <Modal
@@ -98,7 +91,7 @@ export default function MyModal({
         onRequestClose={close}
         testID="testCoinSelectionModal"
       >
-        <TouchableOpacity
+        <PressableSurface
           style={
             styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).modalContainer
           }
@@ -107,14 +100,14 @@ export default function MyModal({
         >
           <KeyboardAvoidingView style={getCorrectStyle()} behavior={isIOS ? "height" : undefined}>
             <TouchableWithoutFeedback>
-              <View style={[getViewStyle(), success ? { backgroundColor: theme.accent } : {}]}>
+              <Stack style={[getViewStyle(), success ? { backgroundColor: theme.accent } : {}]}>
                 {children}
-              </View>
+              </Stack>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
-        </TouchableOpacity>
+        </PressableSurface>
       </Modal>
-    </View>
+    </Stack>
   ) : null;
 }
 

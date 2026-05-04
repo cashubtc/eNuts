@@ -4,9 +4,17 @@ import Separator from "@comps/Separator";
 import type { TDisplaySettingsPageProps } from "@model/nav";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { AppText, globals, themeColors, useAppThemeTokens, type HighlightKey } from "@styles";
+import {
+  AppText,
+  globals,
+  PressableSurface,
+  themeColors,
+  useAppThemeTokens,
+  type HighlightKey,
+  Stack,
+} from "@styles";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 const themeModes = ["dark", "light", "auto"] as const;
 export default function DisplaySettings({ navigation }: TDisplaySettingsPageProps) {
   const { t } = useTranslation([NS.common]);
@@ -22,7 +30,7 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
         <AppText style={[styles.subHeader]} weight="medium" testID={"Theme-txt"}>
           Theme
         </AppText>
-        <View style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
+        <Stack style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
           {themeModes.map((themeMode, i) => (
             <RadioSelection
               key={themeMode}
@@ -32,11 +40,11 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
               onPress={() => updateMode(themeMode)}
             />
           ))}
-        </View>
+        </Stack>
         <AppText style={[styles.subHeader]} weight="medium" testID={"Highlight-txt"}>
           Highlight
         </AppText>
-        <View
+        <Stack
           style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 80 }]}
         >
           {themeColors.map((t, i) => (
@@ -47,7 +55,7 @@ export default function DisplaySettings({ navigation }: TDisplaySettingsPageProp
               hasSeparator={i !== themeColors.length - 1}
             />
           ))}
-        </View>
+        </Stack>
       </ScrollView>
     </Screen>
   );
@@ -78,14 +86,14 @@ interface IRadioSelectionProps {
 function RadioSelection({ label, selected, onPress, hasSeparator }: IRadioSelectionProps) {
   return (
     <>
-      <TouchableOpacity
+      <PressableSurface
         accessibilityRole="button"
         style={[globals().wrapRow, styles.radioRow]}
         onPress={onPress}
       >
         <AppText testID={`${label}-txt`}>{label}</AppText>
         <RadioBtn selected={selected} />
-      </TouchableOpacity>
+      </PressableSurface>
       {hasSeparator && <Separator style={styles.radioSeparator} />}
     </>
   );

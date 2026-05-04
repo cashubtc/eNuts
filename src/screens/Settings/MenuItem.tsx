@@ -1,6 +1,6 @@
 import Separator from "@comps/Separator";
-import { AppText, globals, useAppThemeTokens } from "@styles";
-import { TouchableOpacity, View, StyleSheet } from "react-native";
+import { AppText, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import { StyleSheet } from "react-native";
 interface IMenuItemProps {
   header?: string;
   txt: string;
@@ -20,7 +20,7 @@ export default function SettingsMenuItem({
   const theme = useAppThemeTokens();
   return (
     <>
-      <View
+      <Stack
         style={[
           globals().wrapRow,
           { paddingBottom: 15, flexDirection: "column", alignItems: "flex-start" },
@@ -34,7 +34,7 @@ export default function SettingsMenuItem({
             {header}
           </AppText>
         )}
-        <TouchableOpacity onPress={onPress} disabled={disabled} style={styles.setting}>
+        <PressableSurface onPress={onPress} disabled={disabled} style={styles.setting}>
           {icon}
           <AppText
             style={[styles.settingTxt, { color: disabled ? theme.textSecondary : theme.text }]}
@@ -42,8 +42,8 @@ export default function SettingsMenuItem({
           >
             {txt}
           </AppText>
-        </TouchableOpacity>
-      </View>
+        </PressableSurface>
+      </Stack>
       {hasSeparator && <Separator style={[styles.separator]} />}
     </>
   );

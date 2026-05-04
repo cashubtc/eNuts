@@ -1,9 +1,8 @@
 import { LeftArrow } from "@comps/Icons";
 import { NS } from "@src/i18n";
-import { AppText, Stack, useAppThemeTokens } from "@styles";
+import { AppText, PressableSurface, Stack, useAppThemeTokens } from "@styles";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native";
 
 interface ITopNavProps {
   screenName?: string;
@@ -35,7 +34,7 @@ export default function TopNav({
     >
       <Stack width={44} alignItems="flex-start" justifyContent="center">
         {withBackBtn ? (
-          <TouchableOpacity
+          <PressableSurface
             accessibilityRole="button"
             activeOpacity={0.7}
             onPress={handlePress}
@@ -48,7 +47,7 @@ export default function TopNav({
             testID="back-btn-top-nav"
           >
             <LeftArrow color={theme.accent} />
-          </TouchableOpacity>
+          </PressableSurface>
         ) : null}
       </Stack>
 
@@ -63,7 +62,7 @@ export default function TopNav({
       <Stack flexDirection="row" alignItems="center" justifyContent="flex-end" minWidth={44}>
         {rightAction}
         {cancel ? (
-          <TouchableOpacity
+          <PressableSurface
             accessibilityRole="button"
             activeOpacity={0.7}
             style={{ minHeight: 44, justifyContent: "center", paddingHorizontal: 10 }}
@@ -72,7 +71,7 @@ export default function TopNav({
             <AppText weight="medium" tone="accent" align="center">
               {t("cancel")}
             </AppText>
-          </TouchableOpacity>
+          </PressableSurface>
         ) : null}
       </Stack>
     </Stack>

@@ -1,8 +1,8 @@
 import Button from "@comps/Button";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { AppText, verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, type ReactNode } from "react";
-import { ScrollView, useWindowDimensions, View, StyleSheet } from "react-native";
+import { ScrollView, useWindowDimensions, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 export type ConfirmationModalRef = {
   present: () => void;
@@ -77,7 +77,7 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
           contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 20) }]}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.headerWrap}>
+          <Stack style={styles.headerWrap}>
             <AppText style={[globals().modalHeader, { color: theme.text }, styles.headerTitle]}>
               {title}
             </AppText>
@@ -90,11 +90,11 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
                 {subtitle}
               </AppText>
             ) : null}
-          </View>
+          </Stack>
 
           {children}
 
-          <View style={styles.buttonContainer}>
+          <Stack style={styles.buttonContainer}>
             <Button
               txt={confirmText}
               onPress={onConfirm}
@@ -102,7 +102,7 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
               disabled={confirmDisabled}
             />
             <Button txt={cancelText} onPress={handleCancel} outlined disabled={loading} />
-          </View>
+          </Stack>
         </ScrollView>
       </TrueSheet>
     );

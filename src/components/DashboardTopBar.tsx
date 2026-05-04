@@ -1,8 +1,8 @@
 import { SettingsIcon } from "@comps/Icons";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
-import { Stack, useAppThemeTokens } from "@styles";
-import { Image, TouchableOpacity } from "react-native";
+import { PressableSurface, Stack, useAppThemeTokens } from "@styles";
+import { Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface IDashboardTopBarProps {
@@ -28,7 +28,7 @@ export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarPro
       style={{ paddingTop: insets.top }}
     >
       <Stack flexDirection="row" alignItems="center" justifyContent="space-between" minHeight={50}>
-        <TouchableOpacity
+        <PressableSurface
           onPress={() => void handleLogoPress()}
           style={{ width: 48, height: 48, alignItems: "center", justifyContent: "center" }}
         >
@@ -42,13 +42,13 @@ export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarPro
           >
             <Image source={logoSrc} style={{ width: 27, height: 27 }} resizeMode="contain" />
           </Stack>
-        </TouchableOpacity>
-        <TouchableOpacity
+        </PressableSurface>
+        <PressableSurface
           onPress={onSettingsPress}
           style={{ width: 48, height: 48, alignItems: "center", justifyContent: "center" }}
         >
           <SettingsIcon width={24} height={24} color={theme.accent} />
-        </TouchableOpacity>
+        </PressableSurface>
       </Stack>
     </Stack>
   );

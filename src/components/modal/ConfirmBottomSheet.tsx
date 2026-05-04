@@ -1,8 +1,8 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { ScrollView, View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AppText, verticalScale, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
 import Button from "@comps/Button";
 
 export type ConfirmBottomSheetRef = {
@@ -96,7 +96,7 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
               {options.header}
             </AppText>
             <AppText style={[styles.message, { color: theme.text }]}>{options.txt}</AppText>
-            <View style={styles.buttonContainer}>
+            <Stack style={styles.buttonContainer}>
               <Button
                 txt={options.confirmTxt}
                 onPress={handleConfirm}
@@ -104,7 +104,7 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
                 destructive={options.destructive}
               />
               <Button txt={options.cancelTxt} onPress={handleCancel} outlined />
-            </View>
+            </Stack>
           </>
         )}
       </ScrollView>

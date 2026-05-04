@@ -1,11 +1,11 @@
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
-import { View, StyleSheet } from "react-native";
+import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
+import { StyleSheet } from "react-native";
 import { ReactNode } from "react";
 type DetailsSectionProps = {
   children: ReactNode;
 };
 export function DetailsSection({ children }: DetailsSectionProps) {
-  return <View style={styles.details}>{children}</View>;
+  return <Stack style={styles.details}>{children}</Stack>;
 }
 type DetailRowProps = {
   label: string;
@@ -14,14 +14,14 @@ type DetailRowProps = {
 export function DetailRow({ label, value }: DetailRowProps) {
   const theme = useAppThemeTokens();
   return (
-    <View style={styles.detailRow}>
+    <Stack style={styles.detailRow}>
       <AppText style={[styles.detailLabel, { color: theme.textSecondary }]} testID={`${label}-txt`}>
         {label}
       </AppText>
       <AppText style={[styles.detailValue, { color: theme.text }]} testID={`${value}-txt`}>
         {value}
       </AppText>
-    </View>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

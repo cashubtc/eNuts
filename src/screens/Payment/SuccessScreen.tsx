@@ -1,4 +1,4 @@
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
 import Screen from "@comps/Screen";
@@ -17,7 +17,7 @@ import { isNum, vib } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper Functions
@@ -41,14 +41,14 @@ function hasSimpleAmount(config: SuccessConfig): boolean {
 // ─────────────────────────────────────────────────────────────────────────────
 function DetailsRow({ label, value }: { label: string; value: string }) {
   return (
-    <View style={styles.detailsRow}>
+    <Stack style={styles.detailsRow}>
       <AppText style={[styles.detailsTxt]} testID={`${label}-txt`}>
         {label}
       </AppText>
       <AppText style={[styles.detailsTxt]} testID={`${value}-txt`}>
         {value}
       </AppText>
-    </View>
+    </Stack>
   );
 }
 interface PaymentDetailsProps {
@@ -60,7 +60,7 @@ function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
   const { amount, fee, change } = config;
   const isSwap = config.type === "autoSwap";
   return (
-    <View style={styles.detailsWrap}>
+    <Stack style={styles.detailsWrap}>
       <DetailsRow
         label={t(isSwap ? "swapped" : "paidOut", { ns: NS.wallet })}
         value={`${formatAmount(amount).formatted} ${formatAmount(amount).symbol}`}
@@ -79,7 +79,7 @@ function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
           value={`${formatAmount(change).formatted} ${formatAmount(change).symbol}`}
         />
       )}
-    </View>
+    </Stack>
   );
 }
 // ─────────────────────────────────────────────────────────────────────────────
@@ -126,17 +126,17 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
   return (
     <Screen>
       {/* Confetti Animation */}
-      <View pointerEvents="none" style={styles.confetti}>
+      <Stack pointerEvents="none" style={styles.confetti}>
         <LottieView
           source={require("../../../assets/lottie/confetti.json")}
           autoPlay
           loop={false}
           style={{ width: "100%", height: "100%" }}
         />
-      </View>
+      </Stack>
 
       {/* Content */}
-      <View style={styles.content}>
+      <Stack style={styles.content}>
         {/* Title */}
         <AppText style={[styles.title]} weight="medium" align="center" testID={`${title}-txt`}>
           {title}
@@ -166,7 +166,7 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
 
         {/* Amount Display (for simple success types) */}
         {hasSimpleAmount(config) && (
-          <View style={styles.amountWrap}>
+          <Stack style={styles.amountWrap}>
             <AppText
               style={[styles.amount]}
               weight="medium"
@@ -182,19 +182,19 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
             >
               {formatAmount(config.amount).symbol}
             </AppText>
-          </View>
+          </Stack>
         )}
 
         {/* Payment Details (for melt/autoSwap) */}
         {hasPaymentDetails(config) && (
           <PaymentDetails config={config} formatAmount={formatAmount} />
         )}
-      </View>
+      </Stack>
 
       {/* Back to Dashboard Button */}
-      <View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
+      <Stack style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
         <Button txt={t("backToDashboard")} onPress={() => navigation.navigate("dashboard")} />
-      </View>
+      </Stack>
     </Screen>
   );
 }

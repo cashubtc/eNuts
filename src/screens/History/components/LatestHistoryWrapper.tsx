@@ -1,9 +1,9 @@
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { HistoryEntry } from "@cashu/coco-core";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import EntryTime from "@screens/History/entryTime";
 import { NS } from "@src/i18n";
 import { useNavigation } from "@react-navigation/native";
@@ -42,10 +42,10 @@ export function LatestHistoryWrapper({
   };
   const { formatted, symbol } = formatAmount(amount);
   return (
-    <TouchableOpacity style={styles.entry} onPress={handlePress}>
-      <View style={styles.wrap}>
-        <View style={styles.iconWrap}>{icon}</View>
-        <View>
+    <PressableSurface style={styles.entry} onPress={handlePress}>
+      <Stack style={styles.wrap}>
+        <Stack style={styles.iconWrap}>{icon}</Stack>
+        <Stack>
           <AppText
             style={[
               {
@@ -65,15 +65,15 @@ export function LatestHistoryWrapper({
           >
             <EntryTime from={createdAt} fallback={t("justNow")} />
           </AppText>
-        </View>
-      </View>
+        </Stack>
+      </Stack>
       <AppText
         style={[{ color: textColor }]}
         testID={`${hidden.balance ? "****" : `${formatted} ${symbol}`}-txt`}
       >
         {hidden.balance ? "****" : `${formatted} ${symbol}`}
       </AppText>
-    </TouchableOpacity>
+    </PressableSurface>
   );
 }
 const styles = StyleSheet.create({

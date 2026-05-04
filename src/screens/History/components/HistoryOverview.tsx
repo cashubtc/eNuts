@@ -1,6 +1,6 @@
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
 import { useCurrencyContext } from "@src/context/Currency";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 type HistoryOverviewProps = {
   amount: number;
   amountPrefix: "+" | "-";
@@ -20,7 +20,7 @@ export function HistoryOverview({
   const { formatted, symbol } = formatAmount(amount);
   const amountDisplay = `${amountPrefix}${formatted} ${symbol}`;
   return (
-    <View style={styles.overview}>
+    <Stack style={styles.overview}>
       <AppText style={[styles.amount, { color: amountColor }]} testID={`${amountDisplay}-txt`}>
         {amountDisplay}
       </AppText>
@@ -33,7 +33,7 @@ export function HistoryOverview({
       >
         {description}
       </AppText>
-    </View>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

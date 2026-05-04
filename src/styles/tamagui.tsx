@@ -1,5 +1,5 @@
 import { Text, View, styled, useTheme } from "@tamagui/core";
-import { TextInput } from "react-native";
+import { TextInput, TouchableOpacity } from "react-native";
 
 import { fontScale, verticalScale } from "./scale";
 
@@ -170,6 +170,10 @@ export const ButtonSurface = styled(XStack, {
   defaultVariants: {
     size: "medium",
   },
+});
+
+export const PressableSurface = styled(TouchableOpacity, {
+  name: "PressableSurface",
 });
 
 export const InputFrame = styled(

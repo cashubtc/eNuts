@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { NfcIcon, ExclamationIcon } from "@comps/Icons";
 import { useNfcAmountLimitsContext, NO_LIMIT } from "@src/context/NfcAmountLimits";
@@ -13,7 +13,7 @@ import {
 import Separator from "@comps/Separator";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 export interface NfcPaymentModalRef {
   /** Open the modal and start NFC payment with the default limit */
   open: () => void;
@@ -138,8 +138,8 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
         cornerRadius={26}
         grabberOptions={{ color: theme.textSecondary }}
       >
-        <View style={[styles.container, { backgroundColor: theme.background }]}>
-          <View style={styles.header}>
+        <Stack style={[styles.container, { backgroundColor: theme.background }]}>
+          <Stack style={styles.header}>
             {showConfirmation ? (
               <ExclamationIcon width={28} color={theme.accent} />
             ) : (
@@ -148,10 +148,10 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
             <AppText style={[styles.title]} weight="medium" testID={`${headerTitle}-txt`}>
               {headerTitle}
             </AppText>
-          </View>
+          </Stack>
 
           {showConfirmation && pendingConfirmation && (
-            <View style={styles.confirmationContainer}>
+            <Stack style={styles.confirmationContainer}>
               <AppText
                 style={[styles.confirmationText, { color: theme.textSecondary }]}
                 testID={`${t("nfcAmountExceedsLimit", {
@@ -165,7 +165,7 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                 })}
               </AppText>
 
-              <View
+              <Stack
                 style={[
                   styles.confirmationBox,
                   {
@@ -174,14 +174,14 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                   },
                 ]}
               >
-                <View style={styles.confirmationRow}>
+                <Stack style={styles.confirmationRow}>
                   <AppText
                     style={[styles.confirmationLabel, { color: theme.textSecondary }]}
                     testID={`${t("amount", { ns: NS.common, defaultValue: "Amount" })}-txt`}
                   >
                     {t("amount", { ns: NS.common, defaultValue: "Amount" })}
                   </AppText>
-                  <View style={styles.confirmationValue}>
+                  <Stack style={styles.confirmationValue}>
                     <AppText
                       style={[{ color: theme.text }]}
                       weight="medium"
@@ -193,12 +193,12 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                         testID={`${`≈ ${currencySymbol}${pendingAmountFiat}`}-txt`}
                       >{`≈ ${currencySymbol}${pendingAmountFiat}`}</AppText>
                     )}
-                  </View>
-                </View>
+                  </Stack>
+                </Stack>
 
                 <Separator style={styles.confirmationSeparator} />
 
-                <View style={styles.confirmationRow}>
+                <Stack style={styles.confirmationRow}>
                   <AppText
                     style={[styles.confirmationLabel, { color: theme.textSecondary }]}
                     testID={`${t("yourLimit", {
@@ -211,7 +211,7 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                       defaultValue: "Your limit",
                     })}
                   </AppText>
-                  <View style={styles.confirmationValue}>
+                  <Stack style={styles.confirmationValue}>
                     <AppText
                       style={[{ color: theme.text }]}
                       testID={`${`${pendingConfirmation.maxAmount.toLocaleString()} sats`}-txt`}
@@ -222,9 +222,9 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                         testID={`${`≈ ${currencySymbol}${pendingLimitFiat}`}-txt`}
                       >{`≈ ${currencySymbol}${pendingLimitFiat}`}</AppText>
                     )}
-                  </View>
-                </View>
-              </View>
+                  </Stack>
+                </Stack>
+              </Stack>
 
               <AppText
                 style={[styles.confirmationHint, { color: theme.textSecondary }]}
@@ -239,8 +239,8 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                 })}
               </AppText>
 
-              <View style={styles.confirmationButtons}>
-                <TouchableOpacity
+              <Stack style={styles.confirmationButtons}>
+                <PressableSurface
                   style={[
                     styles.confirmationButton,
                     styles.declineButton,
@@ -252,9 +252,9 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                   <AppText style={[styles.declineButtonText, { color: theme.text }]}>
                     {t("cancel", { ns: NS.common, defaultValue: "Cancel" })}
                   </AppText>
-                </TouchableOpacity>
+                </PressableSurface>
 
-                <TouchableOpacity
+                <PressableSurface
                   style={[
                     styles.confirmationButton,
                     styles.confirmButton,
@@ -266,22 +266,22 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
                   <AppText style={[styles.confirmButtonText, { color: theme.white }]}>
                     {t("confirm", { ns: NS.common, defaultValue: "Confirm" })}
                   </AppText>
-                </TouchableOpacity>
-              </View>
-            </View>
+                </PressableSurface>
+              </Stack>
+            </Stack>
           )}
 
           {showNfcWaiting && (
-            <View style={styles.loading}>
-              <View style={[styles.pulse, { borderColor: theme.accent }]}>
+            <Stack style={styles.loading}>
+              <Stack style={[styles.pulse, { borderColor: theme.accent }]}>
                 <NfcIcon width={40} color={theme.accent} />
-              </View>
+              </Stack>
               <AppText style={[{ color: theme.textSecondary }]} testID={`${statusMessage}-txt`}>
                 {statusMessage}
               </AppText>
-            </View>
+            </Stack>
           )}
-        </View>
+        </Stack>
       </TrueSheet>
     );
   },

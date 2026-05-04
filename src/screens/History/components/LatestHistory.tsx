@@ -1,5 +1,6 @@
+import { Stack } from "@styles";
 import { HistoryEntry } from "@cashu/coco-core";
-import { View } from "react-native";
+
 import { memo } from "react";
 import { LatestHistoryMintEntry } from "./LatestHistoryMintEntry";
 import { LatestHistorySendEntry } from "./LatestHistorySendEntry";
@@ -11,7 +12,7 @@ type LatestHistoryProps = {
 };
 
 export const LatestHistory = memo(function LatestHistory({ history }: LatestHistoryProps) {
-  return <View>{history.slice(0, 4).map((h) => renderHistoryEntry(h))}</View>;
+  return <Stack>{history.slice(0, 4).map((h) => renderHistoryEntry(h))}</Stack>;
 });
 
 function renderHistoryEntry(history: HistoryEntry) {

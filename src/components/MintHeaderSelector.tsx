@@ -4,10 +4,10 @@ import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { Image } from "expo-image";
 import { useMemo, useRef } from "react";
-import { TouchableOpacity, View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 interface IMintHeaderSelectorProps {
   selectedMint: KnownMintWithBalance;
   onMintSelect: (mint: KnownMintWithBalance) => void;
@@ -43,7 +43,7 @@ export default function MintHeaderSelector({
   };
   return (
     <>
-      <TouchableOpacity
+      <PressableSurface
         accessibilityRole="button"
         onPress={handleOpen}
         activeOpacity={0.7}
@@ -55,7 +55,7 @@ export default function MintHeaderSelector({
           },
         ]}
       >
-        <View
+        <Stack
           style={[
             styles.iconWrap,
             {
@@ -74,7 +74,7 @@ export default function MintHeaderSelector({
           ) : (
             <MintBoardIcon width={18} height={18} color={theme.accent} />
           )}
-        </View>
+        </Stack>
         <AppText
           style={[styles.balance, { color: theme.text }]}
           weight="medium"
@@ -82,7 +82,7 @@ export default function MintHeaderSelector({
         >
           {headerBalance}
         </AppText>
-      </TouchableOpacity>
+      </PressableSurface>
 
       <MintSelectionSheet
         ref={mintSelectionSheetRef}

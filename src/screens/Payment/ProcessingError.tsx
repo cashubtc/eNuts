@@ -5,10 +5,10 @@ import { preventBack } from "@nav/utils";
 import { isIOS } from "@src/consts";
 import { NS } from "@src/i18n";
 import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 const alreadySpentErr = "Token already spent.";
 export default function ProcessingErrorScreen({ navigation, route }: TProcessingErrorPageProps) {
   const { scan, comingFromOnboarding, errorMsg } = route.params;
@@ -22,9 +22,9 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
   return (
-    <View style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
-      <View />
-      <View style={styles.section}>
+    <Stack style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
+      <Stack />
+      <Stack style={styles.section}>
         <ExclamationIcon width={60} height={60} color={theme.error} />
         <AppText
           style={[
@@ -58,8 +58,8 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
             {t("alreadySpentHint")}
           </AppText>
         )}
-      </View>
-      <View style={{ width: "100%" }}>
+      </Stack>
+      <Stack style={{ width: "100%" }}>
         <Button
           outlined={scan}
           txt={t("backToDashboard")}
@@ -68,8 +68,8 @@ export default function ProcessingErrorScreen({ navigation, route }: TProcessing
           }}
         />
         <TrustMintBottomSheet ref={trustMintRef} />
-      </View>
-    </View>
+      </Stack>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

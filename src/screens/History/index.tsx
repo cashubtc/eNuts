@@ -6,9 +6,9 @@ import { HistoryEntry } from "@cashu/coco-core";
 import { usePaginatedHistory } from "@cashu/coco-react";
 import { FlashList } from "@shopify/flash-list";
 import { NS } from "@src/i18n";
-import { globals, useAppThemeTokens } from "@styles";
+import { globals, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, View, StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { LatestHistoryMintEntry } from "./components/LatestHistoryMintEntry";
@@ -49,31 +49,31 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
       withBackBtn
       handlePress={() => navigation.goBack()}
     >
-      <View style={styles.container}>
-        <View style={styles.listContainer}>
+      <Stack style={styles.container}>
+        <Stack style={styles.listContainer}>
           {/* History list with infinite scroll */}
           <FlashList
             data={history}
             renderItem={({ item }) => (
-              <View style={[styles.entryCard, { backgroundColor: theme.drawer }]}>
+              <Stack style={[styles.entryCard, { backgroundColor: theme.drawer }]}>
                 {renderHistoryEntry(item)}
-              </View>
+              </Stack>
             )}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.5}
             ListEmptyComponent={<Empty txt={t("noTX") + "..."} />}
             ListFooterComponent={
               isFetching && hasMore ? (
-                <View style={styles.loaderWrap}>
+                <Stack style={styles.loaderWrap}>
                   <ActivityIndicator size="small" color={theme.text} />
-                </View>
+                </Stack>
               ) : null
             }
             onRefresh={() => void refresh()}
             refreshing={isFetching && history.length === 0}
           />
-        </View>
-      </View>
+        </Stack>
+      </Stack>
     </Screen>
   );
 }

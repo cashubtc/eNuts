@@ -7,10 +7,10 @@ import { seedService } from "@src/services/SeedService";
 import { useEffect, useState } from "react";
 import type { TViewMnemonicPageProps } from "@model/nav";
 import { useTranslation } from "react-i18next";
-import { FlatList, View, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import useCopy from "@comps/hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "@comps/Icons";
-import { AppText, useAppThemeTokens } from "@styles";
+import { AppText, useAppThemeTokens, Stack } from "@styles";
 export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
@@ -30,17 +30,17 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
   }, []);
   return (
     <Screen screenName={"Mnemonic"} withBackBtn handlePress={() => navigation.goBack()}>
-      <View style={styles.content}>
+      <Stack style={styles.content}>
         {loading ? (
-          <View style={[styles.warnContainer, { backgroundColor: theme.drawer }]}>
+          <Stack style={[styles.warnContainer, { backgroundColor: theme.drawer }]}>
             <Loading size="large" />
-          </View>
+          </Stack>
         ) : !mnemonic ? (
-          <View style={[styles.warnContainer, { backgroundColor: theme.drawer }]}>
+          <Stack style={[styles.warnContainer, { backgroundColor: theme.drawer }]}>
             <AppText style={[{ color: theme.textSecondary }]} testID={"No mnemonic found-txt"}>
               No mnemonic found
             </AppText>
-          </View>
+          </Stack>
         ) : (
           <>
             <FlatList
@@ -48,7 +48,7 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
               numColumns={2}
               keyExtractor={(_item, index) => index.toString()}
               renderItem={({ item, index }) => (
-                <View
+                <Stack
                   style={[
                     styles.mnemonicWord,
                     {
@@ -64,10 +64,10 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
                   <AppText weight="medium" testID={`${item}-txt`}>
                     {item}
                   </AppText>
-                </View>
+                </Stack>
               )}
             />
-            <View style={styles.copyButtonContainer}>
+            <Stack style={styles.copyButtonContainer}>
               <Button
                 txt={copied ? "Copied!" : "Copy Mnemonic"}
                 onPress={() => void copy(mnemonic)}
@@ -80,10 +80,10 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
                   )
                 }
               />
-            </View>
+            </Stack>
           </>
         )}
-      </View>
+      </Stack>
     </Screen>
   );
 }

@@ -7,9 +7,9 @@ import type { TCurrencySettingsPageProps } from "@model/nav";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import type { TCurrencyCode } from "@model";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 // Common currencies to display at the top
 const COMMON_CURRENCIES: TCurrencyCode[] = ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "CNY"];
 export default function CurrencySettings({ navigation }: TCurrencySettingsPageProps) {
@@ -72,7 +72,7 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
       <ScrollView alwaysBounceVertical={false}>
         {/* Error Banner */}
         {hasRatesError && (
-          <View style={[styles.errorContainer, { backgroundColor: theme.error }]}>
+          <Stack style={[styles.errorContainer, { backgroundColor: theme.error }]}>
             <AppText
               style={[styles.errorText, { color: theme.white }]}
               testID={`${t("ratesUnavailable")}-txt`}
@@ -86,7 +86,7 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
               {t("ratesUnavailableDesc")}
             </AppText>
             <Button txt={t("retry")} onPress={handleRetry} outlined loading={isLoading} />
-          </View>
+          </Stack>
         )}
 
         {/* Enable Currency Conversion Toggle */}
@@ -97,13 +97,13 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
         >
           {t("currencyConversion")}
         </AppText>
-        <View style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
-          <TouchableOpacity
+        <Stack style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
+          <PressableSurface
             style={styles.toggleRow}
             onPress={handleToggleFormatBalance}
             disabled={ratesUnavailable}
           >
-            <View style={styles.toggleTextContainer}>
+            <Stack style={styles.toggleTextContainer}>
               <AppText
                 style={[
                   {
@@ -120,19 +120,19 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
               >
                 {ratesUnavailable ? t("ratesRequiredForFiat") : t("showFiatBalanceDesc")}
               </AppText>
-            </View>
-            <View style={styles.toggleContainer}>
+            </Stack>
+            <Stack style={styles.toggleContainer}>
               <Toggle
                 value={formatBalance}
                 onChange={handleToggleFormatBalance}
                 disabled={ratesUnavailable}
               />
-            </View>
-          </TouchableOpacity>
-        </View>
+            </Stack>
+          </PressableSurface>
+        </Stack>
 
         {/* Currency Selection */}
-        <View style={styles.currencyHeader}>
+        <Stack style={styles.currencyHeader}>
           <AppText style={[styles.subHeader]} weight="medium" testID={`${t("selectCurrency")}-txt`}>
             {t("selectCurrency")}
           </AppText>
@@ -142,10 +142,10 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
               testID={`${`${t("lastUpdate")}: ${formatLastUpdate()}`}-txt`}
             >{`${t("lastUpdate")}: ${formatLastUpdate()}`}</AppText>
           )}
-        </View>
+        </Stack>
 
         {isLoading && !rates ? (
-          <View style={styles.loadingContainer}>
+          <Stack style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={theme.text} />
             <AppText
               style={[styles.loadingText, { color: theme.textSecondary }]}
@@ -153,9 +153,9 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
             >
               {t("loadingRates")}
             </AppText>
-          </View>
+          </Stack>
         ) : hasRatesError ? (
-          <View
+          <Stack
             style={[
               globals().wrapContainer,
               { backgroundColor: theme.drawer },
@@ -168,9 +168,9 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
             >
               {t("noCurrenciesAvailable")}
             </AppText>
-          </View>
+          </Stack>
         ) : (
-          <View
+          <Stack
             style={[
               globals().wrapContainer,
               { backgroundColor: theme.drawer },
@@ -188,7 +188,7 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
                 disabled={!formatBalance || ratesUnavailable}
               />
             ))}
-          </View>
+          </Stack>
         )}
       </ScrollView>
     </Screen>
@@ -213,12 +213,12 @@ function CurrencySelection({
   const theme = useAppThemeTokens();
   return (
     <>
-      <TouchableOpacity
+      <PressableSurface
         style={[globals().wrapRow, { paddingBottom: 15 }]}
         onPress={() => onSelect(code)}
         disabled={disabled}
       >
-        <View style={styles.currencyInfo}>
+        <Stack style={styles.currencyInfo}>
           <AppText
             style={[{ color: disabled ? theme.textSecondary : theme.text }]}
             weight="medium"
@@ -235,9 +235,9 @@ function CurrencySelection({
           >
             {symbol}
           </AppText>
-        </View>
+        </Stack>
         <RadioBtn selected={selected} />
-      </TouchableOpacity>
+      </PressableSurface>
       {hasSeparator && <Separator style={[{ marginBottom: 15 }]} />}
     </>
   );

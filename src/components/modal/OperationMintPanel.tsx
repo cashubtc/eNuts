@@ -1,10 +1,10 @@
 import { MintBoardIcon } from "@comps/Icons";
 import { Image } from "expo-image";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
 import { useMemo } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 type TOperationMintPanelRowTone = "default" | "success" | "danger";
 export interface IOperationMintPanelRow {
   label: string;
@@ -21,7 +21,7 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
     return mint.mintInfo.name || mint.name || formatMintUrl(mint.mintUrl);
   }, [mint]);
   return (
-    <View
+    <Stack
       style={[
         styles.panel,
         {
@@ -30,9 +30,9 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
         },
       ]}
     >
-      <View style={styles.headerRow}>
+      <Stack style={styles.headerRow}>
         {mint.mintInfo.icon_url ? (
-          <View
+          <Stack
             style={[
               styles.iconWrap,
               {
@@ -47,9 +47,9 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
               contentFit="cover"
               transition={200}
             />
-          </View>
+          </Stack>
         ) : (
-          <View
+          <Stack
             style={[
               styles.iconWrap,
               {
@@ -59,10 +59,10 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
             ]}
           >
             <MintBoardIcon width={18} height={18} color={theme.accent} />
-          </View>
+          </Stack>
         )}
 
-        <View style={styles.mintInfo}>
+        <Stack style={styles.mintInfo}>
           <AppText style={[styles.mintName]} weight="medium" testID={`${mintLabel}-txt`}>
             {mintLabel}
           </AppText>
@@ -72,22 +72,22 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
           >
             {formatMintUrl(mint.mintUrl)}
           </AppText>
-        </View>
-      </View>
+        </Stack>
+      </Stack>
 
       {rows.length ? (
-        <View style={[styles.metaWrap, { borderTopColor: theme.border }]}>
+        <Stack style={[styles.metaWrap, { borderTopColor: theme.border }]}>
           {rows.map((row, index) => (
-            <View
+            <Stack
               key={`${row.label}-${index}`}
               style={index < rows.length - 1 ? styles.metaRowSpacing : undefined}
             >
               <MetaRow row={row} />
-            </View>
+            </Stack>
           ))}
-        </View>
+        </Stack>
       ) : null}
-    </View>
+    </Stack>
   );
 }
 function MetaRow({ row }: { row: IOperationMintPanelRow }) {
@@ -103,7 +103,7 @@ function MetaRow({ row }: { row: IOperationMintPanelRow }) {
     }
   }, [theme.text, row.tone]);
   return (
-    <View style={styles.metaRow}>
+    <Stack style={styles.metaRow}>
       <AppText
         style={[styles.balanceLabel, { color: theme.textSecondary }]}
         testID={`${row.label}-txt`}
@@ -117,7 +117,7 @@ function MetaRow({ row }: { row: IOperationMintPanelRow }) {
       >
         {row.value}
       </AppText>
-    </View>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

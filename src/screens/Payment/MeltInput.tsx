@@ -7,21 +7,20 @@ import { BoltIcon, ChevronRightIcon, CopyIcon } from "@comps/Icons";
 import type { MeltOperation } from "@cashu/coco-core";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
-import { AppText, verticalScale, fontScale, InputFrame, useAppThemeTokens } from "@styles";
+import {
+  AppText,
+  verticalScale,
+  fontScale,
+  InputFrame,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import { formatMintUrl, getStrFromClipboard, isErr, vib } from "@util";
 import { isLightningAddress, isLnurl } from "@util/lnurl";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  Easing,
-  Keyboard,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-} from "react-native";
+import { Animated, Easing, Keyboard, ScrollView, StyleSheet, type TextInput } from "react-native";
 import MeltConfirmationModal, { type MeltConfirmationModalRef } from "@modal/MeltConfirmationModal";
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import type { TBeforeRemoveEvent } from "@model/nav";
@@ -380,7 +379,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
         withCancelBtn
         withPadding={true}
       >
-        <View
+        <Stack
           style={{
             flex: 1,
             justifyContent: "center",
@@ -390,7 +389,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
           <AppText testID={`${t("noMintsWithBalance", { ns: NS.common })}-txt`}>
             {t("noMintsWithBalance", { ns: NS.common })}
           </AppText>
-        </View>
+        </Stack>
       </Screen>
     );
   }
@@ -417,7 +416,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
         showsVerticalScrollIndicator={false}
       >
         {!isAmountStep ? (
-          <View
+          <Stack
             key="request-input"
             style={[
               styles.inputSurface,
@@ -427,7 +426,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
               },
             ]}
           >
-            <View style={styles.inputRow}>
+            <Stack style={styles.inputRow}>
               <InputFrame
                 ref={inputRef}
                 keyboardType="email-address"
@@ -446,7 +445,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 style={styles.inputField}
                 testID={`${t("invoiceOrLnAddress")}-input`}
               />
-              <TouchableOpacity
+              <PressableSurface
                 accessibilityRole="button"
                 accessibilityLabel={t("paste")}
                 activeOpacity={0.7}
@@ -460,9 +459,9 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 ]}
               >
                 <CopyIcon width={18} height={18} color={theme.accent} />
-              </TouchableOpacity>
-            </View>
-          </View>
+              </PressableSurface>
+            </Stack>
+          </Stack>
         ) : (
           <Animated.View
             key="ln-address-amount"
@@ -475,11 +474,11 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
               lnAddressMotionStyle,
             ]}
           >
-            <View style={styles.panelHeader}>
-              <View style={[styles.panelIcon, { backgroundColor: theme.inputBackground }]}>
+            <Stack style={styles.panelHeader}>
+              <Stack style={[styles.panelIcon, { backgroundColor: theme.inputBackground }]}>
                 <BoltIcon width={18} height={18} color={theme.accent} />
-              </View>
-              <View style={styles.panelCopy}>
+              </Stack>
+              <Stack style={styles.panelCopy}>
                 <AppText
                   style={[styles.panelTitle]}
                   weight="medium"
@@ -493,8 +492,8 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 >
                   {lnAddress}
                 </AppText>
-              </View>
-              <TouchableOpacity
+              </Stack>
+              <PressableSurface
                 accessibilityRole="button"
                 accessibilityLabel={t("cancel", { ns: NS.common })}
                 activeOpacity={0.7}
@@ -514,11 +513,11 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 >
                   {t("cancel", { ns: NS.common })}
                 </AppText>
-              </TouchableOpacity>
-            </View>
+              </PressableSurface>
+            </Stack>
 
-            <View style={styles.amountStage}>
-              <View style={[styles.amountDivider, { backgroundColor: theme.darkBorder }]} />
+            <Stack style={styles.amountStage}>
+              <Stack style={[styles.amountDivider, { backgroundColor: theme.darkBorder }]} />
               <AmountInput
                 ref={amountInputRef}
                 value={amountInput}
@@ -529,10 +528,10 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 compact
                 testID="melt-ln-address-amount-input"
               />
-            </View>
+            </Stack>
 
             {shouldShowAmountLimits ? (
-              <View style={[styles.amountRangeSection, { borderTopColor: theme.darkBorder }]}>
+              <Stack style={[styles.amountRangeSection, { borderTopColor: theme.darkBorder }]}>
                 <AppText
                   style={[styles.rangeTitle, { color: theme.text }]}
                   weight="medium"
@@ -540,9 +539,9 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 >
                   {t("amountLimits", { ns: NS.common })}
                 </AppText>
-                <View style={styles.rangeGrid}>
+                <Stack style={styles.rangeGrid}>
                   {minSendable ? (
-                    <View style={[styles.rangeItem, { backgroundColor: theme.inputBackground }]}>
+                    <Stack style={[styles.rangeItem, { backgroundColor: theme.inputBackground }]}>
                       <AppText
                         style={[styles.rangeLabel, { color: theme.textSecondary }]}
                         testID={"Min-txt"}
@@ -553,10 +552,10 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                         style={[styles.rangeValue]}
                         testID={`${`${Math.floor(minSendable / 1000)} sats`}-txt`}
                       >{`${Math.floor(minSendable / 1000)} sats`}</AppText>
-                    </View>
+                    </Stack>
                   ) : null}
                   {maxSendable ? (
-                    <View style={[styles.rangeItem, { backgroundColor: theme.inputBackground }]}>
+                    <Stack style={[styles.rangeItem, { backgroundColor: theme.inputBackground }]}>
                       <AppText
                         style={[styles.rangeLabel, { color: theme.textSecondary }]}
                         testID={"Max-txt"}
@@ -567,15 +566,15 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                         style={[styles.rangeValue]}
                         testID={`${`${Math.floor(maxSendable / 1000)} sats`}-txt`}
                       >{`${Math.floor(maxSendable / 1000)} sats`}</AppText>
-                    </View>
+                    </Stack>
                   ) : null}
-                </View>
-              </View>
+                </Stack>
+              </Stack>
             ) : null}
           </Animated.View>
         )}
 
-        <View style={styles.actionWrap}>
+        <Stack style={styles.actionWrap}>
           <Button
             disabled={isContinueDisabled}
             txt={t("continue")}
@@ -584,7 +583,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
               isContinueLoading ? <Loading size={20} /> : <ChevronRightIcon color={theme.white} />
             }
           />
-        </View>
+        </Stack>
       </ScrollView>
 
       {displayOperation ? (

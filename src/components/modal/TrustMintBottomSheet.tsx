@@ -8,10 +8,10 @@ import type { Token } from "@cashu/cashu-ts";
 import type { ITokenInfo } from "@model";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 export type TrustMintAction = "trust" | "cancel" | "swap";
 export type TrustMintBottomSheetRef = {
@@ -95,33 +95,33 @@ const TrustMintBottomSheet = forwardRef<
             {t("from")}:
           </AppText>
         )}
-        <View style={styles.tokenMintsView}>
+        <Stack style={styles.tokenMintsView}>
           {tokenInfo?.mints.map((m) => (
             <AppText style={[styles.mintPrompt, { color: theme.text }]} key={m}>
               {formatMintUrl(m)}
             </AppText>
           ))}
-        </View>
+        </Stack>
         <Separator style={[styles.separator]} />
-        <TouchableOpacity style={styles.row} onPress={handleTrust}>
-          <View style={styles.iconContainer}>
+        <PressableSurface style={styles.row} onPress={handleTrust}>
+          <Stack style={styles.iconContainer}>
             {loading ? (
-              <View>
+              <Stack>
                 <Loading size="small" color={theme.valid} />
-              </View>
+              </Stack>
             ) : (
               <ReceiveIcon width={26} height={26} color={theme.valid} />
             )}
-          </View>
-          <View style={styles.txtWrap}>
+          </Stack>
+          <Stack style={styles.txtWrap}>
             <AppText style={[styles.actionText, { color: theme.text }]}>
               {loading ? t("claiming", { ns: NS.wallet }) : t("trustMintOpt")}
             </AppText>
             <AppText style={[styles.descriptionText, { color: theme.textSecondary }]}>
               {t("trustHint")}
             </AppText>
-          </View>
-        </TouchableOpacity>
+          </Stack>
+        </PressableSurface>
         <TxtButton txt={t("cancel")} onPress={handleCancel} style={[styles.TxtButton]} />
       </ScrollView>
     </TrueSheet>

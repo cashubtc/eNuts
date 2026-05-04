@@ -1,8 +1,8 @@
-import { AppText, verticalScale, fontScale, Stack } from "@styles";
+import { AppText, verticalScale, fontScale, PressableSurface, Stack } from "@styles";
 import { CloseIcon } from "@comps/Icons";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import type { ReactNode, RefObject } from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 interface IDashboardActionSheetProps {
   sheetRef: RefObject<TrueSheet | null>;
   title: string;
@@ -32,7 +32,7 @@ export default function DashboardActionSheet({
           <AppText style={[styles.title]} weight="medium" align="center" testID={`${title}-txt`}>
             {title}
           </AppText>
-          <TouchableOpacity
+          <PressableSurface
             activeOpacity={0.65}
             accessibilityRole="button"
             accessibilityLabel={closeAccessibilityLabel}
@@ -42,7 +42,7 @@ export default function DashboardActionSheet({
             }}
           >
             <CloseIcon width={18} height={18} color={closeIconColor} />
-          </TouchableOpacity>
+          </PressableSurface>
         </Stack>
 
         {children}
@@ -69,7 +69,7 @@ export function DashboardActionSheetOption({
   testID,
 }: IDashboardActionSheetOptionProps) {
   return (
-    <TouchableOpacity
+    <PressableSurface
       activeOpacity={0.7}
       style={styles.optionContainer}
       onPress={onPress}
@@ -83,7 +83,7 @@ export function DashboardActionSheetOption({
           {description}
         </AppText>
       </Stack>
-    </TouchableOpacity>
+    </PressableSurface>
   );
 }
 const styles = StyleSheet.create({

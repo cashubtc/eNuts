@@ -1,6 +1,6 @@
 import { usePromptContext } from "@src/context/Prompt";
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { AppText, fontScale, PressableSurface, useAppThemeTokens } from "@styles";
+import { StyleSheet } from "react-native";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Toaster() {
@@ -21,7 +21,7 @@ export default function Toaster() {
           },
         ]}
       >
-        <TouchableOpacity
+        <PressableSurface
           onPress={closePrompt}
           style={styles.txtWrap}
           testID={`${prompt.success ? "success" : "error"}-toaster`}
@@ -33,7 +33,7 @@ export default function Toaster() {
           >
             {prompt.msg}
           </AppText>
-        </TouchableOpacity>
+        </PressableSurface>
       </Animated.View>
     )
   );

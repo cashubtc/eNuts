@@ -9,11 +9,11 @@ import Screen from "@comps/Screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useManager } from "@src/context/Manager";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl, share } from "@util";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
   const { operation } = route.params;
   const { t } = useTranslation([NS.common]);
@@ -49,8 +49,8 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
         navigation.navigate("dashboard");
       }}
     >
-      <View style={styles.container}>
-        <View style={styles.content}>
+      <Stack style={styles.container}>
+        <Stack style={styles.content}>
           <QR
             size={250}
             value={operation.request}
@@ -58,8 +58,8 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
             isInvoice
             animate={false}
           />
-          <View>
-            <View style={styles.awaitingWrap}>
+          <Stack>
+            <Stack style={styles.awaitingWrap}>
               <AppText
                 style={[{ fontWeight: "500", marginRight: 10 }]}
                 testID={`${t("paymentPending") + "..."}-txt`}
@@ -67,17 +67,17 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
                 {t("paymentPending") + "..."}
               </AppText>
               <Loading />
-            </View>
-          </View>
+            </Stack>
+          </Stack>
           <Button
             txt={t("shareInvoice")}
             onPress={() => void share(operation.request)}
             icon={<ShareIcon color={theme.accentContrast} />}
             outlined
           />
-          {isIOS && <View style={styles.placeholder} />}
-        </View>
-      </View>
+          {isIOS && <Stack style={styles.placeholder} />}
+        </Stack>
+      </Stack>
     </Screen>
   );
 }

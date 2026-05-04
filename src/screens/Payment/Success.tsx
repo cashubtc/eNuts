@@ -1,4 +1,4 @@
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
 import { isIOS } from "@consts";
@@ -11,7 +11,7 @@ import { isNum, vib } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
   const { amount, memo, fee, change, mint, isClaim, isMelt, isAutoSwap, isScanned } = route.params;
@@ -30,16 +30,16 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View pointerEvents="none" style={styles.confetti}>
+    <Stack style={[styles.container, { backgroundColor: theme.background }]}>
+      <Stack pointerEvents="none" style={styles.confetti}>
         <LottieView
           source={require("../../../assets/lottie/confetti.json")}
           autoPlay
           loop={false}
           style={{ width: "100%", height: "100%" }}
         />
-      </View>
-      <View style={{ width: "100%" }}>
+      </Stack>
+      <Stack style={{ width: "100%" }}>
         <AppText testID={`amount: ${amount}`} style={[styles.successTxt, { color: theme.text }]}>
           {(() => {
             if (isMelt && !isAutoSwap) {
@@ -57,16 +57,16 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             {mint}
           </AppText>
         )}
-        <View style={styles.successAnim}>
+        <Stack style={styles.successAnim}>
           <LottieView
             source={require("../../../assets/lottie/success.json")}
             autoPlay
             loop={false}
             style={styles.lottie}
           />
-        </View>
+        </Stack>
         {(isMelt || isAutoSwap) && amount && (
-          <View style={styles.meltWrap}>
+          <Stack style={styles.meltWrap}>
             <Details
               txt={t(isAutoSwap ? "swapped" : "paidOut", {
                 ns: NS.wallet,
@@ -87,30 +87,30 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
                 value={`${formatAmount(change).formatted} ${formatAmount(change).symbol}`}
               />
             )}
-          </View>
+          </Stack>
         )}
-      </View>
-      <View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
+      </Stack>
+      <Stack style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
         <Button
           txt={t("backToDashboard")}
           onPress={() => {
             navigation.navigate("dashboard");
           }}
         />
-      </View>
-    </View>
+      </Stack>
+    </Stack>
   );
 }
 function Details({ txt, value }: { txt: string; value: string }) {
   return (
-    <View style={styles.meltOverview}>
+    <Stack style={styles.meltOverview}>
       <AppText style={[styles.meltTxt]} testID={`${txt}-txt`}>
         {txt}
       </AppText>
       <AppText style={[styles.meltTxt]} testID={`${value}-txt`}>
         {value}
       </AppText>
-    </View>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

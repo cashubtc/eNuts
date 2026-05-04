@@ -6,12 +6,12 @@ import Screen from "@comps/Screen";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function MintHomeScreen({ navigation }: any) {
   const { t } = useTranslation([NS.common]);
@@ -26,19 +26,19 @@ export default function MintHomeScreen({ navigation }: any) {
       withBackBtn
       handlePress={() => navigation.goBack()}
       rightAction={
-        <TouchableOpacity
+        <PressableSurface
           onPress={() => {
             navigation.navigate("Mint", { screen: "MintAdd" });
           }}
           style={{ flexDirection: "row", alignItems: "center" }}
         >
           <PlusIcon width={30} height={30} color={theme.accent} />
-        </TouchableOpacity>
+        </PressableSurface>
       }
     >
-      <View style={styles.container}>
+      <Stack style={styles.container}>
         {knownMints.length > 0 ? (
-          <View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
+          <Stack style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
             {/* Mints list */}
             <ScrollView alwaysBounceVertical={false}>
               {knownMints.map((m, i) => {
@@ -46,7 +46,7 @@ export default function MintHomeScreen({ navigation }: any) {
                 const { formatted, symbol } = formatAmount(m.balance);
                 const displayBalance = hidden.balance ? "****" : `${formatted} ${symbol}`;
                 return (
-                  <TouchableOpacity
+                  <PressableSurface
                     key={m.mintUrl}
                     onPress={() => {
                       navigation.navigate("MintSettings", {
@@ -59,21 +59,21 @@ export default function MintHomeScreen({ navigation }: any) {
                     }}
                   >
                     <Card variant="base" style={styles.cardContent}>
-                      <View style={styles.mintContainer}>
+                      <Stack style={styles.mintContainer}>
                         {/* Left side: Mint icon (if available) */}
                         {m.mintInfo.icon_url && (
-                          <View style={styles.iconContainer}>
+                          <Stack style={styles.iconContainer}>
                             <Image
                               source={{ uri: m.mintInfo.icon_url }}
                               style={styles.icon}
                               contentFit="cover"
                               transition={200}
                             />
-                          </View>
+                          </Stack>
                         )}
 
                         {/* Center: Mint name and balance */}
-                        <View style={styles.infoContainer}>
+                        <Stack style={styles.infoContainer}>
                           <AppText
                             style={[{ color: theme.text }]}
                             weight="medium"
@@ -93,25 +93,25 @@ export default function MintHomeScreen({ navigation }: any) {
                           >
                             {displayBalance}
                           </AppText>
-                        </View>
+                        </Stack>
 
                         {/* Right side: Chevron icon */}
-                        <View style={styles.chevronContainer}>
+                        <Stack style={styles.chevronContainer}>
                           <ChevronRightIcon color={theme.text} />
-                        </View>
-                      </View>
+                        </Stack>
+                      </Stack>
                     </Card>
-                  </TouchableOpacity>
+                  </PressableSurface>
                 );
               })}
             </ScrollView>
-          </View>
+          </Stack>
         ) : (
-          <View style={styles.noMintContainer}>
+          <Stack style={styles.noMintContainer}>
             <Empty txt={t("noMint")} />
-          </View>
+          </Stack>
         )}
-      </View>
+      </Stack>
     </Screen>
   );
 }

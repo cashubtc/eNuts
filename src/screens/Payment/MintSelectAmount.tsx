@@ -6,12 +6,12 @@ import Screen from "@comps/Screen";
 import { useKnownMints } from "@src/context/KnownMints";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { AppText, useAppThemeTokens } from "@styles";
+import { AppText, useAppThemeTokens, Stack } from "@styles";
 import { vib } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard, TextInput, View, StyleSheet } from "react-native";
+import { Keyboard, StyleSheet, type TextInput } from "react-native";
 import { useManager } from "@src/context/Manager";
 import type { MintSelectAmountProps } from "@src/nav/navTypes";
 import useLoading from "@comps/hooks/Loading";
@@ -108,7 +108,7 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
         handlePress={handleBack}
         withPadding={true}
       >
-        <View
+        <Stack
           style={{
             flex: 1,
             justifyContent: "center",
@@ -118,7 +118,7 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
           <AppText testID={`${t("noMintsWithBalance", { ns: NS.common })}-txt`}>
             {t("noMintsWithBalance", { ns: NS.common })}
           </AppText>
-        </View>
+        </Stack>
       </Screen>
     );
   }
@@ -149,14 +149,14 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
         testID="mint-amount-input"
       />
 
-      <View style={styles.actionWrap}>
+      <Stack style={styles.actionWrap}>
         <Button
           txt={t("continue", { ns: NS.common })}
           onPress={handleSubmit}
           icon={<ChevronRightIcon color={theme.white} />}
           loading={loading}
         />
-      </View>
+      </Stack>
     </Screen>
   );
 }
@@ -180,7 +180,7 @@ export function MeltOverview({
   const total = shouldEstimate ? 0 : amount + fee;
   const { formatted, symbol } = formatAmount(total);
   return (
-    <View style={styles.overview}>
+    <Stack style={styles.overview}>
       <AppText
         weight="medium"
         testID={`${
@@ -206,7 +206,7 @@ export function MeltOverview({
         ]}
         testID={`${`${formatted} ${symbol}`}-txt`}
       >{`${formatted} ${symbol}`}</AppText>
-    </View>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

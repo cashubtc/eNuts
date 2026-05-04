@@ -12,11 +12,11 @@ import { NS } from "@src/i18n";
 import type { TBeforeRemoveEvent } from "@model/nav";
 import { SendSelectAmountProps } from "@src/nav/navTypes";
 import { usePromptContext } from "@src/context/Prompt";
-import { AppText, useAppThemeTokens } from "@styles";
+import { AppText, useAppThemeTokens, Stack } from "@styles";
 import { isErr, vib } from "@util";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard, TextInput, View, StyleSheet } from "react-native";
+import { Keyboard, StyleSheet, type TextInput } from "react-native";
 type TPreparedOrLaterSendOperation = Exclude<
   SendOperation,
   {
@@ -215,7 +215,7 @@ export default function SendSelectAmountScreen({ navigation }: SendSelectAmountP
         withBackBtn
         handlePress={handleBack}
       >
-        <View
+        <Stack
           style={{
             flex: 1,
             justifyContent: "center",
@@ -226,7 +226,7 @@ export default function SendSelectAmountScreen({ navigation }: SendSelectAmountP
           <AppText testID={`${t("noMintsWithBalance", { ns: NS.common })}-txt`}>
             {t("noMintsWithBalance", { ns: NS.common })}
           </AppText>
-        </View>
+        </Stack>
       </Screen>
     );
   }
@@ -256,14 +256,14 @@ export default function SendSelectAmountScreen({ navigation }: SendSelectAmountP
         testID="send-amount-input"
       />
 
-      <View style={styles.actionWrap}>
+      <Stack style={styles.actionWrap}>
         <Button
           txt={t("continue", { ns: NS.common })}
           onPress={handleAmountSubmit}
           icon={<ChevronRightIcon color={theme.white} />}
           loading={isSending}
         />
-      </View>
+      </Stack>
 
       <SendConfirmationModal
         ref={sendConfirmationRef}
@@ -296,7 +296,7 @@ export function MeltOverview({
   const total = shouldEstimate ? 0 : amount + fee;
   const { formatted, symbol } = formatAmount(total);
   return (
-    <View style={styles.overview}>
+    <Stack style={styles.overview}>
       <AppText
         weight="medium"
         testID={`${
@@ -322,7 +322,7 @@ export function MeltOverview({
         ]}
         testID={`${`${formatted} ${symbol}`}-txt`}
       >{`${formatted} ${symbol}`}</AppText>
-    </View>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

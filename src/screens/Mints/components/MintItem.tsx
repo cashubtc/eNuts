@@ -2,8 +2,8 @@ import { ChevronRightIcon, ZapIcon } from "@comps/Icons";
 import Separator from "@comps/Separator";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
-import { TouchableOpacity, View } from "react-native";
-import { AppText, globals, useAppThemeTokens } from "@styles";
+
+import { AppText, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import type { NavigationProp } from "@react-navigation/native";
 import type { RootStackParamList } from "@model/nav";
 interface MintItemProps {
@@ -49,8 +49,8 @@ export default function MintItem({
   const { formatted, symbol } = formatAmount(mint.balance);
   const theme = useAppThemeTokens();
   return (
-    <View key={mint.mintUrl}>
-      <TouchableOpacity
+    <Stack key={mint.mintUrl}>
+      <PressableSurface
         style={[globals().wrapRow, { paddingBottom: 15 }]}
         onPress={() => {
           navigation.navigate("mintmanagement", {
@@ -63,8 +63,8 @@ export default function MintItem({
           });
         }}
       >
-        <View style={styles.mintNameWrap}>
-          <View
+        <Stack style={styles.mintNameWrap}>
+          <Stack
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -73,8 +73,8 @@ export default function MintItem({
             <AppText weight="medium" testID={`${mint.name || formatMintUrl(mint.mintUrl)}-txt`}>
               {mint.name || formatMintUrl(mint.mintUrl)}
             </AppText>
-          </View>
-          <View style={styles.mintBal}>
+          </Stack>
+          <Stack style={styles.mintBal}>
             {mint.balance > 0 && <ZapIcon color={theme.accent} />}
             <AppText
               style={{
@@ -89,11 +89,11 @@ export default function MintItem({
                   ? `${formatted} ${symbol}`
                   : t("emptyMint")}
             </AppText>
-          </View>
-        </View>
+          </Stack>
+        </Stack>
         <ChevronRightIcon color={theme.text} />
-      </TouchableOpacity>
+      </PressableSurface>
       {!isLast && <Separator style={[{ marginBottom: 15 }]} />}
-    </View>
+    </Stack>
   );
 }

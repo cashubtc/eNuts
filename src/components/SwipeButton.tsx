@@ -1,4 +1,4 @@
-import { fontScale, useAppThemeTokens } from "@styles";
+import { Stack, fontScale, useAppThemeTokens } from "@styles";
 import { useEffect, useImperativeHandle, forwardRef } from "react";
 import { View, useWindowDimensions, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -127,7 +127,7 @@ function SwipeButton({ txt, onToggle }: ISwipeButtonProps, ref: React.Ref<SwipeB
   };
 
   return (
-    <View style={styles.container}>
+    <Stack style={styles.container}>
       <Animated.View
         style={[styles.swipeCont, { backgroundColor: theme.inputBackground, width: BUTTON_WIDTH }]}
         accessible={true}
@@ -152,7 +152,7 @@ function SwipeButton({ txt, onToggle }: ISwipeButtonProps, ref: React.Ref<SwipeB
           {txt}
         </Animated.Text>
       </Animated.View>
-    </View>
+    </Stack>
   );
 }
 

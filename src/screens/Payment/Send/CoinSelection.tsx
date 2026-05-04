@@ -13,12 +13,12 @@ import { useInitialURL } from "@src/context/Linking";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
-import { AppText, fontScale, globals, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl, getSelectedAmount, isNum } from "@util";
 import { isLightningAddress } from "@util/lnurl";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { OverviewRow } from "@comps/OverviewRow";
 export default function CoinSelectionScreen({ navigation, route }: TCoinSelectionPageProps) {
@@ -109,7 +109,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
       withBackBtn
     >
       <ScrollView alwaysBounceVertical={false} style={{ marginBottom: 90 }}>
-        <View style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
+        <Stack style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
           <OverviewRow txt1={t("paymentType")} txt2={t(getPaymentType())} />
           <OverviewRow txt1={t("mint")} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
           {recipient && <OverviewRow txt1={t("recipient")} txt2={getRecipient()} />}
@@ -129,7 +129,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
               txt2={`${formatAmount(estFee).formatted} ${formatAmount(estFee).symbol}`}
             />
           )}
-          <View>
+          <Stack>
             <AppText
               style={[{ fontWeight: "500", marginBottom: 5 }]}
               testID={`${t("balanceAfterTX")}-txt`}
@@ -148,14 +148,14 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
                 ? `${formatAmount(balance - amount - estFee).formatted} ${t("to")} ${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`
                 : `${formatAmount(balance - amount).formatted} ${formatAmount(balance - amount).symbol}`}
             </AppText>
-          </View>
+          </Stack>
           <Separator style={[{ marginTop: 20 }]} />
           {memo && memo.length > 0 && (
             <OverviewRow txt1={t("memo", { ns: NS.history })} txt2={memo} />
           )}
-        </View>
+        </Stack>
       </ScrollView>
-      <View
+      <Stack
         style={[
           styles.swipeContainer,
           {
@@ -165,7 +165,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
         ]}
       >
         <SwipeButton txt={t(getBtnTxt())} onToggle={submitPaymentReq} />
-      </View>
+      </Stack>
       <TrustMintBottomSheet ref={trustMintRef} />
     </Screen>
   );

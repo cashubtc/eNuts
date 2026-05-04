@@ -5,11 +5,11 @@ import ConfirmBottomSheet, { ConfirmBottomSheetRef } from "@comps/modal/ConfirmB
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
-import { AppText, verticalScale, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, verticalScale, fontScale, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import Button from "@comps/Button";
 export default function MintSettingsScreen({ navigation, route }: any) {
@@ -38,8 +38,8 @@ export default function MintSettingsScreen({ navigation, route }: any) {
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Mint Header Card */}
-        <View style={[styles.headerCard, { backgroundColor: theme.inputBackground }]}>
-          <View style={styles.headerContent}>
+        <Stack style={[styles.headerCard, { backgroundColor: theme.inputBackground }]}>
+          <Stack style={styles.headerContent}>
             {mint?.mintInfo?.icon_url && (
               <Image
                 source={{ uri: mint.mintInfo.icon_url }}
@@ -48,7 +48,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                 transition={200}
               />
             )}
-            <View style={styles.headerTextContainer}>
+            <Stack style={styles.headerTextContainer}>
               {mint?.mintInfo?.name && (
                 <AppText
                   style={[styles.mintName, { color: theme.text }]}
@@ -63,27 +63,27 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                   testID={`${`Version ${mint.mintInfo.version}`}-txt`}
                 >{`Version ${mint.mintInfo.version}`}</AppText>
               )}
-            </View>
-          </View>
-        </View>
+            </Stack>
+          </Stack>
+        </Stack>
 
         {/* Mint URL Section */}
-        <View style={styles.section}>
+        <Stack style={styles.section}>
           <AppText
             style={[styles.sectionTitle, { color: theme.textSecondary }]}
             testID={`${t("general", { ns: NS.mints })}-txt`}
           >
             {t("general", { ns: NS.mints })}
           </AppText>
-          <View style={[styles.card, { backgroundColor: theme.inputBackground }]}>
+          <Stack style={[styles.card, { backgroundColor: theme.inputBackground }]}>
             <AppText
               style={[styles.urlText, { color: theme.text }]}
               testID={`${formatMintUrl(route.params.mintUrl)}-txt`}
             >
               {formatMintUrl(route.params.mintUrl)}
             </AppText>
-          </View>
-        </View>
+          </Stack>
+        </Stack>
 
         {/* Metadata Section */}
         {mint?.mintInfo &&
@@ -91,14 +91,14 @@ export default function MintSettingsScreen({ navigation, route }: any) {
             mint.mintInfo.description_long ||
             (mint.mintInfo.contact && mint.mintInfo.contact.length > 0) ||
             mint.mintInfo.motd) && (
-            <View style={styles.section}>
+            <Stack style={styles.section}>
               <AppText
                 style={[styles.sectionTitle, { color: theme.textSecondary }]}
                 testID={`${t("metadata", { ns: NS.mints })}-txt`}
               >
                 {t("metadata", { ns: NS.mints })}
               </AppText>
-              <View style={[styles.card, { backgroundColor: theme.inputBackground }]}>
+              <Stack style={[styles.card, { backgroundColor: theme.inputBackground }]}>
                 {mint.mintInfo.description && (
                   <InfoRow
                     label="Description"
@@ -137,12 +137,12 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                   </>
                 )}
                 {mint.mintInfo.motd && <InfoRow label="Message" value={mint.mintInfo.motd} />}
-              </View>
-            </View>
+              </Stack>
+            </Stack>
           )}
 
         {/* Danger Zone */}
-        <View style={styles.section}>
+        <Stack style={styles.section}>
           <AppText
             style={[styles.sectionTitle, { color: theme.error }]}
             testID={`${t("dangerZone", { ns: NS.mints })}-txt`}
@@ -163,7 +163,7 @@ export default function MintSettingsScreen({ navigation, route }: any) {
               });
             }}
           />
-        </View>
+        </Stack>
       </ScrollView>
       <ConfirmBottomSheet ref={confirmSheetRef} />
     </Screen>
@@ -178,15 +178,15 @@ function InfoRow({ label, value, hasSeparator }: IInfoRow) {
   const theme = useAppThemeTokens();
   return (
     <>
-      <View style={styles.infoRow}>
+      <Stack style={styles.infoRow}>
         <AppText style={[styles.infoLabel, { color: theme.textSecondary }]} testID={`${label}-txt`}>
           {label}
         </AppText>
         <AppText style={[styles.infoValue, { color: theme.text }]} testID={`${value}-txt`}>
           {value}
         </AppText>
-      </View>
-      {hasSeparator && <View style={[styles.infoSeparator, { backgroundColor: theme.border }]} />}
+      </Stack>
+      {hasSeparator && <Stack style={[styles.infoSeparator, { backgroundColor: theme.border }]} />}
     </>
   );
 }

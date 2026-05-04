@@ -1,7 +1,7 @@
 import { NS } from "@src/i18n";
-import { AppText, useAppThemeTokens } from "@styles";
+import { AppText, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import useCopy from "./hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "./Icons";
@@ -25,8 +25,8 @@ export default function QR({ size, value, animate, truncateNum, onError }: QRPro
   const { copied, copy } = useCopy();
   const chunk = useAnimatedQr(value, { animate });
   return (
-    <TouchableOpacity onPress={() => void copy(value)}>
-      <View style={[styles.qrWrap, { borderColor: theme.white }]}>
+    <PressableSurface onPress={() => void copy(value)}>
+      <Stack style={[styles.qrWrap, { borderColor: theme.white }]}>
         <QRCode
           size={size}
           value={chunk}
@@ -36,8 +36,8 @@ export default function QR({ size, value, animate, truncateNum, onError }: QRPro
           logoMargin={6}
           onError={onError}
         />
-      </View>
-      <View
+      </Stack>
+      <Stack
         style={[
           styles.txtContainer,
           {
@@ -46,17 +46,17 @@ export default function QR({ size, value, animate, truncateNum, onError }: QRPro
           },
         ]}
       >
-        <View style={styles.iconCon}>
+        <Stack style={styles.iconCon}>
           {copied ? <CheckmarkIcon color={theme.valid} /> : <CopyIcon color={theme.text} />}
-        </View>
+        </Stack>
         <AppText
           style={[{ color: copied ? theme.valid : theme.text }]}
           testID={`${copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}-txt`}
         >
           {copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}
         </AppText>
-      </View>
-    </TouchableOpacity>
+      </Stack>
+    </PressableSurface>
   );
 }
 const styles = StyleSheet.create({

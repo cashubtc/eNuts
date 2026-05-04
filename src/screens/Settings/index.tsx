@@ -22,10 +22,10 @@ import { reportIssueUrl } from "@src/consts/urls";
 import { isErr, openUrl } from "@util";
 import { secureStore, store } from "@store";
 import { SECURESTORE_KEY, STORE_KEYS } from "@store/consts";
-import { AppText, globals, useAppThemeTokens } from "@styles";
+import { AppText, globals, useAppThemeTokens, Stack } from "@styles";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 import ConfirmBottomSheet, { ConfirmBottomSheetRef } from "@comps/modal/ConfirmBottomSheet";
 import MenuItem from "./MenuItem";
 import Loading from "@comps/Loading";
@@ -49,7 +49,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
     >
       <ScrollView alwaysBounceVertical={false}>
         {/* MINT */}
-        <View
+        <Stack
           style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
         >
           <MenuItem
@@ -58,9 +58,9 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             icon={<MintBoardIcon color={theme.text} />}
             onPress={() => navigation.navigate("Mint", { screen: "MintHome" })}
           />
-        </View>
+        </Stack>
         {/* WALLET */}
-        <View
+        <Stack
           style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
         >
           <MenuItem
@@ -69,9 +69,9 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             icon={<HistoryIcon color={theme.text} />}
             onPress={() => navigation.navigate("History", { screen: "HistoryMain" })}
           />
-        </View>
+        </Stack>
         {/* PREFERENCES */}
-        <View
+        <Stack
           style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
         >
           <MenuItem
@@ -100,9 +100,9 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             icon={<ZapIcon width={18} color={theme.text} />}
             onPress={() => navigation.navigate("NPC settings")}
           />
-        </View>
+        </Stack>
         {/* SECURITY */}
-        <View
+        <Stack
           style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
         >
           <MenuItem
@@ -116,9 +116,9 @@ export default function Settings({ navigation }: TSettingsPageProps) {
             icon={<LockIcon color={theme.text} />}
             onPress={() => navigation.navigate("Restore", { screen: "RecoverMints" })}
           />
-        </View>
+        </Stack>
         {/* ABOUT */}
-        <View
+        <Stack
           style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
         >
           <MenuItem
@@ -138,8 +138,8 @@ export default function Settings({ navigation }: TSettingsPageProps) {
               )
             }
           />
-        </View>
-        <View
+        </Stack>
+        <Stack
           style={[globals().wrapContainer, { backgroundColor: theme.drawer }, { marginBottom: 20 }]}
         >
           <MenuItem
@@ -158,7 +158,7 @@ export default function Settings({ navigation }: TSettingsPageProps) {
               })
             }
           />
-        </View>
+        </Stack>
         <AppText weight="medium" align="center" testID={`${appVersion}-txt`}>
           {appVersion}
         </AppText>

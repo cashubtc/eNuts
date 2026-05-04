@@ -8,7 +8,14 @@ import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import type { QRScannerScreenProps } from "@src/nav/navTypes";
-import { AppText, verticalScale, fontScale, useAppThemeTokens } from "@styles";
+import {
+  AppText,
+  verticalScale,
+  fontScale,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import type { PaymentCandidateKind, PaymentStringCandidate } from "@util/paymentStringParser";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -17,7 +24,7 @@ import type { ScanningResult } from "expo-camera";
 import type { ComponentProps } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Linking, StyleSheet } from "react-native";
 
 const QR_CANDIDATE_PRIORITY: PaymentCandidateKind[] = [
   "cashuToken",
@@ -151,7 +158,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
   };
 
   const nfcHeaderAction = (
-    <TouchableOpacity
+    <PressableSurface
       accessibilityLabel={t("nfcPayment", {
         ns: NS.wallet,
         defaultValue: "NFC Payment",
@@ -163,7 +170,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
       testID="nfc-btn-top-nav"
     >
       <NfcIcon width={20} color={theme.accent} />
-    </TouchableOpacity>
+    </PressableSurface>
   );
 
   const nfcPaymentModal = (
@@ -191,7 +198,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
 
   if (!permission) {
     // Camera permissions are still loading.
-    return <View />;
+    return <Stack />;
   }
 
   if (!permission.granted) {
@@ -225,14 +232,14 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
       withPadding={false}
       withBottomInset={false}
     >
-      <View style={[styles.cameraContainer, { backgroundColor: theme.background }]}>
+      <Stack style={[styles.cameraContainer, { backgroundColor: theme.background }]}>
         <CameraView
           style={styles.camera}
           onBarcodeScanned={isScanningEnabled ? handleCodeScanned : undefined}
         />
-        <View style={[styles.scrim, { backgroundColor: theme.cameraScrim }]} />
-        <View style={styles.scanSurface}>
-          <View style={styles.headerCopy}>
+        <Stack style={[styles.scrim, { backgroundColor: theme.cameraScrim }]} />
+        <Stack style={styles.scanSurface}>
+          <Stack style={styles.headerCopy}>
             <StatusPill
               label={
                 isClaimingToken
@@ -257,9 +264,9 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
             <AppText style={[styles.subtitle, { color: theme.cameraMutedText }]}>
               {t("qrScanFormats")}
             </AppText>
-          </View>
+          </Stack>
 
-          <View
+          <Stack
             style={[
               styles.focusFrame,
               { backgroundColor: theme.cameraFrame, borderColor: `${theme.accent}66` },
@@ -269,11 +276,11 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
             <FrameCorner position="topRight" color={theme.accent} />
             <FrameCorner position="bottomLeft" color={theme.accent} />
             <FrameCorner position="bottomRight" color={theme.accent} />
-          </View>
+          </Stack>
 
-          <View style={styles.bottomDock}>
+          <Stack style={styles.bottomDock}>
             {isClaimingToken && (
-              <View
+              <Stack
                 style={[
                   styles.progressWrap,
                   {
@@ -282,16 +289,16 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                   },
                 ]}
               >
-                <View style={styles.loadingState}>
+                <Stack style={styles.loadingState}>
                   <Loading size={24} color={theme.accent} />
                   <AppText style={[styles.progressTitle, { color: theme.white }]}>
                     {t("claiming", { ns: NS.wallet })}
                   </AppText>
-                </View>
-              </View>
+                </Stack>
+              </Stack>
             )}
             {!isClaimingToken && urActive && (
-              <View
+              <Stack
                 style={[
                   styles.progressWrap,
                   {
@@ -300,29 +307,29 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                   },
                 ]}
               >
-                <View style={styles.progressHeader}>
+                <Stack style={styles.progressHeader}>
                   <AppText style={[styles.progressTitle, { color: theme.white }]}>
                     {t("receivingAnimatedQr")}
                   </AppText>
                   <AppText style={[styles.progressCount, { color: theme.accent }]}>
                     {receivedCount}/{expectedCount || "-"}
                   </AppText>
-                </View>
-                <View style={[styles.progressTrack, { backgroundColor: theme.cameraTrack }]}>
-                  <View
+                </Stack>
+                <Stack style={[styles.progressTrack, { backgroundColor: theme.cameraTrack }]}>
+                  <Stack
                     style={[
                       styles.progressFill,
                       { width: `${Math.min(estimated, 1) * 100}%`, backgroundColor: theme.accent },
                     ]}
                   />
-                </View>
+                </Stack>
                 {urError && (
                   <AppText style={[styles.errorText, { color: theme.error }]}>{urError}</AppText>
                 )}
-              </View>
+              </Stack>
             )}
             {!isClaimingToken && !isScanningEnabled && (
-              <TouchableOpacity
+              <PressableSurface
                 accessibilityRole="button"
                 style={[styles.rescanButton, { backgroundColor: theme.accent }]}
                 onPress={handleRescan}
@@ -332,12 +339,12 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                 <AppText style={[styles.rescanButtonText, { color: theme.accentContrast }]}>
                   {t("scanAgain")}
                 </AppText>
-              </TouchableOpacity>
+              </PressableSurface>
             )}
-          </View>
-        </View>
+          </Stack>
+        </Stack>
         {nfcPaymentModal}
-      </View>
+      </Stack>
     </Screen>
   );
 }
@@ -355,12 +362,12 @@ function StatusPill({ label, color, textColor = color, iconName }: IStatusPillPr
   const theme = useAppThemeTokens();
 
   return (
-    <View
+    <Stack
       style={[styles.statusPill, { backgroundColor: theme.cameraPill, borderColor: `${color}55` }]}
     >
       <MaterialIcons name={iconName} size={16} color={color} />
       <AppText style={[styles.statusText, { color: textColor }]}>{label}</AppText>
-    </View>
+    </Stack>
   );
 }
 
@@ -380,10 +387,10 @@ function FrameCorner({ position, color }: IFrameCornerProps) {
   }[position];
 
   return (
-    <View style={[styles.corner, positionStyle]}>
-      <View style={[styles.cornerHorizontal, { backgroundColor: color }]} />
-      <View style={[styles.cornerVertical, { backgroundColor: color }]} />
-    </View>
+    <Stack style={[styles.corner, positionStyle]}>
+      <Stack style={[styles.cornerHorizontal, { backgroundColor: color }]} />
+      <Stack style={[styles.cornerVertical, { backgroundColor: color }]} />
+    </Stack>
   );
 }
 

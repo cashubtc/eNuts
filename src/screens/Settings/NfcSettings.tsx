@@ -5,10 +5,18 @@ import { useNfcAmountLimitsContext, NO_LIMIT } from "@src/context/NfcAmountLimit
 import type { TNfcSettingsPageProps } from "@src/nav/navTypes";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, InputFrame, useAppThemeTokens } from "@styles";
+import {
+  AppText,
+  fontScale,
+  globals,
+  InputFrame,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View, type TextInput, StyleSheet } from "react-native";
+import { ScrollView, type TextInput, StyleSheet } from "react-native";
 export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
@@ -76,9 +84,9 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
         withBackBtn
         handlePress={() => navigation.goBack()}
       >
-        <View style={styles.loadingContainer}>
+        <Stack style={styles.loadingContainer}>
           <AppText testID={"Loading...-txt"}>Loading...</AppText>
-        </View>
+        </Stack>
       </Screen>
     );
   }
@@ -100,9 +108,9 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
           {t("paymentLimit", { defaultValue: "Payment Limit" })}
         </AppText>
 
-        <View style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
+        <Stack style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
           {/* No Limit option */}
-          <TouchableOpacity
+          <PressableSurface
             style={[globals().wrapRow, { paddingBottom: 15 }]}
             onPress={handleSelectNoLimit}
           >
@@ -110,18 +118,18 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
               {t("noLimit", { defaultValue: "No Limit" })}
             </AppText>
             <RadioBtn selected={hasNoLimit} />
-          </TouchableOpacity>
+          </PressableSurface>
 
           <Separator style={[{ marginBottom: 15 }]} />
 
           {/* Custom Limit option */}
-          <TouchableOpacity style={[globals().wrapRow]} onPress={handleSelectCustomLimit}>
-            <View style={styles.customLimitRow}>
+          <PressableSurface style={[globals().wrapRow]} onPress={handleSelectCustomLimit}>
+            <Stack style={styles.customLimitRow}>
               <AppText testID={`${t("customLimit", { defaultValue: "Custom" })}-txt`}>
                 {t("customLimit", { defaultValue: "Custom" })}
               </AppText>
               {!hasNoLimit && (
-                <View style={styles.valueContainer}>
+                <Stack style={styles.valueContainer}>
                   <InputFrame
                     ref={inputRef}
                     value={inputValue}
@@ -133,11 +141,11 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
                     returnKeyType="done"
                   />
                   <AppText style={[styles.satsLabel, { color: theme.textSecondary }]}>sats</AppText>
-                </View>
+                </Stack>
               )}
-            </View>
+            </Stack>
             <RadioBtn selected={!hasNoLimit} />
-          </TouchableOpacity>
+          </PressableSurface>
 
           {/* Fiat value hint */}
           {!hasNoLimit && fiatValue && (
@@ -146,7 +154,7 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
               {fiatValue}
             </AppText>
           )}
-        </View>
+        </Stack>
       </ScrollView>
     </Screen>
   );

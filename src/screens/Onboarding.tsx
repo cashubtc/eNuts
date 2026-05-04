@@ -4,10 +4,10 @@ import type { TOnboardingPageProps } from "@model/nav";
 import { NS } from "@src/i18n";
 import { store } from "@src/storage/store";
 import { STORE_KEYS } from "@src/storage/store/consts";
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
 export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
   const { t } = useTranslation([NS.common]);
@@ -29,7 +29,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
           image: <Logo size={130} />,
           title: "Alpha Testing",
           subtitle: (
-            <View
+            <Stack
               style={{
                 padding: 10,
                 flexDirection: "column",
@@ -42,7 +42,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
               >
                 eNuts is currently in alpha testing. Please use at your own risk.
               </AppText>
-              <TouchableOpacity
+              <PressableSurface
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -52,7 +52,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
                 activeOpacity={0.7}
                 testID="onboarding-accept-checkbox"
               >
-                <View
+                <Stack
                   style={{
                     width: 10,
                     borderWidth: 1,
@@ -64,8 +64,8 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
                 <AppText style={[{ marginLeft: 10 }]} testID={"I understand-txt"}>
                   I understand
                 </AppText>
-              </TouchableOpacity>
-            </View>
+              </PressableSurface>
+            </Stack>
           ),
         },
         {
@@ -96,7 +96,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
       skipLabel={t("skip")}
       onSkip={() => void handleDone()}
       DoneButtonComponent={() => (
-        <TouchableOpacity
+        <PressableSurface
           onPress={() => void handleDone()}
           style={{ marginRight: 20 }}
           testID="onboarding-done"
@@ -104,7 +104,7 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
           <AppText style={[{ color: theme.white }]} testID={`${t("next")}-txt`}>
             {t("next")}
           </AppText>
-        </TouchableOpacity>
+        </PressableSurface>
       )}
     />
   );

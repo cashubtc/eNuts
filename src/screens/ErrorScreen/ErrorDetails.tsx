@@ -1,10 +1,10 @@
 import { repoIssueUrl } from "@consts/urls";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { isErr, openUrl } from "@util";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 export interface ErrorDetailsProps {
   error: Error;
   componentStack: string | null;
@@ -16,7 +16,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
   const { openPromptAutoClose } = usePromptContext();
   const theme = useAppThemeTokens();
   return (
-    <View style={styles.container}>
+    <Stack style={styles.container}>
       <AppText style={[styles.header]} weight="medium" testID={`${t("header")}-txt`}>
         {t("header")}
       </AppText>
@@ -31,7 +31,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
           {props?.componentStack || t("stackNA")}
         </AppText>
       </ScrollView>
-      <TouchableOpacity
+      <PressableSurface
         onPress={() =>
           void openUrl(repoIssueUrl)?.catch((err: unknown) =>
             openPromptAutoClose({
@@ -46,8 +46,8 @@ export function ErrorDetails(props: ErrorDetailsProps) {
           align="center"
           testID={`${`${t("reportBug")}  🐛`}-txt`}
         >{`${t("reportBug")}  🐛`}</AppText>
-      </TouchableOpacity>
-    </View>
+      </PressableSurface>
+    </Stack>
   );
 }
 const styles = StyleSheet.create({

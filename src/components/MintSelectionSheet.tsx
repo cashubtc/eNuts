@@ -4,7 +4,7 @@ import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints, type KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, useAppThemeTokens } from "@styles";
+import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import React, {
   forwardRef,
   useMemo,
@@ -15,7 +15,7 @@ import React, {
   type MutableRefObject,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View, ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface MintSelectionSheetProps {
   selectedMint?: {
@@ -56,7 +56,7 @@ const MintItem = memo(
   }) => {
     const handlePress = useCallback(() => onPress(mint), [onPress, mint]);
     return (
-      <TouchableOpacity
+      <PressableSurface
         style={[
           styles.mintItem,
           {
@@ -66,7 +66,7 @@ const MintItem = memo(
         ]}
         onPress={handlePress}
       >
-        <View style={styles.mintInfo}>
+        <Stack style={styles.mintInfo}>
           <AppText
             style={[styles.mintAlias, { color: textColor }]}
             testID={`${mint.name || new URL(mint.mintUrl).hostname}-txt`}
@@ -79,8 +79,8 @@ const MintItem = memo(
           >
             {mint.mintUrl}
           </AppText>
-        </View>
-        <View style={styles.rightSection}>
+        </Stack>
+        <Stack style={styles.rightSection}>
           <AppText
             style={[styles.balance, { color: validColor }]}
             testID={`${formattedBalance}-txt`}
@@ -88,7 +88,7 @@ const MintItem = memo(
             {formattedBalance}
           </AppText>
           {multiSelect && (
-            <View
+            <Stack
               style={[
                 styles.checkbox,
                 {
@@ -98,10 +98,10 @@ const MintItem = memo(
               ]}
             >
               {isSelected && <CheckmarkIcon color={whiteColor} width={14} height={14} />}
-            </View>
+            </Stack>
           )}
-        </View>
-      </TouchableOpacity>
+        </Stack>
+      </PressableSurface>
     );
   },
 );
@@ -214,7 +214,7 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
           contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom }]}
           showsVerticalScrollIndicator={false}
         >
-          <View
+          <Stack
             style={[
               styles.header,
               {
@@ -235,10 +235,10 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
                 ? t("selectMints", { ns: NS.common })
                 : t("selectMint", { ns: NS.common })}
             </AppText>
-          </View>
+          </Stack>
 
           {displayMints.length === 0 ? (
-            <View style={styles.emptyState}>
+            <Stack style={styles.emptyState}>
               <AppText
                 style={[{ color: theme.textSecondary }]}
                 testID={`${t("noMintsWithBalance", {
@@ -249,7 +249,7 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
                   ns: NS.common,
                 })}
               </AppText>
-            </View>
+            </Stack>
           ) : (
             <>
               {displayMints.map((mint) => {
@@ -273,13 +273,13 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
               })}
 
               {multiSelect && (
-                <View style={[styles.buttonContainer, { paddingBottom: insets.bottom + 16 }]}>
+                <Stack style={[styles.buttonContainer, { paddingBottom: insets.bottom + 16 }]}>
                   <Button
                     txt={t("confirm", { ns: NS.common })}
                     onPress={handleConfirmMultiSelect}
                     disabled={internalSelectedMints.length === 0}
                   />
-                </View>
+                </Stack>
               )}
             </>
           )}
