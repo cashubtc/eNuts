@@ -6,6 +6,12 @@ import { privateKeyFromSeedWords } from "nostr-tools/nip06";
 
 class SeedService {
   private _seed: Uint8Array | null = null;
+
+  static async getMnemonicFingerprint(mnemonic: string) {
+    const normalizedMnemonic = mnemonic.toLowerCase().trim();
+    return Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.MD5, normalizedMnemonic);
+  }
+
   async createNewMnemonic(): Promise<{
     mnemonic: string;
     fingerprint: string;
@@ -14,7 +20,7 @@ class SeedService {
     SecureStore.setItem("mnemonic", mnemonic);
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     this._seed = seed;
-    const fingerprint = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.MD5, mnemonic);
+    const fingerprint = await SeedService.getMnemonicFingerprint(mnemonic);
     return { mnemonic, fingerprint };
   }
 
@@ -39,9 +45,9 @@ class SeedService {
     if (!mnemonic) {
       return null;
     }
-    const fingerprint = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.MD5, mnemonic);
-    return fingerprint;
+    return SeedService.getMnemonicFingerprint(mnemonic);
   }
+
   async ensureMnemonicSet() {
     const savedMnemonic = this.getMnemonic();
     if (!savedMnemonic) {
@@ -62,8 +68,32 @@ class SeedService {
     return seed;
   }
 
+  async isSameSeed(seed: Uint8Array) {
+    try {
+      const currentSeed = this.getSeed();
+      if (currentSeed.length !== seed.length) {
+        return false;
+      }
+      return currentSeed.every((byte, index) => byte === seed[index]);
+    } catch {
+      return false;
+    }
+  }
+
+  async isSameMnemonic(mnemonic: string) {
+    const currentMnemonic = this.getMnemonic();
+    if (!currentMnemonic) {
+      return false;
+    }
+    const [currentFingerprint, inputFingerprint] = await Promise.all([
+      SeedService.getMnemonicFingerprint(currentMnemonic),
+      SeedService.getMnemonicFingerprint(mnemonic),
+    ]);
+    return currentFingerprint === inputFingerprint;
+  }
+
   async getNostrSk() {
-    const mnemonic = await this.getMnemonic();
+    const mnemonic = this.getMnemonic();
     if (!mnemonic) {
       throw new Error("No mnemonic found");
     }

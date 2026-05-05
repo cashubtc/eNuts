@@ -39,6 +39,7 @@
     "doneSafety": "Fast fertig... Sicherheitsüberprüfung",
     "noProofsRestored": "Keine Beweise gefunden, um deine Wallet wiederherzustellen.",
     "restoreErr": "Ein Fehler ist aufgetreten bei der Wiederherstellung Ihrer Wallet.",
+    "restoreSameSeed": "Diese Wiederherstellungsphrase wird bereits von dieser Wallet verwendet.",
     "dontClose": "Bitte schließen Sie die App während des Vorgangs nicht.",
     "recoveryHint": "Schreiben oder fügen Sie Ihren 12-Wort-Mnemonic in der richtigen Reihenfolge ein, getrennt durch Leerzeichen.",
     "walletRecovery": "Wallet-Wiederherstellung",

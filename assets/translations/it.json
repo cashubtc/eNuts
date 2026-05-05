@@ -39,6 +39,7 @@
     "doneSafety": "Processo quasi terminato... controllo di sicurezza",
     "noProofsRestored": "Non ci sono prove utili per ripristinare il portafoglio.",
     "restoreErr": "Qualcosa è andato storto durante il processo di ripristino del portafoglio.",
+    "restoreSameSeed": "Questa frase di recupero è già in uso in questo portafoglio.",
     "dontClose": "Non chiudere l'applicazione durante il processo.",
     "recoveryHint": "Scrivere o incollare la mnemonica di 12 parole, separate da uno spazio bianco.",
     "walletRecovery": "Ripristino del portafoglio",

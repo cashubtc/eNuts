@@ -8,6 +8,7 @@ import type { RecoverScreenProps } from "@src/nav/navTypes";
 import { NS } from "@src/i18n";
 import { useKnownMints } from "@src/context/KnownMints";
 import { seedService } from "@src/services/SeedService";
+import { usePromptContext } from "@src/context/Prompt";
 import { getStrFromClipboard } from "@util";
 import { createRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -20,6 +21,7 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
   const { loading } = useLoading();
   const inputRef = createRef<TextInput>();
   const { knownMints } = useKnownMints();
+  const { openPromptAutoClose } = usePromptContext();
 
   const handlePaste = async () => {
     const clipboard = await getStrFromClipboard();
@@ -33,7 +35,17 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
     if (loading || !input.length) {
       return;
     }
-    const seed = seedService.convertMnemonicToSeed(input);
+    if (await seedService.isSameMnemonic(input)) {
+      openPromptAutoClose({
+        msg: t("restoreSameSeed", {
+          defaultValue: "This recovery phrase is already in use on this wallet.",
+        }),
+        success: false,
+      });
+      return;
+    }
+
+    const seed = seedService.convertMnemonicToSeed(seedService.normalizeMnemonic(input));
 
     navigation.navigate("Recovering", {
       bip39seed: seed,

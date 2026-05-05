@@ -39,6 +39,7 @@
     "doneSafety": "Almost done... Safety check",
     "noProofsRestored": "Found no proofs to restore your wallet.",
     "restoreErr": "Something went wrong while restoring your wallet.",
+    "restoreSameSeed": "This recovery phrase is already in use on this wallet.",
     "dontClose": "Please do not close the app during the process.",
     "recoveryHint": "Write or paste your 12-word mnemonic in the right order, separated by blank spaces.",
     "walletRecovery": "Wallet Recovery",
