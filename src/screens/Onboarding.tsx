@@ -54,13 +54,29 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
               >
                 <View
                   style={{
-                    width: s(10),
-                    borderWidth: 1,
+                    width: s(16),
+                    height: s(16),
+                    borderWidth: 1.5,
                     borderColor: "white",
-                    height: s(10),
-                    backgroundColor: accepted ? "white" : "transparent",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 2,
                   }}
-                />
+                >
+                  {accepted && (
+                    <Txt
+                      txt="✕"
+                      styles={[
+                        {
+                          fontSize: s(12),
+                          lineHeight: s(14),
+                          fontWeight: "bold",
+                          color: "white",
+                        },
+                      ]}
+                    />
+                  )}
+                </View>
                 <Txt txt="I understand" styles={[{ marginLeft: s(10) }]} />
               </TouchableOpacity>
             </View>
