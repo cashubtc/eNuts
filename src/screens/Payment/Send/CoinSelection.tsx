@@ -109,7 +109,7 @@ export default function CoinSelectionScreen({ navigation, route }: TCoinSelectio
       withBackBtn
     >
       <ScrollView alwaysBounceVertical={false} style={{ marginBottom: 90 }}>
-        <Stack style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
+        <Stack style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
           <OverviewRow txt1={t("paymentType")} txt2={t(getPaymentType())} />
           <OverviewRow txt1={t("mint")} txt2={mint.customName || formatMintUrl(mint.mintUrl)} />
           {recipient && <OverviewRow txt1={t("recipient")} txt2={getRecipient()} />}

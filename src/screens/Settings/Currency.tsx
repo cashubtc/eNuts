@@ -97,7 +97,7 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
         >
           {t("currencyConversion")}
         </AppText>
-        <Stack style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
+        <Stack style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
           <PressableSurface
             style={styles.toggleRow}
             onPress={handleToggleFormatBalance}

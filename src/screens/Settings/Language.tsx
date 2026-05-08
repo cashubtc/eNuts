@@ -28,7 +28,7 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
       handlePress={() => navigation.goBack()}
     >
       <ScrollView alwaysBounceVertical={false}>
-        <Stack style={(globals().wrapContainer, { backgroundColor: theme.drawer })}>
+        <Stack style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
           {langs.map((l, i) => (
             <LangSelection
               key={l.code}

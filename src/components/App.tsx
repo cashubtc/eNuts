@@ -47,9 +47,11 @@ function App(_: { exp: Record<string, unknown> }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <CustomErrorBoundary catchErrors="always">
-          <RootApp />
-        </CustomErrorBoundary>
+        <ThemeProvider>
+          <CustomErrorBoundary catchErrors="always">
+            <RootApp />
+          </CustomErrorBoundary>
+        </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
@@ -150,23 +152,21 @@ function AppProviders({ children }: { children: React.ReactNode }) {
   const db = useMemo(() => dbProvider.getDatabase(), []);
   useDrizzleStudio(db);
   return (
-    <ThemeProvider>
-      <CurrencyProvider>
-        <NfcAmountLimitsProvider>
-          <PrivacyProvider>
-            <MenuProvider>
-              <TrustMintModalProvider>
-                <ThemedNavigationContainer>
-                  <PromptProvider>
-                    <KeyboardProvider>{children}</KeyboardProvider>
-                  </PromptProvider>
-                </ThemedNavigationContainer>
-              </TrustMintModalProvider>
-            </MenuProvider>
-          </PrivacyProvider>
-        </NfcAmountLimitsProvider>
-      </CurrencyProvider>
-    </ThemeProvider>
+    <CurrencyProvider>
+      <NfcAmountLimitsProvider>
+        <PrivacyProvider>
+          <MenuProvider>
+            <TrustMintModalProvider>
+              <ThemedNavigationContainer>
+                <PromptProvider>
+                  <KeyboardProvider>{children}</KeyboardProvider>
+                </PromptProvider>
+              </ThemedNavigationContainer>
+            </TrustMintModalProvider>
+          </MenuProvider>
+        </PrivacyProvider>
+      </NfcAmountLimitsProvider>
+    </CurrencyProvider>
   );
 }
 
@@ -178,11 +178,7 @@ function RootApp() {
     }
   }, [ready, manager]);
   if (!ready || !manager) {
-    return (
-      <ThemeProvider>
-        <Blank />
-      </ThemeProvider>
-    );
+    return <Blank />;
   }
   return (
     <CocoCashuProvider manager={manager}>
