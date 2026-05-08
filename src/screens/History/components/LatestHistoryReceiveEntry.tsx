@@ -1,8 +1,7 @@
+import { useAppThemeTokens } from "@styles";
 import { ReceiveIcon } from "@comps/Icons";
 import { LatestHistoryWrapper } from "./LatestHistoryWrapper";
-import { useThemeContext } from "@src/context/Theme";
 import { ReceiveHistoryEntry } from "@cashu/coco-core";
-import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 
 type LatestHistoryReceiveEntryProps = {
@@ -15,8 +14,8 @@ export const LatestHistoryReceiveEntry = memo(
     history,
     variant = "highlight",
   }: LatestHistoryReceiveEntryProps) {
-    const { color, highlight } = useThemeContext();
-    const iconColor = variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+    const theme = useAppThemeTokens();
+    const iconColor = variant === "highlight" ? theme.accentContrast : theme.text;
 
     return (
       <LatestHistoryWrapper

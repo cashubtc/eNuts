@@ -1,14 +1,11 @@
-import { useThemeContext } from "@src/context/Theme";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
+import { AppText, appFontSize, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
-import { TouchableOpacity, View, type ViewStyle, type StyleProp } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { type ViewStyle, type StyleProp, StyleSheet } from "react-native";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { ChevronRightIcon } from "./Icons";
-import Txt from "./Txt";
 import Card from "./Card";
-
 interface IMintSelectorProps {
   mint: KnownMintWithBalance;
   onPress: (mint: KnownMintWithBalance) => void;
@@ -16,7 +13,6 @@ interface IMintSelectorProps {
   style?: StyleProp<ViewStyle>;
   label?: string;
 }
-
 export default function MintSelector({
   mint,
   onPress,
@@ -24,63 +20,65 @@ export default function MintSelector({
   style,
   label,
 }: IMintSelectorProps) {
-  const { color } = useThemeContext();
   const { hidden } = usePrivacyContext();
   const { formatAmount } = useCurrencyContext();
-
+  const theme = useAppThemeTokens();
   const displayName = mint.mintInfo.name || formatMintUrl(mint.mintUrl);
-
   const { formatted, symbol } = formatAmount(mint.balance);
   const displayBalance = hidden.balance ? "****" : `${formatted} ${symbol}`;
-
   return (
-    <TouchableOpacity onPress={() => onPress(mint)} activeOpacity={0.7} style={style}>
+    <PressableSurface onPress={() => onPress(mint)} activeOpacity={0.7} style={style}>
       <Card variant={variant} style={styles.cardContent}>
         {label && (
-          <Txt
-            txt={label}
-            styles={[
+          <AppText
+            style={[
               {
-                color: color.TEXT_SECONDARY,
-                fontSize: s(12),
-                marginBottom: vs(8),
+                color: theme.textSecondary,
+                fontSize: appFontSize.caption,
+                marginBottom: 8,
               },
             ]}
-          />
+            testID={`${label}-txt`}
+          >
+            {label}
+          </AppText>
         )}
-        <View style={styles.container}>
+        <Stack style={styles.container}>
           {/* Mint name and balance container */}
-          <View style={styles.infoContainer}>
-            <Txt txt={displayName} bold styles={[{ color: color.TEXT }]} />
-            <Txt
-              txt={displayBalance}
-              styles={[
+          <Stack style={styles.infoContainer}>
+            <AppText style={[{ color: theme.text }]} weight="medium" testID={`${displayName}-txt`}>
+              {displayName}
+            </AppText>
+            <AppText
+              style={[
                 {
-                  color: color.TEXT_SECONDARY,
-                  fontSize: s(12),
+                  color: theme.textSecondary,
+                  fontSize: appFontSize.caption,
                 },
               ]}
-            />
-          </View>
+              testID={`${displayBalance}-txt`}
+            >
+              {displayBalance}
+            </AppText>
+          </Stack>
 
           {/* Chevron icon */}
-          <View style={styles.chevronContainer}>
-            <ChevronRightIcon color={color.TEXT} />
-          </View>
-        </View>
+          <Stack style={styles.chevronContainer}>
+            <ChevronRightIcon color={theme.text} />
+          </Stack>
+        </Stack>
       </Card>
-    </TouchableOpacity>
+    </PressableSurface>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   cardContent: {
-    padding: "12@s",
+    padding: 12,
   },
   container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "8@s",
+    gap: 8,
   },
   infoContainer: {
     flex: 1,
@@ -89,6 +87,6 @@ const styles = ScaledSheet.create({
     justifyContent: "space-between",
   },
   chevronContainer: {
-    marginLeft: "8@s",
+    marginLeft: 8,
   },
 });

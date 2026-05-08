@@ -1,52 +1,46 @@
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
-import Txt from "@comps/Txt";
 import { isIOS } from "@consts";
 import type { TBeforeRemoveEvent, TSuccessPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useBalanceContext } from "@src/context/Balance";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import { isNum, vib } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
-
 export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
   const { amount, memo, fee, change, mint, isClaim, isMelt, isAutoSwap, isScanned } = route.params;
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
-
   useEffect(() => {
     vib(400);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   return (
-    <View style={[styles.container, { backgroundColor: color.BACKGROUND }]}>
-      <View pointerEvents="none" style={styles.confetti}>
+    <Stack style={[styles.container, { backgroundColor: theme.background }]}>
+      <Stack pointerEvents="none" style={styles.confetti}>
         <LottieView
           source={require("../../../assets/lottie/confetti.json")}
           autoPlay
           loop={false}
           style={{ width: "100%", height: "100%" }}
         />
-      </View>
-      <View style={{ width: "100%" }}>
-        <Text testID={`amount: ${amount}`} style={[styles.successTxt, { color: color.TEXT }]}>
+      </Stack>
+      <Stack style={{ width: "100%" }}>
+        <AppText testID={`amount: ${amount}`} style={[styles.successTxt, { color: theme.text }]}>
           {(() => {
             if (isMelt && !isAutoSwap) {
               return t("paymentSuccess");
@@ -56,23 +50,23 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             }
             return null;
           })()}
-        </Text>
-        {memo && <Text style={[styles.mints, { color: color.TEXT_SECONDARY }]}>{memo}</Text>}
+        </AppText>
+        {memo && <AppText style={[styles.mints, { color: theme.textSecondary }]}>{memo}</AppText>}
         {mint && mint.length > 0 && (
-          <Text testID={`mint: ${mint}`} style={[styles.mints, { color: color.TEXT_SECONDARY }]}>
+          <AppText testID={`mint: ${mint}`} style={[styles.mints, { color: theme.textSecondary }]}>
             {mint}
-          </Text>
+          </AppText>
         )}
-        <View style={styles.successAnim}>
+        <Stack style={styles.successAnim}>
           <LottieView
             source={require("../../../assets/lottie/success.json")}
             autoPlay
             loop={false}
             style={styles.lottie}
           />
-        </View>
+        </Stack>
         {(isMelt || isAutoSwap) && amount && (
-          <View style={styles.meltWrap}>
+          <Stack style={styles.meltWrap}>
             <Details
               txt={t(isAutoSwap ? "swapped" : "paidOut", {
                 ns: NS.wallet,
@@ -85,9 +79,7 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
             />
             <Details
               txt={t("totalInclFee")}
-              value={`${formatAmount(amount + (fee || 0)).formatted} ${
-                formatAmount(amount + (fee || 0)).symbol
-              }`}
+              value={`${formatAmount(amount + (fee || 0)).formatted} ${formatAmount(amount + (fee || 0)).symbol}`}
             />
             {isNum(change) && (
               <Details
@@ -95,67 +87,69 @@ export default function SuccessPage({ navigation, route }: TSuccessPageProps) {
                 value={`${formatAmount(change).formatted} ${formatAmount(change).symbol}`}
               />
             )}
-          </View>
+          </Stack>
         )}
-      </View>
-      <View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
+      </Stack>
+      <Stack style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
         <Button
           txt={t("backToDashboard")}
           onPress={() => {
             navigation.navigate("dashboard");
           }}
         />
-      </View>
-    </View>
+      </Stack>
+    </Stack>
   );
 }
-
 function Details({ txt, value }: { txt: string; value: string }) {
   return (
-    <View style={styles.meltOverview}>
-      <Txt txt={txt} styles={[styles.meltTxt]} />
-      <Txt txt={value} styles={[styles.meltTxt]} />
-    </View>
+    <Stack style={styles.meltOverview}>
+      <AppText style={[styles.meltTxt]} testID={`${txt}-txt`}>
+        {txt}
+      </AppText>
+      <AppText style={[styles.meltTxt]} testID={`${value}-txt`}>
+        {value}
+      </AppText>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: "20@s",
+    padding: 20,
   },
   img: {
-    marginTop: "90@s",
-    height: "90@s",
+    marginTop: 90,
+    height: 90,
     opacity: 0.8,
   },
   nostrImg: {
-    marginTop: "90@vs",
+    marginTop: 90,
     justifyContent: "center",
     alignItems: "center",
   },
   successTxt: {
-    fontSize: "28@vs",
+    fontSize: appFontSize.display,
     fontWeight: "800",
     textAlign: "center",
-    marginTop: "30@vs",
+    marginTop: 30,
   },
   meltWrap: {
     width: "100%",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   meltOverview: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "10@vs",
+    marginBottom: 10,
   },
   meltTxt: {
     fontWeight: "500",
   },
   mints: {
-    marginTop: "20@vs",
-    fontSize: "14@vs",
+    marginTop: 20,
+    fontSize: appFontSize.body,
     textAlign: "center",
     fontWeight: "500",
   },
@@ -164,7 +158,7 @@ const styles = ScaledSheet.create({
     bottom: 0,
     right: 0,
     left: 0,
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   confetti: {
     position: "absolute",
@@ -176,10 +170,10 @@ const styles = ScaledSheet.create({
   successAnim: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   lottie: {
-    width: "100@s",
-    height: "100@s",
+    width: 100,
+    height: 100,
   },
 });

@@ -1,5 +1,6 @@
+import { Stack } from "@styles";
 import { useEffect } from "react";
-import { View } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -7,7 +8,6 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { s, ScaledSheet } from "react-native-size-matters";
 
 interface IAnimatedSpinnerProps {
   color: string;
@@ -46,7 +46,7 @@ export default function AnimatedSpinner({ color, size = 24 }: IAnimatedSpinnerPr
     const opacity = 0.2 + (i / 8) * 0.8; // Gradient effect
 
     return (
-      <View
+      <Stack
         key={i}
         style={[
           styles.dot,
@@ -64,13 +64,13 @@ export default function AnimatedSpinner({ color, size = 24 }: IAnimatedSpinnerPr
   });
 
   return (
-    <View style={[styles.container, { width: size, height: size }]}>
+    <Stack style={[styles.container, { width: size, height: size }]}>
       <Animated.View style={[styles.spinner, animatedStyle]}>{dots}</Animated.View>
-    </View>
+    </Stack>
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",

@@ -1,26 +1,30 @@
 import Button from "@comps/Button";
 import Loading from "@comps/Loading";
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
-import TxtInput from "@comps/TxtInput";
 import { CopyIcon, KeyIcon, PlusIcon, RefreshIcon, TrashbinIcon } from "@comps/Icons";
 import type { TNpcSettingsPageProps } from "@src/nav/navTypes";
 import { useBalanceContext } from "@src/context/Balance";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useNpcContext, type INpcAccount, type TNpcUsernameAccountRequest } from "@src/context/Npc";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { isErr } from "@util";
-import { globals, highlight as hi, mainColors } from "@styles";
+import {
+  AppText,
+  appLineHeight,
+  appFontSize,
+  globals,
+  InputFrame,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import * as Clipboard from "expo-clipboard";
 import { useRef, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet } from "react-native-size-matters";
-
 interface INpcAccountCardProps {
   account: INpcAccount;
   busy: boolean;
@@ -29,7 +33,6 @@ interface INpcAccountCardProps {
   onSetUsername: (account: INpcAccount) => void;
   onSync: (accountId: string) => void;
 }
-
 function NpcAccountCard({
   account,
   busy,
@@ -39,8 +42,7 @@ function NpcAccountCard({
   onSync,
 }: INpcAccountCardProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   const accountSourceLabel =
     account.source === "privateKey"
       ? t("npcImportedKey", { defaultValue: "Imported key" })
@@ -50,83 +52,107 @@ function NpcAccountCard({
     : account.isRunning
       ? t("npcActive", { defaultValue: "Active" })
       : t("npcPaused", { defaultValue: "Paused" });
-
   return (
-    <View style={[globals(color).wrapContainer, styles.accountCard]}>
-      <View style={styles.accountHeader}>
-        <View style={styles.accountTitleWrap}>
-          <Txt txt={account.label} bold styles={[styles.accountTitle]} />
-          <View style={styles.badgeRow}>
-            <View style={[styles.sourceBadge, { borderColor: color.BORDER }]}>
-              <Txt
-                txt={accountSourceLabel}
-                styles={[styles.sourceBadgeText, { color: color.TEXT_SECONDARY }]}
-              />
-            </View>
+    <Stack style={[globals().wrapContainer, { backgroundColor: theme.drawer }, styles.accountCard]}>
+      <Stack style={styles.accountHeader}>
+        <Stack style={styles.accountTitleWrap}>
+          <AppText style={[styles.accountTitle]} weight="medium" testID={`${account.label}-txt`}>
+            {account.label}
+          </AppText>
+          <Stack style={styles.badgeRow}>
+            <Stack style={[styles.sourceBadge, { borderColor: theme.border }]}>
+              <AppText
+                style={[styles.sourceBadgeText, { color: theme.textSecondary }]}
+                testID={`${accountSourceLabel}-txt`}
+              >
+                {accountSourceLabel}
+              </AppText>
+            </Stack>
             {account.isDefault && (
-              <View style={[styles.badge, { backgroundColor: hi[highlight] }]}>
-                <Txt
-                  txt={t("npcDefaultAccount", { defaultValue: "Default" })}
-                  styles={[styles.badgeText, { color: color.BACKGROUND }]}
-                />
-              </View>
+              <Stack style={[styles.badge, { backgroundColor: theme.accent }]}>
+                <AppText
+                  style={[styles.badgeText, { color: theme.background }]}
+                  testID={`${t("npcDefaultAccount", { defaultValue: "Default" })}-txt`}
+                >
+                  {t("npcDefaultAccount", { defaultValue: "Default" })}
+                </AppText>
+              </Stack>
             )}
-          </View>
-        </View>
-        <TouchableOpacity
+          </Stack>
+        </Stack>
+        <PressableSurface
           accessibilityRole="button"
           onPress={() => onSync(account.id)}
           disabled={busy}
-          style={[styles.iconButton, { borderColor: color.BORDER, opacity: busy ? 0.7 : 1 }]}
+          style={[styles.iconButton, { borderColor: theme.border, opacity: busy ? 0.7 : 1 }]}
         >
-          {busy ? <Loading size={s(16)} /> : <RefreshIcon width={s(18)} color={hi[highlight]} />}
-        </TouchableOpacity>
-      </View>
+          {busy ? <Loading size={16} /> : <RefreshIcon width={18} color={theme.accent} />}
+        </PressableSurface>
+      </Stack>
 
-      <View style={styles.statusRow}>
-        <View
+      <Stack style={styles.statusRow}>
+        <Stack
           style={[
             styles.statusDot,
-            { backgroundColor: account.isRunning ? hi[highlight] : color.TEXT_SECONDARY },
+            { backgroundColor: account.isRunning ? theme.accent : theme.textSecondary },
           ]}
         />
-        <Txt txt={statusLabel} styles={[styles.statusText, { color: color.TEXT_SECONDARY }]} />
-      </View>
+        <AppText
+          style={[styles.statusText, { color: theme.textSecondary }]}
+          testID={`${statusLabel}-txt`}
+        >
+          {statusLabel}
+        </AppText>
+      </Stack>
 
-      <TouchableOpacity
+      <PressableSurface
         accessibilityRole="button"
         onPress={() => onCopy(account.address)}
         style={[
           styles.addressBox,
-          { borderColor: color.DARK_BORDER, backgroundColor: color.BACKGROUND },
+          { borderColor: theme.darkBorder, backgroundColor: theme.background },
         ]}
       >
-        <View style={styles.addressHeader}>
-          <Txt
-            txt={t("npcReceiveAddress", { defaultValue: "Receive address" })}
-            styles={[styles.addressLabel, { color: color.TEXT_SECONDARY }]}
-          />
-          <View style={styles.copyHint}>
-            <Txt
-              txt={t("copy", { defaultValue: "Copy" })}
-              styles={[styles.copyText, { color: hi[highlight] }]}
-            />
-            <CopyIcon width={s(16)} color={hi[highlight]} />
-          </View>
-        </View>
-        <Txt txt={account.address} bold styles={[styles.addressText, { color: hi[highlight] }]} />
-        <Txt
-          txt={
+        <Stack style={styles.addressHeader}>
+          <AppText
+            style={[styles.addressLabel, { color: theme.textSecondary }]}
+            testID={`${t("npcReceiveAddress", { defaultValue: "Receive address" })}-txt`}
+          >
+            {t("npcReceiveAddress", { defaultValue: "Receive address" })}
+          </AppText>
+          <Stack style={styles.copyHint}>
+            <AppText
+              style={[styles.copyText, { color: theme.accent }]}
+              testID={`${t("copy", { defaultValue: "Copy" })}-txt`}
+            >
+              {t("copy", { defaultValue: "Copy" })}
+            </AppText>
+            <CopyIcon width={16} color={theme.accent} />
+          </Stack>
+        </Stack>
+        <AppText
+          style={[styles.addressText, { color: theme.accent }]}
+          weight="medium"
+          testID={`${account.address}-txt`}
+        >
+          {account.address}
+        </AppText>
+        <AppText
+          style={[styles.mutedText, { color: theme.textSecondary }]}
+          testID={`${
             account.username
               ? account.npub
               : t("npcNpubFallback", { defaultValue: "Using your npub until a username is saved" })
-          }
-          styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
-        />
-      </TouchableOpacity>
+          }-txt`}
+        >
+          {account.username
+            ? account.npub
+            : t("npcNpubFallback", { defaultValue: "Using your npub until a username is saved" })}
+        </AppText>
+      </PressableSurface>
 
-      <View style={styles.actions}>
-        <View style={styles.primaryAction}>
+      <Stack style={styles.actions}>
+        <Stack style={styles.primaryAction}>
           <Button
             txt={t("npcSetUsername", { defaultValue: "Set Username" })}
             onPress={() => onSetUsername(account)}
@@ -134,32 +160,30 @@ function NpcAccountCard({
             loading={busy}
             size="small"
           />
-        </View>
+        </Stack>
         {!account.isDefault && (
-          <TouchableOpacity
+          <PressableSurface
             accessibilityRole="button"
             onPress={() => onRemove(account.id)}
             disabled={busy}
-            style={[
-              styles.removeButton,
-              { borderColor: mainColors.ERROR, opacity: busy ? 0.5 : 1 },
-            ]}
+            style={[styles.removeButton, { borderColor: theme.error, opacity: busy ? 0.5 : 1 }]}
           >
-            <TrashbinIcon width={s(16)} color={mainColors.ERROR} />
-            <Txt
-              txt={t("remove", { defaultValue: "Remove" })}
-              styles={[styles.removeText, { color: mainColors.ERROR }]}
-            />
-          </TouchableOpacity>
+            <TrashbinIcon width={16} color={theme.error} />
+            <AppText
+              style={[styles.removeText, { color: theme.error }]}
+              testID={`${t("remove", { defaultValue: "Remove" })}-txt`}
+            >
+              {t("remove", { defaultValue: "Remove" })}
+            </AppText>
+          </PressableSurface>
         )}
-      </View>
-    </View>
+      </Stack>
+    </Stack>
   );
 }
-
 export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const insets = useSafeAreaInsets();
   const { openPromptAutoClose } = usePromptContext();
   const { balances } = useBalanceContext();
@@ -183,13 +207,11 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
     syncAccount,
     syncAll,
   } = useNpcContext();
-
   const balance = useMemo(
     () => formatAmount(balances.total.total),
     [balances.total.total, formatAmount],
   );
   const accountCount = accounts.length.toString();
-
   const runAction = (action: () => Promise<void>, success?: string) => {
     void action()
       .then(() => {
@@ -203,7 +225,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         });
       });
   };
-
   const handleCopy = (value: string) => {
     void Clipboard.setStringAsync(value).then(() =>
       openPromptAutoClose({
@@ -211,12 +232,10 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       }),
     );
   };
-
   const handleOpenAddAccountSheet = () => {
     setPrivateKeyInput("");
     void addAccountSheetRef.current?.present();
   };
-
   const handleDeriveAccount = () => {
     void addAccountSheetRef.current?.dismiss();
     runAction(
@@ -226,7 +245,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       }),
     );
   };
-
   const handleImportPrivateKey = () => {
     const input = privateKeyInput.trim();
     if (!input) {
@@ -237,7 +255,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       });
       return;
     }
-
     setPrivateKeyInput("");
     void addAccountSheetRef.current?.dismiss();
     runAction(
@@ -247,25 +264,21 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       }),
     );
   };
-
   const handleOpenUsernameSheet = (account: INpcAccount) => {
     setSelectedUsernameAccount(account);
     setUsernameInput(account.username || "");
     setUsernameRequest(null);
     void usernameSheetRef.current?.present();
   };
-
   const handleCloseUsernameSheet = () => {
     void usernameSheetRef.current?.dismiss();
   };
-
   const handleRequestUsername = () => {
     const account = selectedUsernameAccount;
     const username = usernameInput.trim();
     if (!account) {
       return;
     }
-
     setUsernameBusy(true);
     void requestUsername(account.id, username)
       .then((request) => {
@@ -276,7 +289,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
           });
           return;
         }
-
         setUsernameRequest(request);
       })
       .catch((err: unknown) => {
@@ -288,12 +300,10 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         setUsernameBusy(false);
       });
   };
-
   const handleConfirmUsername = () => {
     if (!usernameRequest) {
       return;
     }
-
     setUsernameBusy(true);
     void confirmUsername(usernameRequest)
       .then(() => {
@@ -311,7 +321,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         setUsernameBusy(false);
       });
   };
-
   return (
     <Screen
       screenName={t("npcSettingsTitle", {
@@ -323,73 +332,87 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       withBottomInset={false}
       handlePress={() => navigation.goBack()}
       rightAction={
-        <TouchableOpacity
+        <PressableSurface
           accessibilityRole="button"
           onPress={handleOpenAddAccountSheet}
           disabled={busyAccountId !== null}
           style={[styles.headerAddAction, { opacity: busyAccountId !== null ? 0.5 : 1 }]}
         >
-          <PlusIcon width={s(30)} height={s(30)} color={hi[highlight]} />
-        </TouchableOpacity>
+          <PlusIcon width={30} height={30} color={theme.accent} />
+        </PressableSurface>
       }
     >
       {isLoading ? (
-        <View style={styles.loadingContainer}>
+        <Stack style={styles.loadingContainer}>
           <Loading />
-        </View>
+        </Stack>
       ) : (
         <ScrollView
           alwaysBounceVertical={false}
           contentContainerStyle={{
             paddingHorizontal: 8,
             paddingTop: 8,
-            paddingBottom: Math.max(insets.bottom, s(18)),
+            paddingBottom: Math.max(insets.bottom, 18),
           }}
         >
-          <View style={[globals(color).wrapContainer, styles.summaryCard]}>
-            <View style={styles.summaryHeader}>
-              <View style={styles.summaryText}>
-                <Txt
-                  txt={t("npcReceiveTitle", { defaultValue: "NPC Lightning addresses" })}
-                  bold
-                  styles={[styles.summaryTitle]}
-                />
-                <Txt
-                  txt={t("npcReceiveHint", {
+          <Stack
+            style={[globals().wrapContainer, { backgroundColor: theme.drawer }, styles.summaryCard]}
+          >
+            <Stack style={styles.summaryHeader}>
+              <Stack style={styles.summaryText}>
+                <AppText
+                  style={[styles.summaryTitle]}
+                  weight="medium"
+                  testID={`${t("npcReceiveTitle", { defaultValue: "NPC Lightning addresses" })}-txt`}
+                >
+                  {t("npcReceiveTitle", { defaultValue: "NPC Lightning addresses" })}
+                </AppText>
+                <AppText
+                  style={[styles.mutedText, { color: theme.textSecondary }]}
+                  testID={`${t("npcReceiveHint", {
+                    defaultValue: "Receive Lightning payments into your local Cashu wallet.",
+                  })}-txt`}
+                >
+                  {t("npcReceiveHint", {
                     defaultValue: "Receive Lightning payments into your local Cashu wallet.",
                   })}
-                  styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
-                />
-              </View>
-            </View>
-            <View
+                </AppText>
+              </Stack>
+            </Stack>
+            <Stack
               style={[
                 styles.summaryStats,
-                { borderTopColor: color.DARK_BORDER, borderBottomColor: color.DARK_BORDER },
+                { borderTopColor: theme.darkBorder, borderBottomColor: theme.darkBorder },
               ]}
             >
-              <View style={styles.summaryStat}>
-                <Txt
-                  txt={t("npcAccountsLabel", { defaultValue: "Accounts" })}
-                  styles={[styles.statLabel, { color: color.TEXT_SECONDARY }]}
-                />
-                <Txt txt={accountCount} bold styles={[styles.statValue]} />
-              </View>
-              <View style={[styles.statDivider, { backgroundColor: color.DARK_BORDER }]} />
-              <View style={styles.summaryStat}>
-                <Txt
-                  txt={t("npcLocalBalance", { defaultValue: "Local balance" })}
-                  styles={[styles.statLabel, { color: color.TEXT_SECONDARY }]}
-                />
-                <Txt
-                  txt={`${balance.formatted} ${balance.symbol}`}
-                  bold
-                  styles={[styles.statValue, { color: hi[highlight] }]}
-                />
-              </View>
-            </View>
-            <View style={styles.summaryActions}>
-              <View style={styles.summaryAction}>
+              <Stack style={styles.summaryStat}>
+                <AppText
+                  style={[styles.statLabel, { color: theme.textSecondary }]}
+                  testID={`${t("npcAccountsLabel", { defaultValue: "Accounts" })}-txt`}
+                >
+                  {t("npcAccountsLabel", { defaultValue: "Accounts" })}
+                </AppText>
+                <AppText style={[styles.statValue]} weight="medium" testID={`${accountCount}-txt`}>
+                  {accountCount}
+                </AppText>
+              </Stack>
+              <Stack style={[styles.statDivider, { backgroundColor: theme.darkBorder }]} />
+              <Stack style={styles.summaryStat}>
+                <AppText
+                  style={[styles.statLabel, { color: theme.textSecondary }]}
+                  testID={`${t("npcLocalBalance", { defaultValue: "Local balance" })}-txt`}
+                >
+                  {t("npcLocalBalance", { defaultValue: "Local balance" })}
+                </AppText>
+                <AppText
+                  style={[styles.statValue, { color: theme.accent }]}
+                  weight="medium"
+                  testID={`${`${balance.formatted} ${balance.symbol}`}-txt`}
+                >{`${balance.formatted} ${balance.symbol}`}</AppText>
+              </Stack>
+            </Stack>
+            <Stack style={styles.summaryActions}>
+              <Stack style={styles.summaryAction}>
                 <Button
                   txt={t("npcSyncAll", { defaultValue: "Sync all" })}
                   onPress={() =>
@@ -400,9 +423,9 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                   size="small"
                   outlined
                 />
-              </View>
-            </View>
-          </View>
+              </Stack>
+            </Stack>
+          </Stack>
 
           {accounts.map((account) => (
             <NpcAccountCard
@@ -430,60 +453,75 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
       <TrueSheet
         ref={addAccountSheetRef}
         detents={["auto"]}
-        backgroundColor={color.BACKGROUND}
-        cornerRadius={s(26)}
-        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        backgroundColor={theme.background}
+        grabberOptions={{ color: theme.textSecondary }}
         onDidDismiss={() => setPrivateKeyInput("")}
       >
         <ScrollView
-          style={{ backgroundColor: color.BACKGROUND }}
+          style={{ backgroundColor: theme.background }}
           contentContainerStyle={[
             styles.sheetContainer,
-            { paddingBottom: Math.max(insets.bottom, s(22)) },
+            { paddingBottom: Math.max(insets.bottom, 22) },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.sheetHeader}>
-            <View style={[styles.sheetIcon, { backgroundColor: hi[highlight] }]}>
-              <KeyIcon width={s(22)} color={color.BACKGROUND} />
-            </View>
-            <View style={styles.sheetTitleBlock}>
-              <Txt
-                txt={t("npcAddAccountTitle", { defaultValue: "Add NPC account" })}
-                bold
-                styles={[styles.sheetTitle]}
-              />
-              <Txt
-                txt={t("npcAddAccountHint", {
+          <Stack style={styles.sheetHeader}>
+            <Stack style={[styles.sheetIcon, { backgroundColor: theme.accent }]}>
+              <KeyIcon width={22} color={theme.background} />
+            </Stack>
+            <Stack style={styles.sheetTitleBlock}>
+              <AppText
+                style={[styles.sheetTitle]}
+                weight="medium"
+                testID={`${t("npcAddAccountTitle", { defaultValue: "Add NPC account" })}-txt`}
+              >
+                {t("npcAddAccountTitle", { defaultValue: "Add NPC account" })}
+              </AppText>
+              <AppText
+                style={[styles.mutedText, { color: theme.textSecondary }]}
+                testID={`${t("npcAddAccountHint", {
+                  defaultValue: "Import an existing Nostr key or derive a new key from your seed.",
+                })}-txt`}
+              >
+                {t("npcAddAccountHint", {
                   defaultValue: "Import an existing Nostr key or derive a new key from your seed.",
                 })}
-                styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
-              />
-            </View>
-          </View>
+              </AppText>
+            </Stack>
+          </Stack>
 
-          <View style={styles.fieldBlock}>
-            <Txt
-              txt={t("npcPrivateKeyLabel", { defaultValue: "Private key" })}
-              styles={[styles.label, { color: color.TEXT_SECONDARY }]}
-            />
-            <TxtInput
+          <Stack style={styles.fieldBlock}>
+            <AppText
+              style={[styles.label, { color: theme.textSecondary }]}
+              testID={`${t("npcPrivateKeyLabel", { defaultValue: "Private key" })}-txt`}
+            >
+              {t("npcPrivateKeyLabel", { defaultValue: "Private key" })}
+            </AppText>
+            <InputFrame
               placeholder={t("npcPrivateKeyPlaceholder", { defaultValue: "nsec or hex" })}
+              placeholderTextColor={theme.placeholder as never}
+              selectionColor={theme.accent}
+              cursorColor={theme.accent}
               value={privateKeyInput}
               autoCapitalize="none"
               autoCorrect={false}
               onChangeText={setPrivateKeyInput}
+              testID={`${t("npcPrivateKeyPlaceholder", { defaultValue: "nsec or hex" })}-input`}
             />
-            <Txt
-              txt={t("npcPrivateKeyHint", {
+            <AppText
+              style={[styles.mutedText, { color: theme.textSecondary }]}
+              testID={`${t("npcPrivateKeyHint", {
+                defaultValue: "Imported keys are stored in secure storage on this device.",
+              })}-txt`}
+            >
+              {t("npcPrivateKeyHint", {
                 defaultValue: "Imported keys are stored in secure storage on this device.",
               })}
-              styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
-            />
-          </View>
+            </AppText>
+          </Stack>
 
-          <View style={styles.sheetActions}>
+          <Stack style={styles.sheetActions}>
             <Button
               txt={t("npcImportPrivateKey", { defaultValue: "Import private key" })}
               onPress={handleImportPrivateKey}
@@ -497,17 +535,16 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
               size="small"
               outlined
             />
-          </View>
+          </Stack>
         </ScrollView>
       </TrueSheet>
       <TrueSheet
         ref={usernameSheetRef}
         detents={["auto"]}
-        backgroundColor={color.BACKGROUND}
-        cornerRadius={s(26)}
+        backgroundColor={theme.background}
         dismissible={!usernameBusy}
         draggable={!usernameBusy}
-        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        grabberOptions={{ color: theme.textSecondary }}
         onDidDismiss={() => {
           setSelectedUsernameAccount(null);
           setUsernameInput("");
@@ -516,55 +553,66 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         }}
       >
         <ScrollView
-          style={{ backgroundColor: color.BACKGROUND }}
+          style={{ backgroundColor: theme.background }}
           contentContainerStyle={[
             styles.sheetContainer,
-            { paddingBottom: Math.max(insets.bottom, s(22)) },
+            { paddingBottom: Math.max(insets.bottom, 22) },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.sheetHeader}>
-            <View style={[styles.sheetIcon, { backgroundColor: hi[highlight] }]}>
-              <KeyIcon width={s(22)} color={color.BACKGROUND} />
-            </View>
-            <View style={styles.sheetTitleBlock}>
-              <Txt
-                txt={t("npcSetUsername", { defaultValue: "Set Username" })}
-                bold
-                styles={[styles.sheetTitle]}
-              />
-              <Txt
-                txt={selectedUsernameAccount?.address || ""}
-                styles={[styles.mutedText, { color: color.TEXT_SECONDARY }]}
-              />
-            </View>
-          </View>
+          <Stack style={styles.sheetHeader}>
+            <Stack style={[styles.sheetIcon, { backgroundColor: theme.accent }]}>
+              <KeyIcon width={22} color={theme.background} />
+            </Stack>
+            <Stack style={styles.sheetTitleBlock}>
+              <AppText
+                style={[styles.sheetTitle]}
+                weight="medium"
+                testID={`${t("npcSetUsername", { defaultValue: "Set Username" })}-txt`}
+              >
+                {t("npcSetUsername", { defaultValue: "Set Username" })}
+              </AppText>
+              <AppText
+                style={[styles.mutedText, { color: theme.textSecondary }]}
+                testID={`${selectedUsernameAccount?.address || ""}-txt`}
+              >
+                {selectedUsernameAccount?.address || ""}
+              </AppText>
+            </Stack>
+          </Stack>
 
           {usernameRequest?.type === "payment" ? (
-            <View>
-              <View
+            <Stack>
+              <Stack
                 style={[
                   styles.usernamePreview,
-                  { backgroundColor: color.INPUT_BG, borderColor: color.DARK_BORDER },
+                  { backgroundColor: theme.inputBackground, borderColor: theme.darkBorder },
                 ]}
               >
-                <Txt
-                  txt={usernameRequest.username}
-                  bold
-                  center
-                  styles={[styles.usernamePreviewText, { color: hi[highlight] }]}
-                />
-              </View>
-              <Txt
-                txt={t("npcUsernameFeePrompt", {
+                <AppText
+                  style={[styles.usernamePreviewText, { color: theme.accent }]}
+                  weight="medium"
+                  align="center"
+                  testID={`${usernameRequest.username}-txt`}
+                >
+                  {usernameRequest.username}
+                </AppText>
+              </Stack>
+              <AppText
+                style={[styles.usernamePrompt, { color: theme.textSecondary }]}
+                align="center"
+                testID={`${t("npcUsernameFeePrompt", {
+                  defaultValue: "Do you want to set this username for a fee of {{amount}} sats?",
+                  amount: usernameRequest.amount.toLocaleString(),
+                })}-txt`}
+              >
+                {t("npcUsernameFeePrompt", {
                   defaultValue: "Do you want to set this username for a fee of {{amount}} sats?",
                   amount: usernameRequest.amount.toLocaleString(),
                 })}
-                center
-                styles={[styles.usernamePrompt, { color: color.TEXT_SECONDARY }]}
-              />
-              <View style={styles.sheetActions}>
+              </AppText>
+              <Stack style={styles.sheetActions}>
                 <Button
                   txt={t("confirm", { defaultValue: "Confirm" })}
                   onPress={handleConfirmUsername}
@@ -579,24 +627,30 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                   size="small"
                   outlined
                 />
-              </View>
-            </View>
+              </Stack>
+            </Stack>
           ) : (
-            <View>
-              <View style={styles.fieldBlock}>
-                <Txt
-                  txt={t("npcUsernameLabel", { defaultValue: "Custom username" })}
-                  styles={[styles.label, { color: color.TEXT_SECONDARY }]}
-                />
-                <TxtInput
+            <Stack>
+              <Stack style={styles.fieldBlock}>
+                <AppText
+                  style={[styles.label, { color: theme.textSecondary }]}
+                  testID={`${t("npcUsernameLabel", { defaultValue: "Custom username" })}-txt`}
+                >
+                  {t("npcUsernameLabel", { defaultValue: "Custom username" })}
+                </AppText>
+                <InputFrame
                   placeholder={t("npcUsernamePlaceholder", { defaultValue: "optional username" })}
+                  placeholderTextColor={theme.placeholder as never}
+                  selectionColor={theme.accent}
+                  cursorColor={theme.accent}
                   value={usernameInput}
                   autoCapitalize="none"
                   autoCorrect={false}
                   onChangeText={setUsernameInput}
+                  testID={`${t("npcUsernamePlaceholder", { defaultValue: "optional username" })}-input`}
                 />
-              </View>
-              <View style={styles.sheetActions}>
+              </Stack>
+              <Stack style={styles.sheetActions}>
                 <Button
                   txt={t("npcRequestUsername", { defaultValue: "Request username" })}
                   onPress={handleRequestUsername}
@@ -611,23 +665,22 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
                   size="small"
                   outlined
                 />
-              </View>
-            </View>
+              </Stack>
+            </Stack>
           )}
         </ScrollView>
       </TrueSheet>
     </Screen>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   summaryCard: {
-    paddingBottom: "20@vs",
+    paddingBottom: 20,
   },
   summaryHeader: {
     flexDirection: "row",
@@ -637,36 +690,36 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   summaryTitle: {
-    marginBottom: "6@vs",
+    marginBottom: 6,
   },
   summaryStats: {
     borderTopWidth: 1,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center",
-    marginTop: "18@vs",
-    paddingVertical: "14@vs",
+    marginTop: 18,
+    paddingVertical: 14,
   },
   summaryStat: {
     flex: 1,
-    paddingHorizontal: "14@s",
+    paddingHorizontal: 14,
   },
   statDivider: {
     width: 1,
-    height: "34@vs",
+    height: 34,
   },
   statLabel: {
-    fontSize: "11@vs",
-    marginBottom: "5@vs",
+    fontSize: appFontSize.fine,
+    marginBottom: 5,
   },
   statValue: {
-    fontSize: "16@vs",
+    fontSize: appFontSize.bodyLarge,
   },
   summaryActions: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: "18@vs",
-    gap: "12@s",
+    marginTop: 18,
+    gap: 12,
   },
   summaryAction: {
     flex: 1,
@@ -677,50 +730,50 @@ const styles = ScaledSheet.create({
     justifyContent: "center",
   },
   accountCard: {
-    paddingBottom: "20@vs",
+    paddingBottom: 20,
   },
   accountHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "14@vs",
+    marginBottom: 14,
   },
   accountTitleWrap: {
     flex: 1,
-    paddingRight: "12@s",
+    paddingRight: 12,
   },
   accountTitle: {
-    fontSize: "16@vs",
-    marginBottom: "8@vs",
+    fontSize: appFontSize.bodyLarge,
+    marginBottom: 8,
   },
   badgeRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "8@s",
+    gap: 8,
   },
   badge: {
-    borderRadius: "12@s",
-    paddingHorizontal: "8@s",
-    paddingVertical: "3@vs",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
   },
   badgeText: {
-    fontSize: "10@vs",
+    fontSize: appFontSize.micro,
     fontWeight: "600",
   },
   sourceBadge: {
     borderWidth: 1,
-    borderRadius: "12@s",
-    paddingHorizontal: "8@s",
-    paddingVertical: "3@vs",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
   },
   sourceBadgeText: {
-    fontSize: "10@vs",
+    fontSize: appFontSize.micro,
     fontWeight: "600",
   },
   iconButton: {
-    width: "36@s",
-    height: "36@s",
-    borderRadius: "18@s",
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -728,110 +781,110 @@ const styles = ScaledSheet.create({
   statusRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: "12@vs",
-    gap: "7@s",
+    marginBottom: 12,
+    gap: 7,
   },
   statusDot: {
-    width: "7@s",
-    height: "7@s",
-    borderRadius: "4@s",
+    width: 7,
+    height: 7,
+    borderRadius: 4,
   },
   statusText: {
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
   },
   addressBox: {
     borderWidth: 1,
-    borderRadius: "16@s",
-    paddingHorizontal: "14@s",
-    paddingVertical: "12@vs",
-    marginBottom: "16@vs",
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 16,
   },
   addressHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "8@vs",
-    gap: "12@s",
+    marginBottom: 8,
+    gap: 12,
   },
   copyHint: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "5@s",
+    gap: 5,
   },
   copyText: {
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
     fontWeight: "600",
   },
   addressText: {
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
     fontWeight: "600",
   },
   mutedText: {
-    fontSize: "12@vs",
-    marginTop: "4@vs",
+    fontSize: appFontSize.caption,
+    marginTop: 4,
   },
   fieldBlock: {
-    marginBottom: "14@vs",
+    marginBottom: 14,
   },
   label: {
-    fontSize: "12@vs",
-    marginBottom: "7@vs",
+    fontSize: appFontSize.caption,
+    marginBottom: 7,
   },
   addressLabel: {
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
   },
   actions: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "12@s",
+    gap: 12,
   },
   primaryAction: {
     flex: 1,
   },
   removeButton: {
-    minHeight: "42@vs",
+    minHeight: 42,
     borderWidth: 1,
-    borderRadius: "22@s",
-    paddingHorizontal: "13@s",
+    borderRadius: 22,
+    paddingHorizontal: 13,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: "6@s",
+    gap: 6,
   },
   removeText: {
-    fontSize: "13@vs",
+    fontSize: appFontSize.bodySmall,
     fontWeight: "600",
   },
   usernamePreview: {
     borderWidth: 1,
-    borderRadius: "18@s",
-    paddingHorizontal: "16@s",
-    paddingVertical: "18@vs",
-    marginBottom: "14@vs",
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    marginBottom: 14,
   },
   usernamePreviewText: {
-    fontSize: "20@vs",
+    fontSize: appFontSize.title,
   },
   usernamePrompt: {
-    fontSize: "14@vs",
-    lineHeight: "20@vs",
-    marginBottom: "18@vs",
+    fontSize: appFontSize.body,
+    lineHeight: appLineHeight.body,
+    marginBottom: 18,
   },
   sheetContainer: {
-    paddingHorizontal: "20@s",
-    paddingTop: "26@vs",
+    paddingHorizontal: 20,
+    paddingTop: 26,
   },
   sheetHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
-    marginBottom: "22@vs",
+    gap: 12,
+    marginBottom: 22,
   },
   sheetIcon: {
-    width: "44@s",
-    height: "44@s",
-    borderRadius: "22@s",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -839,10 +892,10 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   sheetTitle: {
-    fontSize: "17@vs",
-    marginBottom: "4@vs",
+    fontSize: appFontSize.nav,
+    marginBottom: 4,
   },
   sheetActions: {
-    gap: "10@vs",
+    gap: 10,
   },
 });

@@ -1,15 +1,15 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HistoryPage from "@screens/History";
 import HistoryEntryDetails from "@screens/History/Details";
-import { useThemeContext } from "@src/context/Theme";
 import type { HistoryStackParamList } from "@src/nav/navTypes";
+import { useAppThemeTokens } from "@styles";
 
 const HistoryStack = createNativeStackNavigator<HistoryStackParamList>();
 
 const animationDuration = 250;
 
 export default function HistoryNavigator() {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   return (
     <HistoryStack.Navigator
@@ -17,7 +17,7 @@ export default function HistoryNavigator() {
         headerShown: false,
         animation: "fade",
         animationDuration,
-        navigationBarColor: color.BACKGROUND,
+        navigationBarColor: theme.background,
       }}
     >
       <HistoryStack.Screen name="HistoryMain" component={HistoryPage} />

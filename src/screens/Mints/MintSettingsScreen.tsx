@@ -1,33 +1,25 @@
-import Txt from "@comps/Txt";
 import Screen from "@comps/Screen";
 import { useTrustedMints } from "@cashu/coco-react";
-
 import { l } from "@log";
 import ConfirmBottomSheet, { ConfirmBottomSheetRef } from "@comps/modal/ConfirmBottomSheet";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-
-import { mainColors } from "@styles";
+import { AppText, appLineHeight, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { ScrollView, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import Button from "@comps/Button";
-
 export default function MintSettingsScreen({ navigation, route }: any) {
   const { t } = useTranslation([NS.common]);
   const { untrustMint } = useTrustedMints();
   const { openPromptAutoClose } = usePromptContext();
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const confirmSheetRef = useRef<ConfirmBottomSheetRef>(null);
-
   const { knownMints } = useKnownMints();
   const mint = knownMints.find((m) => m.mintUrl === route.params.mintUrl);
-
   const handleMintDelete = () => {
     void (async () => {
       try {
@@ -38,7 +30,6 @@ export default function MintSettingsScreen({ navigation, route }: any) {
       }
     })();
   };
-
   return (
     <Screen
       screenName={t("mintSettings", { ns: NS.topNav })}
@@ -47,43 +38,52 @@ export default function MintSettingsScreen({ navigation, route }: any) {
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Mint Header Card */}
-        <View style={[styles.headerCard, { backgroundColor: color.INPUT_BG }]}>
-          <View style={styles.headerContent}>
+        <Stack style={[styles.headerCard, { backgroundColor: theme.inputBackground }]}>
+          <Stack style={styles.headerContent}>
             {mint?.mintInfo?.icon_url && (
               <Image
                 source={{ uri: mint.mintInfo.icon_url }}
-                style={styles.mintIcon}
+                style={[styles.mintIcon, { backgroundColor: theme.mintIconBackground }]}
                 contentFit="cover"
                 transition={200}
               />
             )}
-            <View style={styles.headerTextContainer}>
+            <Stack style={styles.headerTextContainer}>
               {mint?.mintInfo?.name && (
-                <Txt txt={mint.mintInfo.name} styles={[styles.mintName, { color: color.TEXT }]} />
+                <AppText
+                  style={[styles.mintName, { color: theme.text }]}
+                  testID={`${mint.mintInfo.name}-txt`}
+                >
+                  {mint.mintInfo.name}
+                </AppText>
               )}
               {mint?.mintInfo?.version && (
-                <Txt
-                  txt={`Version ${mint.mintInfo.version}`}
-                  styles={[styles.mintVersion, { color: color.TEXT_SECONDARY }]}
-                />
+                <AppText
+                  style={[styles.mintVersion, { color: theme.textSecondary }]}
+                  testID={`${`Version ${mint.mintInfo.version}`}-txt`}
+                >{`Version ${mint.mintInfo.version}`}</AppText>
               )}
-            </View>
-          </View>
-        </View>
+            </Stack>
+          </Stack>
+        </Stack>
 
         {/* Mint URL Section */}
-        <View style={styles.section}>
-          <Txt
-            txt={t("general", { ns: NS.mints })}
-            styles={[styles.sectionTitle, { color: color.TEXT_SECONDARY }]}
-          />
-          <View style={[styles.card, { backgroundColor: color.INPUT_BG }]}>
-            <Txt
-              txt={formatMintUrl(route.params.mintUrl)}
-              styles={[styles.urlText, { color: color.TEXT }]}
-            />
-          </View>
-        </View>
+        <Stack style={styles.section}>
+          <AppText
+            style={[styles.sectionTitle, { color: theme.textSecondary }]}
+            testID={`${t("general", { ns: NS.mints })}-txt`}
+          >
+            {t("general", { ns: NS.mints })}
+          </AppText>
+          <Stack style={[styles.card, { backgroundColor: theme.inputBackground }]}>
+            <AppText
+              style={[styles.urlText, { color: theme.text }]}
+              testID={`${formatMintUrl(route.params.mintUrl)}-txt`}
+            >
+              {formatMintUrl(route.params.mintUrl)}
+            </AppText>
+          </Stack>
+        </Stack>
 
         {/* Metadata Section */}
         {mint?.mintInfo &&
@@ -91,12 +91,14 @@ export default function MintSettingsScreen({ navigation, route }: any) {
             mint.mintInfo.description_long ||
             (mint.mintInfo.contact && mint.mintInfo.contact.length > 0) ||
             mint.mintInfo.motd) && (
-            <View style={styles.section}>
-              <Txt
-                txt={t("metadata", { ns: NS.mints })}
-                styles={[styles.sectionTitle, { color: color.TEXT_SECONDARY }]}
-              />
-              <View style={[styles.card, { backgroundColor: color.INPUT_BG }]}>
+            <Stack style={styles.section}>
+              <AppText
+                style={[styles.sectionTitle, { color: theme.textSecondary }]}
+                testID={`${t("metadata", { ns: NS.mints })}-txt`}
+              >
+                {t("metadata", { ns: NS.mints })}
+              </AppText>
+              <Stack style={[styles.card, { backgroundColor: theme.inputBackground }]}>
                 {mint.mintInfo.description && (
                   <InfoRow
                     label="Description"
@@ -135,16 +137,18 @@ export default function MintSettingsScreen({ navigation, route }: any) {
                   </>
                 )}
                 {mint.mintInfo.motd && <InfoRow label="Message" value={mint.mintInfo.motd} />}
-              </View>
-            </View>
+              </Stack>
+            </Stack>
           )}
 
         {/* Danger Zone */}
-        <View style={styles.section}>
-          <Txt
-            txt={t("dangerZone", { ns: NS.mints })}
-            styles={[styles.sectionTitle, { color: mainColors.ERROR }]}
-          />
+        <Stack style={styles.section}>
+          <AppText
+            style={[styles.sectionTitle, { color: theme.error }]}
+            testID={`${t("dangerZone", { ns: NS.mints })}-txt`}
+          >
+            {t("dangerZone", { ns: NS.mints })}
+          </AppText>
           <Button
             txt={t("delMint", { ns: NS.mints })}
             destructive={true}
@@ -159,61 +163,61 @@ export default function MintSettingsScreen({ navigation, route }: any) {
               });
             }}
           />
-        </View>
+        </Stack>
       </ScrollView>
       <ConfirmBottomSheet ref={confirmSheetRef} />
     </Screen>
   );
 }
-
 interface IInfoRow {
   label: string;
   value: string;
   hasSeparator?: boolean;
 }
-
 function InfoRow({ label, value, hasSeparator }: IInfoRow) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <>
-      <View style={styles.infoRow}>
-        <Txt txt={label} styles={[styles.infoLabel, { color: color.TEXT_SECONDARY }]} />
-        <Txt txt={value} styles={[styles.infoValue, { color: color.TEXT }]} />
-      </View>
-      {hasSeparator && <View style={[styles.infoSeparator, { backgroundColor: color.BORDER }]} />}
+      <Stack style={styles.infoRow}>
+        <AppText style={[styles.infoLabel, { color: theme.textSecondary }]} testID={`${label}-txt`}>
+          {label}
+        </AppText>
+        <AppText style={[styles.infoValue, { color: theme.text }]} testID={`${value}-txt`}>
+          {value}
+        </AppText>
+      </Stack>
+      {hasSeparator && <Stack style={[styles.infoSeparator, { backgroundColor: theme.border }]} />}
     </>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   headerCard: {
-    borderRadius: "16@s",
-    padding: "20@s",
-    marginTop: "16@vs",
-    marginBottom: "24@vs",
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 16,
+    marginBottom: 24,
   },
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
   },
   mintIcon: {
-    width: "48@s",
-    height: "48@s",
-    borderRadius: "12@s",
-    backgroundColor: "rgba(0,0,0,0.05)",
+    width: 48,
+    height: 48,
+    borderRadius: 12,
   },
   headerTextContainer: {
     flex: 1,
-    marginLeft: "16@s",
+    marginLeft: 16,
   },
   mintName: {
-    fontSize: "20@vs",
+    fontSize: appFontSize.title,
     fontWeight: "700",
-    marginBottom: "4@vs",
+    marginBottom: 4,
     letterSpacing: 0.3,
   },
   mintVersion: {
-    fontSize: "13@vs",
+    fontSize: appFontSize.bodySmall,
     fontWeight: "500",
     opacity: 0.7,
   },
@@ -221,65 +225,65 @@ const styles = ScaledSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: "12@vs",
-    paddingHorizontal: "16@s",
-    borderRadius: "12@s",
-    gap: "8@s",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    gap: 8,
   },
   balanceText: {
-    fontSize: "18@vs",
+    fontSize: appFontSize.label,
     fontWeight: "600",
   },
   section: {
-    marginBottom: "24@vs",
+    marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
-    marginBottom: "12@vs",
-    paddingHorizontal: "4@s",
+    marginBottom: 12,
+    paddingHorizontal: 4,
   },
   card: {
-    borderRadius: "16@s",
-    padding: "20@s",
+    borderRadius: 16,
+    padding: 20,
   },
   urlText: {
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
     fontWeight: "500",
-    lineHeight: "20@vs",
+    lineHeight: appLineHeight.body,
   },
   infoRow: {
-    paddingVertical: "8@vs",
+    paddingVertical: 8,
   },
   infoLabel: {
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
     fontWeight: "600",
     textTransform: "capitalize",
-    marginBottom: "6@vs",
+    marginBottom: 6,
   },
   infoValue: {
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
     fontWeight: "400",
-    lineHeight: "20@vs",
+    lineHeight: appLineHeight.body,
   },
   infoSeparator: {
     height: 1,
-    marginVertical: "12@vs",
+    marginVertical: 12,
     opacity: 0.2,
   },
   deleteButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: "16@s",
-    padding: "16@s",
+    borderRadius: 16,
+    padding: 16,
     borderWidth: 1.5,
-    gap: "10@s",
+    gap: 10,
   },
   deleteButtonText: {
-    fontSize: "15@vs",
+    fontSize: appFontSize.bodyMedium,
     fontWeight: "600",
   },
 });

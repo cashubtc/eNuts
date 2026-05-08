@@ -1,29 +1,23 @@
-import { useThemeContext } from "@src/context/Theme";
-import { mainColors } from "@styles";
-import { TouchableOpacity } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { PressableSurface, useAppThemeTokens } from "@styles";
 
 import useCopy from "./hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "./Icons";
 
 export default function Copy({ txt }: { txt: string }) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { copied, copy } = useCopy();
 
   return (
-    <TouchableOpacity style={styles.copyIconWrap} onPress={() => void copy(txt)} disabled={copied}>
+    <PressableSurface
+      style={{ paddingHorizontal: 10, paddingVertical: 5 }}
+      onPress={() => void copy(txt)}
+      disabled={copied}
+    >
       {copied ? (
-        <CheckmarkIcon width={s(16)} height={s(16)} color={mainColors.VALID} />
+        <CheckmarkIcon width={16} height={16} color={theme.valid} />
       ) : (
-        <CopyIcon width={s(18)} height={s(18)} color={color.TEXT_SECONDARY} />
+        <CopyIcon width={18} height={18} color={theme.textSecondary} />
       )}
-    </TouchableOpacity>
+    </PressableSurface>
   );
 }
-
-const styles = ScaledSheet.create({
-  copyIconWrap: {
-    paddingHorizontal: "10@s",
-    paddingVertical: "5@vs",
-  },
-});

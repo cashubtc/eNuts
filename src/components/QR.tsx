@@ -1,22 +1,16 @@
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { mainColors } from "@src/styles";
+import { AppText, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { s, ScaledSheet } from "react-native-size-matters";
-
 import useCopy from "./hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "./Icons";
-import Txt from "./Txt";
 import { useAnimatedQr } from "./hooks/AnimatedQr";
-
 function truncateStr(str: string, len: number): string {
   if (!str) return "";
   if (str.length <= len) return str;
   return str.slice(0, len) + "...";
 }
-
 interface QRProps {
   size: number;
   value: string;
@@ -25,50 +19,48 @@ interface QRProps {
   truncateNum?: number;
   onError: () => void;
 }
-
 export default function QR({ size, value, animate, truncateNum, onError }: QRProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { copied, copy } = useCopy();
   const chunk = useAnimatedQr(value, { animate });
   return (
-    <TouchableOpacity onPress={() => void copy(value)}>
-      <View style={styles.qrWrap}>
+    <PressableSurface onPress={() => void copy(value)}>
+      <Stack style={[styles.qrWrap, { borderColor: theme.white }]}>
         <QRCode
           size={size}
           value={chunk}
           testID="qr-code"
           logoBorderRadius={10}
-          logoBackgroundColor={mainColors.WHITE}
-          logoMargin={s(6)}
+          logoBackgroundColor={theme.white}
+          logoMargin={6}
           onError={onError}
         />
-      </View>
-      <View
+      </Stack>
+      <Stack
         style={[
           styles.txtContainer,
           {
-            borderColor: color.BORDER,
-            backgroundColor: color.INPUT_BG,
+            backgroundColor: theme.inputBackground,
           },
         ]}
       >
-        <View style={styles.iconCon}>
-          {copied ? <CheckmarkIcon color={mainColors.VALID} /> : <CopyIcon color={color.TEXT} />}
-        </View>
-        <Txt
-          txt={copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}
-          styles={[{ color: copied ? mainColors.VALID : color.TEXT }]}
-        />
-      </View>
-    </TouchableOpacity>
+        <Stack style={styles.iconCon}>
+          {copied ? <CheckmarkIcon color={theme.valid} /> : <CopyIcon color={theme.text} />}
+        </Stack>
+        <AppText
+          style={[{ color: copied ? theme.valid : theme.text }]}
+          testID={`${copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}-txt`}
+        >
+          {copied ? t("copied") : truncateStr(value, truncateNum ?? 20)}
+        </AppText>
+      </Stack>
+    </PressableSurface>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   qrWrap: {
-    borderWidth: "10@s",
-    borderColor: mainColors.WHITE,
+    borderWidth: 10,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -76,12 +68,11 @@ const styles = ScaledSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    padding: "15@s",
-    borderWidth: 1,
+    padding: 15,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },
   iconCon: {
-    minWidth: "30@s",
+    minWidth: 30,
   },
 });

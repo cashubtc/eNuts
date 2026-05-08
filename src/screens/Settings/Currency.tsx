@@ -3,23 +3,18 @@ import RadioBtn from "@comps/RadioBtn";
 import Screen from "@comps/Screen";
 import Separator from "@comps/Separator";
 import Toggle from "@comps/Toggle";
-import Txt from "@comps/Txt";
 import type { TCurrencySettingsPageProps } from "@model/nav";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import type { TCurrencyCode } from "@model";
-import { globals, mainColors } from "@styles";
+import { AppText, appFontSize, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
-
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 // Common currencies to display at the top
 const COMMON_CURRENCIES: TCurrencyCode[] = ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "CNY"];
-
 export default function CurrencySettings({ navigation }: TCurrencySettingsPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const {
     rates,
     selectedCurrency,
@@ -31,11 +26,9 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
     error,
     refreshRates,
   } = useCurrencyContext();
-
   // Determine if rates are unavailable (error state)
   const hasRatesError = !isLoading && !rates && !!error;
   const ratesUnavailable = !rates;
-
   // Sort currencies: common ones first, then alphabetically
   const sortedCurrencies = rates
     ? Object.keys(rates).sort((a, b) => {
@@ -49,23 +42,19 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
         return a.localeCompare(b);
       })
     : [];
-
   const handleCurrencySelect = async (currency: TCurrencyCode) => {
     // Don't allow selection if rates are unavailable
     if (ratesUnavailable) return;
     await setSelectedCurrency(currency);
   };
-
   const handleToggleFormatBalance = async () => {
     // Don't allow toggle if rates are unavailable
     if (ratesUnavailable) return;
     await setFormatBalance(!formatBalance);
   };
-
   const handleRetry = async () => {
     await refreshRates();
   };
-
   const formatLastUpdate = () => {
     if (!lastUpdate) return "";
     const date = new Date(lastUpdate);
@@ -74,7 +63,6 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
       minute: "2-digit",
     });
   };
-
   return (
     <Screen
       screenName={t("currency", { ns: NS.topNav })}
@@ -84,73 +72,111 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
       <ScrollView alwaysBounceVertical={false}>
         {/* Error Banner */}
         {hasRatesError && (
-          <View style={[styles.errorContainer, { backgroundColor: mainColors.ERROR }]}>
-            <Txt txt={t("ratesUnavailable")} styles={[styles.errorText]} />
-            <Txt txt={t("ratesUnavailableDesc")} styles={[styles.errorDescription]} />
+          <Stack style={[styles.errorContainer, { backgroundColor: theme.error }]}>
+            <AppText
+              style={[styles.errorText, { color: theme.white }]}
+              testID={`${t("ratesUnavailable")}-txt`}
+            >
+              {t("ratesUnavailable")}
+            </AppText>
+            <AppText
+              style={[styles.errorDescription, { color: theme.white }]}
+              testID={`${t("ratesUnavailableDesc")}-txt`}
+            >
+              {t("ratesUnavailableDesc")}
+            </AppText>
             <Button txt={t("retry")} onPress={handleRetry} outlined loading={isLoading} />
-          </View>
+          </Stack>
         )}
 
         {/* Enable Currency Conversion Toggle */}
-        <Txt txt={t("currencyConversion")} bold styles={[styles.subHeader]} />
-        <View style={globals(color).wrapContainer}>
-          <TouchableOpacity
+        <AppText
+          style={[styles.subHeader]}
+          weight="medium"
+          testID={`${t("currencyConversion")}-txt`}
+        >
+          {t("currencyConversion")}
+        </AppText>
+        <Stack style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
+          <PressableSurface
             style={styles.toggleRow}
             onPress={handleToggleFormatBalance}
             disabled={ratesUnavailable}
           >
-            <View style={styles.toggleTextContainer}>
-              <Txt
-                txt={t("showFiatBalance")}
-                styles={[
+            <Stack style={styles.toggleTextContainer}>
+              <AppText
+                style={[
                   {
-                    color: ratesUnavailable ? color.TEXT_SECONDARY : color.TEXT,
+                    color: ratesUnavailable ? theme.textSecondary : theme.text,
                   },
                 ]}
-              />
-              <Txt
-                txt={ratesUnavailable ? t("ratesRequiredForFiat") : t("showFiatBalanceDesc")}
-                styles={[styles.description, { color: color.TEXT_SECONDARY }]}
-              />
-            </View>
-            <View style={styles.toggleContainer}>
+                testID={`${t("showFiatBalance")}-txt`}
+              >
+                {t("showFiatBalance")}
+              </AppText>
+              <AppText
+                style={[styles.description, { color: theme.textSecondary }]}
+                testID={`${ratesUnavailable ? t("ratesRequiredForFiat") : t("showFiatBalanceDesc")}-txt`}
+              >
+                {ratesUnavailable ? t("ratesRequiredForFiat") : t("showFiatBalanceDesc")}
+              </AppText>
+            </Stack>
+            <Stack style={styles.toggleContainer}>
               <Toggle
                 value={formatBalance}
                 onChange={handleToggleFormatBalance}
                 disabled={ratesUnavailable}
               />
-            </View>
-          </TouchableOpacity>
-        </View>
+            </Stack>
+          </PressableSurface>
+        </Stack>
 
         {/* Currency Selection */}
-        <View style={styles.currencyHeader}>
-          <Txt txt={t("selectCurrency")} bold styles={[styles.subHeader]} />
+        <Stack style={styles.currencyHeader}>
+          <AppText style={[styles.subHeader]} weight="medium" testID={`${t("selectCurrency")}-txt`}>
+            {t("selectCurrency")}
+          </AppText>
           {lastUpdate && (
-            <Txt
-              txt={`${t("lastUpdate")}: ${formatLastUpdate()}`}
-              styles={[styles.lastUpdate, { color: color.TEXT_SECONDARY }]}
-            />
+            <AppText
+              style={[styles.lastUpdate, { color: theme.textSecondary }]}
+              testID={`${`${t("lastUpdate")}: ${formatLastUpdate()}`}-txt`}
+            >{`${t("lastUpdate")}: ${formatLastUpdate()}`}</AppText>
           )}
-        </View>
+        </Stack>
 
         {isLoading && !rates ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={color.TEXT} />
-            <Txt
-              txt={t("loadingRates")}
-              styles={[styles.loadingText, { color: color.TEXT_SECONDARY }]}
-            />
-          </View>
+          <Stack style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={theme.text} />
+            <AppText
+              style={[styles.loadingText, { color: theme.textSecondary }]}
+              testID={`${t("loadingRates")}-txt`}
+            >
+              {t("loadingRates")}
+            </AppText>
+          </Stack>
         ) : hasRatesError ? (
-          <View style={[globals(color).wrapContainer, styles.emptyContainer]}>
-            <Txt
-              txt={t("noCurrenciesAvailable")}
-              styles={[styles.emptyText, { color: color.TEXT_SECONDARY }]}
-            />
-          </View>
+          <Stack
+            style={[
+              globals().wrapContainer,
+              { backgroundColor: theme.drawer },
+              styles.emptyContainer,
+            ]}
+          >
+            <AppText
+              style={[styles.emptyText, { color: theme.textSecondary }]}
+              testID={`${t("noCurrenciesAvailable")}-txt`}
+            >
+              {t("noCurrenciesAvailable")}
+            </AppText>
+          </Stack>
         ) : (
-          <View style={[globals(color).wrapContainer, { marginBottom: s(80) }]}>
+          <Stack
+            style={[
+              globals().wrapContainer,
+              { backgroundColor: theme.drawer },
+              { marginBottom: 80 },
+            ]}
+          >
             {sortedCurrencies.map((currency, i) => (
               <CurrencySelection
                 key={currency}
@@ -162,13 +188,12 @@ export default function CurrencySettings({ navigation }: TCurrencySettingsPagePr
                 disabled={!formatBalance || ratesUnavailable}
               />
             ))}
-          </View>
+          </Stack>
         )}
       </ScrollView>
     </Screen>
   );
 }
-
 interface ICurrencySelectionProps {
   code: TCurrencyCode;
   symbol: string;
@@ -177,7 +202,6 @@ interface ICurrencySelectionProps {
   onSelect: (code: TCurrencyCode) => void;
   disabled?: boolean;
 }
-
 function CurrencySelection({
   code,
   symbol,
@@ -186,101 +210,105 @@ function CurrencySelection({
   onSelect,
   disabled,
 }: ICurrencySelectionProps) {
-  const { color } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   return (
     <>
-      <TouchableOpacity
-        style={[globals().wrapRow, { paddingBottom: vs(15) }]}
+      <PressableSurface
+        style={[globals().wrapRow, { paddingBottom: 15 }]}
         onPress={() => onSelect(code)}
         disabled={disabled}
       >
-        <View style={styles.currencyInfo}>
-          <Txt txt={code} bold styles={[{ color: disabled ? color.TEXT_SECONDARY : color.TEXT }]} />
-          <Txt
-            txt={symbol}
-            styles={[
+        <Stack style={styles.currencyInfo}>
+          <AppText
+            style={[{ color: disabled ? theme.textSecondary : theme.text }]}
+            weight="medium"
+            testID={`${code}-txt`}
+          >
+            {code}
+          </AppText>
+          <AppText
+            style={[
               styles.currencySymbol,
-              { color: disabled ? color.TEXT_SECONDARY : color.TEXT_SECONDARY },
+              { color: disabled ? theme.textSecondary : theme.textSecondary },
             ]}
-          />
-        </View>
+            testID={`${symbol}-txt`}
+          >
+            {symbol}
+          </AppText>
+        </Stack>
         <RadioBtn selected={selected} />
-      </TouchableOpacity>
-      {hasSeparator && <Separator style={[{ marginBottom: vs(15) }]} />}
+      </PressableSurface>
+      {hasSeparator && <Separator style={[{ marginBottom: 15 }]} />}
     </>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   subHeader: {
-    paddingHorizontal: "20@s",
-    marginBottom: "10@vs",
+    paddingHorizontal: 20,
+    marginBottom: 10,
   },
   toggleRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: "15@vs",
+    paddingBottom: 15,
   },
   toggleTextContainer: {
     flex: 1,
-    marginRight: "16@s",
+    marginRight: 16,
   },
   toggleContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
   description: {
-    fontSize: "12@s",
-    marginTop: "4@vs",
+    fontSize: appFontSize.caption,
+    marginTop: 4,
   },
   currencyHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingRight: "20@s",
+    paddingRight: 20,
   },
   lastUpdate: {
-    fontSize: "11@s",
+    fontSize: appFontSize.fine,
   },
   loadingContainer: {
-    padding: "40@s",
+    padding: 40,
     alignItems: "center",
   },
   loadingText: {
-    marginTop: "12@vs",
+    marginTop: 12,
   },
   currencyInfo: {
     flexDirection: "row",
     alignItems: "center",
   },
   currencySymbol: {
-    marginLeft: "12@s",
-    fontSize: "14@s",
+    marginLeft: 12,
+    fontSize: appFontSize.body,
   },
   errorContainer: {
-    marginHorizontal: "20@s",
-    marginBottom: "16@vs",
-    padding: "16@s",
-    borderRadius: "12@s",
+    marginHorizontal: 20,
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 12,
     alignItems: "center",
   },
   errorText: {
-    color: "#FFFFFF",
     fontWeight: "600",
-    fontSize: "14@s",
-    marginBottom: "4@vs",
+    fontSize: appFontSize.body,
+    marginBottom: 4,
   },
   errorDescription: {
-    color: "#FFFFFF",
-    fontSize: "12@s",
+    fontSize: appFontSize.caption,
     textAlign: "center",
-    marginBottom: "12@vs",
+    marginBottom: 12,
     opacity: 0.9,
   },
   emptyContainer: {
-    padding: "40@s",
+    padding: 40,
     alignItems: "center",
   },
   emptyText: {

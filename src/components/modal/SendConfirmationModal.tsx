@@ -2,22 +2,22 @@ import Card from "@comps/Card";
 import ConfirmationModal, { type ConfirmationModalRef } from "@modal/ConfirmationModal";
 import OperationMintPanel, { type IOperationMintPanelRow } from "@modal/OperationMintPanel";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import type { SendOperation } from "@cashu/coco-core";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { useThemeContext } from "@src/context/Theme";
-import { mainColors } from "@styles";
+import { AppText, appLineHeight, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
-import { View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { ScaledSheet } from "react-native-size-matters";
-
 export type SendConfirmationModalRef = ConfirmationModalRef;
-type TPreparedOrLaterSendOperation = Exclude<SendOperation, { state: "init" }>;
-
+type TPreparedOrLaterSendOperation = Exclude<
+  SendOperation,
+  {
+    state: "init";
+  }
+>;
 interface ISendConfirmationModalProps {
   operation: TPreparedOrLaterSendOperation | null;
   mint: KnownMintWithBalance | null;
@@ -25,22 +25,18 @@ interface ISendConfirmationModalProps {
   onConfirm: () => void;
   onCancel: () => void;
 }
-
 type TRowTone = "default" | "success" | "danger";
-
 interface IDetailRow {
   label: string;
   value: string;
   tone?: TRowTone;
 }
-
 const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirmationModalProps>(
   ({ operation, mint, loading = false, onConfirm, onCancel }, ref) => {
     const { t } = useTranslation([NS.common, NS.auth]);
-    const { color } = useThemeContext();
+    const theme = useAppThemeTokens();
     const { hidden } = usePrivacyContext();
     const { formatAmount } = useCurrencyContext();
-
     const formatDisplayAmount = useCallback(
       (amount: number) => {
         const { formatted, symbol } = formatAmount(amount);
@@ -48,14 +44,11 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
       },
       [formatAmount],
     );
-
     const summaryRows = useMemo<IDetailRow[]>(() => {
       if (!operation) {
         return [];
       }
-
       const totalAmount = operation.amount + operation.fee;
-
       return [
         {
           label: t("estimatedFees", { ns: NS.common }),
@@ -75,27 +68,21 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
           : []),
       ];
     }, [formatDisplayAmount, operation, t]);
-
     const balanceAfterTx = useMemo(() => {
       if (!operation || !mint) {
         return "";
       }
-
       const totalAmount = operation.amount + operation.fee;
       const nextBalance = mint.balance - totalAmount;
-
       if (hidden.balance) {
         return "****";
       }
-
       return formatDisplayAmount(nextBalance);
     }, [formatDisplayAmount, hidden.balance, mint, operation]);
-
     const mintRows = useMemo<IOperationMintPanelRow[]>(() => {
       if (!mint) {
         return [];
       }
-
       return [
         {
           label: t("balanceAfterTX", { ns: NS.common }),
@@ -104,7 +91,6 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
         },
       ];
     }, [balanceAfterTx, mint, t]);
-
     return (
       <ConfirmationModal
         ref={ref}
@@ -119,118 +105,129 @@ const SendConfirmationModal = forwardRef<SendConfirmationModalRef, ISendConfirma
         {operation ? (
           <>
             <Card style={styles.summaryCard}>
-              <Txt
-                txt={t("amount", { ns: NS.common })}
-                center
-                styles={[styles.amountLabel, { color: color.TEXT_SECONDARY }]}
-              />
-              <Txt
-                txt={formatDisplayAmount(operation.amount)}
-                center
-                bold
-                styles={[styles.amount]}
-              />
-              <View style={styles.rowsWrap}>
+              <AppText
+                style={[styles.amountLabel, { color: theme.textSecondary }]}
+                align="center"
+                testID={`${t("amount", { ns: NS.common })}-txt`}
+              >
+                {t("amount", { ns: NS.common })}
+              </AppText>
+              <AppText
+                style={[styles.amount]}
+                weight="medium"
+                align="center"
+                testID={`${formatDisplayAmount(operation.amount)}-txt`}
+              >
+                {formatDisplayAmount(operation.amount)}
+              </AppText>
+              <Stack style={styles.rowsWrap}>
                 {summaryRows.map((row, index) => (
-                  <View key={`${row.label}-${index}`}>
+                  <Stack key={`${row.label}-${index}`}>
                     <DetailRow row={row} />
                     {index < summaryRows.length - 1 ? (
                       <Separator noMargin style={styles.separator} />
                     ) : null}
-                  </View>
+                  </Stack>
                 ))}
-              </View>
+              </Stack>
             </Card>
 
             {mint ? (
-              <View style={styles.mintSection}>
-                <Txt
-                  txt={t("sendingFrom", { ns: NS.common, defaultValue: "Sending from" })}
-                  styles={[styles.sectionLabel, { color: color.TEXT_SECONDARY }]}
-                />
+              <Stack style={styles.mintSection}>
+                <AppText
+                  style={[styles.sectionLabel, { color: theme.textSecondary }]}
+                  testID={`${t("sendingFrom", { ns: NS.common, defaultValue: "Sending from" })}-txt`}
+                >
+                  {t("sendingFrom", { ns: NS.common, defaultValue: "Sending from" })}
+                </AppText>
                 <OperationMintPanel mint={mint} rows={mintRows} />
-              </View>
+              </Stack>
             ) : null}
           </>
         ) : (
-          <View />
+          <Stack />
         )}
       </ConfirmationModal>
     );
   },
 );
-
 function DetailRow({ row }: { row: IDetailRow }) {
-  const { color } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   const valueColor = useMemo(() => {
     switch (row.tone) {
       case "success":
-        return mainColors.VALID;
+        return theme.valid;
       case "danger":
-        return mainColors.ERROR;
+        return theme.error;
       default:
-        return color.TEXT;
+        return theme.text;
     }
-  }, [color.TEXT, row.tone]);
-
+  }, [theme.text, row.tone]);
   return (
-    <View style={styles.detailRow}>
-      <Txt txt={row.label} styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]} />
-      <Txt txt={row.value} bold styles={[styles.detailValue, { color: valueColor }]} />
-    </View>
+    <Stack style={styles.detailRow}>
+      <AppText
+        style={[styles.detailLabel, { color: theme.textSecondary }]}
+        testID={`${row.label}-txt`}
+      >
+        {row.label}
+      </AppText>
+      <AppText
+        style={[styles.detailValue, { color: valueColor }]}
+        weight="medium"
+        testID={`${row.value}-txt`}
+      >
+        {row.value}
+      </AppText>
+    </Stack>
   );
 }
-
 SendConfirmationModal.displayName = "SendConfirmationModal";
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   summaryCard: {
-    marginBottom: "12@vs",
-    paddingHorizontal: "20@s",
-    paddingTop: "18@vs",
-    paddingBottom: "16@vs",
+    marginBottom: 12,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 16,
   },
   amountLabel: {
-    fontSize: "12@vs",
-    marginBottom: "8@vs",
+    fontSize: appFontSize.caption,
+    marginBottom: 8,
     letterSpacing: 0.3,
   },
   amount: {
-    fontSize: "34@vs",
-    lineHeight: "40@vs",
-    marginBottom: "20@vs",
+    fontSize: appFontSize.amount,
+    lineHeight: appLineHeight.amount,
+    marginBottom: 20,
   },
   rowsWrap: {
-    gap: "2@vs",
+    gap: 2,
   },
   detailRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "12@s",
-    paddingVertical: "12@vs",
+    gap: 12,
+    paddingVertical: 12,
   },
   detailLabel: {
     flex: 1,
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
   },
   detailValue: {
     flexShrink: 1,
     textAlign: "right",
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
   },
   separator: {
     marginVertical: 0,
   },
   mintSection: {
-    marginBottom: "16@vs",
+    marginBottom: 16,
   },
   sectionLabel: {
-    fontSize: "13@vs",
-    marginBottom: "8@vs",
-    marginLeft: "2@s",
+    fontSize: appFontSize.bodySmall,
+    marginBottom: 8,
+    marginLeft: 2,
   },
 });
-
 export default SendConfirmationModal;

@@ -1,19 +1,17 @@
 import Logo from "@comps/Logo";
 import RadioBtn from "@comps/RadioBtn";
-import Txt from "@comps/Txt";
 import type { TOnboardingPageProps } from "@model/nav";
 import { NS } from "@src/i18n";
 import { store } from "@src/storage/store";
 import { STORE_KEYS } from "@src/storage/store/consts";
-import { H_Colors, mainColors } from "@styles/colors";
+import { AppText, appFontSize, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
-import { s, ScaledSheet } from "react-native-size-matters";
-
 export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
   const { t } = useTranslation([NS.common]);
+  const theme = useAppThemeTokens();
   const [accepted, setAccepted] = useState(false);
   const handleDone = async () => {
     await store.set(STORE_KEYS.explainer, "1");
@@ -27,61 +25,63 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
       showNext={accepted}
       pages={[
         {
-          backgroundColor: "black",
-          image: <Logo size={s(130)} />,
+          backgroundColor: theme.onboardingAlpha,
+          image: <Logo size={130} />,
           title: "Alpha Testing",
           subtitle: (
-            <View
+            <Stack
               style={{
-                padding: s(10),
+                padding: 10,
                 flexDirection: "column",
                 alignItems: "center",
               }}
             >
-              <Txt
-                txt="eNuts is currently in alpha testing. Please use at your own risk."
-                styles={[{ paddingHorizontal: s(10), textAlign: "center" }]}
-              />
-              <TouchableOpacity
+              <AppText
+                style={[{ paddingHorizontal: 10, textAlign: "center" }]}
+                testID={"eNuts is currently in alpha testing. Please use at your own risk.-txt"}
+              >
+                eNuts is currently in alpha testing. Please use at your own risk.
+              </AppText>
+              <PressableSurface
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: s(24),
+                  marginTop: 24,
                 }}
                 onPress={() => setAccepted((acpt) => !acpt)}
                 activeOpacity={0.7}
                 testID="onboarding-accept-checkbox"
               >
-                <View
+                <Stack
                   style={{
-                    width: s(10),
+                    width: 10,
                     borderWidth: 1,
-                    borderColor: "white",
-                    height: s(10),
-                    backgroundColor: accepted ? "white" : "transparent",
+                    borderColor: theme.white,
+                    height: 10,
+                    backgroundColor: accepted ? theme.white : "transparent",
                   }}
                 />
-                <Txt txt="I understand" styles={[{ marginLeft: s(10) }]} />
-              </TouchableOpacity>
-            </View>
+                <AppText style={[{ marginLeft: 10 }]} testID={"I understand-txt"}>
+                  I understand
+                </AppText>
+              </PressableSurface>
+            </Stack>
           ),
         },
         {
-          backgroundColor: H_Colors.Default,
-          image: <Logo size={s(130)} />,
+          backgroundColor: theme.onboardingDefault,
+          image: <Logo size={130} />,
           title: "eNuts & Ecash",
           subtitle: t("explainer1"),
         },
         {
-          backgroundColor: "#8038CA",
-
+          backgroundColor: theme.onboardingCashu,
           image: <Image style={styles.cashuImg} source={require("@assets/cashu.png")} />,
           title: "Cashu & Mints",
           subtitle: t("explainer2"),
         },
         {
-          backgroundColor: H_Colors.Nuts,
-
+          backgroundColor: theme.onboardingNuts,
           image: (
             <Image style={styles.sendReceiveImg} source={require("@assets/send_receive.png")} />
           ),
@@ -96,29 +96,30 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
       skipLabel={t("skip")}
       onSkip={() => void handleDone()}
       DoneButtonComponent={() => (
-        <TouchableOpacity
+        <PressableSurface
           onPress={() => void handleDone()}
-          style={{ marginRight: s(20) }}
+          style={{ marginRight: 20 }}
           testID="onboarding-done"
         >
-          <Txt txt={t("next")} styles={[{ color: mainColors.WHITE }]} />
-        </TouchableOpacity>
+          <AppText style={[{ color: theme.white }]} testID={`${t("next")}-txt`}>
+            {t("next")}
+          </AppText>
+        </PressableSurface>
       )}
     />
   );
 }
-
-const styles = ScaledSheet.create({
-  title: { fontSize: "28@vs", fontWeight: "500" },
-  subTitle: { fontSize: "16@vs" },
+const styles = StyleSheet.create({
+  title: { fontSize: appFontSize.display, fontWeight: "500" },
+  subTitle: { fontSize: appFontSize.bodyLarge },
   cashuImg: {
-    width: "130@s",
-    height: "130@vs",
+    width: 130,
+    height: 130,
     resizeMode: "contain",
   },
   sendReceiveImg: {
-    width: "300@s",
-    height: "170@vs",
+    width: 300,
+    height: 170,
     resizeMode: "contain",
   },
 });

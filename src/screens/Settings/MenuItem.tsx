@@ -1,10 +1,6 @@
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
-import { globals, highlight as hi } from "@styles";
-import { TouchableOpacity, View } from "react-native";
-import { ScaledSheet, vs } from "react-native-size-matters";
-
+import { AppText, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import { StyleSheet } from "react-native";
 interface IMenuItemProps {
   header?: string;
   txt: string;
@@ -13,7 +9,6 @@ interface IMenuItemProps {
   hasSeparator?: boolean;
   disabled?: boolean;
 }
-
 export default function SettingsMenuItem({
   header,
   txt,
@@ -22,45 +17,48 @@ export default function SettingsMenuItem({
   hasSeparator,
   disabled,
 }: IMenuItemProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <>
-      <View
+      <Stack
         style={[
           globals().wrapRow,
-          { paddingBottom: vs(15), flexDirection: "column", alignItems: "flex-start" },
+          { paddingBottom: 15, flexDirection: "column", alignItems: "flex-start" },
         ]}
       >
         {header && (
-          <Txt
-            txt={header}
-            styles={[{ color: hi[highlight], fontWeight: "bold", marginBottom: vs(25) }]}
-          />
+          <AppText
+            style={[{ color: theme.accent, fontWeight: "bold", marginBottom: 25 }]}
+            testID={`${header}-txt`}
+          >
+            {header}
+          </AppText>
         )}
-        <TouchableOpacity onPress={onPress} disabled={disabled} style={styles.setting}>
+        <PressableSurface onPress={onPress} disabled={disabled} style={styles.setting}>
           {icon}
-          <Txt
-            txt={txt}
-            styles={[styles.settingTxt, { color: disabled ? color.TEXT_SECONDARY : color.TEXT }]}
-          />
-        </TouchableOpacity>
-      </View>
+          <AppText
+            style={[styles.settingTxt, { color: disabled ? theme.textSecondary : theme.text }]}
+            testID={`${txt}-txt`}
+          >
+            {txt}
+          </AppText>
+        </PressableSurface>
+      </Stack>
       {hasSeparator && <Separator style={[styles.separator]} />}
     </>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   setting: {
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
   },
   settingTxt: {
-    marginLeft: "15@s",
+    marginLeft: 15,
   },
   separator: {
-    marginBottom: "15@vs",
-    marginTop: "3@vs",
+    marginBottom: 15,
+    marginTop: 3,
   },
 });

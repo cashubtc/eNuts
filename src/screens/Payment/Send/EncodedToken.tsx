@@ -1,43 +1,68 @@
 import { getEncodedToken } from "@cashu/cashu-ts";
 import Button from "@comps/Button";
-import useCopy from "@comps/hooks/Copy";
-import { CopyIcon, ShareIcon } from "@comps/Icons";
+import { ShareIcon } from "@comps/Icons";
 import QR from "@comps/QR";
-import Txt from "@comps/Txt";
 import type { TBeforeRemoveEvent, TEncodedTokenPageProps } from "@model/nav";
 import Screen from "@comps/Screen";
 import { preventBack } from "@nav/utils";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi, mainColors } from "@styles";
-import { formatInt, formatSatStr, share } from "@util";
+import {
+  AppText,
+  appFontSize,
+  appLineHeight,
+  globals,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
+import { formatMintUrl, formatSatStr, share } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { ScrollView, StyleSheet, useWindowDimensions } from "react-native";
 import { useManager } from "@src/context/Manager";
 
+const QR_HORIZONTAL_CHROME = 20;
+const QR_VERTICAL_CHROME = 82;
+const MIN_QR_SIZE = 140;
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
  */
 export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPageProps) {
   const { token } = route.params || {};
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
+  const { width, height } = useWindowDimensions();
+  const [qrStageSize, setQrStageSize] = useState({ width: 0, height: 0 });
   const { formatBalance, formatAmount } = useCurrencyContext();
   const [error, setError] = useState({ msg: "", open: false });
   const encodedToken = useMemo(() => getEncodedToken(token), [token]);
   const tokenAmount = useMemo(() => token.proofs.reduce((r, c) => r + c.amount, 0), [token]);
-  const manager = useManager();
+  const qrSize = useMemo(() => {
+    if (!qrStageSize.width || !qrStageSize.height) {
+      return Math.round(Math.max(196, Math.min(288, width - 96, height * 0.32)));
+    }
 
+    return Math.max(
+      MIN_QR_SIZE,
+      Math.floor(
+        Math.min(qrStageSize.width - QR_HORIZONTAL_CHROME, qrStageSize.height - QR_VERTICAL_CHROME),
+      ),
+    );
+  }, [height, qrStageSize.height, qrStageSize.width, width]);
+  const manager = useManager();
   // For tokens, always show sats as primary (tokens ARE in sats)
   // Show fiat equivalent as secondary info if user prefers fiat
   const fiatEquivalent = formatBalance ? formatAmount(tokenAmount) : null;
+  const amountLabel = formatSatStr(tokenAmount, "standard", true);
+  const mintLabel = formatMintUrl(token.mint);
+  const qrStageHeight = useMemo(
+    () => Math.round(Math.max(300, Math.min(height * 0.5, width + QR_VERTICAL_CHROME - 20))),
+    [height, width],
+  );
   //TODO: Add spent check
   const spent = false;
-  const { copied, copy } = useCopy();
 
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
@@ -45,30 +70,45 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   useEffect(() => {
     const unsub = manager.on("send:finalized", () => {
       navigation.navigate("dashboard");
     });
     return () => unsub();
   }, []);
-
   return (
     <Screen
       withBackBtn={!spent}
-      screenName={!spent ? `${t("newToken")}  🥜🐿️` : undefined}
+      screenName={!spent ? t("newToken") : undefined}
       handlePress={() => navigation.navigate("dashboard")}
       withPadding={false}
+      rightAction={
+        !spent ? (
+          <PressableSurface
+            accessibilityRole="button"
+            activeOpacity={0.7}
+            onPress={() => void share(encodedToken, `cashu://${encodedToken}`)}
+            style={styles.headerShareButton}
+            testID={`${t("share")}-header-button`}
+          >
+            <ShareIcon width={20} height={20} color={theme.accent} />
+          </PressableSurface>
+        ) : undefined
+      }
     >
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {spent ? (
-          <>
-            <View />
-            <View>
-              <Text style={[styles.successTxt, { color: color.TEXT }]}>
+          <Stack style={styles.spentContent}>
+            <Stack />
+            <Stack>
+              <AppText style={[styles.successTxt, { color: theme.text }]}>
                 {t("isSpent", { ns: NS.history })}
-              </Text>
-              <View style={styles.successAnim}>
+              </AppText>
+              <Stack style={styles.successAnim}>
                 <LottieView
                   source={require("../../../../assets/lottie/success.json")}
                   autoPlay
@@ -76,35 +116,32 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
                   style={styles.lottie}
                   renderMode="HARDWARE"
                 />
-              </View>
-            </View>
+              </Stack>
+            </Stack>
             <Button txt={t("backToDashboard")} onPress={() => navigation.navigate("dashboard")} />
-          </>
+          </Stack>
         ) : (
-          <>
-            {/* The amount of the created token */}
-            <View style={styles.qrWrap}>
-              <Txt
-                txt={formatInt(tokenAmount)}
-                styles={[styles.tokenAmount, { color: hi[highlight] }]}
-              />
-              <Txt
-                txt={formatSatStr(tokenAmount, "standard", false)}
-                styles={[styles.tokenFormat]}
-              />
-              {fiatEquivalent && (
-                <Txt
-                  txt={`≈ ${fiatEquivalent.symbol}${fiatEquivalent.formatted}`}
-                  styles={[styles.fiatEquivalent, { color: color.TEXT_SECONDARY }]}
-                />
-              )}
-              {/* The QR code */}
+          <Stack style={styles.tokenContent}>
+            <Stack
+              style={[styles.qrStage, { minHeight: qrStageHeight }]}
+              onLayout={(event) => setQrStageSize(event.nativeEvent.layout)}
+            >
               {error.open ? (
-                <Txt txt={error.msg} styles={[globals(color).navTxt, styles.errorMsg]} />
+                <Stack style={[styles.errorPanel, { backgroundColor: theme.inputBackground }]}>
+                  <AppText
+                    style={[styles.errorMsg, { color: theme.text }]}
+                    align="center"
+                    testID={`${error.msg}-txt`}
+                  >
+                    {error.msg}
+                  </AppText>
+                </Stack>
               ) : (
                 <QR
-                  size={s(280)}
+                  size={qrSize}
                   value={encodedToken}
+                  animate
+                  truncateNum={14}
                   onError={() =>
                     setTimeout(
                       () =>
@@ -117,75 +154,140 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
                   }
                 />
               )}
-            </View>
-            <View style={styles.fullWidth}>
-              {error.open && (
-                <>
-                  <Button
-                    txt={t(copied ? "copied" : "copyToken")}
-                    onPress={() => void copy(encodedToken)}
-                    icon={<CopyIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />}
-                  />
-                  <View style={{ marginVertical: s(10) }} />
-                </>
+            </Stack>
+
+            <Stack
+              style={[
+                globals().wrapContainer,
+                styles.metadataCard,
+                { backgroundColor: theme.drawer },
+              ]}
+            >
+              <MetadataRow label={t("amount")} value={amountLabel} />
+              {fiatEquivalent && (
+                <MetadataRow
+                  label={t("currencyConversion")}
+                  value={`≈ ${fiatEquivalent.symbol}${fiatEquivalent.formatted}`}
+                />
               )}
-              <Button
-                outlined
-                txt={t("share")}
-                onPress={() => void share(encodedToken, `cashu://${encodedToken}`)}
-                icon={<ShareIcon width={s(18)} height={s(18)} color={hi[highlight]} />}
-              />
-            </View>
-          </>
+              <MetadataRow label={t("mint")} value={mintLabel} isLast />
+            </Stack>
+          </Stack>
         )}
-      </View>
+      </ScrollView>
     </Screen>
   );
 }
 
-const styles = ScaledSheet.create({
-  container: {
+function MetadataRow({ label, value, isLast }: { label: string; value: string; isLast?: boolean }) {
+  const theme = useAppThemeTokens();
+
+  return (
+    <Stack
+      style={[
+        styles.metadataRow,
+        !isLast && {
+          borderBottomColor: theme.darkBorder,
+          borderBottomWidth: 1,
+        },
+      ]}
+    >
+      <AppText
+        style={[styles.metadataLabel, { color: theme.textSecondary }]}
+        weight="medium"
+        testID={`${label}-txt`}
+      >
+        {label}
+      </AppText>
+      <AppText
+        style={[styles.metadataValue, { color: theme.textSecondary }]}
+        testID={`${value}-txt`}
+      >
+        {value}
+      </AppText>
+    </Stack>
+  );
+}
+
+const styles = StyleSheet.create({
+  scroll: {
+    flex: 1,
+    width: "100%",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  spentContent: {
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    padding: "20@s",
+    paddingTop: 20,
   },
-  qrWrap: {
+  tokenContent: {
+    flex: 1,
     alignItems: "center",
+    justifyContent: "flex-start",
+    width: "100%",
+    gap: 14,
   },
-  tokenAmount: {
-    fontSize: "40@vs",
-    fontWeight: "500",
-    marginTop: "20@vs",
+  metadataCard: {
+    width: "100%",
   },
-  tokenFormat: {
-    marginBottom: "5@vs",
+  metadataRow: {
+    minHeight: 50,
+    paddingBottom: 12,
+    marginBottom: 12,
   },
-  fiatEquivalent: {
-    fontSize: "14@vs",
-    marginBottom: "15@vs",
+  metadataLabel: {
+    fontSize: appFontSize.caption,
+    marginBottom: 3,
+  },
+  metadataValue: {
+    fontSize: appFontSize.body,
+    lineHeight: appLineHeight.body,
+  },
+  qrStage: {
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 4,
+    width: "100%",
+  },
+  errorPanel: {
+    alignItems: "center",
+    borderRadius: 20,
+    justifyContent: "center",
+    minHeight: 220,
+    padding: 22,
+    width: "100%",
   },
   errorMsg: {
-    marginVertical: "25@vs",
+    fontSize: appFontSize.bodyLarge,
+    lineHeight: appLineHeight.bodyLarge,
     textAlign: "center",
   },
   successTxt: {
-    fontSize: "28@vs",
+    fontSize: appFontSize.display,
     fontWeight: "800",
     textAlign: "center",
-    marginTop: "30@vs",
+    marginTop: 30,
   },
   successAnim: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
-  fullWidth: {
-    width: "100%",
+  headerShareButton: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   lottie: {
-    width: "100@s",
-    height: "100@s",
+    width: 100,
+    height: 100,
   },
 });

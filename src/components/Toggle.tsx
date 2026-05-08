@@ -1,8 +1,6 @@
 import { isIOS } from "@consts";
-import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi } from "@styles";
+import { useAppThemeTokens } from "@styles";
 import { Switch } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
 
 interface IToggleProps {
   value: boolean;
@@ -11,25 +9,21 @@ interface IToggleProps {
 }
 
 export default function Toggle({ value, onChange, disabled }: IToggleProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <Switch
-      trackColor={{ false: color.BORDER, true: hi[highlight] }}
-      thumbColor={color.TEXT}
+      trackColor={{ false: theme.border, true: theme.accent }}
+      thumbColor={theme.text}
       onValueChange={onChange}
       value={value}
-      style={[styles.switch, disabled && styles.disabled]}
+      style={[
+        {
+          marginVertical: -10,
+          transform: [{ scaleX: isIOS ? 0.6 : 1 }, { scaleY: isIOS ? 0.6 : 1 }],
+        },
+        disabled && { opacity: 0.5 },
+      ]}
       disabled={disabled}
     />
   );
 }
-
-const styles = ScaledSheet.create({
-  switch: {
-    marginVertical: "-10@vs",
-    transform: [{ scaleX: isIOS ? 0.6 : 1 }, { scaleY: isIOS ? 0.6 : 1 }],
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-});

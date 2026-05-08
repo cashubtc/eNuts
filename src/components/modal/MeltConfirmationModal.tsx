@@ -3,21 +3,16 @@ import Copy from "@comps/Copy";
 import ConfirmationModal, { type ConfirmationModalRef } from "@modal/ConfirmationModal";
 import OperationMintPanel, { type IOperationMintPanelRow } from "@modal/OperationMintPanel";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import type { MeltOperation } from "@cashu/coco-core";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { AppText, appLineHeight, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
-import { Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { ScaledSheet } from "react-native-size-matters";
-
 export type MeltConfirmationModalRef = ConfirmationModalRef;
-
 interface IMeltConfirmationModalProps {
   operation: MeltOperation;
   mint: KnownMintWithBalance | null;
@@ -26,9 +21,7 @@ interface IMeltConfirmationModalProps {
   onCancel: () => void;
   onBackToDashboard: () => void;
 }
-
 type TRowTone = "default" | "success" | "danger";
-
 interface IDetailRow {
   label: string;
   value: string;
@@ -36,15 +29,13 @@ interface IDetailRow {
   monospace?: boolean;
   tone?: TRowTone;
 }
-
 const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirmationModalProps>(
   ({ operation, mint, loading = false, onConfirm, onCancel, onBackToDashboard }, ref) => {
     const { t } = useTranslation([NS.common, NS.auth]);
-    const { color } = useThemeContext();
+    const theme = useAppThemeTokens();
     const { hidden } = usePrivacyContext();
     const { formatAmount } = useCurrencyContext();
     const isPending = operation.state === "pending";
-
     const formatDisplayAmount = useCallback(
       (amount: number) => {
         const { formatted, symbol } = formatAmount(amount);
@@ -52,15 +43,12 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
       },
       [formatAmount],
     );
-
     const summaryRows = useMemo<IDetailRow[]>(() => {
       if (operation.state === "init") {
         return [];
       }
-
       const swapFee = operation.needsSwap ? operation.swap_fee : 0;
       const totalAmount = operation.amount + operation.fee_reserve + swapFee;
-
       return [
         {
           label: t("estimatedFees", { ns: NS.common }),
@@ -88,14 +76,11 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
           : []),
       ];
     }, [formatDisplayAmount, operation, t]);
-
     const detailRows = useMemo<IDetailRow[]>(() => {
       if (operation.state === "init") {
         return [];
       }
-
       const invoice = "invoice" in operation.methodData ? operation.methodData.invoice : "";
-
       return [
         {
           label: t("paymentType", { ns: NS.common }),
@@ -124,26 +109,21 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
           : []),
       ];
     }, [operation, t]);
-
     const balanceAfterTx = useMemo(() => {
       if (!mint || operation.state === "init") {
         return "";
       }
-
       if (hidden.balance) {
         return "****";
       }
-
       const swapFee = operation.needsSwap ? operation.swap_fee : 0;
       const totalAmount = operation.amount + operation.fee_reserve + swapFee;
       return formatDisplayAmount(mint.balance - totalAmount);
     }, [formatDisplayAmount, hidden.balance, mint, operation]);
-
     const mintRows = useMemo<IOperationMintPanelRow[]>(() => {
       if (!mint || !balanceAfterTx) {
         return [];
       }
-
       return [
         {
           label: t("balanceAfterTX", { ns: NS.common }),
@@ -152,15 +132,12 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
         },
       ];
     }, [balanceAfterTx, mint, t]);
-
     if (operation.state === "init") {
       return null;
     }
-
     const cancelText = isPending
       ? t("backToDashboard", { ns: NS.common })
       : t("cancel", { ns: NS.common });
-
     return (
       <ConfirmationModal
         ref={ref}
@@ -174,77 +151,92 @@ const MeltConfirmationModal = forwardRef<MeltConfirmationModalRef, IMeltConfirma
         onCancel={isPending ? onBackToDashboard : onCancel}
       >
         <Card style={styles.summaryCard}>
-          <Txt
-            txt={t("amount", { ns: NS.common })}
-            center
-            styles={[styles.amountLabel, { color: color.TEXT_SECONDARY }]}
-          />
-          <Txt txt={formatDisplayAmount(operation.amount)} center bold styles={[styles.amount]} />
+          <AppText
+            style={[styles.amountLabel, { color: theme.textSecondary }]}
+            align="center"
+            testID={`${t("amount", { ns: NS.common })}-txt`}
+          >
+            {t("amount", { ns: NS.common })}
+          </AppText>
+          <AppText
+            style={[styles.amount]}
+            weight="medium"
+            align="center"
+            testID={`${formatDisplayAmount(operation.amount)}-txt`}
+          >
+            {formatDisplayAmount(operation.amount)}
+          </AppText>
           {isPending ? (
-            <Txt
-              txt={t("paymentPending", { ns: NS.common }) + "."}
-              center
-              styles={[styles.pendingBadge, { color: color.TEXT_SECONDARY }]}
-            />
+            <AppText
+              style={[styles.pendingBadge, { color: theme.textSecondary }]}
+              align="center"
+              testID={`${t("paymentPending", { ns: NS.common }) + "."}-txt`}
+            >
+              {t("paymentPending", { ns: NS.common }) + "."}
+            </AppText>
           ) : null}
-          <View style={styles.rowsWrap}>
+          <Stack style={styles.rowsWrap}>
             {summaryRows.map((row, index) => (
-              <View key={`${row.label}-${index}`}>
+              <Stack key={`${row.label}-${index}`}>
                 <DetailRow row={row} />
                 {index < summaryRows.length - 1 ? (
                   <Separator noMargin style={styles.separator} />
                 ) : null}
-              </View>
+              </Stack>
             ))}
-          </View>
+          </Stack>
         </Card>
 
         {mint ? (
-          <View style={styles.mintSection}>
-            <Txt
-              txt={t("mint", { ns: NS.common })}
-              styles={[styles.sectionLabel, { color: color.TEXT_SECONDARY }]}
-            />
+          <Stack style={styles.mintSection}>
+            <AppText
+              style={[styles.sectionLabel, { color: theme.textSecondary }]}
+              testID={`${t("mint", { ns: NS.common })}-txt`}
+            >
+              {t("mint", { ns: NS.common })}
+            </AppText>
             <OperationMintPanel mint={mint} rows={mintRows} />
-          </View>
+          </Stack>
         ) : null}
 
         <Card style={styles.detailsCard}>
-          <View style={styles.rowsWrap}>
+          <Stack style={styles.rowsWrap}>
             {detailRows.map((row, index) => (
-              <View key={`${row.label}-${index}`}>
+              <Stack key={`${row.label}-${index}`}>
                 <DetailRow row={row} />
                 {index < detailRows.length - 1 ? (
                   <Separator noMargin style={styles.separator} />
                 ) : null}
-              </View>
+              </Stack>
             ))}
-          </View>
+          </Stack>
         </Card>
       </ConfirmationModal>
     );
   },
 );
-
 function DetailRow({ row }: { row: IDetailRow }) {
-  const { color } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   const valueColor = useMemo(() => {
     switch (row.tone) {
       case "success":
-        return mainColors.VALID;
+        return theme.valid;
       case "danger":
-        return mainColors.ERROR;
+        return theme.error;
       default:
-        return color.TEXT;
+        return theme.text;
     }
-  }, [color.TEXT, row.tone]);
-
+  }, [theme.text, row.tone]);
   return (
-    <View style={styles.detailRow}>
-      <Txt txt={row.label} styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]} />
-      <View style={styles.detailValueWrap}>
-        <Text
+    <Stack style={styles.detailRow}>
+      <AppText
+        style={[styles.detailLabel, { color: theme.textSecondary }]}
+        testID={`${row.label}-txt`}
+      >
+        {row.label}
+      </AppText>
+      <Stack style={styles.detailValueWrap}>
+        <AppText
           numberOfLines={1}
           ellipsizeMode="middle"
           style={[
@@ -256,91 +248,86 @@ function DetailRow({ row }: { row: IDetailRow }) {
           ]}
         >
           {row.value}
-        </Text>
+        </AppText>
         {row.copyValue ? <Copy txt={row.copyValue} /> : null}
-      </View>
-    </View>
+      </Stack>
+    </Stack>
   );
 }
-
 function truncateMiddle(value: string, start = 14, end = 10) {
   if (value.length <= start + end + 3) {
     return value;
   }
-
   return `${value.slice(0, start)}...${value.slice(-end)}`;
 }
-
 MeltConfirmationModal.displayName = "MeltConfirmationModal";
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   summaryCard: {
-    marginBottom: "12@vs",
-    paddingHorizontal: "20@s",
-    paddingTop: "18@vs",
-    paddingBottom: "16@vs",
+    marginBottom: 12,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 16,
   },
   amountLabel: {
-    fontSize: "12@vs",
-    marginBottom: "8@vs",
+    fontSize: appFontSize.caption,
+    marginBottom: 8,
     letterSpacing: 0.3,
   },
   amount: {
-    fontSize: "34@vs",
-    lineHeight: "40@vs",
-    marginBottom: "16@vs",
+    fontSize: appFontSize.amount,
+    lineHeight: appLineHeight.amount,
+    marginBottom: 16,
   },
   pendingBadge: {
-    fontSize: "13@vs",
-    marginBottom: "14@vs",
+    fontSize: appFontSize.bodySmall,
+    marginBottom: 14,
   },
   rowsWrap: {
-    gap: "2@vs",
+    gap: 2,
   },
   detailRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "12@s",
-    paddingVertical: "12@vs",
+    gap: 12,
+    paddingVertical: 12,
   },
   detailLabel: {
     flex: 1,
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
   },
   detailValueWrap: {
     flex: 1.25,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    gap: "8@s",
+    gap: 8,
   },
   detailValue: {
     flexShrink: 1,
     textAlign: "right",
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
     fontWeight: "500",
   },
   mono: {
     fontFamily: "monospace",
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
   },
   separator: {
     marginVertical: 0,
   },
   mintSection: {
-    marginBottom: "12@vs",
+    marginBottom: 12,
   },
   sectionLabel: {
-    fontSize: "13@vs",
-    marginBottom: "8@vs",
-    marginLeft: "2@s",
+    fontSize: appFontSize.bodySmall,
+    marginBottom: 8,
+    marginLeft: 2,
   },
   detailsCard: {
-    marginBottom: "16@vs",
-    paddingHorizontal: "20@s",
-    paddingVertical: "4@vs",
+    marginBottom: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 4,
   },
 });
-
 export default MeltConfirmationModal;

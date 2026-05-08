@@ -1,27 +1,22 @@
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
 import Loading from "@comps/Loading";
 import Button from "@comps/Button";
 import { isIOS } from "@consts";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { seedService } from "@src/services/SeedService";
 import { useEffect, useState } from "react";
 import type { TViewMnemonicPageProps } from "@model/nav";
 import { useTranslation } from "react-i18next";
-import { FlatList, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
+import { FlatList, StyleSheet } from "react-native";
 import useCopy from "@comps/hooks/Copy";
 import { CheckmarkIcon, CopyIcon } from "@comps/Icons";
-import { mainColors } from "@styles";
-
+import { AppText, useAppThemeTokens, Stack } from "@styles";
 export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { copied, copy } = useCopy();
   const [mnemonic, setMnemonic] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const id = setTimeout(() => {
       try {
@@ -33,18 +28,19 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
     }, 0);
     return () => clearTimeout(id);
   }, []);
-
   return (
     <Screen screenName={"Mnemonic"} withBackBtn handlePress={() => navigation.goBack()}>
-      <View style={styles.content}>
+      <Stack style={styles.content}>
         {loading ? (
-          <View style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}>
+          <Stack style={[styles.warnContainer, { backgroundColor: theme.drawer }]}>
             <Loading size="large" />
-          </View>
+          </Stack>
         ) : !mnemonic ? (
-          <View style={[styles.warnContainer, { backgroundColor: color.DRAWER }]}>
-            <Txt txt={"No mnemonic found"} styles={[{ color: color.TEXT_SECONDARY }]} />
-          </View>
+          <Stack style={[styles.warnContainer, { backgroundColor: theme.drawer }]}>
+            <AppText style={[{ color: theme.textSecondary }]} testID={"No mnemonic found-txt"}>
+              No mnemonic found
+            </AppText>
+          </Stack>
         ) : (
           <>
             <FlatList
@@ -52,62 +48,66 @@ export default function ViewMnemonic({ navigation }: TViewMnemonicPageProps) {
               numColumns={2}
               keyExtractor={(_item, index) => index.toString()}
               renderItem={({ item, index }) => (
-                <View
+                <Stack
                   style={[
                     styles.mnemonicWord,
                     {
-                      backgroundColor: color.DRAWER,
-                      marginRight: index % 2 === 0 ? s(10) : 0,
+                      backgroundColor: theme.drawer,
+                      marginRight: index % 2 === 0 ? 10 : 0,
                     },
                   ]}
                 >
-                  <Txt bold txt={`${index + 1}. `} />
-                  <Txt bold txt={item} />
-                </View>
+                  <AppText
+                    weight="medium"
+                    testID={`${`${index + 1}. `}-txt`}
+                  >{`${index + 1}. `}</AppText>
+                  <AppText weight="medium" testID={`${item}-txt`}>
+                    {item}
+                  </AppText>
+                </Stack>
               )}
             />
-            <View style={styles.copyButtonContainer}>
+            <Stack style={styles.copyButtonContainer}>
               <Button
                 txt={copied ? "Copied!" : "Copy Mnemonic"}
                 onPress={() => void copy(mnemonic)}
                 disabled={copied}
                 icon={
                   copied ? (
-                    <CheckmarkIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />
+                    <CheckmarkIcon width={18} height={18} color={theme.white} />
                   ) : (
-                    <CopyIcon width={s(18)} height={s(18)} color={mainColors.WHITE} />
+                    <CopyIcon width={18} height={18} color={theme.white} />
                   )
                 }
               />
-            </View>
+            </Stack>
           </>
         )}
-      </View>
+      </Stack>
     </Screen>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   content: {
-    marginTop: `${isIOS ? 20 : 60}@s`,
-    paddingHorizontal: "20@s",
+    marginTop: isIOS ? 20 : 60,
+    paddingHorizontal: 20,
   },
   copyButtonContainer: {
-    marginTop: "20@s",
+    marginTop: 20,
   },
   mnemonicWord: {
-    padding: "10@s",
-    marginBottom: "10@s",
-    borderRadius: "10@s",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 10,
     width: "48.5%",
     flexDirection: "row",
     alignItems: "center",
   },
   warnContainer: {
     alignItems: "center",
-    padding: "20@s",
-    rowGap: "10@s",
-    borderRadius: "10@s",
-    marginBottom: "20@s",
+    padding: 20,
+    rowGap: 10,
+    borderRadius: 10,
+    marginBottom: 20,
   },
 });

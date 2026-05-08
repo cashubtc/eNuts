@@ -3,72 +3,57 @@ import Button from "@comps/Button";
 import { ChevronRightIcon } from "@comps/Icons";
 import MintHeaderSelector from "@comps/MintHeaderSelector";
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
 import { useKnownMints } from "@src/context/KnownMints";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { AppText, useAppThemeTokens, Stack } from "@styles";
 import { vib } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard, TextInput, View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { Keyboard, StyleSheet, type TextInput } from "react-native";
 import { useManager } from "@src/context/Manager";
 import type { MintSelectAmountProps } from "@src/nav/navTypes";
-import { useThemeContext } from "@src/context/Theme";
 import useLoading from "@comps/hooks/Loading";
-
 export default function MintSelectAmountScreen({ navigation }: MintSelectAmountProps) {
   const { t } = useTranslation([NS.wallet, NS.common]);
+  const theme = useAppThemeTokens();
   const { shake } = useShakeAnimation();
   const { knownMints } = useKnownMints();
   const { loading, startLoading, stopLoading } = useLoading();
   const manager = useManager();
   const amountInputRef = useRef<TextInput>(null);
-
   const [amountInput, setAmountInput] = useState("");
-
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
     knownMints[0] ?? null,
   );
-
   useEffect(() => {
     setSelectedMint((currentMint) => {
       const updatedMint = currentMint
         ? knownMints.find((mint) => mint.mintUrl === currentMint.mintUrl)
         : null;
-
       return updatedMint ?? knownMints[0] ?? null;
     });
   }, [knownMints]);
-
   const noMintsAvailable = useMemo(() => {
     return !selectedMint || knownMints.length === 0;
   }, [selectedMint, knownMints.length]);
-
   const [err, setErr] = useState(false);
-
   const amountValue = useMemo(() => {
     const parsed = parseInt(amountInput || "0", 10);
     return Number.isNaN(parsed) ? 0 : parsed;
   }, [amountInput]);
-
   const screenName = "createInvoice";
-
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
-
   const handleMintSelect = useCallback(
     (mint: KnownMintWithBalance) => {
       setSelectedMint(mint);
     },
     [setSelectedMint],
   );
-
   const handleMintSelectorOpen = useCallback(() => {
     amountInputRef.current?.blur();
   }, []);
-
   const triggerAmountError = useCallback(() => {
     vib(400);
     setErr(true);
@@ -78,17 +63,14 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
       clearTimeout(timeout);
     }, 500);
   }, [shake]);
-
   const handleSubmit = useCallback(async () => {
     if (loading || !selectedMint) {
       return;
     }
-
     if (!amountValue || amountValue < 1) {
       triggerAmountError();
       return;
     }
-
     startLoading();
     try {
       const operation = await manager.ops.mint.prepare({
@@ -117,7 +99,6 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
     stopLoading,
     triggerAmountError,
   ]);
-
   // Early return after all hooks
   if (noMintsAvailable) {
     return (
@@ -127,19 +108,20 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
         handlePress={handleBack}
         withPadding={true}
       >
-        <View
+        <Stack
           style={{
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <Txt txt={t("noMintsWithBalance", { ns: NS.common })} />
-        </View>
+          <AppText testID={`${t("noMintsWithBalance", { ns: NS.common })}-txt`}>
+            {t("noMintsWithBalance", { ns: NS.common })}
+          </AppText>
+        </Stack>
       </Screen>
     );
   }
-
   return (
     <Screen
       screenName={t(screenName, { ns: NS.common })}
@@ -167,18 +149,17 @@ export default function MintSelectAmountScreen({ navigation }: MintSelectAmountP
         testID="mint-amount-input"
       />
 
-      <View style={styles.actionWrap}>
+      <Stack style={styles.actionWrap}>
         <Button
           txt={t("continue", { ns: NS.common })}
           onPress={handleSubmit}
-          icon={<ChevronRightIcon color={mainColors.WHITE} />}
+          icon={<ChevronRightIcon color={theme.white} />}
           loading={loading}
         />
-      </View>
+      </Stack>
     </Screen>
   );
 }
-
 interface IMeltOverviewProps {
   amount: number;
   shouldEstimate?: boolean;
@@ -186,7 +167,6 @@ interface IMeltOverviewProps {
   isInvoice?: boolean;
   fee: number;
 }
-
 export function MeltOverview({
   amount,
   shouldEstimate,
@@ -195,39 +175,41 @@ export function MeltOverview({
   fee,
 }: IMeltOverviewProps) {
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const total = shouldEstimate ? 0 : amount + fee;
   const { formatted, symbol } = formatAmount(total);
-
   return (
-    <View style={styles.overview}>
-      <Txt
-        txt={
+    <Stack style={styles.overview}>
+      <AppText
+        weight="medium"
+        testID={`${
           t(isInvoice ? "invoiceInclFee" : "totalInclFee", {
             ns: NS.common,
           }) + "*"
-        }
-        bold
-      />
-      <Txt
-        txt={`${formatted} ${symbol}`}
-        styles={[
+        }-txt`}
+      >
+        {t(isInvoice ? "invoiceInclFee" : "totalInclFee", {
+          ns: NS.common,
+        }) + "*"}
+      </AppText>
+      <AppText
+        style={[
           {
             color:
               !shouldEstimate && balTooLow
-                ? mainColors.ERROR
+                ? theme.error
                 : shouldEstimate
-                  ? color.TEXT
-                  : mainColors.VALID,
+                  ? theme.text
+                  : theme.valid,
           },
         ]}
-      />
-    </View>
+        testID={`${`${formatted} ${symbol}`}-txt`}
+      >{`${formatted} ${symbol}`}</AppText>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   overview: {
     flexDirection: "row",
     alignItems: "center",
@@ -237,7 +219,7 @@ const styles = ScaledSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "flex-end",
-    paddingHorizontal: "20@s",
-    paddingBottom: "10@vs",
+    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
 });

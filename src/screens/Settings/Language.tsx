@@ -1,19 +1,15 @@
 import RadioBtn from "@comps/RadioBtn";
 import Screen from "@comps/Screen";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import type { ILangsOpt, TranslationLangCodes, TTlLangNames } from "@model/i18n";
 import type { TLanguageSettingsPageProps } from "@model/nav";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { getFlagEmoji } from "@src/util";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
-import { globals } from "@styles";
+import { AppText, appFontSize, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import { s, vs } from "react-native-size-matters";
-
+import { ScrollView } from "react-native";
 const langs: ILangsOpt[] = [
   { name: "english", code: "en", flag: "us" },
   { name: "german", code: "de", flag: "de" },
@@ -22,10 +18,9 @@ const langs: ILangsOpt[] = [
   { name: "russian", code: "ru", flag: "ru" },
   { name: "thai", code: "th", flag: "th" },
 ];
-
 export default function LanguageSettings({ navigation }: TLanguageSettingsPageProps) {
   const { t, i18n } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <Screen
       screenName={t("language", { ns: NS.topNav })}
@@ -33,7 +28,7 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
       handlePress={() => navigation.goBack()}
     >
       <ScrollView alwaysBounceVertical={false}>
-        <View style={globals(color).wrapContainer}>
+        <Stack style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
           {langs.map((l, i) => (
             <LangSelection
               key={l.code}
@@ -44,12 +39,11 @@ export default function LanguageSettings({ navigation }: TLanguageSettingsPagePr
               hasSeparator={i !== langs.length - 1}
             />
           ))}
-        </View>
+        </Stack>
       </ScrollView>
     </Screen>
   );
 }
-
 interface ILangSelectionProps {
   code: TranslationLangCodes;
   name: TTlLangNames;
@@ -57,7 +51,6 @@ interface ILangSelectionProps {
   selected: boolean;
   hasSeparator?: boolean;
 }
-
 function LangSelection({ code, name, flag, selected, hasSeparator }: ILangSelectionProps) {
   const { t, i18n } = useTranslation([NS.common]);
   const handleLangChange = async () => {
@@ -66,19 +59,24 @@ function LangSelection({ code, name, flag, selected, hasSeparator }: ILangSelect
   };
   return (
     <>
-      <TouchableOpacity
-        style={[globals().wrapRow, { paddingBottom: vs(15) }]}
+      <PressableSurface
+        style={[globals().wrapRow, { paddingBottom: 15 }]}
         onPress={() => void handleLangChange()}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <View style={{ minWidth: s(40) }}>
-            <Txt txt={getFlagEmoji(flag)} styles={[{ fontSize: s(22) }]} />
-          </View>
-          <Txt txt={t(name)} />
-        </View>
+        <Stack style={{ flexDirection: "row", alignItems: "center" }}>
+          <Stack style={{ minWidth: 40 }}>
+            <AppText
+              style={[{ fontSize: appFontSize.modalTitle }]}
+              testID={`${getFlagEmoji(flag)}-txt`}
+            >
+              {getFlagEmoji(flag)}
+            </AppText>
+          </Stack>
+          <AppText testID={`${t(name)}-txt`}>{t(name)}</AppText>
+        </Stack>
         <RadioBtn selected={selected} />
-      </TouchableOpacity>
-      {hasSeparator && <Separator style={[{ marginBottom: vs(15) }]} />}
+      </PressableSurface>
+      {hasSeparator && <Separator style={[{ marginBottom: 15 }]} />}
     </>
   );
 }

@@ -1,167 +1,164 @@
 import Button from "@comps/Button";
-import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { highlight as hi } from "@styles";
+import { AppText, appLineHeight, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { ScaledSheet, s } from "react-native-size-matters";
-
+import { StyleSheet } from "react-native";
 interface ICameraPermissionProps {
   canAskAgain: boolean;
   onRequestPermission: () => void;
   onOpenSettings: () => void;
 }
-
 export default function CameraPermission({
   canAskAgain,
   onRequestPermission,
   onOpenSettings,
 }: ICameraPermissionProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { t } = useTranslation([NS.common]);
-
   return (
-    <View style={styles.container}>
-      <View
+    <Stack style={styles.container}>
+      <Stack
         style={[
           styles.stage,
           {
-            backgroundColor: color.DRAWER,
-            borderColor: color.DARK_BORDER,
+            backgroundColor: theme.drawer,
+            borderColor: theme.darkBorder,
           },
         ]}
       >
-        <View style={[styles.iconContainer, { backgroundColor: `${hi[highlight]}18` }]}>
-          <MaterialIcons name="photo-camera" size={s(36)} color={hi[highlight]} />
-        </View>
-        <View style={styles.framePreview}>
-          <View
+        <Stack style={[styles.iconContainer, { backgroundColor: `${theme.accent}18` }]}>
+          <MaterialIcons name="photo-camera" size={36} color={theme.accent} />
+        </Stack>
+        <Stack style={styles.framePreview}>
+          <Stack
             style={[
               styles.previewCorner,
               styles.previewCornerTopLeft,
-              { borderColor: hi[highlight] },
+              { borderColor: theme.accent },
             ]}
           />
-          <View
+          <Stack
             style={[
               styles.previewCorner,
               styles.previewCornerTopRight,
-              { borderColor: hi[highlight] },
+              { borderColor: theme.accent },
             ]}
           />
-          <View
+          <Stack
             style={[
               styles.previewCorner,
               styles.previewCornerBottomLeft,
-              { borderColor: hi[highlight] },
+              { borderColor: theme.accent },
             ]}
           />
-          <View
+          <Stack
             style={[
               styles.previewCorner,
               styles.previewCornerBottomRight,
-              { borderColor: hi[highlight] },
+              { borderColor: theme.accent },
             ]}
           />
-        </View>
-      </View>
-      <Txt
-        txt={canAskAgain ? t("cameraAccessRequired") : t("cameraAccessDenied")}
-        bold
-        center
-        styles={[styles.title]}
-      />
-      <Txt
-        txt={canAskAgain ? t("cameraAccessRequiredHint") : t("cameraAccessDeniedHint")}
-        center
-        styles={[styles.description, { color: color.TEXT_SECONDARY }]}
-      />
-      <View style={styles.buttonContainer}>
+        </Stack>
+      </Stack>
+      <AppText
+        style={[styles.title]}
+        weight="medium"
+        align="center"
+        testID={`${canAskAgain ? t("cameraAccessRequired") : t("cameraAccessDenied")}-txt`}
+      >
+        {canAskAgain ? t("cameraAccessRequired") : t("cameraAccessDenied")}
+      </AppText>
+      <AppText
+        style={[styles.description, { color: theme.textSecondary }]}
+        align="center"
+        testID={`${canAskAgain ? t("cameraAccessRequiredHint") : t("cameraAccessDeniedHint")}-txt`}
+      >
+        {canAskAgain ? t("cameraAccessRequiredHint") : t("cameraAccessDeniedHint")}
+      </AppText>
+      <Stack style={styles.buttonContainer}>
         <Button
           txt={canAskAgain ? t("allowCameraAccess") : t("openSettings")}
           onPress={canAskAgain ? onRequestPermission : onOpenSettings}
         />
-      </View>
-    </View>
+      </Stack>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: "24@s",
+    paddingHorizontal: 24,
   },
   stage: {
-    width: "190@s",
-    height: "190@s",
-    borderRadius: "42@s",
+    width: 190,
+    height: 190,
+    borderRadius: 42,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: "28@vs",
+    marginBottom: 28,
   },
   iconContainer: {
-    width: "78@s",
-    height: "78@s",
-    borderRadius: "39@s",
+    width: 78,
+    height: 78,
+    borderRadius: 39,
     alignItems: "center",
     justifyContent: "center",
   },
   framePreview: {
     position: "absolute",
-    width: "140@s",
-    height: "140@s",
+    width: 140,
+    height: 140,
   },
   previewCorner: {
     position: "absolute",
-    width: "28@s",
-    height: "28@s",
+    width: 28,
+    height: 28,
     opacity: 0.48,
   },
   previewCornerTopLeft: {
     top: 0,
     left: 0,
-    borderTopWidth: "3@s",
-    borderLeftWidth: "3@s",
-    borderTopLeftRadius: "14@s",
+    borderTopWidth: 3,
+    borderLeftWidth: 3,
+    borderTopLeftRadius: 14,
   },
   previewCornerTopRight: {
     top: 0,
     right: 0,
-    borderTopWidth: "3@s",
-    borderRightWidth: "3@s",
-    borderTopRightRadius: "14@s",
+    borderTopWidth: 3,
+    borderRightWidth: 3,
+    borderTopRightRadius: 14,
   },
   previewCornerBottomLeft: {
     bottom: 0,
     left: 0,
-    borderBottomWidth: "3@s",
-    borderLeftWidth: "3@s",
-    borderBottomLeftRadius: "14@s",
+    borderBottomWidth: 3,
+    borderLeftWidth: 3,
+    borderBottomLeftRadius: 14,
   },
   previewCornerBottomRight: {
     right: 0,
     bottom: 0,
-    borderRightWidth: "3@s",
-    borderBottomWidth: "3@s",
-    borderBottomRightRadius: "14@s",
+    borderRightWidth: 3,
+    borderBottomWidth: 3,
+    borderBottomRightRadius: 14,
   },
   title: {
-    fontSize: "24@vs",
-    marginBottom: "10@vs",
+    fontSize: appFontSize.heading,
+    marginBottom: 10,
   },
   description: {
-    fontSize: "14@vs",
-    lineHeight: "20@vs",
-    marginBottom: "30@vs",
-    paddingHorizontal: "16@s",
+    fontSize: appFontSize.body,
+    lineHeight: appLineHeight.body,
+    marginBottom: 30,
+    paddingHorizontal: 16,
   },
   buttonContainer: {
     width: "100%",
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
 });

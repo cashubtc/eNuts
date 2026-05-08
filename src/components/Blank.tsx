@@ -1,6 +1,7 @@
-import { highlight } from "@styles";
-import { View } from "react-native";
+import { Stack, useAppThemeTokens } from "@styles";
 
 export default function Blank() {
-  return <View style={{ flex: 1, backgroundColor: highlight["Default"] }} />;
+  const theme = useAppThemeTokens();
+
+  return <Stack flex={1} backgroundColor="$accent" style={{ backgroundColor: theme.accent }} />;
 }

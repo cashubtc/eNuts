@@ -1,6 +1,6 @@
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
-import Txt from "@comps/Txt";
 import Screen from "@comps/Screen";
 import { isIOS } from "@consts";
 import type {
@@ -11,27 +11,22 @@ import type {
   AutoSwapSuccessConfig,
 } from "@model/nav";
 import { preventBack } from "@nav/utils";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import { isNum, vib } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper Functions
 // ─────────────────────────────────────────────────────────────────────────────
-
 function hasPaymentDetails(
   config: SuccessConfig,
 ): config is MeltSuccessConfig | AutoSwapSuccessConfig {
   return config.type === "melt" || config.type === "autoSwap";
 }
-
 function hasSimpleAmount(config: SuccessConfig): boolean {
   return (
     config.type === "receive" ||
@@ -41,32 +36,31 @@ function hasSimpleAmount(config: SuccessConfig): boolean {
     config.type === "zap"
   );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Components
 // ─────────────────────────────────────────────────────────────────────────────
-
 function DetailsRow({ label, value }: { label: string; value: string }) {
   return (
-    <View style={styles.detailsRow}>
-      <Txt txt={label} styles={[styles.detailsTxt]} />
-      <Txt txt={value} styles={[styles.detailsTxt]} />
-    </View>
+    <Stack style={styles.detailsRow}>
+      <AppText style={[styles.detailsTxt]} testID={`${label}-txt`}>
+        {label}
+      </AppText>
+      <AppText style={[styles.detailsTxt]} testID={`${value}-txt`}>
+        {value}
+      </AppText>
+    </Stack>
   );
 }
-
 interface PaymentDetailsProps {
   config: MeltSuccessConfig | AutoSwapSuccessConfig;
   formatAmount: ReturnType<typeof useCurrencyContext>["formatAmount"];
 }
-
 function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
   const { t } = useTranslation([NS.common]);
   const { amount, fee, change } = config;
   const isSwap = config.type === "autoSwap";
-
   return (
-    <View style={styles.detailsWrap}>
+    <Stack style={styles.detailsWrap}>
       <DetailsRow
         label={t(isSwap ? "swapped" : "paidOut", { ns: NS.wallet })}
         value={`${formatAmount(amount).formatted} ${formatAmount(amount).symbol}`}
@@ -85,21 +79,18 @@ function PaymentDetails({ config, formatAmount }: PaymentDetailsProps) {
           value={`${formatAmount(change).formatted} ${formatAmount(change).symbol}`}
         />
       )}
-    </View>
+    </Stack>
   );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Main Screen Component
 // ─────────────────────────────────────────────────────────────────────────────
-
 export default function SuccessScreen({ navigation, route }: TSuccessScreenProps) {
   const config = route.params;
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
-
   const getSuccessTitle = (cfg: SuccessConfig): string => {
     switch (cfg.type) {
       case "melt":
@@ -121,128 +112,137 @@ export default function SuccessScreen({ navigation, route }: TSuccessScreenProps
         });
     }
   };
-
   const title = getSuccessTitle(config);
-
   // Vibrate on mount
   useEffect(() => {
     vib(400);
   }, []);
-
   // Prevent back navigation
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   return (
     <Screen>
       {/* Confetti Animation */}
-      <View pointerEvents="none" style={styles.confetti}>
+      <Stack pointerEvents="none" style={styles.confetti}>
         <LottieView
           source={require("../../../assets/lottie/confetti.json")}
           autoPlay
           loop={false}
           style={{ width: "100%", height: "100%" }}
         />
-      </View>
+      </Stack>
 
       {/* Content */}
-      <View style={styles.content}>
+      <Stack style={styles.content}>
         {/* Title */}
-        <Txt txt={title} bold center styles={[styles.title]} />
+        <AppText style={[styles.title]} weight="medium" align="center" testID={`${title}-txt`}>
+          {title}
+        </AppText>
 
         {/* Memo */}
         {config.memo && (
-          <Txt
-            txt={config.memo}
-            center
-            styles={[styles.subtitle, { color: color.TEXT_SECONDARY }]}
-          />
+          <AppText
+            style={[styles.subtitle, { color: theme.textSecondary }]}
+            align="center"
+            testID={`${config.memo}-txt`}
+          >
+            {config.memo}
+          </AppText>
         )}
 
         {/* Mint */}
         {config.mint && config.mint.length > 0 && (
-          <Txt
-            txt={config.mint}
-            center
-            styles={[styles.subtitle, { color: color.TEXT_SECONDARY }]}
-          />
+          <AppText
+            style={[styles.subtitle, { color: theme.textSecondary }]}
+            align="center"
+            testID={`${config.mint}-txt`}
+          >
+            {config.mint}
+          </AppText>
         )}
 
         {/* Amount Display (for simple success types) */}
         {hasSimpleAmount(config) && (
-          <View style={styles.amountWrap}>
-            <Txt txt={formatAmount(config.amount).formatted} bold center styles={[styles.amount]} />
-            <Txt
-              txt={formatAmount(config.amount).symbol}
-              center
-              styles={[styles.amountSymbol, { color: color.TEXT_SECONDARY }]}
-            />
-          </View>
+          <Stack style={styles.amountWrap}>
+            <AppText
+              style={[styles.amount]}
+              weight="medium"
+              align="center"
+              testID={`${formatAmount(config.amount).formatted}-txt`}
+            >
+              {formatAmount(config.amount).formatted}
+            </AppText>
+            <AppText
+              style={[styles.amountSymbol, { color: theme.textSecondary }]}
+              align="center"
+              testID={`${formatAmount(config.amount).symbol}-txt`}
+            >
+              {formatAmount(config.amount).symbol}
+            </AppText>
+          </Stack>
         )}
 
         {/* Payment Details (for melt/autoSwap) */}
         {hasPaymentDetails(config) && (
           <PaymentDetails config={config} formatAmount={formatAmount} />
         )}
-      </View>
+      </Stack>
 
       {/* Back to Dashboard Button */}
-      <View style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
+      <Stack style={[styles.btnWrap, { marginBottom: isIOS ? insets.bottom : 20 }]}>
         <Button txt={t("backToDashboard")} onPress={() => navigation.navigate("dashboard")} />
-      </View>
+      </Stack>
     </Screen>
   );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Styles
 // ─────────────────────────────────────────────────────────────────────────────
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: "20@s",
+    padding: 20,
   },
   logo: {
-    marginTop: "90@s",
-    height: "90@s",
+    marginTop: 90,
+    height: 90,
     opacity: 0.8,
   },
   content: {
     width: "100%",
   },
   title: {
-    fontSize: "28@vs",
-    marginTop: "30@vs",
+    fontSize: appFontSize.display,
+    marginTop: 30,
   },
   amountWrap: {
     alignItems: "center",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   amount: {
-    fontSize: "42@s",
+    fontSize: appFontSize.balance,
   },
   amountSymbol: {
-    fontSize: "14@vs",
-    marginTop: "4@vs",
+    fontSize: appFontSize.body,
+    marginTop: 4,
   },
   subtitle: {
-    marginTop: "20@vs",
-    fontSize: "14@vs",
+    marginTop: 20,
+    fontSize: appFontSize.body,
     fontWeight: "500",
   },
   detailsWrap: {
     width: "100%",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   detailsRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "10@vs",
+    marginBottom: 10,
   },
   detailsTxt: {
     fontWeight: "500",
@@ -252,7 +252,7 @@ const styles = ScaledSheet.create({
     bottom: 0,
     right: 0,
     left: 0,
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   confetti: {
     position: "absolute",
@@ -264,10 +264,10 @@ const styles = ScaledSheet.create({
   successAnim: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   lottie: {
-    width: "100@s",
-    height: "100@s",
+    width: 100,
+    height: 100,
   },
 });

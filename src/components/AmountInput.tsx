@@ -1,15 +1,11 @@
 import { useShakeAnimation } from "@comps/animation/Shake";
-import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
-import { globals, highlight as hi, mainColors } from "@styles";
+import { AppText, appFontSize, PressableSurface, Stack, XStack, useAppThemeTokens } from "@styles";
 import { formatSatStr } from "@util";
 import { getLanguageCode } from "@util/localization";
 import { useEffect, useMemo, useRef, forwardRef, useState, useCallback } from "react";
-import { Animated, TextInput, View, Pressable } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { Animated, TextInput, StyleSheet } from "react-native";
 import { SwapCurrencyIcon } from "@comps/Icons";
-
 interface AmountInputProps {
   value: string;
   onChange: (value: string) => void;
@@ -21,7 +17,6 @@ interface AmountInputProps {
   testID?: string;
   compact?: boolean;
 }
-
 /**
  * Detect the decimal separator for the current locale
  */
@@ -31,7 +26,6 @@ function getLocalDecimalSeparator(): string {
   // The decimal separator is the character between 1 and 1
   return formatted.charAt(1);
 }
-
 /**
  * Normalize a numeric string to use period as decimal separator
  * Handles both EU (comma) and US (period) formats intelligently
@@ -39,19 +33,15 @@ function getLocalDecimalSeparator(): string {
 function normalizeDecimalInput(input: string): string {
   // Remove all whitespace
   let text = input.replace(/\s/g, "");
-
   // If empty, return empty
   if (!text) return "";
-
   // Count separators
   const commas = (text.match(/,/g) || []).length;
   const periods = (text.match(/\./g) || []).length;
-
   // Case: Both separators present - last one is the decimal
   if (commas > 0 && periods > 0) {
     const lastComma = text.lastIndexOf(",");
     const lastPeriod = text.lastIndexOf(".");
-
     if (lastComma > lastPeriod) {
       // EU format: 1.000,50 -> 1000.50
       text = text.replace(/\./g, "").replace(",", ".");
@@ -74,10 +64,8 @@ function normalizeDecimalInput(input: string): string {
     text = text.slice(0, lastPeriodIdx).replace(/\./g, "") + text.slice(lastPeriodIdx);
   }
   // Single period or no separators - already normalized
-
   return text;
 }
-
 /**
  * Format a number for display using the user's locale
  */
@@ -89,7 +77,6 @@ function formatFiatDisplay(value: number, decimals: number = 2): string {
     useGrouping: false, // Don't add thousand separators in input
   });
 }
-
 const AmountInput = forwardRef<TextInput, AmountInputProps>(
   (
     {
@@ -105,46 +92,35 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
     },
     ref,
   ) => {
-    const { color, highlight } = useThemeContext();
     const { formatBalance, setFormatBalance, convertFiatToSats, rates, selectedCurrency } =
       useCurrencyContext();
+    const theme = useAppThemeTokens();
     const { anim } = useShakeAnimation();
     const internalRef = useRef<TextInput>(null);
-
     // Use the forwarded ref or fall back to internal ref
     const inputRef = (ref as React.RefObject<TextInput>) || internalRef;
-
     // Check if we're in fiat mode
     const isFiatMode = formatBalance && rates && rates[selectedCurrency];
-
     // Check if currency toggle is available (rates must be loaded)
     const canToggleCurrency = rates && rates[selectedCurrency];
-
     // Handle toggling between sats and fiat modes
     const handleToggleCurrency = useCallback(() => {
       if (!canToggleCurrency) return;
       void setFormatBalance(!formatBalance);
     }, [canToggleCurrency, formatBalance, setFormatBalance]);
-
     // Store the displayed text independently to avoid cursor jumping
     // This is the raw text shown in the input field
     const [displayText, setDisplayText] = useState("");
-
     // Track if we need to sync display from external value change
     const lastExternalValue = useRef<string>("");
-
-    // Memoize style objects to prevent recreation
-    const globalStyles = useMemo(() => globals(), []);
-
+    const [togglePressed, setTogglePressed] = useState(false);
     // Get the locale decimal separator for this user
     const localDecimalSep = useMemo(() => getLocalDecimalSeparator(), []);
-
     // Derived numeric amount in sats (value prop is always in sats)
     const amountInSats = useMemo(() => {
       const parsed = parseInt(value || "0", 10);
       return Number.isNaN(parsed) ? 0 : parsed;
     }, [value]);
-
     // Sync display text when external value changes (e.g., from parent reset)
     // But only if it wasn't caused by our own onChange
     useEffect(() => {
@@ -152,27 +128,24 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       if (value === lastExternalValue.current) {
         return;
       }
-
       // External value changed - need to update display
       if (!value || value === "0") {
         setDisplayText("");
         lastExternalValue.current = value;
         return;
       }
-
       // For sats mode, just show the value
       if (!isFiatMode) {
         setDisplayText(value);
         lastExternalValue.current = value;
         return;
       }
-
       // For fiat mode, convert sats to fiat for display
       const rate = rates?.[selectedCurrency];
       if (rate) {
         const sats = parseInt(value, 10);
         if (!isNaN(sats) && sats > 0) {
-          const btcAmount = sats / 100_000_000;
+          const btcAmount = sats / 100000000;
           const fiatAmount = btcAmount * rate.last;
           // Format with locale-appropriate decimal separator
           const formatted = formatFiatDisplay(fiatAmount);
@@ -181,7 +154,6 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       }
       lastExternalValue.current = value;
     }, [value, isFiatMode, rates, selectedCurrency]);
-
     // Handle mode switches - reset display when switching between sats/fiat
     const prevFiatMode = useRef(isFiatMode);
     useEffect(() => {
@@ -198,7 +170,7 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
           if (rate) {
             const sats = parseInt(value, 10);
             if (!isNaN(sats) && sats > 0) {
-              const btcAmount = sats / 100_000_000;
+              const btcAmount = sats / 100000000;
               const fiatAmount = btcAmount * rate.last;
               setDisplayText(formatFiatDisplay(fiatAmount));
             }
@@ -207,7 +179,6 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
         prevFiatMode.current = isFiatMode;
       }
     }, [isFiatMode, value, rates, selectedCurrency]);
-
     // Handle user input changes
     const handleAmountChange = useCallback(
       (text: string) => {
@@ -218,29 +189,23 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
           onChange("0");
           return;
         }
-
         if (isFiatMode) {
           // Fiat mode: allow decimals
-
           // Only allow digits, commas, and periods
           let cleaned = text.replace(/[^\d.,]/g, "");
-
           // Handle leading decimal separator
           if (cleaned.startsWith(".") || cleaned.startsWith(",")) {
             cleaned = "0" + cleaned;
           }
-
           // Prevent multiple decimal separators of the same type
           // But allow typing either . or , as the decimal separator
           const normalized = normalizeDecimalInput(cleaned);
-
           // Check if the input is valid
           const parts = normalized.split(".");
           if (parts.length > 2) {
             // Invalid: multiple decimal points after normalization
             return;
           }
-
           // Limit decimal places to 2
           if (parts.length === 2 && parts[1].length > 2) {
             const truncatedDecimals = parts[1].substring(0, 2);
@@ -249,10 +214,8 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               text.includes(",") && !text.includes(".") ? "," : localDecimalSep;
             cleaned = parts[0] + userDecimalSep + truncatedDecimals;
           }
-
           // Update display immediately (no lag)
           setDisplayText(cleaned);
-
           // Convert to sats and notify parent
           const fiatValue = parseFloat(normalized || "0");
           if (!isNaN(fiatValue) && fiatValue >= 0) {
@@ -269,7 +232,6 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
           const cleaned = text.replace(/\D/g, "");
           // Remove leading zeros except for single "0"
           const sanitized = cleaned.replace(/^0+/, "") || "0";
-
           setDisplayText(sanitized === "0" ? "" : sanitized);
           lastExternalValue.current = sanitized;
           onChange(sanitized);
@@ -277,7 +239,6 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       },
       [isFiatMode, convertFiatToSats, onChange, localDecimalSep],
     );
-
     // Auto-focus keyboard if requested
     useEffect(() => {
       if (autoFocus) {
@@ -288,7 +249,6 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
     // Currency symbol for fiat mode
     const currencySymbol = useMemo(() => {
       if (isFiatMode && rates?.[selectedCurrency]) {
@@ -296,7 +256,6 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       }
       return "";
     }, [isFiatMode, rates, selectedCurrency]);
-
     // Secondary label showing sats equivalent in fiat mode
     const secondaryLabel = useMemo(() => {
       if (!isFiatMode || amountInSats === 0) {
@@ -304,16 +263,13 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       }
       return formatSatStr(amountInSats, "standard", true);
     }, [isFiatMode, amountInSats]);
-
     // Keyboard type
     const keyboardType = useMemo(() => (isFiatMode ? "decimal-pad" : "numeric"), [isFiatMode]);
-
     // Max length - allow more for fiat to accommodate decimals
     const effectiveMaxLength = useMemo(
       () => (isFiatMode ? 12 : maxLength),
       [isFiatMode, maxLength],
     );
-
     // Placeholder - show appropriate for mode
     const displayPlaceholder = useMemo(() => {
       if (isFiatMode) {
@@ -321,21 +277,22 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
       }
       return placeholder;
     }, [isFiatMode, placeholder, localDecimalSep]);
-
     return (
-      <View style={[styles.container, compact ? styles.containerCompact : null]}>
-        <View style={styles.inputRow}>
+      <Stack style={[styles.container, compact ? styles.containerCompact : null]}>
+        <XStack style={styles.inputRow}>
           {/* Currency symbol prefix for fiat */}
           {currencySymbol && (
-            <Txt
-              txt={currencySymbol}
-              styles={[
+            <AppText
+              style={[
                 compact ? styles.currencySymbolCompact : styles.currencySymbol,
                 {
-                  color: error ? mainColors.ERROR : hi[highlight],
+                  color: error ? theme.error : theme.accent,
                 },
               ]}
-            />
+              testID={`${currencySymbol}-txt`}
+            >
+              {currencySymbol}
+            </AppText>
           )}
           <Animated.View style={[styles.amountWrap, { transform: [{ translateX: anim.current }] }]}>
             <TextInput
@@ -343,12 +300,12 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
               ref={inputRef}
               placeholder={displayPlaceholder}
               autoFocus={autoFocus}
-              cursorColor={hi[highlight]}
-              placeholderTextColor={error ? mainColors.ERROR : hi[highlight]}
+              cursorColor={theme.accent}
+              placeholderTextColor={error ? theme.error : theme.accent}
               style={[
-                globalStyles.selectAmount,
+                styles.selectAmount,
                 compact ? styles.amountInputCompact : null,
-                { color: error ? mainColors.ERROR : hi[highlight] },
+                { color: error ? theme.error : theme.accent },
               ]}
               onChangeText={handleAmountChange}
               onSubmitEditing={onSubmit}
@@ -363,65 +320,68 @@ const AmountInput = forwardRef<TextInput, AmountInputProps>(
           </Animated.View>
           {/* Show "Sats" suffix when not in fiat mode */}
           {!isFiatMode && displayText && (
-            <Txt
-              txt="Sats"
-              styles={[
+            <AppText
+              style={[
                 compact ? styles.satsSuffixCompact : styles.satsSuffix,
                 {
-                  color: error ? mainColors.ERROR : hi[highlight],
+                  color: error ? theme.error : theme.accent,
                 },
               ]}
-            />
+              testID={"Sats-txt"}
+            >
+              Sats
+            </AppText>
           )}
           {/* Currency toggle button */}
           {canToggleCurrency && (
-            <Pressable
+            <PressableSurface
               onPress={handleToggleCurrency}
-              style={({ pressed }) => [
+              onPressIn={() => setTogglePressed(true)}
+              onPressOut={() => setTogglePressed(false)}
+              activeOpacity={0.7}
+              style={[
                 styles.toggleButton,
                 {
-                  backgroundColor: pressed ? color.INPUT_BG : "transparent",
+                  backgroundColor: togglePressed ? theme.inputBackground : "transparent",
                 },
               ]}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               accessibilityLabel="Toggle currency"
               accessibilityHint="Switch between sats and fiat currency"
             >
-              <SwapCurrencyIcon width={20} height={20} color={hi[highlight]} />
-            </Pressable>
+              <SwapCurrencyIcon width={20} height={20} color={theme.accent} />
+            </PressableSurface>
           )}
-        </View>
+        </XStack>
         {secondaryLabel && (
-          <Pressable onPress={handleToggleCurrency} disabled={!canToggleCurrency}>
-            <Txt
-              txt={secondaryLabel}
-              styles={[
+          <PressableSurface onPress={handleToggleCurrency} disabled={!canToggleCurrency}>
+            <AppText
+              style={[
                 compact ? styles.secondaryLabelCompact : styles.secondaryLabel,
-                { color: color.TEXT_SECONDARY },
+                { color: theme.textSecondary },
               ]}
-            />
-          </Pressable>
+              testID={`${secondaryLabel}-txt`}
+            >
+              {secondaryLabel}
+            </AppText>
+          </PressableSurface>
         )}
-      </View>
+      </Stack>
     );
   },
 );
-
 AmountInput.displayName = "AmountInput";
-
 export default AmountInput;
-
 // Export the shake function for parent components to use
 export { useShakeAnimation };
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     width: "100%",
     alignItems: "center",
-    paddingVertical: "20@vs",
+    paddingVertical: 20,
   },
   containerCompact: {
-    paddingVertical: "8@vs",
+    paddingVertical: 8,
   },
   inputRow: {
     flexDirection: "row",
@@ -431,45 +391,53 @@ const styles = ScaledSheet.create({
   amountWrap: {
     alignItems: "center",
   },
-  currencySymbol: {
-    fontSize: "32@s",
+  selectAmount: {
+    width: "100%",
+    fontSize: appFontSize.amountInput,
+    marginBottom: 5,
     fontWeight: "600",
-    marginRight: "4@s",
+    padding: 0,
+    textAlign: "center",
+  },
+  currencySymbol: {
+    fontSize: appFontSize.amountCompact,
+    fontWeight: "600",
+    marginRight: 4,
   },
   currencySymbolCompact: {
-    fontSize: "24@s",
+    fontSize: appFontSize.heading,
     fontWeight: "600",
-    marginRight: "4@s",
+    marginRight: 4,
   },
   amountInputCompact: {
-    fontSize: "36@vs",
+    fontSize: appFontSize.amountLarge,
     marginBottom: 0,
   },
   satsSuffix: {
-    fontSize: "24@s",
+    fontSize: appFontSize.heading,
     fontWeight: "500",
-    marginLeft: "8@s",
+    marginLeft: 8,
     opacity: 0.8,
   },
   satsSuffixCompact: {
-    fontSize: "18@s",
+    fontSize: appFontSize.label,
     fontWeight: "500",
-    marginLeft: "6@s",
+    marginLeft: 6,
     opacity: 0.8,
   },
   toggleButton: {
-    marginLeft: "12@s",
-    padding: "8@s",
-    borderRadius: "20@s",
+    marginLeft: 12,
+    padding: 8,
+    borderRadius: 20,
   },
   secondaryLabel: {
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
     textAlign: "center",
-    marginTop: "8@vs",
+    marginTop: 8,
   },
   secondaryLabelCompact: {
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
     textAlign: "center",
-    marginTop: "4@vs",
+    marginTop: 4,
   },
 });

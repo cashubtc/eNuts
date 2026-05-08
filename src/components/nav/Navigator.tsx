@@ -13,39 +13,38 @@ import SuccessScreen from "@screens/Payment/SuccessScreen";
 import QrScannerScreen from "@screens/QRScan/QrScannerScreen";
 import RestoreNavigator from "@src/nav/RestoreNavigator";
 import SettingsNavigator from "@src/nav/SettingsNavigator";
-import { useThemeContext } from "@src/context/Theme";
-import { View } from "react-native";
+import { Stack, useAppThemeTokens } from "@styles";
 import SendSelectAmountScreen from "@screens/Payment/SendSelectAmount";
 import MintSelectAmountScreen from "@screens/Payment/MintSelectAmount";
 import MeltInputScreen from "@screens/Payment/MeltInput";
 import HistoryNavigator from "@src/nav/HistoryNavigator";
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const NativeStack = createNativeStackNavigator<RootStackParamList>();
 
 const animationDuration = 250;
 
 export default function Navigator({ shouldOnboard }: INavigatorProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
 
   return (
-    <View
+    <Stack
       style={{
         position: "absolute",
         height: "100%",
         width: "100%",
-        backgroundColor: color.BACKGROUND,
+        backgroundColor: theme.background,
       }}
     >
-      <Stack.Navigator
+      <NativeStack.Navigator
         initialRouteName={shouldOnboard ? "onboarding" : "dashboard"}
         screenOptions={{
           headerShown: false,
           animation: "fade",
           animationDuration,
-          navigationBarColor: color.BACKGROUND,
+          navigationBarColor: theme.background,
         }}
       >
-        <Stack.Screen
+        <NativeStack.Screen
           name="onboarding"
           component={OnboardingScreen}
           options={{
@@ -53,28 +52,28 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
             animationDuration,
           }}
         />
-        <Stack.Screen
+        <NativeStack.Screen
           name="dashboard"
           component={Dashboard}
           options={{
             gestureEnabled: false,
           }}
         />
-        <Stack.Screen name="Settings" component={SettingsNavigator} />
-        <Stack.Screen name="MeltInput" component={MeltInputScreen} />
-        <Stack.Screen name="SendSelectAmount" component={SendSelectAmountScreen} />
-        <Stack.Screen name="MintSelectAmount" component={MintSelectAmountScreen} />
-        <Stack.Screen name="coinSelection" component={CoinSelectionScreen} />
-        <Stack.Screen
+        <NativeStack.Screen name="Settings" component={SettingsNavigator} />
+        <NativeStack.Screen name="MeltInput" component={MeltInputScreen} />
+        <NativeStack.Screen name="SendSelectAmount" component={SendSelectAmountScreen} />
+        <NativeStack.Screen name="MintSelectAmount" component={MintSelectAmountScreen} />
+        <NativeStack.Screen name="coinSelection" component={CoinSelectionScreen} />
+        <NativeStack.Screen
           name="processing"
           component={ProcessingScreen}
           options={{ gestureEnabled: false }}
         />
-        <Stack.Screen name="QRScanner" component={QrScannerScreen} />
-        <Stack.Screen name="processingError" component={ProcessingErrorScreen} />
-        <Stack.Screen name="mintInvoice" component={InvoiceScreen} />
+        <NativeStack.Screen name="QRScanner" component={QrScannerScreen} />
+        <NativeStack.Screen name="processingError" component={ProcessingErrorScreen} />
+        <NativeStack.Screen name="mintInvoice" component={InvoiceScreen} />
         {/* sendable token created page */}
-        <Stack.Screen
+        <NativeStack.Screen
           name="encodedToken"
           component={EncodedTokenPage}
           options={{
@@ -83,16 +82,20 @@ export default function Navigator({ shouldOnboard }: INavigatorProps) {
             gestureEnabled: false,
           }}
         />
-        <Stack.Screen name="success" component={SuccessPage} options={{ gestureEnabled: false }} />
-        <Stack.Screen
+        <NativeStack.Screen
+          name="success"
+          component={SuccessPage}
+          options={{ gestureEnabled: false }}
+        />
+        <NativeStack.Screen
           name="successScreen"
           component={SuccessScreen}
           options={{ gestureEnabled: false }}
         />
-        <Stack.Screen name="Mint" component={MintNavigator} />
-        <Stack.Screen name="Restore" component={RestoreNavigator} />
-        <Stack.Screen name="History" component={HistoryNavigator} />
-      </Stack.Navigator>
-    </View>
+        <NativeStack.Screen name="Mint" component={MintNavigator} />
+        <NativeStack.Screen name="Restore" component={RestoreNavigator} />
+        <NativeStack.Screen name="History" component={HistoryNavigator} />
+      </NativeStack.Navigator>
+    </Stack>
   );
 }

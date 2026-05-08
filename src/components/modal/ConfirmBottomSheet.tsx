@@ -1,10 +1,8 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { ScrollView, Text, View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useThemeContext } from "@src/context/Theme";
-import { globals } from "@styles";
+import { AppText, appLineHeight, appFontSize, globals, useAppThemeTokens, Stack } from "@styles";
 import Button from "@comps/Button";
 
 export type ConfirmBottomSheetRef = {
@@ -31,7 +29,7 @@ interface SheetOptions {
 }
 
 const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const insets = useSafeAreaInsets();
   const sheetRef = useRef<TrueSheet>(null);
   const notifyCancelOnDismissRef = useRef(false);
@@ -82,26 +80,22 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
       detents={["auto"]}
       dismissible={false}
       draggable={false}
-      backgroundColor={color.BACKGROUND}
-      cornerRadius={s(26)}
-      grabberOptions={{ color: color.TEXT_SECONDARY }}
+      backgroundColor={theme.background}
+      grabberOptions={{ color: theme.textSecondary }}
       onDidDismiss={handleDismiss}
     >
       <ScrollView
-        style={{ backgroundColor: color.BACKGROUND }}
-        contentContainerStyle={[
-          styles.container,
-          { paddingBottom: Math.max(insets.bottom, vs(20)) },
-        ]}
+        style={{ backgroundColor: theme.background }}
+        contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 20) }]}
         showsVerticalScrollIndicator={false}
       >
         {options && (
           <>
-            <Text style={[globals(color, highlight).modalHeader, { marginBottom: vs(15) }]}>
+            <AppText style={[globals().modalHeader, { color: theme.text }, { marginBottom: 15 }]}>
               {options.header}
-            </Text>
-            <Text style={[styles.message, { color: color.TEXT }]}>{options.txt}</Text>
-            <View style={styles.buttonContainer}>
+            </AppText>
+            <AppText style={[styles.message, { color: theme.text }]}>{options.txt}</AppText>
+            <Stack style={styles.buttonContainer}>
               <Button
                 txt={options.confirmTxt}
                 onPress={handleConfirm}
@@ -109,7 +103,7 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
                 destructive={options.destructive}
               />
               <Button txt={options.cancelTxt} onPress={handleCancel} outlined />
-            </View>
+            </Stack>
           </>
         )}
       </ScrollView>
@@ -119,19 +113,19 @@ const ConfirmBottomSheet = forwardRef<ConfirmBottomSheetRef>((_, ref) => {
 
 ConfirmBottomSheet.displayName = "ConfirmBottomSheet";
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: "20@s",
-    paddingTop: "30@vs",
+    paddingHorizontal: 20,
+    paddingTop: 30,
   },
   message: {
-    fontSize: "14@vs",
-    marginBottom: "20@vs",
-    lineHeight: "20@vs",
+    fontSize: appFontSize.body,
+    marginBottom: 20,
+    lineHeight: appLineHeight.body,
   },
   buttonContainer: {
     width: "100%",
-    gap: "10@vs",
+    gap: 10,
   },
 });
 

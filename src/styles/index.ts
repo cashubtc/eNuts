@@ -1,3 +1,35 @@
-export type { HighlightKey, Theme } from "./colors";
-export { dark, getPinpadBg, highlight, light, lightTheme, mainColors, themeColors } from "./colors";
 export { globalStyles as globals } from "./globals";
+export {
+  appFontSize,
+  appFontWeight,
+  appLetterSpacing,
+  appLineHeight,
+  type TAppFontSize,
+  type TAppFontWeight,
+} from "./fonts";
+export { fontScale, moderateScale, moderateVerticalScale, scale, verticalScale } from "./scale";
+export {
+  AppText,
+  ButtonSurface,
+  InputFrame,
+  PressableSurface,
+  ProgressFill,
+  ProgressTrack,
+  RadioCircle,
+  ScreenFrame,
+  SeparatorLine,
+  Stack,
+  Surface,
+  XStack,
+  YStack,
+  useAppThemeTokens,
+  type TAppTextSize,
+  type TAppTextTone,
+  type TAppTextWeight,
+} from "./tamagui";
+export {
+  getTamaguiThemeName,
+  tamaguiConfig,
+  themeColors,
+  type HighlightKey,
+} from "./tamagui.config";

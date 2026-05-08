@@ -2,51 +2,64 @@ import Button from "@comps/Button";
 import { ShareIcon } from "@comps/Icons";
 import Loading from "@comps/Loading";
 import QR from "@comps/QR";
-import Txt from "@comps/Txt";
 import { isIOS } from "@consts";
 import { l } from "@log";
 import type { TMintInvoicePageProps } from "@model/nav";
 import Screen from "@comps/Screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useManager } from "@src/context/Manager";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
-import { getColor } from "@styles/colors";
+import { AppText, appFontSize, globals, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl, share } from "@util";
-import { useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { StyleSheet, useWindowDimensions } from "react-native";
+
+const QR_HORIZONTAL_CHROME = 20;
+const QR_VERTICAL_CHROME = 82;
+const MIN_QR_SIZE = 140;
 
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
   const { operation } = route.params;
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const manager = useManager();
+  const { width, height } = useWindowDimensions();
+  const [qrStageSize, setQrStageSize] = useState({ width: 0, height: 0 });
+  const qrSize = useMemo(() => {
+    if (!qrStageSize.width || !qrStageSize.height) {
+      return Math.round(Math.max(196, Math.min(300, width - 96, height * 0.38)));
+    }
+
+    return Math.max(
+      MIN_QR_SIZE,
+      Math.floor(
+        Math.min(qrStageSize.width - QR_HORIZONTAL_CHROME, qrStageSize.height - QR_VERTICAL_CHROME),
+      ),
+    );
+  }, [height, qrStageSize.height, qrStageSize.width, width]);
 
   useFocusEffect(
     useCallback(() => {
       const handlePaidInvoice = ({
         operation: finalizedOperation,
       }: {
-        operation: { id: string };
+        operation: {
+          id: string;
+        };
       }) => {
         if (finalizedOperation.id !== operation.id) {
           return;
         }
-
         navigation.navigate("successScreen", {
           type: "receive",
           amount: operation.amount,
         });
       };
-
       manager.on("mint-op:finalized", handlePaidInvoice);
       return () => manager.off("mint-op:finalized", handlePaidInvoice);
     }, [manager, navigation, operation.amount, operation.id]),
   );
-
   return (
     <Screen
       screenName={t("payInvoice", { ns: NS.wallet })}
@@ -56,50 +69,63 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
         navigation.navigate("dashboard");
       }}
     >
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <QR
-            size={vs(250)}
-            value={operation.request}
-            onError={() => l("Error while generating the LN QR code")}
-            isInvoice
-            animate={false}
-          />
-          <View>
-            <View style={styles.awaitingWrap}>
-              <Txt
-                txt={t("paymentPending") + "..."}
-                styles={[{ fontWeight: "500", marginRight: s(10) }]}
-              />
+      <Stack style={styles.container}>
+        <Stack style={styles.content}>
+          <Stack
+            style={styles.qrStage}
+            onLayout={(event) => setQrStageSize(event.nativeEvent.layout)}
+          >
+            <QR
+              size={qrSize}
+              value={operation.request}
+              onError={() => l("Error while generating the LN QR code")}
+              isInvoice
+              animate={false}
+            />
+          </Stack>
+          <Stack>
+            <Stack style={styles.awaitingWrap}>
+              <AppText
+                style={[{ fontWeight: "500", marginRight: 10 }]}
+                testID={`${t("paymentPending") + "..."}-txt`}
+              >
+                {t("paymentPending") + "..."}
+              </AppText>
               <Loading />
-            </View>
-          </View>
+            </Stack>
+          </Stack>
           <Button
             txt={t("shareInvoice")}
             onPress={() => void share(operation.request)}
-            icon={<ShareIcon color={getColor(highlight, color)} />}
+            icon={<ShareIcon color={theme.accentContrast} />}
             outlined
           />
-          {isIOS && <View style={styles.placeholder} />}
-        </View>
-      </View>
+          {isIOS && <Stack style={styles.placeholder} />}
+        </Stack>
+      </Stack>
     </Screen>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: "20@s",
-    paddingBottom: "20@s",
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   content: {
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
   },
+  qrStage: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 240,
+    width: "100%",
+  },
   lnExpiry: {
-    fontSize: "34@vs",
+    fontSize: appFontSize.amount,
     fontWeight: "600",
     textAlign: "center",
   },
@@ -107,9 +133,9 @@ const styles = ScaledSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: "5@vs",
+    marginTop: 5,
   },
   placeholder: {
-    height: "20@vs",
+    height: 20,
   },
 });

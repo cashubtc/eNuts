@@ -1,40 +1,37 @@
+import { AppText, appLineHeight, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import React from "react";
-import { View } from "react-native";
-import { vs, ScaledSheet } from "react-native-size-matters";
+import { StyleSheet } from "react-native";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
-
 interface MetadataItemProps {
   text: string;
   hasSeparator?: boolean;
 }
-
 export default function MetadataItem({ text, hasSeparator }: MetadataItemProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <>
-      <View style={[styles.metadataItem, { paddingBottom: vs(15) }]}>
-        <Txt txt={text} styles={[styles.metadataText, { color: color.TEXT }]} />
-      </View>
+      <Stack style={[styles.metadataItem, { paddingBottom: 15 }]}>
+        <AppText style={[styles.metadataText, { color: theme.text }]} testID={`${text}-txt`}>
+          {text}
+        </AppText>
+      </Stack>
       {hasSeparator && <Separator style={[styles.separator]} />}
     </>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   metadataItem: {
-    paddingHorizontal: "20@s",
-    marginBottom: "5@vs",
+    paddingHorizontal: 20,
+    marginBottom: 5,
   },
   metadataText: {
-    fontSize: "14@vs",
-    lineHeight: "20@vs",
+    fontSize: appFontSize.body,
+    lineHeight: appLineHeight.body,
     flexWrap: "wrap",
     flexShrink: 1,
     opacity: 0.8,
   },
   separator: {
-    marginBottom: "15@vs",
+    marginBottom: 15,
   },
 });

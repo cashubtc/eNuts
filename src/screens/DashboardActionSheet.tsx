@@ -1,10 +1,8 @@
+import { AppText, appLineHeight, appFontSize, PressableSurface, Stack } from "@styles";
 import { CloseIcon } from "@comps/Icons";
-import Txt from "@comps/Txt";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import type { ReactNode, RefObject } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
-
+import { StyleSheet } from "react-native";
 interface IDashboardActionSheetProps {
   sheetRef: RefObject<TrueSheet | null>;
   title: string;
@@ -13,7 +11,6 @@ interface IDashboardActionSheetProps {
   closeIconColor: string;
   children: ReactNode;
 }
-
 export default function DashboardActionSheet({
   sheetRef,
   title,
@@ -27,13 +24,14 @@ export default function DashboardActionSheet({
       ref={sheetRef}
       detents={["auto"]}
       backgroundColor={backgroundColor}
-      cornerRadius={s(26)}
       grabberOptions={{ color: closeIconColor }}
     >
-      <View style={[styles.container, { backgroundColor }]}>
-        <View style={styles.header}>
-          <Txt txt={title} bold center styles={[styles.title]} />
-          <TouchableOpacity
+      <Stack style={[styles.container, { backgroundColor }]}>
+        <Stack style={styles.header}>
+          <AppText style={[styles.title]} weight="medium" align="center" testID={`${title}-txt`}>
+            {title}
+          </AppText>
+          <PressableSurface
             activeOpacity={0.65}
             accessibilityRole="button"
             accessibilityLabel={closeAccessibilityLabel}
@@ -42,16 +40,15 @@ export default function DashboardActionSheet({
               void sheetRef.current?.dismiss();
             }}
           >
-            <CloseIcon width={s(18)} height={s(18)} color={closeIconColor} />
-          </TouchableOpacity>
-        </View>
+            <CloseIcon width={18} height={18} color={closeIconColor} />
+          </PressableSurface>
+        </Stack>
 
         {children}
-      </View>
+      </Stack>
     </TrueSheet>
   );
 }
-
 interface IDashboardActionSheetOptionProps {
   icon: ReactNode;
   title: string;
@@ -61,7 +58,6 @@ interface IDashboardActionSheetOptionProps {
   onPress: () => void;
   testID: string;
 }
-
 export function DashboardActionSheetOption({
   icon,
   title,
@@ -72,44 +68,47 @@ export function DashboardActionSheetOption({
   testID,
 }: IDashboardActionSheetOptionProps) {
   return (
-    <TouchableOpacity
+    <PressableSurface
       activeOpacity={0.7}
       style={styles.optionContainer}
       onPress={onPress}
       testID={testID}
       accessibilityRole="button"
     >
-      <View style={styles.iconContainer}>{icon}</View>
-      <View style={styles.txtWrap}>
-        <Text style={[styles.actionText, { color: textColor }]}>{title}</Text>
-        <Text style={[styles.descriptionText, { color: descriptionColor }]}>{description}</Text>
-      </View>
-    </TouchableOpacity>
+      <Stack style={styles.iconContainer}>{icon}</Stack>
+      <Stack style={styles.txtWrap}>
+        <AppText style={styles.actionText} weight="medium">
+          {title}
+        </AppText>
+        <AppText style={[styles.descriptionText, { color: descriptionColor }]}>
+          {description}
+        </AppText>
+      </Stack>
+    </PressableSurface>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: "20@s",
-    paddingTop: "34@vs",
-    paddingBottom: "24@vs",
+    paddingHorizontal: 20,
+    paddingTop: 34,
+    paddingBottom: 24,
   },
   header: {
-    minHeight: "40@s",
+    minHeight: 40,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: "18@vs",
+    marginBottom: 18,
   },
   title: {
-    fontSize: "20@vs",
-    lineHeight: "25@vs",
+    fontSize: appFontSize.title,
+    lineHeight: appLineHeight.title,
   },
   closeBtn: {
     position: "absolute",
     right: 0,
     top: 0,
-    width: "40@s",
-    height: "40@s",
+    width: 40,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -125,11 +124,10 @@ const styles = ScaledSheet.create({
     width: "90%",
   },
   actionText: {
-    fontSize: "14@vs",
-    fontWeight: "500",
-    marginBottom: "4@vs",
+    fontSize: appFontSize.body,
+    marginBottom: 4,
   },
   descriptionText: {
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
   },
 });

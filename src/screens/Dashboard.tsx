@@ -15,7 +15,6 @@ import {
 import Loading from "@comps/Loading";
 import NfcPaymentModal, { type NfcPaymentModalRef } from "@comps/modal/NfcPaymentModal";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import type { HistoryEntry } from "@cashu/coco-core";
 import { usePaginatedHistory } from "@cashu/coco-react";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
@@ -28,28 +27,34 @@ import { usePrivacyContext } from "@src/context/Privacy";
 import { usePromptContext } from "@src/context/Prompt";
 import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi, mainColors } from "@styles";
+import {
+  AppText,
+  appLineHeight,
+  appFontSize,
+  globals,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import { getStrFromClipboard } from "@util";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { s, ScaledSheet } from "react-native-size-matters";
-
 import { LatestHistoryMeltEntry } from "./History/components/LatestHistoryMeltEntry";
 import { LatestHistoryMintEntry } from "./History/components/LatestHistoryMintEntry";
 import { LatestHistoryReceiveEntry } from "./History/components/LatestHistoryReceiveEntry";
 import { LatestHistorySendEntry } from "./History/components/LatestHistorySendEntry";
 import DashboardActionSheet, { DashboardActionSheetOption } from "./DashboardActionSheet";
-
 export default function Dashboard({ navigation }: TDashboardPageProps) {
   const { t } = useTranslation([NS.common, NS.wallet]);
-  const { activeTheme, color, highlight } = useThemeContext();
-  const accentColor = hi[highlight];
+  const { activeTheme } = useThemeContext();
+  const theme = useAppThemeTokens();
+  const accentColor = theme.accent;
   const isDarkTheme = activeTheme === "dark";
   const balanceTextColor = accentColor;
-  const balanceMetaColor = color.TEXT_SECONDARY;
-  const actionTextColor = color.TEXT;
+  const balanceMetaColor = theme.textSecondary;
+  const actionTextColor = theme.text;
   const actionIconColor = accentColor;
   const actionIconBackground = withAlpha(accentColor, isDarkTheme ? 0.14 : 0.12);
   const actionIconBorderColor = withAlpha(accentColor, isDarkTheme ? 0.24 : 0.18);
@@ -65,11 +70,9 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
   const nfcModalRef = useRef<NfcPaymentModalRef>(null);
   const { claimFromTokenString, isReceiving } = useCashuClaimFlow();
   const balanceAmount = formatAmount(balances.total.total);
-
   const toggleBalanceFormat = () => {
     void setFormatBalance(!formatBalance);
   };
-
   const handleClaimBtnPress = async () => {
     if (loading) {
       return;
@@ -88,69 +91,66 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
     }
     stopLoading();
   };
-
   const handleNfcOptionPress = () => {
     void sendOptionsRef.current?.dismiss();
     setTimeout(() => {
       nfcModalRef.current?.open();
     }, 200);
   };
-
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   return (
     <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: color.BACKGROUND }]}
+      style={[styles.safeArea, { backgroundColor: theme.background }]}
       edges={["bottom"]}
     >
-      <View style={styles.container}>
+      <Stack style={styles.container}>
         <DashboardTopBar
           onSettingsPress={() => navigation.navigate("Settings", { screen: "SettingsMain" })}
         />
-        <View style={styles.content}>
-          <View style={styles.balanceSection}>
-            <TouchableOpacity
+        <Stack style={styles.content}>
+          <Stack style={styles.balanceSection}>
+            <PressableSurface
               style={styles.balanceWrap}
               onPress={toggleBalanceFormat}
               disabled={hidden.balance}
               accessibilityRole="button"
             >
-              <Text
+              <AppText
                 testID={`balance: ${balances.total.total}`}
                 style={[styles.balanceAmount, { color: balanceTextColor }]}
               >
                 {hidden.balance ? "****" : balanceAmount.formatted}
-              </Text>
-              <View style={styles.balanceMetaWrap}>
+              </AppText>
+              <Stack style={styles.balanceMetaWrap}>
                 {!hidden.balance && (
                   <>
-                    <Text style={[styles.balanceSymbol, { color: balanceMetaColor }]}>
+                    <AppText style={[styles.balanceSymbol, { color: balanceMetaColor }]}>
                       {balanceAmount.symbol}
-                    </Text>
-                    <SwapCurrencyIcon width={s(18)} height={s(18)} color={balanceMetaColor} />
+                    </AppText>
+                    <SwapCurrencyIcon width={18} height={18} color={balanceMetaColor} />
                   </>
                 )}
-              </View>
-              <View
+              </Stack>
+              <Stack
                 style={[
                   styles.balanceRule,
                   { backgroundColor: withAlpha(accentColor, isDarkTheme ? 0.4 : 0.28) },
                 ]}
               />
-            </TouchableOpacity>
-          </View>
+            </PressableSurface>
+          </Stack>
 
-          <View style={styles.historySection}>
-            <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: color.TEXT }]} numberOfLines={1}>
+          <Stack style={styles.historySection}>
+            <Stack style={styles.sectionHeader}>
+              <AppText style={[styles.sectionTitle, { color: theme.text }]} numberOfLines={1}>
                 {t("activity")}
-              </Text>
+              </AppText>
               {hasMore && (
-                <TouchableOpacity
+                <PressableSurface
                   accessibilityRole="button"
                   onPress={() => navigation.navigate("History", { screen: "HistoryMain" })}
                   style={[
@@ -162,50 +162,58 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                   ]}
                   testID={`${t("allHistory")}-button`}
                 >
-                  <Text numberOfLines={1} style={[styles.historyLinkTxt, { color: accentColor }]}>
+                  <AppText
+                    numberOfLines={1}
+                    style={[styles.historyLinkTxt, { color: accentColor }]}
+                  >
                     {t("allHistory")}
-                  </Text>
-                </TouchableOpacity>
+                  </AppText>
+                </PressableSurface>
               )}
-            </View>
+            </Stack>
             {!latestHistory.length ? (
-              <View style={[styles.emptyHistory, { backgroundColor: color.DRAWER }]}>
-                <Txt txt={t("noTX")} styles={[globals(color).txt, styles.emptyHistoryTxt]} />
-              </View>
+              <Stack style={[styles.emptyHistory, { backgroundColor: theme.drawer }]}>
+                <AppText
+                  style={[globals().txt, { color: theme.text }, styles.emptyHistoryTxt]}
+                  testID={`${t("noTX")}-txt`}
+                >
+                  {t("noTX")}
+                </AppText>
+              </Stack>
             ) : (
               <ScrollView
-                style={[styles.historyList, { backgroundColor: color.DRAWER }]}
+                style={[styles.historyList, { backgroundColor: theme.drawer }]}
                 contentContainerStyle={styles.historyListContent}
                 showsVerticalScrollIndicator={false}
               >
                 {latestHistory.slice(0, 10).map((entry, index) => (
-                  <View key={entry.id} style={styles.historyEntry}>
+                  <Stack key={entry.id} style={styles.historyEntry}>
                     {renderHistoryEntry(entry)}
                     {index < latestHistory.length - 1 && index < 9 ? (
-                      <View
-                        style={[styles.historyDivider, { backgroundColor: color.DARK_BORDER }]}
+                      <Stack
+                        style={[styles.historyDivider, { backgroundColor: theme.darkBorder }]}
                       />
                     ) : null}
-                  </View>
+                  </Stack>
                 ))}
               </ScrollView>
             )}
-          </View>
-        </View>
+          </Stack>
+        </Stack>
 
-        <View style={styles.actionDockWrap}>
-          <View
+        <Stack style={styles.actionDockWrap}>
+          <Stack
             style={[
               styles.actionDock,
               {
-                backgroundColor: color.DRAWER,
-                borderColor: isDarkTheme ? color.DARK_BORDER : color.BORDER,
+                backgroundColor: theme.drawer,
+                borderColor: isDarkTheme ? theme.darkBorder : theme.border,
               },
             ]}
           >
             {knownMints.length > 0 ? (
               <ActionBtn
-                icon={<SendIcon width={s(26)} height={s(26)} color={actionIconColor} />}
+                icon={<SendIcon width={26} height={26} color={actionIconColor} />}
                 txt={t("send", { ns: NS.wallet })}
                 textColor={actionTextColor}
                 iconBackgroundColor={actionIconBackground}
@@ -216,7 +224,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               />
             ) : (
               <ActionBtn
-                icon={<PlusIcon width={s(28)} height={s(28)} color={actionIconColor} />}
+                icon={<PlusIcon width={28} height={28} color={actionIconColor} />}
                 txt={t("mint")}
                 textColor={actionTextColor}
                 iconBackgroundColor={actionIconBackground}
@@ -227,7 +235,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               />
             )}
             <ActionBtn
-              icon={<ScanQRIcon width={s(26)} height={s(26)} color={actionIconColor} />}
+              icon={<ScanQRIcon width={26} height={26} color={actionIconColor} />}
               txt={t("scan")}
               textColor={actionTextColor}
               iconBackgroundColor={actionIconBackground}
@@ -235,7 +243,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               onPress={() => navigation.navigate("QRScanner")}
             />
             <ActionBtn
-              icon={<ReceiveIcon width={s(26)} height={s(26)} color={actionIconColor} />}
+              icon={<ReceiveIcon width={26} height={26} color={actionIconColor} />}
               txt={t("receive", { ns: NS.wallet })}
               textColor={actionTextColor}
               iconBackgroundColor={actionIconBackground}
@@ -245,22 +253,22 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
                 void receiveOptionsRef.current?.present();
               }}
             />
-          </View>
-        </View>
+          </Stack>
+        </Stack>
 
         <DashboardActionSheet
           sheetRef={sendOptionsRef}
           title={t("send", { ns: NS.wallet })}
           closeAccessibilityLabel={t("cancel")}
-          backgroundColor={color.BACKGROUND}
-          closeIconColor={color.TEXT_SECONDARY}
+          backgroundColor={theme.background}
+          closeIconColor={theme.textSecondary}
         >
           <DashboardActionSheetOption
-            icon={<SendMsgIcon width={s(16)} height={s(16)} color={mainColors.VALID} />}
+            icon={<SendMsgIcon width={16} height={16} color={theme.valid} />}
             title={t("sendEcash")}
             description={t("sendEcashDashboard")}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={() => {
               void sendOptionsRef.current?.dismiss();
               navigation.navigate("SendSelectAmount");
@@ -271,11 +279,11 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           <Separator style={styles.sheetSeparator} />
 
           <DashboardActionSheetOption
-            icon={<ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />}
+            icon={<ZapIcon width={26} height={26} color={theme.zap} />}
             title={t("payLNInvoice", { ns: NS.wallet })}
             description={t("payInvoiceDashboard")}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={() => {
               void sendOptionsRef.current?.dismiss();
               navigation.navigate("MeltInput", {});
@@ -286,7 +294,7 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           <Separator style={styles.sheetSeparator} />
 
           <DashboardActionSheetOption
-            icon={<NfcIcon width={s(20)} color={mainColors.VALID} />}
+            icon={<NfcIcon width={20} color={theme.valid} />}
             title={t("nfcPayment", {
               ns: NS.wallet,
               defaultValue: "NFC Payment",
@@ -295,8 +303,8 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
               ns: NS.wallet,
               defaultValue: "Tap to pay at a terminal",
             })}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={handleNfcOptionPress}
             testID="third-option"
           />
@@ -327,21 +335,21 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           sheetRef={receiveOptionsRef}
           title={t("receive", { ns: NS.wallet })}
           closeAccessibilityLabel={t("cancel")}
-          backgroundColor={color.BACKGROUND}
-          closeIconColor={color.TEXT_SECONDARY}
+          backgroundColor={theme.background}
+          closeIconColor={theme.textSecondary}
         >
           <DashboardActionSheetOption
             icon={
               loading ? (
-                <Loading size="small" color={mainColors.VALID} />
+                <Loading size="small" color={theme.valid} />
               ) : (
-                <CopyIcon color={mainColors.VALID} />
+                <CopyIcon color={theme.valid} />
               )
             }
             title={loading ? t("claiming", { ns: NS.wallet }) : t("pasteToken", { ns: NS.wallet })}
             description={t("receiveEcashDashboard")}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={() => {
               void handleClaimBtnPress();
               void receiveOptionsRef.current?.dismiss();
@@ -352,11 +360,11 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
           <Separator style={styles.sheetSeparator} />
 
           <DashboardActionSheetOption
-            icon={<ZapIcon width={s(26)} height={s(26)} color={mainColors.ZAP} />}
+            icon={<ZapIcon width={26} height={26} color={theme.zap} />}
             title={t("createLnInvoice")}
             description={t("createInvoiceDashboard")}
-            textColor={color.TEXT}
-            descriptionColor={color.TEXT_SECONDARY}
+            textColor={theme.text}
+            descriptionColor={theme.textSecondary}
             onPress={() => {
               void receiveOptionsRef.current?.dismiss();
               navigation.navigate("MintSelectAmount");
@@ -364,11 +372,10 @@ export default function Dashboard({ navigation }: TDashboardPageProps) {
             testID="pay-invoice-option"
           />
         </DashboardActionSheet>
-      </View>
+      </Stack>
     </SafeAreaView>
   );
 }
-
 interface IActionBtnsProps {
   icon: ReactNode;
   txt: string;
@@ -378,7 +385,6 @@ interface IActionBtnsProps {
   iconBorderColor: string;
   disabled?: boolean;
 }
-
 function ActionBtn({
   icon,
   onPress,
@@ -389,7 +395,7 @@ function ActionBtn({
   disabled,
 }: IActionBtnsProps) {
   return (
-    <TouchableOpacity
+    <PressableSurface
       accessibilityRole="button"
       activeOpacity={0.65}
       style={[styles.actionBtn, { opacity: disabled ? 0.45 : 1 }]}
@@ -397,19 +403,20 @@ function ActionBtn({
       disabled={disabled}
       testID={`${txt}-btn`}
     >
-      <View
+      <Stack
         style={[
           styles.actionIcon,
           { backgroundColor: iconBackgroundColor, borderColor: iconBorderColor },
         ]}
       >
         {icon}
-      </View>
-      <Txt txt={txt} bold styles={[styles.actionTxt, { color: textColor }]} />
-    </TouchableOpacity>
+      </Stack>
+      <AppText weight="medium" size="caption" align="center" testID={`${txt}-txt`}>
+        {txt}
+      </AppText>
+    </PressableSurface>
   );
 }
-
 function renderHistoryEntry(entry: HistoryEntry) {
   switch (entry.type) {
     case "mint":
@@ -424,20 +431,17 @@ function renderHistoryEntry(entry: HistoryEntry) {
       return null;
   }
 }
-
 function withAlpha(hex: string, alpha: number) {
   const color = hex.replace("#", "");
   if (color.length !== 6) {
     return hex;
   }
-
   const red = parseInt(color.slice(0, 2), 16);
   const green = parseInt(color.slice(2, 4), 16);
   const blue = parseInt(color.slice(4, 6), 16);
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
@@ -446,132 +450,128 @@ const styles = ScaledSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: "20@s",
-    paddingTop: "2@vs",
+    paddingHorizontal: 20,
+    paddingTop: 2,
   },
   balanceSection: {
-    paddingTop: "10@vs",
-    paddingBottom: "24@vs",
+    paddingTop: 10,
+    paddingBottom: 24,
   },
   balanceWrap: {
     alignItems: "center",
-    paddingVertical: "8@vs",
+    paddingVertical: 8,
   },
   balanceAmount: {
-    fontSize: "64@s",
+    fontSize: appFontSize.heroAmount,
     fontWeight: "700",
-    lineHeight: "74@s",
+    lineHeight: appLineHeight.heroAmount,
     textAlign: "center",
   },
   balanceMetaWrap: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: "22@s",
-    marginTop: "-2@vs",
+    minHeight: 22,
+    marginTop: -2,
   },
   balanceSymbol: {
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
     fontWeight: "500",
-    marginRight: "6@s",
+    marginRight: 6,
   },
   balanceRule: {
-    width: "72@s",
-    height: "3@vs",
-    borderRadius: "2@vs",
-    marginTop: "12@vs",
+    width: 72,
+    height: 3,
+    borderRadius: 2,
+    marginTop: 12,
   },
   actionDockWrap: {
-    paddingHorizontal: "20@s",
-    paddingTop: "8@vs",
-    paddingBottom: "10@vs",
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 10,
     backgroundColor: "transparent",
   },
   actionDock: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderRadius: "26@s",
+    borderRadius: 26,
     borderWidth: 1,
-    paddingHorizontal: "14@s",
-    paddingVertical: "10@vs",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   actionBtn: {
     alignItems: "center",
     justifyContent: "center",
-    width: "82@s",
-    minHeight: "70@s",
+    width: 82,
+    minHeight: 70,
   },
   actionIcon: {
-    width: "44@s",
-    height: "44@s",
-    borderRadius: "22@s",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: "7@vs",
-  },
-  actionTxt: {
-    fontSize: "12@vs",
-    textAlign: "center",
+    marginBottom: 7,
   },
   sheetSeparator: {
     width: "100%",
-    marginTop: "10@vs",
-    marginBottom: "10@vs",
+    marginTop: 10,
+    marginBottom: 10,
   },
   historySection: {
     flex: 1,
   },
   sectionHeader: {
-    minHeight: "34@vs",
+    minHeight: 34,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "10@vs",
+    marginBottom: 10,
   },
   sectionTitle: {
     flex: 1,
-    fontSize: "22@vs",
+    fontSize: appFontSize.modalTitle,
     fontWeight: "600",
-    marginRight: "14@s",
+    marginRight: 14,
   },
   historyLink: {
-    minWidth: "52@s",
-    minHeight: "30@vs",
-    borderRadius: "15@vs",
+    minWidth: 52,
+    minHeight: 30,
+    borderRadius: 15,
     borderWidth: 1,
-    paddingHorizontal: "14@s",
+    paddingHorizontal: 14,
     alignItems: "center",
     justifyContent: "center",
   },
   historyLinkTxt: {
-    fontSize: "13@vs",
+    fontSize: appFontSize.bodySmall,
     fontWeight: "500",
     textAlign: "right",
   },
   historyList: {
     flex: 1,
-    borderRadius: "26@s",
-    paddingHorizontal: "16@s",
+    borderRadius: 26,
+    paddingHorizontal: 16,
   },
   historyListContent: {
-    paddingTop: "12@vs",
-    paddingBottom: "2@vs",
+    paddingTop: 12,
+    paddingBottom: 2,
   },
   historyEntry: {
-    paddingTop: "1@vs",
+    paddingTop: 1,
   },
   historyDivider: {
     height: 1,
-    marginTop: "9@vs",
-    marginBottom: "9@vs",
+    marginTop: 9,
+    marginBottom: 9,
   },
   emptyHistory: {
-    minHeight: "100@vs",
-    borderRadius: "26@s",
+    minHeight: 100,
+    borderRadius: 26,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   emptyHistoryTxt: {
     textAlign: "center",

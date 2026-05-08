@@ -1,8 +1,7 @@
+import { useAppThemeTokens } from "@styles";
 import { CheckmarkIcon, ClockIcon, EcashIcon } from "@comps/Icons";
 import { LatestHistoryWrapper } from "./LatestHistoryWrapper";
-import { useThemeContext } from "@src/context/Theme";
 import { MintHistoryEntry } from "@cashu/coco-core";
-import { getColor } from "@src/styles/colors";
 import { memo } from "react";
 
 type LatestHistoryMintEntryProps = {
@@ -12,8 +11,8 @@ type LatestHistoryMintEntryProps = {
 
 export const LatestHistoryMintEntry = memo(
   function LatestHistoryMintEntry({ history, variant = "highlight" }: LatestHistoryMintEntryProps) {
-    const { color, highlight } = useThemeContext();
-    const iconColor = variant === "highlight" ? getColor(highlight, color) : color.TEXT;
+    const theme = useAppThemeTokens();
+    const iconColor = variant === "highlight" ? theme.accentContrast : theme.text;
 
     let icon;
     switch (history.state) {

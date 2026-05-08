@@ -5,13 +5,11 @@ import Screen from "@comps/Screen";
 import { HistoryEntry } from "@cashu/coco-core";
 import { usePaginatedHistory } from "@cashu/coco-react";
 import { FlashList } from "@shopify/flash-list";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
+import { globals, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ScaledSheet } from "react-native-size-matters";
 
 import { LatestHistoryMintEntry } from "./components/LatestHistoryMintEntry";
 import { LatestHistorySendEntry } from "./components/LatestHistorySendEntry";
@@ -21,7 +19,7 @@ import { LatestHistoryReceiveEntry } from "./components/LatestHistoryReceiveEntr
 export default function HistoryPage({ navigation }: THistoryPageProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation([NS.common]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { history, loadMore, hasMore, isFetching, refresh } = usePaginatedHistory(5);
 
   const renderHistoryEntry = (entry: HistoryEntry) => {
@@ -51,36 +49,36 @@ export default function HistoryPage({ navigation }: THistoryPageProps) {
       withBackBtn
       handlePress={() => navigation.goBack()}
     >
-      <View style={styles.container}>
-        <View style={styles.listContainer}>
+      <Stack style={styles.container}>
+        <Stack style={styles.listContainer}>
           {/* History list with infinite scroll */}
           <FlashList
             data={history}
             renderItem={({ item }) => (
-              <View style={[styles.entryCard, { backgroundColor: color.DRAWER }]}>
+              <Stack style={[styles.entryCard, { backgroundColor: theme.drawer }]}>
                 {renderHistoryEntry(item)}
-              </View>
+              </Stack>
             )}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.5}
             ListEmptyComponent={<Empty txt={t("noTX") + "..."} />}
             ListFooterComponent={
               isFetching && hasMore ? (
-                <View style={styles.loaderWrap}>
-                  <ActivityIndicator size="small" color={color.TEXT} />
-                </View>
+                <Stack style={styles.loaderWrap}>
+                  <ActivityIndicator size="small" color={theme.text} />
+                </Stack>
               ) : null
             }
             onRefresh={() => void refresh()}
             refreshing={isFetching && history.length === 0}
           />
-        </View>
-      </View>
+        </Stack>
+      </Stack>
     </Screen>
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
@@ -91,12 +89,12 @@ const styles = ScaledSheet.create({
   },
   entryCard: {
     borderRadius: 20,
-    paddingHorizontal: "20@s",
-    paddingVertical: "15@vs",
-    marginBottom: "6@vs",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    marginBottom: 6,
   },
   loaderWrap: {
-    paddingVertical: "20@vs",
+    paddingVertical: 20,
     alignItems: "center",
     justifyContent: "center",
   },

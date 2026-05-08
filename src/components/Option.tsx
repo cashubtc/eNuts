@@ -1,13 +1,7 @@
-import { useThemeContext } from "@src/context/Theme";
-import { globals } from "@styles";
-import { TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
-
+import { AppText, appFontSize, Stack, globals, PressableSurface, useAppThemeTokens } from "@styles";
 import { ChevronRightIcon } from "./Icons";
 import Loading from "./Loading";
 import Separator from "./Separator";
-import Txt from "./Txt";
-
 interface IOptionProps {
   txt: string;
   hint: string;
@@ -17,7 +11,6 @@ interface IOptionProps {
   loading?: boolean;
   secondIcon?: React.ReactNode;
 }
-
 export default function Option({
   icon,
   txt,
@@ -27,40 +20,33 @@ export default function Option({
   loading,
   secondIcon,
 }: IOptionProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
     <>
-      <TouchableOpacity style={globals().wrapRow} onPress={onPress} testID={`send-option-${txt}`}>
-        <View style={styles.txtWrap}>
-          {icon ? <View style={{ minWidth: s(40) }}>{icon}</View> : null}
-          <View>
-            <Txt txt={txt} bold />
-            <Txt styles={[styles.targetHint, { color: color.TEXT_SECONDARY }]} txt={hint} />
-          </View>
-        </View>
+      <PressableSurface style={globals().wrapRow} onPress={onPress} testID={`send-option-${txt}`}>
+        <Stack flexDirection="row" alignItems="center" maxWidth="80%">
+          {icon ? <Stack style={{ minWidth: 40 }}>{icon}</Stack> : null}
+          <Stack>
+            <AppText weight="medium" testID={`${txt}-txt`}>
+              {txt}
+            </AppText>
+            <AppText
+              style={[{ fontSize: appFontSize.micro, color: theme.textSecondary }]}
+              testID={`${hint}-txt`}
+            >
+              {hint}
+            </AppText>
+          </Stack>
+        </Stack>
         {loading ? (
           <Loading />
         ) : secondIcon ? (
-          <View style={styles.iconWrap}>{secondIcon}</View>
+          <Stack marginRight={-5}>{secondIcon}</Stack>
         ) : (
-          <ChevronRightIcon color={color.TEXT} />
+          <ChevronRightIcon color={theme.text} />
         )}
-      </TouchableOpacity>
+      </PressableSurface>
       {hasSeparator && <Separator />}
     </>
   );
 }
-
-const styles = ScaledSheet.create({
-  targetHint: {
-    fontSize: "10@vs",
-  },
-  txtWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    maxWidth: "80%",
-  },
-  iconWrap: {
-    marginRight: "-5@s",
-  },
-});

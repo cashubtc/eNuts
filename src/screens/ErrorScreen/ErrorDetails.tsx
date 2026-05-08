@@ -1,32 +1,37 @@
-import Txt from "@comps/Txt";
 import { repoIssueUrl } from "@consts/urls";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
-import { mainColors } from "@src/styles";
+import { AppText, appFontSize, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { isErr, openUrl } from "@util";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
-
+import { ScrollView, StyleSheet } from "react-native";
 export interface ErrorDetailsProps {
   error: Error;
   componentStack: string | null;
   eventId: string | null;
   resetError(): void;
 }
-
 export function ErrorDetails(props: ErrorDetailsProps) {
   const { t } = useTranslation([NS.error]);
   const { openPromptAutoClose } = usePromptContext();
+  const theme = useAppThemeTokens();
   return (
-    <View style={styles.container}>
-      <Txt txt={t("header")} bold styles={[styles.header]} />
-      <Txt txt={t("msg")} styles={[{ marginBottom: s(20) }]} />
+    <Stack style={styles.container}>
+      <AppText style={[styles.header]} weight="medium" testID={`${t("header")}-txt`}>
+        {t("header")}
+      </AppText>
+      <AppText style={[{ marginBottom: 20 }]} testID={`${t("msg")}-txt`}>
+        {t("msg")}
+      </AppText>
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Txt txt={props.error.message} styles={[{ color: mainColors.ERROR }]} />
-        <Txt txt={props?.componentStack || t("stackNA")} />
+        <AppText style={[{ color: theme.error }]} testID={`${props.error.message}-txt`}>
+          {props.error.message}
+        </AppText>
+        <AppText testID={`${props?.componentStack || t("stackNA")}-txt`}>
+          {props?.componentStack || t("stackNA")}
+        </AppText>
       </ScrollView>
-      <TouchableOpacity
+      <PressableSurface
         onPress={() =>
           void openUrl(repoIssueUrl)?.catch((err: unknown) =>
             openPromptAutoClose({
@@ -36,28 +41,31 @@ export function ErrorDetails(props: ErrorDetailsProps) {
         }
         style={styles.bugReport}
       >
-        <Txt txt={`${t("reportBug")}  🐛`} center bold />
-      </TouchableOpacity>
-    </View>
+        <AppText
+          weight="medium"
+          align="center"
+          testID={`${`${t("reportBug")}  🐛`}-txt`}
+        >{`${t("reportBug")}  🐛`}</AppText>
+      </PressableSurface>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: "20@s",
-    paddingBottom: "20@vs",
-    paddingTop: "80@vs",
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    paddingTop: 80,
   },
   header: {
-    fontSize: "22@vs",
-    marginBottom: "30@vs",
+    fontSize: appFontSize.modalTitle,
+    marginBottom: 30,
     textAlign: "center",
   },
   scroll: {
-    marginBottom: "20@vs",
+    marginBottom: 20,
   },
   bugReport: {
-    padding: "20@vs",
+    padding: 20,
   },
 });

@@ -1,9 +1,6 @@
-import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import { useCurrencyContext } from "@src/context/Currency";
-import { View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
-
+import { StyleSheet } from "react-native";
 type HistoryOverviewProps = {
   amount: number;
   amountPrefix: "+" | "-";
@@ -11,7 +8,6 @@ type HistoryOverviewProps = {
   typeLabel: string;
   description: string;
 };
-
 export function HistoryOverview({
   amount,
   amountPrefix,
@@ -19,38 +15,44 @@ export function HistoryOverview({
   typeLabel,
   description,
 }: HistoryOverviewProps) {
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
-
   const { formatted, symbol } = formatAmount(amount);
   const amountDisplay = `${amountPrefix}${formatted} ${symbol}`;
-
   return (
-    <View style={styles.overview}>
-      <Txt txt={amountDisplay} styles={[styles.amount, { color: amountColor }]} />
-      <Txt txt={typeLabel} styles={[styles.type, { color: color.TEXT_SECONDARY }]} />
-      <Txt txt={description} styles={[styles.description, { color: color.TEXT_SECONDARY }]} />
-    </View>
+    <Stack style={styles.overview}>
+      <AppText style={[styles.amount, { color: amountColor }]} testID={`${amountDisplay}-txt`}>
+        {amountDisplay}
+      </AppText>
+      <AppText style={[styles.type, { color: theme.textSecondary }]} testID={`${typeLabel}-txt`}>
+        {typeLabel}
+      </AppText>
+      <AppText
+        style={[styles.description, { color: theme.textSecondary }]}
+        testID={`${description}-txt`}
+      >
+        {description}
+      </AppText>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   overview: {
     alignItems: "center",
-    paddingVertical: "20@vs",
-    paddingHorizontal: "15@s",
+    paddingVertical: 20,
+    paddingHorizontal: 15,
   },
   amount: {
-    fontSize: "40@vs",
+    fontSize: appFontSize.overviewAmount,
     fontWeight: "600",
   },
   type: {
-    fontSize: "14@vs",
-    marginTop: "5@vs",
+    fontSize: appFontSize.body,
+    marginTop: 5,
   },
   description: {
-    fontSize: "14@vs",
-    marginTop: "5@vs",
+    fontSize: appFontSize.body,
+    marginTop: 5,
     textAlign: "center",
   },
 });

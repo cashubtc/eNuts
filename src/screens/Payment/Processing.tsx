@@ -1,26 +1,21 @@
 import { getDecodedToken } from "@cashu/cashu-ts";
 import Loading from "@comps/Loading";
-import Txt from "@comps/Txt";
 import type { TBeforeRemoveEvent, TProcessingPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useInitialURL } from "@src/context/Linking";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
+import { AppText, appFontSize, globals, useAppThemeTokens, Stack } from "@styles";
 import { decodeLnInvoice, isErr } from "@util";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
-
+import { StyleSheet } from "react-native";
 interface IErrorProps {
   e?: unknown;
   customMsg?: "requestMintErr" | "generalMeltingErr" | "invoiceFromLnurlError";
 }
-
 export default function ProcessingScreen({ navigation, route }: TProcessingPageProps) {
   const { t } = useTranslation([NS.mints]);
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { clearUrl } = useInitialURL();
   const {
     mint,
@@ -38,7 +33,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
     proofs,
     recipient,
   } = route.params;
-
   const processingTxt = useMemo(() => {
     if (isMelt) {
       return payZap ? "payingInvoice" : "meltingToken";
@@ -54,7 +48,6 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
     }
     return "claimingToken";
   }, [isMelt, isSwap, isZap, payZap, isSendEcash, isAutoSwap]);
-
   const handleError = ({ e, customMsg }: IErrorProps) => {
     clearUrl();
     navigation.navigate("processingError", {
@@ -65,35 +58,37 @@ export default function ProcessingScreen({ navigation, route }: TProcessingPageP
           : t("generalMeltingErr", { ns: NS.error }),
     });
   };
-
   // prevent back navigation - https://reactnavigation.org/docs/preventing-going-back/
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   return (
-    <View style={[globals(color).container, styles.container]}>
-      <Txt txt={t(processingTxt, { ns: NS.wallet })} styles={[{ color: color.TEXT }]} />
-      <Loading size={s(35)} />
-    </View>
+    <Stack style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
+      <AppText
+        style={[{ color: theme.text }]}
+        testID={`${t(processingTxt, { ns: NS.wallet })}-txt`}
+      >
+        {t(processingTxt, { ns: NS.wallet })}
+      </AppText>
+      <Loading size={35} />
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingTop: 0,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   descText: {
-    marginTop: "20@vs",
+    marginTop: 20,
     textAlign: "center",
   },
   hint: {
-    fontSize: "12@vs",
-    marginTop: "10@vs",
+    fontSize: appFontSize.caption,
+    marginTop: 10,
   },
 });

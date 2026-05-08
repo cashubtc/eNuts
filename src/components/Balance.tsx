@@ -4,67 +4,74 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { usePaginatedHistory } from "@cashu/coco-react";
 import { useBalanceContext } from "@src/context/Balance";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi } from "@styles";
-import { getColor } from "@styles/colors";
+import { AppText, PressableSurface, Stack, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
-import { Text, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
-
 import { TxtButton } from "./Button";
-import Txt from "./Txt";
 import { LatestHistory } from "@screens/History/components/LatestHistory";
 import { useCurrencyContext } from "@src/context/Currency";
-
 interface IBalanceProps {
   nav?: NativeStackNavigationProp<RootStackParamList, "dashboard", "MyStack">;
 }
-
 export default function Balance({ nav }: IBalanceProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
   const { hidden } = usePrivacyContext();
   const { balances } = useBalanceContext();
   const { history: latestHistory, hasMore } = usePaginatedHistory(3);
   const { formatAmount, formatBalance, setFormatBalance } = useCurrencyContext();
-
+  const theme = useAppThemeTokens();
   const toggleBalanceFormat = () => {
     void setFormatBalance(!formatBalance);
   };
-
   return (
-    <View style={[styles.board, { borderColor: color.BORDER, backgroundColor: hi[highlight] }]}>
-      <TouchableOpacity
-        style={styles.balanceWrap}
+    <Stack
+      borderBottomLeftRadius={50}
+      borderBottomRightRadius={50}
+      paddingHorizontal={20}
+      paddingBottom={50}
+      minHeight="55%"
+      backgroundColor="$accent"
+      borderColor="$borderColor"
+    >
+      <PressableSurface
+        style={{ alignItems: "center", marginHorizontal: -20, marginBottom: 10 }}
         onPress={toggleBalanceFormat}
         disabled={hidden.balance}
       >
-        <Text
+        <AppText
           testID={`balance: ${balances.total.total}`}
-          style={[styles.balAmount, { color: getColor(highlight, color) }]}
+          size="balance"
+          weight="semibold"
+          style={[
+            {
+              alignItems: "center",
+              color: theme.accentContrast,
+            },
+          ]}
         >
           {hidden.balance ? "****" : formatAmount(balances.total.total).formatted}
-        </Text>
-        <View style={styles.balAssetNameWrap}>
+        </AppText>
+        <Stack flexDirection="row" alignItems="center" marginBottom={10} minHeight={20}>
           {!hidden.balance && (
             <>
-              <Text style={[styles.balAssetName, { color: getColor(highlight, color) }]}>
+              <AppText size="body" style={{ marginRight: 5, color: theme.accentContrast }}>
                 {formatAmount(balances.total.total).symbol}
-              </Text>
-              <SwapCurrencyIcon width={s(20)} height={s(20)} color={getColor(highlight, color)} />
+              </AppText>
+              <SwapCurrencyIcon width={20} height={20} color={theme.accentContrast} />
             </>
           )}
-        </View>
-      </TouchableOpacity>
+        </Stack>
+      </PressableSurface>
       {/* No transactions yet */}
       {!latestHistory.length && (
-        <View style={styles.txOverview}>
-          <Txt
-            txt={t("noTX")}
-            styles={[globals(color).pressTxt, { color: getColor(highlight, color) }]}
-          />
-        </View>
+        <Stack flex={1} alignItems="center" justifyContent="center">
+          <AppText
+            style={[{ color: theme.accentContrast, textAlign: "center" }]}
+            testID={`${t("noTX")}-txt`}
+          >
+            {t("noTX")}
+          </AppText>
+        </Stack>
       )}
       {/* latest 3 history entries */}
       <LatestHistory history={latestHistory} />
@@ -72,59 +79,10 @@ export default function Balance({ nav }: IBalanceProps) {
         <TxtButton
           txt={t("seeFullHistory")}
           onPress={() => nav?.navigate("History", { screen: "HistoryMain" })}
-          txtColor={getColor(highlight, color)}
-          style={[{ paddingTop: s(15) }]}
+          txtColor={theme.accentContrast}
+          style={[{ paddingTop: 15 }]}
         />
       )}
-    </View>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
-  board: {
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    paddingHorizontal: "20@s",
-    paddingBottom: "50@s",
-    minHeight: "55%",
-  },
-  balanceWrap: {
-    alignItems: "center",
-    marginHorizontal: "-20@s",
-    marginBottom: "10@s",
-  },
-  balAmount: {
-    alignItems: "center",
-    fontSize: "42@s",
-    fontWeight: "600",
-  },
-  balAssetNameWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: "10@s",
-    minHeight: "20@s",
-  },
-  balAssetName: {
-    fontSize: "14@vs",
-    marginRight: "5@s",
-  },
-  iconWrap: {
-    minWidth: "40@s",
-    paddingTop: "3@s",
-  },
-  entry: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingBottom: "10@s",
-  },
-  wrap: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  txOverview: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

@@ -1,47 +1,43 @@
-import Txt from "@comps/Txt";
-import { useThemeContext } from "@src/context/Theme";
-import { View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
+import { StyleSheet } from "react-native";
 import { ReactNode } from "react";
-
 type DetailsSectionProps = {
   children: ReactNode;
 };
-
 export function DetailsSection({ children }: DetailsSectionProps) {
-  return <View style={styles.details}>{children}</View>;
+  return <Stack style={styles.details}>{children}</Stack>;
 }
-
 type DetailRowProps = {
   label: string;
   value: string;
 };
-
 export function DetailRow({ label, value }: DetailRowProps) {
-  const { color } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   return (
-    <View style={styles.detailRow}>
-      <Txt txt={label} styles={[styles.detailLabel, { color: color.TEXT_SECONDARY }]} />
-      <Txt txt={value} styles={[styles.detailValue, { color: color.TEXT }]} />
-    </View>
+    <Stack style={styles.detailRow}>
+      <AppText style={[styles.detailLabel, { color: theme.textSecondary }]} testID={`${label}-txt`}>
+        {label}
+      </AppText>
+      <AppText style={[styles.detailValue, { color: theme.text }]} testID={`${value}-txt`}>
+        {value}
+      </AppText>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   details: {
-    paddingHorizontal: "15@s",
-    paddingBottom: "15@vs",
+    paddingHorizontal: 15,
+    paddingBottom: 15,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: "10@vs",
+    paddingVertical: 10,
   },
   detailLabel: {
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
   },
   detailValue: {
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
   },
 });

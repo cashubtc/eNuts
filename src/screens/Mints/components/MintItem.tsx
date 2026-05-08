@@ -1,14 +1,11 @@
 import { ChevronRightIcon, ZapIcon } from "@comps/Icons";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
-import { Text, TouchableOpacity, View } from "react-native";
-import { s } from "react-native-size-matters";
-import { globals, highlight as hi } from "@styles";
+
+import { AppText, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import type { NavigationProp } from "@react-navigation/native";
 import type { RootStackParamList } from "@model/nav";
-
 interface MintItemProps {
   mint: {
     mintUrl: string;
@@ -19,11 +16,15 @@ interface MintItemProps {
   isLast: boolean;
   color: any;
   highlight: string;
-  hidden: { balance: boolean };
+  hidden: {
+    balance: boolean;
+  };
   t: (key: string) => string;
-  formatAmount: (sats: number) => { formatted: string; symbol: string };
+  formatAmount: (sats: number) => {
+    formatted: string;
+    symbol: string;
+  };
 }
-
 const styles = {
   mintNameWrap: {
     flexDirection: "column" as const,
@@ -35,7 +36,6 @@ const styles = {
     marginTop: 10,
   },
 };
-
 export default function MintItem({
   mint,
   navigation,
@@ -47,11 +47,11 @@ export default function MintItem({
   formatAmount,
 }: MintItemProps) {
   const { formatted, symbol } = formatAmount(mint.balance);
-
+  const theme = useAppThemeTokens();
   return (
-    <View key={mint.mintUrl}>
-      <TouchableOpacity
-        style={[globals().wrapRow, { paddingBottom: s(15) }]}
+    <Stack key={mint.mintUrl}>
+      <PressableSurface
+        style={[globals().wrapRow, { paddingBottom: 15 }]}
         onPress={() => {
           navigation.navigate("mintmanagement", {
             mint: {
@@ -63,20 +63,22 @@ export default function MintItem({
           });
         }}
       >
-        <View style={styles.mintNameWrap}>
-          <View
+        <Stack style={styles.mintNameWrap}>
+          <Stack
             style={{
               flexDirection: "row",
               alignItems: "center",
             }}
           >
-            <Txt txt={mint.name || formatMintUrl(mint.mintUrl)} bold />
-          </View>
-          <View style={styles.mintBal}>
-            {mint.balance > 0 && <ZapIcon color={hi[highlight as keyof typeof hi]} />}
-            <Text
+            <AppText weight="medium" testID={`${mint.name || formatMintUrl(mint.mintUrl)}-txt`}>
+              {mint.name || formatMintUrl(mint.mintUrl)}
+            </AppText>
+          </Stack>
+          <Stack style={styles.mintBal}>
+            {mint.balance > 0 && <ZapIcon color={theme.accent} />}
+            <AppText
               style={{
-                color: mint.balance > 0 ? color.TEXT : color.TEXT_SECONDARY,
+                color: mint.balance > 0 ? theme.text : theme.textSecondary,
                 marginLeft: mint.balance > 0 ? 5 : 0,
                 marginBottom: 5,
               }}
@@ -86,12 +88,12 @@ export default function MintItem({
                 : mint.balance > 0
                   ? `${formatted} ${symbol}`
                   : t("emptyMint")}
-            </Text>
-          </View>
-        </View>
-        <ChevronRightIcon color={color.TEXT} />
-      </TouchableOpacity>
-      {!isLast && <Separator style={[{ marginBottom: s(15) }]} />}
-    </View>
+            </AppText>
+          </Stack>
+        </Stack>
+        <ChevronRightIcon color={theme.text} />
+      </PressableSurface>
+      {!isLast && <Separator style={[{ marginBottom: 15 }]} />}
+    </Stack>
   );
 }

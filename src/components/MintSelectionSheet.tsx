@@ -1,12 +1,10 @@
-import Txt from "@comps/Txt";
 import Button from "@comps/Button";
 import { CheckmarkIcon } from "@comps/Icons";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
 import { useKnownMints, type KnownMintWithBalance } from "@src/context/KnownMints";
 import { NS } from "@src/i18n";
-import { mainColors } from "@styles";
+import { AppText, appFontSize, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import React, {
   forwardRef,
   useMemo,
@@ -17,19 +15,20 @@ import React, {
   type MutableRefObject,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View, ScrollView } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
+import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 interface MintSelectionSheetProps {
-  selectedMint?: { mintUrl: string };
-  selectedMints?: { mintUrl: string }[];
+  selectedMint?: {
+    mintUrl: string;
+  };
+  selectedMints?: {
+    mintUrl: string;
+  }[];
   onMintSelect: (mint: KnownMintWithBalance) => void;
   onMultipleMintSelect?: (mints: KnownMintWithBalance[]) => void;
   multiSelect?: boolean;
   showZeroBalanceMints?: boolean;
 }
-
 // Memoize individual mint items to prevent re-renders
 const MintItem = memo(
   ({
@@ -39,6 +38,8 @@ const MintItem = memo(
     textColor,
     secondaryTextColor,
     inputBgColor,
+    validColor,
+    whiteColor,
     multiSelect,
     formattedBalance,
   }: {
@@ -48,52 +49,63 @@ const MintItem = memo(
     textColor: string;
     secondaryTextColor: string;
     inputBgColor: string;
+    validColor: string;
+    whiteColor: string;
     multiSelect?: boolean;
     formattedBalance: string;
   }) => {
     const handlePress = useCallback(() => onPress(mint), [onPress, mint]);
-
     return (
-      <TouchableOpacity
+      <PressableSurface
         style={[
           styles.mintItem,
           {
             backgroundColor: inputBgColor,
-            borderColor: isSelected ? mainColors.VALID : "transparent",
+            borderColor: isSelected ? validColor : "transparent",
           },
         ]}
         onPress={handlePress}
       >
-        <View style={styles.mintInfo}>
-          <Txt
-            txt={mint.name || new URL(mint.mintUrl).hostname}
-            styles={[styles.mintAlias, { color: textColor }]}
-          />
-          <Txt txt={mint.mintUrl} styles={[styles.mintUrl, { color: secondaryTextColor }]} />
-        </View>
-        <View style={styles.rightSection}>
-          <Txt txt={formattedBalance} styles={[styles.balance, { color: mainColors.VALID }]} />
+        <Stack style={styles.mintInfo}>
+          <AppText
+            style={[styles.mintAlias, { color: textColor }]}
+            testID={`${mint.name || new URL(mint.mintUrl).hostname}-txt`}
+          >
+            {mint.name || new URL(mint.mintUrl).hostname}
+          </AppText>
+          <AppText
+            style={[styles.mintUrl, { color: secondaryTextColor }]}
+            testID={`${mint.mintUrl}-txt`}
+          >
+            {mint.mintUrl}
+          </AppText>
+        </Stack>
+        <Stack style={styles.rightSection}>
+          <AppText
+            style={[styles.balance, { color: validColor }]}
+            testID={`${formattedBalance}-txt`}
+          >
+            {formattedBalance}
+          </AppText>
           {multiSelect && (
-            <View
+            <Stack
               style={[
                 styles.checkbox,
                 {
-                  backgroundColor: isSelected ? mainColors.VALID : "transparent",
-                  borderColor: isSelected ? mainColors.VALID : textColor,
+                  backgroundColor: isSelected ? validColor : "transparent",
+                  borderColor: isSelected ? validColor : textColor,
                 },
               ]}
             >
-              {isSelected && <CheckmarkIcon color={mainColors.WHITE} width={14} height={14} />}
-            </View>
+              {isSelected && <CheckmarkIcon color={whiteColor} width={14} height={14} />}
+            </Stack>
           )}
-        </View>
-      </TouchableOpacity>
+        </Stack>
+      </PressableSurface>
     );
   },
 );
-
 MintItem.displayName = "MintItem";
-
 const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
   (
     {
@@ -107,37 +119,31 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
     ref,
   ) => {
     const { t } = useTranslation([NS.common]);
-    const { color } = useThemeContext();
+    const theme = useAppThemeTokens();
     const { formatAmount } = useCurrencyContext();
     const { knownMints } = useKnownMints();
     const insets = useSafeAreaInsets();
     const sheetRef = useRef<TrueSheet>(null);
-
     // Internal state for multi-select mode
     const [internalSelectedMints, setInternalSelectedMints] = useState<KnownMintWithBalance[]>([]);
-
     const setSheetRef = useCallback(
       (sheet: TrueSheet | null) => {
         sheetRef.current = sheet;
-
         if (typeof ref === "function") {
           ref(sheet);
           return;
         }
-
         if (ref) {
           (ref as MutableRefObject<TrueSheet | null>).current = sheet;
         }
       },
       [ref],
     );
-
     // Determine which mints to display based on balance visibility setting
     const displayMints = useMemo(
       () => (showZeroBalanceMints ? knownMints : knownMints.filter((mint) => mint.balance > 0)),
       [knownMints, showZeroBalanceMints],
     );
-
     // Initialize internal state when controlled selectedMints change
     React.useEffect(() => {
       if (multiSelect && selectedMints) {
@@ -147,7 +153,6 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
         setInternalSelectedMints(controlledSelectedMints);
       }
     }, [selectedMints, displayMints, multiSelect]);
-
     // Determine selected mints based on mode
     const currentSelectedMints = useMemo(() => {
       if (multiSelect) {
@@ -157,7 +162,6 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
         ? [displayMints.find((m) => m.mintUrl === selectedMint.mintUrl)].filter(Boolean)
         : [];
     }, [multiSelect, internalSelectedMints, selectedMint, displayMints]);
-
     const handleMintPress = useCallback(
       (mint: KnownMintWithBalance) => {
         if (multiSelect) {
@@ -177,14 +181,12 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
       },
       [multiSelect, onMintSelect],
     );
-
     const handleConfirmMultiSelect = useCallback(() => {
       if (onMultipleMintSelect) {
         onMultipleMintSelect(internalSelectedMints);
       }
       void sheetRef.current?.dismiss();
     }, [onMultipleMintSelect, internalSelectedMints]);
-
     const isMintSelected = useCallback(
       (mint: KnownMintWithBalance) => {
         if (multiSelect) {
@@ -194,14 +196,12 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
       },
       [multiSelect, internalSelectedMints, selectedMint],
     );
-
     return (
       <TrueSheet
         ref={setSheetRef}
         detents={[0.5, 1]}
-        backgroundColor={color.BACKGROUND}
-        cornerRadius={s(26)}
-        grabberOptions={{ color: color.TEXT_SECONDARY }}
+        backgroundColor={theme.background}
+        grabberOptions={{ color: theme.textSecondary }}
         scrollable
         scrollableOptions={{
           topScrollEdgeEffect: "hidden",
@@ -209,53 +209,62 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
         }}
       >
         <ScrollView
-          style={{ backgroundColor: color.BACKGROUND }}
+          style={{ backgroundColor: theme.background }}
           contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom }]}
           showsVerticalScrollIndicator={false}
         >
-          <View
+          <Stack
             style={[
               styles.header,
               {
-                backgroundColor: color.BACKGROUND,
-                borderBottomColor: color.BORDER || "rgba(0,0,0,0.1)",
+                backgroundColor: theme.background,
+                borderBottomColor: theme.border,
               },
             ]}
           >
-            <Txt
-              txt={
+            <AppText
+              style={[styles.headerText, { color: theme.text }]}
+              testID={`${
                 multiSelect
                   ? t("selectMints", { ns: NS.common })
                   : t("selectMint", { ns: NS.common })
-              }
-              styles={[styles.headerText, { color: color.TEXT }]}
-            />
-          </View>
+              }-txt`}
+            >
+              {multiSelect
+                ? t("selectMints", { ns: NS.common })
+                : t("selectMint", { ns: NS.common })}
+            </AppText>
+          </Stack>
 
           {displayMints.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Txt
-                txt={t("noMintsWithBalance", {
+            <Stack style={styles.emptyState}>
+              <AppText
+                style={[{ color: theme.textSecondary }]}
+                testID={`${t("noMintsWithBalance", {
+                  ns: NS.common,
+                })}-txt`}
+              >
+                {t("noMintsWithBalance", {
                   ns: NS.common,
                 })}
-                styles={[{ color: color.TEXT_SECONDARY }]}
-              />
-            </View>
+              </AppText>
+            </Stack>
           ) : (
             <>
               {displayMints.map((mint) => {
                 const { formatted, symbol } = formatAmount(mint.balance);
                 const formattedBalance = `${formatted} ${symbol}`;
-
                 return (
                   <MintItem
                     key={mint.mintUrl}
                     mint={mint}
                     isSelected={isMintSelected(mint)}
                     onPress={handleMintPress}
-                    textColor={color.TEXT}
-                    secondaryTextColor={color.TEXT_SECONDARY}
-                    inputBgColor={color.INPUT_BG}
+                    textColor={theme.text}
+                    secondaryTextColor={theme.textSecondary}
+                    inputBgColor={theme.inputBackground}
+                    validColor={theme.valid}
+                    whiteColor={theme.white}
                     multiSelect={multiSelect}
                     formattedBalance={formattedBalance}
                   />
@@ -263,13 +272,13 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
               })}
 
               {multiSelect && (
-                <View style={[styles.buttonContainer, { paddingBottom: insets.bottom + vs(16) }]}>
+                <Stack style={[styles.buttonContainer, { paddingBottom: insets.bottom + 16 }]}>
                   <Button
                     txt={t("confirm", { ns: NS.common })}
                     onPress={handleConfirmMultiSelect}
                     disabled={internalSelectedMints.length === 0}
                   />
-                </View>
+                </Stack>
               )}
             </>
           )}
@@ -278,72 +287,70 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
     );
   },
 );
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   header: {
-    paddingVertical: "10@vs",
+    paddingVertical: 10,
     alignItems: "center",
     borderBottomWidth: 1,
-    marginBottom: "16@vs",
+    marginBottom: 16,
   },
   headerText: {
-    fontSize: "18@s",
+    fontSize: appFontSize.label,
     fontWeight: "600",
   },
   selectedCount: {
-    fontSize: "12@s",
-    marginTop: "4@vs",
+    fontSize: appFontSize.caption,
+    marginTop: 4,
   },
   scrollContent: {
-    paddingHorizontal: "16@s",
-    paddingTop: "30@vs",
+    paddingHorizontal: 16,
+    paddingTop: 30,
   },
   emptyState: {
-    padding: "20@s",
+    padding: 20,
     alignItems: "center",
   },
   mintItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: "16@s",
-    marginBottom: "12@vs",
-    borderRadius: "12@s",
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 12,
     borderWidth: 2,
-    minHeight: "70@vs",
+    minHeight: 70,
   },
   mintInfo: {
     flex: 1,
-    marginRight: "12@s",
+    marginRight: 12,
   },
   rightSection: {
     alignItems: "flex-end",
     justifyContent: "center",
   },
   mintAlias: {
-    fontSize: "16@s",
+    fontSize: appFontSize.bodyLarge,
     fontWeight: "500",
-    marginBottom: "4@vs",
+    marginBottom: 4,
   },
   mintUrl: {
-    fontSize: "12@s",
+    fontSize: appFontSize.caption,
   },
   balance: {
-    fontSize: "14@s",
+    fontSize: appFontSize.body,
     fontWeight: "600",
-    marginBottom: "8@vs",
+    marginBottom: 8,
   },
   checkbox: {
-    width: "22@s",
-    height: "22@s",
-    borderRadius: "4@s",
+    width: 22,
+    height: 22,
+    borderRadius: 4,
     borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
   },
   buttonContainer: {
-    paddingHorizontal: "16@s",
-    paddingTop: "20@vs",
+    paddingHorizontal: 16,
+    paddingTop: 20,
   },
 });
-
 export default MintSelectionSheet;

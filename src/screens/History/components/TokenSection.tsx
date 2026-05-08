@@ -1,65 +1,62 @@
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import Copy from "@comps/Copy";
-import Txt from "@comps/Txt";
 import Separator from "@comps/Separator";
-import { useThemeContext } from "@src/context/Theme";
-import { View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
-
+import { StyleSheet } from "react-native";
 const truncateStr = (str: string, maxLength: number) => {
   if (str.length <= maxLength) return str;
   return str.substring(0, maxLength) + "...";
 };
-
 type TokenSectionProps = {
   label: string;
   value: string;
 };
-
 export function TokenSection({ label, value }: TokenSectionProps) {
-  const { color } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   return (
     <>
       <Separator style={styles.separator} />
-      <View style={styles.tokenSection}>
-        <View style={styles.tokenHeader}>
-          <Txt txt={label} styles={[styles.sectionTitle, { color: color.TEXT }]} />
+      <Stack style={styles.tokenSection}>
+        <Stack style={styles.tokenHeader}>
+          <AppText style={[styles.sectionTitle, { color: theme.text }]} testID={`${label}-txt`}>
+            {label}
+          </AppText>
           <Copy txt={value} />
-        </View>
-        <View style={[styles.tokenContainer, { backgroundColor: color.INPUT_BG }]}>
-          <Txt
-            txt={truncateStr(value, 100)}
-            styles={[styles.tokenValue, { color: color.TEXT_SECONDARY }]}
-          />
-        </View>
-      </View>
+        </Stack>
+        <Stack style={[styles.tokenContainer, { backgroundColor: theme.inputBackground }]}>
+          <AppText
+            style={[styles.tokenValue, { color: theme.textSecondary }]}
+            testID={`${truncateStr(value, 100)}-txt`}
+          >
+            {truncateStr(value, 100)}
+          </AppText>
+        </Stack>
+      </Stack>
     </>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   separator: {
-    marginVertical: "10@vs",
+    marginVertical: 10,
   },
   tokenSection: {
-    paddingHorizontal: "15@s",
-    paddingBottom: "15@vs",
+    paddingHorizontal: 15,
+    paddingBottom: 15,
   },
   tokenHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "10@vs",
+    marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: "16@vs",
+    fontSize: appFontSize.bodyLarge,
     fontWeight: "600",
   },
   tokenValue: {
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
   },
   tokenContainer: {
-    padding: "10@s",
-    borderRadius: "8@s",
+    padding: 10,
+    borderRadius: 8,
   },
 });

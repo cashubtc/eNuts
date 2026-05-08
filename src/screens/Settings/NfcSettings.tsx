@@ -1,38 +1,37 @@
 import RadioBtn from "@comps/RadioBtn";
 import Screen from "@comps/Screen";
 import Separator from "@comps/Separator";
-import Txt from "@comps/Txt";
 import { useNfcAmountLimitsContext, NO_LIMIT } from "@src/context/NfcAmountLimits";
 import type { TNfcSettingsPageProps } from "@src/nav/navTypes";
 import { useCurrencyContext } from "@src/context/Currency";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi } from "@styles";
+import {
+  AppText,
+  appFontSize,
+  globals,
+  InputFrame,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View, Text, TextInput } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
-
+import { ScrollView, type TextInput, StyleSheet } from "react-native";
 export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
   const { t } = useTranslation([NS.common]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatBalance, formatSatsAsCurrency, rates, selectedCurrency } = useCurrencyContext();
-
   const { defaultMaxAmount, isLoading, setDefaultMaxAmount } = useNfcAmountLimitsContext();
-
   const inputRef = useRef<TextInput>(null);
   const [inputValue, setInputValue] = useState("");
   const hasNoLimit = defaultMaxAmount === NO_LIMIT;
-
   const currencySymbol = rates?.[selectedCurrency]?.symbol || selectedCurrency;
-
   // Sync local state with context when it loads
   useEffect(() => {
     if (!isLoading && defaultMaxAmount !== NO_LIMIT) {
       setInputValue(defaultMaxAmount.toString());
     }
   }, [isLoading, defaultMaxAmount]);
-
   // Get fiat value for display
   const getFiatValue = useCallback(
     (amount: number) => {
@@ -41,12 +40,10 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
     },
     [formatBalance, rates, formatSatsAsCurrency],
   );
-
   // Handle selecting "No Limit"
   const handleSelectNoLimit = useCallback(async () => {
     await setDefaultMaxAmount(NO_LIMIT);
   }, [setDefaultMaxAmount]);
-
   // Handle selecting "Custom Limit"
   const handleSelectCustomLimit = useCallback(async () => {
     const amount = parseInt(inputValue, 10);
@@ -54,18 +51,16 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
       await setDefaultMaxAmount(amount);
     } else {
       setInputValue("50000");
-      await setDefaultMaxAmount(50_000);
+      await setDefaultMaxAmount(50000);
     }
     // Focus the input when selecting custom limit
     setTimeout(() => inputRef.current?.focus(), 100);
   }, [inputValue, setDefaultMaxAmount]);
-
   // Handle input change
   const handleInputChange = useCallback(
     (text: string) => {
       const cleaned = text.replace(/[^0-9]/g, "");
       setInputValue(cleaned);
-
       if (!hasNoLimit) {
         const amount = parseInt(cleaned, 10);
         if (!isNaN(amount) && amount > 0) {
@@ -75,13 +70,10 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
     },
     [hasNoLimit, setDefaultMaxAmount],
   );
-
   const currentAmount = parseInt(inputValue, 10);
   const fiatValue = !isNaN(currentAmount) ? getFiatValue(currentAmount) : null;
-
   // Format display value with thousand separators
   const displayValue = !isNaN(currentAmount) ? currentAmount.toLocaleString() : "50,000";
-
   if (isLoading) {
     return (
       <Screen
@@ -92,13 +84,12 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
         withBackBtn
         handlePress={() => navigation.goBack()}
       >
-        <View style={styles.loadingContainer}>
-          <Txt txt="Loading..." />
-        </View>
+        <Stack style={styles.loadingContainer}>
+          <AppText testID={"Loading...-txt"}>Loading...</AppText>
+        </Stack>
       </Screen>
     );
   }
-
   return (
     <Screen
       screenName={t("nfcSettings", {
@@ -109,92 +100,102 @@ export default function NfcSettings({ navigation }: TNfcSettingsPageProps) {
       handlePress={() => navigation.goBack()}
     >
       <ScrollView alwaysBounceVertical={false}>
-        <Txt
-          txt={t("paymentLimit", { defaultValue: "Payment Limit" })}
-          bold
-          styles={[styles.subHeader]}
-        />
+        <AppText
+          style={[styles.subHeader]}
+          weight="medium"
+          testID={`${t("paymentLimit", { defaultValue: "Payment Limit" })}-txt`}
+        >
+          {t("paymentLimit", { defaultValue: "Payment Limit" })}
+        </AppText>
 
-        <View style={globals(color).wrapContainer}>
+        <Stack style={[globals().wrapContainer, { backgroundColor: theme.drawer }]}>
           {/* No Limit option */}
-          <TouchableOpacity
-            style={[globals().wrapRow, { paddingBottom: s(15) }]}
+          <PressableSurface
+            style={[globals().wrapRow, { paddingBottom: 15 }]}
             onPress={handleSelectNoLimit}
           >
-            <Txt txt={t("noLimit", { defaultValue: "No Limit" })} />
+            <AppText testID={`${t("noLimit", { defaultValue: "No Limit" })}-txt`}>
+              {t("noLimit", { defaultValue: "No Limit" })}
+            </AppText>
             <RadioBtn selected={hasNoLimit} />
-          </TouchableOpacity>
+          </PressableSurface>
 
-          <Separator style={[{ marginBottom: s(15) }]} />
+          <Separator style={[{ marginBottom: 15 }]} />
 
           {/* Custom Limit option */}
-          <TouchableOpacity style={[globals().wrapRow]} onPress={handleSelectCustomLimit}>
-            <View style={styles.customLimitRow}>
-              <Txt txt={t("customLimit", { defaultValue: "Custom" })} />
+          <PressableSurface style={[globals().wrapRow]} onPress={handleSelectCustomLimit}>
+            <Stack style={styles.customLimitRow}>
+              <AppText testID={`${t("customLimit", { defaultValue: "Custom" })}-txt`}>
+                {t("customLimit", { defaultValue: "Custom" })}
+              </AppText>
               {!hasNoLimit && (
-                <View style={styles.valueContainer}>
-                  <TextInput
+                <Stack style={styles.valueContainer}>
+                  <InputFrame
                     ref={inputRef}
                     value={inputValue}
                     onChangeText={handleInputChange}
                     keyboardType="number-pad"
-                    style={[styles.inlineInput, { color: hi[highlight] }]}
-                    selectionColor={hi[highlight]}
+                    style={[styles.inlineInput, { color: theme.accent }]}
+                    selectionColor={theme.accent}
+                    cursorColor={theme.accent}
                     returnKeyType="done"
                   />
-                  <Text style={[styles.satsLabel, { color: color.TEXT_SECONDARY }]}>sats</Text>
-                </View>
+                  <AppText style={[styles.satsLabel, { color: theme.textSecondary }]}>sats</AppText>
+                </Stack>
               )}
-            </View>
+            </Stack>
             <RadioBtn selected={!hasNoLimit} />
-          </TouchableOpacity>
+          </PressableSurface>
 
           {/* Fiat value hint */}
           {!hasNoLimit && fiatValue && (
-            <Text style={[styles.fiatHint, { color: color.TEXT_SECONDARY }]}>
+            <AppText style={[styles.fiatHint, { color: theme.textSecondary }]}>
               ≈ {currencySymbol}
               {fiatValue}
-            </Text>
+            </AppText>
           )}
-        </View>
+        </Stack>
       </ScrollView>
     </Screen>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   subHeader: {
-    paddingHorizontal: "20@s",
-    marginBottom: "10@vs",
+    paddingHorizontal: 20,
+    marginBottom: 10,
   },
   customLimitRow: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: "10@s",
+    gap: 10,
   },
   valueContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   inlineInput: {
-    fontSize: "15@vs",
+    fontSize: appFontSize.bodyMedium,
     fontWeight: "500",
-    padding: 0,
-    minWidth: "60@s",
+    backgroundColor: "transparent",
+    borderRadius: 0,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    minWidth: 60,
+    width: 72,
   },
   satsLabel: {
-    fontSize: "13@vs",
-    marginLeft: "4@s",
+    fontSize: appFontSize.bodySmall,
+    marginLeft: 4,
   },
   fiatHint: {
-    fontSize: "12@vs",
-    marginTop: "8@vs",
-    marginLeft: "70@s",
+    fontSize: appFontSize.caption,
+    marginTop: 8,
+    marginLeft: 70,
   },
 });

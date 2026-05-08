@@ -1,78 +1,71 @@
 import Button from "@comps/Button";
-import { highlight as hi } from "@styles";
+import { AppText, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { CheckmarkIcon } from "@comps/Icons";
 import { ScreenWithKeyboard } from "@comps/Screen";
-import Txt from "@comps/Txt";
 import { isIOS } from "@consts";
 import type { RecoverMintsScreenProps } from "@src/nav/navTypes";
 import { useKnownMints } from "@src/context/KnownMints";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals } from "@styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
-import { vs } from "react-native-size-matters";
-
+import { ScrollView, StyleSheet } from "react-native";
 export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScreenProps) {
   const { t } = useTranslation([NS.common]);
-  const { highlight, color } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   const { knownMints } = useKnownMints();
   const [selectedMints, setSelectedMints] = useState<string[]>(
     knownMints.map((mint) => mint.mintUrl),
   );
-
   const toggleMintSelection = (mintUrl: string) => {
     setSelectedMints((prev) =>
       prev.includes(mintUrl) ? prev.filter((m) => m !== mintUrl) : [...prev, mintUrl],
     );
   };
-
   return (
     <ScreenWithKeyboard
       screenName={t("walletRecovery")}
       withBackBtn
       handlePress={() => navigation.goBack()}
     >
-      <View style={{ flex: 1, gap: s(10) }}>
-        <Txt txt={t("selectRestoreMint")} styles={[styles.hint]} bold />
+      <Stack style={{ flex: 1, gap: 10 }}>
+        <AppText style={[styles.hint]} weight="medium" testID={`${t("selectRestoreMint")}-txt`}>
+          {t("selectRestoreMint")}
+        </AppText>
         <ScrollView alwaysBounceVertical={false} style={{ flex: 1 }}>
           {knownMints.length > 0 ? (
-            <View style={{ flex: 1, gap: s(4) }}>
+            <Stack style={{ flex: 1, gap: 4 }}>
               {knownMints.map((mint) => {
                 const isSelected = selectedMints.includes(mint.mintUrl);
                 return (
-                  <TouchableOpacity
+                  <PressableSurface
                     key={mint.mintUrl}
                     style={[
                       styles.mintItem,
                       isSelected && {
-                        backgroundColor: hi[highlight] + "20",
-                        borderColor: hi[highlight],
+                        backgroundColor: theme.accent + "20",
+                        borderColor: theme.accent,
                       },
                     ]}
                     onPress={() => toggleMintSelection(mint.mintUrl)}
                     activeOpacity={0.7}
                   >
-                    <View style={styles.mintContent}>
-                      <Txt txt={mint.mintUrl} styles={[{ flex: 1 }]} />
-                      {isSelected && (
-                        <CheckmarkIcon width={vs(14)} height={vs(14)} color={hi[highlight]} />
-                      )}
-                    </View>
-                  </TouchableOpacity>
+                    <Stack style={styles.mintContent}>
+                      <AppText style={[{ flex: 1 }]} testID={`${mint.mintUrl}-txt`}>
+                        {mint.mintUrl}
+                      </AppText>
+                      {isSelected && <CheckmarkIcon width={14} height={14} color={theme.accent} />}
+                    </Stack>
+                  </PressableSurface>
                 );
               })}
-            </View>
+            </Stack>
           ) : (
-            <View style={styles.emptyContainer}>
-              <Txt txt={t("noMint")} />
-            </View>
+            <Stack style={styles.emptyContainer}>
+              <AppText testID={`${t("noMint")}-txt`}>{t("noMint")}</AppText>
+            </Stack>
           )}
         </ScrollView>
-        <View style={styles.btnWrap}>
+        <Stack style={styles.btnWrap}>
           <Button
             disabled={selectedMints.length === 0}
             txt={t("confirm")}
@@ -80,36 +73,35 @@ export default function SelectRecoveryMintScreen({ navigation }: RecoverMintsScr
               navigation.navigate("Recover");
             }}
           />
-        </View>
-      </View>
+        </Stack>
+      </Stack>
     </ScreenWithKeyboard>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   hint: {
-    paddingHorizontal: "20@s",
-    marginBottom: "20@vs",
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   mintItem: {
-    padding: "16@s",
-    borderRadius: "12@s",
+    padding: 16,
+    borderRadius: 12,
     borderWidth: 2,
     borderColor: "transparent",
-    marginBottom: "8@s",
+    marginBottom: 8,
   },
   mintContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
+    gap: 12,
   },
   emptyContainer: {
-    padding: "20@s",
+    padding: 20,
     alignItems: "center",
   },
   btnWrap: {
-    marginHorizontal: "20@s",
-    marginTop: "20@s",
-    marginBottom: isIOS ? "0@s" : "20@s",
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: isIOS ? 0 : 20,
   },
 });

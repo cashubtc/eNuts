@@ -6,11 +6,16 @@ import CameraPermission from "@src/screens/QRScan/components/CameraPermission";
 import useScanResult from "@src/screens/QRScan/hooks/useScanResult";
 import { useCashuClaimFlow } from "@comps/hooks/useCashuClaimFlow";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import type { QRScannerScreenProps } from "@src/nav/navTypes";
-import { highlight as hi, mainColors } from "@styles";
-import { getColor } from "@styles/colors";
+import {
+  AppText,
+  appLineHeight,
+  appFontSize,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import type { PaymentCandidateKind, PaymentStringCandidate } from "@util/paymentStringParser";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -19,8 +24,7 @@ import type { ScanningResult } from "expo-camera";
 import type { ComponentProps } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ScaledSheet, s } from "react-native-size-matters";
+import { Linking, StyleSheet } from "react-native";
 
 const QR_CANDIDATE_PRIORITY: PaymentCandidateKind[] = [
   "cashuToken",
@@ -40,7 +44,7 @@ function selectQrCandidate(candidates: PaymentStringCandidate[]) {
 function QrScannerScreen({ navigation }: QRScannerScreenProps) {
   const [permission, requestPermission] = useCameraPermissions();
   const { t } = useTranslation([NS.common, NS.wallet]);
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { openPromptAutoClose } = usePromptContext();
   const [isScanningEnabled, setIsScanningEnabled] = useState(true);
   const [isClaimingScannedToken, setIsClaimingScannedToken] = useState(false);
@@ -154,7 +158,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
   };
 
   const nfcHeaderAction = (
-    <TouchableOpacity
+    <PressableSurface
       accessibilityLabel={t("nfcPayment", {
         ns: NS.wallet,
         defaultValue: "NFC Payment",
@@ -162,11 +166,11 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
       accessibilityRole="button"
       activeOpacity={0.7}
       onPress={handleNfcPress}
-      style={[styles.headerAction, { borderColor: `${hi[highlight]}55` }]}
+      style={[styles.headerAction, { borderColor: `${theme.accent}55` }]}
       testID="nfc-btn-top-nav"
     >
-      <NfcIcon width={s(20)} color={hi[highlight]} />
-    </TouchableOpacity>
+      <NfcIcon width={20} color={theme.accent} />
+    </PressableSurface>
   );
 
   const nfcPaymentModal = (
@@ -194,7 +198,7 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
 
   if (!permission) {
     // Camera permissions are still loading.
-    return <View />;
+    return <Stack />;
   }
 
   if (!permission.granted) {
@@ -228,14 +232,14 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
       withPadding={false}
       withBottomInset={false}
     >
-      <View style={[styles.cameraContainer, { backgroundColor: color.BACKGROUND }]}>
+      <Stack style={[styles.cameraContainer, { backgroundColor: theme.background }]}>
         <CameraView
           style={styles.camera}
           onBarcodeScanned={isScanningEnabled ? handleCodeScanned : undefined}
         />
-        <View style={styles.scrim} />
-        <View style={styles.scanSurface}>
-          <View style={styles.headerCopy}>
+        <Stack style={[styles.scrim, { backgroundColor: theme.cameraScrim }]} />
+        <Stack style={styles.scanSurface}>
+          <Stack style={styles.headerCopy}>
             <StatusPill
               label={
                 isClaimingToken
@@ -246,7 +250,8 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                       ? t("qrScanReady")
                       : t("qrScanPaused")
               }
-              color={hi[highlight]}
+              color={theme.accent}
+              textColor={theme.white}
               iconName={
                 isClaimingToken
                   ? "hourglass-top"
@@ -255,62 +260,91 @@ function QrScannerScreen({ navigation }: QRScannerScreenProps) {
                     : "center-focus-strong"
               }
             />
-            <Text style={styles.title}>{t("qrScanHint")}</Text>
-            <Text style={styles.subtitle}>{t("qrScanFormats")}</Text>
-          </View>
+            <AppText style={[styles.title, { color: theme.white }]}>{t("qrScanHint")}</AppText>
+            <AppText style={[styles.subtitle, { color: theme.cameraMutedText }]}>
+              {t("qrScanFormats")}
+            </AppText>
+          </Stack>
 
-          <View style={[styles.focusFrame, { borderColor: `${hi[highlight]}66` }]}>
-            <FrameCorner position="topLeft" color={hi[highlight]} />
-            <FrameCorner position="topRight" color={hi[highlight]} />
-            <FrameCorner position="bottomLeft" color={hi[highlight]} />
-            <FrameCorner position="bottomRight" color={hi[highlight]} />
-          </View>
+          <Stack
+            style={[
+              styles.focusFrame,
+              { backgroundColor: theme.cameraFrame, borderColor: `${theme.accent}66` },
+            ]}
+          >
+            <FrameCorner position="topLeft" color={theme.accent} />
+            <FrameCorner position="topRight" color={theme.accent} />
+            <FrameCorner position="bottomLeft" color={theme.accent} />
+            <FrameCorner position="bottomRight" color={theme.accent} />
+          </Stack>
 
-          <View style={styles.bottomDock}>
+          <Stack style={styles.bottomDock}>
             {isClaimingToken && (
-              <View style={styles.progressWrap}>
-                <View style={styles.loadingState}>
-                  <Loading size={s(24)} color={hi[highlight]} />
-                  <Text style={styles.progressTitle}>{t("claiming", { ns: NS.wallet })}</Text>
-                </View>
-              </View>
+              <Stack
+                style={[
+                  styles.progressWrap,
+                  {
+                    backgroundColor: theme.cameraPanel,
+                    borderColor: theme.cameraPanelBorder,
+                  },
+                ]}
+              >
+                <Stack style={styles.loadingState}>
+                  <Loading size={24} color={theme.accent} />
+                  <AppText style={[styles.progressTitle, { color: theme.white }]}>
+                    {t("claiming", { ns: NS.wallet })}
+                  </AppText>
+                </Stack>
+              </Stack>
             )}
             {!isClaimingToken && urActive && (
-              <View style={styles.progressWrap}>
-                <View style={styles.progressHeader}>
-                  <Text style={styles.progressTitle}>{t("receivingAnimatedQr")}</Text>
-                  <Text style={[styles.progressCount, { color: hi[highlight] }]}>
+              <Stack
+                style={[
+                  styles.progressWrap,
+                  {
+                    backgroundColor: theme.cameraPanel,
+                    borderColor: theme.cameraPanelBorder,
+                  },
+                ]}
+              >
+                <Stack style={styles.progressHeader}>
+                  <AppText style={[styles.progressTitle, { color: theme.white }]}>
+                    {t("receivingAnimatedQr")}
+                  </AppText>
+                  <AppText style={[styles.progressCount, { color: theme.accent }]}>
                     {receivedCount}/{expectedCount || "-"}
-                  </Text>
-                </View>
-                <View style={styles.progressTrack}>
-                  <View
+                  </AppText>
+                </Stack>
+                <Stack style={[styles.progressTrack, { backgroundColor: theme.cameraTrack }]}>
+                  <Stack
                     style={[
                       styles.progressFill,
-                      { width: `${Math.min(estimated, 1) * 100}%`, backgroundColor: hi[highlight] },
+                      { width: `${Math.min(estimated, 1) * 100}%`, backgroundColor: theme.accent },
                     ]}
                   />
-                </View>
-                {urError && <Text style={styles.errorText}>{urError}</Text>}
-              </View>
+                </Stack>
+                {urError && (
+                  <AppText style={[styles.errorText, { color: theme.error }]}>{urError}</AppText>
+                )}
+              </Stack>
             )}
             {!isClaimingToken && !isScanningEnabled && (
-              <TouchableOpacity
+              <PressableSurface
                 accessibilityRole="button"
-                style={[styles.rescanButton, { backgroundColor: hi[highlight] }]}
+                style={[styles.rescanButton, { backgroundColor: theme.accent }]}
                 onPress={handleRescan}
                 activeOpacity={0.75}
               >
-                <MaterialIcons name="refresh" size={s(18)} color={getColor(highlight, color)} />
-                <Text style={[styles.rescanButtonText, { color: getColor(highlight, color) }]}>
+                <MaterialIcons name="refresh" size={18} color={theme.accentContrast} />
+                <AppText style={[styles.rescanButtonText, { color: theme.accentContrast }]}>
                   {t("scanAgain")}
-                </Text>
-              </TouchableOpacity>
+                </AppText>
+              </PressableSurface>
             )}
-          </View>
-        </View>
+          </Stack>
+        </Stack>
         {nfcPaymentModal}
-      </View>
+      </Stack>
     </Screen>
   );
 }
@@ -320,15 +354,20 @@ export default QrScannerScreen;
 interface IStatusPillProps {
   label: string;
   color: string;
+  textColor?: string;
   iconName: ComponentProps<typeof MaterialIcons>["name"];
 }
 
-function StatusPill({ label, color, iconName }: IStatusPillProps) {
+function StatusPill({ label, color, textColor = color, iconName }: IStatusPillProps) {
+  const theme = useAppThemeTokens();
+
   return (
-    <View style={[styles.statusPill, { borderColor: `${color}55` }]}>
-      <MaterialIcons name={iconName} size={s(16)} color={color} />
-      <Text style={styles.statusText}>{label}</Text>
-    </View>
+    <Stack
+      style={[styles.statusPill, { backgroundColor: theme.cameraPill, borderColor: `${color}55` }]}
+    >
+      <MaterialIcons name={iconName} size={16} color={color} />
+      <AppText style={[styles.statusText, { color: textColor }]}>{label}</AppText>
+    </Stack>
   );
 }
 
@@ -348,14 +387,14 @@ function FrameCorner({ position, color }: IFrameCornerProps) {
   }[position];
 
   return (
-    <View style={[styles.corner, positionStyle]}>
-      <View style={[styles.cornerHorizontal, { backgroundColor: color }]} />
-      <View style={[styles.cornerVertical, { backgroundColor: color }]} />
-    </View>
+    <Stack style={[styles.corner, positionStyle]}>
+      <Stack style={[styles.cornerHorizontal, { backgroundColor: color }]} />
+      <Stack style={[styles.cornerVertical, { backgroundColor: color }]} />
+    </Stack>
   );
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   camera: {
     ...StyleSheet.absoluteFillObject,
   },
@@ -364,24 +403,23 @@ const styles = ScaledSheet.create({
   },
   scrim: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.42)",
   },
   scanSurface: {
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: "24@s",
-    paddingTop: "26@vs",
-    paddingBottom: "26@vs",
+    paddingHorizontal: 24,
+    paddingTop: 26,
+    paddingBottom: 26,
   },
   headerCopy: {
     width: "100%",
     alignItems: "center",
   },
   headerAction: {
-    width: "40@s",
-    height: "40@s",
-    borderRadius: "20@s",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -389,141 +427,130 @@ const styles = ScaledSheet.create({
   statusPill: {
     flexDirection: "row",
     alignItems: "center",
-    columnGap: "8@s",
+    columnGap: 8,
     borderWidth: 1,
-    borderRadius: "999@s",
-    paddingHorizontal: "12@s",
-    paddingVertical: "8@vs",
-    backgroundColor: "rgba(0, 0, 0, 0.36)",
-    marginBottom: "18@vs",
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 18,
   },
   statusText: {
-    color: mainColors.WHITE,
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
     fontWeight: "600",
   },
   title: {
-    color: mainColors.WHITE,
-    fontSize: "24@vs",
-    lineHeight: "30@vs",
+    fontSize: appFontSize.heading,
+    lineHeight: appLineHeight.heading,
     fontWeight: "600",
     textAlign: "center",
   },
   subtitle: {
-    color: "rgba(250, 250, 250, 0.72)",
-    fontSize: "13@vs",
-    lineHeight: "19@vs",
+    fontSize: appFontSize.bodySmall,
+    lineHeight: appLineHeight.bodySmall,
     textAlign: "center",
-    marginTop: "8@vs",
+    marginTop: 8,
   },
   focusFrame: {
-    width: "268@s",
-    height: "268@s",
-    borderRadius: "34@s",
+    width: 268,
+    height: 268,
+    borderRadius: 34,
     borderWidth: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.04)",
     overflow: "hidden",
   },
   corner: {
     position: "absolute",
-    width: "56@s",
-    height: "56@s",
+    width: 56,
+    height: 56,
   },
   cornerTopLeft: {
-    top: "12@s",
-    left: "12@s",
+    top: 12,
+    left: 12,
   },
   cornerTopRight: {
-    top: "12@s",
-    right: "12@s",
+    top: 12,
+    right: 12,
     transform: [{ rotate: "90deg" }],
   },
   cornerBottomLeft: {
-    bottom: "12@s",
-    left: "12@s",
+    bottom: 12,
+    left: 12,
     transform: [{ rotate: "-90deg" }],
   },
   cornerBottomRight: {
-    right: "12@s",
-    bottom: "12@s",
+    right: 12,
+    bottom: 12,
     transform: [{ rotate: "180deg" }],
   },
   cornerHorizontal: {
-    width: "44@s",
-    height: "4@s",
-    borderRadius: "999@s",
+    width: 44,
+    height: 4,
+    borderRadius: 999,
   },
   cornerVertical: {
-    width: "4@s",
-    height: "44@s",
-    borderRadius: "999@s",
-    marginTop: "-4@s",
+    width: 4,
+    height: 44,
+    borderRadius: 999,
+    marginTop: -4,
   },
   bottomDock: {
     width: "100%",
-    minHeight: "92@vs",
+    minHeight: 92,
     justifyContent: "flex-end",
   },
   progressWrap: {
     width: "100%",
-    padding: "18@s",
-    borderRadius: "24@s",
-    backgroundColor: "rgba(0, 0, 0, 0.58)",
+    padding: 18,
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
-    marginBottom: "12@vs",
+    marginBottom: 12,
   },
   progressHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "12@vs",
+    marginBottom: 12,
   },
   loadingState: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    columnGap: "12@s",
-    minHeight: "40@vs",
+    columnGap: 12,
+    minHeight: 40,
   },
   progressTitle: {
-    color: mainColors.WHITE,
-    fontSize: "14@vs",
+    fontSize: appFontSize.body,
     fontWeight: "600",
   },
   progressCount: {
-    fontSize: "13@vs",
+    fontSize: appFontSize.bodySmall,
     fontWeight: "700",
   },
   progressTrack: {
     width: "100%",
-    height: "5@vs",
-    borderRadius: "999@s",
-    backgroundColor: "rgba(255, 255, 255, 0.16)",
+    height: 5,
+    borderRadius: 999,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    borderRadius: "999@s",
+    borderRadius: 999,
   },
   rescanButton: {
     width: "100%",
-    minHeight: "54@vs",
-    borderRadius: "999@s",
+    minHeight: 54,
+    borderRadius: 999,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    columnGap: "8@s",
+    columnGap: 8,
   },
   rescanButtonText: {
-    color: mainColors.WHITE,
-    fontSize: "15@vs",
+    fontSize: appFontSize.bodyMedium,
     fontWeight: "600",
   },
   errorText: {
-    color: mainColors.ERROR,
-    marginTop: "10@vs",
+    marginTop: 10,
     textAlign: "center",
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
   },
 });

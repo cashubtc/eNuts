@@ -2,58 +2,51 @@ import Button, { IconBtn, TxtButton } from "@comps/Button";
 import Card from "@comps/Card";
 import Empty from "@comps/Empty";
 import { ChevronRightIcon, PlusIcon } from "@comps/Icons";
-import Txt from "@comps/Txt";
 import Screen from "@comps/Screen";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { globals, highlight as hi } from "@styles";
-import { getColor } from "@styles/colors";
+import { AppText, appFontSize, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
-
 export default function MintHomeScreen({ navigation }: any) {
   const { t } = useTranslation([NS.common]);
   const { knownMints } = useKnownMints();
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { formatAmount } = useCurrencyContext();
   const insets = useSafeAreaInsets();
   const { hidden } = usePrivacyContext();
-
   return (
     <Screen
       screenName="Mints"
       withBackBtn
       handlePress={() => navigation.goBack()}
       rightAction={
-        <TouchableOpacity
+        <PressableSurface
           onPress={() => {
             navigation.navigate("Mint", { screen: "MintAdd" });
           }}
           style={{ flexDirection: "row", alignItems: "center" }}
         >
-          <PlusIcon width={s(30)} height={s(30)} color={hi[highlight]} />
-        </TouchableOpacity>
+          <PlusIcon width={30} height={30} color={theme.accent} />
+        </PressableSurface>
       }
     >
-      <View style={styles.container}>
+      <Stack style={styles.container}>
         {knownMints.length > 0 ? (
-          <View style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
+          <Stack style={[styles.topSection, { marginBottom: 75 + insets.bottom }]}>
             {/* Mints list */}
             <ScrollView alwaysBounceVertical={false}>
               {knownMints.map((m, i) => {
                 const displayName = m.mintInfo.name || formatMintUrl(m.mintUrl);
                 const { formatted, symbol } = formatAmount(m.balance);
                 const displayBalance = hidden.balance ? "****" : `${formatted} ${symbol}`;
-
                 return (
-                  <TouchableOpacity
+                  <PressableSurface
                     key={m.mintUrl}
                     onPress={() => {
                       navigation.navigate("MintSettings", {
@@ -62,60 +55,67 @@ export default function MintHomeScreen({ navigation }: any) {
                     }}
                     activeOpacity={0.7}
                     style={{
-                      marginBottom: i < knownMints.length - 1 ? s(12) : 0,
+                      marginBottom: i < knownMints.length - 1 ? 12 : 0,
                     }}
                   >
                     <Card variant="base" style={styles.cardContent}>
-                      <View style={styles.mintContainer}>
+                      <Stack style={styles.mintContainer}>
                         {/* Left side: Mint icon (if available) */}
                         {m.mintInfo.icon_url && (
-                          <View style={styles.iconContainer}>
+                          <Stack style={styles.iconContainer}>
                             <Image
                               source={{ uri: m.mintInfo.icon_url }}
                               style={styles.icon}
                               contentFit="cover"
                               transition={200}
                             />
-                          </View>
+                          </Stack>
                         )}
 
                         {/* Center: Mint name and balance */}
-                        <View style={styles.infoContainer}>
-                          <Txt txt={displayName} bold styles={[{ color: color.TEXT }]} />
-                          <Txt
-                            txt={displayBalance}
-                            styles={[
+                        <Stack style={styles.infoContainer}>
+                          <AppText
+                            style={[{ color: theme.text }]}
+                            weight="medium"
+                            testID={`${displayName}-txt`}
+                          >
+                            {displayName}
+                          </AppText>
+                          <AppText
+                            style={[
                               {
-                                color: color.TEXT_SECONDARY,
-                                fontSize: s(12),
-                                marginTop: vs(2),
+                                color: theme.textSecondary,
+                                fontSize: appFontSize.caption,
+                                marginTop: 2,
                               },
                             ]}
-                          />
-                        </View>
+                            testID={`${displayBalance}-txt`}
+                          >
+                            {displayBalance}
+                          </AppText>
+                        </Stack>
 
                         {/* Right side: Chevron icon */}
-                        <View style={styles.chevronContainer}>
-                          <ChevronRightIcon color={color.TEXT} />
-                        </View>
-                      </View>
+                        <Stack style={styles.chevronContainer}>
+                          <ChevronRightIcon color={theme.text} />
+                        </Stack>
+                      </Stack>
                     </Card>
-                  </TouchableOpacity>
+                  </PressableSurface>
                 );
               })}
             </ScrollView>
-          </View>
+          </Stack>
         ) : (
-          <View style={styles.noMintContainer}>
+          <Stack style={styles.noMintContainer}>
             <Empty txt={t("noMint")} />
-          </View>
+          </Stack>
         )}
-      </View>
+      </Stack>
     </Screen>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "flex-start",
@@ -123,14 +123,14 @@ const styles = ScaledSheet.create({
   noMintContainer: {
     flex: 1,
     width: "100%",
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   noMintBottomSection: {
     position: "absolute",
-    bottom: "20@s",
-    right: "20@s",
-    left: "20@s",
-    rowGap: "20@s",
+    bottom: 20,
+    right: 20,
+    left: 20,
+    rowGap: 20,
   },
   topSection: {
     width: "100%",
@@ -141,25 +141,25 @@ const styles = ScaledSheet.create({
     bottom: 20,
   },
   cardContent: {
-    padding: "12@s",
+    padding: 12,
   },
   mintContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   iconContainer: {
-    marginRight: "12@s",
+    marginRight: 12,
   },
   icon: {
-    width: "40@s",
-    height: "40@s",
-    borderRadius: "20@s",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   infoContainer: {
     flex: 1,
     justifyContent: "center",
   },
   chevronContainer: {
-    marginLeft: "8@s",
+    marginLeft: 8,
   },
 });

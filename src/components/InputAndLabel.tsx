@@ -1,11 +1,7 @@
-import { useThemeContext } from "@src/context/Theme";
+import { InputFrame, Stack, useAppThemeTokens } from "@styles";
 import { useTranslation } from "react-i18next";
-import { type KeyboardTypeOptions, View } from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
-
+import type { KeyboardTypeOptions } from "react-native";
 import { TxtButton } from "./Button";
-import TxtInput from "./TxtInput";
-
 interface IInputAndLabelProps {
   keyboardType?: KeyboardTypeOptions;
   placeholder: string;
@@ -15,7 +11,6 @@ interface IInputAndLabelProps {
   handleLabel: () => void;
   isEmptyInput?: boolean;
 }
-
 export default function InputAndLabel({
   keyboardType,
   placeholder,
@@ -26,36 +21,35 @@ export default function InputAndLabel({
   isEmptyInput,
 }: IInputAndLabelProps) {
   const { t } = useTranslation();
-  const { color } = useThemeContext();
+  const theme = useAppThemeTokens();
   return (
-    <View style={styles.wrap}>
-      <TxtInput
-        keyboardType={keyboardType}
+    <Stack position="relative" width="100%">
+      <InputFrame
+        keyboardType={keyboardType || "default"}
         placeholder={placeholder}
         value={value}
         onChangeText={setInput}
         onSubmitEditing={handleInput}
+        placeholderTextColor={theme.placeholder as never}
+        selectionColor={theme.accent}
+        cursorColor={theme.accent}
+        testID={`${placeholder}-input`}
       />
       {/* Paste / Clear Input */}
       <TxtButton
         txt={t(isEmptyInput ? "paste" : "clear")}
         onPress={handleLabel}
-        style={[styles.pasteInputTxtWrap, { backgroundColor: color.INPUT_BG }]}
+        style={[
+          {
+            position: "absolute",
+            right: 10,
+            top: 10,
+            paddingTop: 10,
+            marginHorizontal: 10,
+            backgroundColor: theme.inputBackground,
+          },
+        ]}
       />
-    </View>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
-  wrap: {
-    position: "relative",
-    width: "100%",
-  },
-  pasteInputTxtWrap: {
-    position: "absolute",
-    right: "10@s",
-    top: "10@s",
-    paddingTop: "10@s",
-    marginHorizontal: "10@s",
-  },
-});

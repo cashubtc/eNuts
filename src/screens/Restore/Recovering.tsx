@@ -2,26 +2,21 @@ import Button from "@comps/Button";
 import Loading from "@comps/Loading";
 import Logo from "@comps/Logo";
 import Progress from "@comps/Progress";
-import Txt from "@comps/Txt";
 import type { IRecoveringPageProps, TBeforeRemoveEvent } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useManager } from "@src/context/Manager";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import { appLogger } from "@src/logger";
 import { vib } from "@src/util";
-import { globals } from "@styles";
+import { AppText, appFontSize, globals, useAppThemeTokens, Stack } from "@styles";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
-
 // TODO
 // show internet connection status
 // show different quotes messages during the process
-
 export default function RecoveringScreen({ navigation, route }: IRecoveringPageProps) {
   const manager = useManager();
   const { t } = useTranslation([NS.common]);
@@ -30,7 +25,6 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
   const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { bip39seed, mintUrls } = route.params;
-
   useEffect(() => {
     const restore = async () => {
       try {
@@ -51,125 +45,130 @@ export default function RecoveringScreen({ navigation, route }: IRecoveringPageP
     };
     restore();
   }, []);
-
-  const { color } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   useEffect(() => {
     const backHandler = (e: TBeforeRemoveEvent) => preventBack(e, navigation.dispatch);
     navigation.addListener("beforeRemove", backHandler);
     return () => navigation.removeListener("beforeRemove", backHandler);
   }, [navigation]);
-
   const progress = useMemo(() => {
     if (!mintUrls?.length) return 0;
     return Math.min(1, current / mintUrls.length);
   }, [current, mintUrls]);
-
   if (isDone) {
     return (
-      <View style={[styles.containerSuccess, { backgroundColor: color.BACKGROUND }]}>
-        <View pointerEvents="none" style={styles.confetti}>
+      <Stack style={[styles.containerSuccess, { backgroundColor: theme.background }]}>
+        <Stack pointerEvents="none" style={styles.confetti}>
           <LottieView
             source={require("../../../assets/lottie/confetti.json")}
             autoPlay
             loop={false}
             style={{ width: "100%", height: "100%" }}
           />
-        </View>
-        <Logo size={s(230)} style={styles.img} success />
-        <View style={{ width: "100%" }}>
-          <Text style={[styles.successTxt, { color: color.TEXT }]}>Wallet restored!</Text>
-          <View style={styles.successAnim}>
+        </Stack>
+        <Logo size={230} style={styles.img} success />
+        <Stack style={{ width: "100%" }}>
+          <AppText style={[styles.successTxt, { color: theme.text }]}>Wallet restored!</AppText>
+          <Stack style={styles.successAnim}>
             <LottieView
               source={require("../../../assets/lottie/success.json")}
               autoPlay
               loop={false}
               style={styles.lottie}
             />
-          </View>
-        </View>
-        <View style={[styles.btnWrap, { marginBottom: insets.bottom || 20 }]}>
+          </Stack>
+        </Stack>
+        <Stack style={[styles.btnWrap, { marginBottom: insets.bottom || 20 }]}>
           <Button txt={t("backToDashboard")} onPress={() => navigation.navigate("dashboard")} />
-        </View>
-      </View>
+        </Stack>
+      </Stack>
     );
   }
-
   return (
-    <View style={[globals(color).container, styles.container]}>
-      <Loading size={s(35)} />
-      <Txt styles={[styles.descText]} txt={t("recoveringWallet")} />
-      <View style={{ width: "100%", paddingHorizontal: s(20) }}>
+    <Stack style={[globals().container, { backgroundColor: theme.background }, styles.container]}>
+      <Loading size={35} />
+      <AppText style={[styles.descText]} testID={`${t("recoveringWallet")}-txt`}>
+        {t("recoveringWallet")}
+      </AppText>
+      <Stack style={{ width: "100%", paddingHorizontal: 20 }}>
         <Progress progress={progress} />
-        <Txt
-          center
-          styles={[styles.hint, { color: color.TEXT_SECONDARY }]}
-          txt={`${t("restored")} ${current}/${mintUrls.length}`}
-        />
-        <Txt
-          center
-          styles={[styles.hint, { color: color.TEXT_SECONDARY, marginTop: vs(6) }]}
-          txt={t("dontClose")}
-        />
-      </View>
-      {error && <Txt center styles={[styles.errorTxt]} txt={error} />}
-    </View>
+        <AppText
+          style={[styles.hint, { color: theme.textSecondary }]}
+          align="center"
+          testID={`${`${t("restored")} ${current}/${mintUrls.length}`}-txt`}
+        >{`${t("restored")} ${current}/${mintUrls.length}`}</AppText>
+        <AppText
+          style={[styles.hint, { color: theme.textSecondary, marginTop: 6 }]}
+          align="center"
+          testID={`${t("dontClose")}-txt`}
+        >
+          {t("dontClose")}
+        </AppText>
+      </Stack>
+      {error && (
+        <AppText
+          style={[styles.errorTxt, { color: theme.error }]}
+          align="center"
+          testID={`${error}-txt`}
+        >
+          {error}
+        </AppText>
+      )}
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingTop: 0,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   descText: {
-    marginTop: "20@s",
-    marginBottom: "30@s",
+    marginTop: 20,
+    marginBottom: 30,
     textAlign: "center",
-    fontSize: "20@s",
+    fontSize: appFontSize.title,
   },
   hint: {
-    fontSize: "12@s",
-    marginTop: "10@s",
+    fontSize: appFontSize.caption,
+    marginTop: 10,
   },
   errorTxt: {
-    fontSize: "12@s",
-    marginTop: "14@s",
-    color: "#ff5a5f",
+    fontSize: appFontSize.caption,
+    marginTop: 14,
   },
   // Success styles
   containerSuccess: {
     flex: 1,
-    padding: "20@s",
+    padding: 20,
   },
   img: {
-    marginTop: "90@s",
-    height: "90@s",
+    marginTop: 90,
+    height: 90,
     opacity: 0.8,
   },
   successTxt: {
-    fontSize: "28@vs",
+    fontSize: appFontSize.display,
     fontWeight: "800",
     textAlign: "center",
-    marginTop: "30@vs",
+    marginTop: 30,
   },
   successAnim: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "20@vs",
+    marginTop: 20,
   },
   lottie: {
-    width: "100@s",
-    height: "100@s",
+    width: 100,
+    height: 100,
   },
   btnWrap: {
     position: "absolute",
     bottom: 0,
     right: 0,
     left: 0,
-    paddingHorizontal: "20@s",
+    paddingHorizontal: 20,
   },
   confetti: {
     position: "absolute",

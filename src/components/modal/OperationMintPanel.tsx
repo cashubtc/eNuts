@@ -1,52 +1,43 @@
 import { MintBoardIcon } from "@comps/Icons";
-import Txt from "@comps/Txt";
 import { Image } from "expo-image";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
-import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi, mainColors } from "@styles";
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
 import { useMemo } from "react";
-import { View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
-
+import { StyleSheet } from "react-native";
 type TOperationMintPanelRowTone = "default" | "success" | "danger";
-
 export interface IOperationMintPanelRow {
   label: string;
   value: string;
   tone?: TOperationMintPanelRowTone;
 }
-
 interface IOperationMintPanelProps {
   mint: KnownMintWithBalance;
   rows: IOperationMintPanelRow[];
 }
-
 export default function OperationMintPanel({ mint, rows }: IOperationMintPanelProps) {
-  const { color, highlight } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   const mintLabel = useMemo(() => {
     return mint.mintInfo.name || mint.name || formatMintUrl(mint.mintUrl);
   }, [mint]);
-
   return (
-    <View
+    <Stack
       style={[
         styles.panel,
         {
-          backgroundColor: color.DRAWER,
-          borderColor: color.BORDER,
+          backgroundColor: theme.drawer,
+          borderColor: theme.border,
         },
       ]}
     >
-      <View style={styles.headerRow}>
+      <Stack style={styles.headerRow}>
         {mint.mintInfo.icon_url ? (
-          <View
+          <Stack
             style={[
               styles.iconWrap,
               {
-                backgroundColor: color.INPUT_BG,
-                borderColor: color.BORDER,
+                backgroundColor: theme.inputBackground,
+                borderColor: theme.border,
               },
             ]}
           >
@@ -56,84 +47,95 @@ export default function OperationMintPanel({ mint, rows }: IOperationMintPanelPr
               contentFit="cover"
               transition={200}
             />
-          </View>
+          </Stack>
         ) : (
-          <View
+          <Stack
             style={[
               styles.iconWrap,
               {
-                backgroundColor: color.INPUT_BG,
-                borderColor: color.BORDER,
+                backgroundColor: theme.inputBackground,
+                borderColor: theme.border,
               },
             ]}
           >
-            <MintBoardIcon width={s(18)} height={s(18)} color={hi[highlight]} />
-          </View>
+            <MintBoardIcon width={18} height={18} color={theme.accent} />
+          </Stack>
         )}
 
-        <View style={styles.mintInfo}>
-          <Txt txt={mintLabel} bold styles={[styles.mintName]} />
-          <Txt
-            txt={formatMintUrl(mint.mintUrl)}
-            styles={[styles.mintUrl, { color: color.TEXT_SECONDARY }]}
-          />
-        </View>
-      </View>
+        <Stack style={styles.mintInfo}>
+          <AppText style={[styles.mintName]} weight="medium" testID={`${mintLabel}-txt`}>
+            {mintLabel}
+          </AppText>
+          <AppText
+            style={[styles.mintUrl, { color: theme.textSecondary }]}
+            testID={`${formatMintUrl(mint.mintUrl)}-txt`}
+          >
+            {formatMintUrl(mint.mintUrl)}
+          </AppText>
+        </Stack>
+      </Stack>
 
       {rows.length ? (
-        <View style={[styles.metaWrap, { borderTopColor: color.BORDER }]}>
+        <Stack style={[styles.metaWrap, { borderTopColor: theme.border }]}>
           {rows.map((row, index) => (
-            <View
+            <Stack
               key={`${row.label}-${index}`}
               style={index < rows.length - 1 ? styles.metaRowSpacing : undefined}
             >
               <MetaRow row={row} />
-            </View>
+            </Stack>
           ))}
-        </View>
+        </Stack>
       ) : null}
-    </View>
+    </Stack>
   );
 }
-
 function MetaRow({ row }: { row: IOperationMintPanelRow }) {
-  const { color } = useThemeContext();
-
+  const theme = useAppThemeTokens();
   const valueColor = useMemo(() => {
     switch (row.tone) {
       case "success":
-        return mainColors.VALID;
+        return theme.valid;
       case "danger":
-        return mainColors.ERROR;
+        return theme.error;
       default:
-        return color.TEXT;
+        return theme.text;
     }
-  }, [color.TEXT, row.tone]);
-
+  }, [theme.text, row.tone]);
   return (
-    <View style={styles.metaRow}>
-      <Txt txt={row.label} styles={[styles.balanceLabel, { color: color.TEXT_SECONDARY }]} />
-      <Txt txt={row.value} bold styles={[styles.balanceValue, { color: valueColor }]} />
-    </View>
+    <Stack style={styles.metaRow}>
+      <AppText
+        style={[styles.balanceLabel, { color: theme.textSecondary }]}
+        testID={`${row.label}-txt`}
+      >
+        {row.label}
+      </AppText>
+      <AppText
+        style={[styles.balanceValue, { color: valueColor }]}
+        weight="medium"
+        testID={`${row.value}-txt`}
+      >
+        {row.value}
+      </AppText>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   panel: {
     borderRadius: 18,
     borderWidth: 1,
-    paddingHorizontal: "14@s",
-    paddingVertical: "12@vs",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
+    gap: 12,
   },
   iconWrap: {
-    width: "40@s",
-    height: "40@s",
-    borderRadius: "20@s",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -147,31 +149,31 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   mintName: {
-    fontSize: "14@vs",
-    marginBottom: "2@vs",
+    fontSize: appFontSize.body,
+    marginBottom: 2,
   },
   mintUrl: {
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
   },
   metaWrap: {
-    marginTop: "12@vs",
-    paddingTop: "12@vs",
+    marginTop: 12,
+    paddingTop: 12,
     borderTopWidth: 1,
   },
   metaRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "12@s",
+    gap: 12,
   },
   metaRowSpacing: {
-    marginBottom: "8@vs",
+    marginBottom: 8,
   },
   balanceLabel: {
     flex: 1,
-    fontSize: "12@vs",
+    fontSize: appFontSize.caption,
   },
   balanceValue: {
-    fontSize: "13@vs",
+    fontSize: appFontSize.bodySmall,
   },
 });

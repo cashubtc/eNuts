@@ -1,5 +1,6 @@
 import { useThemeContext } from "@src/context/Theme";
-import { Image, type ImageStyle, type StyleProp, StyleSheet, View } from "react-native";
+import { Stack } from "@styles";
+import { Image, type ImageStyle, type StyleProp, StyleSheet } from "react-native";
 
 interface ILogoProps {
   size: number;
@@ -17,9 +18,9 @@ export default function Logo({ size, success, style }: ILogoProps) {
       ? require("@assets/icon_transparent_dark.png")
       : require("@assets/icon_transparent.png");
   return (
-    <View style={styles.imgWrap}>
+    <Stack style={styles.imgWrap}>
       <Image style={[styles.img, { height: size }, style]} source={src} />
-    </View>
+    </Stack>
   );
 }
 

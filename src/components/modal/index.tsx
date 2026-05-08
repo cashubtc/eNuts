@@ -1,14 +1,6 @@
 import { isIOS } from "@consts";
-import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi, HighlightKey, mainColors, Theme } from "@styles";
-import {
-  KeyboardAvoidingView,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { PressableSurface, Stack, useAppThemeTokens } from "@styles";
+import { KeyboardAvoidingView, Modal, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface IMyModalProps {
@@ -32,58 +24,66 @@ export default function MyModal({
   // onBackdropPress,
   children,
 }: IMyModalProps) {
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const insets = useSafeAreaInsets();
 
   const getCorrectStyle = () => {
     if (type === "bottom") {
-      return styles(color, highlight).bottomView;
+      return styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).bottomView;
     }
     if (type === "question" || type === "success" || type === "error" || type === "invoiceAmount") {
-      return styles(color, highlight).centeredView;
+      return styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).centeredView;
     }
   };
 
   const getViewStyle = () => {
     if (type === "bottom") {
       return {
-        ...styles(color, highlight).common,
-        ...styles(color, highlight).modalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).modalView,
         paddingBottom: 20 + insets.bottom,
       };
     }
     if (type === "question") {
       return {
-        ...styles(color, highlight).common,
-        ...styles(color, highlight).centeredModalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop)
+          .centeredModalView,
       };
     }
     if (type === "success") {
       return {
-        ...styles(color, highlight).common,
-        ...styles(color, highlight).successModalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop)
+          .successModalView,
       };
     }
     if (type === "error") {
       return {
-        ...styles(color, highlight).common,
-        ...styles(color, highlight).promptModalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).promptModalView,
       };
     }
     if (type === "invoiceAmount") {
       let styling = {
-        ...styles(color, highlight).common,
-        ...styles(color, highlight).invoiceAmountModalView,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).common,
+        ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop)
+          .invoiceAmountModalView,
       };
       if (hasNoPadding) {
-        styling = { ...styling, ...styles(color, highlight).contactList };
+        styling = {
+          ...styling,
+          ...styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).contactList,
+        };
       }
       return styling;
     }
   };
 
   return visible ? (
-    <View style={styles(color, highlight).modalParent}>
+    <Stack
+      style={styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).modalParent}
+    >
       <Modal
         visible
         transparent
@@ -91,25 +91,27 @@ export default function MyModal({
         onRequestClose={close}
         testID="testCoinSelectionModal"
       >
-        <TouchableOpacity
-          style={styles(color, highlight).modalContainer}
+        <PressableSurface
+          style={
+            styles(theme.background, theme.accent, theme.black, theme.modalBackdrop).modalContainer
+          }
           activeOpacity={1}
           onPressOut={close}
         >
           <KeyboardAvoidingView style={getCorrectStyle()} behavior={isIOS ? "height" : undefined}>
             <TouchableWithoutFeedback>
-              <View style={[getViewStyle(), success ? { backgroundColor: hi[highlight] } : {}]}>
+              <Stack style={[getViewStyle(), success ? { backgroundColor: theme.accent } : {}]}>
                 {children}
-              </View>
+              </Stack>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
-        </TouchableOpacity>
+        </PressableSurface>
       </Modal>
-    </View>
+    </Stack>
   ) : null;
 }
 
-const styles = (pref: Theme, h: HighlightKey) =>
+const styles = (background: string, accent: string, shadowColor: string, modalBackdrop: string) =>
   StyleSheet.create({
     modalParent: {
       position: "absolute",
@@ -117,15 +119,15 @@ const styles = (pref: Theme, h: HighlightKey) =>
       right: 0,
       bottom: 0,
       left: 0,
-      backgroundColor: "rgba(0, 0, 0, .5)",
+      backgroundColor: modalBackdrop,
     },
     modalContainer: {
       flex: 1,
     },
     common: {
-      backgroundColor: pref.BACKGROUND,
+      backgroundColor: background,
       alignItems: "center",
-      shadowColor: mainColors.BLACK,
+      shadowColor,
       shadowOffset: {
         width: 0,
         height: 2,
@@ -156,7 +158,7 @@ const styles = (pref: Theme, h: HighlightKey) =>
       width: "90%",
       borderRadius: 20,
       borderWidth: 3,
-      borderColor: hi[h],
+      borderColor: accent,
       paddingTop: 50,
       paddingBottom: 50,
       paddingRight: 20,
@@ -171,7 +173,7 @@ const styles = (pref: Theme, h: HighlightKey) =>
       width: "90%",
       borderRadius: 20,
       borderWidth: 3,
-      borderColor: hi[h],
+      borderColor: accent,
       padding: 20,
     },
     invoiceAmountModalView: {

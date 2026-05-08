@@ -1,48 +1,34 @@
 import { usePrivacyContext } from "@src/context/Privacy";
-import { useThemeContext } from "@src/context/Theme";
 import { useCurrencyContext } from "@src/context/Currency";
-import { highlight as hi } from "@styles";
-import { View } from "react-native";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
-
+import { AppText, appFontSize, Stack, useAppThemeTokens } from "@styles";
 import { MintBoardIcon } from "./Icons";
-import Txt from "./Txt";
-
 interface IMintBalanceProps {
   balance: number;
   txtColor: string;
   disabled?: boolean;
 }
-
 export default function MintBalance({ balance, txtColor, disabled }: IMintBalanceProps) {
-  const { color, highlight } = useThemeContext();
   const { hidden } = usePrivacyContext();
   const { formatAmount } = useCurrencyContext();
-
+  const theme = useAppThemeTokens();
   const { formatted, symbol } = formatAmount(balance);
-
   return (
-    <View style={[styles.wrap, { borderColor: disabled ? color.TEXT_SECONDARY : hi[highlight] }]}>
-      <MintBoardIcon
-        width={s(16)}
-        height={s(16)}
-        color={disabled ? color.TEXT_SECONDARY : hi[highlight]}
-      />
-      <Txt
-        txt={hidden.balance ? "****" : `${formatted} ${symbol}`}
-        styles={[{ fontSize: vs(10), color: txtColor, marginLeft: s(5) }]}
-      />
-    </View>
+    <Stack
+      flexDirection="row"
+      alignItems="center"
+      borderWidth={1}
+      paddingVertical={4}
+      paddingHorizontal={6}
+      borderRadius={20}
+      style={{ borderColor: disabled ? theme.textSecondary : theme.accent }}
+    >
+      <MintBoardIcon width={16} height={16} color={disabled ? theme.textSecondary : theme.accent} />
+      <AppText
+        style={[{ fontSize: appFontSize.micro, color: txtColor, marginLeft: 5 }]}
+        testID={`${hidden.balance ? "****" : `${formatted} ${symbol}`}-txt`}
+      >
+        {hidden.balance ? "****" : `${formatted} ${symbol}`}
+      </AppText>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
-  wrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    paddingVertical: "4@vs",
-    paddingHorizontal: "6@s",
-    borderRadius: 20,
-  },
-});

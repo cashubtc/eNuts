@@ -1,9 +1,8 @@
+import { AppText, InputFrame, useAppThemeTokens, Stack } from "@styles";
 import Button, { TxtButton } from "@comps/Button";
 import useLoading from "@comps/hooks/Loading";
 import Loading from "@comps/Loading";
 import Screen from "@comps/Screen";
-import Txt from "@comps/Txt";
-import TxtInput from "@comps/TxtInput";
 import type { RecoverScreenProps } from "@src/nav/navTypes";
 import { NS } from "@src/i18n";
 import { useKnownMints } from "@src/context/KnownMints";
@@ -11,16 +10,14 @@ import { seedService } from "@src/services/SeedService";
 import { getStrFromClipboard } from "@util";
 import { createRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { type TextInput, View } from "react-native";
-import { s, ScaledSheet } from "react-native-size-matters";
-
+import { type TextInput, StyleSheet } from "react-native";
 export default function RecoverScreen({ navigation }: RecoverScreenProps) {
   const { t } = useTranslation([NS.common]);
+  const theme = useAppThemeTokens();
   const [input, setInput] = useState("");
   const { loading } = useLoading();
   const inputRef = createRef<TextInput>();
   const { knownMints } = useKnownMints();
-
   const handlePaste = async () => {
     const clipboard = await getStrFromClipboard();
     if (!clipboard) {
@@ -28,19 +25,16 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
     }
     setInput(clipboard);
   };
-
   const handleBtnPress = async () => {
     if (loading || !input.length) {
       return;
     }
     const seed = seedService.convertMnemonicToSeed(input);
-
     navigation.navigate("Recovering", {
       bip39seed: seed,
       mintUrls: knownMints.map((mint) => mint.mintUrl),
     });
   };
-
   // auto-focus keyboard
   useEffect(() => {
     const t = setTimeout(() => {
@@ -49,7 +43,6 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
     }, 200);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <Screen
       screenName={t("walletRecovery")}
@@ -57,44 +50,49 @@ export default function RecoverScreen({ navigation }: RecoverScreenProps) {
       handlePress={() => navigation.goBack()}
       withKeyboard={true}
     >
-      <View style={styles.container}>
-        <View style={{ paddingHorizontal: s(8) }}>
-          <Txt txt={t("recoveryHint")} styles={[styles.hint]} bold />
-          <View style={styles.labelRow}>
-            <Txt txt={t("12WordMnemonic")} styles={[styles.label]} />
+      <Stack style={styles.container}>
+        <Stack style={{ paddingHorizontal: 8 }}>
+          <AppText style={[styles.hint]} weight="medium" testID={`${t("recoveryHint")}-txt`}>
+            {t("recoveryHint")}
+          </AppText>
+          <Stack style={styles.labelRow}>
+            <AppText style={[styles.label]} testID={`${t("12WordMnemonic")}-txt`}>
+              {t("12WordMnemonic")}
+            </AppText>
             <TxtButton
               txt={t("paste")}
               onPress={() => void handlePaste()}
               style={[styles.pasteBtn]}
             />
-          </View>
-          <TxtInput
+          </Stack>
+          <InputFrame
             autoCapitalize="none"
             multiline
-            innerRef={inputRef}
+            ref={inputRef}
             placeholder=""
+            placeholderTextColor={theme.placeholder as never}
+            selectionColor={theme.accent}
+            cursorColor={theme.accent}
             onChangeText={(text) => setInput(text)}
             onSubmitEditing={() => void handleBtnPress()}
-            autoFocus
-            ms={200}
             style={[styles.multilineInput]}
+            testID="-input"
             value={input}
           />
-        </View>
-        <View style={styles.actionWrap}>
+        </Stack>
+        <Stack style={styles.actionWrap}>
           <Button
             disabled={!input.length}
             txt={t("confirm")}
             onPress={() => void handleBtnPress()}
             icon={loading ? <Loading size={20} /> : undefined}
           />
-        </View>
-      </View>
+        </Stack>
+      </Stack>
     </Screen>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
@@ -105,13 +103,13 @@ const styles = ScaledSheet.create({
     width: "100%",
   },
   hint: {
-    marginBottom: "20@vs",
+    marginBottom: 20,
   },
   labelRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "8@vs",
+    marginBottom: 8,
   },
   label: {
     flex: 1,
@@ -121,11 +119,11 @@ const styles = ScaledSheet.create({
     paddingBottom: 0,
   },
   actionWrap: {
-    marginBottom: "20@s",
+    marginBottom: 20,
   },
   multilineInput: {
-    minHeight: "80@s",
+    minHeight: 80,
     borderRadius: 25,
-    padding: "10@s",
+    padding: 10,
   },
 });

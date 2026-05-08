@@ -1,0 +1,78 @@
+export const appFontSize = {
+  micro: 11,
+  fine: 12,
+  caption: 13,
+  bodySmall: 14,
+  bodyMedium: 15,
+  body: 16,
+  bodyLarge: 17,
+  nav: 18,
+  label: 18,
+  title: 22,
+  modalTitle: 24,
+  heading: 26,
+  display: 30,
+  amountCompact: 34,
+  amount: 36,
+  amountLarge: 38,
+  overviewAmount: 42,
+  balance: 46,
+  amountInput: 52,
+  heroAmount: 72,
+} as const;
+
+export const appLineHeight = {
+  micro: 14,
+  fine: 16,
+  caption: 18,
+  bodySmall: 20,
+  bodyMedium: 21,
+  body: 22,
+  bodyLarge: 24,
+  nav: 24,
+  label: 24,
+  title: 28,
+  modalTitle: 30,
+  heading: 32,
+  display: 36,
+  amountCompact: 40,
+  amount: 42,
+  amountLarge: 44,
+  overviewAmount: 48,
+  balance: 54,
+  amountInput: 60,
+  heroAmount: 82,
+} satisfies Record<keyof typeof appFontSize, number>;
+
+export const appLetterSpacing = {
+  micro: 0,
+  fine: 0,
+  caption: 0,
+  bodySmall: 0,
+  body: 0,
+  bodyMedium: 0,
+  bodyLarge: 0,
+  nav: 0,
+  label: 0,
+  title: 0,
+  modalTitle: 0,
+  heading: 0,
+  display: 0,
+  amountCompact: 0,
+  amount: 0,
+  amountLarge: 0,
+  overviewAmount: 0,
+  balance: 0,
+  amountInput: 0,
+  heroAmount: 0,
+} satisfies Record<keyof typeof appFontSize, number>;
+
+export const appFontWeight = {
+  regular: "400",
+  medium: "500",
+  semibold: "600",
+  bold: "700",
+} as const;
+
+export type TAppFontSize = keyof typeof appFontSize;
+export type TAppFontWeight = keyof typeof appFontWeight;

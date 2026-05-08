@@ -3,30 +3,25 @@ import AmountInput, { useShakeAnimation } from "@comps/AmountInput";
 import useLoading from "@comps/hooks/Loading";
 import Loading from "@comps/Loading";
 import MintHeaderSelector from "@comps/MintHeaderSelector";
-import Txt from "@comps/Txt";
-import TxtInput from "@comps/TxtInput";
 import { BoltIcon, ChevronRightIcon, CopyIcon } from "@comps/Icons";
 import type { MeltOperation } from "@cashu/coco-core";
 import { usePromptContext } from "@src/context/Prompt";
-import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
-import { highlight as hi, mainColors } from "@styles";
+import {
+  AppText,
+  appLineHeight,
+  appFontSize,
+  InputFrame,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import { formatMintUrl, getStrFromClipboard, isErr, vib } from "@util";
 import { isLightningAddress, isLnurl } from "@util/lnurl";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  Easing,
-  Keyboard,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { ScaledSheet } from "react-native-size-matters";
+import { Animated, Easing, Keyboard, ScrollView, StyleSheet, type TextInput } from "react-native";
 import MeltConfirmationModal, { type MeltConfirmationModalRef } from "@modal/MeltConfirmationModal";
-
 import { useKnownMints, KnownMintWithBalance } from "@src/context/KnownMints";
 import type { TBeforeRemoveEvent } from "@model/nav";
 import { MeltInputProps } from "@src/nav/navTypes";
@@ -37,10 +32,13 @@ import {
   type LnAddressMetadata,
 } from "@src/util/lud16";
 import { useMeltOperation } from "@cashu/coco-react";
-
-type TFinalizedMeltOperation = Extract<MeltOperation, { state: "finalized" }>;
+type TFinalizedMeltOperation = Extract<
+  MeltOperation,
+  {
+    state: "finalized";
+  }
+>;
 type TMeltInputStep = "request" | "amount";
-
 export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const { invoice } = route.params || {};
   const { knownMints } = useKnownMints();
@@ -52,9 +50,7 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     prepare,
     reset,
   } = useMeltOperation();
-
   const { loading, startLoading, stopLoading } = useLoading();
-
   const [selectedMint, setSelectedMint] = useState<KnownMintWithBalance | null>(
     knownMints.length > 0 ? knownMints[0] : null,
   );
@@ -65,7 +61,6 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const [inputStep, setInputStep] = useState<TMeltInputStep>("request");
   const [lnAddress, setLnAddress] = useState("");
   const [lnAddressMetadata, setLnAddressMetadata] = useState<LnAddressMetadata | null>(null);
-
   // Use refs for better performance
   const inputRef = useRef<TextInput>(null);
   const amountInputRef = useRef<TextInput>(null);
@@ -73,10 +68,9 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const hasNavigatedRef = useRef(false);
   const hasCancelledRef = useRef(false);
   const lnAddressAnim = useRef(new Animated.Value(0)).current;
-
   const { t } = useTranslation([NS.common]);
   const { openPromptAutoClose } = usePromptContext();
-  const { color, highlight } = useThemeContext();
+  const theme = useAppThemeTokens();
   const { shake } = useShakeAnimation();
   const [input, setInput] = useState(invoice || "");
   const trimmedInput = input.trim();
@@ -84,27 +78,22 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const displayOperation = currentOperation || preparedOperation;
   const canCancelPreparedOperation = displayOperation?.state === "prepared";
   const isBusy = loading || operationLoading;
-
   const amountValue = useMemo(() => {
     const parsed = parseInt(amountInput || "0", 10);
     return Number.isNaN(parsed) ? 0 : parsed;
   }, [amountInput]);
-
   const isAmountInvalid = useMemo(() => {
     if (!isAmountStep) {
       return false;
     }
-
     const amountInMsats = amountValue * 1000;
     const isAmountTooLow = amountValue < 1;
     const isBelowMin =
       !!lnAddressMetadata?.minSendable && lnAddressMetadata.minSendable > amountInMsats;
     const isAboveMax =
       !!lnAddressMetadata?.maxSendable && lnAddressMetadata.maxSendable < amountInMsats;
-
     return isAmountTooLow || isBelowMin || isAboveMax;
   }, [amountValue, isAmountStep, lnAddressMetadata]);
-
   const minSendable = lnAddressMetadata?.minSendable;
   const maxSendable = lnAddressMetadata?.maxSendable;
   const shouldShowAmountLimits = isAmountStep && (!!minSendable || !!maxSendable);
@@ -112,37 +101,31 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
   const isContinueDisabled =
     isBusy ||
     (isAmountStep ? !lnAddressMetadata || !amountValue || isAmountInvalid : !trimmedInput.length);
-
   // Check if we have mints available
   const noMintsAvailable = useMemo(() => {
     return !selectedMint || knownMints.length === 0;
   }, [selectedMint, knownMints.length]);
-
   const handleMintSelect = useCallback(
     (mint: KnownMintWithBalance) => {
       setSelectedMint(mint);
     },
     [setSelectedMint],
   );
-
   const handleMintSelectorOpen = useCallback(() => {
     inputRef.current?.blur();
     amountInputRef.current?.blur();
   }, []);
-
   // Paste from clipboard
   const handlePaste = async () => {
     if (isAmountStep) {
       return;
     }
-
     const clipboard = await getStrFromClipboard();
     if (!clipboard) {
       return;
     }
     setInput(clipboard);
   };
-
   const triggerAmountError = useCallback(() => {
     vib(400);
     setAmountErr(true);
@@ -152,47 +135,38 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       clearTimeout(timeout);
     }, 500);
   }, [shake]);
-
   const showError = useCallback(
     (error: unknown) => {
       if (isErr(error)) {
         openPromptAutoClose({ msg: error.message || t("invalidInvoice") });
         return;
       }
-
       console.error(error);
       openPromptAutoClose({ msg: t("invalidInvoice") });
     },
     [openPromptAutoClose, t],
   );
-
   const presentMeltConfirmation = useCallback(() => {
     inputRef.current?.blur();
     amountInputRef.current?.blur();
     Keyboard.dismiss();
-
     setTimeout(() => {
       meltConfirmationRef.current?.present();
     }, 0);
   }, []);
-
   const navigateToSuccess = useCallback(
     (finalizedOperation: TFinalizedMeltOperation) => {
       if (hasNavigatedRef.current) {
         return;
       }
-
       hasNavigatedRef.current = true;
       meltConfirmationRef.current?.close({ notifyCancel: false });
-
       const mintName =
         preparedMint?.mintInfo.name ||
         preparedMint?.name ||
         formatMintUrl(preparedMint?.mintUrl || finalizedOperation.mintUrl);
-
       setPreparedOperation(null);
       setPreparedMint(null);
-
       navigation.navigate("successScreen", {
         type: "melt",
         mint: mintName,
@@ -203,12 +177,10 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     },
     [navigation, preparedMint],
   );
-
   const cancelPreparedOperation = useCallback(async () => {
     if (!canCancelPreparedOperation || operationLoading || hasCancelledRef.current) {
       return true;
     }
-
     try {
       hasCancelledRef.current = true;
       await cancel();
@@ -222,18 +194,15 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       return false;
     }
   }, [canCancelPreparedOperation, cancel, operationLoading, reset, showError]);
-
   const handleOperationCancel = useCallback(async () => {
     const didCancel = await cancelPreparedOperation();
     if (!didCancel) {
       presentMeltConfirmation();
     }
   }, [cancelPreparedOperation, presentMeltConfirmation]);
-
   const handleBackToDashboard = useCallback(() => {
     navigation.navigate("dashboard");
   }, [navigation]);
-
   const handleCancelLnAddress = useCallback(() => {
     amountInputRef.current?.blur();
     Keyboard.dismiss();
@@ -243,33 +212,27 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     setAmountInput("");
     setAmountErr(false);
   }, []);
-
   const handleBack = useCallback(() => {
     if (displayOperation) {
       meltConfirmationRef.current?.close({ notifyCancel: true });
       return;
     }
-
     if (isAmountStep) {
       handleCancelLnAddress();
       return;
     }
-
     navigation.goBack();
   }, [displayOperation, handleCancelLnAddress, isAmountStep, navigation]);
-
   const handleOperationConfirm = useCallback(async () => {
     if (!displayOperation) {
       return;
     }
-
     try {
       await execute();
     } catch (error) {
       showError(error);
     }
   }, [displayOperation, execute, showError]);
-
   const prepareMelt = useCallback(
     async (invoiceToPrepare: string, currentMint: KnownMintWithBalance) => {
       const operation = await prepare({
@@ -277,7 +240,6 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
         method: "bolt11",
         methodData: { invoice: invoiceToPrepare },
       });
-
       hasCancelledRef.current = false;
       hasNavigatedRef.current = false;
       setPreparedMint(currentMint);
@@ -286,19 +248,16 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     },
     [prepare, presentMeltConfirmation],
   );
-
   const handleBtnPress = async () => {
     const currentMint = selectedMint;
     if (isBusy || !currentMint) {
       return;
     }
-
     if (isAmountStep) {
       if (!lnAddressMetadata || isAmountInvalid) {
         triggerAmountError();
         return;
       }
-
       startLoading();
       try {
         const invoiceToPrepare = await getInvoiceFromLnAddress(
@@ -313,7 +272,6 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       }
       return;
     }
-
     // user pasted an encoded LNURL, we need to get the amount by the user
     if (isLnurl(trimmedInput)) {
       startLoading();
@@ -330,10 +288,8 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       } finally {
         stopLoading();
       }
-
       return;
     }
-
     if (isLightningAddress(trimmedInput)) {
       startLoading();
       try {
@@ -349,10 +305,8 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       } finally {
         stopLoading();
       }
-
       return;
     }
-
     startLoading();
     try {
       await prepareMelt(trimmedInput, currentMint);
@@ -362,7 +316,6 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       stopLoading();
     }
   };
-
   const lnAddressMotionStyle = {
     opacity: lnAddressAnim,
     transform: [
@@ -374,13 +327,11 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       },
     ],
   };
-
   useEffect(() => {
     if (!isAmountStep) {
       lnAddressAnim.setValue(0);
       return;
     }
-
     Animated.timing(lnAddressAnim, {
       toValue: 1,
       duration: 180,
@@ -388,35 +339,28 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
       useNativeDriver: true,
     }).start();
   }, [isAmountStep, lnAddressAnim]);
-
   useEffect(() => {
     if (currentOperation?.state === "finalized") {
       navigateToSuccess(currentOperation);
     }
   }, [currentOperation, navigateToSuccess]);
-
   useEffect(() => {
     const handleBeforeRemove = (e: TBeforeRemoveEvent) => {
       if (!canCancelPreparedOperation || hasCancelledRef.current) {
         return;
       }
-
       e.preventDefault();
-
       if (operationLoading) {
         return;
       }
-
       void cancelPreparedOperation().then((didCancel) => {
         if (didCancel) {
           navigation.dispatch(e.data.action);
         }
       });
     };
-
     return navigation.addListener("beforeRemove", handleBeforeRemove);
   }, [canCancelPreparedOperation, cancelPreparedOperation, navigation, operationLoading]);
-
   // auto-focus keyboard
   useEffect(() => {
     const t = setTimeout(() => {
@@ -425,7 +369,6 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     }, 200);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   // Early return if no mints available
   if (noMintsAvailable) {
     return (
@@ -436,19 +379,20 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
         withCancelBtn
         withPadding={true}
       >
-        <View
+        <Stack
           style={{
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <Txt txt={t("noMintsWithBalance", { ns: NS.common })} />
-        </View>
+          <AppText testID={`${t("noMintsWithBalance", { ns: NS.common })}-txt`}>
+            {t("noMintsWithBalance", { ns: NS.common })}
+          </AppText>
+        </Stack>
       </Screen>
     );
   }
-
   return (
     <Screen
       screenName={t("cashOut")}
@@ -472,33 +416,36 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
         showsVerticalScrollIndicator={false}
       >
         {!isAmountStep ? (
-          <View
+          <Stack
             key="request-input"
             style={[
               styles.inputSurface,
               {
-                backgroundColor: color.DRAWER,
-                borderColor: color.BORDER,
+                backgroundColor: theme.drawer,
+                borderColor: theme.border,
               },
             ]}
           >
-            <View style={styles.inputRow}>
-              <TxtInput
-                innerRef={inputRef}
+            <Stack style={styles.inputRow}>
+              <InputFrame
+                ref={inputRef}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
                 placeholder={t("invoiceOrLnAddress")}
+                placeholderTextColor={theme.placeholder as never}
+                selectionColor={theme.accent}
+                cursorColor={theme.accent}
                 value={input}
                 onChangeText={(text) => {
                   setInput(text);
                 }}
                 onSubmitEditing={() => void handleBtnPress()}
                 autoFocus
-                ms={200}
                 style={styles.inputField}
+                testID={`${t("invoiceOrLnAddress")}-input`}
               />
-              <TouchableOpacity
+              <PressableSurface
                 accessibilityRole="button"
                 accessibilityLabel={t("paste")}
                 activeOpacity={0.7}
@@ -506,39 +453,47 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 style={[
                   styles.pasteButton,
                   {
-                    backgroundColor: color.INPUT_BG,
-                    borderColor: color.BORDER,
+                    backgroundColor: theme.inputBackground,
+                    borderColor: theme.border,
                   },
                 ]}
               >
-                <CopyIcon width={18} height={18} color={hi[highlight]} />
-              </TouchableOpacity>
-            </View>
-          </View>
+                <CopyIcon width={18} height={18} color={theme.accent} />
+              </PressableSurface>
+            </Stack>
+          </Stack>
         ) : (
           <Animated.View
             key="ln-address-amount"
             style={[
               styles.lnAddressPanel,
               {
-                backgroundColor: color.DRAWER,
-                borderColor: color.BORDER,
+                backgroundColor: theme.drawer,
+                borderColor: theme.border,
               },
               lnAddressMotionStyle,
             ]}
           >
-            <View style={styles.panelHeader}>
-              <View style={[styles.panelIcon, { backgroundColor: color.INPUT_BG }]}>
-                <BoltIcon width={18} height={18} color={hi[highlight]} />
-              </View>
-              <View style={styles.panelCopy}>
-                <Txt txt={t("amount", { ns: NS.common })} bold styles={[styles.panelTitle]} />
-                <Txt
-                  txt={lnAddress}
-                  styles={[styles.addressText, { color: color.TEXT_SECONDARY }]}
-                />
-              </View>
-              <TouchableOpacity
+            <Stack style={styles.panelHeader}>
+              <Stack style={[styles.panelIcon, { backgroundColor: theme.inputBackground }]}>
+                <BoltIcon width={18} height={18} color={theme.accent} />
+              </Stack>
+              <Stack style={styles.panelCopy}>
+                <AppText
+                  style={[styles.panelTitle]}
+                  weight="medium"
+                  testID={`${t("amount", { ns: NS.common })}-txt`}
+                >
+                  {t("amount", { ns: NS.common })}
+                </AppText>
+                <AppText
+                  style={[styles.addressText, { color: theme.textSecondary }]}
+                  testID={`${lnAddress}-txt`}
+                >
+                  {lnAddress}
+                </AppText>
+              </Stack>
+              <PressableSurface
                 accessibilityRole="button"
                 accessibilityLabel={t("cancel", { ns: NS.common })}
                 activeOpacity={0.7}
@@ -546,21 +501,23 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 style={[
                   styles.cancelButton,
                   {
-                    backgroundColor: color.INPUT_BG,
-                    borderColor: color.BORDER,
+                    backgroundColor: theme.inputBackground,
+                    borderColor: theme.border,
                   },
                 ]}
               >
-                <Txt
-                  txt={t("cancel", { ns: NS.common })}
-                  bold
-                  styles={[styles.cancelText, { color: hi[highlight] }]}
-                />
-              </TouchableOpacity>
-            </View>
+                <AppText
+                  style={[styles.cancelText, { color: theme.accent }]}
+                  weight="medium"
+                  testID={`${t("cancel", { ns: NS.common })}-txt`}
+                >
+                  {t("cancel", { ns: NS.common })}
+                </AppText>
+              </PressableSurface>
+            </Stack>
 
-            <View style={styles.amountStage}>
-              <View style={[styles.amountDivider, { backgroundColor: color.DARK_BORDER }]} />
+            <Stack style={styles.amountStage}>
+              <Stack style={[styles.amountDivider, { backgroundColor: theme.darkBorder }]} />
               <AmountInput
                 ref={amountInputRef}
                 value={amountInput}
@@ -571,60 +528,62 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
                 compact
                 testID="melt-ln-address-amount-input"
               />
-            </View>
+            </Stack>
 
             {shouldShowAmountLimits ? (
-              <View style={[styles.amountRangeSection, { borderTopColor: color.DARK_BORDER }]}>
-                <Txt
-                  txt={t("amountLimits", { ns: NS.common })}
-                  bold
-                  styles={[styles.rangeTitle, { color: color.TEXT }]}
-                />
-                <View style={styles.rangeGrid}>
+              <Stack style={[styles.amountRangeSection, { borderTopColor: theme.darkBorder }]}>
+                <AppText
+                  style={[styles.rangeTitle, { color: theme.text }]}
+                  weight="medium"
+                  testID={`${t("amountLimits", { ns: NS.common })}-txt`}
+                >
+                  {t("amountLimits", { ns: NS.common })}
+                </AppText>
+                <Stack style={styles.rangeGrid}>
                   {minSendable ? (
-                    <View style={[styles.rangeItem, { backgroundColor: color.INPUT_BG }]}>
-                      <Txt
-                        txt="Min"
-                        styles={[styles.rangeLabel, { color: color.TEXT_SECONDARY }]}
-                      />
-                      <Txt
-                        txt={`${Math.floor(minSendable / 1000)} sats`}
-                        styles={[styles.rangeValue]}
-                      />
-                    </View>
+                    <Stack style={[styles.rangeItem, { backgroundColor: theme.inputBackground }]}>
+                      <AppText
+                        style={[styles.rangeLabel, { color: theme.textSecondary }]}
+                        testID={"Min-txt"}
+                      >
+                        Min
+                      </AppText>
+                      <AppText
+                        style={[styles.rangeValue]}
+                        testID={`${`${Math.floor(minSendable / 1000)} sats`}-txt`}
+                      >{`${Math.floor(minSendable / 1000)} sats`}</AppText>
+                    </Stack>
                   ) : null}
                   {maxSendable ? (
-                    <View style={[styles.rangeItem, { backgroundColor: color.INPUT_BG }]}>
-                      <Txt
-                        txt="Max"
-                        styles={[styles.rangeLabel, { color: color.TEXT_SECONDARY }]}
-                      />
-                      <Txt
-                        txt={`${Math.floor(maxSendable / 1000)} sats`}
-                        styles={[styles.rangeValue]}
-                      />
-                    </View>
+                    <Stack style={[styles.rangeItem, { backgroundColor: theme.inputBackground }]}>
+                      <AppText
+                        style={[styles.rangeLabel, { color: theme.textSecondary }]}
+                        testID={"Max-txt"}
+                      >
+                        Max
+                      </AppText>
+                      <AppText
+                        style={[styles.rangeValue]}
+                        testID={`${`${Math.floor(maxSendable / 1000)} sats`}-txt`}
+                      >{`${Math.floor(maxSendable / 1000)} sats`}</AppText>
+                    </Stack>
                   ) : null}
-                </View>
-              </View>
+                </Stack>
+              </Stack>
             ) : null}
           </Animated.View>
         )}
 
-        <View style={styles.actionWrap}>
+        <Stack style={styles.actionWrap}>
           <Button
             disabled={isContinueDisabled}
             txt={t("continue")}
             onPress={() => void handleBtnPress()}
             icon={
-              isContinueLoading ? (
-                <Loading size={20} />
-              ) : (
-                <ChevronRightIcon color={mainColors.WHITE} />
-              )
+              isContinueLoading ? <Loading size={20} /> : <ChevronRightIcon color={theme.white} />
             }
           />
-        </View>
+        </Stack>
       </ScrollView>
 
       {displayOperation ? (
@@ -641,27 +600,26 @@ export default function MeltInputScreen({ navigation, route }: MeltInputProps) {
     </Screen>
   );
 }
-
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
-    gap: "12@vs",
-    paddingTop: "6@vs",
-    paddingBottom: "14@vs",
+    gap: 12,
+    paddingTop: 6,
+    paddingBottom: 14,
   },
   formScroll: {
     flex: 1,
   },
   inputSurface: {
-    borderRadius: "28@s",
+    borderRadius: 28,
     borderWidth: 1,
-    paddingHorizontal: "18@s",
-    paddingVertical: "18@vs",
+    paddingHorizontal: 18,
+    paddingVertical: 18,
   },
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
+    gap: 12,
   },
   inputField: {
     flex: 1,
@@ -669,94 +627,94 @@ const styles = ScaledSheet.create({
     backgroundColor: "transparent",
     borderRadius: 0,
     paddingHorizontal: 0,
-    paddingVertical: "4@vs",
-    fontSize: "16@ms",
+    paddingVertical: 4,
+    fontSize: appFontSize.bodyLarge,
   },
   pasteButton: {
-    width: "42@s",
-    height: "42@s",
-    borderRadius: "21@s",
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   lnAddressPanel: {
-    borderRadius: "24@s",
+    borderRadius: 24,
     borderWidth: 1,
-    paddingHorizontal: "16@s",
-    paddingVertical: "14@vs",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   panelHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "12@s",
+    gap: 12,
   },
   panelIcon: {
-    width: "34@s",
-    height: "34@s",
-    borderRadius: "17@s",
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: "center",
     justifyContent: "center",
   },
   panelCopy: {
     flex: 1,
-    gap: "3@vs",
+    gap: 3,
   },
   panelTitle: {
-    fontSize: "14@ms",
+    fontSize: appFontSize.body,
   },
   cancelButton: {
-    borderRadius: "16@s",
+    borderRadius: 16,
     borderWidth: 1,
-    paddingHorizontal: "10@s",
-    paddingVertical: "7@vs",
+    paddingHorizontal: 10,
+    paddingVertical: 7,
   },
   cancelText: {
-    fontSize: "11@ms",
+    fontSize: appFontSize.fine,
   },
   amountStage: {
     width: "100%",
-    paddingTop: "6@vs",
+    paddingTop: 6,
   },
   amountDivider: {
     height: 1,
     width: "100%",
-    marginBottom: "1@vs",
+    marginBottom: 1,
   },
   addressText: {
-    fontSize: "12@ms",
-    lineHeight: "17@vs",
+    fontSize: appFontSize.caption,
+    lineHeight: appLineHeight.caption,
     flexShrink: 1,
   },
   amountRangeSection: {
-    gap: "8@vs",
-    paddingTop: "10@vs",
+    gap: 8,
+    paddingTop: 10,
     borderTopWidth: 1,
   },
   rangeTitle: {
-    fontSize: "12@ms",
+    fontSize: appFontSize.caption,
   },
   rangeGrid: {
     flexDirection: "row",
-    gap: "10@s",
+    gap: 10,
   },
   rangeItem: {
     flex: 1,
-    gap: "2@vs",
-    borderRadius: "14@s",
-    paddingHorizontal: "10@s",
-    paddingVertical: "8@vs",
+    gap: 2,
+    borderRadius: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
   },
   rangeLabel: {
-    fontSize: "10@ms",
+    fontSize: appFontSize.micro,
     textTransform: "uppercase",
   },
   rangeValue: {
-    fontSize: "13@ms",
+    fontSize: appFontSize.bodySmall,
   },
   actionWrap: {
     width: "100%",
     marginTop: "auto",
-    paddingTop: "14@vs",
+    paddingTop: 14,
   },
 });

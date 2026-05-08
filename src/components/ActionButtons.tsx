@@ -1,6 +1,5 @@
-import { View } from "react-native";
+import { Stack } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet } from "react-native-size-matters";
 
 import Button from "./Button";
 
@@ -29,30 +28,19 @@ export default function ActionButtons({
 }: IActionBtnsProps) {
   const insets = useSafeAreaInsets();
   return (
-    <View
+    <Stack
+      width="100%"
+      alignItems="center"
       style={[
-        styles.actionWrap,
-        ontopOfNav ? styles.ontopOfNav : {},
+        ontopOfNav ? { paddingLeft: 20, paddingRight: 20, marginBottom: 60 } : {},
         absolutePos
-          ? { position: "absolute", right: 0, left: 0, padding: s(20), bottom: insets.bottom }
+          ? { position: "absolute", right: 0, left: 0, padding: 20, bottom: insets.bottom }
           : {},
       ]}
     >
       <Button loading={loading} txt={topBtnTxt} onPress={topBtnAction} icon={topIcon} />
-      <View style={{ marginVertical: s(10) }} />
+      <Stack style={{ marginVertical: 10 }} />
       <Button txt={bottomBtnTxt} outlined onPress={bottomBtnAction} icon={bottomIcon} />
-    </View>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
-  actionWrap: {
-    width: "100%",
-    alignItems: "center",
-  },
-  ontopOfNav: {
-    paddingLeft: "20@s",
-    paddingRight: "20@s",
-    marginBottom: "60@s",
-  },
-});

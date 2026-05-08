@@ -1,20 +1,19 @@
 import { SettingsIcon } from "@comps/Icons";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useThemeContext } from "@src/context/Theme";
-import { highlight as hi } from "@styles";
-import { Image, TouchableOpacity, View } from "react-native";
+import { PressableSurface, Stack, useAppThemeTokens } from "@styles";
+import { Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { s, ScaledSheet, vs } from "react-native-size-matters";
 
 interface IDashboardTopBarProps {
   onSettingsPress: () => void;
 }
 
 export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarProps) {
-  const { color, highlight, activeTheme } = useThemeContext();
+  const { highlight, activeTheme } = useThemeContext();
   const { handleLogoPress } = usePrivacyContext();
   const insets = useSafeAreaInsets();
-  const iconColor = hi[highlight];
+  const theme = useAppThemeTokens();
 
   const logoSrc =
     activeTheme === "dark" && (highlight === "Zap" || highlight === "Azyre" || highlight === "Rosy")
@@ -22,55 +21,35 @@ export default function DashboardTopBar({ onSettingsPress }: IDashboardTopBarPro
       : require("@assets/icon_transparent.png");
 
   return (
-    <View
-      style={[
-        styles.topBar,
-        {
-          paddingTop: insets.top,
-          backgroundColor: color.BACKGROUND,
-        },
-      ]}
+    <Stack
+      paddingHorizontal={20}
+      paddingBottom={4}
+      backgroundColor="$background"
+      style={{ paddingTop: insets.top }}
     >
-      <View style={styles.topBarContent}>
-        <TouchableOpacity onPress={() => void handleLogoPress()} style={styles.controlBtn}>
-          <View style={[styles.logoMark, { backgroundColor: hi[highlight] }]}>
-            <Image source={logoSrc} style={styles.logoImage} resizeMode="contain" />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onSettingsPress} style={styles.controlBtn}>
-          <SettingsIcon width={s(24)} height={s(24)} color={iconColor} />
-        </TouchableOpacity>
-      </View>
-    </View>
+      <Stack flexDirection="row" alignItems="center" justifyContent="space-between" minHeight={50}>
+        <PressableSurface
+          onPress={() => void handleLogoPress()}
+          style={{ width: 48, height: 48, alignItems: "center", justifyContent: "center" }}
+        >
+          <Stack
+            width={36}
+            height={36}
+            borderRadius={18}
+            alignItems="center"
+            justifyContent="center"
+            backgroundColor="$accent"
+          >
+            <Image source={logoSrc} style={{ width: 27, height: 27 }} resizeMode="contain" />
+          </Stack>
+        </PressableSurface>
+        <PressableSurface
+          onPress={onSettingsPress}
+          style={{ width: 48, height: 48, alignItems: "center", justifyContent: "center" }}
+        >
+          <SettingsIcon width={24} height={24} color={theme.accent} />
+        </PressableSurface>
+      </Stack>
+    </Stack>
   );
 }
-
-const styles = ScaledSheet.create({
-  topBar: {
-    paddingHorizontal: "20@s",
-    paddingBottom: "4@vs",
-  },
-  topBarContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    minHeight: "50@s",
-  },
-  controlBtn: {
-    width: "48@s",
-    height: "48@s",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logoMark: {
-    width: "36@s",
-    height: "36@s",
-    borderRadius: "18@s",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logoImage: {
-    width: "27@s",
-    height: "27@s",
-  },
-});
