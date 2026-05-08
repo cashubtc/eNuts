@@ -7,7 +7,7 @@ import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import {
   AppText,
-  fontScale,
+  appFontSize,
   globals,
   InputFrame,
   PressableSurface,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inlineInput: {
-    fontSize: fontScale(15),
+    fontSize: appFontSize.bodyMedium,
     fontWeight: "500",
     backgroundColor: "transparent",
     borderRadius: 0,
@@ -190,11 +190,11 @@ const styles = StyleSheet.create({
     width: 72,
   },
   satsLabel: {
-    fontSize: fontScale(13),
+    fontSize: appFontSize.bodySmall,
     marginLeft: 4,
   },
   fiatHint: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginTop: 8,
     marginLeft: 70,
   },

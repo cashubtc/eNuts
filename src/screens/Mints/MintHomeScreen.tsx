@@ -6,7 +6,7 @@ import Screen from "@comps/Screen";
 import { useKnownMints } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
 import { useCurrencyContext } from "@src/context/Currency";
 import { Image } from "expo-image";
@@ -85,7 +85,7 @@ export default function MintHomeScreen({ navigation }: any) {
                             style={[
                               {
                                 color: theme.textSecondary,
-                                fontSize: fontScale(12),
+                                fontSize: appFontSize.caption,
                                 marginTop: 2,
                               },
                             ]}

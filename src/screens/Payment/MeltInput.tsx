@@ -9,8 +9,8 @@ import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
 import {
   AppText,
-  verticalScale,
-  fontScale,
+  appLineHeight,
+  appFontSize,
   InputFrame,
   PressableSurface,
   useAppThemeTokens,
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     paddingHorizontal: 0,
     paddingVertical: 4,
-    fontSize: fontScale(16),
+    fontSize: appFontSize.bodyLarge,
   },
   pasteButton: {
     width: 42,
@@ -661,7 +661,7 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   panelTitle: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
   },
   cancelButton: {
     borderRadius: 16,
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   cancelText: {
-    fontSize: fontScale(11),
+    fontSize: appFontSize.fine,
   },
   amountStage: {
     width: "100%",
@@ -682,8 +682,8 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   addressText: {
-    fontSize: fontScale(12),
-    lineHeight: verticalScale(17),
+    fontSize: appFontSize.caption,
+    lineHeight: appLineHeight.caption,
     flexShrink: 1,
   },
   amountRangeSection: {
@@ -692,7 +692,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   rangeTitle: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
   },
   rangeGrid: {
     flexDirection: "row",
@@ -706,11 +706,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   rangeLabel: {
-    fontSize: fontScale(10),
+    fontSize: appFontSize.micro,
     textTransform: "uppercase",
   },
   rangeValue: {
-    fontSize: fontScale(13),
+    fontSize: appFontSize.bodySmall,
   },
   actionWrap: {
     width: "100%",

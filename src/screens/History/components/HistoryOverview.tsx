@@ -1,4 +1,4 @@
-import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import { useCurrencyContext } from "@src/context/Currency";
 import { StyleSheet } from "react-native";
 type HistoryOverviewProps = {
@@ -43,15 +43,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   amount: {
-    fontSize: fontScale(40),
+    fontSize: appFontSize.overviewAmount,
     fontWeight: "600",
   },
   type: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     marginTop: 5,
   },
   description: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     marginTop: 5,
     textAlign: "center",
   },

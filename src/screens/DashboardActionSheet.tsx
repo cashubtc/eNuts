@@ -1,4 +1,4 @@
-import { AppText, verticalScale, fontScale, PressableSurface, Stack } from "@styles";
+import { AppText, appLineHeight, appFontSize, PressableSurface, Stack } from "@styles";
 import { CloseIcon } from "@comps/Icons";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import type { ReactNode, RefObject } from "react";
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   title: {
-    fontSize: fontScale(20),
-    lineHeight: verticalScale(25),
+    fontSize: appFontSize.title,
+    lineHeight: appLineHeight.title,
   },
   closeBtn: {
     position: "absolute",
@@ -123,11 +123,11 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   actionText: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     fontWeight: "500",
     marginBottom: 4,
   },
   descriptionText: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
   },
 });

@@ -7,7 +7,7 @@ import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
 import { NS } from "@src/i18n";
-import { AppText, verticalScale, fontScale, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appLineHeight, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import React, { forwardRef, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -190,13 +190,13 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   amountLabel: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginBottom: 8,
     letterSpacing: 0.3,
   },
   amount: {
-    fontSize: fontScale(34),
-    lineHeight: verticalScale(40),
+    fontSize: appFontSize.amount,
+    lineHeight: appLineHeight.amount,
     marginBottom: 20,
   },
   rowsWrap: {
@@ -211,12 +211,12 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     flex: 1,
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
   },
   detailValue: {
     flexShrink: 1,
     textAlign: "right",
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
   },
   separator: {
     marginVertical: 0,
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionLabel: {
-    fontSize: fontScale(13),
+    fontSize: appFontSize.bodySmall,
     marginBottom: 8,
     marginLeft: 2,
   },

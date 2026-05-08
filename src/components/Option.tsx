@@ -1,4 +1,4 @@
-import { AppText, fontScale, Stack, globals, PressableSurface, useAppThemeTokens } from "@styles";
+import { AppText, appFontSize, Stack, globals, PressableSurface, useAppThemeTokens } from "@styles";
 import { ChevronRightIcon } from "./Icons";
 import Loading from "./Loading";
 import Separator from "./Separator";
@@ -31,7 +31,7 @@ export default function Option({
               {txt}
             </AppText>
             <AppText
-              style={[{ fontSize: fontScale(10), color: theme.textSecondary }]}
+              style={[{ fontSize: appFontSize.micro, color: theme.textSecondary }]}
               testID={`${hint}-txt`}
             >
               {hint}

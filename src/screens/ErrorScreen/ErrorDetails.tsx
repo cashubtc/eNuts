@@ -1,7 +1,7 @@
 import { repoIssueUrl } from "@consts/urls";
 import { usePromptContext } from "@src/context/Prompt";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { isErr, openUrl } from "@util";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     paddingTop: 80,
   },
   header: {
-    fontSize: fontScale(22),
+    fontSize: appFontSize.modalTitle,
     marginBottom: 30,
     textAlign: "center",
   },

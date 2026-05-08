@@ -4,7 +4,7 @@ import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useCurrencyContext } from "@src/context/Currency";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
 import { usePrivacyContext } from "@src/context/Privacy";
-import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { Image } from "expo-image";
 import { useMemo, useRef } from "react";
 import { StyleSheet } from "react-native";
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   balance: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     maxWidth: 92,
   },
 });

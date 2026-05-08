@@ -1,4 +1,4 @@
-import { AppText, verticalScale, fontScale, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appLineHeight, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import React from "react";
 import { StyleSheet } from "react-native";
 import Separator from "@comps/Separator";
@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   metadataText: {
-    fontSize: fontScale(14),
-    lineHeight: verticalScale(20),
+    fontSize: appFontSize.body,
+    lineHeight: appLineHeight.body,
     flexWrap: "wrap",
     flexShrink: 1,
     opacity: 0.8,

@@ -8,7 +8,7 @@ import { useManager } from "@src/context/Manager";
 import { NS } from "@src/i18n";
 import { appLogger } from "@src/logger";
 import { vib } from "@src/util";
-import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, globals, useAppThemeTokens, Stack } from "@styles";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -128,14 +128,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 30,
     textAlign: "center",
-    fontSize: fontScale(20),
+    fontSize: appFontSize.title,
   },
   hint: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginTop: 10,
   },
   errorTxt: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginTop: 14,
   },
   // Success styles
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   successTxt: {
-    fontSize: fontScale(28),
+    fontSize: appFontSize.display,
     fontWeight: "800",
     textAlign: "center",
     marginTop: 30,

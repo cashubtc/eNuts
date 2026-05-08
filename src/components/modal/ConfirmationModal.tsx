@@ -1,6 +1,6 @@
 import Button from "@comps/Button";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
-import { AppText, verticalScale, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appLineHeight, appFontSize, globals, useAppThemeTokens, Stack } from "@styles";
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, type ReactNode } from "react";
 import { ScrollView, useWindowDimensions, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: fontScale(14),
-    lineHeight: verticalScale(20),
+    fontSize: appFontSize.body,
+    lineHeight: appLineHeight.body,
   },
   buttonContainer: {
     width: "100%",

@@ -29,8 +29,8 @@ import { useThemeContext } from "@src/context/Theme";
 import { NS } from "@src/i18n";
 import {
   AppText,
-  verticalScale,
-  fontScale,
+  appLineHeight,
+  appFontSize,
   globals,
   PressableSurface,
   useAppThemeTokens,
@@ -466,9 +466,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   balanceAmount: {
-    fontSize: fontScale(64),
+    fontSize: appFontSize.heroAmount,
     fontWeight: "700",
-    lineHeight: verticalScale(74),
+    lineHeight: appLineHeight.heroAmount,
     textAlign: "center",
   },
   balanceMetaWrap: {
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
     marginTop: -2,
   },
   balanceSymbol: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     fontWeight: "500",
     marginRight: 6,
   },
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
   actionTxt: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     textAlign: "center",
   },
   sheetSeparator: {
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     flex: 1,
-    fontSize: fontScale(22),
+    fontSize: appFontSize.modalTitle,
     fontWeight: "600",
     marginRight: 14,
   },
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   historyLinkTxt: {
-    fontSize: fontScale(13),
+    fontSize: appFontSize.bodySmall,
     fontWeight: "500",
     textAlign: "right",
   },

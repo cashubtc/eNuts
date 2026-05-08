@@ -1,6 +1,6 @@
 import type { TextStyle, ViewStyle } from "react-native";
 
-import { fontScale } from "./scale";
+import { appFontSize } from "./fonts";
 
 type TGlobalStyle = TextStyle & ViewStyle;
 type TGlobalStyles = Record<string, TGlobalStyle>;
@@ -14,37 +14,37 @@ export const globalStyles = () =>
       width: "100%",
     },
     txt: {
-      fontSize: fontScale(14),
+      fontSize: appFontSize.body,
     },
     txtBold: {
-      fontSize: fontScale(14),
+      fontSize: appFontSize.body,
       fontWeight: "500",
     },
     pressTxt: {
-      fontSize: fontScale(14),
+      fontSize: appFontSize.body,
       fontWeight: "500",
       textAlign: "center",
     },
     navTxt: {
-      fontSize: fontScale(18),
+      fontSize: appFontSize.label,
       fontWeight: "500",
     },
     input: {
       paddingHorizontal: 18,
       paddingVertical: 18,
       borderRadius: 50,
-      fontSize: fontScale(14),
+      fontSize: appFontSize.body,
       width: "100%",
     },
     modalHeader: {
-      fontSize: fontScale(22),
+      fontSize: appFontSize.modalTitle,
       fontWeight: "500",
       marginBottom: 30,
       marginTop: 10,
       textAlign: "center",
     },
     modalTxt: {
-      fontSize: fontScale(14),
+      fontSize: appFontSize.body,
       textAlign: "center",
       marginHorizontal: 20,
       marginTop: -15,
@@ -87,7 +87,7 @@ export const globalStyles = () =>
     },
     selectAmount: {
       width: "100%",
-      fontSize: fontScale(48),
+      fontSize: appFontSize.amountInput,
       marginBottom: 5,
       fontWeight: "600",
       padding: 0,

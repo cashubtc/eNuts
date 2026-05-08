@@ -1,4 +1,12 @@
 export { globalStyles as globals } from "./globals";
+export {
+  appFontSize,
+  appFontWeight,
+  appLetterSpacing,
+  appLineHeight,
+  type TAppFontSize,
+  type TAppFontWeight,
+} from "./fonts";
 export { fontScale, moderateScale, moderateVerticalScale, scale, verticalScale } from "./scale";
 export {
   AppText,

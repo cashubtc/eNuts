@@ -11,8 +11,8 @@ import { NS } from "@src/i18n";
 import { isErr } from "@util";
 import {
   AppText,
-  verticalScale,
-  fontScale,
+  appLineHeight,
+  appFontSize,
   globals,
   InputFrame,
   PressableSurface,
@@ -711,11 +711,11 @@ const styles = StyleSheet.create({
     height: 34,
   },
   statLabel: {
-    fontSize: fontScale(11),
+    fontSize: appFontSize.fine,
     marginBottom: 5,
   },
   statValue: {
-    fontSize: fontScale(16),
+    fontSize: appFontSize.bodyLarge,
   },
   summaryActions: {
     flexDirection: "row",
@@ -745,7 +745,7 @@ const styles = StyleSheet.create({
     paddingRight: 12,
   },
   accountTitle: {
-    fontSize: fontScale(16),
+    fontSize: appFontSize.bodyLarge,
     marginBottom: 8,
   },
   badgeRow: {
@@ -759,7 +759,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   badgeText: {
-    fontSize: fontScale(10),
+    fontSize: appFontSize.micro,
     fontWeight: "600",
   },
   sourceBadge: {
@@ -769,7 +769,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   sourceBadgeText: {
-    fontSize: fontScale(10),
+    fontSize: appFontSize.micro,
     fontWeight: "600",
   },
   iconButton: {
@@ -792,7 +792,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   statusText: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
   },
   addressBox: {
     borderWidth: 1,
@@ -814,26 +814,26 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   copyText: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     fontWeight: "600",
   },
   addressText: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     fontWeight: "600",
   },
   mutedText: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginTop: 4,
   },
   fieldBlock: {
     marginBottom: 14,
   },
   label: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginBottom: 7,
   },
   addressLabel: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
   },
   actions: {
     flexDirection: "row",
@@ -855,7 +855,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   removeText: {
-    fontSize: fontScale(13),
+    fontSize: appFontSize.bodySmall,
     fontWeight: "600",
   },
   usernamePreview: {
@@ -866,11 +866,11 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   usernamePreviewText: {
-    fontSize: fontScale(20),
+    fontSize: appFontSize.title,
   },
   usernamePrompt: {
-    fontSize: fontScale(14),
-    lineHeight: verticalScale(20),
+    fontSize: appFontSize.body,
+    lineHeight: appLineHeight.body,
     marginBottom: 18,
   },
   sheetContainer: {
@@ -894,7 +894,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sheetTitle: {
-    fontSize: fontScale(17),
+    fontSize: appFontSize.nav,
     marginBottom: 4,
   },
   sheetActions: {

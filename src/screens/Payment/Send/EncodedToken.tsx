@@ -7,7 +7,15 @@ import Screen from "@comps/Screen";
 import { preventBack } from "@nav/utils";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import {
+  AppText,
+  appFontSize,
+  appLineHeight,
+  globals,
+  PressableSurface,
+  useAppThemeTokens,
+  Stack,
+} from "@styles";
 import { formatMintUrl, formatSatStr, share } from "@util";
 import LottieView from "lottie-react-native";
 import { useEffect, useMemo, useState } from "react";
@@ -235,12 +243,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   metadataLabel: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginBottom: 3,
   },
   metadataValue: {
-    fontSize: fontScale(14),
-    lineHeight: fontScale(20),
+    fontSize: appFontSize.body,
+    lineHeight: appLineHeight.body,
   },
   qrStage: {
     alignItems: "center",
@@ -257,12 +265,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   errorMsg: {
-    fontSize: fontScale(16),
-    lineHeight: fontScale(23),
+    fontSize: appFontSize.bodyLarge,
+    lineHeight: appLineHeight.bodyLarge,
     textAlign: "center",
   },
   successTxt: {
-    fontSize: fontScale(28),
+    fontSize: appFontSize.display,
     fontWeight: "800",
     textAlign: "center",
     marginTop: 30,

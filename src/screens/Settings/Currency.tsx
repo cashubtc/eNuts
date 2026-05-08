@@ -7,7 +7,7 @@ import type { TCurrencySettingsPageProps } from "@model/nav";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import type { TCurrencyCode } from "@model";
-import { AppText, fontScale, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 // Common currencies to display at the top
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   description: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginTop: 4,
   },
   currencyHeader: {
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   lastUpdate: {
-    fontSize: fontScale(11),
+    fontSize: appFontSize.fine,
   },
   loadingContainer: {
     padding: 40,
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   },
   currencySymbol: {
     marginLeft: 12,
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
   },
   errorContainer: {
     marginHorizontal: 20,
@@ -298,11 +298,11 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontWeight: "600",
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     marginBottom: 4,
   },
   errorDescription: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     textAlign: "center",
     marginBottom: 12,
     opacity: 0.9,

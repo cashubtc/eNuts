@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MintStackParamList } from "@src/nav/navTypes";
 import {
   AppText,
-  fontScale,
+  appFontSize,
   globals,
   InputFrame,
   PressableSurface,
@@ -79,7 +79,7 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
             <AppText
               style={{
                 color: theme.white,
-                fontSize: fontScale(10),
+                fontSize: appFontSize.micro,
                 fontWeight: "bold",
               }}
             >
@@ -90,7 +90,7 @@ function RecommendedMintItem({ mint, onPress }: RecommendedMintItemProps) {
         <AppText
           style={{
             color: theme.textSecondary,
-            fontSize: fontScale(12),
+            fontSize: appFontSize.caption,
             marginBottom: 2,
           }}
         >
@@ -217,7 +217,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
             <AppText
               style={{
                 color: theme.textSecondary,
-                fontSize: fontScale(12),
+                fontSize: appFontSize.caption,
                 textAlign: "center",
                 marginTop: 4,
               }}
@@ -234,7 +234,7 @@ function AddMintScreen({ navigation, route }: MintAddScreenProps) {
                 {
                   color: theme.text,
                   marginBottom: 12,
-                  fontSize: fontScale(16),
+                  fontSize: appFontSize.bodyLarge,
                 },
               ]}
               weight="medium"

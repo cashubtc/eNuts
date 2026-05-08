@@ -1,6 +1,6 @@
 import type { RootStackParamList } from "@model/nav";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AppText, fontScale, Stack, useAppThemeTokens } from "@styles";
+import { AppText, appFontSize, Stack, useAppThemeTokens } from "@styles";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
 import { TxtButton } from "./Button";
@@ -43,7 +43,7 @@ export default function Empty({
           <AppText
             style={[
               {
-                fontSize: fontScale(18),
+                fontSize: appFontSize.label,
                 opacity: 0.8,
                 color: theme.text,
                 marginBottom: hasOk ? 10 : 0,
@@ -57,7 +57,7 @@ export default function Empty({
           </AppText>
           {hint && hint.length > 0 && (
             <AppText
-              style={[{ color: theme.textSecondary, fontSize: fontScale(12) }]}
+              style={[{ color: theme.textSecondary, fontSize: appFontSize.caption }]}
               align="center"
               testID={`${hint}-txt`}
             >

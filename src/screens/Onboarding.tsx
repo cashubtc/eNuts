@@ -4,7 +4,7 @@ import type { TOnboardingPageProps } from "@model/nav";
 import { NS } from "@src/i18n";
 import { store } from "@src/storage/store";
 import { STORE_KEYS } from "@src/storage/store/consts";
-import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Image, StyleSheet } from "react-native";
@@ -110,8 +110,8 @@ export default function OnboardingScreen({ navigation }: TOnboardingPageProps) {
   );
 }
 const styles = StyleSheet.create({
-  title: { fontSize: fontScale(28), fontWeight: "500" },
-  subTitle: { fontSize: fontScale(16) },
+  title: { fontSize: appFontSize.display, fontWeight: "500" },
+  subTitle: { fontSize: appFontSize.bodyLarge },
   cashuImg: {
     width: 130,
     height: 130,

@@ -1,20 +1,15 @@
 import { Text, View, styled, useTheme } from "@tamagui/core";
 import { TextInput, TouchableOpacity } from "react-native";
 
-import { fontScale, verticalScale } from "./scale";
+import {
+  appFontSize,
+  appFontWeight,
+  appLineHeight,
+  type TAppFontSize,
+  type TAppFontWeight,
+} from "./fonts";
 
-export type TAppTextSize =
-  | "micro"
-  | "caption"
-  | "body"
-  | "bodyLarge"
-  | "nav"
-  | "title"
-  | "heading"
-  | "display"
-  | "amount"
-  | "balance"
-  | "heroAmount";
+export type TAppTextSize = TAppFontSize;
 
 export type TAppTextTone =
   | "default"
@@ -27,11 +22,11 @@ export type TAppTextTone =
   | "white"
   | "black";
 
-export type TAppTextWeight = "regular" | "medium" | "semibold" | "bold";
+export type TAppTextWeight = TAppFontWeight;
 
-const textSize = (fontSize: number, lineHeight?: number) => ({
-  fontSize: fontScale(fontSize),
-  ...(lineHeight ? { lineHeight: verticalScale(lineHeight) } : {}),
+const textSize = (size: TAppTextSize) => ({
+  fontSize: appFontSize[size],
+  lineHeight: appLineHeight[size],
 });
 
 export const Stack = styled(View, {
@@ -64,7 +59,7 @@ export const Surface = styled(YStack, {
 export const AppText = styled(Text, {
   name: "AppText",
   color: "$text",
-  fontSize: fontScale(14),
+  fontSize: appFontSize.body,
 
   variants: {
     align: {
@@ -109,30 +104,39 @@ export const AppText = styled(Text, {
     },
     weight: {
       regular: {
-        fontWeight: "400",
+        fontWeight: appFontWeight.regular,
       },
       medium: {
-        fontWeight: "500",
+        fontWeight: appFontWeight.medium,
       },
       semibold: {
-        fontWeight: "600",
+        fontWeight: appFontWeight.semibold,
       },
       bold: {
-        fontWeight: "700",
+        fontWeight: appFontWeight.bold,
       },
     },
     size: {
-      micro: textSize(10, 14),
-      caption: textSize(12, 16),
-      body: textSize(14, 20),
-      bodyLarge: textSize(16, 22),
-      nav: textSize(17, 22),
-      title: textSize(20, 25),
-      heading: textSize(24, 30),
-      display: textSize(28, 34),
-      amount: textSize(34, 40),
-      balance: textSize(42, 48),
-      heroAmount: textSize(64, 74),
+      micro: textSize("micro"),
+      fine: textSize("fine"),
+      caption: textSize("caption"),
+      bodySmall: textSize("bodySmall"),
+      body: textSize("body"),
+      bodyMedium: textSize("bodyMedium"),
+      bodyLarge: textSize("bodyLarge"),
+      nav: textSize("nav"),
+      label: textSize("label"),
+      title: textSize("title"),
+      modalTitle: textSize("modalTitle"),
+      heading: textSize("heading"),
+      display: textSize("display"),
+      amountCompact: textSize("amountCompact"),
+      amount: textSize("amount"),
+      amountLarge: textSize("amountLarge"),
+      overviewAmount: textSize("overviewAmount"),
+      balance: textSize("balance"),
+      amountInput: textSize("amountInput"),
+      heroAmount: textSize("heroAmount"),
     },
   } as const,
 
@@ -182,7 +186,7 @@ export const InputFrame = styled(
     backgroundColor: "$inputBackground",
     borderRadius: 50,
     color: "$text",
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     paddingHorizontal: 18,
     paddingVertical: 18,
     width: "100%",

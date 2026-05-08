@@ -13,7 +13,7 @@ import { useInitialURL } from "@src/context/Linking";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
 import TrustMintBottomSheet, { type TrustMintBottomSheetRef } from "@modal/TrustMintBottomSheet";
-import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, globals, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl, getSelectedAmount, isNum } from "@util";
 import { isLightningAddress } from "@util/lnurl";
 import { useEffect, useRef, useState } from "react";
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   coinSelectionHint: {
-    fontSize: fontScale(10),
+    fontSize: appFontSize.micro,
     maxWidth: "88%",
   },
   swipeContainer: {

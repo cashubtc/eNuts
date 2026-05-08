@@ -1,7 +1,7 @@
 import { MintBoardIcon } from "@comps/Icons";
 import { Image } from "expo-image";
 import type { KnownMintWithBalance } from "@src/context/KnownMints";
-import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl } from "@util";
 import { useMemo } from "react";
 import { StyleSheet } from "react-native";
@@ -149,11 +149,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mintName: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     marginBottom: 2,
   },
   mintUrl: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
   },
   metaWrap: {
     marginTop: 12,
@@ -171,9 +171,9 @@ const styles = StyleSheet.create({
   },
   balanceLabel: {
     flex: 1,
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
   },
   balanceValue: {
-    fontSize: fontScale(13),
+    fontSize: appFontSize.bodySmall,
   },
 });

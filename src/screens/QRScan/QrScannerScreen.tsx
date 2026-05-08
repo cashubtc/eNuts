@@ -10,8 +10,8 @@ import { NS } from "@src/i18n";
 import type { QRScannerScreenProps } from "@src/nav/navTypes";
 import {
   AppText,
-  verticalScale,
-  fontScale,
+  appLineHeight,
+  appFontSize,
   PressableSurface,
   useAppThemeTokens,
   Stack,
@@ -435,18 +435,18 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   statusText: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     fontWeight: "600",
   },
   title: {
-    fontSize: fontScale(24),
-    lineHeight: verticalScale(30),
+    fontSize: appFontSize.heading,
+    lineHeight: appLineHeight.heading,
     fontWeight: "600",
     textAlign: "center",
   },
   subtitle: {
-    fontSize: fontScale(13),
-    lineHeight: verticalScale(19),
+    fontSize: appFontSize.bodySmall,
+    lineHeight: appLineHeight.bodySmall,
     textAlign: "center",
     marginTop: 8,
   },
@@ -518,11 +518,11 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   progressTitle: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     fontWeight: "600",
   },
   progressCount: {
-    fontSize: fontScale(13),
+    fontSize: appFontSize.bodySmall,
     fontWeight: "700",
   },
   progressTrack: {
@@ -545,12 +545,12 @@ const styles = StyleSheet.create({
     columnGap: 8,
   },
   rescanButtonText: {
-    fontSize: fontScale(15),
+    fontSize: appFontSize.bodyMedium,
     fontWeight: "600",
   },
   errorText: {
     marginTop: 10,
     textAlign: "center",
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
   },
 });

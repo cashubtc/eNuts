@@ -1,4 +1,4 @@
-import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import { StyleSheet } from "react-native";
 import { ReactNode } from "react";
 type DetailsSectionProps = {
@@ -35,9 +35,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   detailLabel: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
   },
   detailValue: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
   },
 });

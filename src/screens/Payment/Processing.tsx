@@ -4,7 +4,7 @@ import type { TBeforeRemoveEvent, TProcessingPageProps } from "@model/nav";
 import { preventBack } from "@nav/utils";
 import { useInitialURL } from "@src/context/Linking";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, globals, useAppThemeTokens, Stack } from "@styles";
 import { decodeLnInvoice, isErr } from "@util";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   hint: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginTop: 10,
   },
 });

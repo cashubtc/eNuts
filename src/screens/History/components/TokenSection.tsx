@@ -1,4 +1,4 @@
-import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import Copy from "@comps/Copy";
 import Separator from "@comps/Separator";
 import { StyleSheet } from "react-native";
@@ -49,11 +49,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: fontScale(16),
+    fontSize: appFontSize.bodyLarge,
     fontWeight: "600",
   },
   tokenValue: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
   },
   tokenContainer: {
     padding: 10,

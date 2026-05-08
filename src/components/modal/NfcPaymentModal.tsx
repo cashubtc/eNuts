@@ -13,7 +13,7 @@ import {
 import Separator from "@comps/Separator";
 import { useCurrencyContext } from "@src/context/Currency";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 export interface NfcPaymentModalRef {
   /** Open the modal and start NFC payment with the default limit */
   open: () => void;
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   title: {
-    fontSize: fontScale(18),
+    fontSize: appFontSize.label,
   },
   loading: {
     alignItems: "center",
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   confirmationText: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     textAlign: "center",
     marginBottom: 16,
   },
@@ -339,20 +339,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   confirmationLabel: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
   },
   confirmationValue: {
     alignItems: "flex-end",
   },
   confirmationFiat: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     marginTop: 2,
   },
   confirmationSeparator: {
     marginHorizontal: 16,
   },
   confirmationHint: {
-    fontSize: fontScale(12),
+    fontSize: appFontSize.caption,
     textAlign: "center",
     marginBottom: 20,
     fontStyle: "italic",
@@ -373,11 +373,11 @@ const styles = StyleSheet.create({
   },
   confirmButton: {},
   declineButtonText: {
-    fontSize: fontScale(15),
+    fontSize: appFontSize.bodyMedium,
     fontWeight: "600",
   },
   confirmButtonText: {
-    fontSize: fontScale(15),
+    fontSize: appFontSize.bodyMedium,
     fontWeight: "600",
   },
 });

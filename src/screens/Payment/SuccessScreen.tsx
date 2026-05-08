@@ -1,4 +1,4 @@
-import { AppText, fontScale, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, useAppThemeTokens, Stack } from "@styles";
 import Button from "@comps/Button";
 import Logo from "@comps/Logo";
 import Screen from "@comps/Screen";
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    fontSize: fontScale(28),
+    fontSize: appFontSize.display,
     marginTop: 30,
   },
   amountWrap: {
@@ -223,15 +223,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   amount: {
-    fontSize: fontScale(42),
+    fontSize: appFontSize.balance,
   },
   amountSymbol: {
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     marginTop: 4,
   },
   subtitle: {
     marginTop: 20,
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     fontWeight: "500",
   },
   detailsWrap: {

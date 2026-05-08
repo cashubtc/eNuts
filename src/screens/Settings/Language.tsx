@@ -7,7 +7,7 @@ import { NS } from "@src/i18n";
 import { getFlagEmoji } from "@src/util";
 import { store } from "@store";
 import { STORE_KEYS } from "@store/consts";
-import { AppText, fontScale, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, globals, PressableSurface, useAppThemeTokens, Stack } from "@styles";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
 const langs: ILangsOpt[] = [
@@ -65,7 +65,10 @@ function LangSelection({ code, name, flag, selected, hasSeparator }: ILangSelect
       >
         <Stack style={{ flexDirection: "row", alignItems: "center" }}>
           <Stack style={{ minWidth: 40 }}>
-            <AppText style={[{ fontSize: fontScale(22) }]} testID={`${getFlagEmoji(flag)}-txt`}>
+            <AppText
+              style={[{ fontSize: appFontSize.modalTitle }]}
+              testID={`${getFlagEmoji(flag)}-txt`}
+            >
               {getFlagEmoji(flag)}
             </AppText>
           </Stack>

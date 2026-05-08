@@ -1,6 +1,6 @@
 import { usePrivacyContext } from "@src/context/Privacy";
 import { useCurrencyContext } from "@src/context/Currency";
-import { AppText, fontScale, Stack, useAppThemeTokens } from "@styles";
+import { AppText, appFontSize, Stack, useAppThemeTokens } from "@styles";
 import { MintBoardIcon } from "./Icons";
 interface IMintBalanceProps {
   balance: number;
@@ -24,7 +24,7 @@ export default function MintBalance({ balance, txtColor, disabled }: IMintBalanc
     >
       <MintBoardIcon width={16} height={16} color={disabled ? theme.textSecondary : theme.accent} />
       <AppText
-        style={[{ fontSize: fontScale(10), color: txtColor, marginLeft: 5 }]}
+        style={[{ fontSize: appFontSize.micro, color: txtColor, marginLeft: 5 }]}
         testID={`${hidden.balance ? "****" : `${formatted} ${symbol}`}-txt`}
       >
         {hidden.balance ? "****" : `${formatted} ${symbol}`}

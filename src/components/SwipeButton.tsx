@@ -1,4 +1,4 @@
-import { Stack, fontScale, useAppThemeTokens } from "@styles";
+import { Stack, appFontSize, useAppThemeTokens } from "@styles";
 import { useEffect, useImperativeHandle, forwardRef } from "react";
 import { View, useWindowDimensions, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   },
   swipeText: {
     alignSelf: "center",
-    fontSize: fontScale(14),
+    fontSize: appFontSize.body,
     fontWeight: "500",
     zIndex: 2,
   },

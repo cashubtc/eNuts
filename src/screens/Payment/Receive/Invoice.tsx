@@ -9,7 +9,7 @@ import Screen from "@comps/Screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useManager } from "@src/context/Manager";
 import { NS } from "@src/i18n";
-import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
+import { AppText, appFontSize, globals, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl, share } from "@util";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   lnExpiry: {
-    fontSize: fontScale(34),
+    fontSize: appFontSize.amount,
     fontWeight: "600",
     textAlign: "center",
   },
