@@ -411,11 +411,7 @@ function ActionBtn({
       >
         {icon}
       </Stack>
-      <AppText
-        style={[styles.actionTxt, { color: textColor }]}
-        weight="medium"
-        testID={`${txt}-txt`}
-      >
+      <AppText weight="medium" size="caption" align="center" testID={`${txt}-txt`}>
         {txt}
       </AppText>
     </PressableSurface>
@@ -517,10 +513,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 7,
-  },
-  actionTxt: {
-    fontSize: appFontSize.caption,
-    textAlign: "center",
   },
   sheetSeparator: {
     width: "100%",

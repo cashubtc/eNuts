@@ -77,7 +77,9 @@ export function DashboardActionSheetOption({
     >
       <Stack style={styles.iconContainer}>{icon}</Stack>
       <Stack style={styles.txtWrap}>
-        <AppText style={[styles.actionText, { color: textColor }]}>{title}</AppText>
+        <AppText style={styles.actionText} weight="medium">
+          {title}
+        </AppText>
         <AppText style={[styles.descriptionText, { color: descriptionColor }]}>
           {description}
         </AppText>
@@ -123,7 +125,6 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: appFontSize.body,
-    fontWeight: "500",
     marginBottom: 4,
   },
   descriptionText: {
