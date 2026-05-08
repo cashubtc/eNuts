@@ -11,14 +11,34 @@ import { useManager } from "@src/context/Manager";
 import { NS } from "@src/i18n";
 import { AppText, fontScale, globals, useAppThemeTokens, Stack } from "@styles";
 import { formatMintUrl, share } from "@util";
-import { useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet } from "react-native";
+import { StyleSheet, useWindowDimensions } from "react-native";
+
+const QR_HORIZONTAL_CHROME = 20;
+const QR_VERTICAL_CHROME = 82;
+const MIN_QR_SIZE = 140;
+
 export default function InvoiceScreen({ navigation, route }: TMintInvoicePageProps) {
   const { operation } = route.params;
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
   const manager = useManager();
+  const { width, height } = useWindowDimensions();
+  const [qrStageSize, setQrStageSize] = useState({ width: 0, height: 0 });
+  const qrSize = useMemo(() => {
+    if (!qrStageSize.width || !qrStageSize.height) {
+      return Math.round(Math.max(196, Math.min(300, width - 96, height * 0.38)));
+    }
+
+    return Math.max(
+      MIN_QR_SIZE,
+      Math.floor(
+        Math.min(qrStageSize.width - QR_HORIZONTAL_CHROME, qrStageSize.height - QR_VERTICAL_CHROME),
+      ),
+    );
+  }, [height, qrStageSize.height, qrStageSize.width, width]);
+
   useFocusEffect(
     useCallback(() => {
       const handlePaidInvoice = ({
@@ -51,13 +71,18 @@ export default function InvoiceScreen({ navigation, route }: TMintInvoicePagePro
     >
       <Stack style={styles.container}>
         <Stack style={styles.content}>
-          <QR
-            size={250}
-            value={operation.request}
-            onError={() => l("Error while generating the LN QR code")}
-            isInvoice
-            animate={false}
-          />
+          <Stack
+            style={styles.qrStage}
+            onLayout={(event) => setQrStageSize(event.nativeEvent.layout)}
+          >
+            <QR
+              size={qrSize}
+              value={operation.request}
+              onError={() => l("Error while generating the LN QR code")}
+              isInvoice
+              animate={false}
+            />
+          </Stack>
           <Stack>
             <Stack style={styles.awaitingWrap}>
               <AppText
@@ -91,6 +116,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  qrStage: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 240,
+    width: "100%",
   },
   lnExpiry: {
     fontSize: fontScale(34),

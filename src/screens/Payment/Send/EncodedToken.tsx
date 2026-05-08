@@ -15,6 +15,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, useWindowDimensions } from "react-native";
 import { useManager } from "@src/context/Manager";
+
+const QR_HORIZONTAL_CHROME = 20;
+const QR_VERTICAL_CHROME = 82;
+const MIN_QR_SIZE = 140;
 /**
  * The page that shows the created Cashu token that can be scanned, copied or shared
  */
@@ -23,14 +27,23 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
   const { t } = useTranslation([NS.common]);
   const theme = useAppThemeTokens();
   const { width, height } = useWindowDimensions();
+  const [qrStageSize, setQrStageSize] = useState({ width: 0, height: 0 });
   const { formatBalance, formatAmount } = useCurrencyContext();
   const [error, setError] = useState({ msg: "", open: false });
   const encodedToken = useMemo(() => getEncodedToken(token), [token]);
   const tokenAmount = useMemo(() => token.proofs.reduce((r, c) => r + c.amount, 0), [token]);
-  const qrSize = useMemo(
-    () => Math.round(Math.max(196, Math.min(288, width - 96, height * 0.32))),
-    [height, width],
-  );
+  const qrSize = useMemo(() => {
+    if (!qrStageSize.width || !qrStageSize.height) {
+      return Math.round(Math.max(196, Math.min(288, width - 96, height * 0.32)));
+    }
+
+    return Math.max(
+      MIN_QR_SIZE,
+      Math.floor(
+        Math.min(qrStageSize.width - QR_HORIZONTAL_CHROME, qrStageSize.height - QR_VERTICAL_CHROME),
+      ),
+    );
+  }, [height, qrStageSize.height, qrStageSize.width, width]);
   const manager = useManager();
   // For tokens, always show sats as primary (tokens ARE in sats)
   // Show fiat equivalent as secondary info if user prefers fiat
@@ -107,7 +120,10 @@ export default function EncodedTokenPage({ navigation, route }: TEncodedTokenPag
               )}
             </Stack>
 
-            <Stack style={styles.qrStage}>
+            <Stack
+              style={styles.qrStage}
+              onLayout={(event) => setQrStageSize(event.nativeEvent.layout)}
+            >
               {error.open ? (
                 <Stack style={[styles.errorPanel, { backgroundColor: theme.inputBackground }]}>
                   <AppText
@@ -176,7 +192,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   tokenContent: {
-    flexGrow: 1,
+    flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
@@ -211,8 +227,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   qrStage: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    minHeight: 240,
     width: "100%",
   },
   errorPanel: {
