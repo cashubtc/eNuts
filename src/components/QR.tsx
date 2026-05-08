@@ -41,7 +41,6 @@ export default function QR({ size, value, animate, truncateNum, onError }: QRPro
         style={[
           styles.txtContainer,
           {
-            borderColor: theme.border,
             backgroundColor: theme.inputBackground,
           },
         ]}
@@ -70,7 +69,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 15,
-    borderWidth: 1,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },
