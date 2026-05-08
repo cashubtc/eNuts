@@ -77,7 +77,6 @@ const TrustMintBottomSheet = forwardRef<
       ref={sheetRef}
       detents={["auto"]}
       backgroundColor={theme.background}
-      cornerRadius={26}
       grabberOptions={{ color: theme.textSecondary }}
       onDidDismiss={handleDismiss}
     >

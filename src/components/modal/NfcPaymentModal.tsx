@@ -135,7 +135,6 @@ const NfcPaymentModal = forwardRef<NfcPaymentModalRef, INfcPaymentModalProps>(
         dismissible={!isActive}
         draggable={!isActive}
         backgroundColor={theme.background}
-        cornerRadius={26}
         grabberOptions={{ color: theme.textSecondary }}
       >
         <Stack style={[styles.container, { backgroundColor: theme.background }]}>

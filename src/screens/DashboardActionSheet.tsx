@@ -24,7 +24,6 @@ export default function DashboardActionSheet({
       ref={sheetRef}
       detents={["auto"]}
       backgroundColor={backgroundColor}
-      cornerRadius={26}
       grabberOptions={{ color: closeIconColor }}
     >
       <Stack style={[styles.container, { backgroundColor }]}>

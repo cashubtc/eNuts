@@ -201,7 +201,6 @@ const MintSelectionSheet = forwardRef<TrueSheet, MintSelectionSheetProps>(
         ref={setSheetRef}
         detents={[0.5, 1]}
         backgroundColor={theme.background}
-        cornerRadius={26}
         grabberOptions={{ color: theme.textSecondary }}
         scrollable
         scrollableOptions={{

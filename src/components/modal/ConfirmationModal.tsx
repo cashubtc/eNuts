@@ -67,7 +67,6 @@ const ConfirmationModal = forwardRef<ConfirmationModalRef, IConfirmationModalPro
         dismissible={false}
         draggable={false}
         backgroundColor={theme.background}
-        cornerRadius={26}
         grabberOptions={{ color: theme.textSecondary }}
         scrollable
         onDidDismiss={handleDismiss}

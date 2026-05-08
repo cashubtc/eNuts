@@ -454,7 +454,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         ref={addAccountSheetRef}
         detents={["auto"]}
         backgroundColor={theme.background}
-        cornerRadius={26}
         grabberOptions={{ color: theme.textSecondary }}
         onDidDismiss={() => setPrivateKeyInput("")}
       >
@@ -543,7 +542,6 @@ export default function NpcSettings({ navigation }: TNpcSettingsPageProps) {
         ref={usernameSheetRef}
         detents={["auto"]}
         backgroundColor={theme.background}
-        cornerRadius={26}
         dismissible={!usernameBusy}
         draggable={!usernameBusy}
         grabberOptions={{ color: theme.textSecondary }}
